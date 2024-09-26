@@ -18,7 +18,7 @@ package audit.models
 
 import audit.Utilities._
 import auth.MtdItUser
-import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate, WhatYouOweChargesList}
+import models.financialDetails.{ChargeItem, WhatYouOweChargesList}
 import models.outstandingCharges.OutstandingChargesModel
 import play.api.libs.json._
 import services.DateServiceInterface
@@ -26,7 +26,7 @@ import utils.Utilities.JsonUtil
 
 case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
                                         whatYouOweChargesList: WhatYouOweChargesList,
-                                        dateService: DateServiceInterface) extends ExtendedAuditModel {
+                                        implicit val dateService: DateServiceInterface) extends ExtendedAuditModel {
 
   val currentTaxYear: Int = dateService.getCurrentTaxYearEnd
 
@@ -65,24 +65,24 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
     if (secondOrMoreYearOfMigration && fields.values.nonEmpty) Json.obj("balanceDetails" -> fields)
     else Json.obj()
   }
+//
+//  private def remainingToPay(documentDetail: DocumentDetail): BigDecimal = {
+//    if (documentDetail.isLatePaymentInterest) documentDetail.interestRemainingToPay else documentDetail.remainingToPay
+//  }
 
-  private def remainingToPay(documentDetail: DocumentDetail): BigDecimal = {
-    if (documentDetail.isLatePaymentInterest) documentDetail.interestRemainingToPay else documentDetail.remainingToPay
-  }
-
-  private def documentDetails(docDateDetail: DocumentDetailWithDueDate): JsObject = {
+  private def documentDetails(docDateDetail: ChargeItem): JsObject = {
     Json.obj(
       "chargeUnderReview" -> docDateDetail.dunningLock,
-      "outstandingAmount" -> remainingToPay(docDateDetail.documentDetail)
+      "outstandingAmount" -> docDateDetail.remainingToPay
     ) ++
-      ("chargeType", getChargeType(docDateDetail.documentDetail, docDateDetail.isLatePaymentInterest)) ++
+      ("chargeType", getChargeType(docDateDetail, docDateDetail.isLatePaymentInterest)) ++
       ("dueDate", docDateDetail.dueDate) ++
-      accruingInterestJson(docDateDetail.documentDetail) ++
-      Json.obj("endTaxYear" -> docDateDetail.documentDetail.taxYear.toInt) ++
-      Json.obj("overDue" -> docDateDetail.isOverdue)
+      accruingInterestJson(docDateDetail) ++
+      Json.obj("endTaxYear" -> docDateDetail.taxYear.toInt) ++
+      Json.obj("overDue" -> docDateDetail.isOverdue())
   }
 
-  private def accruingInterestJson(documentDetail: DocumentDetail): JsObject = {
+  private def accruingInterestJson(documentDetail: ChargeItem): JsObject = {
     if (documentDetail.hasAccruingInterest) {
       Json.obj() ++
         ("accruingInterest", documentDetail.interestOutstandingAmount) ++
@@ -101,7 +101,7 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
     ("dueDate", outstandingCharge.bcdChargeType.map(_.relevantDueDate)) ++
     ("accruingInterest", outstandingCharge.aciChargeType.map(_.chargeAmount))
 
-  private def codingOut(documentDetail: DocumentDetail): JsObject = {
+  private def codingOut(documentDetail: ChargeItem): JsObject = {
       Json.obj(
         "amountCodedOut" -> documentDetail.amountCodedOut,
         "endTaxYear" -> documentDetail.taxYear.toString

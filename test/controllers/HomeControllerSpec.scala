@@ -28,7 +28,7 @@ import models.financialDetails._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, when}
+import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
 import play.api.i18n.Lang
@@ -37,7 +37,6 @@ import play.api.test.Helpers._
 import play.api.test.Injecting
 import play.i18n
 import play.i18n.MessagesApi
-import services.DateService
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testTaxYear}
 import testConstants.FinancialDetailsTestConstants.financialDetailsModel
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, businessesAndPropertyIncomeCeased}
@@ -53,6 +52,10 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
   with MockAuditingService with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with BeforeAndAfterEach
   with MockItvcErrorHandler with MockNextUpdatesService with MockFinancialDetailsService with MockWhatYouOweService with Injecting {
 
+
+
+//  override implicit val dateService = TestSupport
+
   val updateYear: String = "2018"
   val nextPaymentYear: String = "2019"
   val nextPaymentYear2: String = "2018"
@@ -63,7 +66,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
   val nextPaymentDate2: LocalDate = LocalDate.of(nextPaymentYear2.toInt, Month.JANUARY, 31)
   val homePageTitle = s"${messages("htmlTitle", messages("home.heading"))}"
   val agentTitle = s"${messages("htmlTitle.agent", messages("home.agent.heading"))}"
-  val mockDateService: DateService = mock(classOf[DateService])
+//  val mockDateService: DateService = mock(classOf[DateService])
 
   trait Setup {
     val controller = new HomeController(
@@ -155,7 +158,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         mockSingleBusinessIncomeSource()
         when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
           .thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
-        when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+        when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(oneOverdueBCDPaymentInWhatYouOweChargesList))
 
         val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
@@ -253,7 +256,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
           mockSingleBusinessIncomeSource()
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
-          when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+          when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
 
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
@@ -270,7 +273,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
           mockSingleBusinessIncomeSource()
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None), List(), List()))))
-          when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+          when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
 
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
@@ -292,7 +295,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
               financialDetails = List(FinancialDetail(nextPaymentYear, transactionId = Some("testId"),
                 items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
             ))))
-          when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+          when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
 
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)

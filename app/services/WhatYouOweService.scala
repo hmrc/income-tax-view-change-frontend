@@ -19,10 +19,7 @@ package services
 import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.FinancialDetailsConnector
-import enums.{Poa1Charge, Poa2Charge, TRMAmmendCharge, TRMNewCharge}
 import models.financialDetails._
-import models.incomeSourceDetails.TaxYear
-import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -38,10 +35,11 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
 
   implicit lazy val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
 
-  val validChargeTypeCondition: DocumentDetail => Boolean = documentDetail => {
-    (documentDetail.documentText, documentDetail.getDocType) match {
-      case (Some(documentText), _) if documentText.contains("Class 2 National Insurance") => true
-      case (_, Poa1Charge | Poa2Charge | TRMNewCharge | TRMAmmendCharge) => true
+  val validChargeTypeCondition: ChargeItem => Boolean = documentDetail => {
+    (documentDetail.transactionType, documentDetail.subTransactionType) match {
+      case (_, Some(Nics2)) => true
+      case (PaymentOnAccountOne | PaymentOnAccountTwo | PaymentOnAccountOneReviewAndReconcile
+            | PaymentOnAccountTwoReviewAndReconcile | BalancingCharge | MfaDebitCharge, _) => true
       case (_, _) => false
     }
   }
@@ -57,16 +55,19 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
     }
   }
 
-  def getWhatYouOweChargesList(isCodingOutEnabled: Boolean, isMFACreditsEnabled: Boolean)
+  def getWhatYouOweChargesList(isCodingOutEnabled: Boolean, isMFACreditsEnabled: Boolean, isReviewAndReconcile: Boolean)
                               (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
     {
       for {
         unpaidChanges <- financialDetailsService.getAllUnpaidFinancialDetails(isCodingOutEnabled)
-      } yield getWhatYouOweChargesList(unpaidChanges, isCodingOutEnabled, isMFACreditsEnabled)
+      } yield getWhatYouOweChargesList(unpaidChanges, isCodingOutEnabled, isMFACreditsEnabled, isReviewAndReconcile)
     }.flatten
   }
 
-  def getWhatYouOweChargesList(unpaidCharges: List[FinancialDetailsResponseModel], isCodingOutEnabled: Boolean, isMFACreditsEnabled: Boolean)
+  def getWhatYouOweChargesList(unpaidCharges: List[FinancialDetailsResponseModel],
+                               isCodingOutEnabled: Boolean,
+                               isMFACreditsEnabled: Boolean,
+                               isReviewAndReconciledEnabled: Boolean)
                               (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
 
     unpaidCharges match {
@@ -77,15 +78,21 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
         val balanceDetails = financialDetailsModelList.headOption
           .map(_.balanceDetails).getOrElse(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None))
         val codedOutDocumentDetail = if (isCodingOutEnabled) {
-          financialDetailsModelList.flatMap(fdm =>
-            fdm.documentDetails.find(dd => dd.isPayeSelfAssessment
-              && dd.taxYear == (dateService.getCurrentTaxYearEnd - 1))
-          ).headOption
+
+          def chargeItemf: DocumentDetail => Option[ChargeItem] = ChargeItem
+            .tryGetChargeItem(isCodingOutEnabled, isReviewAndReconciledEnabled)(financialDetailsModelList
+              .flatMap(_.financialDetails))(_)
+
+          financialDetailsModelList.flatMap(_.documentDetails)
+            .flatMap(chargeItemf)
+            .filter(_.subTransactionType.contains(Accepted))
+            .find(_.taxYear == (dateService.getCurrentTaxYearEnd - 1))
         } else None
+
 
         val whatYouOweChargesList = WhatYouOweChargesList(
           balanceDetails = balanceDetails,
-          chargesList = getFilteredChargesList(financialDetailsModelList, isMFACreditsEnabled, isCodingOutEnabled),
+          chargesList = getFilteredChargesList(financialDetailsModelList, isMFACreditsEnabled, isCodingOutEnabled, isReviewAndReconciledEnabled),
           codedOutDocumentDetail = codedOutDocumentDetail)
 
         callOutstandingCharges(mtdUser.saUtr, mtdUser.incomeSources.yearOfMigration, dateService.getCurrentTaxYearEnd).map {
@@ -110,23 +117,27 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
   }
 
   private def getFilteredChargesList(financialDetailsList: List[FinancialDetailsModel],
-                                     isMFACreditsEnabled: Boolean, isCodingOutEnabled: Boolean): List[DocumentDetailWithDueDate] = {
-    val documentDetailsWithDueDates = financialDetailsList.flatMap(financialDetails =>
-      financialDetails.getAllDocumentDetailsWithDueDates(isCodingOutEnabled))
-      .filter(documentDetailWithDueDate => whatYouOwePageDataExists(documentDetailWithDueDate)
-        && validChargeTypeCondition(documentDetailWithDueDate.documentDetail)
-        && !documentDetailWithDueDate.documentDetail.isPayeSelfAssessment
-        && documentDetailWithDueDate.documentDetail.checkIfEitherChargeOrLpiHasRemainingToPay)
+                                     isMFACreditsEnabled: Boolean, isCodingOutEnabled: Boolean, isReviewAndReconciled: Boolean): List[ChargeItem] = {
+
+    def getChargeItem(financialDetails: List[FinancialDetail]): DocumentDetail => Option[ChargeItem] = ChargeItem.tryGetChargeItem(
+      codingOutEnabled = isCodingOutEnabled,
+      reviewAndReconcileEnabled = isReviewAndReconciled
+    )(financialDetails)
+
+    financialDetailsList
+      .flatMap(financialDetails =>  {
+        financialDetails.getAllDocumentDetailsWithDueDates(isCodingOutEnabled)
+          .flatMap(dd => {
+            val ci = getChargeItem(financialDetails.financialDetails)(dd.documentDetail)
+            println(ci)
+            ci
+          })
+      })
+      .filter(validChargeTypeCondition)
+      .filterNot(_.subTransactionType.contains(Accepted))
+      .filter(_.remainingToPayByChargeOrLpi > 0)
+      .filterNot(_.transactionType == MfaDebitCharge && !isMFACreditsEnabled)
       .sortBy(_.dueDate.get)
-    if (!isMFACreditsEnabled) filterMFADebits(documentDetailsWithDueDates) else documentDetailsWithDueDates
-  }
-
-  private def whatYouOwePageDataExists(documentDetailWithDueDate: DocumentDetailWithDueDate): Boolean = {
-    documentDetailWithDueDate.documentDetail.documentDescription.isDefined && documentDetailWithDueDate.dueDate.isDefined
-  }
-
-  private def filterMFADebits(documentDetailsWithDueDate: List[DocumentDetailWithDueDate]): List[DocumentDetailWithDueDate] = {
-    documentDetailsWithDueDate.filterNot(documentDetailWithDueDate => documentDetailWithDueDate.isMFADebit)
   }
 
 }

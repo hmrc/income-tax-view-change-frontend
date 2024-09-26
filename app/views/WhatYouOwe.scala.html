@@ -26,6 +26,9 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import java.time.LocalDate
 @import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
+@import models.financialDetails.Nics2
+@import models.financialDetails.MfaDebitCharge
+@import services.DateServiceInterface
 
 @this(
     mainTemplate: unifiedLayout,
@@ -55,7 +58,7 @@
     isUserMigrated: Boolean = false,
     creditAndRefundEnabled: Boolean,
     claimToAdjustViewModel: WYOClaimToAdjustViewModel,
-    origin: Option[String] = None)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
+    origin: Option[String] = None)(implicit request: Request[_], user: MtdItUser[_], messages: Messages, dateService: DateServiceInterface)
 
 @import implicitDateFormatter.longDate
 
@@ -214,10 +217,10 @@
     </thead>
 }
 
-@paymentTypeEntry(documentDetail: DocumentDetail, rowId: String, isLatePaymentInterest: Boolean,
+@paymentTypeEntry(documentDetail: ChargeItem, rowId: String, isLatePaymentInterest: Boolean,
     isMFADebit: Boolean, linkSuffix: String, index: Int) = @{
 
-    val chargeTypeKey = if(isMFADebit) "hmrcAdjustment.text" else documentDetail.getChargeTypeKey(codingOutEnabled)
+    val chargeTypeKey = documentDetail.getChargeTypeKey(codingOutEnabled)
     val lpi = if (isLatePaymentInterest) "lpi." else ""
     val linkText = getMessage(s"${lpi}${chargeTypeKey}")
     val taxYear = documentDetail.taxYear
@@ -240,13 +243,13 @@
     </a>
 }
 
-@getPaymentTypeEntry(documentDetail: DocumentDetail, rowId: String, isOverduePayment: Boolean, isMFADebit: Boolean, index: Int) = @{
+@getPaymentTypeEntry(documentDetail: ChargeItem, rowId: String, isOverduePayment: Boolean, isMFADebit: Boolean, index: Int) = @{
     val isLatePaymentInterest = isOverduePayment && documentDetail.isLatePaymentInterest
     def getLinkSuffix() : String = {
         if(!isOverduePayment) {
             "link"
         } else {
-            if(documentDetail.isClass2Nic || documentDetail.isLatePaymentInterest) {
+            if(documentDetail.subTransactionType.contains(Nics2) || documentDetail.isLatePaymentInterest) {
                 "late-link"
             } else {
                 "late-link2"
@@ -273,10 +276,10 @@
     </a>
 }
 
-@tableRow(rowId2: String, documentDetailWithDueDate: DocumentDetailWithDueDate, isOverduePayment: Boolean, index:Int, id:String) = {
+@tableRow(rowId2: String, documentDetailWithDueDate: ChargeItem, isOverduePayment: Boolean, index:Int, id:String) = {
     <tr class="govuk-table__row" id="@rowId2">
         <td class="govuk-table__cell govuk-!-width-one-quarter" >
-            @documentDetailWithDueDate.documentDetail.documentDueDate.getOrElse(throw MissingFieldException("document due date of Payment")).toLongDateShort
+            @documentDetailWithDueDate.dueDate.getOrElse(throw MissingFieldException("document due date of Payment")).toLongDateShort
         </td>
         <td class="govuk-table__cell govuk-!-width-one-half">
             @if(isOverduePayment){
@@ -284,22 +287,22 @@
                     <span id="@rowId2-overdue" class="govuk-tag govuk-tag--red" >@getMessage("over-due")</span>
                 </div>
             }
-            @getPaymentTypeEntry(documentDetail = documentDetailWithDueDate.documentDetail, isOverduePayment = isOverduePayment,
-                rowId = rowId2, isMFADebit = documentDetailWithDueDate.isMFADebit, index = index)
+            @getPaymentTypeEntry(documentDetail = documentDetailWithDueDate, isOverduePayment = isOverduePayment,
+                rowId = rowId2, isMFADebit = documentDetailWithDueDate.transactionType == MfaDebitCharge, index = index)
 
             @if(documentDetailWithDueDate.dunningLock){
                 <div class="form-hint govuk-body-s"> @getMessage("paymentUnderReview") </div>
             }
-            @if(isOverduePayment && documentDetailWithDueDate.documentDetail.hasLpiWithDunningLock){
+            @if(isOverduePayment && documentDetailWithDueDate.hasLpiWithDunningLock){
                 <div class="form-hint govuk-body-s" id="LpiDunningLock"> @getMessage("paymentUnderReview") </div>
             }
         </td>
-        <td class="govuk-table__cell numeric govuk-!-width-one-quarter"> @taxYearSummaryLink(documentDetailWithDueDate.documentDetail.taxYear.toInt, index, id)</td>
+        <td class="govuk-table__cell numeric govuk-!-width-one-quarter"> @taxYearSummaryLink(documentDetailWithDueDate.taxYear.toInt, index, id)</td>
         <td class="govuk-table__cell numeric govuk-!-width-one-quarter govuk-table__cell--numeric">@{
-            if(isOverduePayment && documentDetailWithDueDate.documentDetail.isLatePaymentInterest) {
-                documentDetailWithDueDate.documentDetail.interestRemainingToPay.toCurrency
+            if(isOverduePayment && documentDetailWithDueDate.isLatePaymentInterest) {
+                documentDetailWithDueDate.interestRemainingToPay.toCurrency
             } else {
-                documentDetailWithDueDate.documentDetail.remainingToPay.toCurrency
+                documentDetailWithDueDate.remainingToPay.toCurrency
             }
         }</td>
     </tr>
@@ -424,25 +427,25 @@
                             }
                             @if(whatYouOweChargesList.chargesList.nonEmpty) {
                                 @for((charge, index) <- whatYouOweChargesList.sortedChargesList.zipWithIndex) {
-                                    @tableRow(s"due-$index", charge, isOverduePayment = charge.isOverdue, index, "taxYearSummary-link")
-                                    @if(charge.isOverdue && charge.documentDetail.hasAccruingInterest) {
+                                    @tableRow(s"due-$index", charge, isOverduePayment = charge.isOverdue(), index, "taxYearSummary-link")
+                                    @if(charge.isOverdue() && charge.hasAccruingInterest) {
                                         <tr class="govuk-table__row" id=@(s"charge-interest-$index")>
                                             <td class="govuk-table__cell govuk-!-width-one-quarter"></td>
                                             <td class="govuk-table__cell govuk-!-width-one-half">
                                                 @getMessage("over-due.interest.line1")
                                                 <div>
                                                 @getMessage("over-due.interest.line2",
-                                                    charge.documentDetail.interestFromDate.getOrElse(throw MissingFieldException("Overdue Payment Interest From Date")).toLongDateShort,
-                                                    charge.documentDetail.interestEndDate.getOrElse(throw MissingFieldException("Overdue Payment Interest End Date")).toLongDateShort,
-                                                    charge.documentDetail.interestRate.getOrElse(throw MissingFieldException("Overdue Payment Interest Rate")).toString
+                                                    charge.interestFromDate.getOrElse(throw MissingFieldException("Overdue Payment Interest From Date")).toLongDateShort,
+                                                    charge.interestEndDate.getOrElse(throw MissingFieldException("Overdue Payment Interest End Date")).toLongDateShort,
+                                                    charge.interestRate.getOrElse(throw MissingFieldException("Overdue Payment Interest Rate")).toString
                                                 )
                                                 </div>
                                             </td>
                                             <td class="govuk-table__cell numeric govuk-!-width-one-quarter">
-                                            @taxYearSummaryLink(charge.documentDetail.taxYear.toInt, index, "taxYearSummary-accuring-interest-link")
+                                            @taxYearSummaryLink(charge.taxYear.toInt, index, "taxYearSummary-accuring-interest-link")
                                             </td>
                                             <td class="govuk-table__cell numeric govuk-!-width-one-quarter govuk-table__cell--numeric">@{
-                                                charge.documentDetail.interestOutstandingAmount.getOrElse(throw MissingFieldException("Overdue Payment Interest Outstanding Amount")).toCurrency
+                                                charge.interestOutstandingAmount.getOrElse(throw MissingFieldException("Overdue Payment Interest Outstanding Amount")).toCurrency
                                             }</td>
                                         </tr>
                                     }
@@ -528,7 +531,7 @@
     }
 }
 
-@codingOutInsetContent(codedOutDocumentDetail: DocumentDetail) = {
+@codingOutInsetContent(codedOutDocumentDetail: ChargeItem) = {
     @p(id=Some("coding-out-notice"), classes="govuk-body coding-out-notice"){
         @if(isAgent) {
             @getMessage("codingOut-1a")
@@ -536,7 +539,7 @@
             @getMessage("credit-overpaid-prefix")
         }
         <a class="govuk-link" id="coding-out-summary-link" href="@getCodingOutHref(codedOutDocumentDetail.taxYear, codedOutDocumentDetail.transactionId)">
-            @codedOutDocumentDetail.amountCodedOut.getOrElse(throw new MissingFieldException("DocumentDetail.amountCodedOut")).toCurrency
+            @codedOutDocumentDetail.amountCodedOut.getOrElse(throw new MissingFieldException("ChargeItem.amountCodedOut")).toCurrency
         </a>
         @getMessage("codingOut-1b")
         <b>@getMessage("codingOut-2", (codedOutDocumentDetail.taxYear - 1).toString(),

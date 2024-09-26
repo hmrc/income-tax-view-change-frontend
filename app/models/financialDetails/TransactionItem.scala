@@ -18,9 +18,11 @@ package models.financialDetails
 
 import exceptions.CouldNotCreateChargeItem
 import play.api.Logger
+import play.api.libs.json.{Format, Json}
 import services.DateServiceInterface
 
 import java.time.LocalDate
+import scala.util.{Failure, Success, Try}
 
 trait TransactionItem {
 
@@ -44,13 +46,19 @@ case class ChargeItem (
   latePaymentInterestAmount: Option[BigDecimal],
   interestFromDate: Option[LocalDate],
   interestEndDate: Option[LocalDate],
+  interestRate: Option[BigDecimal],
   lpiWithDunningLock: Option[BigDecimal],
-  isOverdue: Boolean,
+  amountCodedOut: Option[BigDecimal],
+//  isOverdue: Boolean,
   dunningLock: Boolean) extends TransactionItem {
 
+  def isOverdue()(implicit dateService: DateServiceInterface): Boolean = dueDate.exists(_ isBefore dateService.getCurrentDate)
 
   val hasLpiWithDunningLock: Boolean =
     lpiWithDunningLock.isDefined && lpiWithDunningLock.getOrElse[BigDecimal](0) > 0
+
+  def hasAccruingInterest: Boolean =
+    interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0
 
   def getDueDateForNonZeroCharge: Option[LocalDate] = {
     dueDate.filterNot(_ => originalAmount == 0.0)
@@ -89,6 +97,12 @@ case class ChargeItem (
     if (isPaid) BigDecimal(0)
     else outstandingAmount
   }
+
+  def remainingToPayByChargeOrLpi: BigDecimal = {
+    if (isLatePaymentInterest) interestRemainingToPay
+    else remainingToPay
+  }
+
 
   val isPartPaid: Boolean = outstandingAmount != originalAmount
 
@@ -134,10 +148,30 @@ case class ChargeItem (
 
 object ChargeItem {
 
+  implicit val format: Format[ChargeItem] = Json.format[ChargeItem]
+
+  def tryGetChargeItem(codingOutEnabled: Boolean, reviewAndReconcileEnabled: Boolean)(financialDetails: List[FinancialDetail])(documentDetail: DocumentDetail)
+                      (implicit dateService: DateServiceInterface): Option[ChargeItem] = {
+    Try(ChargeItem.fromDocumentPair(
+      documentDetail,
+      financialDetails,
+      codingOutEnabled,
+      reviewAndReconcileEnabled)
+    ) match {
+      case Failure(exception) =>
+        Logger("application").warn(exception.getMessage)
+        None
+      case Success(value) if value.isCodingOut && !codingOutEnabled =>
+        None
+      case Success(value) =>
+        Some(value)
+    }
+  }
+
   def fromDocumentPair(documentDetail: DocumentDetail, financialDetails: List[FinancialDetail], codingOut: Boolean, reviewAndReconcile: Boolean)
                       (implicit dateService: DateServiceInterface): ChargeItem = {
 
-    val isOverdue: Boolean = documentDetail.documentDueDate.exists(_ isBefore dateService.getCurrentDate)
+
 
     val financialDetail = financialDetails.find(_.transactionId.contains(documentDetail.transactionId)) match {
       case Some(fd) => fd
@@ -162,7 +196,7 @@ object ChargeItem {
       taxYear = documentDetail.taxYear,
       transactionType = chargeType,
       subTransactionType = documentDetail.documentText
-        .flatMap(SubTransactionType.fromDocumentText).filter(_ => codingOut),
+        .flatMap(SubTransactionType.fromDocumentText),
       documentDate = documentDetail.documentDate,
       dueDate = documentDetail.documentDueDate,
       originalAmount = documentDetail.originalAmount,
@@ -171,8 +205,10 @@ object ChargeItem {
       latePaymentInterestAmount = documentDetail.latePaymentInterestAmount,
       interestFromDate = documentDetail.interestFromDate,
       interestEndDate = documentDetail.interestEndDate,
+      interestRate = documentDetail.interestRate,
       lpiWithDunningLock = documentDetail.lpiWithDunningLock,
-      isOverdue = isOverdue,
+      amountCodedOut = documentDetail.amountCodedOut,
+//      isOverdue = isOverdue,
       dunningLock = dunningLockExists
     )
   }
@@ -188,7 +224,7 @@ object ChargeItem {
       chargeType <- ChargeType.fromCode(mainTransaction, reviewAndReconcile)
     } yield {
 
-      val isOverdue: Boolean = dd.documentDueDate.exists(_ isBefore dateService.getCurrentDate)
+//      val isOverdue: Boolean = dd.documentDueDate.exists(_ isBefore dateService.getCurrentDate)
 
       val dunningLockExists =
         financialDetailsModel.financialDetails
@@ -208,8 +244,10 @@ object ChargeItem {
         latePaymentInterestAmount = dd.latePaymentInterestAmount,
         interestFromDate = dd.interestFromDate,
         interestEndDate = dd.interestEndDate,
+        interestRate = dd.interestRate,
         lpiWithDunningLock = dd.lpiWithDunningLock,
-        isOverdue = isOverdue,
+        amountCodedOut = dd.amountCodedOut,
+//        isOverdue = isOverdue,
         dunningLock = dunningLockExists
       )
     }

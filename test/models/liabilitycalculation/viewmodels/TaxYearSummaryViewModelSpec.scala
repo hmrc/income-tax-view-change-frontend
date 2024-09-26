@@ -16,21 +16,25 @@
 
 package models.liabilitycalculation.viewmodels
 
-import models.financialDetails.ChargeItem
+import mocks.services.MockDateService
 import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.viewmodels.CalculationSummary.localDate
 import models.obligations.ObligationsModel
-import testConstants.FinancialDetailsTestConstants.chargeItemModel
+import models.taxyearsummary.TaxYearSummaryChargeItem
+import services.DateService
+import testConstants.ChargeConstants
 import testConstants.NextUpdatesTestConstants.nextUpdatesDataSelfEmploymentSuccessModel
 import testUtils.UnitSpec
 
 import java.time.LocalDate
 
-class TaxYearSummaryViewModelSpec extends UnitSpec {
+class TaxYearSummaryViewModelSpec extends UnitSpec with ChargeConstants with MockDateService {
 
-  val testWithMissingOriginalAmountChargesList: List[ChargeItem] = List(
+  implicit val dateService: DateService = mockDateService
+
+  val testWithMissingOriginalAmountChargesList: List[TaxYearSummaryChargeItem] = List(
     chargeItemModel(originalAmount = 0)
-  )
+  ).map(chargeItem => TaxYearSummaryChargeItem.fromChargeItem(chargeItem, chargeItem.dueDate))
 
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
 

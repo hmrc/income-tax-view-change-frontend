@@ -19,10 +19,10 @@ package audit.models
 import audit.Utilities.{getChargeType, userAuditDetails}
 import auth.MtdItUser
 import implicits.ImplicitDateParser
-import models.financialDetails.ChargeItem
 import models.liabilitycalculation.Messages
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.obligations.ObligationWithIncomeType
+import models.taxyearsummary.TaxYearSummaryChargeItem
 import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json.{JsObject, JsValue, Json}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
@@ -95,7 +95,7 @@ case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],
       errorMessages
   }
 
-  private def paymentsJson(docDateDetail: ChargeItem): JsObject = {
+  private def paymentsJson(docDateDetail: TaxYearSummaryChargeItem): JsObject = {
     Json.obj("paymentType" -> getChargeType(docDateDetail, false),
       "underReview" -> docDateDetail.dunningLock,
       "status" -> docDateDetail.getChargePaidStatus) ++
@@ -109,7 +109,7 @@ case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],
     ("taxDue", taxYearSummaryViewModel.calculationSummary.map(_.forecastIncomeTaxAndNics)) ++
     ("totalAllowancesAndDeductions", taxYearSummaryViewModel.calculationSummary.map(_.forecastAllowancesAndDeductions))
 
-  private def paymentsJsonLPI(docDateDetail: ChargeItem): JsObject = {
+  private def paymentsJsonLPI(docDateDetail: TaxYearSummaryChargeItem): JsObject = {
     Json.obj("paymentType" -> getChargeType(docDateDetail, latePaymentCharge = true),
       "underReview" -> docDateDetail.dunningLock,
       "status" -> docDateDetail.getInterestPaidStatus) ++

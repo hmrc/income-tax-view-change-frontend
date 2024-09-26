@@ -30,6 +30,7 @@ import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{Message, Messages}
 import models.obligations._
+import models.taxyearsummary.TaxYearSummaryChargeItem
 import org.jsoup.Jsoup
 import org.scalatest.Assertion
 import play.api.http.Status
@@ -40,6 +41,7 @@ import play.api.test.Helpers.{status, _}
 import services.DateService
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testMtditid, testNino, testTaxYear, testYearPlusOne, testYearPlusTwo}
 import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
+import testConstants.ChargeConstants
 import testConstants.FinancialDetailsTestConstants.{financialDetails, _}
 import testConstants.NewCalcBreakdownUnitTestConstants.{liabilityCalculationModelErrorMessagesForAgent, liabilityCalculationModelErrorMessagesForIndividual, liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulNotCrystallised}
 import testUtils.TestSupport
@@ -53,7 +55,7 @@ import scala.concurrent.Future
 class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationService
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicateNoCache
   with MockFinancialDetailsService with FeatureSwitching with MockItvcErrorHandler
-  with MockAuditingService with MockNextUpdatesService with MockIncomeTaxCalculationConnector with MockClaimToAdjustService {
+  with MockAuditingService with MockNextUpdatesService with MockIncomeTaxCalculationConnector with MockClaimToAdjustService with ChargeConstants {
 
   val taxYearSummaryView: TaxYearSummary = app.injector.instanceOf[TaxYearSummary]
 
@@ -80,16 +82,16 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
     app.injector.instanceOf[MessagesControllerComponents],
     ec)
 
+  val testCharge = chargeItemModel()
 
-  val testChargesList: List[ChargeItem] = List(
-    chargeItemModel(),
-    chargeItemModel(interestEndDate = Some(LocalDate.of(2018, 6, 15)), latePaymentInterestAmount = Some(100.0))
+  val testChargesList: List[TaxYearSummaryChargeItem] = List(
+    TaxYearSummaryChargeItem.fromChargeItem(testCharge.copy(latePaymentInterestAmount = None)),
+    TaxYearSummaryChargeItem.fromChargeItem(testCharge, dueDate = testCharge.interestEndDate, isLatePaymentInterest = true)
   )
 
-
-  val testEmptyChargesList: List[ChargeItem] = List.empty
-  val class2NicsChargesList: List[ChargeItem] = List(chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Nics2), latePaymentInterestAmount = None))
-  val payeChargesList: List[ChargeItem] = List(chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Accepted), latePaymentInterestAmount = None))
+  val testEmptyChargesList: List[TaxYearSummaryChargeItem] = List.empty
+  val class2NicsChargesList: List[TaxYearSummaryChargeItem] = List(chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Nics2), latePaymentInterestAmount = None)).map(TaxYearSummaryChargeItem.fromChargeItem)
+  val payeChargesList: List[TaxYearSummaryChargeItem] = List(chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Accepted), latePaymentInterestAmount = None)).map(TaxYearSummaryChargeItem.fromChargeItem)
   val taxYearsRefererBackLink: String = "http://www.somedomain.org/report-quarterly/income-and-expenses/view/tax-years"
   val taxYearsBackLink: String = "/report-quarterly/income-and-expenses/view/tax-years"
   val homeBackLink: String = "/report-quarterly/income-and-expenses/view"
@@ -467,7 +469,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         mockCalculationSuccessfulNew(testMtditid)
         mockFinancialDetailsSuccess(
           financialDetailsModelResponse = financialDetails(
-            documentDetails = documentDetailClass2Nic.documentDetail
+            documentDetails = documentDetailClass2Nic.documentDetail,
+            financialDetails = financialDetail(mainTransaction = "4910")
           )
         )
         mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
@@ -500,7 +503,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         mockCalculationSuccessfulNew(testMtditid)
         mockFinancialDetailsSuccess(
           financialDetailsModelResponse = financialDetails(
-            documentDetails = documentDetailPaye.documentDetail
+            documentDetails = documentDetailPaye.documentDetail,
+            financialDetails = financialDetail(mainTransaction = "4910")
           )
         )
         mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
@@ -543,11 +547,11 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
           response = testObligtionsModel
         )
 
-        val mfaCharges: List[ChargeItem] = List(
+        val mfaCharges: List[TaxYearSummaryChargeItem] = List(
           chargeItemModel(transactionId = "MFADEBIT01", transactionType = MfaDebitCharge, originalAmount = 100.0, outstandingAmount = 100.0, latePaymentInterestAmount = None),
           chargeItemModel(transactionId = "MFADEBIT02", transactionType = MfaDebitCharge, originalAmount = 100.0, outstandingAmount = 100.0, latePaymentInterestAmount = None),
           chargeItemModel(transactionId = "MFADEBIT03", transactionType = MfaDebitCharge, originalAmount = 100.0, outstandingAmount = 100.0, latePaymentInterestAmount = None)
-        )
+        ).map(TaxYearSummaryChargeItem.fromChargeItem)
 
         val calcOverview: CalculationSummary = CalculationSummary(liabilityCalculationModelSuccessful)
         val charges = if (MFAEnabled) mfaCharges else testEmptyChargesList

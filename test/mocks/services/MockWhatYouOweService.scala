@@ -21,13 +21,15 @@ import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import services.WhatYouOweService
+import services.{DateService, WhatYouOweService}
 import testUtils.UnitSpec
 
 import java.time.LocalDate
 import scala.concurrent.Future
 
-trait MockWhatYouOweService extends UnitSpec with BeforeAndAfterEach {
+trait MockWhatYouOweService extends UnitSpec with MockDateService with BeforeAndAfterEach {
+
+  implicit val dateService: DateService
 
   val mockWhatYouOweService: WhatYouOweService = mock(classOf[WhatYouOweService])
 
@@ -49,7 +51,7 @@ trait MockWhatYouOweService extends UnitSpec with BeforeAndAfterEach {
   }
 
   def setupMockGetWhatYouOweChargesListFromFinancialDetails(whatYouOweChargesList: WhatYouOweChargesList): Unit = {
-    when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+    when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
       .thenReturn(Future.successful(whatYouOweChargesList))
   }
 

@@ -31,6 +31,7 @@ import models.financialDetails._
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
 import models.obligations.ObligationsModel
+import models.taxyearsummary.TaxYearSummaryChargeItem
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Lang, Messages, MessagesApi}
 import play.api.mvc._
@@ -45,7 +46,6 @@ import java.net.URI
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success, Try}
 
 @Singleton
 class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
@@ -73,7 +73,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
   }
 
   private def view(liabilityCalc: LiabilityCalculationResponseModel,
-                   chargeItems: List[ChargeItem],
+                   chargeItems: List[TaxYearSummaryChargeItem],
                    taxYear: Int,
                    obligations: ObligationsModel,
                    codingOutEnabled: Boolean,
@@ -149,67 +149,72 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
     }
   }
 
-  private def withTaxYearFinancials(taxYear: Int, isAgent: Boolean)(f: List[ChargeItem] => Future[Result])
+  private def withTaxYearFinancials(taxYear: Int, isAgent: Boolean)(f: List[TaxYearSummaryChargeItem] => Future[Result])
                                    (implicit user: MtdItUser[_]): Future[Result] = {
 
     financialDetailsService.getFinancialDetails(taxYear, user.nino) flatMap {
       case financialDetails@FinancialDetailsModel(_, documentDetails, _) =>
 
-        def getChargeItem(documentDetail: DocumentDetail): Option[ChargeItem] = {
-          Try(ChargeItem.fromDocumentPair(
-            documentDetail,
-            financialDetails.financialDetails,
-            isEnabled(CodingOut),
-            isEnabled(ReviewAndReconcilePoa))
-          ) match {
-            case Failure(exception) =>
-              Logger("application").warn(exception.getMessage)
-              None
-            case Success(value) =>
-              Some(value)
-          }
-        }
-
-        def filterMfa(chargeItem: ChargeItem): Boolean = {
+        def filterMfa(chargeItem: TaxYearSummaryChargeItem): Boolean = {
           (isEnabled(MFACreditsAndDebits), chargeItem.transactionType) match {
             case (false, MfaDebitCharge) => false
             case _ => true
           }
         }
 
-        def filterReviewAndReconcile(chargeItem: ChargeItem): Boolean = {
+        def filterReviewAndReconcile(chargeItem: TaxYearSummaryChargeItem): Boolean = {
           (isEnabled(ReviewAndReconcilePoa), chargeItem.transactionType) match {
             case (false, PaymentOnAccountOneReviewAndReconcile | PaymentOnAccountTwoReviewAndReconcile) => false
             case _ => true
           }
         }
 
+        def findDueDateByDocumentDetails(documentDetail: DocumentDetail): Option[LocalDate] = {
+          financialDetails.financialDetails.find { fd =>
+            fd.transactionId.contains(documentDetail.transactionId) &&
+              fd.taxYear.toInt == documentDetail.taxYear
+          } flatMap (_ => documentDetail.documentDueDate)
+        }
+
+        val getChargeItem: DocumentDetail => Option[ChargeItem] = ChargeItem.tryGetChargeItem(
+          codingOutEnabled = isEnabled(CodingOut),
+          reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa)
+        )(
+          financialDetails = financialDetails.financialDetails
+        )
+
         val chargeItemsNoPayments = documentDetails
           .filter(_.paymentLot.isEmpty)
-          .flatMap(getChargeItem)
 
-        val  chargeItemsCodingOut = chargeItemsNoPayments.filter(_.isCodingOut)
+        val  chargeItemsCodingOut = chargeItemsNoPayments
+          .filterNot(_.isNotCodingOutDocumentDetail)
+          .flatMap(dd => getChargeItem(dd)
+            .map(ci => TaxYearSummaryChargeItem.fromChargeItem(ci, dd.getDueDate())))
 
-        val chargeItemsNoCodingOut: List[ChargeItem] = {
+        val chargeItemsNoCodingOut: List[TaxYearSummaryChargeItem] = {
           chargeItemsNoPayments
-            .filterNot(_.isCodingOut)
+            .filter(_.isNotCodingOutDocumentDetail)
+            .flatMap(dd => getChargeItem(dd)
+              .map(ci => TaxYearSummaryChargeItem.fromChargeItem(ci, findDueDateByDocumentDetails(dd))))
             .filterNot(_.originalAmount < 0)
             .filter(filterMfa)
             .filter(filterReviewAndReconcile)
         }
 
-        val chargeItemsLpi: List[ChargeItem] = {
+        val chargeItemsLpi: List[TaxYearSummaryChargeItem] = {
           chargeItemsNoPayments
             .filter(_.isLatePaymentInterest)
+            .flatMap(dd => getChargeItem(dd)
+              .map(ci => TaxYearSummaryChargeItem.fromChargeItem(ci, dd.interestEndDate, isLatePaymentInterest = true)))
         }
 
-        val chargeItemsCodingOutPaye: List[ChargeItem] = {
+        val chargeItemsCodingOutPaye: List[TaxYearSummaryChargeItem] = {
            chargeItemsCodingOut
             .filter(_.subTransactionType.contains(models.financialDetails.Accepted))
             .filterNot(_.originalAmount <= 0)
         }
 
-        val chargeItemsCodingOutNotPaye: List[ChargeItem] = {
+        val chargeItemsCodingOutNotPaye: List[TaxYearSummaryChargeItem] = {
            chargeItemsCodingOut
             .filterNot(_.subTransactionType.contains(models.financialDetails.Accepted))
             .filterNot(_.originalAmount <= 0)

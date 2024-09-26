@@ -25,16 +25,18 @@ import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{Message, Messages}
 import models.obligations.{ObligationWithIncomeType, ObligationsModel}
+import models.taxyearsummary.TaxYearSummaryChargeItem
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
-import testConstants.FinancialDetailsTestConstants.{MFADebitsDocumentDetailsWithDueDates, chargeItemModel, fullDocumentDetailModel}
+import testConstants.ChargeConstants
+import testConstants.FinancialDetailsTestConstants.{MFADebitsDocumentDetailsWithDueDates, fullDocumentDetailModel}
 import testConstants.NextUpdatesTestConstants._
 import testUtils.ViewSpec
 import views.html.TaxYearSummary
 
 import java.time.LocalDate
 
-class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
+class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeConstants {
 
   val testYear: Int = 2018
   val hrefForecastSelector: String = """a[href$="#forecast"]"""
@@ -142,73 +144,78 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
       ))
     )))
 
+  val testDunningLockChargesList: List[TaxYearSummaryChargeItem] = List(
+    TaxYearSummaryChargeItem.fromChargeItem(chargeItemModel(transactionType=PaymentOnAccountOne, dueDate = Some(LocalDate.of(2019, 6, 15)), dunningLock = true),
+      dueDate = Some(LocalDate.of(2019, 6, 15))),
+    TaxYearSummaryChargeItem.fromChargeItem(chargeItemModel(transactionType=PaymentOnAccountTwo, dueDate = Some(LocalDate.of(2019, 7, 15)), dunningLock = false),
+      dueDate = Some(LocalDate.of(2019, 7, 15))),
+    TaxYearSummaryChargeItem.fromChargeItem(chargeItemModel(transactionType=BalancingCharge,     dueDate = Some(LocalDate.of(2019, 8, 15)), dunningLock = true),
+    dueDate = Some(LocalDate.of(2019, 8, 15))))
 
-  val testDunningLockChargesList: List[ChargeItem] = List(
-    chargeItemModel(transactionType=PaymentOnAccountOne, dueDate = Some(LocalDate.of(2019, 6, 15)), dunningLock = true),
-    chargeItemModel(transactionType=PaymentOnAccountTwo, dueDate = Some(LocalDate.of(2019, 7, 15)), dunningLock = false),
-    chargeItemModel(transactionType=BalancingCharge,     dueDate = Some(LocalDate.of(2019, 8, 15)), dunningLock = true))
+  val testChargesList: List[TaxYearSummaryChargeItem] = List(
+    TaxYearSummaryChargeItem.fromChargeItem(
+      chargeItemModel(transactionType=PaymentOnAccountOne, dueDate = Some(LocalDate.of(2019, 6, 15)), latePaymentInterestAmount = Some(100.0)),
+      dueDate = Some(LocalDate.of(2019, 6, 15)), isLatePaymentInterest = true),
+    TaxYearSummaryChargeItem.fromChargeItem(
+      chargeItemModel(transactionType=PaymentOnAccountTwo, dueDate = Some(LocalDate.of(2019, 7, 15)), latePaymentInterestAmount = Some(80.0)),
+      dueDate = Some(LocalDate.of(2019, 7, 15)), isLatePaymentInterest = true),
+    TaxYearSummaryChargeItem.fromChargeItem(
+      chargeItemModel(transactionType=BalancingCharge, dueDate = Some(LocalDate.of(2019, 8, 15)), interestOutstandingAmount = Some(0.0)),
+      dueDate = Some(LocalDate.of(2019, 8, 15)), isLatePaymentInterest = true)
+  )
 
-  val testChargesList: List[ChargeItem] = List(
-    chargeItemModel(transactionType=PaymentOnAccountOne, dueDate = Some(LocalDate.of(2019, 6, 15)), latePaymentInterestAmount = Some(100.0)),
-    chargeItemModel(transactionType=PaymentOnAccountTwo, dueDate = Some(LocalDate.of(2019, 7, 15)), latePaymentInterestAmount = Some(80.0)),
-    chargeItemModel(transactionType=BalancingCharge,     dueDate = Some(LocalDate.of(2019, 8, 15)), interestOutstandingAmount = Some(0.0)))
+  val testChargesWithoutLpiList: List[TaxYearSummaryChargeItem] = testChargesList.map(_.copy(isLatePaymentInterest = false))
 
-  val testChargesWithoutLpiList: List[ChargeItem] = testChargesList.map(_.copy(latePaymentInterestAmount = None))
-
-  val class2NicsChargesList: List[ChargeItem] = List(
+  val class2NicsChargesList: List[TaxYearSummaryChargeItem] = List(
     chargeItemModel(transactionType=PaymentOnAccountOne, dueDate = Some(LocalDate.of(2021, 7, 31)), latePaymentInterestAmount = None),
     chargeItemModel(transactionType=BalancingCharge, subTransactionType = Some(Nics2), dueDate = Some(LocalDate.of(2021, 7, 30)), latePaymentInterestAmount = None)
-    )
+    ).map(TaxYearSummaryChargeItem.fromChargeItem(_))
 
 
-  val payeChargeList: List[ChargeItem] = List(
+  val payeChargeList: List[TaxYearSummaryChargeItem] = List(
     chargeItemModel(transactionType=BalancingCharge, dueDate = Some(LocalDate.of(2021, 7, 30)), subTransactionType = Some(Accepted), latePaymentInterestAmount = None)
-  )
+  ).map(TaxYearSummaryChargeItem.fromChargeItem)
 
-  val testBalancingPaymentChargeWithZeroValue: List[ChargeItem] = List(
-    chargeItemModel(transactionType=BalancingCharge, originalAmount = 0.0, latePaymentInterestAmount = None))
+  val testBalancingPaymentChargeWithZeroValue: List[TaxYearSummaryChargeItem] = List(
+    chargeItemModel(transactionType=BalancingCharge, originalAmount = 0.0, latePaymentInterestAmount = None)).map(TaxYearSummaryChargeItem.fromChargeItem)
 
 
 
-  val immediatelyRejectedByNps: List[ChargeItem] = List(
+  val immediatelyRejectedByNps: List[TaxYearSummaryChargeItem] = List(
     chargeItemModel(transactionType=BalancingCharge, subTransactionType = Some(Nics2), latePaymentInterestAmount = None),
       chargeItemModel(transactionType=BalancingCharge, interestOutstandingAmount = Some(0.0), latePaymentInterestAmount = None)
-  )
+  ) .map(TaxYearSummaryChargeItem.fromChargeItem)
 
-
-
-  val rejectedByNpsPartWay: List[ChargeItem] = List(
+  val rejectedByNpsPartWay: List[TaxYearSummaryChargeItem] = List(
     chargeItemModel(transactionType=BalancingCharge, subTransactionType = Some(Nics2), latePaymentInterestAmount = None),
     chargeItemModel(transactionType=BalancingCharge, subTransactionType = Some(Cancelled), latePaymentInterestAmount = None)
-  )
+  ).map(TaxYearSummaryChargeItem.fromChargeItem)
 
-
-
-  val codingOutPartiallyCollected: List[ChargeItem] = List(
+  val codingOutPartiallyCollected: List[TaxYearSummaryChargeItem] = List(
     chargeItemModel(transactionType=BalancingCharge, subTransactionType = Some(Nics2), latePaymentInterestAmount = None),
     chargeItemModel(transactionType=BalancingCharge, interestOutstandingAmount = Some(0.0), latePaymentInterestAmount = None),
     chargeItemModel(transactionType=BalancingCharge, subTransactionType = Some(Cancelled), latePaymentInterestAmount = None)
-  )
+  ).map(TaxYearSummaryChargeItem.fromChargeItem)
 
-  val mfaCharges: List[ChargeItem] = List(
+  val mfaCharges: List[TaxYearSummaryChargeItem] = List(
     chargeItemModel(transactionId = "MFADEBIT01", transactionType = MfaDebitCharge, originalAmount = 100.0, outstandingAmount = 100.0, latePaymentInterestAmount = None),
     chargeItemModel(transactionId = "MFADEBIT02", transactionType = MfaDebitCharge, originalAmount = 100.0, outstandingAmount = 100.0, latePaymentInterestAmount = None),
     chargeItemModel(transactionId = "MFADEBIT03", transactionType = MfaDebitCharge, originalAmount = 100.0, outstandingAmount = 100.0, latePaymentInterestAmount = None)
-  )
+  ).map(TaxYearSummaryChargeItem.fromChargeItem)
 
   val documentDetailWithDueDateMissingDueDate: List[ChargeItem] = List(
     chargeItemModel(dueDate = None)
   )
 
-  val emptyChargeList: List[ChargeItem] = List.empty
+  val emptyChargeList: List[TaxYearSummaryChargeItem] = List.empty
 
-  val testWithOneMissingDueDateChargesList: List[ChargeItem] = List(
-    chargeItemModel(),
-    chargeItemModel(dueDate = None)
+  val testWithOneMissingDueDateChargesList: List[TaxYearSummaryChargeItem] = List(
+    TaxYearSummaryChargeItem.fromChargeItem(chargeItemModel()),
+    TaxYearSummaryChargeItem.fromChargeItem(chargeItemModel(), dueDate = None)
   )
 
-  val testWithMissingOriginalAmountChargesList: List[ChargeItem] = List(
-    chargeItemModel(originalAmount = 1000.0),
+  val testWithMissingOriginalAmountChargesList: List[TaxYearSummaryChargeItem] = List(
+    TaxYearSummaryChargeItem.fromChargeItem(chargeItemModel(originalAmount = 1000.0)),
   )
 
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
@@ -217,11 +224,12 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
   val testCTAModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled = true, poaTaxYear = Some(TaxYear(2023,2024)))
 
-  def estimateView(chargeItems: List[ChargeItem] = testChargesList, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false, obligations: ObligationsModel = testObligationsModel): Html = taxYearSummaryView(
+  def estimateView(chargeItems: List[TaxYearSummaryChargeItem] = testChargesList, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false, obligations: ObligationsModel = testObligationsModel): Html = taxYearSummaryView(
     testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), chargeItems, obligations, codingOutEnabled = false, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
 
   def class2NicsView(codingOutEnabled: Boolean, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), class2NicsChargesList, testObligationsModel, codingOutEnabled = codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), class2NicsChargesList
+      , testObligationsModel, codingOutEnabled = codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
 
   def estimateViewWithNoCalcData(reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
     testYear, TaxYearSummaryViewModel(None, testChargesList, testObligationsModel, codingOutEnabled = false, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)

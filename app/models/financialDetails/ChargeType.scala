@@ -90,6 +90,8 @@ object ChargeType {
   val read: Reads[ChargeType] = (JsPath).read[String].collect(JsonValidationError("Could not parse transactionType")) {
     case PaymentOnAccountOne.key => PaymentOnAccountOne
     case PaymentOnAccountTwo.key => PaymentOnAccountTwo
+    case PaymentOnAccountOneReviewAndReconcile.key => PaymentOnAccountOneReviewAndReconcile
+    case PaymentOnAccountTwoReviewAndReconcile.key => PaymentOnAccountTwoReviewAndReconcile
     case BalancingCharge.key => BalancingCharge
     case MfaDebitCharge.key => MfaDebitCharge
   }

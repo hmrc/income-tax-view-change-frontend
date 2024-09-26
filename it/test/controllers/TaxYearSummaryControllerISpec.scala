@@ -28,6 +28,7 @@ import models.financialDetails._
 import models.liabilitycalculation.LiabilityCalculationError
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
+import models.taxyearsummary.TaxYearSummaryChargeItem
 import org.jsoup.Jsoup
 import play.api.http.Status._
 import play.api.libs.json.Json
@@ -219,7 +220,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
       FinancialDetail(
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         mainType = Some("SA Balancing Charge"),
-        transactionId = Some("testTransactionId"),
+        transactionId = Some("testTransactionId1"),
         mainTransaction = Some("4910"),
         items = Some(Seq(SubItem(Some(LocalDate.of(2020, 7, 13)))))
       ),
@@ -233,7 +234,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
       FinancialDetail(
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         mainType = Some("SA Balancing Charge"),
-        transactionId = Some("testTransactionI3"),
+        transactionId = Some("testTransactionId3"),
         mainTransaction = Some("4910"),
         items = Some(Seq(SubItem(Some(LocalDate.of(2022, 1, 31)))))
       )
@@ -334,7 +335,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
     )
   )
 
-  val emptyPaymentsList: List[ChargeItem] = List.empty
+  val emptyPaymentsList: List[TaxYearSummaryChargeItem] = List.empty
 
   val allObligations: ObligationsModel = ObligationsModel(Seq(
     GroupedObligationsModel(
@@ -496,9 +497,9 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           elementTextBySelector("#income-deductions-contributions-table tr:nth-child(1) td[class=govuk-table__cell govuk-table__cell--numeric]")("£12,500.00"),
           elementTextBySelector("#income-deductions-contributions-table tr:nth-child(2) td[class=govuk-table__cell govuk-table__cell--numeric]")("£12,500.00"),
           elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(4)", "td:nth-of-type(1)")("£90,500.99"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "th")(s"$overdue $poa1"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("23 Apr 2021"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")("£1,000.00"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "th")(s"$overdue $poa1"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("23 Apr 2021"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("£1,000.00"),
           elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "a")(poa1Lpi),
           elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("24 Jun 2021"),
           elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")("£100.00"),
@@ -554,8 +555,6 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, obligation.identification, obligation.obligations).detail)
         }
 
-        val x = Jsoup.parse(res.body)
-        println(x.select("#payments table"))
         And("The expected result is returned")
         res should have(
           httpStatus(OK),
@@ -589,7 +588,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
             None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
           )(FakeRequest()),
           messagesAPI, TaxYearSummaryViewModel(Some(CalculationSummary(liabilityCalculationModelSuccessfulExpected)),
-            financialDetailsDunningLockSuccess.documentDetails.map(dd => ChargeItem.fromDocumentPair(dd, financialDetailsDunningLockSuccess.financialDetails, true, true)),
+            financialDetailsDunningLockSuccess.documentDetails.map(dd => ChargeItem.fromDocumentPair(dd, financialDetailsDunningLockSuccess.financialDetails, true, true)).map(TaxYearSummaryChargeItem.fromChargeItem),
             allObligations, codingOutEnabled = true, reviewAndReconcileEnabled = true, showForecastData = true, ctaViewModel = emptyCTAModel)))
       }
 
@@ -1143,7 +1142,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           messagesAPI, TaxYearSummaryViewModel(
             Some(CalculationSummary(liabilityCalculationModelSuccessful)),
 
-            auditDD.map(dd => ChargeItem.fromDocumentPair(dd.documentDetail, financialDetailsMFADebits.financialDetails, true, true)), allObligations,
+            auditDD.map(dd => ChargeItem.fromDocumentPair(dd.documentDetail, financialDetailsMFADebits.financialDetails, true, true)).map(TaxYearSummaryChargeItem.fromChargeItem), allObligations,
             codingOutEnabled = true,
             reviewAndReconcileEnabled = true,
             showForecastData = true, ctaViewModel = emptyCTAModel)))

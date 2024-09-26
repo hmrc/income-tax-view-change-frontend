@@ -16,12 +16,12 @@
 
 package models.liabilitycalculation.viewmodels
 
-import models.financialDetails.ChargeItem
 import models.incomeSourceDetails.TaxYear
 import models.obligations.ObligationsModel
+import models.taxyearsummary.TaxYearSummaryChargeItem
 
 case class TaxYearSummaryViewModel(calculationSummary: Option[CalculationSummary],
-                                   charges: List[ChargeItem],
+                                   charges: List[TaxYearSummaryChargeItem],
                                    obligations: ObligationsModel,
                                    codingOutEnabled: Boolean,
                                    reviewAndReconcileEnabled: Boolean,

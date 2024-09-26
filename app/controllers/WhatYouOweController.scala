@@ -59,7 +59,7 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
     for {
-      whatYouOweChargesList <- whatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(MFACreditsAndDebits))
+      whatYouOweChargesList <- whatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(MFACreditsAndDebits), isEnabled(ReviewAndReconcilePoa))
       creditCharges <- whatYouOweService.getCreditCharges()
       ctaViewModel <- claimToAdjustViewModel(Nino(user.nino))
     } yield {
@@ -80,7 +80,7 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
         isUserMigrated = user.incomeSources.yearOfMigration.isDefined,
         creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
         origin = origin,
-        claimToAdjustViewModel = ctaViewModel)(user, user, messages)
+        claimToAdjustViewModel = ctaViewModel)(user, user, messages, dateService)
       ).addingToSession(gatewayPage -> WhatYouOwePage.name)
     }
   } recover {

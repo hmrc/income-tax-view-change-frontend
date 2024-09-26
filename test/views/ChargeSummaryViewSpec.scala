@@ -30,13 +30,14 @@ import org.mockito.Mockito.mock
 import org.scalatest.Assertion
 import play.twirl.api.Html
 import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
+import testConstants.ChargeConstants
 import testConstants.FinancialDetailsTestConstants._
 import testUtils.ViewSpec
 import views.html.ChargeSummary
 
 import java.time.LocalDate
 
-class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
+class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeConstants {
 
   lazy val chargeSummary: ChargeSummary = app.injector.instanceOf[ChargeSummary]
   val whatYouOweAgentUrl = controllers.routes.WhatYouOweController.showAgent.url

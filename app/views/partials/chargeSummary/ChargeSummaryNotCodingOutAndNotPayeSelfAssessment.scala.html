@@ -22,6 +22,8 @@
 @import java.time.LocalDate
 @import exceptions.MissingFieldException
 
+@import services.DateServiceInterface
+
 @this(p: p, link: link, implicitDateFormatter: ImplicitDateFormatterImpl)
 
 @(
@@ -31,7 +33,7 @@
     taxYearFromCodingOut: String,
     taxYearToCodingOut: String,
     appConfig: config.FrontendAppConfig
-)(implicit messages: Messages)
+)(implicit messages: Messages, dateService: DateServiceInterface)
 
 @import implicitDateFormatter.longDate
 
@@ -39,14 +41,14 @@
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">@messages("chargeSummary.dueDate")</dt>
         <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
-            @if(chargeItem.isOverdue && !chargeItem.checkIsPaid(latePaymentInterestCharge)) {
+            @if(chargeItem.isOverdue() && !chargeItem.checkIsPaid(latePaymentInterestCharge)) {
                 <span class="govuk-tag govuk-tag--red">@messages("chargeSummary.overdue")</span>
             }
             @{
                 if(latePaymentInterestCharge) {
                     chargeItem.interestEndDate.getOrElse(throw MissingFieldException("Interest End Date")).toLongDate
                 } else if(chargeItem.transactionType == models.financialDetails.BalancingCharge && chargeItem.subTransactionType == None) {
-                    chargeItem.getBalancingChargeDueDate(codingOutEnabled).map(_.toLongDate).getOrElse(messages("tax-year-summary.na"))
+                    chargeItem.getDueDateForNonZeroBalancingCharge(codingOutEnabled).map(_.toLongDate).getOrElse(messages("tax-year-summary.na"))
                 } else {
                     chargeItem.dueDate.map(_.toLongDate).getOrElse(messages("chargeSummary.na"))
                 }

@@ -24,12 +24,13 @@
 @import views.html.partials.{taxYearSummaryBreakdownPartial, taxYearSummaryTabsPartial}
 @import models.liabilitycalculation.viewmodels.TYSClaimToAdjustViewModel
 @import java.time.LocalDate
-@import models.financialDetails.ChargeItem
-@import models.financialDetails.ChargeItem._
+@import models.taxyearsummary.TaxYearSummaryChargeItem
+@import models.taxyearsummary.TaxYearSummaryChargeItem._
 @import models.financialDetails.Accepted
 @import models.financialDetails.PaymentOnAccountOneReviewAndReconcile
 @import models.financialDetails.PaymentOnAccountTwoReviewAndReconcile
 @import models.financialDetails.BalancingCharge
+@import services.DateServiceInterface
 
 
 @this(
@@ -46,7 +47,7 @@
 )
 
 @(taxYear: Int, viewModel: TaxYearSummaryViewModel, backUrl: String, isAgent: Boolean = false, origin: Option[String] = None
-  )(implicit request: Request[_], messages: Messages, user: auth.MtdItUser[_])
+  )(implicit request: Request[_], dateService: DateServiceInterface, messages: Messages, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter._
 @codingOutEnabled = @{viewModel.codingOutEnabled}
@@ -168,7 +169,7 @@
 }
 
 
-@getChargeSummaryHref(chargeItem: ChargeItem) = @{
+@getChargeSummaryHref(chargeItem: TaxYearSummaryChargeItem) = @{
     // Logic has not yet been defined for the redirect url for Review and Reconcile
     if(Seq(PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile).contains(chargeItem.transactionType)) {
         "/"
@@ -181,7 +182,7 @@
     }
 }
 
-@getChargeSummaryMessage(chargeItem: ChargeItem) = @{
+@getChargeSummaryMessage(chargeItem: TaxYearSummaryChargeItem) = @{
     val chargeTypeKey = chargeItem.getChargeTypeKey(codingOutEnabled, reviewAndReconcileEnabled)
     val lpi = if (chargeItem.isLatePaymentInterest) "lpi." else ""
     messages(s"tax-year-summary.payments.${lpi}${chargeTypeKey}")
@@ -215,7 +216,7 @@
             @for((chargeItem, index) <- viewModel.charges.sortBy(_.dueDate).sortBy(_.subTransactionType.contains(Accepted)).zipWithIndex) {
                 <tr class="govuk-table__row">
                     <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">
-                        @if(chargeItem.isOverdue &&
+                        @if(chargeItem.isOverdue() &&
                             !chargeItem.subTransactionType.contains(Accepted) &&
                             ((!chargeItem.isLatePaymentInterest && !chargeItem.isPaid) ||
                             (chargeItem.isLatePaymentInterest && !chargeItem.interestIsPaid))) {

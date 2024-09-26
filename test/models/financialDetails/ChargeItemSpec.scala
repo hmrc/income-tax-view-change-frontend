@@ -18,14 +18,15 @@ package models.financialDetails
 
 import config.FrontendAppConfig
 import enums.CodingOutType.{CODING_OUT_ACCEPTED, CODING_OUT_CANCELLED, CODING_OUT_CLASS2_NICS}
-import services.DateService
+import services.{DateService, DateServiceInterface}
 import testConstants.BaseTestConstants.app
-import testConstants.FinancialDetailsTestConstants.{documentDetailModel, financialDetail, chargeItemModel}
+import testConstants.ChargeConstants
+import testConstants.FinancialDetailsTestConstants.{documentDetailModel, financialDetail}
 import testUtils.UnitSpec
 
 import java.time.LocalDate
 
-class ChargeItemSpec extends UnitSpec {
+class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
   val dueDate = LocalDate.of(2024, 1, 1)
   val originalAmount: BigDecimal = 100.0
@@ -33,6 +34,7 @@ class ChargeItemSpec extends UnitSpec {
   val interestOutstandingAmount: Option[BigDecimal] = Some(40.0)
   val latePaymentInterestAmount: Option[BigDecimal] = Some(30.0)
   val lpiWithDunningLock: Option[BigDecimal] = Some(20.0)
+
 
   val defaultDocDetails = documentDetailModel(documentDueDate = Some(dueDate),
     originalAmount = originalAmount,
@@ -57,7 +59,7 @@ class ChargeItemSpec extends UnitSpec {
   val mfaFinancialDetails = financialDetail(mainTransaction = "4003")
 
 
-  implicit val defaultDateService: DateService = dateService(LocalDate.of(2000, 1, 1))
+  implicit val dateService: DateServiceInterface = dateService(LocalDate.of(2000, 1, 1))
   def dateService(currentDate: LocalDate): DateService = new DateService()(app.injector.instanceOf[FrontendAppConfig]){
     override def getCurrentDate: LocalDate = currentDate
   }
@@ -180,7 +182,7 @@ class ChargeItemSpec extends UnitSpec {
           reviewAndReconcile = reviewAndReconcileEnabled)
 
         chargeItem.transactionType shouldBe BalancingCharge
-        chargeItem.subTransactionType shouldBe None
+        chargeItem.subTransactionType shouldBe Some(Nics2)
       }
 
       "from Balancing Payment Accepted" in {
@@ -192,7 +194,7 @@ class ChargeItemSpec extends UnitSpec {
           reviewAndReconcile = reviewAndReconcileEnabled)
 
         chargeItem.transactionType shouldBe BalancingCharge
-        chargeItem.subTransactionType shouldBe None
+        chargeItem.subTransactionType shouldBe Some(Accepted)
       }
 
       "from Balancing Payment Cancelled" in {
@@ -204,7 +206,7 @@ class ChargeItemSpec extends UnitSpec {
           reviewAndReconcile = reviewAndReconcileEnabled)
 
         chargeItem.transactionType shouldBe BalancingCharge
-        chargeItem.subTransactionType shouldBe None
+        chargeItem.subTransactionType shouldBe Some(Cancelled)
       }
 
       "from MFA" in {
@@ -224,33 +226,42 @@ class ChargeItemSpec extends UnitSpec {
       val reviewAndReconcileEnabled = false
 
       "date is before due date" in {
+
+        val dateServiceBeforeDueDate = dateService(dueDate.minusDays(1))
+
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
           financialDetails = List(poa1FinancialDetails),
           codingOut = true,
-          reviewAndReconcile = reviewAndReconcileEnabled)(dateService(dueDate.minusDays(1)))
+          reviewAndReconcile = reviewAndReconcileEnabled)(dateServiceBeforeDueDate)
 
-        chargeItem.isOverdue shouldBe false
+        chargeItem.isOverdue()(dateServiceBeforeDueDate) shouldBe false
       }
 
       "date is due date" in {
+
+        val dateServiceOnDueDate = dateService(dueDate)
+
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
           financialDetails = List(poa1FinancialDetails),
           codingOut = true,
-          reviewAndReconcile = reviewAndReconcileEnabled)(dateService(dueDate))
+          reviewAndReconcile = reviewAndReconcileEnabled)(dateServiceOnDueDate)
 
-        chargeItem.isOverdue shouldBe false
+        chargeItem.isOverdue()(dateServiceOnDueDate) shouldBe false
       }
 
       "date is after due date" in {
+
+        val dateServiceAfterDueDate = dateService(dueDate.plusDays(1))
+
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
           financialDetails = List(poa1FinancialDetails),
           codingOut = true,
-          reviewAndReconcile = reviewAndReconcileEnabled)(dateService(dueDate.plusDays(1)))
+          reviewAndReconcile = reviewAndReconcileEnabled)(dateServiceAfterDueDate)
 
-        chargeItem.isOverdue shouldBe true
+        chargeItem.isOverdue()(dateServiceAfterDueDate) shouldBe true
       }
     }
   }

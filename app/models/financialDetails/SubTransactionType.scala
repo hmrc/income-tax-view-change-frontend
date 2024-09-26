@@ -63,34 +63,19 @@ object SubTransactionType {
     }
   }
 
-  def fromCode(subTransaction: String): Option[ChargeType] = {
-//    mainTransaction match {
-//      case ChargeType.paymentOnAccountOne =>
-//        Some(PaymentOnAccountOne)
-//      case ChargeType.paymentOnAccountTwo =>
-//        Some(PaymentOnAccountTwo)
-//      case ChargeType.balancingCharge =>
-//        Some(BalancingCharge)
-//      case x if ChargeType.mfaDebit.contains(x) =>
-//        Some(MfaDebitCharge)
-//      case _ => None
-//    }
-    None
-  }
-
-  implicit val write: Writes[ChargeType] = new Writes[ChargeType] {
-    def writes(transactionType: ChargeType): JsValue = {
+  implicit val write: Writes[SubTransactionType] = new Writes[SubTransactionType] {
+    def writes(transactionType: SubTransactionType): JsValue = {
       JsString(transactionType.key)
     }
   }
 
-  val read: Reads[ChargeType] = (JsPath).read[String].collect(JsonValidationError("Could not parse transactionType")) {
-    case PaymentOnAccountOne.key => PaymentOnAccountOne
-    case PaymentOnAccountTwo.key => PaymentOnAccountTwo
-    case BalancingCharge.key => BalancingCharge
-    case MfaDebitCharge.key => MfaDebitCharge
+  val read: Reads[SubTransactionType] = (JsPath).read[String].collect(JsonValidationError("Could not parse transactionType")) {
+    case CODING_OUT_CLASS2_NICS.name => Nics2
+    case CODING_OUT_ACCEPTED.name => Accepted
+    case CODING_OUT_CANCELLED.name => Cancelled
+
   }
 
-  implicit val format: Format[ChargeType] = Format( read, write)
+  implicit val format: Format[SubTransactionType] = Format( read, write)
 
 }
