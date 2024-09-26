@@ -63,7 +63,7 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
                                         mcc: MessagesControllerComponents,
                                         val ec: ExecutionContext,
                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport with FallBackBackLinks with ClaimToAdjustHelper {
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport with FallBackBackLinks {
 
   def onError(message: String, isAgent: Boolean, showInternalServerError: Boolean)(implicit request: Request[_]): Result = {
     val errorPrefix: String = s"[ChargeSummaryController]${if (isAgent) "[Agent]" else ""}[showChargeSummary]"
