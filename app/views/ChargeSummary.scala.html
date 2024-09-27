@@ -348,7 +348,7 @@
         @paymentProcessingInfo
     }
 
-    @if(viewModel.isAgentAndRemainingToPayWithNoCodingOutEnabledAndIsPayeSelfAssessment){
+    @if(viewModel.isAgentAndRemainingToPayWithNoCodingOutEnabledAndIsPayeSelfAssessment && !viewModel.isReviewAndReconcileDebit){
         @paymentProcessingInfo
     }
 
