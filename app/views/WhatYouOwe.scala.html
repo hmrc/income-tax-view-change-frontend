@@ -26,6 +26,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import java.time.LocalDate
 @import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
 
 @this(
     mainTemplate: unifiedLayout,
@@ -36,6 +37,7 @@
     p: p,
     link: link,
     detailsDropdown: detailsDropdown,
+    govukWarningText : GovukWarningText,
     govukInsetText : GovukInsetText
 )
 
@@ -52,6 +54,7 @@
     MFADebitsEnabled: Boolean,
     whatYouOweCreditAmountEnabled: Boolean,
     isAgent: Boolean = false,
+    hasOverdueOrAccruingInterestCharges: Boolean,
     isUserMigrated: Boolean = false,
     creditAndRefundEnabled: Boolean,
     claimToAdjustViewModel: WYOClaimToAdjustViewModel,
@@ -387,8 +390,11 @@
         @saNoteParagraph
     } else {
 
-        <div>
+        @if(hasOverdueOrAccruingInterestCharges) {
+            @govukWarningText(WarningText(content = Text(getMessage("interestChargesWarning"))))
+        }
 
+        <div>
             @if(whatYouOweChargesList.chargesList.nonEmpty || whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero) {
                 <div id="payments-due-table">
                     <table class="govuk-table">
