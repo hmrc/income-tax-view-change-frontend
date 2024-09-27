@@ -391,7 +391,10 @@
     } else {
 
         @if(hasOverdueOrAccruingInterestCharges) {
-            @govukWarningText(WarningText(content = Text(getMessage("interestChargesWarning"))))
+            @govukWarningText(WarningText(
+                attributes = Map("id" -> "interest-charges-warning"),
+                content = Text(getMessage("interestChargesWarning"))
+            ))
         }
 
         <div>
