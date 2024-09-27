@@ -17,9 +17,7 @@
 package audit
 
 import _root_.models.financialDetails._
-import _root_.models.taxyearsummary.TaxYearSummaryChargeItem
 import auth.MtdItUserBase
-import enums.{Poa1Charge, Poa2Charge, TRMAmmendCharge, TRMNewCharge}
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
@@ -43,36 +41,6 @@ object Utilities {
     case Some(Agent) => Json.obj("userType" -> "Agent")
     case Some(_) => Json.obj("userType" -> "Individual")
     case None => Json.obj()
-  }
-
-  def getChargeType(docDetail: ChargeItem, latePaymentCharge: Boolean): Option[String] =
-    (docDetail.transactionType, docDetail.subTransactionType) match {
-      case (_, Some(Nics2))       => Some("Class 2 National Insurance")
-      case(_, Some(Cancelled))    => Some("Cancelled PAYE Self Assessment (through your PAYE tax code)")
-      case (PaymentOnAccountOne,  _) => if (latePaymentCharge) Some("Late payment interest on first payment on account") else Some("First payment on account")
-      case (PaymentOnAccountTwo,  _) => if (latePaymentCharge) Some("Late payment interest on second payment on account") else Some("Second payment on account")
-      case (BalancingCharge, None ) => if (latePaymentCharge) Some("Late payment interest for remaining balance") else Some("Remaining balance")
-      case (_, _) => Some(docDetail.transactionType.key)
-    }
-
-  def getChargeType(docDetail: TaxYearSummaryChargeItem, latePaymentCharge: Boolean): Option[String] =
-    (docDetail.transactionType, docDetail.subTransactionType) match {
-      case (_, Some(Nics2))       => Some("Class 2 National Insurance")
-      case(_, Some(Cancelled))    => Some("Cancelled PAYE Self Assessment (through your PAYE tax code)")
-      case (PaymentOnAccountOne,  _) => if (latePaymentCharge) Some("Late payment interest on first payment on account") else Some("First payment on account")
-      case (PaymentOnAccountTwo,  _) => if (latePaymentCharge) Some("Late payment interest on second payment on account") else Some("Second payment on account")
-      case (BalancingCharge, None ) => if (latePaymentCharge) Some("Late payment interest for remaining balance") else Some("Remaining balance")
-      case (_, _) => Some(docDetail.transactionType.key)
-    }
-
-  def getChargeType(docDetail: DocumentDetail, latePaymentCharge: Boolean = false): Option[String] =
-    (docDetail.getDocType, docDetail.documentText) match {
-    case (_, Some(documentText)) if (documentText.contains("Class 2 National Insurance")) => Some("Class 2 National Insurance")
-    case(_, Some(documentDescription)) if (documentDescription.contains("Cancelled PAYE Self Assessment")) => Some("Cancelled PAYE Self Assessment (through your PAYE tax code)")
-    case (Poa1Charge, _) => if (latePaymentCharge) Some("Late payment interest on first payment on account") else Some("First payment on account")
-    case (Poa2Charge,_) => if (latePaymentCharge) Some("Late payment interest on second payment on account") else Some("Second payment on account")
-    case (TRMNewCharge | TRMAmmendCharge,_ ) => if (latePaymentCharge) Some("Late payment interest for remaining balance") else Some("Remaining balance")
-    case (_, _) => docDetail.documentDescription
   }
 
   def ratePctString(rate: BigDecimal): String = s"$rate%"

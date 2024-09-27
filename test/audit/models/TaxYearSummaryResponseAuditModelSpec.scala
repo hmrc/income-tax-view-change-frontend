@@ -79,30 +79,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
 
   def payments(hasDunningLock: Boolean): List[ChargeItem] = {
     List(
-
       chargeItemModel(dunningLock = hasDunningLock)
-
-//      DocumentDetailWithDueDate(
-//        documentDetail = DocumentDetail(
-//          taxYear = 2020,
-//          transactionId = "1040000123",
-//          documentDescription = Some("ITSA- POA 1"),
-//          documentText = Some("documentText"),
-//          outstandingAmount = 1400.0,
-//          originalAmount = 1400.0,
-//          documentDate = LocalDate.parse("2018-03-29"),
-//          interestOutstandingAmount = Some(80),
-//          interestRate = Some(100),
-//          latePaymentInterestId = None,
-//          interestFromDate = Some(LocalDate.parse("2018-03-29")),
-//          interestEndDate = Some(LocalDate.parse("2018-06-15")),
-//          latePaymentInterestAmount = Some(100),
-//          lpiWithDunningLock = Some(100),
-//          paymentLotItem = None,
-//          paymentLot = None),
-//        dueDate = Some(LocalDate.parse("2019-05-15")),
-//        isLatePaymentInterest = true,
-//        dunningLock = hasDunningLock)
     )
   }
 

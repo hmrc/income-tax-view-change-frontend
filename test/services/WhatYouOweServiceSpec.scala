@@ -400,16 +400,5 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
     "not validate any MFA" in {
       TestWhatYouOweService.validChargeTypeCondition(chargeItemModel(transactionType = MfaDebitCharge))
     }
-
-//    val validChargeTypeCondition: ChargeItem => Boolean = documentDetail => {
-//      (documentDetail.transactionType, documentDetail.subTransactionType) match {
-//        case (_, Some(Nics2)) => true
-//        case (PaymentOnAccountOne | PaymentOnAccountTwo | BalancingCharge, _) => true
-//        case (_, _) => false
-//      }
-
-
-
-
-    }
+  }
 }

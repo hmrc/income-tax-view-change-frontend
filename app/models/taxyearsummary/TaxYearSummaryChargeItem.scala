@@ -22,8 +22,6 @@ import services.DateServiceInterface
 
 import java.time.LocalDate
 
-
-
   object TaxYearSummaryChargeItem {
 
     def fromChargeItem(chargeItem:ChargeItem): TaxYearSummaryChargeItem = {
@@ -87,7 +85,6 @@ import java.time.LocalDate
                           lpiWithDunningLock: Option[BigDecimal],
                           amountCodedOut: Option[BigDecimal],
                           isLatePaymentInterest: Boolean = false,
-                          //  isOverdue: Boolean,
                           dunningLock: Boolean) extends TransactionItem {
 
     def isOverdue()(implicit dateService: DateServiceInterface): Boolean = dueDate.exists(_ isBefore dateService.getCurrentDate)
@@ -97,10 +94,6 @@ import java.time.LocalDate
 
     def hasAccruingInterest: Boolean =
       interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0
-
-    def getDueDateForNonZeroCharge: Option[LocalDate] = {
-      dueDate.filterNot(_ => originalAmount == 0.0)
-    }
 
     def getDueDateForNonZeroBalancingCharge(codedOutEnabled: Boolean = false): Option[LocalDate] = {
       if(transactionType == BalancingCharge && (!codedOutEnabled || subTransactionType.isEmpty) && originalAmount == 0.0) {
@@ -134,7 +127,6 @@ import java.time.LocalDate
       if (isLatePaymentInterest) interestRemainingToPay
       else remainingToPay
     }
-
 
     val isPartPaid: Boolean = outstandingAmount != originalAmount
 

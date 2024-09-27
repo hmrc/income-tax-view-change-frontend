@@ -35,20 +35,6 @@ case object Cancelled extends SubTransactionType {
   override val key = "Cancelled"
 }
 
-//
-//case object Nics4 extends SubTransactionType {
-//  override val key = "POA1"
-//}
-//
-//case object StudentLoan extends SubTransactionType {
-//  override val key = "POA1"
-//}
-//
-//case object CapitalGainsTax extends SubTransactionType {
-//  override val key = "POA1"
-//}
-
-
 object SubTransactionType {
 
   def fromDocumentText(documentText: String): Option[SubTransactionType] = {

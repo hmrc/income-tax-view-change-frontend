@@ -49,20 +49,16 @@ case class ChargeItem (
   interestRate: Option[BigDecimal],
   lpiWithDunningLock: Option[BigDecimal],
   amountCodedOut: Option[BigDecimal],
-//  isOverdue: Boolean,
   dunningLock: Boolean) extends TransactionItem {
 
-  def isOverdue()(implicit dateService: DateServiceInterface): Boolean = dueDate.exists(_ isBefore dateService.getCurrentDate)
+  def isOverdue()(implicit dateService: DateServiceInterface): Boolean =
+    dueDate.exists(_ isBefore dateService.getCurrentDate)
 
   val hasLpiWithDunningLock: Boolean =
     lpiWithDunningLock.isDefined && lpiWithDunningLock.getOrElse[BigDecimal](0) > 0
 
   def hasAccruingInterest: Boolean =
     interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0
-
-  def getDueDateForNonZeroCharge: Option[LocalDate] = {
-    dueDate.filterNot(_ => originalAmount == 0.0)
-  }
 
   def getDueDateForNonZeroBalancingCharge(codedOutEnabled: Boolean = false): Option[LocalDate] = {
     if(transactionType == BalancingCharge && (!codedOutEnabled || subTransactionType.isEmpty) && originalAmount == 0.0) {
@@ -102,7 +98,6 @@ case class ChargeItem (
     if (isLatePaymentInterest) interestRemainingToPay
     else remainingToPay
   }
-
 
   val isPartPaid: Boolean = outstandingAmount != originalAmount
 
@@ -150,8 +145,9 @@ object ChargeItem {
 
   implicit val format: Format[ChargeItem] = Json.format[ChargeItem]
 
-  def tryGetChargeItem(codingOutEnabled: Boolean, reviewAndReconcileEnabled: Boolean)(financialDetails: List[FinancialDetail])(documentDetail: DocumentDetail)
-                      (implicit dateService: DateServiceInterface): Option[ChargeItem] = {
+  def tryGetChargeItem(codingOutEnabled: Boolean, reviewAndReconcileEnabled: Boolean)
+                      (financialDetails: List[FinancialDetail])
+                      (documentDetail: DocumentDetail): Option[ChargeItem] = {
     Try(ChargeItem.fromDocumentPair(
       documentDetail,
       financialDetails,
@@ -168,10 +164,8 @@ object ChargeItem {
     }
   }
 
-  def fromDocumentPair(documentDetail: DocumentDetail, financialDetails: List[FinancialDetail], codingOut: Boolean, reviewAndReconcile: Boolean)
-                      (implicit dateService: DateServiceInterface): ChargeItem = {
-
-
+  def fromDocumentPair(documentDetail: DocumentDetail, financialDetails: List[FinancialDetail],
+                       codingOut: Boolean, reviewAndReconcile: Boolean): ChargeItem = {
 
     val financialDetail = financialDetails.find(_.transactionId.contains(documentDetail.transactionId)) match {
       case Some(fd) => fd
@@ -208,14 +202,12 @@ object ChargeItem {
       interestRate = documentDetail.interestRate,
       lpiWithDunningLock = documentDetail.lpiWithDunningLock,
       amountCodedOut = documentDetail.amountCodedOut,
-//      isOverdue = isOverdue,
       dunningLock = dunningLockExists
     )
   }
 
   def fromFinancialDetailModel(transactionId: String, financialDetailsModel: FinancialDetailsModel, codingOut: Boolean,
-                               reviewAndReconcile: Boolean)
-                              (implicit dateService: DateServiceInterface): Option[ChargeItem] = {
+                               reviewAndReconcile: Boolean): Option[ChargeItem] = {
 
     for {
       dd <- financialDetailsModel.documentDetails.find(_.transactionId == transactionId)
@@ -223,8 +215,6 @@ object ChargeItem {
       mainTransaction <- fd.mainTransaction
       chargeType <- ChargeType.fromCode(mainTransaction, reviewAndReconcile)
     } yield {
-
-//      val isOverdue: Boolean = dd.documentDueDate.exists(_ isBefore dateService.getCurrentDate)
 
       val dunningLockExists =
         financialDetailsModel.financialDetails
@@ -247,7 +237,6 @@ object ChargeItem {
         interestRate = dd.interestRate,
         lpiWithDunningLock = dd.lpiWithDunningLock,
         amountCodedOut = dd.amountCodedOut,
-//        isOverdue = isOverdue,
         dunningLock = dunningLockExists
       )
     }

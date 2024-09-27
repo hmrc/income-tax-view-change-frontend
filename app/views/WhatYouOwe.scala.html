@@ -217,19 +217,19 @@
     </thead>
 }
 
-@paymentTypeEntry(documentDetail: ChargeItem, rowId: String, isLatePaymentInterest: Boolean,
+@paymentTypeEntry(chargeItem: ChargeItem, rowId: String, isLatePaymentInterest: Boolean,
     isMFADebit: Boolean, linkSuffix: String, index: Int) = @{
 
-    val chargeTypeKey = documentDetail.getChargeTypeKey(codingOutEnabled)
+    val chargeTypeKey = chargeItem.getChargeTypeKey(codingOutEnabled)
     val lpi = if (isLatePaymentInterest) "lpi." else ""
     val linkText = getMessage(s"${lpi}${chargeTypeKey}")
-    val taxYear = documentDetail.taxYear
+    val taxYear = chargeItem.taxYear
     val linkHref = if(isAgent) {
         controllers.routes.ChargeSummaryController.showAgent(taxYear.toInt,
-            documentDetail.transactionId, isLatePaymentInterest)
+            chargeItem.transactionId, isLatePaymentInterest)
     } else {
         controllers.routes.ChargeSummaryController.show(taxYear.toInt,
-            documentDetail.transactionId, isLatePaymentInterest, origin)
+            chargeItem.transactionId, isLatePaymentInterest, origin)
     }
     paymentTypeEntryHTML(linkText = linkText, linkHref = linkHref, taxYear = taxYear, rowId = rowId,
         linkSuffix: String, index+1)
@@ -243,20 +243,20 @@
     </a>
 }
 
-@getPaymentTypeEntry(documentDetail: ChargeItem, rowId: String, isOverduePayment: Boolean, isMFADebit: Boolean, index: Int) = @{
-    val isLatePaymentInterest = isOverduePayment && documentDetail.isLatePaymentInterest
+@getPaymentTypeEntry(chargeItem: ChargeItem, rowId: String, isOverduePayment: Boolean, isMFADebit: Boolean, index: Int) = @{
+    val isLatePaymentInterest = isOverduePayment && chargeItem.isLatePaymentInterest
     def getLinkSuffix() : String = {
         if(!isOverduePayment) {
             "link"
         } else {
-            if(documentDetail.subTransactionType.contains(Nics2) || documentDetail.isLatePaymentInterest) {
+            if(chargeItem.subTransactionType.contains(Nics2) || chargeItem.isLatePaymentInterest) {
                 "late-link"
             } else {
                 "late-link2"
             }
         }
     }
-    paymentTypeEntry(documentDetail, rowId, isLatePaymentInterest = isLatePaymentInterest,
+    paymentTypeEntry(chargeItem, rowId, isLatePaymentInterest = isLatePaymentInterest,
     linkSuffix = getLinkSuffix(), isMFADebit = isMFADebit, index = index)
 }
 
@@ -276,10 +276,10 @@
     </a>
 }
 
-@tableRow(rowId2: String, documentDetailWithDueDate: ChargeItem, isOverduePayment: Boolean, index:Int, id:String) = {
+@tableRow(rowId2: String, chargeItem: ChargeItem, isOverduePayment: Boolean, index:Int, id:String) = {
     <tr class="govuk-table__row" id="@rowId2">
         <td class="govuk-table__cell govuk-!-width-one-quarter" >
-            @documentDetailWithDueDate.dueDate.getOrElse(throw MissingFieldException("document due date of Payment")).toLongDateShort
+            @chargeItem.dueDate.getOrElse(throw MissingFieldException("document due date of Payment")).toLongDateShort
         </td>
         <td class="govuk-table__cell govuk-!-width-one-half">
             @if(isOverduePayment){
@@ -287,22 +287,22 @@
                     <span id="@rowId2-overdue" class="govuk-tag govuk-tag--red" >@getMessage("over-due")</span>
                 </div>
             }
-            @getPaymentTypeEntry(documentDetail = documentDetailWithDueDate, isOverduePayment = isOverduePayment,
-                rowId = rowId2, isMFADebit = documentDetailWithDueDate.transactionType == MfaDebitCharge, index = index)
+            @getPaymentTypeEntry(chargeItem = chargeItem, isOverduePayment = isOverduePayment,
+                rowId = rowId2, isMFADebit = chargeItem.transactionType == MfaDebitCharge, index = index)
 
-            @if(documentDetailWithDueDate.dunningLock){
+            @if(chargeItem.dunningLock){
                 <div class="form-hint govuk-body-s"> @getMessage("paymentUnderReview") </div>
             }
-            @if(isOverduePayment && documentDetailWithDueDate.hasLpiWithDunningLock){
+            @if(isOverduePayment && chargeItem.hasLpiWithDunningLock){
                 <div class="form-hint govuk-body-s" id="LpiDunningLock"> @getMessage("paymentUnderReview") </div>
             }
         </td>
-        <td class="govuk-table__cell numeric govuk-!-width-one-quarter"> @taxYearSummaryLink(documentDetailWithDueDate.taxYear.toInt, index, id)</td>
+        <td class="govuk-table__cell numeric govuk-!-width-one-quarter"> @taxYearSummaryLink(chargeItem.taxYear.toInt, index, id)</td>
         <td class="govuk-table__cell numeric govuk-!-width-one-quarter govuk-table__cell--numeric">@{
-            if(isOverduePayment && documentDetailWithDueDate.isLatePaymentInterest) {
-                documentDetailWithDueDate.interestRemainingToPay.toCurrency
+            if(isOverduePayment && chargeItem.isLatePaymentInterest) {
+                chargeItem.interestRemainingToPay.toCurrency
             } else {
-                documentDetailWithDueDate.remainingToPay.toCurrency
+                chargeItem.remainingToPay.toCurrency
             }
         }</td>
     </tr>

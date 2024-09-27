@@ -52,10 +52,6 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
   with MockAuditingService with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with BeforeAndAfterEach
   with MockItvcErrorHandler with MockNextUpdatesService with MockFinancialDetailsService with MockWhatYouOweService with Injecting {
 
-
-
-//  override implicit val dateService = TestSupport
-
   val updateYear: String = "2018"
   val nextPaymentYear: String = "2019"
   val nextPaymentYear2: String = "2018"
@@ -66,7 +62,6 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
   val nextPaymentDate2: LocalDate = LocalDate.of(nextPaymentYear2.toInt, Month.JANUARY, 31)
   val homePageTitle = s"${messages("htmlTitle", messages("home.heading"))}"
   val agentTitle = s"${messages("htmlTitle.agent", messages("home.agent.heading"))}"
-//  val mockDateService: DateService = mock(classOf[DateService])
 
   trait Setup {
     val controller = new HomeController(

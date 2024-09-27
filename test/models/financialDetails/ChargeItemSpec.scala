@@ -233,7 +233,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
           documentDetail = defaultDocDetails,
           financialDetails = List(poa1FinancialDetails),
           codingOut = true,
-          reviewAndReconcile = reviewAndReconcileEnabled)(dateServiceBeforeDueDate)
+          reviewAndReconcile = reviewAndReconcileEnabled)
 
         chargeItem.isOverdue()(dateServiceBeforeDueDate) shouldBe false
       }
@@ -246,7 +246,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
           documentDetail = defaultDocDetails,
           financialDetails = List(poa1FinancialDetails),
           codingOut = true,
-          reviewAndReconcile = reviewAndReconcileEnabled)(dateServiceOnDueDate)
+          reviewAndReconcile = reviewAndReconcileEnabled)
 
         chargeItem.isOverdue()(dateServiceOnDueDate) shouldBe false
       }
@@ -259,7 +259,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
           documentDetail = defaultDocDetails,
           financialDetails = List(poa1FinancialDetails),
           codingOut = true,
-          reviewAndReconcile = reviewAndReconcileEnabled)(dateServiceAfterDueDate)
+          reviewAndReconcile = reviewAndReconcileEnabled)
 
         chargeItem.isOverdue()(dateServiceAfterDueDate) shouldBe true
       }
@@ -267,13 +267,6 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
   }
 
     "getChargeKey" when {
-//      case (PaymentOnAccountOne, _) =>
-//      case (PaymentOnAccountTwo, _) => "paymentOnAccount2.text"
-//      case (MfaDebitCharge,      _) => "hmrcAdjustment.text"
-//      case (BalancingCharge, Some(Nics2)) if codedOutEnabled => "class2Nic.text"
-//      case (BalancingCharge, Some(Accepted)) if codedOutEnabled => "codingOut.text"
-//      case (BalancingCharge, Some(Cancelled)) if codedOutEnabled => "cancelledPayeSelfAssessment.text"
-//      case (BalancingCharge, _) => "balancingCharge.text"
 
       "coding out is enabled" when {
 
@@ -371,16 +364,5 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
           key shouldBe "balancingCharge.text"
         }
       }
-
-
-
-
-
-
-
-
-
-
-
   }
 }

@@ -37,8 +37,8 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, chargesList: Li
 
   def isChargesListEmpty: Boolean = chargesList.isEmpty && !bcdChargeTypeDefinedAndGreaterThanZero
 
-  def hasUnpaidPOAs: Boolean = chargesList.exists(docDetail =>
-    Seq(PaymentOnAccountOne, PaymentOnAccountTwo).contains(docDetail.transactionType) && docDetail.outstandingAmount > 0.0)
+  def hasUnpaidPOAs: Boolean = chargesList.exists(chargeItem =>
+    Seq(PaymentOnAccountOne, PaymentOnAccountTwo).contains(chargeItem.transactionType) && chargeItem.outstandingAmount > 0.0)
 
   def hasDunningLock: Boolean = chargesList.exists(charge => charge.dunningLock)
 
