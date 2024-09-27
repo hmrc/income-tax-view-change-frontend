@@ -135,7 +135,7 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
     val documentDetailWithDueDate: DocumentDetailWithDueDate = chargeDetailsforTaxYear.findDocumentDetailByIdWithDueDate(id).get
     val financialDetailsForCharge = chargeDetailsforTaxYear.financialDetails.filter(_.transactionId.contains(id))
     val (isLatePaymentCharge, isOtherInterestCharge) = isInterestCharge match{
-      case true if documentDetailWithDueDate.isLatePaymentInterest => (true, false)
+      case true if documentDetailWithDueDate.documentDetail.isLatePaymentInterest => (true, false)
       case true if documentDetailWithDueDate.documentDetail.isOtherInterest => (false, true)
       case _ => (false,false)
     }
@@ -227,7 +227,7 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
       (viewSection1, true, "Original Amount"),
       (viewSection2, documentDetailWithDueDate.documentDetail.interestEndDate.isDefined, "Interest EndDate"),
       (viewSection2, documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined ||
-        documentDetailWithDueDate.documentDetail.interestOutstandingAmount.isDefined, "Late Payment Interest Amount"),
+        documentDetailWithDueDate.documentDetail.interestOutstandingAmount.isDefined, "Interest Amount"),
       (viewSection3, true, "Original Amount")
     )
 

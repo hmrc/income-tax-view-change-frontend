@@ -429,11 +429,19 @@
                     </tr>
                 }
 
-                @if(viewModel.isInterestCharge) {
+                @if(viewModel.latePaymentInterestCharge){
                     <tr>
                         <td class="govuk-table__cell govuk-!-width-one-quarter">@{viewModel.documentDetail.interestEndDate.get.toLongDateShort}</td>
                         <td class="govuk-table__cell">@messages(s"chargeSummary.lpi.chargeHistory.created.${viewModel.documentDetail.getChargeTypeKey()}")</td>
-                        <td class="govuk-table__cell govuk-!-text-align-right">@{viewModel.documentDetail.interestRemainingToPay.toCurrency}</td>
+                        <td class="govuk-table__cell govuk-!-text-align-right">@{viewModel.documentDetail.latePaymentInterestAmount.get.toCurrency}</td>
+                    </tr>
+                }
+
+                @if(viewModel.otherInterestCharge){
+                    <tr>
+                        <td class="govuk-table__cell govuk-!-width-one-quarter">@{viewModel.documentDetail.interestEndDate.get.toLongDateShort}</td>
+                        <td class="govuk-table__cell">@messages(s"chargeSummary.lpi.chargeHistory.created.${viewModel.documentDetail.getChargeTypeKey()}")</td>
+                        <td class="govuk-table__cell govuk-!-text-align-right">@{viewModel.documentDetail.interestOutstandingAmount.get.toCurrency}</td>
                     </tr>
                 }
 
