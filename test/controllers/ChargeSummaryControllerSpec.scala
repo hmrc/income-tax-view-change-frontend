@@ -311,7 +311,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         JsoupParse(result).toHtmlDocument.select("#payment-processing-bullets").text() shouldBe s"$paymentprocessingbullet1"
       }
 
-      "not display the payment processing info if the charge is Review & Reconcile" in new Setup(financialDetailsReviewAndReconcile) {
+      "hide payment processing info" in new Setup(financialDetailsReviewAndReconcile) {
         disable(ChargeHistory)
         disable(PaymentAllocation)
         enable(ReviewAndReconcilePoa)
@@ -378,7 +378,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 
   "The ChargeSummaryController for Agents" should {
 
-    "not display the payment processing info if the charge is Review & Reconcile" in new Setup(financialDetailsReviewAndReconcile, isAgent = true) {
+    "hide payment processing info" in new Setup(financialDetailsReviewAndReconcile, isAgent = true) {
       disable(ChargeHistory)
       disable(PaymentAllocation)
       enable(ReviewAndReconcilePoa)
