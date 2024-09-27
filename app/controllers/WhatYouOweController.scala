@@ -126,5 +126,4 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
         isAgent = true
       )
   }
-
 }
