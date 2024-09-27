@@ -93,8 +93,7 @@ case class ChargeSummaryViewModel(
 
   val isBalancingChargeZero = documentDetail.isBalancingChargeZero(codingOutEnabled)
   val codingOutEnabledAndIsClass2NicWithNoIsPayeSelfAssessment: Boolean = codingOutEnabled && documentDetail.isClass2Nic && !documentDetail.isPayeSelfAssessment
-  val noIsAgentAndRemainingToPayWithNoCodingOutEnabledAndIsPayeSelfAssessment: Boolean = !isAgent && documentDetail.remainingToPay > 0 && !(codingOutEnabled && documentDetail.isPayeSelfAssessment) && !isReviewAndReconcileDebit
-  val isAgentAndRemainingToPayWithNoCodingOutEnabledAndIsPayeSelfAssessment: Boolean = isAgent && documentDetail.remainingToPay > 0 && !(codingOutEnabled && documentDetail.isPayeSelfAssessment)
+  val remainingToPayWithNoCodingOutEnabledAndIsPayeSelfAssessment: Boolean = documentDetail.remainingToPay > 0 && !(codingOutEnabled && documentDetail.isPayeSelfAssessment) && !isReviewAndReconcileDebit
   val chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZero: Boolean = (chargeHistoryEnabled || (paymentAllocationEnabled && paymentAllocations.nonEmpty)) && !isBalancingChargeZero
   val noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment: Boolean = !latePaymentInterestCharge && !otherInterestCharge && !(codingOutEnabled && documentDetail.isPayeSelfAssessment)
 

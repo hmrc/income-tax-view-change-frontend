@@ -2333,3 +2333,6 @@ optIn.confirmTaxYear.desc                           = Opting in will mean you ne
 optIn.confirmTaxYear.text                           = If you have submitted any income and expenses for this tax year to HMRC, this will be deleted from our records. So make sure you keep hold of this information because you will need to include it in your quarterly updates.
 optIn.confirmTaxYear.confirmSaveBtn                 = Confirm and save
 optIn.confirmTaxYear.cancel                         = Cancel
+
+optIn.confirmNextTaxYear.heading                    = Confirm and opt in from {0} to {1} tax year onwards
+optIn.confirmNextTaxYear.desc                       = If you opt in for the next tax year, from {0} you will need to submit your quarterly updates through compatible software.

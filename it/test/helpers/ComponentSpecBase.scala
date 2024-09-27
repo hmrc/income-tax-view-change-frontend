@@ -671,11 +671,11 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     }
 
     def renderChooseOptInTaxYearPageInMultiYearJourney(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
-      get("/opt-in/multi-year-choice", additionalCookies)
+      get("/opt-in/choose-tax-year", additionalCookies)
     }
 
     def renderCheckYourAnswersOptInJourney(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
-      get("/opt-in/check-answers", additionalCookies)
+      get("/opt-in/check-your-answers", additionalCookies)
     }
 
     def submitChoiceOnOptOutChooseTaxYear(body: Map[String, Seq[String]] = Map.empty) = {
@@ -683,11 +683,11 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     }
 
     def submitChoiceOnOptInChooseTaxYear(body: Map[String, Seq[String]] = Map.empty) = {
-      post("/opt-in/multi-year-choice")(body)
+      post("/opt-in/choose-tax-year")(body)
     }
 
     def submitCheckYourAnswersOptInJourney(body: Map[String, Seq[String]] = Map.empty) = {
-      post("/opt-in/check-answers")(body)
+      post("/opt-in/check-your-answers")(body)
     }
 
     def renderOptOutErrorPage(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
