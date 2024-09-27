@@ -27,7 +27,7 @@ import mocks.services.MockIncomeSourceDetailsService
 import models.admin.{ChargeHistory, CodingOut, MFACreditsAndDebits, PaymentAllocation, ReviewAndReconcilePoa}
 import models.chargeHistory._
 import models.financialDetails.{FinancialDetail, FinancialDetailsResponseModel}
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, isA}
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
@@ -300,7 +300,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         }
       }
 
-      "display the payment processing info if the charge is not Review & Reconcile or POA" in new Setup(
+      "display the payment processing info if the charge is not Review & Reconcile" in new Setup(
         financialDetailsModel(documentDescription = Some("ITSA BCD"))) {
         disable(ChargeHistory)
         disable(PaymentAllocation)
@@ -377,6 +377,22 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
   }
 
   "The ChargeSummaryController for Agents" should {
+
+    "not display the payment processing info if the charge is Review & Reconcile" in new Setup(financialDetailsReviewAndReconcile, isAgent = true) {
+      disable(ChargeHistory)
+      disable(PaymentAllocation)
+      enable(ReviewAndReconcilePoa)
+
+      val endYear: Int = 2023
+      val startYear: Int = endYear - 1
+
+      val result: Future[Result] = controller.showAgent(testTaxYear, id1040000123)(fakeRequestConfirmedClient("AB123456C"))
+
+      status(result) shouldBe Status.OK
+      JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeadingForRAR1(startYear.toString, endYear.toString)
+      JsoupParse(result).toHtmlDocument.select("#payment-processing-bullets").isEmpty shouldBe true
+    }
+
 
     "redirect a user back to the home page" when {
 
