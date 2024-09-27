@@ -900,6 +900,8 @@ whatYouOwe.adjust-poa.paid-5                                    = fan bellaf.
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad cyntaf ar gyfrif
 chargeSummary.paymentOnAccount2.text                            = Ail daliad ar gyfrif
+chargeSummary.paymentOnAccount1.extraAmount.text				= Taliad cyntaf ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
+chargeSummary.paymentOnAccount2.extraAmount.text				= Ail daliad ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
 chargeSummary.balancingCharge.text                              = Taliad mantoli
 chargeSummary.dueDate                                           = Dyddiad dyledus
 chargeSummary.class2Nic.text                                    = Class 2 National Insurance
@@ -946,6 +948,13 @@ chargeSummary.lpi.balancingCharge.textTwo                          = plws 2.5%.
 chargeSummary.lpi.balancingCharge.p3                               = Gweler yr arweiniad ynghylch y
 chargeSummary.lpi.balancingCharge.p3LinkText                       = cyfraddau llog a bennir gan CThEF (yn agor tab newydd).
 
+chargeSummary.reviewAndReconcilePoa.warning                           = Bydd y tâl hwn yn cronni llog hyd nes y bydd yn cael ei dalu.
+chargeSummary.reviewAndReconcilePoa.p1                                = Mae CThEF wedi creu’r tâl hwn oherwydd bod eich Ffurflen Dreth yn dangos bod eich
+chargeSummary.reviewAndReconcilePoa1.linkText                         = taliad cyntaf ar gyfrif
+chargeSummary.reviewAndReconcilePoa2.linkText                         = ail daliad ar gyfrif
+chargeSummary.reviewAndReconcilePoa.comma                             = ,
+chargeSummary.reviewAndReconcilePoa.p2                                = a gafodd ei addasu, yn rhy isel.
+
 chargeSummary.paymentBreakdown.heading   						   = Dadansoddiad o’r taliad
 chargeSummary.paymentBreakdown.incomeTax   						   = Treth Incwm
 chargeSummary.paymentBreakdown.nic2   							   = Yswiriant Gwladol Dosbarth 2
@@ -988,7 +997,7 @@ chargeSummary.definition.balancingcharge.p2                        = Bydd angen 
 
 chargeSummary.definition.hmrcadjustment                            = Mae CThEF wedi ychwanegu’r tâl hwn ar ôl addasiad i’ch Ffurflen Dreth.
 
-chargeSummary.chargeHistory.heading								        = Hanes taliadau
+chargeSummary.chargeHistory.heading								        = Hanes y tâl hwn
 chargeSummary.chargeHistory.lateInterestPayment					        = Hanes llog am dalu’n hwyr
 chargeSummary.chargeHistory.Poa1heading                                 = Hanes eich taliad ar gyfrif cyntaf
 chargeSummary.chargeHistory.Poa2heading                                 = Hanes eich ail daliad ar gyfrif
@@ -1001,7 +1010,8 @@ chargeSummary.chargeHistory.created.balancingCharge.text		        = Taliad Manto
 chargeSummary.chargeHistory.created.class2Nic.text                      = Class 2 National Insurance created
 chargeSummary.chargeHistory.created.codingOut.text                      = PAYE self assessment created
 chargeSummary.chargeHistory.created.cancelledPayeSelfAssessment.text	= Hunanasesiad TWE wedi’i ganslo (trwy eich cod treth TWE)
-
+chargeSummary.chargeHistory.created.reviewAndReconcilePoa1.text         = Creodd CThEF y swm ychwanegol hwn ar gyfer eich taliad ar gyfrif cyntaf yn seiliedig ar eich Ffurflen Dreth
+chargeSummary.chargeHistory.created.reviewAndReconcilePoa2.text         = Creodd CThEF y swm ychwanegol hwn ar gyfer eich ail daliad ar gyfrif yn seiliedig ar eich Ffurflen Dreth
 chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	        = Taliad ar gyfrif 1 o 2 wedi’i ostwng oherwydd cais gan y trethdalwr
 chargeSummary.chargeHistory.request.paymentOnAccount2.text	   	        = Taliad ar gyfrif 2 o 2 wedi’i ostwng oherwydd cais gan y trethdalwr
 chargeSummary.chargeHistory.request.balancingCharge.text	   	        = Taliad Mantoli wedi’i ostwng oherwydd cais gan y trethdalwr

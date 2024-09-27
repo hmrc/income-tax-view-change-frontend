@@ -28,14 +28,6 @@ case object Poa2Charge extends DocumentType {
   override val key: String = "ITSA - POA 2"
 }
 
-case object Poa1Reconciliation extends DocumentType {
-  override val key: String = "SA POA 1 Reconciliation Debit"
-}
-
-case object Poa2Reconciliation extends DocumentType {
-  override val key: String = "SA POA 2 Reconciliation Debit"
-}
-
 case object BalancingCharge extends DocumentType {
   override val key: String = "ITSA BCD"
 }
@@ -44,7 +36,7 @@ case object TRMNewCharge extends DocumentType {
   override val key: String = "TRM New Charge"
 }
 
-case object TRMAmmendCharge extends DocumentType {
+case object TRMAmendCharge extends DocumentType {
   override val key: String = "TRM Amend Charge"
 }
 

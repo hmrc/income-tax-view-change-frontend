@@ -19,7 +19,7 @@ package services
 import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.FinancialDetailsConnector
-import enums.{Poa1Charge, Poa2Charge, TRMAmmendCharge, TRMNewCharge}
+import enums.{Poa1Charge, Poa2Charge, TRMAmendCharge, TRMNewCharge}
 import models.financialDetails._
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -39,7 +39,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
   val validChargeTypeCondition: DocumentDetailWithDueDate => Boolean = documentDetailWDD => {
     (documentDetailWDD.documentDetail.documentText, documentDetailWDD.documentDetail.getDocType, documentDetailWDD.isReviewAndReconcileDebit) match {
       case (Some(documentText), _, _) if documentText.contains("Class 2 National Insurance") => true
-      case (_, Poa1Charge | Poa2Charge | TRMNewCharge | TRMAmmendCharge, _) => true
+      case (_, Poa1Charge | Poa2Charge | TRMNewCharge | TRMAmendCharge, _) => true
       case (_, _, true) => true
       case (_, _, _) => false
     }
