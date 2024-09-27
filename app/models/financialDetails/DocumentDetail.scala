@@ -226,8 +226,8 @@ case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Op
 
   def isReviewAndReconcileDebit: Boolean = isReviewAndReconcilePoaOneDebit || isReviewAndReconcilePoaTwoDebit
 
-  def isAccruingInterest: Boolean = {
-    isReviewAndReconcileDebit && !documentDetail.isPaid && !isOverdue
+  def isReviewAndReconcileDebitWithAccruingInterest: Boolean = {
+    isReviewAndReconcileDebit && !documentDetail.isPaid
   }
 }
 

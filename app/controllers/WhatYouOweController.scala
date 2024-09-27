@@ -66,6 +66,12 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
 
       auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList, dateService))
 
+
+      val hasOverdueCharges: Boolean = whatYouOweChargesList.chargesList.exists(!_.documentDetail.isPaid)
+      val hasAccruingInterestReviewAndReconcileCharges: Boolean =
+        whatYouOweChargesList.chargesList.exists(_.isReviewAndReconcileDebitWithAccruingInterest)
+
+
       Ok(whatYouOwe(
         currentDate = dateService.getCurrentDate,
         creditCharges,
@@ -76,6 +82,7 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
         codingOutEnabled = isEnabled(CodingOut),
         MFADebitsEnabled = isEnabled(MFACreditsAndDebits),
         isAgent = isAgent,
+        hasOverdueOrAccruingInterestCharges = hasOverdueCharges || hasAccruingInterestReviewAndReconcileCharges,
         whatYouOweCreditAmountEnabled = isEnabled(WhatYouOweCreditAmount),
         isUserMigrated = user.incomeSources.yearOfMigration.isDefined,
         creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
