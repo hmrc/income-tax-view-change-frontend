@@ -761,9 +761,6 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with ChargeConstants {
           IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05", 2)
           IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
-
-          println(Jsoup.parse(res.body).select("#payments"))
-
           Then("the result should have a HTTP status of OK (200) and the payments due page")
           res should have(
             httpStatus(OK),

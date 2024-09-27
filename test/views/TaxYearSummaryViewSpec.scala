@@ -630,9 +630,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       }
 
       "display the payment type as a link to Charge Summary in the Payments tab for late payment interest POA1" in new Setup(estimateView()) {
-        println( layoutContent.select("#payments-table"))
         val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(1) a")
-//        val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(2) a")
         paymentTypeLink.text shouldBe lpiPaymentOnAccount1
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId, true).url
