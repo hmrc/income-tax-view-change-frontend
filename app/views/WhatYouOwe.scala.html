@@ -219,11 +219,12 @@
     else "reviewAndReconcileTwo.text"
 }
 
-@paymentTypeEntry(documentDetailWithDate: DocumentDetailWithDueDate, rowId: String, isInterest: Boolean,
+@paymentTypeEntry(documentDetailWithDate: DocumentDetailWithDueDate, rowId: String, isLatePaymentInterest: Boolean, isOtherInterest: Boolean,
     isMFADebit: Boolean, linkSuffix: String, index: Int) = @{
 
+    val isInterest = isLatePaymentInterest || isOtherInterest
     val chargeTypeKey = if(isMFADebit) "hmrcAdjustment.text" else if (documentDetailWithDate.isReviewAndReconcileDebit) reviewAndReconcileKey(documentDetailWithDate) else documentDetailWithDate.documentDetail.getChargeTypeKey(codingOutEnabled)
-    val lpi = if (isInterest) "lpi." else ""
+    val lpi = if (isLatePaymentInterest) "lpi." else if (isOtherInterest) "interest." else ""
     val linkText = getMessage(s"${lpi}${chargeTypeKey}")
     val taxYear = documentDetailWithDate.documentDetail.taxYear
     val linkHref = if(isAgent) {
@@ -246,7 +247,8 @@
 }
 
 @getPaymentTypeEntry(documentDetailWithDate: DocumentDetailWithDueDate, rowId: String, isOverduePayment: Boolean, isMFADebit: Boolean, index: Int) = @{
-    val isInterest = documentDetailWithDate.documentDetail.isPaid && documentDetailWithDate.documentDetail.isInterest
+    val isLatePaymentInterest = isOverduePayment && documentDetailWithDate.documentDetail.isLatePaymentInterest
+    val isOtherInterest = documentDetailWithDate.documentDetail.isPaid && documentDetailWithDate.documentDetail.isOtherInterest
     def getLinkSuffix() : String = {
         if(!isOverduePayment) {
             "link"
@@ -258,7 +260,7 @@
             }
         }
     }
-    paymentTypeEntry(documentDetailWithDate, rowId, isInterest = isInterest,
+    paymentTypeEntry(documentDetailWithDate, rowId, isLatePaymentInterest = isLatePaymentInterest, isOtherInterest = isOtherInterest,
     linkSuffix = getLinkSuffix(), isMFADebit = isMFADebit, index = index)
 }
 
@@ -315,7 +317,7 @@
         </td>
         <td class="govuk-table__cell numeric govuk-!-width-one-quarter"> @taxYearSummaryLink(documentDetailWithDueDate.documentDetail.taxYear.toInt, index, id)</td>
         <td class="govuk-table__cell numeric govuk-!-width-one-quarter govuk-table__cell--numeric">@{
-            if(documentDetailWithDueDate.documentDetail.isInterest) {
+            if(documentDetailWithDueDate.isOnlyInterest) {
                 documentDetailWithDueDate.documentDetail.interestRemainingToPay.toCurrency
             } else {
                 documentDetailWithDueDate.documentDetail.remainingToPay.toCurrency
