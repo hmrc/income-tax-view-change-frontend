@@ -23,7 +23,6 @@ import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.admin._
 import models.financialDetails.{BalanceDetails, ChargeItem, DocumentDetail, FinancialDetail, FinancialDetailsModel, WhatYouOweChargesList}
 import models.incomeSourceDetails.TaxYear
-import org.jsoup.Jsoup
 import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest

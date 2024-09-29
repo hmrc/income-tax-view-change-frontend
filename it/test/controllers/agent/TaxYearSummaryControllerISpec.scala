@@ -766,14 +766,14 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
           And("I wiremock stub financial details for TY22/23 with POAs")
           IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testYear2023 - 1}-04-06", s"$testYear2023-04-05")(OK,
-            testValidFinancialDetailsModelReviewAndReconcileDebitsJson(2000, 2000, testYear2023.toString, testDate.toString))
+            testValidFinancialDetailsModelReviewAndReconcileDebitsJson(2000, 2000, testYear2023.toString, futureDate.toString))
 
           val res = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
 
           val document = Jsoup.parse(res.body)
 
-          document.getElementById("paymentTypeLink-0").attr("href") shouldBe "/"
-          document.getElementById("paymentTypeLink-1").attr("href") shouldBe "/"
+          document.getElementById("paymentTypeLink-0").attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(testYear2023, "1040000123").url
+          document.getElementById("paymentTypeLink-1").attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(testYear2023, "1040000124").url
 
           res should have(
             httpStatus(OK),

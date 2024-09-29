@@ -95,6 +95,10 @@ import java.time.LocalDate
     def hasAccruingInterest: Boolean =
       interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0
 
+    def isAccruingInterest()(implicit dateService: DateServiceInterface): Boolean = {
+      Seq(PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile).contains(transactionType) && !isPaid && !isOverdue()
+    }
+
     def getDueDateForNonZeroBalancingCharge(codedOutEnabled: Boolean = false): Option[LocalDate] = {
       if(transactionType == BalancingCharge && (!codedOutEnabled || subTransactionType.isEmpty) && originalAmount == 0.0) {
         None
@@ -162,8 +166,8 @@ import java.time.LocalDate
         case (BalancingCharge, Some(Accepted))  if codedOutEnabled    => "codingOut.text"
         case (BalancingCharge, Some(Cancelled)) if codedOutEnabled    => "cancelledPayeSelfAssessment.text"
         case (BalancingCharge, _)                                     => "balancingCharge.text"
-        case (PaymentOnAccountOneReviewAndReconcile, _) if reviewAndReconcileEnabled => "first-poa-extra-amount"
-        case (PaymentOnAccountTwoReviewAndReconcile, _) if reviewAndReconcileEnabled => "second-poa-extra-amount"
+        case (PaymentOnAccountOneReviewAndReconcile, _) if reviewAndReconcileEnabled => "reviewAndReconcilePoa1.text"
+        case (PaymentOnAccountTwoReviewAndReconcile, _) if reviewAndReconcileEnabled => "reviewAndReconcilePoa2.text"
         case error =>
           Logger("application").error(s"Missing or non-matching charge type: $error found")
           "unknownCharge"

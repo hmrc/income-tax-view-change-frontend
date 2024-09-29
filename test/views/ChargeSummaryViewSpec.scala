@@ -17,9 +17,10 @@
 package views
 
 import config.featureswitch.FeatureSwitching
-import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, CreateReversalReason, CustomerRequestReason}
 import enums.ChargeType._
+import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, CreateReversalReason, CustomerRequestReason}
 import exceptions.MissingFieldException
+import models.admin.ReviewAndReconcilePoa
 import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargeHistoryModel}
 import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails._
@@ -36,6 +37,7 @@ import testUtils.ViewSpec
 import views.html.ChargeSummary
 
 import java.time.LocalDate
+import scala.util.Try
 
 class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeConstants {
 
@@ -55,8 +57,12 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
                   paymentAllocationEnabled: Boolean = false,
                   latePaymentInterestCharge: Boolean = false,
                   codingOutEnabled: Boolean = false,
+                  reviewAndReconcileEnabled: Boolean = false,
                   isAgent: Boolean = false,
                   adjustmentHistory: AdjustmentHistoryModel = defaultAdjustmentHistory) {
+
+    enable(ReviewAndReconcilePoa)
+
     val viewModel: ChargeSummaryViewModel = ChargeSummaryViewModel(
       currentDate = dateService.getCurrentDate,
       chargeItem = chargeItem.copy(dueDate = dueDate),
@@ -70,8 +76,14 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       paymentAllocationEnabled = paymentAllocationEnabled,
       latePaymentInterestCharge = latePaymentInterestCharge,
       codingOutEnabled = codingOutEnabled,
+      reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       isAgent = isAgent,
+      poaOneChargeUrl = "",
+      poaTwoChargeUrl = "",
       adjustmentHistory = adjustmentHistory)
+
+
+
     val view: Html = chargeSummary(viewModel)
     val document: Document = Jsoup.parse(view.toString())
     def verifySummaryListRowNumeric(rowNumber: Int, expectedKeyText: String, expectedValueText: String): Assertion = {
@@ -115,7 +127,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     val paymentBreakdownNic2: String = messages("chargeSummary.paymentBreakdown.nic2")
     val codingOutMessage2017To2018: String = messages("chargeSummary.codingOutMessage", 2017, 2018)
     val codingOutMessage2017To2018WithStringMessagesArgument: String = messages("chargeSummary.codingOutMessage", "2017", "2018")
-    val chargeSummaryCodingOutHeading2017To2018: String = s"$taxYearHeading 6 April 2017 to 5 April 2018 ${messages("chargeSummary.codingOut.text")}"
+    val chargeSummaryCodingOutHeading2017To2018: String = s"2017 to 2018 tax year ${messages("chargeSummary.codingOut.text")}"
     val insetPara: String = s"${messages("chargeSummary.codingOutInset-1")} ${messages("chargeSummary.codingOutInset-2")} ${messages("pagehelp.opensInNewTabText")} ${messages("chargeSummary.codingOutInset-3")}"
     val paymentBreakdownInterestLocksCharging: String = messages("chargeSummary.paymentBreakdown.interestLocks.charging")
 
@@ -139,10 +151,10 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     val lpiBcdTextP3 = messages("chargeSummary.lpi.balancingCharge.p3") + " " + messages("chargeSummary.lpi.balancingCharge.p3LinkText")
 
 
-    def poaHeading(year: Int, number: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year ${getFirstOrSecond(number)} payment on account"
-    def poa1Heading(year: Int, number: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year First payment on account"
+    def poaHeading(year: Int, number: Int) = s"${year - 1} to $year tax year ${getFirstOrSecond(number)} payment on account"
+    def poa1Heading(year: Int, number: Int) = s"${year - 1} to $year tax year First payment on account"
 
-    def poa2Heading(year: Int, number: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year Second payment on account"
+    def poa2Heading(year: Int, number: Int) = s"${year - 1} to $year tax year Second payment on account"
 
     def getFirstOrSecond(number: Int): String = {
       require(number > 0, "Number must be greater than zero")
@@ -153,17 +165,17 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       }
     }
 
-    def poa1InterestHeading(year: Int, number: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year Late payment interest on first payment on account"
+    def poa1InterestHeading(year: Int, number: Int) = s"${year - 1} to $year tax year Late payment interest on first payment on account"
 
-    def poa2InterestHeading(year: Int, number: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year Late payment interest on second payment on account"
+    def poa2InterestHeading(year: Int, number: Int) = s"${year - 1} to $year tax year Late payment interest on second payment on account"
 
-    def balancingChargeHeading(year: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year $balancingCharge"
+    def balancingChargeHeading(year: Int) = s"${year - 1} to $year tax year $balancingCharge"
 
-    def balancingChargeInterestHeading(year: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year ${messages("chargeSummary.lpi.balancingCharge.text")}"
+    def balancingChargeInterestHeading(year: Int) = s"${year - 1} to $year tax year ${messages("chargeSummary.lpi.balancingCharge.text")}"
 
-    def class2NicHeading(year: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year $paymentBreakdownNic2"
+    def class2NicHeading(year: Int) = s"${year - 1} to $year tax year $paymentBreakdownNic2"
 
-    def cancelledSaPayeHeading(year: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year ${messages("chargeSummary.cancelledPayeSelfAssessment.text")}"
+    def cancelledSaPayeHeading(year: Int) = s"${year - 1} to $year tax year ${messages("chargeSummary.cancelledPayeSelfAssessment.text")}"
 
     val dueDate: String = messages("chargeSummary.dueDate")
     val interestPeriod: String = messages("chargeSummary.lpi.interestPeriod")
@@ -175,7 +187,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     val chargeHistoryHeadingPoa1: String = messages("chargeSummary.chargeHistory.Poa1heading")
     val chargeHistoryHeadingPoa2: String = messages("chargeSummary.chargeHistory.Poa2heading")
     val historyRowPOA1Created: String = s"29 Mar 2018 ${messages("chargeSummary.chargeHistory.created.paymentOnAccount1.text")} £1,400.00"
-    val codingOutHeader: String = s"$taxYearHeading ${messages("taxYears.taxYears", "6 April 2017", "5 April 2018")} PAYE self assessment"
+    val codingOutHeader: String = "2017 to 2018 tax year PAYE self assessment"
     val paymentprocessingbullet1: String = s"${messages("chargeSummary.payments-bullet1-1")} ${messages("chargeSummary.payments-bullet1-2")} ${messages("pagehelp.opensInNewTabText")}"
     val paymentprocessingbullet1Agent: String = s"${messages("chargeSummary.payments-bullet1-1")} ${messages("chargeSummary.payments-bullet1-2-agent")} ${messages("pagehelp.opensInNewTabText")}"
 
@@ -480,7 +492,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
       val baseBalancing = chargeItemModel(transactionType = BalancingCharge)
       val baseBalancingNics2 = chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Nics2))
-      val baseBalancingAccepted = chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Accepted))
+      val baseBalancingAccepted = chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Accepted), originalAmount = 2500.00)
       val baseBalancingCancelled = chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Cancelled))
 
       "is Nics2" should {
@@ -519,13 +531,12 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       "is accepted" should {
 
         val creditItemCodingOut = baseBalancingAccepted.copy(
-          transactionId = "CODINGOUT02",
-          outstandingAmount = 2500.00,
-          originalAmount = 2500.00)
+          transactionId = "CODINGOUT02")
 
         "display the coded out details" when {
 
-          "Coding Out is Enabled" in new TestSetup(creditItemCodingOut, codingOutEnabled = true) {
+          "Coding Out is Enabled" in new TestSetup(creditItemCodingOut,
+              codingOutEnabled = true) {
             document.select("h1").text() shouldBe chargeSummaryCodingOutHeading2017To2018
             document.select("#check-paye-para").text() shouldBe payeTaxCodeTextWithStringMessage(2018)
             document.select("#paye-tax-code-link").attr("href") shouldBe payeTaxCodeLink
@@ -555,11 +566,15 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
             document.select(".govuk-table tbody tr").size() shouldBe 1
           }
 
-          "Coding Out is Disabled" in new TestSetup(
-            creditItemCodingOut.copy(taxYear = 2019, subTransactionType = None),
+           "Coding Out is Disabled" in new TestSetup(
+            creditItemCodingOut.copy(
+              taxYear = 2019,
+              subTransactionType = None,
+              outstandingAmount = 2500.00,
+              originalAmount = 2500.00),
             codingOutEnabled = false
           ) {
-            document.select("h1").text() shouldBe s"$taxYearHeading 6 April 2018 to 5 April 2019 $balancingCharge"
+            document.select("h1").text() shouldBe s"2018 to 2019 tax year $balancingCharge"
             verifySummaryListRowNumeric(1, dueDate, "OVERDUE 15 May 2019")
             verifySummaryListRowNumeric(2, fullPaymentAmount, "£2,500.00")
             verifySummaryListRowNumeric(3, remainingToPay, "£2,500.00")
@@ -727,7 +742,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         val hmrcCreated = messages("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
         val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,400.00"
         // heading should be hmrc adjustment
-        document.select("h1").text() shouldBe s"$taxYearHeading 6 April 2018 to 5 April 2019 " +
+        document.select("h1").text() shouldBe s"2018 to 2019 tax year " +
           messages("chargeSummary.hmrcAdjustment.text")
         // remaining to pay should be the same as payment amount
         document.select(".govuk-summary-list").text() shouldBe summaryListText
@@ -750,7 +765,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         val MFADebitAllocation2 = "31 Mar 2018 " + messages("chargeSummary.paymentAllocations.mfaDebit") + " 2019 £1,600.00"
         val allocationLinkHref = "/report-quarterly/income-and-expenses/view/payment-made-to-hmrc?documentNumber=PAYID01"
         // heading should be hmrc adjustment
-        document.select("h1").text() shouldBe s"$taxYearHeading 6 April 2018 to 5 April 2019 " +
+        document.select("h1").text() shouldBe s"2018 to 2019 tax year " +
           messages("chargeSummary.hmrcAdjustment.text")
         // remaining to pay should be zero
         document.select(".govuk-summary-list").text() shouldBe summaryListText
@@ -961,13 +976,13 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     }
 
     "have a payment link when an outstanding amount is to be paid" in new TestSetup(
-      chargeItem = chargeItemModel()
+      chargeItem = chargeItemModel(transactionType = BalancingCharge)
     ) {
       document.select("div#payment-link-2018").text() shouldBe s"${messages("paymentDue.payNow")} ${messages("paymentDue.pay-now-hidden", "2017", "2018")}"
     }
 
     "have a payment processing information section" in new TestSetup(
-      chargeItem = chargeItemModel(lpiWithDunningLock = None),
+      chargeItem = chargeItemModel(transactionType = BalancingCharge, lpiWithDunningLock = None),
       isAgent = true
     ) {
       document.select("#payment-processing-bullets li:nth-child(1)").text() shouldBe paymentprocessingbullet1Agent
@@ -1008,9 +1023,17 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     }
 
     "does not have any payment lock notes or link when there is no interest locks on the page" in new TestSetup(
-      chargeItem = chargeItemModel(),
+      chargeItem = chargeItemModel(transactionType = BalancingCharge),
       paymentBreakdown = paymentBreakdown) {
       document.select("div#payment-link-2018").text() shouldBe s"${messages("paymentDue.payNow")} ${messages("paymentDue.pay-now-hidden", "2017", "2018")}"
+    }
+
+    "does not have any payment processing info or link when the charge is Review And Reconcile" in new TestSetup(
+      chargeItemModel(transactionType = PaymentOnAccountOneReviewAndReconcile),
+      paymentBreakdown = paymentBreakdown,
+      reviewAndReconcileEnabled = true) {
+      Try(document.getElementById("payment-days-note").text()).toOption.isDefined shouldBe false
+      Try(document.getElementById("payment-link-2018").text()).toOption.isDefined shouldBe false
     }
 
     "not have a payment link when there is an outstanding amount of 0" in new TestSetup(
@@ -1139,11 +1162,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         }
       }
     }
-
   }
-
-
-
 
   "The charge summary view when missing mandatory expected fields" should {
     "throw a MissingFieldException" in new TestSetup(chargeItem = chargeItemModel()) {
@@ -1160,7 +1179,10 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         paymentAllocationEnabled = false,
         latePaymentInterestCharge = false,
         codingOutEnabled = false,
+        reviewAndReconcileEnabled = false,
         isAgent = false,
+        poaOneChargeUrl = "",
+        poaTwoChargeUrl = "",
         adjustmentHistory = defaultAdjustmentHistory)
       val thrownException = intercept[MissingFieldException] {
 
@@ -1237,7 +1259,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         val hmrcCreated = messages("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
         val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,400.00"
         // heading should be hmrc adjustment
-        document.select("h1").text() shouldBe s"$taxYearHeading 6 April 2018 to 5 April 2019 " +
+        document.select("h1").text() shouldBe s"2018 to 2019 tax year " +
           messages("chargeSummary.hmrcAdjustment.text")
         // remaining to pay should be the same as payment amount
         document.select(".govuk-summary-list").text() shouldBe summaryListText
@@ -1258,7 +1280,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         val MFADebitAllocation2 = "31 Mar 2018 " + messages("chargeSummary.paymentAllocations.mfaDebit") + " 2019 £1,600.00"
         val allocationLinkHref = "/report-quarterly/income-and-expenses/view/agents/payment-made-to-hmrc?documentNumber=PAYID01"
         // heading should be hmrc adjustment
-        document.select("h1").text() shouldBe s"$taxYearHeading 6 April 2018 to 5 April 2019 " +
+        document.select("h1").text() shouldBe s"2018 to 2019 tax year " +
           messages("chargeSummary.hmrcAdjustment.text")
         // remaining to pay should be zero
         document.select(".govuk-summary-list").text() shouldBe summaryListText

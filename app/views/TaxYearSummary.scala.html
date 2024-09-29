@@ -170,15 +170,10 @@
 
 
 @getChargeSummaryHref(chargeItem: TaxYearSummaryChargeItem) = @{
-    // Logic has not yet been defined for the redirect url for Review and Reconcile
-    if(Seq(PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile).contains(chargeItem.transactionType)) {
-        "/"
+    if(isAgent){
+        controllers.routes.ChargeSummaryController.showAgent(taxYear, chargeItem.transactionId, chargeItem.isLatePaymentInterest).url
     } else {
-        if(isAgent){
-            controllers.routes.ChargeSummaryController.showAgent(taxYear, chargeItem.transactionId, chargeItem.isLatePaymentInterest).url
-        } else {
-            controllers.routes.ChargeSummaryController.show(taxYear, chargeItem.transactionId, chargeItem.isLatePaymentInterest, origin).url
-        }
+        controllers.routes.ChargeSummaryController.show(taxYear, chargeItem.transactionId, chargeItem.isLatePaymentInterest, origin).url
     }
 }
 
@@ -222,7 +217,8 @@
                             (chargeItem.isLatePaymentInterest && !chargeItem.interestIsPaid))) {
                             <div class="govuk-tag govuk-tag--red">@messages("tax-year-summary.payments.overdue")</div>
                         }
-                        @if(Seq(PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile).contains(chargeItem.transactionType) && !chargeItem.isPaid) {
+
+                        @if(chargeItem.isAccruingInterest()) {
                             <div class="govuk-tag govuk-tag--red" id="accrues-interest-tag">@messages("taxYears.accruesInterest")</div>
                         }
                         <div id="paymentTypeText-@{index}">

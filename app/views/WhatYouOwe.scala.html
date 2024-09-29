@@ -52,6 +52,7 @@
     btaNavPartial: Option[Html] = None,
     dunningLock: Boolean,
     codingOutEnabled: Boolean,
+    reviewAndReconcileEnabled: Boolean,
     MFADebitsEnabled: Boolean,
     whatYouOweCreditAmountEnabled: Boolean,
     isAgent: Boolean = false,
@@ -220,7 +221,7 @@
 @paymentTypeEntry(chargeItem: ChargeItem, rowId: String, isLatePaymentInterest: Boolean,
     isMFADebit: Boolean, linkSuffix: String, index: Int) = @{
 
-    val chargeTypeKey = chargeItem.getChargeTypeKey(codingOutEnabled)
+    val chargeTypeKey = chargeItem.getChargeTypeKey(codingOutEnabled, reviewAndReconcileEnabled)
     val lpi = if (isLatePaymentInterest) "lpi." else ""
     val linkText = getMessage(s"${lpi}${chargeTypeKey}")
     val taxYear = chargeItem.taxYear
@@ -260,6 +261,12 @@
     linkSuffix = getLinkSuffix(), isMFADebit = isMFADebit, index = index)
 }
 
+@getInterestMessage(chargeItem: ChargeItem): String = @{
+    if(chargeItem.transactionType == PaymentOnAccountOneReviewAndReconcile) getMessage("over-due.reviewAndReconcileOne.line1")
+    else if(chargeItem.transactionType == PaymentOnAccountTwoReviewAndReconcile) getMessage("over-due.reviewAndReconcileTwo.line1")
+    else getMessage("over-due.interest.line1")
+    }
+
 @getReturnHref(year: Int) = @{
    if (isAgent) {
        controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(year).url
@@ -282,11 +289,15 @@
             @chargeItem.dueDate.getOrElse(throw MissingFieldException("document due date of Payment")).toLongDateShort
         </td>
         <td class="govuk-table__cell govuk-!-width-one-half">
+            @if(chargeItem.isAccruingInterest()) {
+                <div> <span class="govuk-tag govuk-tag--red">@messages("taxYears.accruesInterest") </span></div>
+            }
             @if(isOverduePayment){
                 <div>
                     <span id="@rowId2-overdue" class="govuk-tag govuk-tag--red" >@getMessage("over-due")</span>
                 </div>
             }
+
             @getPaymentTypeEntry(chargeItem = chargeItem, isOverduePayment = isOverduePayment,
                 rowId = rowId2, isMFADebit = chargeItem.transactionType == MfaDebitCharge, index = index)
 
@@ -428,11 +439,11 @@
                             @if(whatYouOweChargesList.chargesList.nonEmpty) {
                                 @for((charge, index) <- whatYouOweChargesList.sortedChargesList.zipWithIndex) {
                                     @tableRow(s"due-$index", charge, isOverduePayment = charge.isOverdue(), index, "taxYearSummary-link")
-                                    @if(charge.isOverdue() && charge.hasAccruingInterest) {
+                                    @if(charge.hasAccruingInterest) {
                                         <tr class="govuk-table__row" id=@(s"charge-interest-$index")>
                                             <td class="govuk-table__cell govuk-!-width-one-quarter"></td>
                                             <td class="govuk-table__cell govuk-!-width-one-half">
-                                                @getMessage("over-due.interest.line1")
+                                                @getInterestMessage(charge)
                                                 <div>
                                                 @getMessage("over-due.interest.line2",
                                                     charge.interestFromDate.getOrElse(throw MissingFieldException("Overdue Payment Interest From Date")).toLongDateShort,

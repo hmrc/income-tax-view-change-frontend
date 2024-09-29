@@ -45,11 +45,6 @@ trait MockWhatYouOweService extends UnitSpec with MockDateService with BeforeAnd
     reset(mockWhatYouOweService)
   }
 
-  def setupMockGetWhatYouOweChargesList(whatYouOweChargesList: WhatYouOweChargesList): Unit = {
-    when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
-      .thenReturn(Future.successful(whatYouOweChargesList))
-  }
-
   def setupMockGetWhatYouOweChargesListFromFinancialDetails(whatYouOweChargesList: WhatYouOweChargesList): Unit = {
     when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
       .thenReturn(Future.successful(whatYouOweChargesList))

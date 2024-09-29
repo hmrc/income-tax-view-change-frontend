@@ -20,7 +20,7 @@ import enums.ChargeType.NIC4_WALES
 import models.financialDetails._
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import services.{DateService, DateServiceInterface}
-import testConstants.FinancialDetailsTestConstants.{currentYear, dueDateDueIn30Days, dueDateMoreThan30Days, dueDateOverdue, fixedDate, id1040000123, id1040000124, id1040000125, id1040000126, noDunningLocks, oneDunningLock, outstandingChargesDueIn30Days, outstandingChargesDueInMoreThan30Days, outstandingChargesModel}
+import testConstants.FinancialDetailsTestConstants.{currentYear, dueDateDueIn30Days, dueDateMoreThan30Days, dueDateOverdue, fixedDate, id1040000123, id1040000124, id1040000125, id1040000126, noDunningLocks, oneDunningLock, outstandingChargesDueIn30Days, outstandingChargesDueInMoreThan30Days, outstandingChargesModel, testFinancialDetailsModelWithChargesOfSameType}
 
 import java.time.LocalDate
 
@@ -459,6 +459,46 @@ trait ChargeConstants {
     outstandingChargesModel = Some(outstandingChargesDueIn30Days)
   )
 
+  val financialDetailsReviewAndReconcile: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
+    documentDescription = List(Some("SA POA 1 Reconciliation Debit"), Some("SA POA 2 Reconciliation Debit")),
+    mainType = List(Some("SA POA 1 Reconciliation"), Some("SA POA 2 Reconciliation")),
+    mainTransaction = List(Some("4911"), Some("4913")),
+    dueDate = List(Some(fixedDate.minusDays(1)), Some(fixedDate.plusDays(30))),
+    outstandingAmount = List(50, 75),
+    taxYear = fixedDate.getYear.toString,
+    latePaymentInterestAmount = List(None, None)
+  )
+
+  val financialDetailsReviewAndReconcileNotYetDue: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
+    documentDescription = List(Some("SA POA 1 Reconciliation Debit"), Some("SA POA 2 Reconciliation Debit")),
+    mainType = List(Some("SA POA 1 Reconciliation"), Some("SA POA 2 Reconciliation")),
+    mainTransaction = List(Some("4911"), Some("4913")),
+    dueDate = List(Some(fixedDate.plusYears(100).minusDays(1)), Some(fixedDate.plusYears(100).plusDays(30))),
+    outstandingAmount = List(50, 75),
+    taxYear = fixedDate.getYear.toString,
+    latePaymentInterestAmount = List(None, None)
+  )
+
+  val financialDetailsReviewAndReconcileCi: List[ChargeItem] = testFinancialDetailsChargeItems(
+    transactionId = List(id1040000123, id1040000124),
+    transactionTypes = List(PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwo),
+    dueDate = List(Some(fixedDate.minusDays(1)), Some(fixedDate.plusDays(30))),
+    outstandingAmount = List(50, 75),
+    taxYear = fixedDate.getYear.toString,
+    latePaymentInterestAmount = List(None, None),
+    dunningLock = noDunningLocks
+  )
+
+  val financialDetailsReviewAndReconcileNotYetDueCi: List[ChargeItem] = testFinancialDetailsChargeItems(
+    transactionId = List(id1040000123, id1040000124),
+    transactionTypes = List(PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile),
+    dueDate = List(Some(fixedDate.plusYears(100).minusDays(1)), Some(fixedDate.plusYears(100).plusDays(30))),
+    outstandingAmount = List(50, 75),
+    taxYear = fixedDate.getYear.toString,
+    latePaymentInterestAmount = List(None, None),
+    dunningLock = noDunningLocks
+  )
+
   val whatYouOweDataWithMixedData1: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     chargesList = testFinancialDetailsChargeItems(
@@ -492,6 +532,42 @@ trait ChargeConstants {
     outstandingChargesModel = Some(OutstandingChargesModel(List()))
   )
 
+  val financialDetailsWithMixedData4Ci: List[ChargeItem] = testFinancialDetailsChargeItems(
+    transactionId = List(id1040000123, id1040000124),
+    transactionTypes = List(PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwo),
+    dueDate = List(Some(fixedDate.plusDays(30)), Some(fixedDate.minusDays(1))),
+    outstandingAmount = List(50, 75),
+    outstandingInterest  = List(Some(100.0), Some(100.0)),
+    latePaymentInterestAmount  = List(None, None),
+    lpiWithDunningLock = List(Some(100.0), Some(100.0)),
+    interestRate = List(Some(100.0), Some(100.0)),
+    interestEndDate = List(Some(LocalDate.of(2018,3,29)),Some(LocalDate.of(2018,3,29))),
+    taxYear = fixedDate.getYear.toString,
+    dunningLock = List(None, None)
+  )
+
+  val whatYouOweDataWithMixedData4Unfiltered: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    chargesList = List(financialDetailsWithMixedData4Ci.head,
+      financialDetailsWithMixedData4Ci(1)),
+    outstandingChargesModel = Some(OutstandingChargesModel(List()))
+  )
+  val whatYouOweDataWithMixedData4Filtered: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    chargesList = List(financialDetailsWithMixedData4Ci(1)),
+    outstandingChargesModel = Some(OutstandingChargesModel(List()))
+  )
+
+  val whatYouOweWithReviewReconcileData: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    chargesList = financialDetailsReviewAndReconcileCi,
+    outstandingChargesModel = Some(OutstandingChargesModel(List()))
+  )
+  val whatYouOweNotDueReviewReconcileData: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    chargesList = financialDetailsReviewAndReconcileNotYetDueCi,
+    outstandingChargesModel = Some(OutstandingChargesModel(List()))
+  )
 
   val financialDetailsWithMixedData1Ci: List[ChargeItem] = testFinancialDetailsChargeItems(
     dueDate = List(Some(fixedDate.plusDays(35)), Some(fixedDate.minusDays(1))),

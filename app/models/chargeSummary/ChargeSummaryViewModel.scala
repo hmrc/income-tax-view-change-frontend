@@ -34,19 +34,20 @@ case class ChargeSummaryViewModel(
                                    paymentAllocationEnabled: Boolean,
                                    latePaymentInterestCharge: Boolean,
                                    codingOutEnabled: Boolean,
+                                   reviewAndReconcileEnabled: Boolean,
                                    isAgent: Boolean = false,
                                    btaNavPartial: Option[Html] = None,
                                    origin: Option[String] = None,
                                    gatewayPage: Option[GatewayPage] = None,
-                                   adjustmentHistory: AdjustmentHistoryModel
+                                   adjustmentHistory: AdjustmentHistoryModel,
+                                   poaOneChargeUrl: String,
+                                   poaTwoChargeUrl: String,
                                  ) {
 
   val dueDate = chargeItem.dueDate
   val hasDunningLocks = paymentBreakdown.exists(_.dunningLockExists)
   val hasInterestLocks = paymentBreakdown.exists(_.interestLockExists)
   val hasAccruedInterest = paymentBreakdown.exists(_.hasAccruedInterest)
-
-
 
   val currentTaxYearEnd = {
     if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) currentDate.getYear
@@ -69,7 +70,7 @@ case class ChargeSummaryViewModel(
   val taxYearToCodingOut = s"${chargeItem.taxYear.toInt + 2}"
 
   val pageTitle: String =
-    s"chargeSummary.${if(latePaymentInterestCharge)"lpi."else ""}${chargeItem.getChargeTypeKey(codingOutEnabled)}"
+    s"chargeSummary.${if(latePaymentInterestCharge)"lpi."else ""}${chargeItem.getChargeTypeKey(codingOutEnabled, reviewAndReconcileEnabled)}"
 
   val isBalancingChargeZero: Boolean = chargeItem.transactionType match {
     case _ if codingOutEnabled && chargeItem.subTransactionType.isDefined => false
@@ -82,7 +83,8 @@ case class ChargeSummaryViewModel(
   }
 
   val noIsAgentAndRemainingToPayWithNoCodingOutEnabledAndIsPayeSelfAssessment: Boolean =
-    !isAgent && chargeItem.remainingToPay > 0 && !(codingOutEnabled && chargeItem.subTransactionType.contains(Accepted))
+    !isAgent && chargeItem.remainingToPay > 0 && !(codingOutEnabled && chargeItem.subTransactionType.contains(Accepted)) &&
+      (!Seq(PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile).contains(chargeItem.transactionType))
 
   val isAgentAndRemainingToPayWithNoCodingOutEnabledAndIsPayeSelfAssessment: Boolean =
     isAgent && chargeItem.remainingToPay > 0 && !(codingOutEnabled && chargeItem.subTransactionType.contains(Accepted))

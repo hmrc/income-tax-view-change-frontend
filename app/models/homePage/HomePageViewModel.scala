@@ -16,6 +16,7 @@
 
 package models.homePage
 
+import models.financialDetails.{DocumentDetail, FinancialDetailsModel, FinancialDetailsResponseModel}
 import models.incomeSourceDetails.TaxYear
 import models.obligations.NextUpdatesTileViewModel
 
@@ -30,16 +31,30 @@ case class HomePageViewModel(utr: Option[String],
                             dunningLockExists: Boolean = false,
                             origin: Option[String] = None)
 
-case class NextPaymentsTileViewModel(nextPaymentDueDate: Option[LocalDate], overDuePaymentsCount: Int) {
+case class NextPaymentsTileViewModel(nextPaymentDueDate: Option[LocalDate], overDuePaymentsCount: Int,
+                                     paymentsAccruingInterestCount: Int, reviewAndReconcileEnabled: Boolean) {
 
   def verify: Either[Throwable, NextPaymentsTileViewModel] = {
     if (!(overDuePaymentsCount == 0) && nextPaymentDueDate.isEmpty) {
       Left(new Exception("Error, overDuePaymentsCount was non-0 while nextPaymentDueDate was empty"))
     } else {
-      Right(NextPaymentsTileViewModel(nextPaymentDueDate, overDuePaymentsCount))
+      Right(NextPaymentsTileViewModel(nextPaymentDueDate, overDuePaymentsCount, paymentsAccruingInterestCount, reviewAndReconcileEnabled))
     }
   }
 
+}
+
+object NextPaymentsTileViewModel {
+
+  def paymentsAccruingInterestCount(unpaidCharges: List[FinancialDetailsResponseModel], currentDate: LocalDate): Int = {
+    val financialDetailsModels = unpaidCharges collect {
+      case fdm: FinancialDetailsModel => fdm
+    }
+    val docDetailsNotDueWithInterest: List[DocumentDetail] = financialDetailsModels.flatMap(_.documentDetails)
+      .filter(x => !x.isPaid && x.hasAccruingInterest && x.documentDueDate.getOrElse(LocalDate.MIN).isAfter(currentDate))
+
+    docDetailsNotDueWithInterest.length
+  }
 }
 
 case class ReturnsTileViewModel(currentTaxYear: TaxYear, iTSASubmissionIntegrationEnabled: Boolean)

@@ -355,7 +355,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       )
     }
 
-    "load the page with any payments you make" in {
+    "load the page with any payments you make if the charge is not a Review & Reconcile or POA charge" in {
       Given("I wiremock stub a successful Income Source Details response with property only")
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -369,14 +369,14 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       Given("the ChargeHistory feature switch is disabled")
       disable(ChargeHistory)
 
-      val res = IncomeTaxViewChangeFrontend.getChargeSummary("2018", "1040000124")
+      val res = IncomeTaxViewChangeFrontend.getChargeSummary("2018", "1040000123")
 
       verifyIncomeSourceDetailsCall(testMtditid)
 
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       res should have(
         httpStatus(OK),
-        pageTitleIndividual("chargeSummary.paymentOnAccount1.text"),
+        pageTitleIndividual("chargeSummary.balancingCharge.text"),
         elementTextBySelector("#payment-processing-bullets")(paymentprocessingbullet1)
       )
     }

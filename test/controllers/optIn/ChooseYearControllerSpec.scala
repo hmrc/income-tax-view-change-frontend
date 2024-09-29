@@ -51,7 +51,7 @@ class ChooseYearControllerSpec extends TestSupport
         setupMockAuthorisationSuccess(isAgent)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         mockAvailableOptInTaxYear(List(taxYear2023, taxYear2023.nextYear))
-        mockFetchSavedChosenTaxYear(taxYear2023)
+        mockFetchSavedChosenTaxYear(Some(taxYear2023))
 
         val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
         val result = controller.show(isAgent).apply(requestGET)
