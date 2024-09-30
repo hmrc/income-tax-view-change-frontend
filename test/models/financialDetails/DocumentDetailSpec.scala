@@ -26,6 +26,8 @@ import java.time.LocalDate
 class DocumentDetailSpec extends UnitSpec {
 
   "DocumentDetail" when {
+    
+    
 
     "calling predicate hasAccruingInterest" should {
 
@@ -123,6 +125,8 @@ class DocumentDetailSpec extends UnitSpec {
     }
 
     "getChargeTypeKey" should {
+
+
       "return POA1" when {
         "when document description is ITSA- POA 1" in {
           fullDocumentDetailModel.copy(documentDescription = Some("ITSA- POA 1")).getChargeTypeKey(false) shouldBe "paymentOnAccount1.text"

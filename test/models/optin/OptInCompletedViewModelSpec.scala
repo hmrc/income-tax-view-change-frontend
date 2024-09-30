@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.optIn
+package models.optin
 
 import models.incomeSourceDetails.TaxYear
 import models.optin.OptInCompletedViewModel

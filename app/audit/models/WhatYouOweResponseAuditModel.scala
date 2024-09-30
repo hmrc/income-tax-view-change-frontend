@@ -18,7 +18,7 @@ package audit.models
 
 import audit.Utilities._
 import auth.MtdItUser
-import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate, WhatYouOweChargesList}
+import models.financialDetails.{BalancingCharge, Cancelled, ChargeItem, Nics2, PaymentOnAccountOne, PaymentOnAccountTwo, WhatYouOweChargesList}
 import models.outstandingCharges.OutstandingChargesModel
 import play.api.libs.json._
 import services.DateServiceInterface
@@ -26,7 +26,7 @@ import utils.Utilities.JsonUtil
 
 case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
                                         whatYouOweChargesList: WhatYouOweChargesList,
-                                        dateService: DateServiceInterface) extends ExtendedAuditModel {
+                                        implicit val dateService: DateServiceInterface) extends ExtendedAuditModel {
 
   val currentTaxYear: Int = dateService.getCurrentTaxYearEnd
 
@@ -37,7 +37,7 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
     whatYouOweChargesList.chargesList.map(documentDetails) ++ whatYouOweChargesList.outstandingChargesModel.map(outstandingChargeDetails)
 
   override val detail: JsValue = {
-    (whatYouOweChargesList.codedOutDocumentDetail.map(docDetail => Json.obj("codingOut" -> codingOut(docDetail)))) match {
+    (whatYouOweChargesList.codedOutDocumentDetail.map(chargeItem => Json.obj("codingOut" -> codingOut(chargeItem)))) match {
       case Some(codingOutJson) => userAuditDetails(user) ++
         balanceDetailsJson ++
         Json.obj("charges" -> docDetailsListJson) ++
@@ -66,29 +66,35 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
     else Json.obj()
   }
 
-  private def remainingToPay(documentDetail: DocumentDetail): BigDecimal = {
-    if (documentDetail.isLatePaymentInterest) documentDetail.interestRemainingToPay else documentDetail.remainingToPay
-  }
+  def getChargeType(chargeItem: ChargeItem, latePaymentCharge: Boolean): Option[String] =
+    (chargeItem.transactionType, chargeItem.subTransactionType) match {
+      case (_, Some(Nics2))       => Some("Class 2 National Insurance")
+      case(_, Some(Cancelled))    => Some("Cancelled PAYE Self Assessment (through your PAYE tax code)")
+      case (PaymentOnAccountOne,  _) => if (latePaymentCharge) Some("Late payment interest on first payment on account") else Some("First payment on account")
+      case (PaymentOnAccountTwo,  _) => if (latePaymentCharge) Some("Late payment interest on second payment on account") else Some("Second payment on account")
+      case (BalancingCharge, None ) => if (latePaymentCharge) Some("Late payment interest for remaining balance") else Some("Remaining balance")
+      case (_, _) => Some(chargeItem.transactionType.key)
+    }
 
-  private def documentDetails(docDateDetail: DocumentDetailWithDueDate): JsObject = {
+  private def documentDetails(chargeItem: ChargeItem): JsObject = {
     Json.obj(
-      "chargeUnderReview" -> docDateDetail.dunningLock,
-      "outstandingAmount" -> remainingToPay(docDateDetail.documentDetail)
+      "chargeUnderReview" -> chargeItem.dunningLock,
+      "outstandingAmount" -> chargeItem.remainingToPayByChargeOrLpi
     ) ++
-      ("chargeType", getChargeType(docDateDetail.documentDetail, docDateDetail.isLatePaymentInterest)) ++
-      ("dueDate", docDateDetail.dueDate) ++
-      accruingInterestJson(docDateDetail.documentDetail) ++
-      Json.obj("endTaxYear" -> docDateDetail.documentDetail.taxYear.toInt) ++
-      Json.obj("overDue" -> docDateDetail.isOverdue)
+      ("chargeType", getChargeType(chargeItem, chargeItem.isLatePaymentInterest)) ++
+      ("dueDate", chargeItem.dueDate) ++
+      accruingInterestJson(chargeItem) ++
+      Json.obj("endTaxYear" -> chargeItem.taxYear.toInt) ++
+      Json.obj("overDue" -> chargeItem.isOverdue())
   }
 
-  private def accruingInterestJson(documentDetail: DocumentDetail): JsObject = {
-    if (documentDetail.hasAccruingInterest) {
+  private def accruingInterestJson(chargeItem: ChargeItem): JsObject = {
+    if (chargeItem.hasAccruingInterest) {
       Json.obj() ++
-        ("accruingInterest", documentDetail.interestOutstandingAmount) ++
-        ("interestRate", documentDetail.interestRate.map(ratePctString)) ++
-        ("interestFromDate", documentDetail.interestFromDate) ++
-        ("interestEndDate", documentDetail.interestEndDate)
+        ("accruingInterest", chargeItem.interestOutstandingAmount) ++
+        ("interestRate", chargeItem.interestRate.map(ratePctString)) ++
+        ("interestFromDate", chargeItem.interestFromDate) ++
+        ("interestEndDate", chargeItem.interestEndDate)
     } else {
       Json.obj()
     }
@@ -101,12 +107,10 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
     ("dueDate", outstandingCharge.bcdChargeType.map(_.relevantDueDate)) ++
     ("accruingInterest", outstandingCharge.aciChargeType.map(_.chargeAmount))
 
-  private def codingOut(documentDetail: DocumentDetail): JsObject = {
+  private def codingOut(chargeItem: ChargeItem): JsObject = {
       Json.obj(
-        "amountCodedOut" -> documentDetail.amountCodedOut,
-        "endTaxYear" -> documentDetail.taxYear.toString
+        "amountCodedOut" -> chargeItem.amountCodedOut,
+        "endTaxYear" -> chargeItem.taxYear.toString
       )
   }
-
-
 }
