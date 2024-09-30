@@ -60,7 +60,7 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
 
     for {
       whatYouOweChargesList <- whatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(MFACreditsAndDebits), isEnabled(ReviewAndReconcilePoa))
-      creditCharges <- whatYouOweService.getCreditCharges()
+      _ <- whatYouOweService.getCreditCharges()
       ctaViewModel <- claimToAdjustViewModel(Nino(user.nino))
     } yield {
 
@@ -69,7 +69,6 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
       Ok(whatYouOwe(
         currentDate = dateService.getCurrentDate,
         hasOverdueOrAccruingInterestCharges = whatYouOweService.hasOverdueOrAccruingInterestCharges(whatYouOweChargesList),
-        creditCharges = creditCharges,
         whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
         currentTaxYear = dateService.getCurrentTaxYearEnd, backUrl = backUrl, utr = user.saUtr,
         btaNavPartial = user.btaNavPartial,
