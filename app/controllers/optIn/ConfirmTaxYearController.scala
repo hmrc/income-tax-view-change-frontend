@@ -63,6 +63,7 @@ class ConfirmTaxYearController @Inject()(val view: ConfirmTaxYear,
           case Some(model) => Ok(view(ConfirmTaxYearViewModel(
             model.availableOptInTaxYear,
             model.cancelURL,
+            model.isNextTaxYear,
             model.isAgent)))
           case None => errorHandler(isAgent).showInternalServerError()
         }
