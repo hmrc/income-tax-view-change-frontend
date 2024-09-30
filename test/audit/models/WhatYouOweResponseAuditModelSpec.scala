@@ -100,7 +100,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport with ChargeConstants 
           Json.obj(
             "chargeType" -> paymentOnAccount2,
             "dueDate" -> dueDateOverdue(1).get,
-            "outstandingAmount" -> 75,
+            "outstandingAmount" -> 24.05,
             "accruingInterest" -> 24.05,
             "interestRate" -> "6.2%",
             "interestFromDate" -> "2019-05-25",
@@ -124,7 +124,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport with ChargeConstants 
           Json.obj(
             "chargeType" -> paymentOnAccount1,
             "dueDate" -> dueDateInFuture,
-            "outstandingAmount" -> 125,
+            "outstandingAmount" -> 100,
             "accruingInterest" -> 100,
             "interestRate" -> "100.0%",
             "interestFromDate" -> "2018-03-29",

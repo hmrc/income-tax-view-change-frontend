@@ -218,19 +218,11 @@
     </thead>
 }
 
-@reviewAndReconcileKey(documentDetailWithDate: DocumentDetailWithDueDate): String = @{
-    if (documentDetailWithDate.isReviewAndReconcilePoaOneDebit) "reviewAndReconcileOne.text"
-    else "reviewAndReconcileTwo.text"
-}
-
-@paymentTypeEntry(documentDetailWithDate: DocumentDetailWithDueDate, rowId: String, isLatePaymentInterest: Boolean, isOtherInterest: Boolean,
-@paymentTypeEntry(chargeItem: ChargeItem, rowId: String, isLatePaymentInterest: Boolean,
+@paymentTypeEntry(chargeItem: ChargeItem, rowId: String, isLatePaymentInterest: Boolean, isOtherInterest: Boolean,
     isMFADebit: Boolean, linkSuffix: String, index: Int) = @{
 
     val chargeTypeKey = chargeItem.getChargeTypeKey(codingOutEnabled, reviewAndReconcileEnabled)
-    val lpi = if (isLatePaymentInterest) "lpi." else ""
     val isInterest = isLatePaymentInterest || isOtherInterest
-    val chargeTypeKey = if(isMFADebit) "hmrcAdjustment.text" else if (documentDetailWithDate.isReviewAndReconcileDebit) reviewAndReconcileKey(documentDetailWithDate) else documentDetailWithDate.documentDetail.getChargeTypeKey(codingOutEnabled)
     val lpi = if (isLatePaymentInterest) "lpi." else if (isOtherInterest) "interest." else ""
     val linkText = getMessage(s"${lpi}${chargeTypeKey}")
     val taxYear = chargeItem.taxYear
@@ -255,7 +247,7 @@
 
 @getPaymentTypeEntry(chargeItem: ChargeItem, rowId: String, isOverduePayment: Boolean, isMFADebit: Boolean, index: Int) = @{
     val isLatePaymentInterest = isOverduePayment && chargeItem.isLatePaymentInterest
-    val isOtherInterest = documentDetailWithDate.documentDetail.isPaid && documentDetailWithDate.documentDetail.isOtherInterest
+    val isOtherInterest = chargeItem.isPaid && chargeItem.isOtherInterest
     def getLinkSuffix() : String = {
         if(!isOverduePayment) {
             "link"
@@ -295,12 +287,12 @@
 
 @tableRow(rowId2: String, chargeItem: ChargeItem, isOverduePayment: Boolean, index:Int, id:String) = {
     <tr class="govuk-table__row" id="@rowId2">
-        <td class="govuk-table__cell govuk-!-width-one-quarter" >
-        @if(documentDetailWithDueDate.documentDetail.isOtherInterest && documentDetailWithDueDate.documentDetail.isPaid){
-            @documentDetailWithDueDate.documentDetail.interestEndDate.getOrElse(throw MissingFieldException("document interest end date")).toLongDateShort
-        } else {
-            @chargeItem.dueDate.getOrElse(throw MissingFieldException("document due date of Payment")).toLongDateShort
-        }
+        <td class="govuk-table__cell govuk-!-width-one-quarter">
+            @if(chargeItem.isOtherInterest && chargeItem.isPaid) {
+                 @chargeItem.interestEndDate.getOrElse(throw MissingFieldException("document interest end date")).toLongDateShort
+             }else{
+                @chargeItem.dueDate.getOrElse(throw MissingFieldException("document due date of Payment")).toLongDateShort
+            }
         </td>
         <td class="govuk-table__cell govuk-!-width-one-half">
             @if(chargeItem.isAccruingInterest()) {
@@ -324,8 +316,8 @@
         </td>
         <td class="govuk-table__cell numeric govuk-!-width-one-quarter"> @taxYearSummaryLink(chargeItem.taxYear.toInt, index, id)</td>
         <td class="govuk-table__cell numeric govuk-!-width-one-quarter govuk-table__cell--numeric">@{
-            if(documentDetailWithDueDate.isOnlyInterest) {
-                documentDetailWithDueDate.documentDetail.interestRemainingToPay.toCurrency
+            if(chargeItem.isOnlyInterest) {
+                chargeItem.interestRemainingToPay.toCurrency
             } else {
                 chargeItem.remainingToPay.toCurrency
             }

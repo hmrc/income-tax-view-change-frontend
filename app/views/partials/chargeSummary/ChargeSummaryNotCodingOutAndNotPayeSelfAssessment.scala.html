@@ -78,7 +78,7 @@
             <span>
             @{
                 if (latePaymentInterestCharge) chargeItem.latePaymentInterestAmount.getOrElse(throw MissingFieldException("Late Payment Interest Amount")).toCurrency
-                else if (otherInterestCharge) documentDetail.interestOutstandingAmount.getOrElse(throw MissingFieldException("Interest Amount")).toCurrency
+                else if (otherInterestCharge) chargeItem.interestOutstandingAmount.getOrElse(throw MissingFieldException("Interest Amount")).toCurrency
                 else chargeItem.originalAmount.toCurrency
             }
             </span>

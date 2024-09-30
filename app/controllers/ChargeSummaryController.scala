@@ -192,7 +192,7 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
 
             val viewModel: ChargeSummaryViewModel = ChargeSummaryViewModel(
               currentDate = dateService.getCurrentDate,
-              documentDetailWithDueDate = documentDetailWithDueDate,
+              chargeItem = chargeItem,
               backUrl = getChargeSummaryBackUrl(sessionGatewayPage, taxYear, origin, isAgent),
               gatewayPage = sessionGatewayPage,
               paymentBreakdown = paymentBreakdown,
@@ -210,7 +210,7 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
               poaOneChargeUrl = poaOneChargeUrl,
               poaTwoChargeUrl = poaTwoChargeUrl
             )
-            mandatoryViewDataPresent(isLatePaymentCharge, viewModel.documentDetailWithDueDate) match {
+            mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate) match {
               case Right(_) =>
                 Ok(chargeSummaryView(viewModel))
               case Left(ec) => onError(s"Invalid response from charge history: ${ec.message}", isAgent, showInternalServerError = true)
