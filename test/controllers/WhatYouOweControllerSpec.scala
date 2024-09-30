@@ -123,8 +123,6 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         when(whatYouOweService.getCreditCharges()(any(), any()))
           .thenReturn(Future.successful(List()))
 
-        val interestChargesWarningText = "! Warning Interest charges will keep increasing every day until the charges they relate to are paid in full."
-
         val result: Future[Result] = controller.show()(fakeRequestWithNinoAndOrigin("PTA"))
         val resultAgent: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
 
