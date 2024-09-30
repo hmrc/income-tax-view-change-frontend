@@ -25,14 +25,13 @@ import controllers.ChargeSummaryController.ErrorCode
 import controllers.agent.predicates.ClientConfirmedController
 import enums.GatewayPage.GatewayPage
 import forms.utils.SessionKeys.gatewayPage
-import models.admin.{ChargeHistory, CodingOut, MFACreditsAndDebits, PaymentAllocation, ReviewAndReconcilePoa}
+import models.admin._
 import models.chargeHistory._
 import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocations}
 import models.financialDetails._
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.claimToAdjustPoa.ClaimToAdjustHelper
 import services.claimToAdjustPoa.ClaimToAdjustHelper.{isPoAOne, isPoATwo}
 import services.{ChargeHistoryService, DateServiceInterface, FinancialDetailsService, IncomeSourceDetailsService}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -131,6 +130,7 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
                                   isReviewAndReconcilePoaOneDebit: Boolean,
                                   isReviewAndReconcilePoaTwoDebit: Boolean)
                                  (implicit user: MtdItUser[_], dateService: DateServiceInterface): Future[Result] = {
+
     val sessionGatewayPage = user.session.get(gatewayPage).map(GatewayPage(_))
     val documentDetailWithDueDate: DocumentDetailWithDueDate = chargeDetailsforTaxYear.findDocumentDetailByIdWithDueDate(id).get
     val financialDetailsForCharge = chargeDetailsforTaxYear.financialDetails.filter(_.transactionId.contains(id))
@@ -139,6 +139,13 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
       case true if documentDetailWithDueDate.documentDetail.isOtherInterest => (false, true)
       case _ => (false,false)
     }
+
+    val chargeItem = ChargeItem.fromDocumentPair(
+      documentDetailWithDueDate.documentDetail,
+      financialDetailsForCharge,
+      isEnabledFromConfig(CodingOut),
+      isEnabledFromConfig(ReviewAndReconcilePoa))
+
     val chargeReference: Option[String] = financialDetailsForCharge.headOption match {
       case Some(value) => value.chargeReference
       case None => None
@@ -151,20 +158,22 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
     val paymentAllocations: List[PaymentHistoryAllocations] =
       if (paymentAllocationEnabled) {
         financialDetailsForCharge
-          .filter(_.messageKeyByTypes.isDefined)
+            .filter(_.messageKeyByTypes.isDefined)
           .flatMap(chargeFinancialDetail => paymentsForAllYears.getAllocationsToCharge(chargeFinancialDetail))
       } else Nil
 
     chargeHistoryService.chargeHistoryResponse(isInterestCharge, documentDetailWithDueDate.documentDetail.isPayeSelfAssessment,
       chargeReference, isEnabled(ChargeHistory), isEnabled(CodingOut)).map {
       case Right(chargeHistory) =>
-        if (!isEnabled(CodingOut) && (documentDetailWithDueDate.documentDetail.isPayeSelfAssessment ||
+        if (!isEnabled(CodingOut) && (
+          documentDetailWithDueDate.documentDetail.isPayeSelfAssessment ||
           documentDetailWithDueDate.documentDetail.isClass2Nic ||
           documentDetailWithDueDate.documentDetail.isCancelledPayeSelfAssessment)) {
           onError("Coding Out is disabled and redirected to not found page", isAgent, showInternalServerError = false)
         } else {
           auditChargeSummary(documentDetailWithDueDate, paymentBreakdown, chargeHistory, paymentAllocations,
             isLatePaymentCharge, isMFADebit, taxYear)
+
 
           val (poaOneChargeUrl, poaTwoChargeUrl) =
             (for {
@@ -175,11 +184,11 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
             } yield
               if (isAgent)
                 (routes.ChargeSummaryController.showAgent(poaOneTaxYearTo, poaOneTransactionId).url,
-                 routes.ChargeSummaryController.showAgent(poaTwoTaxYearTo, poaTwoTransactionId).url)
+                  routes.ChargeSummaryController.showAgent(poaTwoTaxYearTo, poaTwoTransactionId).url)
               else
                 (routes.ChargeSummaryController.show(poaOneTaxYearTo, poaOneTransactionId).url,
-                 routes.ChargeSummaryController.show(poaTwoTaxYearTo, poaTwoTransactionId).url)
-            ).getOrElse(("", ""))
+                  routes.ChargeSummaryController.show(poaTwoTaxYearTo, poaTwoTransactionId).url)
+              ).getOrElse(("", ""))
 
             val viewModel: ChargeSummaryViewModel = ChargeSummaryViewModel(
               currentDate = dateService.getCurrentDate,
@@ -194,12 +203,9 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
               latePaymentInterestCharge = isLatePaymentCharge,
               otherInterestCharge = isOtherInterestCharge,
               codingOutEnabled = isEnabled(CodingOut),
+              reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
               btaNavPartial = user.btaNavPartial,
               isAgent = isAgent,
-              isMFADebit = isMFADebit,
-              isReviewAndReconcilePoaOneDebit = isReviewAndReconcilePoaOneDebit,
-              isReviewAndReconcilePoaTwoDebit = isReviewAndReconcilePoaTwoDebit,
-              documentType = documentDetailWithDueDate.documentDetail.getDocType,
               adjustmentHistory = chargeHistoryService.getAdjustmentHistory(chargeHistory, documentDetailWithDueDate.documentDetail),
               poaOneChargeUrl = poaOneChargeUrl,
               poaTwoChargeUrl = poaTwoChargeUrl
@@ -214,7 +220,6 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
       case _ =>
         onError("Invalid response from charge history", isAgent, showInternalServerError = true)
     }
-
   }
 
   def mandatoryViewDataPresent(isLatePaymentCharge: Boolean, documentDetailWithDueDate: DocumentDetailWithDueDate)(implicit user: MtdItUser[_]): Either[ErrorCode, Boolean] = {

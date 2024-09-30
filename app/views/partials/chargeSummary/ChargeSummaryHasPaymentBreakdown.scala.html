@@ -27,10 +27,9 @@
 
 @this(p: p, implicitDateFormatter: ImplicitDateFormatterImpl)
 
-@(  documentDetailWithDueDate: DocumentDetailWithDueDate,
+@(  chargeItem: models.financialDetails.ChargeItem,
     paymentBreakdown: List[FinancialDetail],
     latePaymentInterestCharge: Boolean,
-    documentDetail: DocumentDetail,
     chargeSummaryLpiCharge: ChargeSummaryLpiCharge,
     isAgent: Boolean = false,
     origin: Option[String] = None)(implicit messages: Messages)
@@ -51,7 +50,7 @@
                     @messages("chargeSummary.paymentBreakdown.dunningLocks.underReview")
                     </span>
                 }
-                @if(latePaymentInterestCharge && documentDetail.hasLpiWithDunningLock) {
+                @if(latePaymentInterestCharge && chargeItem.hasLpiWithDunningLock) {
                     @p(){
                         <span>@messages("chargeSummary.paymentBreakdown.lpiWithDunning.text")</span>
                         <span class="govuk-body-s half-light">@messages("chargeSummary.paymentBreakdown.dunningLocks.underReview")</span>
@@ -72,6 +71,6 @@
         </div>
     }
     @if(latePaymentInterestCharge) {
-        @chargeSummaryLpiCharge(documentDetail)
+        @chargeSummaryLpiCharge(chargeItem)
     }
 </dl>

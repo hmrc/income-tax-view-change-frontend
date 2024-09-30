@@ -930,6 +930,14 @@ object NewCalcBreakdownUnitTestConstants {
         taxAmount = 40000.00
       ),
       TaxBands(
+        name = "AVRT",
+        rate = 45.0,
+        bandLimit = 125140,
+        apportionedBandLimit = 125140,
+        income = 100000,
+        taxAmount = 11250.00
+      ),
+      TaxBands(
         name = "ART_scottish",
         rate = 45.0,
         bandLimit = 12500,

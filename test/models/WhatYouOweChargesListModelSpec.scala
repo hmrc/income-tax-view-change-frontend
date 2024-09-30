@@ -22,11 +22,12 @@ import models.outstandingCharges.OutstandingChargesModel
 import org.scalatest.matchers.should.Matchers
 import services.DateService
 import testConstants.BaseTestConstants.app
+import testConstants.ChargeConstants
 import testUtils.UnitSpec
 
 import java.time.LocalDate
 
-class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers {
+class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers with ChargeConstants {
 
   implicit val dateService: DateService = app.injector.instanceOf[DateService]
   lazy val fixedDate : LocalDate = LocalDate.of(2023, 12, 15)
@@ -35,17 +36,17 @@ class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers {
 
   def whatYouOweAllData(dunningLock: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    chargesList = financialDetailsDueIn30Days(dunningLock).getAllDocumentDetailsWithDueDates()
-      ++ financialDetailsDueInMoreThan30Days(dunningLock).getAllDocumentDetailsWithDueDates()
-      ++ financialDetailsOverdueData(dunningLock).getAllDocumentDetailsWithDueDates(),
+    chargesList = financialDetailsDueIn30DaysCi(dunningLock)
+      ++ financialDetailsDueInMoreThan30DaysCi(dunningLock)
+      ++ financialDetailsOverdueDataCi(dunningLock),
     outstandingChargesModel = Some(outstandingCharges)
   )
 
   def whatYouOweFinancialDataWithoutOutstandingCharges(dunningLock: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    chargesList = financialDetailsDueIn30Days(dunningLock).getAllDocumentDetailsWithDueDates()
-      ++ financialDetailsDueInMoreThan30Days(dunningLock).getAllDocumentDetailsWithDueDates()
-      ++ financialDetailsOverdueData(dunningLock).getAllDocumentDetailsWithDueDates()
+    chargesList = financialDetailsDueIn30DaysCi(dunningLock)
+      ++ financialDetailsDueInMoreThan30DaysCi(dunningLock)
+      ++ financialDetailsOverdueDataCi(dunningLock)
   )
 
 

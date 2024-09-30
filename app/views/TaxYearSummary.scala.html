@@ -24,6 +24,14 @@
 @import views.html.partials.{taxYearSummaryBreakdownPartial, taxYearSummaryTabsPartial}
 @import models.liabilitycalculation.viewmodels.TYSClaimToAdjustViewModel
 @import java.time.LocalDate
+@import models.taxyearsummary.TaxYearSummaryChargeItem
+@import models.taxyearsummary.TaxYearSummaryChargeItem._
+@import models.financialDetails.Accepted
+@import models.financialDetails.PaymentOnAccountOneReviewAndReconcile
+@import models.financialDetails.PaymentOnAccountTwoReviewAndReconcile
+@import models.financialDetails.BalancingCharge
+@import services.DateServiceInterface
+
 
 @this(
     mainTemplate: unifiedLayout,
@@ -39,10 +47,11 @@
 )
 
 @(taxYear: Int, viewModel: TaxYearSummaryViewModel, backUrl: String, isAgent: Boolean = false, origin: Option[String] = None
-  )(implicit request: Request[_], messages: Messages, user: auth.MtdItUser[_])
+  )(implicit request: Request[_], dateService: DateServiceInterface, messages: Messages, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter._
 @codingOutEnabled = @{viewModel.codingOutEnabled}
+@reviewAndReconcileEnabled = @{viewModel.reviewAndReconcileEnabled}
 @showForecastData = @{viewModel.showForecastData}
 
 
@@ -160,24 +169,17 @@
 }
 
 
-@getChargeSummaryHref(documentDetailWithDueDate: DocumentDetailWithDueDate) = @{
+@getChargeSummaryHref(chargeItem: TaxYearSummaryChargeItem) = @{
     if(isAgent){
-        controllers.routes.ChargeSummaryController.showAgent(taxYear, documentDetailWithDueDate.documentDetail.transactionId, documentDetailWithDueDate.isLatePaymentInterest).url
+        controllers.routes.ChargeSummaryController.showAgent(taxYear, chargeItem.transactionId, chargeItem.isLatePaymentInterest).url
     } else {
-        controllers.routes.ChargeSummaryController.show(taxYear, documentDetailWithDueDate.documentDetail.transactionId, documentDetailWithDueDate.isLatePaymentInterest, origin).url
+        controllers.routes.ChargeSummaryController.show(taxYear, chargeItem.transactionId, chargeItem.isLatePaymentInterest, origin).url
     }
 }
 
-@getChargeSummaryMessage(documentDetailWithDueDate: DocumentDetailWithDueDate) = @{
-    val chargeTypeKey = {
-        documentDetailWithDueDate match {
-            case _ if documentDetailWithDueDate.isMFADebit => "hmrcAdjustment.text"
-            case _ if documentDetailWithDueDate.isReviewAndReconcilePoaOneDebit => "first-poa-extra-amount"
-            case _ if documentDetailWithDueDate.isReviewAndReconcilePoaTwoDebit => "second-poa-extra-amount"
-            case _ => s"${documentDetailWithDueDate.documentDetail.getChargeTypeKey(codingOutEnabled)}"
-        }
-    }
-    val lpi = if (documentDetailWithDueDate.isLatePaymentInterest) "lpi." else ""
+@getChargeSummaryMessage(chargeItem: TaxYearSummaryChargeItem) = @{
+    val chargeTypeKey = chargeItem.getChargeTypeKey(codingOutEnabled, reviewAndReconcileEnabled)
+    val lpi = if (chargeItem.isLatePaymentInterest) "lpi." else ""
     messages(s"tax-year-summary.payments.${lpi}${chargeTypeKey}")
 }
 
@@ -206,47 +208,48 @@
             <caption class="govuk-table__caption govuk-visually-hidden" style="margin-bottom: 0px;">@messages("tax-year-summary.payments")</caption>
             @paymentsTableHead("payments-table-head")
             <tbody>
-            @for((documentDetailWithDueDate, index) <- viewModel.charges.sortBy(_.dueDate).sortBy(_.documentDetail.isPayeSelfAssessment).zipWithIndex) {
+            @for((chargeItem, index) <- viewModel.charges.sortBy(_.dueDate).sortBy(_.subTransactionType.contains(Accepted)).zipWithIndex) {
                 <tr class="govuk-table__row">
                     <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">
-                        @if(documentDetailWithDueDate.isOverdue &&
-                            !documentDetailWithDueDate.documentDetail.isPayeSelfAssessment &&
-                            ((!documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.isPaid) ||
-                            (documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.interestIsPaid))) {
+                        @if(chargeItem.isOverdue() &&
+                            !chargeItem.subTransactionType.contains(Accepted) &&
+                            ((!chargeItem.isLatePaymentInterest && !chargeItem.isPaid) ||
+                            (chargeItem.isLatePaymentInterest && !chargeItem.interestIsPaid))) {
                             <div class="govuk-tag govuk-tag--red">@messages("tax-year-summary.payments.overdue")</div>
                         }
-                        @if(documentDetailWithDueDate.isAccruingInterest) {
+
+                        @if(chargeItem.isAccruingInterest()) {
                             <div class="govuk-tag govuk-tag--red" id="accrues-interest-tag">@messages("taxYears.accruesInterest")</div>
                         }
                         <div id="paymentTypeText-@{index}">
-                            @if(documentDetailWithDueDate.documentDetail.originalAmount == 0) {
-                                @getChargeSummaryMessage(documentDetailWithDueDate)
+                            @if(chargeItem.originalAmount == 0) {
+                                @getChargeSummaryMessage(chargeItem)
                             } else {
-                                <a class="govuk-link"  id="paymentTypeLink-@{index}" href="@getChargeSummaryHref(documentDetailWithDueDate)">@getChargeSummaryMessage(documentDetailWithDueDate)</a>
+                                <a class="govuk-link"  id="paymentTypeLink-@{index}" href="@getChargeSummaryHref(chargeItem)">@getChargeSummaryMessage(chargeItem)</a>
                             }
                         </div>
-                        @if(documentDetailWithDueDate.dunningLock){<div class="form-hint govuk-body-s"> @messages("tax-year-summary.payments.paymentUnderReview") </div>}
-                        @if(documentDetailWithDueDate.documentDetail.hasLpiWithDunningLock){<div class="form-hint govuk-body-s"> @messages("tax-year-summary.payments.paymentUnderReview") </div>}
+                        @if(chargeItem.dunningLock){<div class="form-hint govuk-body-s"> @messages("tax-year-summary.payments.paymentUnderReview") </div>}
+                        @if(chargeItem.hasLpiWithDunningLock){<div class="form-hint govuk-body-s"> @messages("tax-year-summary.payments.paymentUnderReview") </div>}
                     </th>
-                    @if(documentDetailWithDueDate.isLatePaymentInterest) {
-                        @documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.map { latePaymentInterestAmount =>
-                             <td class="govuk-table__cell">@documentDetailWithDueDate.dueDate.map(_.toLongDateShort).getOrElse(messages("tax-year-summary.na"))</td>
+                    @if(chargeItem.isLatePaymentInterest) {
+                        @chargeItem.latePaymentInterestAmount.map { latePaymentInterestAmount =>
+                             <td class="govuk-table__cell">@chargeItem.dueDate.map(_.toLongDateShort).getOrElse(messages("tax-year-summary.na"))</td>
                              <td class="govuk-table__cell govuk-table__cell--numeric">@latePaymentInterestAmount.toCurrencyString</td>
                         }
-                    } else if(codingOutEnabled && documentDetailWithDueDate.documentDetail.isPayeSelfAssessment) {
+                    } else if(codingOutEnabled && chargeItem.subTransactionType.contains(Accepted)) {
                         <td class="govuk-table__cell">@messages("tax-year-summary.na")</td>
-                        <td class="govuk-table__cell govuk-table__cell--numeric">@documentDetailWithDueDate.documentDetail.originalAmount.toCurrencyString</td>
-                    } else if(documentDetailWithDueDate.documentDetail.isBalancingCharge(codingOutEnabled)) {
+                        <td class="govuk-table__cell govuk-table__cell--numeric">@chargeItem.originalAmount.toCurrencyString</td>
+                    } else if(chargeItem.transactionType == BalancingCharge && chargeItem.subTransactionType.isEmpty) {
                          <td class="govuk-table__cell">
-                            @documentDetailWithDueDate.documentDetail.getBalancingChargeDueDate(codingOutEnabled).map(_.toLongDateShort).getOrElse(messages("tax-year-summary.na"))
+                            @chargeItem.getDueDateForNonZeroBalancingCharge(codingOutEnabled).map(_.toLongDateShort).getOrElse(messages("tax-year-summary.na"))
                          </td>
-                         <td class="govuk-table__cell govuk-table__cell--numeric">@documentDetailWithDueDate.documentDetail.originalAmount.toCurrencyString</td>
-                    } else if(documentDetailWithDueDate.isReviewAndReconcileDebit) {
-                         <td class="govuk-table__cell">@documentDetailWithDueDate.dueDate.map(_.toLongDateShort).getOrElse(messages("tax-year-summary.na"))</td>
-                         <td class="govuk-table__cell govuk-table__cell--numeric">@documentDetailWithDueDate.documentDetail.outstandingAmount.toCurrencyString</td>
+                         <td class="govuk-table__cell govuk-table__cell--numeric">@chargeItem.originalAmount.toCurrencyString</td>
+                    } else if(Seq(PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile).contains(chargeItem.transactionType)) {
+                         <td class="govuk-table__cell">@chargeItem.dueDate.map(_.toLongDateShort).getOrElse(messages("tax-year-summary.na"))</td>
+                         <td class="govuk-table__cell govuk-table__cell--numeric">@chargeItem.outstandingAmount.toCurrencyString</td>
                     } else {
-                        <td class="govuk-table__cell">@documentDetailWithDueDate.dueDate.map(_.toLongDateShort).getOrElse(messages("tax-year-summary.na"))</td>
-                        <td class="govuk-table__cell govuk-table__cell--numeric">@documentDetailWithDueDate.documentDetail.originalAmount.toCurrencyString</td>
+                        <td class="govuk-table__cell">@chargeItem.dueDate.map(_.toLongDateShort).getOrElse(messages("tax-year-summary.na"))</td>
+                        <td class="govuk-table__cell govuk-table__cell--numeric">@chargeItem.originalAmount.toCurrencyString</td>
                     }
                 </tr>
             }
