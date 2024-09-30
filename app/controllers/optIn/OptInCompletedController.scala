@@ -20,6 +20,7 @@ import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
+import models.itsaStatus.ITSAStatus.Voluntary
 import models.optin.OptInCompletedViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -60,8 +61,12 @@ class OptInCompletedController @Inject()(val view: OptInCompletedView,
           proposition <- optInService.fetchOptInProposition()
           intent <- optInService.fetchSavedChosenTaxYear()
         } yield {
+          val followingYearVoluntary = proposition.nextTaxYear.status == Voluntary
           intent.map { optInTaxYear =>
-            val model = OptInCompletedViewModel(isAgent = isAgent, optInTaxYear = optInTaxYear, isCurrentYear = proposition.isCurrentTaxYear(optInTaxYear))
+            val model = OptInCompletedViewModel(isAgent = isAgent,
+                                                optInTaxYear = optInTaxYear,
+                                                isCurrentYear = proposition.isCurrentTaxYear(optInTaxYear),
+                                                followingVoluntary = followingYearVoluntary)
             Ok(view(model))
           }.getOrElse(errorHandler(isAgent).showInternalServerError())
         }

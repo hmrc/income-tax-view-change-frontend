@@ -34,7 +34,11 @@
 
 @panelBody = @{
     if(model.isCurrentYear) {
-        "optin.completedOptIn.cy.heading.desc"
+        if(model.followingVoluntary) {
+            "optin.completedOptIn.followingVoluntary.heading.desc"
+        } else {
+            "optin.completedOptIn.cy.heading.desc"
+        }
     } else "optin.completedOptIn.ny.heading.desc"
 }
 
