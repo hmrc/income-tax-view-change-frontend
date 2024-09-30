@@ -847,6 +847,8 @@ whatYouOwe.paymentOnAccount1.text							       = First payment on account
 whatYouOwe.paymentOnAccount2.text							       = Second payment on account
 whatYouOwe.reviewAndReconcilePoa1.text                              = First payment on account: extra amount from your tax return
 whatYouOwe.reviewAndReconcilePoa2.text                              = Second payment on account: extra amount from your tax return
+whatYouOwe.interest.reviewAndReconcilePoa1.text                    = Interest for first payment on account: extra amount
+whatYouOwe.interest.reviewAndReconcilePoa2.text                     = Interest for second payment on account: extra amount
 whatYouOwe.hmrcAdjustment.text                                     = HMRC adjustment
 whatYouOwe.lpi.paymentOnAccount1.text                              = Late payment interest on first payment on account
 whatYouOwe.lpi.paymentOnAccount2.text                              = Late payment interest on second payment on account
@@ -919,8 +921,10 @@ whatYouOwe.interestChargesWarning                                  = Interest ch
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text							   = First payment on account
 chargeSummary.paymentOnAccount2.text							   = Second payment on account
-chargeSummary.reviewAndReconcilePoa1.text				   = First payment on account: extra amount from your tax return
-chargeSummary.reviewAndReconcilePoa2.text				   = Second payment on account: extra amount from your tax return
+chargeSummary.interest.reviewAndReconcilePoa1.text                 = Interest for first payment on account: extra amount
+chargeSummary.interest.reviewAndReconcilePoa2.text                 = Interest for second payment on account: extra amount
+chargeSummary.reviewAndReconcilePoa1.text				           = First payment on account: extra amount from your tax return
+chargeSummary.reviewAndReconcilePoa2.text				           = Second payment on account: extra amount from your tax return
 chargeSummary.balancingCharge.text  							   = Balancing payment
 chargeSummary.class2Nic.text                                       = Class 2 National Insurance
 chargeSummary.codingOut.text                                       = Balancing payment collected through PAYE tax code
@@ -954,6 +958,18 @@ chargeSummary.lpi.paymentsOnAccount.textTwo                        = plus 2.5%.
 chargeSummary.lpi.paymentsOnAccount.p3                             = See guidance on the
 chargeSummary.lpi.paymentsOnAccount.p3LinkText                     = interest rates set by HMRC (opens in new tab).
 
+
+chargeSummary.poa1ExtraAmountInterest.p1                            = You owe HMRC interest because your tax return shows that your adjusted first payment on account was too low.
+chargeSummary.poa1ExtraAmountInterest.p2                            = HMRC applies the interest to the extra amount – the difference between your adjusted payment on account and what you actually owe.
+chargeSummary.poa1ExtraAmountInterest.p3                            = Interest is charged from the date your first payment on account was due and calculated at the
+chargeSummary.poa1ExtraAmountInterest.p3LinkText                    = Bank of England base rate (opens in new tab)
+chargeSummary.poa1ExtraAmountInterest.p3AfterLink                   = plus 2.5%.
+
+chargeSummary.poa2ExtraAmountInterest.p1                            = You owe HMRC interest because your tax return shows that your adjusted second payment on account was too low.
+chargeSummary.poa2ExtraAmountInterest.p2                            = HMRC applies the interest to the extra amount – the difference between your adjusted payment on account and what you actually owe.
+chargeSummary.poa2ExtraAmountInterest.p3                            = Interest is charged from the date your second payment on account was due and calculated at the
+chargeSummary.poa2ExtraAmountInterest.p3LinkText                    = Bank of England base rate (opens in new tab)
+chargeSummary.poa2ExtraAmountInterest.p3AfterLink                   = plus 2.5%.
 
 chargeSummary.definition.balancingcharge.p1                        = A balancing payment is the tax you still need to pay for a tax year. This happens if you:
 chargeSummary.definition.balancingcharge.bullet1                   = did not have any tax to pay during the year (for example, if your last Self Assessment tax bill was under £1,000)
@@ -1024,6 +1040,8 @@ chargeSummary.lpi.interestPeriod								   = Interest period
 chargeSummary.lpi.interestPeriod.dates							   = {0} to {1}
 chargeSummary.lpi.chargeHistory.created.paymentOnAccount1.text	   = Late payment interest for payment on account 1 of 2 created
 chargeSummary.lpi.chargeHistory.created.paymentOnAccount2.text	   = Late payment interest for payment on account 2 of 2 created
+chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa1.text       = HMRC created this charge
+chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa2.text       = HMRC created this charge
 chargeSummary.lpi.chargeHistory.created.balancingCharge.text	   = Late payment interest on balancing payment created
 
 chargeSummary.lpi.balancingCharge.p1                               = You owe HMRC interest because you paid your balancing payment late.
@@ -1039,6 +1057,9 @@ chargeSummary.reviewAndReconcilePoa1.linkText                         = first pa
 chargeSummary.reviewAndReconcilePoa2.linkText                         = second payment on account
 chargeSummary.reviewAndReconcilePoa.comma                             =
 chargeSummary.reviewAndReconcilePoa.p2                                = was too low.
+
+chargeSummary.lpi.poaExtraCharge.link                              = See guidance on the
+chargeSummary.lpi.poaExtraCharge.linkText                          = interest rates set by HMRC (opens in new tab).
 
 chargeSummary.paymentAllocations.poa1.incomeTax                    = Payment allocated to Income Tax for first payment on account
 chargeSummary.paymentAllocations.poa1.nic4                         = Payment allocated to Class 4 National Insurance for first payment on account

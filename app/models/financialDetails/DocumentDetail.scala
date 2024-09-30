@@ -17,7 +17,7 @@
 package models.financialDetails
 
 import enums.CodingOutType._
-import enums.{BalancingCharge, DocumentType, OtherCharge, Poa1Charge, Poa2Charge, TRMAmendCharge, TRMNewCharge}
+import enums.{BalancingCharge, DocumentType, OtherCharge, Poa1Charge, Poa1ReconciliationDebit, Poa2Charge, Poa2ReconciliationDebit, TRMAmendCharge, TRMNewCharge}
 import play.api.Logger
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.{Json, Reads, Writes, __}
@@ -67,7 +67,7 @@ case class DocumentDetail(taxYear: Int,
     lpiWithDunningLock.isDefined && lpiWithDunningLock.getOrElse[BigDecimal](0) > 0
 
   def hasAccruingInterest: Boolean =
-    interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0
+    interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0 && !isPaid
 
   def originalAmountIsNotNegative: Boolean = originalAmount match {
     case amount if amount < 0 => false
@@ -80,6 +80,12 @@ case class DocumentDetail(taxYear: Int,
   }
 
   def isLatePaymentInterest: Boolean = latePaymentInterestAmount match {
+    case Some(amount) if amount <= 0 => false
+    case Some(_) => true
+    case _ => false
+  }
+
+  def isOtherInterest: Boolean = interestOutstandingAmount match {
     case Some(amount) if amount <= 0 => false
     case Some(_) => true
     case _ => false
@@ -115,8 +121,8 @@ case class DocumentDetail(taxYear: Int,
     else outstandingAmount
   }
 
-  def remainingToPayByChargeOrLpi: BigDecimal = {
-    if (isLatePaymentInterest) interestRemainingToPay
+  def remainingToPayByChargeOrInterest: BigDecimal = {
+    if (isLatePaymentInterest || isOtherInterest) interestRemainingToPay
     else remainingToPay
   }
 
@@ -125,8 +131,10 @@ case class DocumentDetail(taxYear: Int,
     else interestOutstandingAmount.getOrElse(latePaymentInterestAmount.get)
   }
 
+  def isInterest: Boolean = isLatePaymentInterest || isOtherInterest
+
   def checkIfEitherChargeOrLpiHasRemainingToPay: Boolean = {
-    if (isLatePaymentInterest) interestRemainingToPay > 0
+    if (isLatePaymentInterest || isOtherInterest) interestRemainingToPay > 0
     else remainingToPay > 0
   }
 
@@ -181,6 +189,8 @@ case class DocumentDetail(taxYear: Int,
   def getChargeTypeKey(codedOutEnabled: Boolean = false): String = documentDescription match {
     case Some(Poa1Charge.key) => "paymentOnAccount1.text"
     case Some(Poa2Charge.key) => "paymentOnAccount2.text"
+    case Some(Poa1ReconciliationDebit.key) => "poa1ExtraCharge.text"
+    case Some(Poa2ReconciliationDebit.key) => "poa2ExtraCharge.text"
     case Some(BalancingCharge.key) => "balancingCharge.text"
     case Some(TRMNewCharge.key) | Some(TRMAmendCharge.key) => (codedOutEnabled, isClass2Nic, isPayeSelfAssessment, isCancelledPayeSelfAssessment) match {
       case (true, true, false, false) => "class2Nic.text"
@@ -205,6 +215,8 @@ case class DocumentDetail(taxYear: Int,
     documentDescription match {
       case Some(Poa1Charge.key) => Poa1Charge
       case Some(Poa2Charge.key) => Poa2Charge
+      case Some(Poa1ReconciliationDebit.key) => Poa1ReconciliationDebit
+      case Some(Poa2ReconciliationDebit.key) => Poa2ReconciliationDebit
       case Some(BalancingCharge.key) => BalancingCharge
       case Some(TRMNewCharge.key) => TRMNewCharge
       case Some(TRMAmendCharge.key) => TRMAmendCharge
@@ -229,6 +241,8 @@ case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Op
   def isAccruingInterest: Boolean = {
     isReviewAndReconcileDebit && !documentDetail.isPaid && !isOverdue
   }
+
+  def isOnlyInterest: Boolean = {(isOverdue && isLatePaymentInterest) || (documentDetail.isOtherInterest && documentDetail.isPaid)}
 }
 
 object DocumentDetail {

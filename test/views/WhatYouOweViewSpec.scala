@@ -66,6 +66,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val poa2Text: String = messages("whatYouOwe.paymentOnAccount2.text")
   val poaExtra1Text: String = messages("whatYouOwe.reviewAndReconcilePoa1.text")
   val poaExtra2Text: String = messages("whatYouOwe.reviewAndReconcilePoa2.text")
+  val poa1ReconcileInterest: String = messages("whatYouOwe.interest.reviewAndReconcilePoa1.text")
+  val poa2ReconcileInterest: String = messages("whatYouOwe.interest.reviewAndReconcilePoa2.text")
   val remainingBalance: String = messages("whatYouOwe.balancingCharge.text")
   val preMTDRemainingBalance: String = s"${messages("whatYouOwe.balancingCharge.text")} ${messages("whatYouOwe.pre-mtd-digital")}"
   val remainingBalanceLine1: String = messages("whatYouOwe.remaining-balance.line1")
@@ -90,6 +92,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val itsaPOA1: String = "ITSA- POA 1"
   val itsaPOA2: String = "ITSA - POA 2"
   val cancelledPayeSelfAssessment: String = messages("whatYouOwe.cancelledPayeSelfAssessment.text")
+
+  val interestEndDateFuture: LocalDate = LocalDate.of(2100, 1, 1)
 
   def ctaViewModel(isFSEnabled: Boolean): WYOClaimToAdjustViewModel = {
     if (isFSEnabled) {
@@ -450,7 +454,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         }
         "have review and reconcile extra payments with Accrues Interest tags in the same table" in new TestSetup(
-          charges = whatYouOweNotDueReviewReconcileData,
+          charges = whatYouOweWithReviewReconcileDataNotYetDue,
           reviewAndReconcileEnabled  = true) {
           val poaExtra1Table: Element = pageDocument.getElementById("due-0")
           poaExtra1Table.select("td").first().text() shouldBe fixedDate.plusYears(100).minusDays(1).toLongDateShort
@@ -465,6 +469,22 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           poa2ExtraTable.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
 
           poa2ExtraTable.select("td").last().text() shouldBe "£75.00"
+        }
+        "have interest charges for paid reconciliation charges in the same table" in new TestSetup(charges = whatYouOweReconciliationInterestData,
+          reviewAndReconcileEnabled = true) {
+          val poaExtra1Table: Element = pageDocument.getElementById("due-0")
+          poaExtra1Table.select("td").first().text() shouldBe interestEndDateFuture.toLongDateShort
+          poaExtra1Table.select("td").get(1).text() shouldBe poa1ReconcileInterest + " 1"
+          poaExtra1Table.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
+
+          poaExtra1Table.select("td").last().text() shouldBe "£100.00"
+
+          val poa2ExtraTable: Element = pageDocument.getElementById("due-1")
+          poa2ExtraTable.select("td").first().text() shouldBe interestEndDateFuture.toLongDateShort
+          poa2ExtraTable.select("td").get(1).text() shouldBe poa2ReconcileInterest + " 2"
+          poa2ExtraTable.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
+
+          poa2ExtraTable.select("td").last().text() shouldBe "£40.00"
         }
         "payment type drop down and content exists" in new TestSetup(charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
           pageDocument.select(".govuk-details__summary-text").text shouldBe dropDownInfo
@@ -727,7 +747,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
             overduePaymentsTableRow1.select("td").last().text() shouldBe "£34.56"
 
             pageDocument.getElementById("due-0-late-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
-              fixedDate.getYear, "1040000124", latePaymentCharge = true).url
+              fixedDate.getYear, "1040000124", isInterestCharge = true).url
             pageDocument.getElementById("due-0-overdue").text shouldBe overdueTag
             pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
               fixedDate.getYear).url
@@ -760,7 +780,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
             overduePaymentsTableRow1.select("td").last().text() shouldBe "£34.56"
 
             pageDocument.getElementById("due-0-late-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
-              fixedDate.getYear, "1040000124", latePaymentCharge = true).url
+              fixedDate.getYear, "1040000124", isInterestCharge = true).url
             pageDocument.getElementById("due-0-overdue").text shouldBe overdueTag
             pageDocument.getElementById("LpiDunningLock").text shouldBe "Payment under review"
             pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
@@ -789,7 +809,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
             overduePaymentsTableRow1.select("td").last().text() shouldBe "£34.56"
 
             pageDocument.getElementById("due-0-late-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
-              fixedDate.getYear, "1040000124", latePaymentCharge = true).url
+              fixedDate.getYear, "1040000124", isInterestCharge = true).url
             pageDocument.getElementById("due-0-overdue").text shouldBe overdueTag
             pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
               fixedDate.getYear).url
