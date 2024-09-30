@@ -142,6 +142,14 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
     val lpiPoaTextParagraph = messages("chargeSummary.lpi.paymentsOnAccount.textOne") + " " + messages("chargeSummary.lpi.paymentsOnAccount.linkText") + " " + messages("chargeSummary.lpi.paymentsOnAccount.textTwo")
     val lpiPoaTextP3 = messages("chargeSummary.lpi.paymentsOnAccount.p3") + " " + messages("chargeSummary.lpi.paymentsOnAccount.p3LinkText")
 
+    val poa1ReconciliationInterestP1 = messages("chargeSummary.poa1ExtraAmountInterest.p1")
+    val poa1ReconciliationInterestP2 = messages("chargeSummary.poa1ExtraAmountInterest.p2")
+    val poa1ReconciliationInterestP3 = messages("chargeSummary.poa1ExtraAmountInterest.p3") + " " +  messages("chargeSummary.poa1ExtraAmountInterest.p3LinkText") + " " + messages("chargeSummary.poa1ExtraAmountInterest.p3AfterLink")
+
+    val poa2ReconciliationInterestP1 = messages("chargeSummary.poa2ExtraAmountInterest.p1")
+    val poa2ReconciliationInterestP2 = messages("chargeSummary.poa2ExtraAmountInterest.p2")
+    val poa2ReconciliationInterestP3 = messages("chargeSummary.poa2ExtraAmountInterest.p3") + " " +  messages("chargeSummary.poa2ExtraAmountInterest.p3LinkText") + " " + messages("chargeSummary.poa2ExtraAmountInterest.p3AfterLink")
+
     val bcdTextParagraph = messages("chargeSummary.definition.balancingcharge.p1")
     val bcdTextBullets = messages("chargeSummary.definition.balancingcharge.bullet1") + " " + messages("chargeSummary.definition.balancingcharge.bullet2")
     val bcdTextP2 = messages("chargeSummary.definition.balancingcharge.p2")
@@ -169,6 +177,14 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
     def poa2InterestHeading(year: Int, number: Int) = s"${year - 1} to $year tax year Late payment interest on second payment on account"
 
+    def poa1ReconcileHeading(year: Int, number: Int) = s"${year - 1} to $year tax year First payment on account: extra amount from your tax return"
+
+    def poa2ReconcileHeading(year: Int, number: Int) = s"${year - 1} to $year tax year Second payment on account: extra amount from your tax return"
+
+    def poa1ReconcileInterestHeading(year: Int, number: Int) = s"${year - 1} to $year tax year Interest for first payment on account: extra amount"
+
+    def poa2ReconcileInterestHeading(year: Int, number: Int) = s"${year - 1} to $year tax year Interest for second payment on account: extra amount"
+
     def balancingChargeHeading(year: Int) = s"${year - 1} to $year tax year $balancingCharge"
 
     def balancingChargeInterestHeading(year: Int) = s"${year - 1} to $year tax year ${messages("chargeSummary.lpi.balancingCharge.text")}"
@@ -181,6 +197,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
     val interestPeriod: String = messages("chargeSummary.lpi.interestPeriod")
     val fullPaymentAmount: String = messages("chargeSummary.paymentAmount")
     val paymentAmount: String = messages("chargeSummary.paymentAmountCodingOut")
+    val amount: String = messages("chargeSummary.chargeHistory.amount")
     val remainingToPay: String = messages("chargeSummary.remainingDue")
     val paymentBreakdownHeading: String = messages("chargeSummary.paymentBreakdown.heading")
     val chargeHistoryHeadingGeneric: String = messages("chargeSummary.chargeHistory.heading")
@@ -194,6 +211,8 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
     def paymentOnAccountCreated(number: Int) = messages(s"chargeSummary.chargeHistory.created.paymentOnAccount$number.text")
 
     def paymentOnAccountInterestCreated(number: Int) = s"Late payment interest for payment on account $number of 2 created"
+
+    val hmrcCreated: String = messages("chargeSummary.lpi.chargeHistory.created.poa1ExtraCharge.text")
 
     val balancingChargeCreated: String = messages("chargeSummary.chargeHistory.created.balancingCharge.text")
     val balancingChargeInterestCreated: String = messages("chargeSummary.lpi.chargeHistory.created.balancingCharge.text")
@@ -364,6 +383,24 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.select("h1").text() shouldBe poa2InterestHeading(2018, 2)
       }
 
+      "have the correct heading for a POA 1 reconciliation charge" in new TestSetup(documentDetailModel(documentDescription = Some("some-description")), paymentBreakdown = paymentBreakdown, isReviewAndReconcilePoaOneDebit = true) {
+        document.select("h1").text() shouldBe poa1ReconcileHeading(2018, 2)
+      }
+
+      "have the correct heading for a POA 2 reconciliation charge" in new TestSetup(documentDetailModel(documentDescription = Some("some-description")), paymentBreakdown = paymentBreakdown, isReviewAndReconcilePoaTwoDebit = true) {
+        document.select("h1").text() shouldBe poa2ReconcileHeading(2018, 2)
+      }
+
+      "have the correct heading for interest for a POA 1 reconciliation charge" in new TestSetup(documentDetailModel(documentDescription = Some("POA 1 Reconciliation Debit"),
+        interestOutstandingAmount = Some(100), outstandingAmount = 0, latePaymentInterestAmount = None), otherInterestCharge = true, isReviewAndReconcilePoaOneDebit = true) {
+        document.select("h1").text() shouldBe poa1ReconcileInterestHeading(2018, 2)
+      }
+
+      "have the correct heading for interest for a POA 2 reconciliation charge" in new TestSetup(documentDetailModel(documentDescription = Some("POA 2 Reconciliation Debit"),
+        interestOutstandingAmount = Some(100), outstandingAmount = 0, latePaymentInterestAmount = None), otherInterestCharge = true, isReviewAndReconcilePoaTwoDebit = true) {
+        document.select("h1").text() shouldBe poa2ReconcileInterestHeading(2018, 2)
+      }
+
       s"have the correct heading for a $paymentBreakdownNic2 charge when coding out FS is enabled" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(paymentBreakdownNic2)), codingOutEnabled = true) {
         document.select("h1").text() shouldBe class2NicHeading(2018)
       }
@@ -418,6 +455,20 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.select("#charge-explanation>:nth-child(1)").text() shouldBe poaTextParagraph
         document.select("#charge-explanation>:nth-child(2)").text() shouldBe poaTextBullets
         document.select("#charge-explanation>:nth-child(3)").text() shouldBe poaTextP2
+      }
+
+      "have content explaining the interest on a POA1 reconciliation charge" in new TestSetup(documentDetailModel(documentDescription = Some("POA 1 Reconciliation Debit"),
+        interestOutstandingAmount = Some(100), outstandingAmount = 0, latePaymentInterestAmount = None), otherInterestCharge = true, isReviewAndReconcilePoaOneDebit = true) {
+        document.selectById("poa1-extra-charge-p1").text() shouldBe poa1ReconciliationInterestP1
+        document.selectById("poa1-extra-charge-p2").text() shouldBe poa1ReconciliationInterestP2
+        document.selectById("poa1-extra-charge-p3").text() shouldBe poa1ReconciliationInterestP3
+      }
+
+      "have content explaining the interest on a POA2 reconciliation charge" in new TestSetup(documentDetailModel(documentDescription = Some("POA 2 Reconciliation Debit"),
+        interestOutstandingAmount = Some(100), outstandingAmount = 0, latePaymentInterestAmount = None), otherInterestCharge = true, isReviewAndReconcilePoaTwoDebit = true) {
+        document.selectById("poa2-extra-charge-p1").text() shouldBe poa2ReconciliationInterestP1
+        document.selectById("poa2-extra-charge-p2").text() shouldBe poa2ReconciliationInterestP2
+        document.selectById("poa2-extra-charge-p3").text() shouldBe poa2ReconciliationInterestP3
       }
 
       "have content explaining the definition of a late payment interest charge on account when charge is a POA1" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA- POA 1")), latePaymentInterestCharge = true) {
@@ -548,6 +599,14 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
       "display a remaining amount of 0 if a cleared amount equal to the original amount is present but an outstanding amount is not" in new TestSetup(documentDetailModel(outstandingAmount = 0)) {
         verifySummaryListRowNumeric(3, remainingToPay, "£0.00")
+      }
+
+      "display all relevant information for interest on a poa reconciliation charge" in new TestSetup(documentDetailModel(documentDescription = Some("POA 1 Reconciliation Debit"),
+        interestOutstandingAmount = Some(100), outstandingAmount = 0, latePaymentInterestAmount = None), otherInterestCharge = true, isReviewAndReconcilePoaOneDebit = true) {
+        verifySummaryListRowNumeric(1, dueDate, "15 May 2019")
+        verifySummaryListRowNumeric(2, interestPeriod, "29 Mar 2018 to 15 Jun 2018")
+        verifySummaryListRowNumeric(3, amount, "£100.00")
+        verifySummaryListRowNumeric(4, remainingToPay, "£100.00")
       }
 
       "not display the Payment breakdown list when payments breakdown is empty" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = Nil) {
@@ -708,6 +767,22 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       "display only the charge creation item for a payment on account 2 of 2 late interest charge" in new TestSetup(documentDetailModel(outstandingAmount = 0, documentDescription = Some("ITSA - POA 2")), latePaymentInterestCharge = true) {
         document.select("tbody tr").size() shouldBe 1
         document.select("tbody tr td:nth-child(2)").text() shouldBe paymentOnAccountInterestCreated(2)
+      }
+
+      "display only the charge creation item for interest on a poa 1 reconciliation charge" in new TestSetup(documentDetailModel(documentDescription = Some("POA 1 Reconciliation Debit"),
+        interestOutstandingAmount = Some(100), outstandingAmount = 0, latePaymentInterestAmount = None), otherInterestCharge = true, isReviewAndReconcilePoaOneDebit = true) {
+        document.select("tbody tr").size() shouldBe 1
+        document.select("tbody tr td:nth-child(1)").text() shouldBe "15 Jun 2018"
+        document.select("tbody tr td:nth-child(2)").text() shouldBe hmrcCreated
+        document.select("tbody tr td:nth-child(3)").text() shouldBe "£100.00"
+      }
+
+      "display only the charge creation item for interest on a poa 2 reconciliation charge" in new TestSetup(documentDetailModel(documentDescription = Some("POA 2 Reconciliation Debit"),
+        interestOutstandingAmount = Some(100), outstandingAmount = 0, latePaymentInterestAmount = None), otherInterestCharge = true, isReviewAndReconcilePoaTwoDebit = true) {
+        document.select("tbody tr").size() shouldBe 1
+        document.select("tbody tr td:nth-child(1)").text() shouldBe "15 Jun 2018"
+        document.select("tbody tr td:nth-child(2)").text() shouldBe hmrcCreated
+        document.select("tbody tr td:nth-child(3)").text() shouldBe "£100.00"
       }
 
       "display only the charge creation item for a new balancing charge late interest charge" in new TestSetup(documentDetailModel(outstandingAmount = 0, documentDescription = Some("TRM New Charge")), latePaymentInterestCharge = true) {
