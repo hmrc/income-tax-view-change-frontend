@@ -63,14 +63,6 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
     }.flatten
   }
 
-  def hasOverdueOrAccruingInterestCharges(whatYouOweChargesList: WhatYouOweChargesList): Boolean = {
-
-    val hasOverdueCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isOverdue())
-    val hasAccruingInterestReviewAndReconcileCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isAccruingInterest())
-
-    hasOverdueCharges || hasAccruingInterestReviewAndReconcileCharges
-  }
-
   def getWhatYouOweChargesList(unpaidCharges: List[FinancialDetailsResponseModel],
                                isCodingOutEnabled: Boolean,
                                isMFACreditsEnabled: Boolean,

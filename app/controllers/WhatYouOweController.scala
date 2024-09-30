@@ -60,15 +60,18 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
 
     for {
       whatYouOweChargesList <- whatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(MFACreditsAndDebits), isEnabled(ReviewAndReconcilePoa))
-      _ <- whatYouOweService.getCreditCharges() // TODO: Return value never used?
+      creditCharges <- whatYouOweService.getCreditCharges()
       ctaViewModel <- claimToAdjustViewModel(Nino(user.nino))
     } yield {
 
       auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList, dateService))
 
+      val hasOverdueCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isOverdue()(dateService))
+      val hasAccruingInterestReviewAndReconcileCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isAccruingInterest()(dateService))
+
       Ok(whatYouOwe(
-        currentDate = dateService.getCurrentDate,
-        hasOverdueOrAccruingInterestCharges = whatYouOweService.hasOverdueOrAccruingInterestCharges(whatYouOweChargesList),
+        creditCharges = creditCharges,
+        hasOverdueOrAccruingInterestCharges = hasOverdueCharges || hasAccruingInterestReviewAndReconcileCharges,
         whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
         currentTaxYear = dateService.getCurrentTaxYearEnd, backUrl = backUrl, utr = user.saUtr,
         btaNavPartial = user.btaNavPartial,

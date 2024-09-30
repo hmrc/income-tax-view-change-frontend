@@ -18,7 +18,7 @@ package controllers
 
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import forms.utils.SessionKeys.gatewayPage
+import forms.utils.SessionKeys.{gatewayPage, origin}
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.MockClaimToAdjustService
@@ -93,17 +93,23 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
     ))
   )
 
+  def whatYouOweChargesListWithOverdueCharge: WhatYouOweChargesList = WhatYouOweChargesList(
+    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    financialDetailsOverdueCharges,
+    Some(OutstandingChargesModel(List(
+      OutstandingChargeModel("POA1RR", Some(LocalDate.parse("2010-12-31")), 10.23, 1234), OutstandingChargeModel("POA1RR", Some(LocalDate.parse("2010-12-31")), 1.23, 1234))
+    ))
+  )
+
   def whatYouOweChargesListEmpty: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None), List.empty)
 
-  def whatYouOweChargesListWithAllChargesPaid: WhatYouOweChargesList = whatYouOweChargesListWithReviewReconcile
-    .copy(
-      chargesList = List(
-        whatYouOweChargesListWithReviewReconcile
-          .chargesList
-          .head
-          .copy(outstandingAmount = 0)
-      )
-    )
+  def whatYouOweChargesListWithBalancingChargeNotOverdue: WhatYouOweChargesList = WhatYouOweChargesList(
+    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    financialDetailsBalancingChargeNotOverdue,
+    Some(OutstandingChargesModel(List(
+      OutstandingChargeModel("BCD", Some(LocalDate.parse("2020-12-31")), 10.23, 1234), OutstandingChargeModel("BCD", None, 1.23, 1234))
+    ))
+  )
 
   val noFinancialDetailErrors = List(testFinancialDetail(2018))
   val hasFinancialDetailErrors = List(testFinancialDetail(2018), testFinancialDetailsErrorModel)
@@ -332,7 +338,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
 
         when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
-          .thenReturn(Future.successful(whatYouOweChargesListWithReviewReconcile))
+          .thenReturn(Future.successful(whatYouOweChargesListWithOverdueCharge))
 
         when(whatYouOweService.getCreditCharges()(any(), any()))
           .thenReturn(Future.successful(List()))
@@ -352,7 +358,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
         when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
-          .thenReturn(Future.successful(whatYouOweChargesListFull))
+          .thenReturn(Future.successful(whatYouOweChargesListWithOverdueCharge))
 
         when(whatYouOweService.getCreditCharges()(any(), any()))
           .thenReturn(Future.successful(List()))
@@ -365,14 +371,16 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         status(resultAgent) shouldBe Status.OK
         Jsoup.parse(contentAsString(resultAgent)).getElementById("interest-charges-warning").text() shouldBe interestChargesWarningText
       }
-      "render the Interest Charges Warning when an unpaid Review and Reconcile charge exists" in new Setup {
+      "render the Interest Charges Warning when a Review and Reconcile charge with accruing interest exists" in new Setup {
+        println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+        println(s"CURRENT DATE: ${dateService.getCurrentDate}")
         enable(ReviewAndReconcilePoa)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
         when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
-          .thenReturn(Future.successful(whatYouOweChargesListWithReviewReconcile))
+          .thenReturn(Future.successful(whatYouOweChargesListWithOverdueCharge))
 
         when(whatYouOweService.getCreditCharges()(any(), any()))
           .thenReturn(Future.successful(List()))
@@ -385,7 +393,6 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         status(resultAgent) shouldBe Status.OK
         Jsoup.parse(contentAsString(resultAgent)).getElementById("interest-charges-warning").text() shouldBe interestChargesWarningText
       }
-
       "hide the Interest Charges Warning when there are no overdue charges or unpaid Review & Reconcile charges" in new Setup {
         enable(ReviewAndReconcilePoa)
         mockSingleBISWithCurrentYearAsMigrationYear()
@@ -393,7 +400,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
         when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
-          .thenReturn(Future.successful(whatYouOweChargesListWithAllChargesPaid))
+          .thenReturn(Future.successful(whatYouOweChargesListWithBalancingChargeNotOverdue))
 
         when(whatYouOweService.getCreditCharges()(any(), any()))
           .thenReturn(Future.successful(List()))

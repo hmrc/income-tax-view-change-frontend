@@ -143,7 +143,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     val defaultClaimToAdjustViewModel = ctaViewModel(adjustPaymentsOnAccountFSEnabled)
 
     val html: HtmlFormat.Appendable = whatYouOweView(
-      currentDate = dateService.getCurrentDate,
       creditCharges = creditCharges,
       whatYouOweChargesList = charges,
       hasLpiWithDunningLock = hasLpiWithDunningLock,
@@ -206,9 +205,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
     val whatYouOweView: WhatYouOwe = app.injector.instanceOf[WhatYouOwe]
 
-    private val currentDateIs: LocalDate = dateService.getCurrentDate
     val html: HtmlFormat.Appendable = whatYouOweView(
-      currentDateIs,
       creditCharges = creditCharges,
       whatYouOweChargesList = charges,
       hasLpiWithDunningLock = hasLpiWithDunningLock,

@@ -44,7 +44,7 @@
     govukInsetText : GovukInsetText
 )
 
-@(currentDate: LocalDate,
+@(creditCharges: List[DocumentDetail],
     hasOverdueOrAccruingInterestCharges: Boolean,
     whatYouOweChargesList: WhatYouOweChargesList,
     hasLpiWithDunningLock: Boolean,
@@ -68,6 +68,8 @@
 @getPrefix(key: String) = @{
     s"whatYouOwe.$key"
 }
+
+@currentDate = @{ dateService.getCurrentDate }
 
 @getMessage(key: String, args: String*) = @{
     messages(s"whatYouOwe.$key", args: _*)
