@@ -23,7 +23,7 @@ import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.{MockFinancialDetailsService, MockIncomeSourceDetailsService, MockNextUpdatesService, MockWhatYouOweService}
-import models.admin.{CreditsRefundsRepay, IncomeSources, IncomeSourcesNewJourney}
+import models.admin.{CreditsRefundsRepay, IncomeSources, IncomeSourcesNewJourney, ReviewAndReconcilePoa}
 import models.financialDetails._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -155,7 +155,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         mockSingleBusinessIncomeSource()
         when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
           .thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
-        when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+        when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(oneOverdueBCDPaymentInWhatYouOweChargesList))
 
         val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
@@ -247,13 +247,77 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         document.select("#overdue-warning").text shouldBe s"! Warning ${messages("home.overdue.message.dunningLock.false")}"
       }
 
+      "display daily interest accruing warning and tag when there are payments accruing interest" in new Setup {
+        mockGetDueDates(Right(futureDueDates))
+        mockSingleBusinessIncomeSource()
+        enable(ReviewAndReconcilePoa)
+
+        when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
+          .thenReturn(Future.successful(List(
+            FinancialDetailsModel(
+              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+              documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId2", Some("SA POA 1 Reconciliation Debit"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
+                documentDueDate = Some(futureDueDates.head), interestOutstandingAmount = Some(400))),
+              financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, mainType = Some("SA POA 1 Reconciliation Debit"), transactionId = Some("testId2"),
+                items = Some(Seq(SubItem(dueDate = Some(futureDueDates.head))))))),
+            FinancialDetailsModel(
+              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+              documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId3", Some("SA POA 2 Reconciliation Debit"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
+                documentDueDate = Some(futureDueDates.head), interestOutstandingAmount = Some(400))),
+              financialDetails = List(FinancialDetail(nextPaymentYear, mainType = Some("SA POA 2 Reconciliation Debit"),
+                transactionId = Some("testId3"),
+                items = Some(Seq(SubItem(dueDate = Some(futureDueDates.head)))))))
+          )))
+        setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+
+        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+
+        status(result) shouldBe Status.OK
+        val document: Document = Jsoup.parse(contentAsString(result))
+        document.title shouldBe homePageTitle
+        document.select("#accrues-interest-tag").text shouldBe messages("home.payments.daily-interest-charges")
+        document.select("#accrues-interest-warning").text shouldBe s"! Warning ${messages("home.interest-accruing")}"
+      }
+
+      "does not display daily interest accruing warning and tag when the payments accruing interest are overdue" in new Setup {
+        mockGetDueDates(Right(futureDueDates))
+        mockSingleBusinessIncomeSource()
+        enable(ReviewAndReconcilePoa)
+
+        when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
+          .thenReturn(Future.successful(List(
+            FinancialDetailsModel(
+              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+              documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId2", Some("SA POA 1 Reconciliation Debit"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
+                documentDueDate = Some(nextPaymentDate2.toString), interestOutstandingAmount = Some(400))),
+              financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, mainType = Some("SA POA 1 Reconciliation Debit"), transactionId = Some("testId2"),
+                items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString))))))),
+            FinancialDetailsModel(
+              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+              documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId3", Some("SA POA 2 Reconciliation Debit"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
+                documentDueDate = Some(nextPaymentDate2.toString), interestOutstandingAmount = Some(400))),
+              financialDetails = List(FinancialDetail(nextPaymentYear, mainType = Some("SA POA 2 Reconciliation Debit"),
+                transactionId = Some("testId3"),
+                items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString)))))))
+          )))
+        setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+
+        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+
+        status(result) shouldBe Status.OK
+        val document: Document = Jsoup.parse(contentAsString(result))
+        document.title shouldBe homePageTitle
+        document.select("#accrues-interest-tag").text shouldBe ""
+        document.select("#accrues-interest-warning").text shouldBe ""
+      }
+
       "Not display the next payment due date" when {
         "there is a problem getting financial details" in new Setup {
           mockGetDueDates(Right(futureDueDates))
           mockSingleBusinessIncomeSource()
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
-          when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+          when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
 
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
@@ -270,7 +334,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
           mockSingleBusinessIncomeSource()
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None), List(), List()))))
-          when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+          when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
 
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
@@ -292,7 +356,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
               financialDetails = List(FinancialDetail(nextPaymentYear, transactionId = Some("testId"),
                 items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
             ))))
-          when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+          when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
 
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
@@ -500,286 +564,286 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
     }
   }
 
-  "navigate to homepage as Agent" should {
-    "the user is not authenticated" should {
-      "redirect them to sign in" in new Setup {
-        setupMockAgentAuthorisationException(withClientPredicate = false)
-
-        val result: Future[Result] = TestHomeController.showAgent()(fakeRequestWithActiveSession)
-
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
-      }
-    }
-
-    "the user has timed out" should {
-      "redirect to the session timeout page" in new Setup {
-        setupMockAgentAuthorisationException(exception = BearerTokenExpired())
-
-        val result: Future[Result] = TestHomeController.showAgent()(fakeRequestWithClientDetails)
-
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
-      }
-    }
-
-    "the user does not have an agent reference number" should {
-      "return Ok with technical difficulties" in new Setup {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccessNoEnrolment, withClientPredicate = false)
-        mockShowOkTechnicalDifficulties()
-
-        val result: Future[Result] = TestHomeController.showAgent()(fakeRequestWithActiveSession)
-
-        status(result) shouldBe OK
-        contentType(result) shouldBe Some(HTML)
-      }
-    }
-
-    "the call to retrieve income sources for the client returns an error" should {
-      "return an internal server exception" in new Setup {
-
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockErrorIncomeSource()
-
-        val result = TestHomeController.showAgent()(fakeRequestConfirmedClient())
-
-        result.failed.futureValue shouldBe an[InternalServerException]
-        result.failed.futureValue.getMessage shouldBe "IncomeSourceDetailsModel not created"
-      }
-    }
-
-    "the call to retrieve income sources for the client is successful" when {
-      "retrieving their obligation due date details had a failure" should {
-        "return an internal server exception" in new Setup {
-
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-          when(mockDateService.getCurrentDate).thenReturn(fixedDate)
-          mockSingleBusinessIncomeSource()
-          mockGetDueDates(Left(new Exception("obligation test exception")))
-          setupMockGetWhatYouOweChargesList(emptyWhatYouOweChargesList)
-
-          val result = TestHomeController.showAgent()(fakeRequestConfirmedClient())
-
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        }
-      }
-
-      "retrieving their obligation due date details was successful" when {
-        "retrieving their charge due date details had a failure" should {
-          "return an internal server exception" in {
-
-            setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-            when(mockDateService.getCurrentDate).thenReturn(fixedDate)
-            mockSingleBusinessIncomeSource()
-            mockGetDueDates(Right(futureDueDates))
-            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any())) thenReturn Future.failed(new InternalServerException("obligation test exception"))
-            setupMockGetWhatYouOweChargesList(emptyWhatYouOweChargesList)
-
-            val result: Future[Result] = TestHomeController.showAgent()(fakeRequestConfirmedClient())
-
-            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-          }
-        }
-        "retrieving their charge due date details was successful" should {
-          "display the home page with right details and without dunning lock warning and one overdue payment" in {
-
-            setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-            mockSingleBusinessIncomeSource()
-            when(mockDateService.getCurrentDate).thenReturn(fixedDate)
-            mockGetDueDates(Right(futureDueDates))
-
-            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
-              .thenReturn(Future.successful(List(financialDetailsModel(dueDateValue = Some(LocalDate.of(2021, 5, 15).toString)))))
-            setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
-
-            val result: Future[Result] = TestHomeController.showAgent()(fakeRequestConfirmedClient())
-
-            status(result) shouldBe OK
-            contentType(result) shouldBe Some(HTML)
-            val document: Document = Jsoup.parse(contentAsString(result))
-            document.title shouldBe agentTitle
-            document.select("#payments-tile p:nth-child(2)").text shouldBe s"${messages("home.overdue.date")} 15 June 2018"
-            document.select("#overdue-warning").text shouldBe s"! Warning $overdueWarningMessageDunningLockFalse"
-          }
-          "display the home page with right details and without dunning lock warning and one overdue payment from CESA" in {
-
-            setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-            mockSingleBusinessIncomeSource()
-            when(mockDateService.getCurrentDate).thenReturn(fixedDate)
-            mockGetDueDates(Right(futureDueDates))
-            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
-              .thenReturn(Future.successful(List(financialDetailsModel(testTaxYear, dueDateValue = None))))
-            setupMockGetWhatYouOweChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList)
-
-            val result: Future[Result] = TestHomeController.showAgent()(fakeRequestConfirmedClient())
-
-            status(result) shouldBe OK
-            contentType(result) shouldBe Some(HTML)
-            val document: Document = Jsoup.parse(contentAsString(result))
-            document.title shouldBe agentTitle
-            document.select("#payments-tile p:nth-child(2)").text shouldBe twoOverduePayments
-          }
-          "display the home page with right details and with dunning lock warning and two overdue payments" in {
-
-            setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-            when(mockDateService.getCurrentDate).thenReturn(fixedDate)
-            mockSingleBusinessIncomeSource()
-            mockGetDueDates(Right(futureDueDates))
-            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
-              .thenReturn(Future.successful(List(financialDetailsModel(testTaxYear, dunningLock = Some("Stand over order")))))
-            setupMockGetWhatYouOweChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList)
-
-            val result: Future[Result] = TestHomeController.showAgent()(fakeRequestConfirmedClient())
-
-            status(result) shouldBe OK
-            contentType(result) shouldBe Some(HTML)
-            val document: Document = Jsoup.parse(contentAsString(result))
-            document.title shouldBe agentTitle
-            document.select("#payments-tile p:nth-child(2)").text shouldBe twoOverduePayments
-            document.select("#overdue-warning").text shouldBe s"! Warning $overdueWarningMessageDunningLockTrue"
-          }
-          "display the home page with right details and with dunning lock warning and two overdue payments from FinancialDetailsService and one from CESA" in {
-
-            setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-            when(mockDateService.getCurrentDate).thenReturn(fixedDate)
-            mockSingleBusinessIncomeSource()
-            mockGetDueDates(Right(futureDueDates))
-            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
-              .thenReturn(Future.successful(List(financialDetailsModel(testTaxYear, dunningLock = Some("Stand over order")),
-                financialDetailsModel(testTaxYear))))
-            setupMockGetWhatYouOweChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList)
-
-            val result: Future[Result] = TestHomeController.showAgent()(fakeRequestConfirmedClient())
-
-            status(result) shouldBe OK
-            contentType(result) shouldBe Some(HTML)
-            val document: Document = Jsoup.parse(contentAsString(result))
-            document.title shouldBe agentTitle
-            document.select("#payments-tile p:nth-child(2)").text shouldBe messages("home.overdue.date.payment.count", "3")
-            document.select("#overdue-warning").text shouldBe s"! Warning $overdueWarningMessageDunningLockTrue"
-          }
-          "display the home page with right details and with dunning lock warning and one overdue payments from CESA" in {
-
-            setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-            when(mockDateService.getCurrentDate).thenReturn(fixedDate)
-            mockSingleBusinessIncomeSource()
-            mockGetDueDates(Right(futureDueDates))
-            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
-              .thenReturn(Future.successful(List(financialDetailsModel(testTaxYear, dunningLock = Some("Stand over order"), dueDateValue = None))))
-            setupMockGetWhatYouOweChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList)
-
-            val result: Future[Result] = TestHomeController.showAgent()(fakeRequestConfirmedClient())
-
-            status(result) shouldBe OK
-            contentType(result) shouldBe Some(HTML)
-            val document: Document = Jsoup.parse(contentAsString(result))
-            document.title shouldBe agentTitle
-            document.select("#payments-tile p:nth-child(2)").text shouldBe twoOverduePayments
-            document.select("#overdue-warning").text shouldBe s"! Warning $overdueWarningMessageDunningLockTrue"
-          }
-          "display the home page with right details and without dunning lock warning and one overdue payments from CESA" in {
-
-            setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-            when(mockDateService.getCurrentDate).thenReturn(fixedDate)
-            mockSingleBusinessIncomeSource()
-            mockGetDueDates(Right(futureDueDates))
-            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
-              .thenReturn(Future.successful(List(financialDetailsModel(testTaxYear, dunningLock = None, dueDateValue = None))))
-            setupMockGetWhatYouOweChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList)
-
-            val result: Future[Result] = TestHomeController.showAgent()(fakeRequestConfirmedClient())
-
-            status(result) shouldBe OK
-            contentType(result) shouldBe Some(HTML)
-            val document: Document = Jsoup.parse(contentAsString(result))
-            document.title shouldBe agentTitle
-            document.select("#payments-tile p:nth-child(2)").text shouldBe twoOverduePayments
-            document.select("#overdue-warning").text shouldBe s"! Warning $overdueWarningMessageDunningLockFalse"
-          }
-        }
-        "there is no update date to display - Agent" in new Setup {
-          setupMockAuthorisationSuccess(true)
-          mockGetDueDates(Right(Seq.empty))
-          mockSingleBusinessIncomeSource()
-          mockGetAllUnpaidFinancialDetails()
-          setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
-
-          val result: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
-          status(result) shouldBe Status.OK
-
-          val document: Document = Jsoup.parse(contentAsString(result))
-          document.title shouldBe agentTitle
-          document.select("#updates-tile").text shouldBe messages("home.updates.heading")
-        }
-      }
-    }
-    "display the available credit when CreditsAndRefundsRepay FS is enabled" in new Setup {
-      disableAllSwitches()
-      enable(CreditsRefundsRepay)
-      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-      mockGetDueDates(Right(Seq.empty))
-      mockSingleBusinessIncomeSource()
-      when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
-        .thenReturn(Future.successful(List(FinancialDetailsModel(
-          balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(786), None, None, None, None),
-          documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", Some("ITSA- POA 1"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
-            documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
-          financialDetails = List(FinancialDetail(taxYear = nextPaymentYear, mainType = Some("SA Payment on Account 1"),
-            transactionId = Some("testId"),
-            items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
-        ))))
-      setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
-
-      val result: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
-
-      status(result) shouldBe Status.OK
-      val document: Document = Jsoup.parse(contentAsString(result))
-      document.getElementById("available-credit").text shouldBe expectedAvailableCreditText("£786.00")
-    }
-    "display £0.00 available credit when available credit is None" in new Setup {
-      disableAllSwitches()
-      enable(CreditsRefundsRepay)
-      mockGetDueDates(Right(Seq.empty))
-      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-      mockSingleBusinessIncomeSource()
-      when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
-        .thenReturn(Future.successful(List(FinancialDetailsModel(
-          balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-          documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", Some("ITSA- POA 1"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
-            documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
-          financialDetails = List(FinancialDetail(taxYear = nextPaymentYear, mainType = Some("SA Payment on Account 1"),
-            transactionId = Some("testId"),
-            items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
-        ))))
-      setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
-
-      val result: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
-
-      status(result) shouldBe Status.OK
-      val document: Document = Jsoup.parse(contentAsString(result))
-      document.getElementById("available-credit").text shouldBe expectedAvailableCreditText("£0.00")
-    }
-    "not display the available credit when CreditsAndRefundsRepay FS is disabled" in new Setup {
-      disable(CreditsRefundsRepay)
-      mockGetDueDates(Right(Seq.empty))
-      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-      mockSingleBusinessIncomeSource()
-      when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
-        .thenReturn(Future.successful(List(FinancialDetailsModel(
-          balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(786), None, None, None, None),
-          documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", Some("ITSA- POA 1"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
-            documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
-          financialDetails = List(FinancialDetail(taxYear = nextPaymentYear, mainType = Some("SA Payment on Account 1"),
-            transactionId = Some("testId"),
-            items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
-        ))))
-      setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
-
-      val result: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
-
-      status(result) shouldBe Status.OK
-      val document: Document = Jsoup.parse(contentAsString(result))
-      Option(document.getElementById("available-credit")).isDefined shouldBe false
-    }
-  }
+//  "navigate to homepage as Agent" should {
+//    "the user is not authenticated" should {
+//      "redirect them to sign in" in new Setup {
+//        setupMockAgentAuthorisationException(withClientPredicate = false)
+//
+//        val result: Future[Result] = TestHomeController.showAgent()(fakeRequestWithActiveSession)
+//
+//        status(result) shouldBe SEE_OTHER
+//        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
+//      }
+//    }
+//
+//    "the user has timed out" should {
+//      "redirect to the session timeout page" in new Setup {
+//        setupMockAgentAuthorisationException(exception = BearerTokenExpired())
+//
+//        val result: Future[Result] = TestHomeController.showAgent()(fakeRequestWithClientDetails)
+//
+//        status(result) shouldBe SEE_OTHER
+//        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
+//      }
+//    }
+//
+//    "the user does not have an agent reference number" should {
+//      "return Ok with technical difficulties" in new Setup {
+//        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccessNoEnrolment, withClientPredicate = false)
+//        mockShowOkTechnicalDifficulties()
+//
+//        val result: Future[Result] = TestHomeController.showAgent()(fakeRequestWithActiveSession)
+//
+//        status(result) shouldBe OK
+//        contentType(result) shouldBe Some(HTML)
+//      }
+//    }
+//
+//    "the call to retrieve income sources for the client returns an error" should {
+//      "return an internal server exception" in new Setup {
+//
+//        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+//        mockErrorIncomeSource()
+//
+//        val result = TestHomeController.showAgent()(fakeRequestConfirmedClient())
+//
+//        result.failed.futureValue shouldBe an[InternalServerException]
+//        result.failed.futureValue.getMessage shouldBe "IncomeSourceDetailsModel not created"
+//      }
+//    }
+//
+//    "the call to retrieve income sources for the client is successful" when {
+//      "retrieving their obligation due date details had a failure" should {
+//        "return an internal server exception" in new Setup {
+//
+//          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+//          when(mockDateService.getCurrentDate).thenReturn(fixedDate)
+//          mockSingleBusinessIncomeSource()
+//          mockGetDueDates(Left(new Exception("obligation test exception")))
+//          setupMockGetWhatYouOweChargesList(emptyWhatYouOweChargesList)
+//
+//          val result = TestHomeController.showAgent()(fakeRequestConfirmedClient())
+//
+//          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+//        }
+//      }
+//
+//      "retrieving their obligation due date details was successful" when {
+//        "retrieving their charge due date details had a failure" should {
+//          "return an internal server exception" in {
+//
+//            setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+//            when(mockDateService.getCurrentDate).thenReturn(fixedDate)
+//            mockSingleBusinessIncomeSource()
+//            mockGetDueDates(Right(futureDueDates))
+//            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any())) thenReturn Future.failed(new InternalServerException("obligation test exception"))
+//            setupMockGetWhatYouOweChargesList(emptyWhatYouOweChargesList)
+//
+//            val result: Future[Result] = TestHomeController.showAgent()(fakeRequestConfirmedClient())
+//
+//            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+//          }
+//        }
+//        "retrieving their charge due date details was successful" should {
+//          "display the home page with right details and without dunning lock warning and one overdue payment" in {
+//
+//            setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+//            mockSingleBusinessIncomeSource()
+//            when(mockDateService.getCurrentDate).thenReturn(fixedDate)
+//            mockGetDueDates(Right(futureDueDates))
+//
+//            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
+//              .thenReturn(Future.successful(List(financialDetailsModel(dueDateValue = Some(LocalDate.of(2021, 5, 15).toString)))))
+//            setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+//
+//            val result: Future[Result] = TestHomeController.showAgent()(fakeRequestConfirmedClient())
+//
+//            status(result) shouldBe OK
+//            contentType(result) shouldBe Some(HTML)
+//            val document: Document = Jsoup.parse(contentAsString(result))
+//            document.title shouldBe agentTitle
+//            document.select("#payments-tile p:nth-child(2)").text shouldBe s"${messages("home.overdue.date")} 15 June 2018"
+//            document.select("#overdue-warning").text shouldBe s"! Warning $overdueWarningMessageDunningLockFalse"
+//          }
+//          "display the home page with right details and without dunning lock warning and one overdue payment from CESA" in {
+//
+//            setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+//            mockSingleBusinessIncomeSource()
+//            when(mockDateService.getCurrentDate).thenReturn(fixedDate)
+//            mockGetDueDates(Right(futureDueDates))
+//            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
+//              .thenReturn(Future.successful(List(financialDetailsModel(testTaxYear, dueDateValue = None))))
+//            setupMockGetWhatYouOweChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList)
+//
+//            val result: Future[Result] = TestHomeController.showAgent()(fakeRequestConfirmedClient())
+//
+//            status(result) shouldBe OK
+//            contentType(result) shouldBe Some(HTML)
+//            val document: Document = Jsoup.parse(contentAsString(result))
+//            document.title shouldBe agentTitle
+//            document.select("#payments-tile p:nth-child(2)").text shouldBe twoOverduePayments
+//          }
+//          "display the home page with right details and with dunning lock warning and two overdue payments" in {
+//
+//            setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+//            when(mockDateService.getCurrentDate).thenReturn(fixedDate)
+//            mockSingleBusinessIncomeSource()
+//            mockGetDueDates(Right(futureDueDates))
+//            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
+//              .thenReturn(Future.successful(List(financialDetailsModel(testTaxYear, dunningLock = Some("Stand over order")))))
+//            setupMockGetWhatYouOweChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList)
+//
+//            val result: Future[Result] = TestHomeController.showAgent()(fakeRequestConfirmedClient())
+//
+//            status(result) shouldBe OK
+//            contentType(result) shouldBe Some(HTML)
+//            val document: Document = Jsoup.parse(contentAsString(result))
+//            document.title shouldBe agentTitle
+//            document.select("#payments-tile p:nth-child(2)").text shouldBe twoOverduePayments
+//            document.select("#overdue-warning").text shouldBe s"! Warning $overdueWarningMessageDunningLockTrue"
+//          }
+//          "display the home page with right details and with dunning lock warning and two overdue payments from FinancialDetailsService and one from CESA" in {
+//
+//            setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+//            when(mockDateService.getCurrentDate).thenReturn(fixedDate)
+//            mockSingleBusinessIncomeSource()
+//            mockGetDueDates(Right(futureDueDates))
+//            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
+//              .thenReturn(Future.successful(List(financialDetailsModel(testTaxYear, dunningLock = Some("Stand over order")),
+//                financialDetailsModel(testTaxYear))))
+//            setupMockGetWhatYouOweChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList)
+//
+//            val result: Future[Result] = TestHomeController.showAgent()(fakeRequestConfirmedClient())
+//
+//            status(result) shouldBe OK
+//            contentType(result) shouldBe Some(HTML)
+//            val document: Document = Jsoup.parse(contentAsString(result))
+//            document.title shouldBe agentTitle
+//            document.select("#payments-tile p:nth-child(2)").text shouldBe messages("home.overdue.date.payment.count", "3")
+//            document.select("#overdue-warning").text shouldBe s"! Warning $overdueWarningMessageDunningLockTrue"
+//          }
+//          "display the home page with right details and with dunning lock warning and one overdue payments from CESA" in {
+//
+//            setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+//            when(mockDateService.getCurrentDate).thenReturn(fixedDate)
+//            mockSingleBusinessIncomeSource()
+//            mockGetDueDates(Right(futureDueDates))
+//            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
+//              .thenReturn(Future.successful(List(financialDetailsModel(testTaxYear, dunningLock = Some("Stand over order"), dueDateValue = None))))
+//            setupMockGetWhatYouOweChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList)
+//
+//            val result: Future[Result] = TestHomeController.showAgent()(fakeRequestConfirmedClient())
+//
+//            status(result) shouldBe OK
+//            contentType(result) shouldBe Some(HTML)
+//            val document: Document = Jsoup.parse(contentAsString(result))
+//            document.title shouldBe agentTitle
+//            document.select("#payments-tile p:nth-child(2)").text shouldBe twoOverduePayments
+//            document.select("#overdue-warning").text shouldBe s"! Warning $overdueWarningMessageDunningLockTrue"
+//          }
+//          "display the home page with right details and without dunning lock warning and one overdue payments from CESA" in {
+//
+//            setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+//            when(mockDateService.getCurrentDate).thenReturn(fixedDate)
+//            mockSingleBusinessIncomeSource()
+//            mockGetDueDates(Right(futureDueDates))
+//            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
+//              .thenReturn(Future.successful(List(financialDetailsModel(testTaxYear, dunningLock = None, dueDateValue = None))))
+//            setupMockGetWhatYouOweChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList)
+//
+//            val result: Future[Result] = TestHomeController.showAgent()(fakeRequestConfirmedClient())
+//
+//            status(result) shouldBe OK
+//            contentType(result) shouldBe Some(HTML)
+//            val document: Document = Jsoup.parse(contentAsString(result))
+//            document.title shouldBe agentTitle
+//            document.select("#payments-tile p:nth-child(2)").text shouldBe twoOverduePayments
+//            document.select("#overdue-warning").text shouldBe s"! Warning $overdueWarningMessageDunningLockFalse"
+//          }
+//        }
+//        "there is no update date to display - Agent" in new Setup {
+//          setupMockAuthorisationSuccess(true)
+//          mockGetDueDates(Right(Seq.empty))
+//          mockSingleBusinessIncomeSource()
+//          mockGetAllUnpaidFinancialDetails()
+//          setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+//
+//          val result: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
+//          status(result) shouldBe Status.OK
+//
+//          val document: Document = Jsoup.parse(contentAsString(result))
+//          document.title shouldBe agentTitle
+//          document.select("#updates-tile").text shouldBe messages("home.updates.heading")
+//        }
+//      }
+//    }
+//    "display the available credit when CreditsAndRefundsRepay FS is enabled" in new Setup {
+//      disableAllSwitches()
+//      enable(CreditsRefundsRepay)
+//      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+//      mockGetDueDates(Right(Seq.empty))
+//      mockSingleBusinessIncomeSource()
+//      when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
+//        .thenReturn(Future.successful(List(FinancialDetailsModel(
+//          balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(786), None, None, None, None),
+//          documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", Some("ITSA- POA 1"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
+//            documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
+//          financialDetails = List(FinancialDetail(taxYear = nextPaymentYear, mainType = Some("SA Payment on Account 1"),
+//            transactionId = Some("testId"),
+//            items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
+//        ))))
+//      setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+//
+//      val result: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
+//
+//      status(result) shouldBe Status.OK
+//      val document: Document = Jsoup.parse(contentAsString(result))
+//      document.getElementById("available-credit").text shouldBe expectedAvailableCreditText("£786.00")
+//    }
+//    "display £0.00 available credit when available credit is None" in new Setup {
+//      disableAllSwitches()
+//      enable(CreditsRefundsRepay)
+//      mockGetDueDates(Right(Seq.empty))
+//      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+//      mockSingleBusinessIncomeSource()
+//      when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
+//        .thenReturn(Future.successful(List(FinancialDetailsModel(
+//          balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+//          documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", Some("ITSA- POA 1"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
+//            documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
+//          financialDetails = List(FinancialDetail(taxYear = nextPaymentYear, mainType = Some("SA Payment on Account 1"),
+//            transactionId = Some("testId"),
+//            items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
+//        ))))
+//      setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+//
+//      val result: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
+//
+//      status(result) shouldBe Status.OK
+//      val document: Document = Jsoup.parse(contentAsString(result))
+//      document.getElementById("available-credit").text shouldBe expectedAvailableCreditText("£0.00")
+//    }
+//    "not display the available credit when CreditsAndRefundsRepay FS is disabled" in new Setup {
+//      disable(CreditsRefundsRepay)
+//      mockGetDueDates(Right(Seq.empty))
+//      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+//      mockSingleBusinessIncomeSource()
+//      when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
+//        .thenReturn(Future.successful(List(FinancialDetailsModel(
+//          balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(786), None, None, None, None),
+//          documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", Some("ITSA- POA 1"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
+//            documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
+//          financialDetails = List(FinancialDetail(taxYear = nextPaymentYear, mainType = Some("SA Payment on Account 1"),
+//            transactionId = Some("testId"),
+//            items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
+//        ))))
+//      setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+//
+//      val result: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
+//
+//      status(result) shouldBe Status.OK
+//      val document: Document = Jsoup.parse(contentAsString(result))
+//      Option(document.getElementById("available-credit")).isDefined shouldBe false
+//    }
+//  }
 }

@@ -24,7 +24,7 @@ import controllers.routes
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
-import models.optin.{MultiYearCheckYourAnswersViewModel, OptInSessionData}
+import models.optin.{ConfirmTaxYearViewModel, MultiYearCheckYourAnswersViewModel, OptInSessionData}
 import repositories.ITSAStatusRepositorySupport._
 import repositories.UIJourneySessionDataRepository
 import services.optIn.core.OptInProposition._
@@ -87,8 +87,8 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
   }
 
   private def fetchSavedOptInSessionData()(implicit user: MtdItUser[_],
-                                   hc: HeaderCarrier,
-                                   ec: ExecutionContext): Future[Option[OptInSessionData]] = {
+                                           hc: HeaderCarrier,
+                                           ec: ExecutionContext): Future[Option[OptInSessionData]] = {
 
     val savedOptInSessionData = for {
       sessionData <- OptionT(fetchExistingUIJourneySessionDataOrInit())
@@ -99,8 +99,8 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
   }
 
   private def fetchSavedOptInProposition()(implicit user: MtdItUser[_],
-                              hc: HeaderCarrier,
-                              ec: ExecutionContext): Future[Option[OptInProposition]] = {
+                                           hc: HeaderCarrier,
+                                           ec: ExecutionContext): Future[Option[OptInProposition]] = {
 
     val savedOptInProposition = for {
 
@@ -122,8 +122,8 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
 
 
   def fetchOptInProposition()(implicit user: MtdItUser[_],
-                               hc: HeaderCarrier,
-                               ec: ExecutionContext): Future[OptInProposition] = {
+                              hc: HeaderCarrier,
+                              ec: ExecutionContext): Future[OptInProposition] = {
 
     fetchSavedOptInProposition().flatMap { savedProposition =>
       savedProposition.map(Future.successful).getOrElse {
@@ -135,11 +135,11 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
     }
   }
 
-  private def fetchOptInInitialState( currentYear: TaxYear,
-                                      nextYear: TaxYear)
-                                     (implicit user: MtdItUser[_],
-                                      hc: HeaderCarrier,
-                                      ec: ExecutionContext): Future[OptInInitialState] = {
+  private def fetchOptInInitialState(currentYear: TaxYear,
+                                     nextYear: TaxYear)
+                                    (implicit user: MtdItUser[_],
+                                     hc: HeaderCarrier,
+                                     ec: ExecutionContext): Future[OptInInitialState] = {
 
     val statusMapFuture: Future[Map[TaxYear, ITSAStatus]] = getITSAStatusesFrom(currentYear)
 
@@ -149,15 +149,15 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
   }
 
   private def getITSAStatusesFrom(currentYear: TaxYear)(implicit user: MtdItUser[_],
-                                                         hc: HeaderCarrier,
-                                                         ec: ExecutionContext): Future[Map[TaxYear, ITSAStatus]] = {
+                                                        hc: HeaderCarrier,
+                                                        ec: ExecutionContext): Future[Map[TaxYear, ITSAStatus]] = {
     itsaStatusService.getStatusTillAvailableFutureYears(currentYear.previousYear).map(_.view.mapValues(_.status).toMap.withDefaultValue(ITSAStatus.NoStatus))
     //todo is passing currentYear.previousYear correct here?
   }
 
   def fetchSavedChosenTaxYear()(implicit user: MtdItUser[_],
-                                   hc: HeaderCarrier,
-                                   ec: ExecutionContext): Future[Option[TaxYear]] = {
+                                hc: HeaderCarrier,
+                                ec: ExecutionContext): Future[Option[TaxYear]] = {
 
     fetchSavedOptInSessionData().map {
       case None => None
@@ -178,5 +178,17 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
   }
 
   private def isNextTaxYear(currentTaxYear: TaxYear, candidate: TaxYear): Boolean = currentTaxYear.nextYear == candidate
+
+  def getConfirmTaxYearViewModel(isAgent: Boolean)(implicit user: MtdItUser[_],
+                                                   hc: HeaderCarrier,
+                                                   ec: ExecutionContext): Future[Option[ConfirmTaxYearViewModel]] = {
+    val result = for {
+      intentTaxYear <- OptionT(fetchSavedChosenTaxYear())
+      cancelURL = routes.ReportingFrequencyPageController.show(isAgent).url
+      intentIsNextYear = isNextTaxYear(dateService.getCurrentTaxYear, intentTaxYear)
+    } yield ConfirmTaxYearViewModel(intentTaxYear, cancelURL, intentIsNextYear, isAgent)
+
+    result.value
+  }
 
 }

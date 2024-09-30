@@ -24,13 +24,14 @@ import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEve
 import helpers.servicemocks.AuthStub.{titleInternalServer, titleProbWithService}
 import helpers.servicemocks.{CalculationListStub, IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import models.admin.{AdjustPaymentsOnAccount, MFACreditsAndDebits}
+import models.admin.{AdjustPaymentsOnAccount, MFACreditsAndDebits, ReviewAndReconcilePoa}
 import models.core.AccountingPeriodModel
 import models.financialDetails._
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.liabilitycalculation.LiabilityCalculationError
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
-import models.obligations.{SingleObligationModel, GroupedObligationsModel, ObligationsModel, StatusFulfilled}
+import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
+import org.jsoup.Jsoup
 import play.api.http.Status._
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
@@ -39,7 +40,7 @@ import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.address
 import testConstants.CalculationListIntegrationTestConstants.successResponseNonCrystallised
-import testConstants.IncomeSourceIntegrationTestConstants.{singleBusinessResponseWoMigration, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
+import testConstants.IncomeSourceIntegrationTestConstants.{singleBusinessResponseWoMigration, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson, testValidFinancialDetailsModelReviewAndReconcileDebitsJson}
 import testConstants.NewCalcBreakdownItTestConstants.{liabilityCalculationModelDeductionsMinimal, liabilityCalculationModelSuccessful}
 import testConstants.messages.TaxYearSummaryMessages._
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
@@ -741,6 +742,43 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         testMFADebits(false)
       }
     }
+
+    "Review and Reconcile debit charges should" should {
+      "render in the charges table" when {
+        "the user has Review and Reconcile debit charges and ReviewAndReconcilePoa FS is enabled" in {
+          enable(ReviewAndReconcilePoa)
+          stubAuthorisedAgentUser(authorised = true)
+
+          Given("A successful getIncomeSourceDetails call is made")
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
+
+          And(s"A non crystallised calculation for $getCurrentTaxYearEnd is returned")
+          IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(status = OK, body = liabilityCalculationModelDeductionsMinimal)
+
+          And(s"A non crystallised calculation for $getCurrentTaxYearEnd is returned from calc list")
+          CalculationListStub.stubGetCalculationList(testNino, "22-23")(successResponseNonCrystallised.toString)
+
+          And("I wiremock stub financial details for TY22/23 with POAs")
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testYear2023 - 1}-04-06", s"$testYear2023-04-05")(OK,
+            testValidFinancialDetailsModelReviewAndReconcileDebitsJson(2000, 2000, testYear2023.toString, futureDate.toString))
+
+          val res = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+
+          val document = Jsoup.parse(res.body)
+
+          document.getElementById("paymentTypeLink-0").attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(testYear2023, "1040000123").url
+          document.getElementById("paymentTypeLink-1").attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(testYear2023, "1040000124").url
+
+          res should have(
+            httpStatus(OK),
+            pageTitleAgent("tax-year-summary.heading"),
+            elementTextByID("paymentTypeLink-0")("First payment on account: extra amount from your tax return"),
+            elementTextByID("paymentTypeLink-1")("Second payment on account: extra amount from your tax return"),
+            isElementVisibleById("accrues-interest-tag")(expectedValue = true))
+        }
+      }
+    }
+
     "Claim to adjust POA section" should {
       "show" when {
         "The user has amendable POAs for the given tax year and the FS is Enabled" in {

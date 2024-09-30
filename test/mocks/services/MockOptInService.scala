@@ -22,6 +22,7 @@ import org.mockito.ArgumentMatchers.{any, matches}
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
 import services.optIn.OptInService
+import services.optIn.core.OptInProposition
 import testUtils.UnitSpec
 
 import scala.concurrent.Future
@@ -43,7 +44,15 @@ trait MockOptInService extends UnitSpec with BeforeAndAfterEach {
     when(mockOptInService.availableOptInTaxYear()(any(), any(), any())).thenReturn(Future.successful(choices))
   }
 
-  def mockFetchSavedChosenTaxYear(intent: TaxYear): Unit = {
-    when(mockOptInService.fetchSavedChosenTaxYear()(any(), any(), any())).thenReturn(Future.successful(Some(intent)))
+  def mockFetchSavedChosenTaxYear(intentOpl: Option[TaxYear]): Unit = {
+    when(mockOptInService.fetchSavedChosenTaxYear()(any(), any(), any())).thenReturn(Future.successful(intentOpl))
+  }
+
+  def mockFetchOptInProposition(propositionOpl: Option[OptInProposition]): Unit = {
+    propositionOpl.map { proposition =>
+      when(mockOptInService.fetchOptInProposition()(any(), any(), any())).thenReturn(Future.successful(proposition))
+    } getOrElse {
+      when(mockOptInService.fetchOptInProposition()(any(), any(), any())).thenReturn(Future.failed(new RuntimeException("Some error")))
+    }
   }
 }

@@ -32,6 +32,7 @@ import java.time.LocalDate
 object BaseIntegrationTestConstants {
 
   val testDate: LocalDate = LocalDate.of(2018, 5, 5)
+  val futureDate: LocalDate = LocalDate.of(2100, 1, 1)
 
   val testUserTypeIndividual = Individual
   val testUserTypeAgent = Agent

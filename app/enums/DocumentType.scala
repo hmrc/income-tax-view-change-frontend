@@ -36,7 +36,7 @@ case object TRMNewCharge extends DocumentType {
   override val key: String = "TRM New Charge"
 }
 
-case object TRMAmmendCharge extends DocumentType {
+case object TRMAmendCharge extends DocumentType {
   override val key: String = "TRM Amend Charge"
 }
 

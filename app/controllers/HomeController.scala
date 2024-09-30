@@ -23,7 +23,7 @@ import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import models.admin._
-import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
+import models.financialDetails.{DocumentDetail, FinancialDetail, FinancialDetailsModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
 import models.homePage._
 import models.incomeSourceDetails.TaxYear
 import models.obligations.NextUpdatesTileViewModel
@@ -88,6 +88,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
       outstandingChargesModel <- getOutstandingChargesModel(unpaidCharges)
       outstandingChargeDueDates = getRelevantDates(outstandingChargesModel)
       overDuePaymentsCount = calculateOverduePaymentsCount(paymentsDue, outstandingChargesModel)
+      accruingInterestPaymentsCount = NextPaymentsTileViewModel.paymentsAccruingInterestCount(unpaidCharges, dateService.getCurrentDate)
       paymentsDueMerged = mergePaymentsDue(paymentsDue, outstandingChargeDueDates)
     } yield {
 
@@ -101,7 +102,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
       val returnsTileViewModel = ReturnsTileViewModel(TaxYear(dateService.getCurrentTaxYearEnd - 1, dateService.getCurrentTaxYearEnd), isEnabled(ITSASubmissionIntegration))
 
-      NextPaymentsTileViewModel(paymentsDueMerged, overDuePaymentsCount).verify match {
+      NextPaymentsTileViewModel(paymentsDueMerged, overDuePaymentsCount, accruingInterestPaymentsCount, isEnabled(ReviewAndReconcilePoa)).verify match {
 
         case Right(viewModel: NextPaymentsTileViewModel) => val homeViewModel = HomePageViewModel(
           utr = user.saUtr,
@@ -137,7 +138,8 @@ private def getOutstandingChargesModel(unpaidCharges: List[FinancialDetailsRespo
   whatYouOweService.getWhatYouOweChargesList(
     unpaidCharges,
     isEnabled(CodingOut),
-    isEnabled(MFACreditsAndDebits)
+    isEnabled(MFACreditsAndDebits),
+    isEnabled(ReviewAndReconcilePoa)
   ) map {
     case WhatYouOweChargesList(_, _, Some(OutstandingChargesModel(outstandingCharges)), _) =>
       outstandingCharges.filter(_.isBalancingChargeDebit)

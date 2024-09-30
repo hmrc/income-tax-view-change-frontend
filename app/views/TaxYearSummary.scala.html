@@ -169,7 +169,14 @@
 }
 
 @getChargeSummaryMessage(documentDetailWithDueDate: DocumentDetailWithDueDate) = @{
-    val chargeTypeKey = if (documentDetailWithDueDate.isMFADebit) "hmrcAdjustment.text" else s"${documentDetailWithDueDate.documentDetail.getChargeTypeKey(codingOutEnabled)}"
+    val chargeTypeKey = {
+        documentDetailWithDueDate match {
+            case _ if documentDetailWithDueDate.isMFADebit => "hmrcAdjustment.text"
+            case _ if documentDetailWithDueDate.isReviewAndReconcilePoaOneDebit => "first-poa-extra-amount"
+            case _ if documentDetailWithDueDate.isReviewAndReconcilePoaTwoDebit => "second-poa-extra-amount"
+            case _ => s"${documentDetailWithDueDate.documentDetail.getChargeTypeKey(codingOutEnabled)}"
+        }
+    }
     val lpi = if (documentDetailWithDueDate.isLatePaymentInterest) "lpi." else ""
     messages(s"tax-year-summary.payments.${lpi}${chargeTypeKey}")
 }
@@ -208,6 +215,9 @@
                             (documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.interestIsPaid))) {
                             <div class="govuk-tag govuk-tag--red">@messages("tax-year-summary.payments.overdue")</div>
                         }
+                        @if(documentDetailWithDueDate.isAccruingInterest) {
+                            <div class="govuk-tag govuk-tag--red" id="accrues-interest-tag">@messages("taxYears.accruesInterest")</div>
+                        }
                         <div id="paymentTypeText-@{index}">
                             @if(documentDetailWithDueDate.documentDetail.originalAmount == 0) {
                                 @getChargeSummaryMessage(documentDetailWithDueDate)
@@ -231,6 +241,9 @@
                             @documentDetailWithDueDate.documentDetail.getBalancingChargeDueDate(codingOutEnabled).map(_.toLongDateShort).getOrElse(messages("tax-year-summary.na"))
                          </td>
                          <td class="govuk-table__cell govuk-table__cell--numeric">@documentDetailWithDueDate.documentDetail.originalAmount.toCurrencyString</td>
+                    } else if(documentDetailWithDueDate.isReviewAndReconcileDebit) {
+                         <td class="govuk-table__cell">@documentDetailWithDueDate.dueDate.map(_.toLongDateShort).getOrElse(messages("tax-year-summary.na"))</td>
+                         <td class="govuk-table__cell govuk-table__cell--numeric">@documentDetailWithDueDate.documentDetail.outstandingAmount.toCurrencyString</td>
                     } else {
                         <td class="govuk-table__cell">@documentDetailWithDueDate.dueDate.map(_.toLongDateShort).getOrElse(messages("tax-year-summary.na"))</td>
                         <td class="govuk-table__cell govuk-table__cell--numeric">@documentDetailWithDueDate.documentDetail.originalAmount.toCurrencyString</td>

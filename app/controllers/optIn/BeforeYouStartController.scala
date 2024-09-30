@@ -16,19 +16,23 @@
 
 package controllers.optIn
 
-import auth.FrontendAuthorisedFunctions
+import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
+import models.incomeSourceDetails.TaxYear
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import services.optIn.OptInService
 import utils.AuthenticatorPredicate
 import views.html.optIn.BeforeYouStart
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class BeforeYouStartController @Inject()(val beforeYouStart: BeforeYouStart)
+class BeforeYouStartController @Inject()(val beforeYouStart: BeforeYouStart,
+                                         val optInService: OptInService)
                                         (implicit val appConfig: FrontendAppConfig,
                                          val ec: ExecutionContext,
                                          val auth: AuthenticatorPredicate,
@@ -39,9 +43,31 @@ class BeforeYouStartController @Inject()(val beforeYouStart: BeforeYouStart)
                                         )
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  private val startButtonUrl = (isAgent: Boolean) => controllers.optIn.routes.ChooseYearController.show(isAgent)
+  private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+
+  private def withRecover(isAgent: Boolean)(code: => Future[Result])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
+    code.recover {
+      case ex: Exception =>
+        Logger("application").error(s"request failed :: $ex")
+        errorHandler(isAgent).showInternalServerError()
+    }
+  }
+
+  private def startButtonUrl(isAgent: Boolean, availableYears: Seq[TaxYear])(implicit user: MtdItUser[_]) = {
+    availableYears match {
+      case Seq(singleYear) =>
+        optInService.saveIntent(TaxYear.makeTaxYearWithEndYear(singleYear.endYear))
+        controllers.optIn.routes.ConfirmTaxYearController.show(isAgent)
+      case _ => controllers.optIn.routes.ChooseYearController.show(isAgent)
+    }
+  }
 
   def show(isAgent: Boolean = false): Action[AnyContent] = auth.authenticatedAction(isAgent) {
-    implicit user => Future.successful(Ok(beforeYouStart(isAgent, startButtonUrl(isAgent).url)))
+    implicit user =>
+      withRecover(isAgent) {
+        optInService.availableOptInTaxYear().flatMap { availableYears =>
+          Future.successful(Ok(beforeYouStart(isAgent, startButtonUrl(isAgent, availableYears).url)))
+        }
+      }
   }
 }

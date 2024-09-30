@@ -25,9 +25,10 @@ import controllers.agent.predicates.ClientConfirmedController
 import enums.GatewayPage.TaxYearSummaryPage
 import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import implicits.ImplicitDateFormatter
-import models.admin.{AdjustPaymentsOnAccount, CodingOut, ForecastCalculation, MFACreditsAndDebits}
+import models.admin.{AdjustPaymentsOnAccount, CodingOut, ForecastCalculation, MFACreditsAndDebits, ReviewAndReconcilePoa}
 import models.core.Nino
 import models.financialDetails.MfaDebitUtils.filterMFADebits
+import models.financialDetails.ReviewAndReconcileDebitUtils.filterReviewAndReconcileDebits
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
@@ -161,8 +162,14 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
             .map(
               documentDetail => DocumentDetailWithDueDate(documentDetail, financialDetails.findDueDateByDocumentDetails(documentDetail),
                 dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId), codingOutEnabled = isEnabled(CodingOut),
-                isMFADebit = financialDetails.isMFADebit(documentDetail.transactionId)))
-        }.filter(documentDetailWithDueDate => filterMFADebits(isEnabled(MFACreditsAndDebits), documentDetailWithDueDate))
+                isMFADebit = financialDetails.isMFADebit(documentDetail.transactionId),
+                isReviewAndReconcilePoaOneDebit = financialDetails.isReviewAndReconcilePoaOneDebit(documentDetail.transactionId),
+                isReviewAndReconcilePoaTwoDebit = financialDetails.isReviewAndReconcilePoaTwoDebit(documentDetail.transactionId)
+              )
+            )
+        }
+          .filterNot(documentDetailWithDueDate  => filterMFADebits(isEnabled(MFACreditsAndDebits), documentDetailWithDueDate))
+          .filterNot(documentDetailWithDueDate  => filterReviewAndReconcileDebits(isEnabled(ReviewAndReconcilePoa), documentDetailWithDueDate, financialDetails))
         val documentDetailsWithDueDatesForLpi: List[DocumentDetailWithDueDate] = {
           docDetailsNoPayments.filter(_.isLatePaymentInterest).map(
             documentDetail => DocumentDetailWithDueDate(documentDetail, documentDetail.interestEndDate, isLatePaymentInterest = true,

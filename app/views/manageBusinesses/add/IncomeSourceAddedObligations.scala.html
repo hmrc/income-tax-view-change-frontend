@@ -14,14 +14,16 @@
  * limitations under the License.
  *@
 
-@import views.html.layouts.unifiedLayout
-@import views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
-@import views.html.helpers.injected.ErrorSummary
-@import models.incomeSourceDetails.viewmodels._
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+@import models.incomeSourceDetails.ChosenReportingMethod
+@import models.incomeSourceDetails.viewmodels._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, _}
+@import views.html.components._
+@import views.html.helpers.injected.ErrorSummary
+@import views.html.layouts.unifiedLayout
+
+@import java.time.LocalDate
 
 @this(
         mainTemplate: unifiedLayout,
@@ -30,23 +32,16 @@
         continueButton: ContinueButton,
         formWithCSRF: FormWithCSRF,
         errorSummary: ErrorSummary,
-        govukTable: GovukTable
-
+        govukTable: GovukTable,
+        govukInsetText: GovukInsetText,
 )
 
-@(sources: ObligationsViewModel, isAgent: Boolean, incomeSourceType: IncomeSourceType, businessName: Option[String] = None)(implicit messages: Messages, user: auth.MtdItUser[_])
-@import implicitDateFormatter.longDate
+@(sources: ObligationsViewModel, isAgent: Boolean, incomeSourceType: IncomeSourceType, businessName: Option[String] = None, currentDate: LocalDate, isBusinessHistoric: Boolean, reportingMethod: ChosenReportingMethod)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
     messages(s"business-added.$key", args: _*)
 }
-
-@getQuarterlyTableHeading(quarterly: Seq[DatesModel]) = @{
-    val startYear = (quarterly.head.inboundCorrespondenceFrom.getYear)
-    val endYear = (quarterly.head.inboundCorrespondenceFrom.getYear + 1)
-    s"${getMessage("table.heading-1")} $startYear ${getMessage("to")} $endYear"
-}
-
+    @import implicitDateFormatter.longDate
 
 @getPageTitle = @{
 
@@ -64,14 +59,6 @@
     }
 }
 
-@getAddIncomeSourcesCall = @{
-    if(isAgent) {
-        controllers.manageBusinesses.add.routes.AddIncomeSourceController.showAgent()
-    } else {
-        controllers.manageBusinesses.add.routes.AddIncomeSourceController.show()
-    }
-}
-
 @bannerHtmlContent(head: String, h1: String, base: String) = {
     <div class="govuk-panel__body govuk-!-margin-bottom-3">
     @head
@@ -84,7 +71,7 @@
     </div>
 }
 
-@getBannerContent() = @{
+@getBannerContent = @{
     incomeSourceType match {
         case _: SelfEmployment.type =>
             bannerHtmlContent(getMessage("sole-trader.head"), businessName.get, getMessage("sole-trader.base"))
@@ -97,105 +84,179 @@
     }
 }
 
+@getManageUrl = @{
+    controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url
+}
 
-@mainTemplate(pageTitle = getPageTitle,
+@getNextUpdatesUrl = @{
+    if(isAgent) {
+        controllers.routes.NextUpdatesController.showAgent.url
+    } else {
+        controllers.routes.NextUpdatesController.show().url
+    }
+}
+
+@getReportingFrequencyUrl = @{
+    // TODO the below link will need to change to the new entry point for the opt in/out journeys once the page is made
+    if(isAgent) {
+      controllers.routes.NextUpdatesController.showAgent.url
+    } else {
+      controllers.routes.NextUpdatesController.show().url
+    }
+}
+
+@getSoftwareUrl = @{
+    "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
+}
+
+@getOverdueObligationsComponents = @{
+  sources.getOverdueObligationsMessageComponents(currentDate, isBusinessHistoric)
+}
+
+@getSpecifiedObligationsComponents(isAnnual: Boolean) = @{
+  val modifiedSources: ObligationsViewModel =
+    if (isAnnual) sources.copy(quarterlyObligationsDates = Nil)
+    else sources.copy(finalDeclarationDates = Nil)
+
+  getOverdueObligationsMessage(modifiedSources.getOverdueObligationsMessageComponents(currentDate, isBusinessHistoric))
+}
+
+@getOverdueObligationsMessage(overdueObligationsComponents: OverdueObligationsMessageComponents) = @{
+    messages(s"business-added.${overdueObligationsComponents.messageKey}", overdueObligationsComponents.args: _*)
+}
+
+  @getQuarterlyOrHybridList = @{
+    val quarterlyBullet: List[Html] = sources.getFirstUpcomingQuarterlyDate(currentDate) match {
+      case Some(quarterlyUpdate) =>
+        val quarterlyUpdateTaxYear = sources.getQuarterlyObligationTaxYear(quarterlyUpdate)
+        List(Html(
+        s"""<li id="quarterly-list">
+          ${getMessage("next-quarterly-obligation-text", (quarterlyUpdateTaxYear - 1).toString, quarterlyUpdateTaxYear.toString, quarterlyUpdate.inboundCorrespondenceDue.toLongDate, quarterlyUpdate.inboundCorrespondenceFrom.toLongDate, quarterlyUpdate.inboundCorrespondenceTo.toLongDate)}
+        </li>"""
+        ))
+      case None => Nil
+    }
+
+    val hybridOrFinalDecBullet: List[Html] = sources.getFinalDeclarationDate(currentDate) match {
+      case Some(finalDecDate) =>
+        List(Html(
+        s"""<li id="obligations-list">
+        ${getMessage("final-dec-text", finalDecDate.inboundCorrespondenceFrom.getYear.toString, finalDecDate.inboundCorrespondenceTo.getYear.toString, finalDecDate.inboundCorrespondenceDue.toLongDate)}
+        </li>"""
+        ))
+      case None => Nil
+    }
+
+    quarterlyBullet ++ hybridOrFinalDecBullet
+  }
+
+  @mainTemplate(pageTitle = getPageTitle,
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial) {
 
-    @formWithCSRF(action = getAddIncomeSourcesCall) {
+      <div class="govuk-panel govuk-panel--confirmation" id="banner">
+        @getBannerContent
+      </div>
 
-        <div class="govuk-panel govuk-panel--confirmation" id="banner">
-        @getBannerContent()
+      @if(getOverdueObligationsComponents.messageKey.nonEmpty) {
+        @if(getOverdueObligationsComponents.messageKey != "hybrid") {
+          @govukInsetText(InsetText(id = Some("warning-inset"), content = HtmlContent(getOverdueObligationsMessage(getOverdueObligationsComponents))))
+        } else {
+          @govukInsetText(InsetText(id = Some("annual-warning-inset"), content = HtmlContent(getSpecifiedObligationsComponents(isAnnual = true))))
+          @govukInsetText(InsetText(id = Some("quarterly-warning-inset"), content = HtmlContent(getSpecifiedObligationsComponents(isAnnual = false))))
+        }
+      }
+
+      <h2 class="govuk-label-wrapper">
+        <label class="govuk-heading-m govuk-!-margin-top-8" id="deadlines">
+          @getMessage("deadlines")
+        </label>
+      </h2>
+
+      @if(reportingMethod == ChosenReportingMethod.Hybrid || reportingMethod == ChosenReportingMethod.Quarterly) {
+        @if(getQuarterlyOrHybridList.nonEmpty){
+          <ul class="govuk-list govuk-list--bullet">
+            @getQuarterlyOrHybridList
+          </ul>
+        }
+      }
+
+      @if(reportingMethod == ChosenReportingMethod.Annual || reportingMethod == ChosenReportingMethod.DefaultAnnual){
+        @sources.getFinalDeclarationDate(currentDate).map { finalDecDate =>
+          <p class="govuk-body" id="final-declaration">
+              @Html(getMessage("final-dec-text", finalDecDate.inboundCorrespondenceFrom.getYear.toString, finalDecDate.inboundCorrespondenceTo.getYear.toString, finalDecDate.inboundCorrespondenceDue.toLongDate)).
+          </p>
+        }.getOrElse(Html(None))
+      }
+
+      @if(sources.getOverdueObligationsMessageComponents(currentDate, isBusinessHistoric).messageKey.nonEmpty) {
+        <div class="govuk-link govuk-body" id="view-upcoming-updates">
+          <a href=@getNextUpdatesUrl>@getMessage("obligation.view-overdue-upcoming-updates.text")</a>
+        </div>
+      } else {
+        <div class="govuk-link govuk-body" id="view-upcoming-updates">
+          <a href=@getNextUpdatesUrl>@getMessage("obligation.view-upcoming-updates.text")</a>
+        </div>
+      }
+
+      <div class="govuk-link govuk-body" id="view-all-businesses-link">
+        <a href=@getManageUrl>@getMessage("view-all-businesses")</a>
+      </div>
+
+      @if(reportingMethod == ChosenReportingMethod.Quarterly || reportingMethod == ChosenReportingMethod.Hybrid) {
+        <div class="govuk-body govuk-!-margin-top-8" id="change-frequency">
+          @getMessage("quarterly-opt-out-hybrid-text-1")
+          <a class="govuk-link" href=@getReportingFrequencyUrl>@getMessage("quarterly-opt-out-hybrid-link")</a>
+          @getMessage("quarterly-opt-out-hybrid-text-2")
+        </div>
+      }
+      @if(reportingMethod == ChosenReportingMethod.Annual) {
+        <div class="govuk-body govuk-!-margin-top-8" id="change-frequency">
+          @getMessage("quarterly-opt-out-text-1")
+          <a class="govuk-link" href=@getReportingFrequencyUrl>@getMessage("quarterly-opt-out-link")</a>
+          @getMessage("quarterly-opt-out-text-2")
+        </div>
+      }
+      @if(reportingMethod == ChosenReportingMethod.DefaultAnnual) {
+        <div class="govuk-body govuk-!-margin-top-8" id="change-frequency">
+          @getMessage("default-annual-reporting-frequency-text")
+          <a class="govuk-link" href=@getReportingFrequencyUrl>@getMessage("default-annual-reporting-frequency-link")</a>
+        </div>
+      }
+
+
+
+      @if(reportingMethod == ChosenReportingMethod.Quarterly) {
+        <h2 class="govuk-heading-m govuk-!-margin-top-8">@getMessage("submit-software-text")</h2>
+
+        <div class="govuk-body" id="submit-text">
+          <p>@getMessage("submit-software-quarterly-text")
+            <a class="govuk-link" href=@getSoftwareUrl>@getMessage("submit-software-quarterly-link")</a>
+          </p>
+        </div>
+      }
+      @if(reportingMethod == ChosenReportingMethod.Annual || reportingMethod == ChosenReportingMethod.DefaultAnnual) {
+        <h2 class="govuk-heading-m govuk-!-margin-top-8">@getMessage("submit-tax-return")</h2>
+
+        <div class="govuk-body" id="submit-text">
+          <p>@getMessage("submit-tax-return-text")
+            <a class="govuk-link" href=@getSoftwareUrl>@getMessage("submit-tax-return-link")</a>
+          </p>
+        </div>
+      }
+      @if(reportingMethod == ChosenReportingMethod.Hybrid) {
+        <h2 class="govuk-heading-m govuk-!-margin-top-8">@getMessage("submit-software-text")</h2>
+
+        <div class="govuk-body" id="quarterly-submit-text">
+          <p>@getMessage("submit-software-quarterly-text")
+            <a class="govuk-link" href=@getSoftwareUrl>@getMessage("submit-software-quarterly-link")</a>
+          </p>
         </div>
 
-        <h2 class="govuk-label-wrapper">
-            <label class="govuk-label govuk-label--l govuk-!-margin-top-8">
-            @getMessage("text")
-            </label>
-        </h2>
-
-
-        @if(sources.quarterlyObligationsDates.nonEmpty) {
-            <div class="box-simple" id="quarterly">
-                <div class="page_headers govuk-heading-m"> @getMessage("quarterly-heading") </div>
-                <p class="govuk-body"> @getMessage("quarterly-p1") </p>
-
-                @for(quarterlyPeriods <- sources.quarterlyObligationsDates) {
-                    @govukTable(Table(
-                        rows = quarterlyPeriods.map { quarterlyPeriod =>
-                            Seq(
-                                TableRow(
-                                    content = Text(s"${quarterlyPeriod.inboundCorrespondenceFrom.toLongDate} ${getMessage("to")} ${quarterlyPeriod.inboundCorrespondenceTo.toLongDate}")
-                                ),
-                                TableRow(
-                                    content = Text(quarterlyPeriod.inboundCorrespondenceDue.toLongDate)
-                                )
-                            )
-                        },
-                        head = Some(Seq(
-                            HeadCell(
-                                content = Text(getQuarterlyTableHeading(quarterlyPeriods))
-                            ),
-                            HeadCell(
-                                content = Text(getMessage("table.heading-2"))
-                            )
-                        )),
-                        caption = None,
-                        firstCellIsHeader = false
-                    ))
-                }
-            </div>
-        }
-
-        @if(sources.finalDeclarationDates.nonEmpty) {
-            <div class="box-simple" id="finalDeclaration">
-                <div class="page_headers govuk-heading-m"> @getMessage("final-declaration-heading") </div>
-                <p class="govuk-body"> @getMessage("final-declaration-text") </p>
-
-                @govukTable(Table(
-                    rows = sources.finalDeclarationDates.map { finalDecDate =>
-                        Seq(
-                            TableRow(
-                                content = Text(s"${finalDecDate.inboundCorrespondenceFrom.getYear.toString} ${getMessage("to")} ${finalDecDate.inboundCorrespondenceTo.getYear.toString}")
-                            ),
-                            TableRow(
-                                content = Text(finalDecDate.inboundCorrespondenceDue.toLongDate)
-                            )
-                        )
-                    },
-                    head = Some(Seq(
-                        HeadCell(
-                            content = Text(getMessage("table.heading-1"))
-                        ),
-                        HeadCell(
-                            content = Text(getMessage("table.heading-2"))
-                        )
-                    )),
-                    caption = None,
-                    firstCellIsHeader = false
-                ))
-            </div>
-        }
-
-        @if(sources.showPrevTaxYears) {
-            <div class="box-simple" id="prevYears">
-                <div class="page_headers govuk-heading-m"> @getMessage("previous-tax-years-heading") </div>
-                <p class="govuk-body">
-                @{
-                    val head = getMessage("previous-tax-years-t1")
-                    val to = getMessage("to")
-                    val fromYear = sources.currentTaxYear - 1
-                    val toYear = sources.currentTaxYear
-
-                    s"""$head $fromYear $to $toYear."""
-                }
-                </p>
-            </div>
-        }
-
-        <div class="govuk-!-margin-top-8">
-        @continueButton(Some(getMessage("income-sources-button")))
+        <div class="govuk-body" id="annual-submit-text">
+          <p>
+            @getMessage("submit-hybrid-annual-text")
+          </p>
         </div>
-
+      }
     }
-}

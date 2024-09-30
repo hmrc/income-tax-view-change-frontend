@@ -16,8 +16,11 @@
 
 package models.chargeHistory
 
-import play.api.Logger
+import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, CustomerRequestReason, ReversalReason, UnknownReversalReason}
 import play.api.libs.json.{Format, Json}
+import services.claimToAdjustPoa.ClaimToAdjustHelper
+import services.claimToAdjustPoa.ClaimToAdjustHelper.isPoADocumentDescription
+
 import java.time.LocalDate
 
 
@@ -30,22 +33,18 @@ case class ChargeHistoryModel(taxYear: String,
                               reversalReason: String,
                               poaAdjustmentReason: Option[String]) {
 
-  val reasonCode: String = {
-    if (poaAdjustmentReason.isDefined) "adjustment"
+  val reasonCode: ReversalReason = {
+    if (poaAdjustmentReason.isDefined)
+      AdjustmentReversalReason
     else
       reversalReason match {
-        case "amended return" => "amend"
-        case "Customer Request" => "request"
-        case error =>
-          Logger("application").error(s"Missing or non-matching history reason: $error found")
-          "unrecognisedReason"
+        case "amended return" => AmendedReturnReversalReason
+        case "Customer Request" => CustomerRequestReason
+        case _ => UnknownReversalReason
       }
   }
 
-  private val POA1: String = "ITSA- POA 1"
-  private val POA2: String = "ITSA - POA 2"
-
-  val isPoA: Boolean = Seq(POA1, POA2).contains(documentDescription)
+  val isPoA: Boolean = isPoADocumentDescription(documentDescription)
 }
 
 object ChargeHistoryModel {

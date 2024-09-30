@@ -26,6 +26,7 @@ import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
 import forms.optOut.ConfirmOptOutSingleTaxYearForm
 import helpers.servicemocks.AuditStub
 import helpers.{CustomMatchers, GenericStubMethods, TestDateService, WiremockHelper}
+import models.admin.FeatureSwitchName
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
@@ -123,11 +124,13 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     WireMock.reset()
     AuditStub.stubAuditing()
     cache.removeAll()
+    FeatureSwitchName.allFeatureSwitches foreach disable
   }
 
   override def afterAll(): Unit = {
     stopWiremock()
     super.afterAll()
+    FeatureSwitchName.allFeatureSwitches foreach disable
   }
 
   def getWithClientDetailsInSession(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
