@@ -76,5 +76,10 @@ object OptOutProposition {
 
     OptOutProposition(previousYearOptOut, currentYearOptOut, nextYearOptOut)
   }
-
 }
+
+case class OptOutYearParams(currentYear: TaxYear,
+                            previousYearCrystallised: Boolean,
+                            previousYearItsaStatus: ITSAStatus,
+                            currentYearItsaStatus: ITSAStatus,
+                            nextYearItsaStatus: ITSAStatus, afterAssumedITSAStatusCurrentYearMinusOne: ITSAStatus)

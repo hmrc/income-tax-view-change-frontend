@@ -21,9 +21,9 @@ import auth.MtdItUser
 import cats.data.OptionT
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure}
-import models.incomeSourceDetails.TaxYear
+import models.incomeSourceDetails.{AnnualReporting, TaxYear}
 import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
+import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, Voluntary}
 import models.optout._
 import repositories.OptOutSessionDataRepository
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
@@ -35,7 +35,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import audit.AuditingService
-//import audit.models.CheckYourAnswersAuditModel
+import audit.models.CheckYourAnswersAuditModel
 
 @Singleton
 class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnector,
@@ -43,6 +43,7 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
                               calculationListService: CalculationListService,
                               nextUpdatesService: NextUpdatesService,
                               dateService: DateServiceInterface,
+                              auditingService: AuditingService,
                               repository: OptOutSessionDataRepository) {
 
   def fetchOptOutProposition()(implicit user: MtdItUser[_],
@@ -92,31 +93,50 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     }
   }
 
-  def makeOptOutUpdateRequest(optOutProposition: OptOutProposition, intentTaxYear: TaxYear)
+  def makeOptOutUpdateRequest(optOutProposition: OptOutProposition, intentTaxYear: TaxYear, optOutYearParams: OptOutYearParams)
                              (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[ITSAStatusUpdateResponse] = {
     val yearsToUpdate = optOutProposition.optOutYearsToUpdate(intentTaxYear)
     val responsesSeqOfFutures = makeUpdateCalls(yearsToUpdate)
-    Future.sequence(responsesSeqOfFutures).
+    val futureResponses = Future.sequence(responsesSeqOfFutures).
       map(responsesSeq => findAnyFailOrFirstSuccess(responsesSeq))
 
-//    auditingService.extendedAudit(CheckYourAnswersAuditModel(
-//      for {
-//        clientName <- fetchClientName
-//        nino <- request.session.get(SessionKeys.clientNino)
-//        clientMTDID <- request.session.get(SessionKeys.clientMTDID)
-//        arn <- user.agentReferenceNumber
-//        saUtr <- request.session.get(SessionKeys.clientUTR)
-//      } yield
-//        auditingService.extendedAudit(ConfirmClientDetailsAuditModel(
-//          clientName = clientName,
-//          nino = nino,
-//          mtditid = clientMTDID,
-//          arn = arn,
-//          saUtr = saUtr,
-//          credId = user.credId
-//        ))
-//    ))
+    val CYMinus1 = optOutYearParams.previousYearItsaStatus match {
+      case Voluntary => Annual
+      case Annual => Annual
+      case Mandated => Mandated
+    }
+    val CY = optOutYearParams.currentYearItsaStatus match {
+      case Voluntary => Annual
+      case Annual => Annual
+      case Mandated => Mandated
+    }
+    val CYPlus1 = optOutYearParams.nextYearItsaStatus match {
+      case Voluntary => Annual
+      case Annual => Annual
+      case Mandated => Mandated
+    }
+      auditingService.extendedAudit(CheckYourAnswersAuditModel(
+
+        outcome = futureResponses,
+        optOutRequestedFromTaxYear = intentTaxYear,
+        currentYear = optOutYearParams.currentYear,
+        beforeITSAStatusCurrentYearMinusOne = optOutYearParams.previousYearItsaStatus,
+        beforeITSAStatusCurrentYear = optOutYearParams.currentYearItsaStatus,
+        beforeITSAStatusCurrentYearPlusOne = optOutYearParams.nextYearItsaStatus,
+
+        afterAssumedITSAStatusCurrentYearMinusOne = CYMinus1,
+        afterAssumedITSAStatusCurrentYear = CY,
+        afterAssumedITSAStatusCurrentYearPlusOne = CYPlus1,
+        currentYearMinusOneCrystallised = optOutYearParams.previousYearCrystallised
+      ))
+    futureResponses
   }
+  abstract class Outcome {
+    val isSuccessful: Boolean
+    val failureCategory: String
+    val failureReason: String
+  }
+
 
   private def makeUpdateCalls(optOutYearsToUpdate: Seq[TaxYear])
                              (implicit user: MtdItUser[_], hc: HeaderCarrier): Seq[Future[ITSAStatusUpdateResponse]] = {
