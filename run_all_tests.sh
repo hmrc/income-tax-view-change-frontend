@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-sbt clean compile coverage Test/test it/test coverageOff coverageReport
+sbt clean compile scalastyle coverage Test/test it/test coverageOff coverageReport
