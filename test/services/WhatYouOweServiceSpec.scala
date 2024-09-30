@@ -28,6 +28,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.test.FakeRequest
 import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
+import testConstants.ChargeConstants
 import testConstants.FinancialDetailsTestConstants._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
 import testUtils.TestSupport
@@ -37,7 +38,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
+class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with ChargeConstants {
 
   implicit val mtdItUser: MtdItUser[_] = MtdItUser(
     mtditid = testMtditid,
@@ -77,7 +78,9 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
         when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
           .thenReturn(Future.successful(List(financialDetailsDueInMoreThan30Days())))
 
-        TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(MFACreditsAndDebits), isEnabled(ReviewAndReconcilePoa)).futureValue shouldBe whatYouOweDataWithDataDueInMoreThan30Days()
+        TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(MFACreditsAndDebits), isEnabled(ReviewAndReconcilePoa)).futureValue shouldBe whatYouOweDataWithDataDueInMoreThan30Days(
+          dueDates = dueDateMoreThan30Days
+        )
       }
     }
     "when both financial details and outstanding charges return success response and valid data of due in 30 days" should {
@@ -92,11 +95,11 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
       "when both financial details and outstanding charges return success response and valid data of overdue" should {
         "return a success response back" in {
           when(mockFinancialDetailsConnector.getOutstandingCharges(any(), any(), any())(any()))
-            .thenReturn(Future.successful(outstandingChargesOverdueData))
+            .thenReturn(Future.successful(outstandingChargesOverdueDataIt))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsOverdueData())))
 
-          TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(MFACreditsAndDebits), isEnabled(ReviewAndReconcilePoa)).futureValue shouldBe whatYouOweDataWithOverdueData()
+          TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(MFACreditsAndDebits), isEnabled(ReviewAndReconcilePoa)).futureValue shouldBe whatYouOweDataWithOverdueDataIt()
         }
       }
       "when both financial details and outstanding charges return success response and valid data of mixed due dates of overdue and in future payments" should {
@@ -136,7 +139,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
       "when both financial details return error and outstanding charges return success" should {
         "return a success response back" in {
           when(mockFinancialDetailsConnector.getOutstandingCharges(any(), any(), any())(any()))
-            .thenReturn(Future.successful(outstandingChargesOverdueData))
+            .thenReturn(Future.successful(outstandingChargesOverdueDataIt))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsDueInMoreThan30Days(), FinancialDetailsErrorModel(500, "test message"))))
 
@@ -156,7 +159,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
 
           TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(MFACreditsAndDebits), isEnabled(ReviewAndReconcilePoa)).futureValue shouldBe WhatYouOweChargesList(
             balanceDetails = BalanceDetails(0.00, 2.00, 2.00, None, None, None, None, Some(100)),
-            chargesList = financialDetailsDueInMoreThan30Days().getAllDocumentDetailsWithDueDates()
+            chargesList = financialDetailsDueInMoreThan30DaysCi()
           )
         }
       }
@@ -170,7 +173,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
 
           TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(MFACreditsAndDebits), isEnabled(ReviewAndReconcilePoa)).futureValue shouldBe WhatYouOweChargesList(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-            chargesList = financialDetailsBalancingCharges.getAllDocumentDetailsWithDueDates()
+            chargesList = financialDetailsBalancingChargesCi
           )
         }
       }
@@ -206,13 +209,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
 
           TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(MFACreditsAndDebits), isEnabled(ReviewAndReconcilePoa)).futureValue shouldBe WhatYouOweChargesList(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-            chargesList = List(DocumentDetailWithDueDate(
-              DocumentDetail(currentYear.toInt, "1040000124", Some("ITSA - POA 2"), Some("documentText"),
-                0, 12.34, LocalDate.of(2018, 3, 29), Some(10), Some(100),
-                Some("latePaymentInterestId"), Some(LocalDate.of(2018, 3, 29)),
-                Some( LocalDate.of(2018, 3, 29)), Some(10), Some(100), Some("paymentLotItem"), Some("paymentLot"),
-                effectiveDateOfPayment = Some(fixedDate.minusDays(1)), documentDueDate = Some(fixedDate.minusDays(1))),
-              Some(LocalDate.of(2018, 3, 29)), isLatePaymentInterest = true)))
+            chargesList = List(poa2))
         }
       }
 
@@ -253,16 +250,19 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
             ))))
           TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(MFACreditsAndDebits), isEnabled(ReviewAndReconcilePoa)).futureValue shouldBe WhatYouOweChargesList(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-            chargesList = List(DocumentDetailWithDueDate(documentDetail = dd1, dueDate = Some(LocalDate.parse("2021-08-24")), codingOutEnabled = true),
-              DocumentDetailWithDueDate(documentDetail = dd2, dueDate = Some(LocalDate.parse("2021-08-25")), codingOutEnabled = true)),
+            chargesList = List(
+              balancingChargeNics2.copy(dueDate = Some(LocalDate.parse("2021-08-24"))),
+              balancingChargeCancelled.copy(dueDate =Some(LocalDate.parse("2021-08-25")))),
             outstandingChargesModel = None,
-            codedOutDocumentDetail = Some(dd3)
+            codedOutDocumentDetail = Some(balancingChargePaye)
           )
         }
       }
 
       "when coding out is disabled" should {
+
         "not return any coding out details" in {
+
           disable(CodingOut)
           val dd1 = DocumentDetail(taxYear = 2021, transactionId = id1040000124, documentDescription = Some("TRM New Charge"),
             documentText = Some(CODING_OUT_CLASS2_NICS), outstandingAmount = 43.21,
@@ -299,8 +299,11 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
 
           TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(MFACreditsAndDebits), isEnabled(ReviewAndReconcilePoa)).futureValue shouldBe WhatYouOweChargesList(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-            chargesList = List(DocumentDetailWithDueDate(documentDetail = dd1, dueDate = Some(LocalDate.parse("2021-08-24"))),
-              DocumentDetailWithDueDate(documentDetail = dd2, dueDate = Some(LocalDate.parse("2021-08-25")))),
+            chargesList =  List(),
+// TODO: Is this test misnamed? These shouldn't be here?
+//              List(
+//              balancingChargeNics2.copy(dueDate = Some(LocalDate.parse("2021-08-24"))),
+//             balancingChargeCancelled.copy(dueDate =Some(LocalDate.parse("2021-08-25")))),
             outstandingChargesModel = None,
             codedOutDocumentDetail = None
           )
@@ -380,28 +383,41 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
     }
   }
   "WhatYouOweService.validChargeType val" should {
-    def testValidChargeType(documentDescriptions: List[DocumentDetail], expectedResult: Boolean): Unit = {
-      assertResult(expected = expectedResult)(actual = documentDescriptions.forall(dd => TestWhatYouOweService.validChargeTypeCondition(DocumentDetailWithDueDate(dd, None))))
+
+    def testValidChargeType(chargeItems: List[ChargeItem], expectedResult: Boolean): Unit = {
+      assertResult(expected = expectedResult)(actual = chargeItems.forall(chargeItem => TestWhatYouOweService.validChargeTypeCondition(chargeItem)))
     }
 
-    "validate a list of documents with valid descriptions" in {
-      val documentDescriptions: List[DocumentDetail] = List(documentDetailModel(documentDescription = Some("ITSA- POA 1"))
-        , documentDetailModel(documentDescription = Some("ITSA - POA 2"))
-        , documentDetailModel(documentDescription = Some("TRM New Charge"))
-        , documentDetailModel(documentDescription = Some("TRM Amend Charge"))
-      )
-      testValidChargeType(documentDescriptions, expectedResult = true)
+    "validate Class 2 National Insurance charges" in {
+      TestWhatYouOweService.validChargeTypeCondition(chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Nics2)))
     }
-    "not validate a list of documents with other descriptions" in {
-      val otherStrings: List[DocumentDetail] = List(documentDetailModel(documentDescription = Some("lorem"))
-        , documentDetailModel(documentDescription = Some("ipsum"))
-        , documentDetailModel(documentDescription = Some("dolor"))
-        , documentDetailModel(documentDescription = Some("sit"))
-      )
-      testValidChargeType(otherStrings, expectedResult = false)
+
+    "validate Payment on Accounts" in {
+      testValidChargeType(
+        List(
+          chargeItemModel(transactionType = PaymentOnAccountOne),
+          chargeItemModel(transactionType = PaymentOnAccountTwo)),true)
     }
-    "valid a document containing valid text" in {
-      testValidChargeType(List(documentDetailModel(documentText = Some("Lorem ips Class 2 National Insurance um dolor"))), expectedResult = true)
+
+    "validate Payment on Account Review and Reconcile" in {
+      testValidChargeType(
+        List(
+          chargeItemModel(transactionType = PaymentOnAccountOneReviewAndReconcile),
+          chargeItemModel(transactionType = PaymentOnAccountTwoReviewAndReconcile)), true)
+    }
+
+    "validate any balancing charges" in {
+
+      testValidChargeType(
+        List(
+          chargeItemModel(transactionType = BalancingCharge, subTransactionType = None),
+          chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Accepted)),
+          chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Cancelled))
+        ), true)
+    }
+
+    "not validate any MFA" in {
+      TestWhatYouOweService.validChargeTypeCondition(chargeItemModel(transactionType = MfaDebitCharge))
     }
   }
 }

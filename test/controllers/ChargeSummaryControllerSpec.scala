@@ -34,6 +34,7 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import services.{ChargeHistoryService, DateService, FinancialDetailsService}
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testTaxYear}
+import testConstants.ChargeConstants
 import testConstants.FinancialDetailsTestConstants._
 import testUtils.TestSupport
 
@@ -46,7 +47,8 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
   with MockIncomeSourceDetailsService
   with MockAuditingService
   with FeatureSwitching
-  with TestSupport {
+  with TestSupport
+  with ChargeConstants {
 
   def financialDetailsWithLocks(taxYear: Int): List[FinancialDetail] = List(
     financialDetail(taxYear = taxYear, chargeType = ITSA_ENGLAND_AND_NI),
@@ -60,9 +62,14 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
   class Setup(financialDetails: FinancialDetailsResponseModel,
               adjustmentHistoryModel: AdjustmentHistoryModel = emptyAdjustmentHistoryModel,
               chargeHistoryResponse: Either[ChargesHistoryErrorModel, List[ChargeHistoryModel]] = Right(List()),
+              enableReviewAndReconcile: Boolean = false,
               isAgent: Boolean = false) {
     val financialDetailsService: FinancialDetailsService = mock(classOf[FinancialDetailsService])
     val mockChargeHistoryService: ChargeHistoryService = mock(classOf[ChargeHistoryService])
+
+    if(enableReviewAndReconcile) {
+      enable(ReviewAndReconcilePoa)
+    }
 
 
     when(financialDetailsService.getAllFinancialDetails(any(), any(), any()))
@@ -102,8 +109,8 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
   val errorHeading: String = messages("standardError.heading")
   val successHeadingForPOA1 = s"2017 to 2018 tax year ${messages("chargeSummary.paymentOnAccount1.text")}"
   val successHeadingForBCD = s"2017 to 2018 tax year ${messages("chargeSummary.balancingCharge.text")}"
-  def successHeadingForRAR1(startYear: String, endYear: String) = s"$startYear to $endYear tax year ${messages("chargeSummary.paymentOnAccount1.extraAmount.text")}"
-  def successHeadingForRAR2(startYear: String, endYear: String) = s"$startYear to $endYear tax year ${messages("chargeSummary.paymentOnAccount2.extraAmount.text")}"
+  def successHeadingForRAR1(startYear: String, endYear: String) = s"$startYear to $endYear tax year ${messages("chargeSummary.reviewAndReconcilePoa1.text")}"
+  def successHeadingForRAR2(startYear: String, endYear: String) = s"$startYear to $endYear tax year ${messages("chargeSummary.reviewAndReconcilePoa2.text")}"
   val dunningLocksBannerHeading: String = messages("chargeSummary.dunning.locks.banner.title")
   val paymentBreakdownHeading: String = messages("chargeSummary.paymentBreakdown.heading")
   val paymentHistoryHeadingForPOA1Charge: String = messages("chargeSummary.chargeHistory.Poa1heading")
@@ -143,7 +150,9 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 
     "load the page" when {
 
-      "provided with an id associated to a Review & Reconcile Debit Charge for POA1" in new Setup(testFinancialDetailsModelWithReviewAndReconcileAndPoas) {
+      "provided with an id associated to a Review & Reconcile Debit Charge for POA1" in new Setup(
+        testFinancialDetailsModelWithReviewAndReconcileAndPoas,
+        enableReviewAndReconcile = true) {
         enable(ChargeHistory)
         enable(PaymentAllocation)
         enable(ReviewAndReconcilePoa)
@@ -301,7 +310,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       }
 
       "display the payment processing info if the charge is not Review & Reconcile" in new Setup(
-        financialDetailsModel(documentDescription = Some("ITSA BCD"))) {
+        financialDetailsModel(documentDescription = Some("ITSA BCD"), mainTransaction = "4910")) {
         disable(ChargeHistory)
         disable(PaymentAllocation)
         val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithNinoAndOrigin("PTA"))

@@ -20,11 +20,15 @@
 @import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.partials.chargeSummary._
-@import enums.Poa1Charge
-@import enums.Poa2Charge
-@import enums.BalancingCharge
-@import enums.TRMNewCharge
-@import enums.TRMAmendCharge
+@import services.DateServiceInterface
+@import models.financialDetails.Accepted
+@import models.financialDetails.Cancelled
+@import models.financialDetails.PaymentOnAccountOne
+@import models.financialDetails.PaymentOnAccountOneReviewAndReconcile
+@import models.financialDetails.PaymentOnAccountTwo
+@import models.financialDetails.PaymentOnAccountTwoReviewAndReconcile
+@import models.financialDetails.BalancingCharge
+@import models.financialDetails.MfaDebitCharge
 @import java.time.LocalDate
 @import models.chargeSummary.ChargeSummaryViewModel
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
@@ -44,7 +48,7 @@
     chargeSummaryNotCodingOutAndNotPayeSelfAssessment: ChargeSummaryNotCodingOutAndNotPayeSelfAssessment,
     govukInsetText : GovukInsetText
 )
-@(viewModel: ChargeSummaryViewModel)(implicit request : Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+@(viewModel: ChargeSummaryViewModel)(implicit request : Request[_], messages: Messages, appConfig: config.FrontendAppConfig, dateService: DateServiceInterface)
 
 @import implicitDateFormatter.{longDate, toTaxYearEndDate, toTaxYearStartDate}
 
@@ -67,16 +71,16 @@
 
 @getLpiPoaExplanationContent = {
     <div>
-        @if(viewModel.documentType == Poa1Charge && !viewModel.latePaymentInterestCharge) {
+        @if(viewModel.chargeItem.transactionType == PaymentOnAccountOne && !viewModel.latePaymentInterestCharge) {
             @p(id = Some("lpi-poa1")){@messages("chargeSummary.paymentsOnAccount")}
-        } else if (viewModel.documentType == Poa1Charge && viewModel.latePaymentInterestCharge) {
+        } else if (viewModel.chargeItem.transactionType == PaymentOnAccountOne && viewModel.latePaymentInterestCharge) {
             @p(id = Some("lpi-poa2")){@messages("chargeSummary.lpi.paymentsOnAccount.poa1")}
-        } else if(viewModel.documentType == Poa2Charge && !viewModel.latePaymentInterestCharge) {
+        } else if(viewModel.chargeItem.transactionType == PaymentOnAccountTwo && !viewModel.latePaymentInterestCharge) {
             @p(id = Some("lpi-poa3")){@messages("chargeSummary.paymentsOnAccount")}
-        } else if(viewModel.documentType == Poa2Charge && viewModel.latePaymentInterestCharge) {
+        } else if(viewModel.chargeItem.transactionType == PaymentOnAccountTwo && viewModel.latePaymentInterestCharge) {
             @p(id = Some("lpi-poa4")){@messages("chargeSummary.lpi.paymentsOnAccount.poa2")}
         }
-        @if((viewModel.documentType == Poa1Charge | viewModel.documentType == Poa2Charge) && viewModel.latePaymentInterestCharge) {
+        @if((viewModel.chargeItem.transactionType == PaymentOnAccountOne | viewModel.chargeItem.transactionType == PaymentOnAccountTwo) && viewModel.latePaymentInterestCharge) {
             @p(id = Some("lpi-poa5")) {
                 @messages("chargeSummary.lpi.paymentsOnAccount.textOne")
                 <a class="govuk-link" href="https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate">@messages("chargeSummary.lpi.paymentsOnAccount.linkText")</a>
@@ -138,20 +142,17 @@
     }
 }
 
-@getExplanationContent = @{viewModel.documentType match {
-        case _ if viewModel.isMFADebit  => hmrcAdjustmentExplanation
-        case _ if viewModel.isReviewAndReconcilePoaOneDebit => reviewAndReconcilePoaOneDebitExplanation
-        case _ if viewModel.isReviewAndReconcilePoaTwoDebit => reviewAndReconcilePoaTwoDebitExplanation
-        case Poa1Charge | Poa2Charge if !viewModel.latePaymentInterestCharge => paymentOnAccountExplanation
-        case Poa1Charge | Poa2Charge if viewModel.latePaymentInterestCharge => getLpiPoaExplanationContent
-        case TRMNewCharge if !viewModel.latePaymentInterestCharge => balancingChargeExplanation //TRMNewCharge used instead of Balancing charge
-        case BalancingCharge if viewModel.latePaymentInterestCharge => getBalancingPaymentsExplanationContent
-        case TRMNewCharge if viewModel.latePaymentInterestCharge => getBalancingPaymentsExplanationContent //LPI Balancing charge uses TRMCharge on one page and Balancing Charge on another page
-        case _                          =>
+@getExplanationContent = @{(viewModel.chargeItem.transactionType, viewModel.chargeItem.subTransactionType) match {
+    case (MfaDebitCharge, _)                                                                     => hmrcAdjustmentExplanation
+    case (PaymentOnAccountOneReviewAndReconcile, _)                                              => reviewAndReconcilePoaOneDebitExplanation
+    case (PaymentOnAccountTwoReviewAndReconcile, _)                                              => reviewAndReconcilePoaTwoDebitExplanation
+    case (PaymentOnAccountOne | PaymentOnAccountTwo, _) if !viewModel.latePaymentInterestCharge  => paymentOnAccountExplanation
+    case (PaymentOnAccountOne | PaymentOnAccountTwo, _)                                          => getLpiPoaExplanationContent
+    case (BalancingCharge, None) if !viewModel.latePaymentInterestCharge                         => balancingChargeExplanation
+    case (BalancingCharge, None)                                                                 => getBalancingPaymentsExplanationContent
+    case _                                                                                       =>
     }
 }
-
-
 
 @checkPayeCodePara = {
     @p(id = Some("check-paye-para")){
@@ -222,10 +223,10 @@
 }
 
 @chargeHistoryHeading = @{
-    viewModel.documentType match {
+    viewModel.chargeItem.transactionType match {
         case _ if viewModel.latePaymentInterestCharge => messages("chargeSummary.chargeHistory.lateInterestPayment")
-        case Poa1Charge => messages("chargeSummary.chargeHistory.Poa1heading")
-        case Poa2Charge => messages("chargeSummary.chargeHistory.Poa2heading")
+        case PaymentOnAccountOne => messages("chargeSummary.chargeHistory.Poa1heading")
+        case PaymentOnAccountTwo => messages("chargeSummary.chargeHistory.Poa2heading")
         case _ => messages("chargeSummary.chargeHistory.heading")
     }
 }
@@ -240,8 +241,8 @@
 @mainTemplate(pageTitle = messages(viewModel.pageTitle), backUrl = Some(viewModel.backUrl), isAgent = viewModel.isAgent, btaNavPartial = viewModel.btaNavPartial,
     useFallbackBackLink = true, gatewayPage = viewModel.gatewayPage) {
 
-    @if(viewModel.hasDunningLocks || viewModel.documentDetail.hasLpiWithDunningLock) {
-        @chargeSummaryHasDunningLocksOrLpiWithDunningLock(viewModel.documentDetail, viewModel.dueDate, viewModel.latePaymentInterestCharge, appConfig)
+    @if(viewModel.hasDunningLocks || viewModel.chargeItem.hasLpiWithDunningLock) {
+        @chargeSummaryHasDunningLocksOrLpiWithDunningLock(viewModel.chargeItem, viewModel.dueDate, viewModel.latePaymentInterestCharge, appConfig)
     }
 
     <h1 class="govuk-heading-xl">
@@ -249,13 +250,14 @@
         @{ messages(viewModel.pageTitle) }
     </h1>
 
-@if(viewModel.isReviewAndReconcileDebit) {
-    @govukWarningText(WarningText(content = Text(messages("chargeSummary.reviewAndReconcilePoa.warning"))))
-}
 
-@getExplanationContent
+    @if(Seq(PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile).contains(viewModel.chargeItem.transactionType)) {
+        @govukWarningText(WarningText(content = Text(messages("chargeSummary.reviewAndReconcilePoa.warning"))))
+    }
 
-    @if(viewModel.codingOutEnabled && viewModel.documentDetail.isPayeSelfAssessment){
+    @getExplanationContent
+
+    @if(viewModel.codingOutEnabled && viewModel.chargeItem.subTransactionType == Some(Accepted)){
         @checkPayeCodePara
         <div id="coding-out-wrapper">
             @govukInsetText(InsetText(content = HtmlContent(codingOutMessageInset)))
@@ -263,7 +265,7 @@
         @codingOutMessage
     }
 
-    @if(viewModel.codingOutEnabled && viewModel.documentDetail.isCancelledPayeSelfAssessment){
+    @if(viewModel.codingOutEnabled && viewModel.chargeItem.subTransactionType == Some(Cancelled)){
         @checkPayeCodePara
         <div id="cancelled-coding-out-wrapper">
             @govukInsetText(InsetText(content = HtmlContent(codingOutCancelledMessageInset)))
@@ -277,22 +279,19 @@
         }
     }
 
-    <dl class="govuk-summary-list">
-        @if(!(viewModel.codingOutEnabled && viewModel.documentDetail.isPayeSelfAssessment)) {
-            @chargeSummaryNotCodingOutAndNotPayeSelfAssessment(
-                viewModel.documentDetailWithDueDate,
-                viewModel.documentDetail,
-                viewModel.latePaymentInterestCharge,
-                viewModel.codingOutEnabled,
-                viewModel.taxYearFromCodingOut,
-                viewModel.taxYearToCodingOut,
-                appConfig)
-        }
-    </dl>
+    @if(!viewModel.codingOutEnabled || viewModel.chargeItem.subTransactionType != Some(Accepted)) {
+        @chargeSummaryNotCodingOutAndNotPayeSelfAssessment(
+            viewModel.chargeItem,
+            viewModel.latePaymentInterestCharge,
+            viewModel.codingOutEnabled,
+            viewModel.taxYearFromCodingOut,
+            viewModel.taxYearToCodingOut,
+            appConfig)
+    }
 
-    @if(viewModel.codingOutEnabled && viewModel.documentDetail.isPayeSelfAssessment) {
+    @if(viewModel.codingOutEnabled && viewModel.chargeItem.subTransactionType == Some(Accepted)) {
         @chargeSummaryCodingOut(
-            viewModel.documentDetail,
+            viewModel.chargeItem,
             viewModel.codingOutEnabled,
             viewModel.taxYearFromCodingOut,
             viewModel.taxYearToCodingOut,
@@ -302,10 +301,9 @@
 
     @if(viewModel.hasPaymentBreakdown && !viewModel.isBalancingChargeZero) {
         @chargeSummaryHasPaymentBreakdown(
-            viewModel.documentDetailWithDueDate,
+            viewModel.chargeItem,
             viewModel.paymentBreakdown,
             viewModel.latePaymentInterestCharge,
-            viewModel.documentDetail,
             chargeSummaryLpiCharge,
             viewModel.isAgent
         )
@@ -341,7 +339,7 @@
     @if(viewModel.remainingToPayWithNoCodingOutEnabledAndIsPayeSelfAssessment){
         @if(!viewModel.isAgent) {
             <div id="payment-link-@{viewModel.taxYearTo}">
-                <a class="govuk-button" role="button" data-module="govuk-button" href="@controllers.routes.PaymentController.paymentHandoff(viewModel.documentDetail.remainingToPay.toPence, viewModel.origin)">
+                <a class="govuk-button" role="button" data-module="govuk-button" href="@controllers.routes.PaymentController.paymentHandoff(viewModel.chargeItem.remainingToPay.toPence, viewModel.origin)">
                     @messages("paymentDue.payNow")
                     <span class="govuk-visually-hidden">@messages("paymentDue.pay-now-hidden", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)</span>
                 </a>
@@ -350,8 +348,9 @@
         @paymentProcessingInfo
     }
 
+
     @if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZero){
-        @if(viewModel.hasPaymentBreakdown && viewModel.documentDetail.isNotCodingOutDocumentDetail) {
+        @if(viewModel.hasPaymentBreakdown && viewModel.chargeItem.subTransactionType == None) {
             <h3 id="charge-history-h3" class="govuk-heading-m">@chargeHistoryHeading</h3>
         } else {
             <h2 id="charge-history-h2" class="govuk-heading-m">@chargeHistoryHeading</h2>
@@ -375,10 +374,7 @@
                             getCreationDate(viewModel.adjustmentHistory.creationEvent.adjustmentDate)
                         }</td>
                         <td class="govuk-table__cell">@{
-                            if (viewModel.isMFADebit) messages(s"chargeSummary.chargeHistory.created.hmrcAdjustment.text")
-                            else if (viewModel.isReviewAndReconcilePoaOneDebit) messages("chargeSummary.chargeHistory.created.reviewAndReconcilePoa1.text")
-                            else if (viewModel.isReviewAndReconcilePoaTwoDebit) messages("chargeSummary.chargeHistory.created.reviewAndReconcilePoa2.text")
-                            else messages(s"chargeSummary.chargeHistory.created.${viewModel.documentDetail.getChargeTypeKey(viewModel.codingOutEnabled)}")
+                            messages(s"chargeSummary.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey(viewModel.codingOutEnabled, viewModel.reviewAndReconcileEnabled)}")
                         }
                         </td>
                         <td class="govuk-table__cell numeric govuk-!-text-align-right">@{
@@ -389,31 +385,31 @@
 
                 @if(viewModel.latePaymentInterestCharge) {
                     <tr>
-                        <td class="govuk-table__cell govuk-!-width-one-quarter">@{viewModel.documentDetail.interestEndDate.get.toLongDateShort}</td>
-                        <td class="govuk-table__cell">@messages(s"chargeSummary.lpi.chargeHistory.created.${viewModel.documentDetail.getChargeTypeKey()}")</td>
-                        <td class="govuk-table__cell govuk-!-text-align-right">@{viewModel.documentDetail.latePaymentInterestAmount.get.toCurrency}</td>
+                        <td class="govuk-table__cell govuk-!-width-one-quarter">@{viewModel.chargeItem.interestEndDate.get.toLongDateShort}</td>
+                        <td class="govuk-table__cell">@messages(s"chargeSummary.lpi.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey(viewModel.codingOutEnabled, viewModel.reviewAndReconcileEnabled)}")</td>
+                        <td class="govuk-table__cell govuk-!-text-align-right">@{viewModel.chargeItem.latePaymentInterestAmount.get.toCurrency}</td>
                     </tr>
                 }
 
-                @if(viewModel.codingOutEnabled && viewModel.documentDetail.isPayeSelfAssessment) {
+                @if(viewModel.codingOutEnabled && viewModel.chargeItem.subTransactionType == Some(Accepted)) {
                     <tr>
-                        <td class="govuk-table__cell govuk-!-width-one-quarter">@{viewModel.documentDetail.documentDate.toLongDateShort}</td>
+                        <td class="govuk-table__cell govuk-!-width-one-quarter">@{viewModel.chargeItem.documentDate.toLongDateShort}</td>
                         <td class="govuk-table__cell">@messages("chargeSummary.codingOutPayHistoryAmount", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)</td>
-                        <td class="govuk-table__cell">@{viewModel.documentDetail.originalAmount.toCurrency}</td>
+                        <td class="govuk-table__cell">@{viewModel.chargeItem.originalAmount.toCurrency}</td>
                     </tr>
                 }
 
                 @for(charge <- viewModel.adjustmentHistory.adjustments) {
                     <tr>
-                        <td class="govuk-table__cell govuk-!-width-one-quarter">@{charge.adjustmentDate.getOrElse(viewModel.documentDetail.documentDate).toLongDateShort}</td>
-                        <td class="govuk-table__cell">@messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${viewModel.documentDetail.getChargeTypeKey()}")</td>
+                        <td class="govuk-table__cell govuk-!-width-one-quarter">@{charge.adjustmentDate.getOrElse(viewModel.chargeItem.documentDate).toLongDateShort}</td>
+                        <td class="govuk-table__cell">@messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${viewModel.chargeItem.getChargeTypeKey(viewModel.codingOutEnabled, viewModel.reviewAndReconcileEnabled)}")</td>
                         <td class="govuk-table__cell">@{charge.amount.toCurrency}</td>
                     </tr>
                 }
             }
 
             @if(viewModel.paymentAllocationEnabled && !viewModel.latePaymentInterestCharge) {
-                @chargeSummaryPaymentAllocation(viewModel.paymentAllocations, viewModel.payments, viewModel.documentDetailWithDueDate, viewModel.isAgent, viewModel.isMFADebit, None, viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)
+                @chargeSummaryPaymentAllocation(viewModel.paymentAllocations, viewModel.payments, viewModel.chargeItem, viewModel.isAgent, None, viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)
             }
             </tbody>
         </table>

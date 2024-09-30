@@ -25,14 +25,13 @@ import controllers.agent.predicates.ClientConfirmedController
 import enums.GatewayPage.TaxYearSummaryPage
 import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import implicits.ImplicitDateFormatter
-import models.admin.{AdjustPaymentsOnAccount, CodingOut, ForecastCalculation, MFACreditsAndDebits, ReviewAndReconcilePoa}
+import models.admin._
 import models.core.Nino
-import models.financialDetails.MfaDebitUtils.filterMFADebits
-import models.financialDetails.ReviewAndReconcileDebitUtils.filterReviewAndReconcileDebits
-import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel}
+import models.financialDetails._
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
 import models.obligations.ObligationsModel
+import models.taxyearsummary.TaxYearSummaryChargeItem
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Lang, Messages, MessagesApi}
 import play.api.mvc._
@@ -74,7 +73,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
   }
 
   private def view(liabilityCalc: LiabilityCalculationResponseModel,
-                   documentDetailsWithDueDates: List[DocumentDetailWithDueDate],
+                   chargeItems: List[TaxYearSummaryChargeItem],
                    taxYear: Int,
                    obligations: ObligationsModel,
                    codingOutEnabled: Boolean,
@@ -95,9 +94,10 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
 
         val taxYearSummaryViewModel: TaxYearSummaryViewModel = TaxYearSummaryViewModel(
           calculationSummary,
-          documentDetailsWithDueDates,
+          chargeItems,
           obligations,
           codingOutEnabled = codingOutEnabled,
+          reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
           showForecastData = showForecast(calculationSummary),
           ctaViewModel = claimToAdjustViewModel
         )
@@ -118,9 +118,10 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
       case error: LiabilityCalculationError if error.status == NO_CONTENT =>
         val viewModel = TaxYearSummaryViewModel(
           None,
-          documentDetailsWithDueDates,
+          chargeItems,
           obligations,
           codingOutEnabled,
+          isEnabled(ReviewAndReconcilePoa),
           isEnabled(ForecastCalculation),
           claimToAdjustViewModel)
 
@@ -148,45 +149,78 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
     }
   }
 
-  private def withTaxYearFinancials(taxYear: Int, isAgent: Boolean)(f: List[DocumentDetailWithDueDate] => Future[Result])
+  private def withTaxYearFinancials(taxYear: Int, isAgent: Boolean)(f: List[TaxYearSummaryChargeItem] => Future[Result])
                                    (implicit user: MtdItUser[_]): Future[Result] = {
 
     financialDetailsService.getFinancialDetails(taxYear, user.nino) flatMap {
       case financialDetails@FinancialDetailsModel(_, documentDetails, _) =>
-        val docDetailsNoPayments = documentDetails.filter(_.paymentLot.isEmpty)
-        val docDetailsCodingOut = docDetailsNoPayments.filter(_.isCodingOutDocumentDetail(isEnabled(CodingOut)))
-        val documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = {
-          docDetailsNoPayments
-            .filter(_.isNotCodingOutDocumentDetail)
-            .filter(_.originalAmountIsNotNegative)
-            .map(
-              documentDetail => DocumentDetailWithDueDate(documentDetail, financialDetails.findDueDateByDocumentDetails(documentDetail),
-                dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId), codingOutEnabled = isEnabled(CodingOut),
-                isMFADebit = financialDetails.isMFADebit(documentDetail.transactionId),
-                isReviewAndReconcilePoaOneDebit = financialDetails.isReviewAndReconcilePoaOneDebit(documentDetail.transactionId),
-                isReviewAndReconcilePoaTwoDebit = financialDetails.isReviewAndReconcilePoaTwoDebit(documentDetail.transactionId)
-              )
-            )
-        }
-          .filterNot(documentDetailWithDueDate  => filterMFADebits(isEnabled(MFACreditsAndDebits), documentDetailWithDueDate))
-          .filterNot(documentDetailWithDueDate  => filterReviewAndReconcileDebits(isEnabled(ReviewAndReconcilePoa), documentDetailWithDueDate, financialDetails))
-        val documentDetailsWithDueDatesForLpi: List[DocumentDetailWithDueDate] = {
-          docDetailsNoPayments.filter(_.isLatePaymentInterest).map(
-            documentDetail => DocumentDetailWithDueDate(documentDetail, documentDetail.interestEndDate, isLatePaymentInterest = true,
-              dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId)))
-        }
-        val documentDetailsWithDueDatesCodingOutPaye: List[DocumentDetailWithDueDate] = {
-          docDetailsCodingOut.filter(dd => dd.isPayeSelfAssessment && dd.originalAmountIsNotZeroOrNegative).map(
-            documentDetail => DocumentDetailWithDueDate(documentDetail, documentDetail.getDueDate(),
-              dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId)))
-        }
-        val documentDetailsWithDueDatesCodingOut: List[DocumentDetailWithDueDate] = {
-          docDetailsCodingOut.filter(dd => !dd.isPayeSelfAssessment && dd.originalAmountIsNotZeroOrNegative).map(
-            documentDetail => DocumentDetailWithDueDate(documentDetail, documentDetail.getDueDate(),
-              dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId)))
+
+        def filterMfa(chargeItem: TaxYearSummaryChargeItem): Boolean = {
+          (isEnabled(MFACreditsAndDebits), chargeItem.transactionType) match {
+            case (false, MfaDebitCharge) => false
+            case _ => true
+          }
         }
 
-        f(documentDetailsWithDueDates ++ documentDetailsWithDueDatesForLpi ++ documentDetailsWithDueDatesCodingOutPaye ++ documentDetailsWithDueDatesCodingOut)
+        def filterReviewAndReconcile(chargeItem: TaxYearSummaryChargeItem): Boolean = {
+          (isEnabled(ReviewAndReconcilePoa), chargeItem.transactionType) match {
+            case (false, PaymentOnAccountOneReviewAndReconcile | PaymentOnAccountTwoReviewAndReconcile) => false
+            case _ => true
+          }
+        }
+
+        def findDueDateByDocumentDetails(documentDetail: DocumentDetail): Option[LocalDate] = {
+          financialDetails.financialDetails.find { fd =>
+            fd.transactionId.contains(documentDetail.transactionId) &&
+              fd.taxYear.toInt == documentDetail.taxYear
+          } flatMap (_ => documentDetail.documentDueDate)
+        }
+
+        val getChargeItem: DocumentDetail => Option[ChargeItem] = ChargeItem.tryGetChargeItem(
+          codingOutEnabled = isEnabled(CodingOut),
+          reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa)
+        )(
+          financialDetails = financialDetails.financialDetails
+        )
+
+        val chargeItemsNoPayments = documentDetails
+          .filter(_.paymentLot.isEmpty)
+
+        val  chargeItemsCodingOut = chargeItemsNoPayments
+          .filterNot(_.isNotCodingOutDocumentDetail)
+          .flatMap(dd => getChargeItem(dd)
+            .map(ci => TaxYearSummaryChargeItem.fromChargeItem(ci, dd.getDueDate())))
+
+        val chargeItemsNoCodingOut: List[TaxYearSummaryChargeItem] = {
+          chargeItemsNoPayments
+            .filter(_.isNotCodingOutDocumentDetail)
+            .flatMap(dd => getChargeItem(dd)
+              .map(ci => TaxYearSummaryChargeItem.fromChargeItem(ci, findDueDateByDocumentDetails(dd))))
+            .filterNot(_.originalAmount < 0)
+            .filter(filterMfa)
+            .filter(filterReviewAndReconcile)
+        }
+
+        val chargeItemsLpi: List[TaxYearSummaryChargeItem] = {
+          chargeItemsNoPayments
+            .filter(_.isLatePaymentInterest)
+            .flatMap(dd => getChargeItem(dd)
+              .map(ci => TaxYearSummaryChargeItem.fromChargeItem(ci, dd.interestEndDate, isLatePaymentInterest = true)))
+        }
+
+        val chargeItemsCodingOutPaye: List[TaxYearSummaryChargeItem] = {
+           chargeItemsCodingOut
+            .filter(_.subTransactionType.contains(models.financialDetails.Accepted))
+            .filterNot(_.originalAmount <= 0)
+        }
+
+        val chargeItemsCodingOutNotPaye: List[TaxYearSummaryChargeItem] = {
+           chargeItemsCodingOut
+            .filterNot(_.subTransactionType.contains(models.financialDetails.Accepted))
+            .filterNot(_.originalAmount <= 0)
+        }
+
+        f(chargeItemsNoCodingOut ++ chargeItemsLpi ++ chargeItemsCodingOutPaye ++ chargeItemsCodingOutNotPaye)
       case FinancialDetailsErrorModel(NOT_FOUND, _) => f(List.empty)
       case _ if isAgent =>
         Logger("application").error(s"[Agent]Could not retrieve financial details for year: $taxYear")
