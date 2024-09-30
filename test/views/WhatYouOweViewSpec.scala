@@ -65,6 +65,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val poa2Text: String = messages("whatYouOwe.paymentOnAccount2.text")
   val poaExtra1Text: String = messages("whatYouOwe.reviewAndReconcileOne.text")
   val poaExtra2Text: String = messages("whatYouOwe.reviewAndReconcileTwo.text")
+  val poa1ReconcileInterest: String = messages("whatYouOwe.interest.reviewAndReconcileOne.text")
+  val poa2ReconcileInterest: String = messages("whatYouOwe.interest.reviewAndReconcileTwo.text")
   val remainingBalance: String = messages("whatYouOwe.balancingCharge.text")
   val preMTDRemainingBalance: String = s"${messages("whatYouOwe.balancingCharge.text")} ${messages("whatYouOwe.pre-mtd-digital")}"
   val remainingBalanceLine1: String = messages("whatYouOwe.remaining-balance.line1")
@@ -89,6 +91,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val itsaPOA1: String = "ITSA- POA 1"
   val itsaPOA2: String = "ITSA - POA 2"
   val cancelledPayeSelfAssessment: String = messages("whatYouOwe.cancelledPayeSelfAssessment.text")
+
+  val interestEndDateFuture: LocalDate = LocalDate.of(2100, 1, 1)
 
   def ctaViewModel(isFSEnabled: Boolean): WYOClaimToAdjustViewModel = {
     if (isFSEnabled) {
@@ -476,6 +480,21 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           poa2ExtraTable.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
 
           poa2ExtraTable.select("td").last().text() shouldBe "£75.00"
+        }
+        "have interest charges for paid reconciliation charges in the same table" in new TestSetup(charges = whatYouOweReconciliationInterestData) {
+          val poaExtra1Table: Element = pageDocument.getElementById("due-0")
+          poaExtra1Table.select("td").first().text() shouldBe interestEndDateFuture.toLongDateShort
+          poaExtra1Table.select("td").get(1).text() shouldBe "OVERDUE " + poa1ReconcileInterest + " 1"
+          poaExtra1Table.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
+
+          poaExtra1Table.select("td").last().text() shouldBe "£100.00"
+
+          val poa2ExtraTable: Element = pageDocument.getElementById("due-1")
+          poa2ExtraTable.select("td").first().text() shouldBe interestEndDateFuture.toLongDateShort
+          poa2ExtraTable.select("td").get(1).text() shouldBe "OVERDUE " + poa2ReconcileInterest + " 2"
+          poa2ExtraTable.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
+
+          poa2ExtraTable.select("td").last().text() shouldBe "£40.00"
         }
         "payment type drop down and content exists" in new TestSetup(charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
           pageDocument.select(".govuk-details__summary-text").text shouldBe dropDownInfo
