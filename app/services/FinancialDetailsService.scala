@@ -96,6 +96,7 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
     financialDetailsModel.documentDetails.collect {
       case documentDetail: DocumentDetail if documentDetail.isCodingOutDocumentDetail(isCodingOutEnabled) => documentDetail
       case documentDetail: DocumentDetail if documentDetail.latePaymentInterestAmount.isDefined && !documentDetail.interestIsPaid => documentDetail
+      case documentDetail: DocumentDetail if documentDetail.interestOutstandingAmount.isDefined && !documentDetail.interestIsPaid => documentDetail
       case documentDetail: DocumentDetail if documentDetail.isNotCodingOutDocumentDetail && !documentDetail.isPaid => documentDetail
     }
   }

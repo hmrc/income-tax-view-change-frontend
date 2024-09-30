@@ -111,6 +111,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
   val successHeadingForBCD = s"2017 to 2018 tax year ${messages("chargeSummary.balancingCharge.text")}"
   def successHeadingForRAR1(startYear: String, endYear: String) = s"$startYear to $endYear tax year ${messages("chargeSummary.reviewAndReconcilePoa1.text")}"
   def successHeadingForRAR2(startYear: String, endYear: String) = s"$startYear to $endYear tax year ${messages("chargeSummary.reviewAndReconcilePoa2.text")}"
+  def successHeadingRAR1Interest(startYear: String, endYear: String) = s"$startYear to $endYear tax year ${messages("chargeSummary.interest.reviewAndReconcilePoa1.text")}"
   val dunningLocksBannerHeading: String = messages("chargeSummary.dunning.locks.banner.title")
   val paymentBreakdownHeading: String = messages("chargeSummary.paymentBreakdown.heading")
   val paymentHistoryHeadingForPOA1Charge: String = messages("chargeSummary.chargeHistory.Poa1heading")
@@ -124,6 +125,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
   val explanationTextForRAR2: String = messages("chargeSummary.reviewAndReconcilePoa.p1") + " " + messages("chargeSummary.reviewAndReconcilePoa2.linkText") + " " + messages("chargeSummary.reviewAndReconcilePoa.p2")
   val descriptionTextForRAR1: String = messages("chargeSummary.chargeHistory.created.reviewAndReconcilePoa1.text")
   val descriptionTextForRAR2: String = messages("chargeSummary.chargeHistory.created.reviewAndReconcilePoa2.text")
+  val descriptionTextRAR1Interest: String = messages("chargeSummary.poa1ExtraAmountInterest.p1")
 
     "The ChargeSummaryController for Individuals" should {
 
@@ -194,6 +196,21 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
           .selectXpath("/html/body/div/main/div/div/div[1]/table/tbody/tr/td[2]").text() shouldBe descriptionTextForRAR2
       }
 
+      "provided with an id associated to interest on a Review & Reconcile Debit Charge for POA" in new Setup(testFinancialDetailsModelWithReviewAndReconcileInterest) {
+        enable(ChargeHistory)
+        enable(PaymentAllocation)
+        enable(ReviewAndReconcilePoa)
+
+        val endYear: Int = 2018
+        val startYear: Int = endYear - 1
+
+        val result: Future[Result] = controller.show(testTaxYear, id1040000123, isInterestCharge = true)(fakeRequestWithNinoAndOrigin("PTA"))
+
+        status(result) shouldBe Status.OK
+        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeadingRAR1Interest(startYear.toString, endYear.toString)
+        JsoupParse(result).toHtmlDocument.getElementById("poa1-extra-charge-p1").text() shouldBe descriptionTextRAR1Interest
+      }
+
       "provided with an id that matches a charge in the financial response" in new Setup(financialDetailsModel()) {
         enable(ChargeHistory)
         enable(PaymentAllocation)
@@ -238,7 +255,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         enable(ChargeHistory)
         disable(PaymentAllocation)
 
-        val result: Future[Result] = controller.show(testTaxYear, "1040000123", isLatePaymentCharge = true)(fakeRequestWithNinoAndOrigin("PTA"))
+        val result: Future[Result] = controller.show(testTaxYear, "1040000123", isInterestCharge = true)(fakeRequestWithNinoAndOrigin("PTA"))
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe lateInterestSuccessHeading
@@ -249,7 +266,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       "provided with dunning locks and late payment interest flag, not showing the locks banner" in new Setup(
         financialDetailsModel(lpiWithDunningLock = None).copy(financialDetails = financialDetailsWithLocks(testTaxYear))) {
 
-        val result: Future[Result] = controller.show(testTaxYear, "1040000123", isLatePaymentCharge = true)(fakeRequestWithNinoAndOrigin("PTA"))
+        val result: Future[Result] = controller.show(testTaxYear, "1040000123", isInterestCharge = true)(fakeRequestWithNinoAndOrigin("PTA"))
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("#dunningLocksBanner").size() shouldBe 0
@@ -495,7 +512,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         financialDetailsModel(lpiWithDunningLock = None), isAgent = true) {
         enable(ChargeHistory)
         disable(PaymentAllocation)
-        val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123", isLatePaymentCharge = true)(fakeRequestConfirmedClient("AB123456C"))
+        val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123", isInterestCharge = true)(fakeRequestConfirmedClient("AB123456C"))
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe lateInterestSuccessHeading
@@ -517,7 +534,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       "provided with dunning locks and a late payment interest flag, not showing the locks banner" in new Setup(
         financialDetailsModel(lpiWithDunningLock = None).copy(financialDetails = financialDetailsWithLocks(testTaxYear)), isAgent = true) {
 
-        val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123", isLatePaymentCharge = true)(fakeRequestConfirmedClient("AB123456C"))
+        val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123", isInterestCharge = true)(fakeRequestConfirmedClient("AB123456C"))
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("#dunningLocksBanner").size() shouldBe 0

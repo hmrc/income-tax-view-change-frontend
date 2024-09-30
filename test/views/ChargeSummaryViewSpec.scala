@@ -56,6 +56,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
                   chargeHistoryEnabled: Boolean = true,
                   paymentAllocationEnabled: Boolean = false,
                   latePaymentInterestCharge: Boolean = false,
+                  otherInterestCharge: Boolean = false,
                   codingOutEnabled: Boolean = false,
                   reviewAndReconcileEnabled: Boolean = false,
                   isAgent: Boolean = false,
@@ -75,6 +76,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       chargeHistoryEnabled = chargeHistoryEnabled,
       paymentAllocationEnabled = paymentAllocationEnabled,
       latePaymentInterestCharge = latePaymentInterestCharge,
+      otherInterestCharge = otherInterestCharge,
       codingOutEnabled = codingOutEnabled,
       reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       isAgent = isAgent,
@@ -142,6 +144,14 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     val lpiPoaTextParagraph = messages("chargeSummary.lpi.paymentsOnAccount.textOne") + " " + messages("chargeSummary.lpi.paymentsOnAccount.linkText") + " " + messages("chargeSummary.lpi.paymentsOnAccount.textTwo")
     val lpiPoaTextP3 = messages("chargeSummary.lpi.paymentsOnAccount.p3") + " " + messages("chargeSummary.lpi.paymentsOnAccount.p3LinkText")
 
+    val poa1ReconciliationInterestP1 = messages("chargeSummary.poa1ExtraAmountInterest.p1")
+    val poa1ReconciliationInterestP2 = messages("chargeSummary.poa1ExtraAmountInterest.p2")
+    val poa1ReconciliationInterestP3 = messages("chargeSummary.poa1ExtraAmountInterest.p3") + " " +  messages("chargeSummary.poa1ExtraAmountInterest.p3LinkText") + " " + messages("chargeSummary.poa1ExtraAmountInterest.p3AfterLink")
+
+    val poa2ReconciliationInterestP1 = messages("chargeSummary.poa2ExtraAmountInterest.p1")
+    val poa2ReconciliationInterestP2 = messages("chargeSummary.poa2ExtraAmountInterest.p2")
+    val poa2ReconciliationInterestP3 = messages("chargeSummary.poa2ExtraAmountInterest.p3") + " " +  messages("chargeSummary.poa2ExtraAmountInterest.p3LinkText") + " " + messages("chargeSummary.poa2ExtraAmountInterest.p3AfterLink")
+
     val bcdTextParagraph = messages("chargeSummary.definition.balancingcharge.p1")
     val bcdTextBullets = messages("chargeSummary.definition.balancingcharge.bullet1") + " " + messages("chargeSummary.definition.balancingcharge.bullet2")
     val bcdTextP2 = messages("chargeSummary.definition.balancingcharge.p2")
@@ -169,6 +179,14 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
     def poa2InterestHeading(year: Int, number: Int) = s"${year - 1} to $year tax year Late payment interest on second payment on account"
 
+    def poa1ReconcileHeading(year: Int, number: Int) = s"${year - 1} to $year tax year First payment on account: extra amount from your tax return"
+
+    def poa2ReconcileHeading(year: Int, number: Int) = s"${year - 1} to $year tax year Second payment on account: extra amount from your tax return"
+
+    def poa1ReconcileInterestHeading(year: Int, number: Int) = s"${year - 1} to $year tax year Interest for first payment on account: extra amount"
+
+    def poa2ReconcileInterestHeading(year: Int, number: Int) = s"${year - 1} to $year tax year Interest for second payment on account: extra amount"
+
     def balancingChargeHeading(year: Int) = s"${year - 1} to $year tax year $balancingCharge"
 
     def balancingChargeInterestHeading(year: Int) = s"${year - 1} to $year tax year ${messages("chargeSummary.lpi.balancingCharge.text")}"
@@ -181,6 +199,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     val interestPeriod: String = messages("chargeSummary.lpi.interestPeriod")
     val fullPaymentAmount: String = messages("chargeSummary.paymentAmount")
     val paymentAmount: String = messages("chargeSummary.paymentAmountCodingOut")
+    val amount: String = messages("chargeSummary.chargeHistory.amount")
     val remainingToPay: String = messages("chargeSummary.remainingDue")
     val paymentBreakdownHeading: String = messages("chargeSummary.paymentBreakdown.heading")
     val chargeHistoryHeadingGeneric: String = messages("chargeSummary.chargeHistory.heading")
@@ -194,6 +213,8 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     def paymentOnAccountCreated(number: Int) = messages(s"chargeSummary.chargeHistory.created.paymentOnAccount$number.text")
 
     def paymentOnAccountInterestCreated(number: Int) = s"Late payment interest for payment on account $number of 2 created"
+
+    val hmrcCreated: String = messages("chargeSummary.lpi.chargeHistory.created.poa1ExtraCharge.text")
 
     val balancingChargeCreated: String = messages("chargeSummary.chargeHistory.created.balancingCharge.text")
     val balancingChargeInterestCreated: String = messages("chargeSummary.lpi.chargeHistory.created.balancingCharge.text")
@@ -1178,6 +1199,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         chargeHistoryEnabled = true,
         paymentAllocationEnabled = false,
         latePaymentInterestCharge = false,
+        otherInterestCharge = false,
         codingOutEnabled = false,
         reviewAndReconcileEnabled = false,
         isAgent = false,
