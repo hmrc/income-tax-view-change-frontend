@@ -20,7 +20,7 @@ import play.api.libs.json.{JsObject, JsValue, Json}
 import utils.Utilities.JsonUtil
 
 case class ConfirmClientDetailsAuditModel(clientName: String, nino: String,
-                                          mtditid: String, arn: String,saUtr: String,
+                                          mtditid: String, arn: String, saUtr: String,
                                           credId: Option[String]) extends ExtendedAuditModel {
 
   override val transactionName: String = enums.TransactionName.ClientDetailsConfirmed

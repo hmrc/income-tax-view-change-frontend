@@ -32,11 +32,14 @@ import views.html.optOut.{CheckOptOutAnswers, ConfirmOptOut}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import audit.AuditingService
+//import audit.models.{CheckYourAnswersAuditModel, Outcome}
 
 class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
                                         checkOptOutAnswers: CheckOptOutAnswers,
                                         optOutService: OptOutService,
-                                        auth: AuthenticatorPredicate)
+                                        auth: AuthenticatorPredicate,
+                                        auditingService: AuditingService)
                                        (implicit val appConfig: FrontendAppConfig,
                                         val ec: ExecutionContext,
                                         val authorisedFunctions: FrontendAuthorisedFunctions,
@@ -69,8 +72,51 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
     implicit user =>
       optOutService.makeOptOutUpdateRequest().map {
         case ITSAStatusUpdateResponseSuccess(_) => Redirect(routes.ConfirmedOptOutController.show(isAgent))
+//          val checkYourAnswersAuditModel: CheckYourAnswersAuditModel = CheckYourAnswersAuditModel(
+//            nino = nino, outcome = Outcome, optOutRequestedFromTaxYear = String, currentYear = String,
+//            beforeITSAStatusCurrentYearMinusOne = String, beforeITSAStatusCurrentYear = String,
+//            beforeITSAStatusCurrentYearPlusOne = String, afterAssumedITSAStatusCurrentYearMinusOne = String,
+//            afterAssumedITSAStatusCurrentYear = String, afterAssumedITSAStatusCurrentYearPlusOne = String,
+//            currentYearMinusOneCrystallised = Boolean)
+//          for {
+//            clientName <- fetchClientName
+//            nino <- request.session.get(SessionKeys.clientNino)
+//            clientMTDID <- request.session.get(SessionKeys.clientMTDID)
+//            arn <- user.agentReferenceNumber
+//            saUtr <- request.session.get(SessionKeys.clientUTR)
+//          } yield
+//          auditingService.extendedAudit(CheckYourAnswersAuditModel(
+//            nino = nino,
+//            "outcome" -> outcome,
+//            "optOutRequestedFromTaxYear" -> optOutRequestedFromTaxYear,
+//            "currentYear" -> currentYear,
+//            "beforeITSAStatusCurrentYearMinusOne" -> beforeITSAStatusCurrentYearMinusOne,
+//            "beforeITSAStatusCurrentYear" -> beforeITSAStatusCurrentYear,
+//            "beforeITSAStatusCurrentYearPlusOne" -> beforeITSAStatusCurrentYearPlusOne,
+//            "afterAssumedITSAStatusCurrentYearMinusOne" -> afterAssumedITSAStatusCurrentYearMinusOne,
+//            "afterAssumedITSAStatusCurrentYear" -> afterAssumedITSAStatusCurrentYear,
+//            "afterAssumedITSAStatusCurrentYearPlusOne" -> afterAssumedITSAStatusCurrentYearMinusOne,
+//            "currentYearMinusOneCrystallised" -> currentYearMinusOneCrystallised)
+//          ))
+//
         case _ => Redirect(routes.OptOutErrorController.show(isAgent))
       }
+
+//      for {
+//        clientName <- fetchClientName
+//        nino <- request.session.get(SessionKeys.clientNino)
+//        clientMTDID <- request.session.get(SessionKeys.clientMTDID)
+//        arn <- user.agentReferenceNumber
+//        saUtr <- request.session.get(SessionKeys.clientUTR)
+//      } yield
+//        auditingService.extendedAudit(ConfirmClientDetailsAuditModel(
+//          clientName = clientName,
+//          nino = nino,
+//          mtditid = clientMTDID,
+//          arn = arn,
+//          saUtr = saUtr,
+//          credId = user.credId
+//        ))
   }
 
   private def withRecover(isAgent: Boolean)(code: => Future[Result])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
