@@ -55,9 +55,9 @@ object WiremockHelper extends Eventually with IntegrationPatience {
   }
 
 
-  def verifyPut(uri: String, optBody: Option[String] = None): Unit = {
+  def verifyPut(uri: String, optRequestBody: Option[String] = None): Unit = {
     val uriMapping = putRequestedFor(urlEqualTo(uri))
-    val putRequest = optBody match {
+    val putRequest = optRequestBody match {
       case Some(body) => uriMapping.withRequestBody(equalTo(body))
       case None => uriMapping
     }
@@ -141,6 +141,17 @@ object WiremockHelper extends Eventually with IntegrationPatience {
 
   def stubPut(url: String, status: Integer, responseBody: String): StubMapping =
     stubFor(put(urlEqualTo(url))
+      .willReturn(
+        aResponse().
+          withStatus(status).
+          withBody(responseBody)
+      )
+    )
+
+  // for now overload the stubPut because there are quite a lot of other tests which do not have the request body supplied
+  def stubPut(url: String, status: Integer, expectedRequestBody: String, responseBody: String): StubMapping =
+    stubFor(put(urlEqualTo(url))
+      .withRequestBody(equalToJson(expectedRequestBody)) // Ensure that the request body matches
       .willReturn(
         aResponse().
           withStatus(status).

@@ -17,7 +17,7 @@
 package controllers.optOut
 
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel._
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockOptOutService, MockSessionService}
 import models.incomeSourceDetails.TaxYear
