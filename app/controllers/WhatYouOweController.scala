@@ -74,13 +74,14 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
         btaNavPartial = user.btaNavPartial,
         dunningLock = whatYouOweChargesList.hasDunningLock,
         codingOutEnabled = isEnabled(CodingOut),
+        reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
         MFADebitsEnabled = isEnabled(MFACreditsAndDebits),
         isAgent = isAgent,
         whatYouOweCreditAmountEnabled = isEnabled(WhatYouOweCreditAmount),
         isUserMigrated = user.incomeSources.yearOfMigration.isDefined,
         creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
         origin = origin,
-        claimToAdjustViewModel = ctaViewModel)(user, user, messages)
+        claimToAdjustViewModel = ctaViewModel)(user, user, messages, dateService)
       ).addingToSession(gatewayPage -> WhatYouOwePage.name)
     }
   } recover {
