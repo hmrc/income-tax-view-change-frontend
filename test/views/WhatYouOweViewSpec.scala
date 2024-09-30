@@ -143,6 +143,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     val defaultClaimToAdjustViewModel = ctaViewModel(adjustPaymentsOnAccountFSEnabled)
 
     val html: HtmlFormat.Appendable = whatYouOweView(
+      hasOverdueOrAccruingInterestCharges = false,
       creditCharges = creditCharges,
       whatYouOweChargesList = charges,
       hasLpiWithDunningLock = hasLpiWithDunningLock,
@@ -151,7 +152,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       utr = Some("1234567890"),
       btaNavPartial = None,
       dunningLock = dunningLock,
-      hasOverdueOrAccruingInterestCharges = false,
       codingOutEnabled = codingOutEnabled,
       reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       MFADebitsEnabled = MFADebitsEnabled,
@@ -206,6 +206,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     val whatYouOweView: WhatYouOwe = app.injector.instanceOf[WhatYouOwe]
 
     val html: HtmlFormat.Appendable = whatYouOweView(
+      hasOverdueOrAccruingInterestCharges = false,
       creditCharges = creditCharges,
       whatYouOweChargesList = charges,
       hasLpiWithDunningLock = hasLpiWithDunningLock,
@@ -214,7 +215,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       utr = Some("1234567890"),
       dunningLock = dunningLock,
       codingOutEnabled = codingOutEnabled,
-      hasOverdueOrAccruingInterestCharges = false,
       reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       MFADebitsEnabled = MFADebitsEnabled,
       whatYouOweCreditAmountEnabled = whatYouOweCreditAmountEnabled,

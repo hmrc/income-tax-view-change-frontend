@@ -35,7 +35,7 @@ object FinancialDetailsTestConstants {
 
   val fixedDate: LocalDate = LocalDate.of(2023, 12, 15)
 
-  val fixedDateTwo: LocalDate = LocalDate.of(2018, 3, 29)
+  val fixedDateTwo: LocalDate = LocalDate.of(2018, 12, 15)
 
   implicit val dateService: DateService = app.injector.instanceOf[DateService]
 
