@@ -165,6 +165,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
         def filterReviewAndReconcile(chargeItem: TaxYearSummaryChargeItem): Boolean = {
           (isEnabled(ReviewAndReconcilePoa), chargeItem.transactionType) match {
             case (false, PaymentOnAccountOneReviewAndReconcile | PaymentOnAccountTwoReviewAndReconcile) => false
+            case (true, PaymentOnAccountOneReviewAndReconcile | PaymentOnAccountTwoReviewAndReconcile) if chargeItem.outstandingAmount <= 0 => false
             case _ => true
           }
         }
