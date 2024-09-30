@@ -916,6 +916,16 @@ object FinancialDetailsTestConstants {
       )
     )
 
+  def financialDetailsModelWithPoaExtraCharge() =
+    FinancialDetailsModel(
+      balanceDetails = balanceDetails,
+      documentDetails = List(documentDetailModel(testTaxYear, paymentLot = None,
+        paymentLotItem = None, latePaymentInterestAmount = None, documentDescription = Some("ITSA - POA 2"))),
+      financialDetails = List(financialDetail(testTaxYear, mainType = "ITSA Poa 2", mainTransaction = "4930"),
+        financialDetail(testTaxYear, transactionId = Some("123456"), mainType = "ITSA Poa 2 extra charge", mainTransaction = "4913")
+      )
+    )
+
   def testFinancialDetailsModelWithMFADebits(): FinancialDetailsModel =
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),

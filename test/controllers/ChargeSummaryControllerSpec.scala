@@ -326,6 +326,23 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         }
       }
 
+      "displays link to poa extra charge on poa page when reconciliation charge exists" in new Setup(financialDetailsModelWithPoaExtraCharge()) {
+        enable(ReviewAndReconcilePoa)
+
+        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithNinoAndOrigin("PTA"))
+
+        status(result) shouldBe Status.OK
+        JsoupParse(result).toHtmlDocument.select("#poa-extra-charge-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(testTaxYear, "123456").url
+      }
+      "not display link to poa extra charge if no charge exists" in new Setup(financialDetailsModel()) {
+        enable(ReviewAndReconcilePoa)
+
+        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithNinoAndOrigin("PTA"))
+
+        status(result) shouldBe Status.OK
+        JsoupParse(result).toHtmlDocument.select("#poa-extra-charge-link").attr("href") shouldBe ""
+      }
+
       "display the payment processing info if the charge is not Review & Reconcile" in new Setup(
         financialDetailsModel(documentDescription = Some("ITSA BCD"), mainTransaction = "4910")) {
         disable(ChargeHistory)
@@ -520,6 +537,22 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe lpiHistoryHeading
       }
 
+      "displays link to poa extra charge" in new Setup(financialDetailsModelWithPoaExtraCharge(), isAgent = true) {
+        enable(ReviewAndReconcilePoa)
+
+        val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123")(fakeRequestConfirmedClient("AB123456C"))
+
+        status(result) shouldBe Status.OK
+        JsoupParse(result).toHtmlDocument.select("#poa-extra-charge-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(testTaxYear, "123456").url
+      }
+      "not display link to poa extra charge if no charge exists" in new Setup(financialDetailsModel(), isAgent = true) {
+        enable(ReviewAndReconcilePoa)
+
+        val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123")(fakeRequestConfirmedClient("AB123456C"))
+
+        status(result) shouldBe Status.OK
+        JsoupParse(result).toHtmlDocument.select("#poa-extra-charge-link").attr("href") shouldBe ""
+      }
 
       "provided with dunning locks, showing the locks banner" in new Setup(
         financialDetailsModel().copy(financialDetails = financialDetailsWithLocks(testTaxYear)), isAgent = true) {
