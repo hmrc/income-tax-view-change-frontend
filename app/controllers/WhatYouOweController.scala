@@ -66,7 +66,7 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
 
       auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList, dateService))
 
-      Ok(whatYouOwe(
+      Ok(whatYouOwe(test = false,
         currentDate = dateService.getCurrentDate,
         creditCharges,
         whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,

@@ -42,7 +42,8 @@
     govukInsetText : GovukInsetText
 )
 
-@(currentDate: LocalDate,
+@(test: Boolean,
+    currentDate: LocalDate,
     creditCharges: List[DocumentDetail],
     whatYouOweChargesList: WhatYouOweChargesList,
     hasLpiWithDunningLock: Boolean,
@@ -385,6 +386,8 @@
 
         @saNoteParagraph
     } else {
+
+    <a>@test</a>
 
         <div>
 
