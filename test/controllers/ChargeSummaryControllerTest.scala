@@ -186,6 +186,7 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
         when(documentDetail.originalAmount).thenReturn(10)
         when(documentDetail.interestEndDate).thenReturn(None)
         when(documentDetail.latePaymentInterestAmount).thenReturn(None)
+        when(documentDetail.interestOutstandingAmount).thenReturn(None)
 
         val outcome = controller.mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate)(tsTestUser)
 

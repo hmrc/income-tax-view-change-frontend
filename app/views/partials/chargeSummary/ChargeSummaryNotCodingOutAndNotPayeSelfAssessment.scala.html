@@ -29,6 +29,7 @@
 @(
     chargeItem: models.financialDetails.ChargeItem,
     latePaymentInterestCharge: Boolean,
+    otherInterestCharge: Boolean,
     codingOutEnabled: Boolean,
     taxYearFromCodingOut: String,
     taxYearToCodingOut: String,
@@ -56,7 +57,7 @@
         </dd>
     </div>
 
-    @if(latePaymentInterestCharge) {
+    @if(latePaymentInterestCharge || otherInterestCharge) {
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">@messages("chargeSummary.lpi.interestPeriod")</dt>
             <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
@@ -77,6 +78,7 @@
             <span>
             @{
                 if (latePaymentInterestCharge) chargeItem.latePaymentInterestAmount.getOrElse(throw MissingFieldException("Late Payment Interest Amount")).toCurrency
+                else if (otherInterestCharge) chargeItem.interestOutstandingAmount.getOrElse(throw MissingFieldException("Interest Amount")).toCurrency
                 else chargeItem.originalAmount.toCurrency
             }
             </span>
@@ -88,7 +90,7 @@
         @{
             if (codingOutEnabled && chargeItem.subTransactionType == Some(models.financialDetails.Accepted)) {
                 messages("chargeSummary.codingOutRemainingToPay", taxYearFromCodingOut, taxYearToCodingOut)
-            } else if (latePaymentInterestCharge) chargeItem.interestRemainingToPay.toCurrency
+            } else if (latePaymentInterestCharge || otherInterestCharge) chargeItem.interestRemainingToPay.toCurrency
             else chargeItem.remainingToPay.toCurrency
         }
         </dd>
