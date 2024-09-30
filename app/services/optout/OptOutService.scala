@@ -16,6 +16,7 @@
 
 package services.optout
 
+import audit.AuditingService
 import auth.MtdItUser
 import cats.data.OptionT
 import connectors.itsastatus.ITSAStatusUpdateConnector
@@ -33,6 +34,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import audit.AuditingService
+//import audit.models.CheckYourAnswersAuditModel
 
 @Singleton
 class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnector,
@@ -95,6 +98,24 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     val responsesSeqOfFutures = makeUpdateCalls(yearsToUpdate)
     Future.sequence(responsesSeqOfFutures).
       map(responsesSeq => findAnyFailOrFirstSuccess(responsesSeq))
+
+//    auditingService.extendedAudit(CheckYourAnswersAuditModel(
+//      for {
+//        clientName <- fetchClientName
+//        nino <- request.session.get(SessionKeys.clientNino)
+//        clientMTDID <- request.session.get(SessionKeys.clientMTDID)
+//        arn <- user.agentReferenceNumber
+//        saUtr <- request.session.get(SessionKeys.clientUTR)
+//      } yield
+//        auditingService.extendedAudit(ConfirmClientDetailsAuditModel(
+//          clientName = clientName,
+//          nino = nino,
+//          mtditid = clientMTDID,
+//          arn = arn,
+//          saUtr = saUtr,
+//          credId = user.credId
+//        ))
+//    ))
   }
 
   private def makeUpdateCalls(optOutYearsToUpdate: Seq[TaxYear])
