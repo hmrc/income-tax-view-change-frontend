@@ -61,12 +61,11 @@ class OptInCompletedController @Inject()(val view: OptInCompletedView,
           proposition <- optInService.fetchOptInProposition()
           intent <- optInService.fetchSavedChosenTaxYear()
         } yield {
-          val followingYearVoluntary = proposition.nextTaxYear.status == Voluntary
           intent.map { optInTaxYear =>
             val model = OptInCompletedViewModel(isAgent = isAgent,
                                                 optInTaxYear = optInTaxYear,
                                                 isCurrentYear = proposition.isCurrentTaxYear(optInTaxYear),
-                                                followingVoluntary = followingYearVoluntary)
+                                                optInIncludedNextYear = proposition.nextTaxYear.status == Voluntary)
             Ok(view(model))
           }.getOrElse(errorHandler(isAgent).showInternalServerError())
         }

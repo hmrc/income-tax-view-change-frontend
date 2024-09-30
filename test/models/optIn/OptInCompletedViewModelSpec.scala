@@ -30,7 +30,7 @@ class OptInCompletedViewModelSpec extends UnitSpec {
     val optInTaxYear = currentTaxYear
 
     s"Individual" in {
-      val model = OptInCompletedViewModel(isAgent = false, optInTaxYear = optInTaxYear, isCurrentYear = false, followingVoluntary = false)
+      val model = OptInCompletedViewModel(isAgent = false, optInTaxYear = optInTaxYear, isCurrentYear = false, optInIncludedNextYear = false)
 
       model.startYear shouldBe "2022"
       model.endYear shouldBe "2023"
@@ -39,17 +39,17 @@ class OptInCompletedViewModelSpec extends UnitSpec {
     }
 
     s"Individual with following year Voluntary" in {
-      val model = OptInCompletedViewModel(isAgent = false, optInTaxYear = optInTaxYear, isCurrentYear = false, followingVoluntary = true)
+      val model = OptInCompletedViewModel(isAgent = false, optInTaxYear = optInTaxYear, isCurrentYear = false, optInIncludedNextYear = true)
 
       model.startYear shouldBe "2022"
       model.endYear shouldBe "2023"
       model.isAgent shouldBe false
       model.nextYear shouldBe "2024"
-      model.followingVoluntary shouldBe true
+      model.optInIncludedNextYear shouldBe true
     }
 
     s"Agent" in {
-      val model = OptInCompletedViewModel(isAgent = true, optInTaxYear = optInTaxYear, isCurrentYear = true, followingVoluntary = false)
+      val model = OptInCompletedViewModel(isAgent = true, optInTaxYear = optInTaxYear, isCurrentYear = true, optInIncludedNextYear = false)
 
       model.startYear shouldBe "2022"
       model.endYear shouldBe "2023"
@@ -63,7 +63,7 @@ class OptInCompletedViewModelSpec extends UnitSpec {
     val optInTaxYear = currentTaxYear.nextYear
 
     s"Individual" in {
-      val model = OptInCompletedViewModel(isAgent = false, optInTaxYear = optInTaxYear, isCurrentYear = true, followingVoluntary = false)
+      val model = OptInCompletedViewModel(isAgent = false, optInTaxYear = optInTaxYear, isCurrentYear = true, optInIncludedNextYear = false)
 
       model.startYear shouldBe "2023"
       model.endYear shouldBe "2024"
@@ -72,7 +72,7 @@ class OptInCompletedViewModelSpec extends UnitSpec {
     }
 
     s"Agent" in {
-      val model = OptInCompletedViewModel(isAgent = true, optInTaxYear = optInTaxYear, isCurrentYear = true, followingVoluntary = false)
+      val model = OptInCompletedViewModel(isAgent = true, optInTaxYear = optInTaxYear, isCurrentYear = true, optInIncludedNextYear = false)
 
       model.startYear shouldBe "2023"
       model.endYear shouldBe "2024"
