@@ -56,7 +56,7 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
                     itvcErrorHandler: ShowInternalServerError,
                     isAgent: Boolean,
                     origin: Option[String] = None)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages, dateServiceInterface: DateServiceInterface): Future[Result] = {
+                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
     for {
       whatYouOweChargesList <- whatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(MFACreditsAndDebits), isEnabled(ReviewAndReconcilePoa))
@@ -66,13 +66,10 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
 
       auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList, dateService))
 
-      val hasOverdueCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isOverdue())
-      val hasAccruingInterestReviewAndReconcileCharges: Boolean =
-        whatYouOweChargesList.chargesList.exists(_.isAccruingInterest())
-
       Ok(whatYouOwe(
         currentDate = dateService.getCurrentDate,
-        creditCharges,
+        hasOverdueOrAccruingInterestCharges = whatYouOweService.hasOverdueOrAccruingInterestCharges(whatYouOweChargesList),
+        creditCharges = creditCharges,
         whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
         currentTaxYear = dateService.getCurrentTaxYearEnd, backUrl = backUrl, utr = user.saUtr,
         btaNavPartial = user.btaNavPartial,
@@ -81,7 +78,6 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
         reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
         MFADebitsEnabled = isEnabled(MFACreditsAndDebits),
         isAgent = isAgent,
-        hasOverdueOrAccruingInterestCharges = hasOverdueCharges || hasAccruingInterestReviewAndReconcileCharges,
         whatYouOweCreditAmountEnabled = isEnabled(WhatYouOweCreditAmount),
         isUserMigrated = user.incomeSources.yearOfMigration.isDefined,
         creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),

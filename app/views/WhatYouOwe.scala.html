@@ -45,6 +45,7 @@
 )
 
 @(currentDate: LocalDate,
+    hasOverdueOrAccruingInterestCharges: Boolean,
     creditCharges: List[DocumentDetail],
     whatYouOweChargesList: WhatYouOweChargesList,
     hasLpiWithDunningLock: Boolean,
@@ -58,7 +59,6 @@
     MFADebitsEnabled: Boolean,
     whatYouOweCreditAmountEnabled: Boolean,
     isAgent: Boolean = false,
-    hasOverdueOrAccruingInterestCharges: Boolean,
     isUserMigrated: Boolean = false,
     creditAndRefundEnabled: Boolean,
     claimToAdjustViewModel: WYOClaimToAdjustViewModel,
