@@ -207,6 +207,7 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
               btaNavPartial = user.btaNavPartial,
               isAgent = isAgent,
               adjustmentHistory = chargeHistoryService.getAdjustmentHistory(chargeHistory, documentDetailWithDueDate.documentDetail),
+              poaExtraChargeLink = checkForPoaExtraChargeLink(chargeDetailsforTaxYear, documentDetailWithDueDate, isAgent),
               poaOneChargeUrl = poaOneChargeUrl,
               poaTwoChargeUrl = poaTwoChargeUrl
             )
@@ -219,6 +220,27 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
         }
       case _ =>
         onError("Invalid response from charge history", isAgent, showInternalServerError = true)
+    }
+  }
+
+  private def checkForPoaExtraChargeLink(chargeDetailsForTaxYear: FinancialDetailsModel, documentDetailWithDueDate: DocumentDetailWithDueDate, isAgent: Boolean)(implicit user: MtdItUser[_]): Option[String] = {
+    val chargeItem: Option[ChargeItem] = ChargeItem.tryGetChargeItem(isEnabled(CodingOut), isEnabled(ReviewAndReconcilePoa))(
+      chargeDetailsForTaxYear.financialDetails)(documentDetailWithDueDate.documentDetail)
+
+    val desiredMainTransaction: String = chargeItem match {
+      case Some(item) if item.transactionType == PaymentOnAccountOne => "4911"
+      case Some(item) if item.transactionType == PaymentOnAccountTwo => "4913"
+      case _ => "no valid case"
+    }
+
+    val extraChargeId = chargeDetailsForTaxYear.financialDetails.find(x => x.taxYear == documentDetailWithDueDate.documentDetail.taxYear.toString
+      && x.mainTransaction.contains(desiredMainTransaction)).getOrElse(FinancialDetail("9999", items = None)).transactionId
+
+    extraChargeId match {
+      case Some(validId) =>
+        if (isAgent) Some(controllers.routes.ChargeSummaryController.showAgent(documentDetailWithDueDate.documentDetail.taxYear, validId).url)
+        else Some(controllers.routes.ChargeSummaryController.show(documentDetailWithDueDate.documentDetail.taxYear, validId).url)
+      case None => None
     }
   }
 
