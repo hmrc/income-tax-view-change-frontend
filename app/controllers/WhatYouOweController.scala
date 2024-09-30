@@ -60,7 +60,7 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
 
     for {
       whatYouOweChargesList <- whatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(MFACreditsAndDebits), isEnabled(ReviewAndReconcilePoa))
-      _ <- whatYouOweService.getCreditCharges()
+      _ <- whatYouOweService.getCreditCharges() // TODO: Return value never used?
       ctaViewModel <- claimToAdjustViewModel(Nino(user.nino))
     } yield {
 
