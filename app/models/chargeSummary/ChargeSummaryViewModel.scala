@@ -41,7 +41,7 @@ case class ChargeSummaryViewModel(
                                    gatewayPage: Option[GatewayPage] = None,
                                    adjustmentHistory: AdjustmentHistoryModel,
                                    poaOneChargeUrl: String,
-                                   poaTwoChargeUrl: String,
+                                   poaTwoChargeUrl: String
                                  ) {
 
   val dueDate = chargeItem.dueDate
