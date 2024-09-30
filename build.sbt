@@ -26,10 +26,15 @@ lazy val playSettings: Seq[Setting[_]] = Seq(
   )
 )
 
+
+ThisBuild / javaOptions ++= Seq(
+  "-Xmx4G",  // Set maximum heap size to 4GB (adjust this value based on your requirements)
+  "-Xms2G"   // Set the initial heap size to 2GB (adjust as needed)
+)
+
 // Define common scalac options to avoid repetition
 lazy val scalacSettings: Seq[String] = Seq(
-  "-Wconf:cat=lint-multiarg-infix:silent", //TODO: Remove and clean up
-  "-Xfatal-warnings", //TODO: Remove Suppress all scala 3 () and other fatal warnings
+  "-Wconf:src=routes/.*:s",  // TODO: Remove and clean up parens () for scala 3
   "-Wconf:cat=unused:silent", // Suppress all unused warnings
   "-Wconf:msg=match may not be exhaustive:silent", // Suppress the exhaustive match warning
   "-Wconf:msg=defaultPrefix:silent", // Silence warnings related to defaultPrefix
