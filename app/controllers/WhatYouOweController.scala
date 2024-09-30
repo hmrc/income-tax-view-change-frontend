@@ -56,7 +56,7 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
                     itvcErrorHandler: ShowInternalServerError,
                     isAgent: Boolean,
                     origin: Option[String] = None)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
+                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages, dateServiceInterface: DateServiceInterface): Future[Result] = {
 
     for {
       whatYouOweChargesList <- whatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(MFACreditsAndDebits), isEnabled(ReviewAndReconcilePoa))
@@ -65,6 +65,10 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
     } yield {
 
       auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList, dateService))
+
+      val hasOverdueCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isOverdue())
+      val hasAccruingInterestReviewAndReconcileCharges: Boolean =
+        whatYouOweChargesList.chargesList.exists(_.isAccruingInterest())
 
       Ok(whatYouOwe(
         currentDate = dateService.getCurrentDate,
@@ -77,6 +81,7 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
         reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
         MFADebitsEnabled = isEnabled(MFACreditsAndDebits),
         isAgent = isAgent,
+        hasOverdueOrAccruingInterestCharges = hasOverdueCharges || hasAccruingInterestReviewAndReconcileCharges,
         whatYouOweCreditAmountEnabled = isEnabled(WhatYouOweCreditAmount),
         isUserMigrated = user.incomeSources.yearOfMigration.isDefined,
         creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),

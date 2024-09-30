@@ -95,9 +95,20 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
 
   def whatYouOweChargesListEmpty: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None), List.empty)
 
+  def whatYouOweChargesListWithAllChargesPaid: WhatYouOweChargesList = whatYouOweChargesListWithReviewReconcile
+    .copy(
+      chargesList = List(
+        whatYouOweChargesListWithReviewReconcile
+          .chargesList
+          .head
+          .copy(outstandingAmount = 0)
+      )
+    )
+
   val noFinancialDetailErrors = List(testFinancialDetail(2018))
   val hasFinancialDetailErrors = List(testFinancialDetail(2018), testFinancialDetailsErrorModel)
   val hasAFinancialDetailError = List(testFinancialDetailsErrorModel)
+  val interestChargesWarningText = "! Warning Interest charges will keep increasing every day until the charges they relate to are paid in full."
 
   "The WhatYouOweController.viewPaymentsDue function" when {
     "obtaining a users charge" should {
@@ -111,6 +122,8 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
 
         when(whatYouOweService.getCreditCharges()(any(), any()))
           .thenReturn(Future.successful(List()))
+
+        val interestChargesWarningText = "! Warning Interest charges will keep increasing every day until the charges they relate to are paid in full."
 
         val result: Future[Result] = controller.show()(fakeRequestWithNinoAndOrigin("PTA"))
         val resultAgent: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
@@ -333,6 +346,67 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         contentAsString(result).contains("First payment on account: extra amount from your tax return") shouldBe true
         status(resultAgent) shouldBe Status.OK
         contentAsString(resultAgent).contains("First payment on account: extra amount from your tax return") shouldBe true
+      }
+      "render the Interest Charges Warning when an overdue charge exists" in new Setup {
+        enable(ReviewAndReconcilePoa)
+        mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+          .thenReturn(Future.successful(whatYouOweChargesListFull))
+
+        when(whatYouOweService.getCreditCharges()(any(), any()))
+          .thenReturn(Future.successful(List()))
+
+        val result: Future[Result] = controller.show()(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
+
+        status(result) shouldBe Status.OK
+        Jsoup.parse(contentAsString(result)).getElementById("interest-charges-warning").text() shouldBe interestChargesWarningText
+        status(resultAgent) shouldBe Status.OK
+        Jsoup.parse(contentAsString(resultAgent)).getElementById("interest-charges-warning").text() shouldBe interestChargesWarningText
+      }
+      "render the Interest Charges Warning when an unpaid Review and Reconcile charge exists" in new Setup {
+        enable(ReviewAndReconcilePoa)
+        mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+          .thenReturn(Future.successful(whatYouOweChargesListWithReviewReconcile))
+
+        when(whatYouOweService.getCreditCharges()(any(), any()))
+          .thenReturn(Future.successful(List()))
+
+        val result: Future[Result] = controller.show()(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
+
+        status(result) shouldBe Status.OK
+        Jsoup.parse(contentAsString(result)).getElementById("interest-charges-warning").text() shouldBe interestChargesWarningText
+        status(resultAgent) shouldBe Status.OK
+        Jsoup.parse(contentAsString(resultAgent)).getElementById("interest-charges-warning").text() shouldBe interestChargesWarningText
+      }
+
+      "hide the Interest Charges Warning when there are no overdue charges or unpaid Review & Reconcile charges" in new Setup {
+        enable(ReviewAndReconcilePoa)
+        mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+          .thenReturn(Future.successful(whatYouOweChargesListWithAllChargesPaid))
+
+        when(whatYouOweService.getCreditCharges()(any(), any()))
+          .thenReturn(Future.successful(List()))
+
+        val result: Future[Result] = controller.show()(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
+
+        status(result) shouldBe Status.OK
+        Option(Jsoup.parse(contentAsString(result)).getElementById("interest-charges-warning")).isDefined shouldBe false
+        status(resultAgent) shouldBe Status.OK
+        Option(Jsoup.parse(contentAsString(resultAgent)).getElementById("interest-charges-warning")).isDefined shouldBe false
       }
     }
   }
