@@ -18,7 +18,7 @@ package controllers
 
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import forms.utils.SessionKeys.{gatewayPage, origin}
+import forms.utils.SessionKeys.gatewayPage
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.MockClaimToAdjustService
@@ -338,7 +338,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
 
         when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
-          .thenReturn(Future.successful(whatYouOweChargesListWithOverdueCharge))
+          .thenReturn(Future.successful(whatYouOweChargesListWithReviewReconcile))
 
         when(whatYouOweService.getCreditCharges()(any(), any()))
           .thenReturn(Future.successful(List()))
@@ -372,8 +372,6 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         Jsoup.parse(contentAsString(resultAgent)).getElementById("interest-charges-warning").text() shouldBe interestChargesWarningText
       }
       "render the Interest Charges Warning when a Review and Reconcile charge with accruing interest exists" in new Setup {
-        println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-        println(s"CURRENT DATE: ${dateService.getCurrentDate}")
         enable(ReviewAndReconcilePoa)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
