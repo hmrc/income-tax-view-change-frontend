@@ -28,11 +28,11 @@ case object Poa2Charge extends DocumentType {
   override val key: String = "ITSA - POA 2"
 }
 
-case object Poa1Reconciliation extends DocumentType {
+case object Poa1ReconciliationDebit extends DocumentType {
   override val key: String = "POA 1 Reconciliation Debit"
 }
 
-case object Poa2Reconciliation extends DocumentType {
+case object Poa2ReconciliationDebit extends DocumentType {
   override val key: String = "POA 2 Reconciliation Debit"
 }
 

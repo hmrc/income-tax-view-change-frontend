@@ -17,7 +17,7 @@
 package models.financialDetails
 
 import enums.CodingOutType._
-import enums.{BalancingCharge, DocumentType, OtherCharge, Poa1Charge, Poa1Reconciliation, Poa2Charge, Poa2Reconciliation, TRMAmendCharge, TRMNewCharge}
+import enums.{BalancingCharge, DocumentType, OtherCharge, Poa1Charge, Poa1ReconciliationDebit, Poa2Charge, Poa2ReconciliationDebit, TRMAmendCharge, TRMNewCharge}
 import play.api.Logger
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.{Json, Reads, Writes, __}
@@ -189,8 +189,8 @@ case class DocumentDetail(taxYear: Int,
   def getChargeTypeKey(codedOutEnabled: Boolean = false): String = documentDescription match {
     case Some(Poa1Charge.key) => "paymentOnAccount1.text"
     case Some(Poa2Charge.key) => "paymentOnAccount2.text"
-    case Some(Poa1Reconciliation.key) => "poa1ExtraCharge.text"
-    case Some(Poa2Reconciliation.key) => "poa2ExtraCharge.text"
+    case Some(Poa1ReconciliationDebit.key) => "poa1ExtraCharge.text"
+    case Some(Poa2ReconciliationDebit.key) => "poa2ExtraCharge.text"
     case Some(BalancingCharge.key) => "balancingCharge.text"
     case Some(TRMNewCharge.key) | Some(TRMAmendCharge.key) => (codedOutEnabled, isClass2Nic, isPayeSelfAssessment, isCancelledPayeSelfAssessment) match {
       case (true, true, false, false) => "class2Nic.text"
@@ -215,8 +215,8 @@ case class DocumentDetail(taxYear: Int,
     documentDescription match {
       case Some(Poa1Charge.key) => Poa1Charge
       case Some(Poa2Charge.key) => Poa2Charge
-      case Some(Poa1Reconciliation.key) => Poa1Reconciliation
-      case Some(Poa2Reconciliation.key) => Poa2Reconciliation
+      case Some(Poa1ReconciliationDebit.key) => Poa1ReconciliationDebit
+      case Some(Poa2ReconciliationDebit.key) => Poa2ReconciliationDebit
       case Some(BalancingCharge.key) => BalancingCharge
       case Some(TRMNewCharge.key) => TRMNewCharge
       case Some(TRMAmendCharge.key) => TRMAmendCharge

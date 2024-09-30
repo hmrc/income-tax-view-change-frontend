@@ -77,19 +77,6 @@ case class ChargeSummaryViewModel(
   val pageTitle: String =
     s"chargeSummary.$messagePrefix${chargeItem.getChargeTypeKey(codingOutEnabled, reviewAndReconcileEnabled)}"
 
-//  val pageTitle: String = {
-//    val key = (latePaymentInterestCharge, otherInterestCharge, isMFADebit, isReviewAndReconcilePoaOneDebit, isReviewAndReconcilePoaTwoDebit) match {
-//      case (true, false, false, false, false) => s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}"
-//      case (false, false, true, false, false) => s"chargeSummary.hmrcAdjustment.text"
-//      case (false, false, false, true, false) => s"chargeSummary.paymentOnAccount1.extraAmount.text"
-//      case (false, false, false, false, true) => s"chargeSummary.paymentOnAccount2.extraAmount.text"
-//      case (false, true, false, true, false) => s"chargeSummary.poa1ExtraChargeInterest.text"
-//      case (false, true, false, false, true) => s"chargeSummary.poa2ExtraChargeInterest.text"
-//      case (_, _, _, _, _) => s"chargeSummary.${documentDetail.getChargeTypeKey(codingOutEnabled)}"
-//    }
-//    key
-//  }
-
   val isBalancingChargeZero: Boolean = chargeItem.transactionType match {
     case _ if codingOutEnabled && chargeItem.subTransactionType.isDefined => false
     case BalancingCharge if chargeItem.originalAmount == 0 => true
