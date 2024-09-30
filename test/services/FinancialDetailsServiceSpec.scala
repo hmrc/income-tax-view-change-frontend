@@ -394,6 +394,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
             documentDetails = List(
               fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(50.0)),
               fullDocumentDetailModel.copy(outstandingAmount = 100.00, originalAmount = 100.00),
+              fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(0.00), interestOutstandingAmount = Some(100.00))
             ),
             financialDetails = List(
               fullFinancialDetailModel
@@ -416,6 +417,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           documentDetails = List(
             fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(50.0)),
             fullDocumentDetailModel.copy(outstandingAmount = 100.00, originalAmount = 100.00),
+            fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(0.00), interestOutstandingAmount = Some(100.00)),
             fullDocumentDetailModel.copy(outstandingAmount = 0, originalAmount = -200.00, latePaymentInterestAmount = None, interestOutstandingAmount = None)
           ),
           financialDetails = List(
