@@ -218,7 +218,7 @@
                             <div class="govuk-tag govuk-tag--red">@messages("tax-year-summary.payments.overdue")</div>
                         }
 
-                        @if(chargeItem.isReviewAndReconcileWithAccruingInterest() && !chargeItem.isOverDue()) {
+                        @if(chargeItem.isAccruingInterest()) {
                             <div class="govuk-tag govuk-tag--red" id="accrues-interest-tag">@messages("taxYears.accruesInterest")</div>
                         }
                         <div id="paymentTypeText-@{index}">

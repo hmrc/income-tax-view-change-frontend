@@ -289,7 +289,7 @@
             @chargeItem.dueDate.getOrElse(throw MissingFieldException("document due date of Payment")).toLongDateShort
         </td>
         <td class="govuk-table__cell govuk-!-width-one-half">
-            @if(chargeItem.isReviewAndReconcileWithAccruingInterest() || !chargeItem.isOverdue()) {
+            @if(chargeItem.isAccruingInterest()) {
                 <div> <span class="govuk-tag govuk-tag--red">@messages("taxYears.accruesInterest") </span></div>
             }
             @if(isOverduePayment){

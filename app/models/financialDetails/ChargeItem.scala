@@ -51,8 +51,8 @@ case class ChargeItem (
   def hasAccruingInterest: Boolean =
     interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0
 
-  def isReviewAndReconcileWithAccruingInterest()(implicit dateService: DateServiceInterface): Boolean = {
-    Seq(PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile).contains(transactionType) && !isPaid
+  def isAccruingInterest()(implicit dateService: DateServiceInterface): Boolean = {
+    Seq(PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile).contains(transactionType) && !isPaid && !isOverdue()
   }
 
   def getDueDateForNonZeroBalancingCharge(codedOutEnabled: Boolean = false): Option[LocalDate] = {
