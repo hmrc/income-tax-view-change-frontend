@@ -52,19 +52,37 @@ class ConfirmTaxYearControllerSpec extends TestSupport
     mcc = app.injector.instanceOf[MessagesControllerComponents]
   )
 
-  val endTaxYear = 2023
-  val taxYear2023 = TaxYear.forYearEnd(endTaxYear)
+  val endCurrentTaxYear = 2025
+  val taxYear2024_25: TaxYear = TaxYear.forYearEnd(endCurrentTaxYear)
+
+  val endTaxYear = 2026
+  val taxYear2025_26: TaxYear = TaxYear.forYearEnd(endCurrentTaxYear)
 
   def showTests(isAgent: Boolean): Unit = {
     "show page" should {
 
-      s"return result with $OK status" in {
+      s"return result with $OK status for current tax year" in {
         setupMockAuthorisationSuccess(isAgent)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
         when(mockOptInService.getConfirmTaxYearViewModel(any())(any(), any(), any()))
           .thenReturn(Future.successful(Some(ConfirmTaxYearViewModel(
-            taxYear2023, routes.ReportingFrequencyPageController.show(isAgent).url,
+            taxYear2024_25, routes.ReportingFrequencyPageController.show(isAgent).url, isNextTaxYear = false,
+            isAgent)
+          )))
+
+        val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
+        val result = controller.show(isAgent).apply(requestGET)
+        status(result) shouldBe Status.OK
+      }
+
+      s"return result with $OK status for next tax year" in {
+        setupMockAuthorisationSuccess(isAgent)
+        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+        when(mockOptInService.getConfirmTaxYearViewModel(any())(any(), any(), any()))
+          .thenReturn(Future.successful(Some(ConfirmTaxYearViewModel(
+            taxYear2025_26, routes.ReportingFrequencyPageController.show(isAgent).url, isNextTaxYear = true,
             isAgent)
           )))
 
@@ -88,7 +106,7 @@ class ConfirmTaxYearControllerSpec extends TestSupport
   }
 
   def submitTest(isAgent: Boolean): Unit = {
-    val testName = "MultiYear Opt-In"
+    val testName = "Single Year Opt-In"
     val requestPOST = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
 
     s"submit method is invoked $testName" should {

@@ -336,19 +336,18 @@
         }
     }
 
-    @if(viewModel.noIsAgentAndRemainingToPayWithNoCodingOutEnabledAndIsPayeSelfAssessment){
-        <div id="payment-link-@{viewModel.taxYearTo}">
-            <a class="govuk-button" role="button" data-module="govuk-button" href="@controllers.routes.PaymentController.paymentHandoff(viewModel.chargeItem.remainingToPay.toPence, viewModel.origin)">
-                @messages("paymentDue.payNow")
-                <span class="govuk-visually-hidden">@messages("paymentDue.pay-now-hidden", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)</span>
-            </a>
-        </div>
+    @if(viewModel.remainingToPayWithNoCodingOutEnabledAndIsPayeSelfAssessment){
+        @if(!viewModel.isAgent) {
+            <div id="payment-link-@{viewModel.taxYearTo}">
+                <a class="govuk-button" role="button" data-module="govuk-button" href="@controllers.routes.PaymentController.paymentHandoff(viewModel.chargeItem.remainingToPay.toPence, viewModel.origin)">
+                    @messages("paymentDue.payNow")
+                    <span class="govuk-visually-hidden">@messages("paymentDue.pay-now-hidden", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)</span>
+                </a>
+            </div>
+        }
         @paymentProcessingInfo
     }
 
-    @if(viewModel.isAgentAndRemainingToPayWithNoCodingOutEnabledAndIsPayeSelfAssessment){
-        @paymentProcessingInfo
-    }
 
     @if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZero){
         @if(viewModel.hasPaymentBreakdown && viewModel.chargeItem.subTransactionType == None) {

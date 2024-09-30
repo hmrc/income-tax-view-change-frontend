@@ -78,22 +78,17 @@ case class ChargeSummaryViewModel(
     case _ => false
   }
 
-  val codingOutEnabledAndIsClass2NicWithNoIsPayeSelfAssessment: Boolean = {
+  val codingOutEnabledAndIsClass2NicWithNoIsPayeSelfAssessment: Boolean =
     codingOutEnabled && chargeItem.subTransactionType.contains(Nics2)
-  }
 
-  val noIsAgentAndRemainingToPayWithNoCodingOutEnabledAndIsPayeSelfAssessment: Boolean =
-    !isAgent && chargeItem.remainingToPay > 0 && !(codingOutEnabled && chargeItem.subTransactionType.contains(Accepted)) &&
-      (!Seq(PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile).contains(chargeItem.transactionType))
-
-  val isAgentAndRemainingToPayWithNoCodingOutEnabledAndIsPayeSelfAssessment: Boolean =
-    isAgent && chargeItem.remainingToPay > 0 && !(codingOutEnabled && chargeItem.subTransactionType.contains(Accepted))
+  val remainingToPayWithNoCodingOutEnabledAndIsPayeSelfAssessment: Boolean = chargeItem.remainingToPay > 0 &&
+    !(codingOutEnabled && chargeItem.subTransactionType.contains(Accepted)) &&
+    !Seq(PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile).contains(chargeItem.transactionType)
 
   val chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZero: Boolean =
     (chargeHistoryEnabled || (paymentAllocationEnabled && paymentAllocations.nonEmpty)) && !isBalancingChargeZero
 
-  val noLatePaymentInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment: Boolean =
-    !latePaymentInterestCharge && !(codingOutEnabled && chargeItem.subTransactionType.contains(Accepted))
+  val noLatePaymentInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment: Boolean = !latePaymentInterestCharge && !(codingOutEnabled && chargeItem.subTransactionType.contains(Accepted))
 
 }
 
