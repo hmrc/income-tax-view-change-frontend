@@ -137,7 +137,6 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     val failureReason: String
   }
 
-
   private def makeUpdateCalls(optOutYearsToUpdate: Seq[TaxYear])
                              (implicit user: MtdItUser[_], hc: HeaderCarrier): Seq[Future[ITSAStatusUpdateResponse]] = {
     optOutYearsToUpdate.map(optOutYear => itsaStatusUpdateConnector.optOut(optOutYear, user.nino))
