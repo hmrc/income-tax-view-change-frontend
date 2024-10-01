@@ -143,7 +143,7 @@ case class ChargeItem (
         "unknownCharge"
     }
 
-  def poaLinkForDrilldownPage: String = transactionType match {
+  def getMainTransactionForPoaLink: String = transactionType match {
     case PaymentOnAccountOne => "4911"
     case PaymentOnAccountTwo => "4913"
     case _ => "no valid case"

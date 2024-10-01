@@ -229,7 +229,7 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
 
    chargeItem match {
       case Some(value) =>
-        val desiredMainTransaction = value.poaLinkForDrilldownPage
+        val desiredMainTransaction = value.getMainTransactionForPoaLink
         val extraChargeId = chargeDetailsForTaxYear.financialDetails.find(x => x.taxYear == documentDetailWithDueDate.documentDetail.taxYear.toString
           && x.mainTransaction.contains(desiredMainTransaction)).getOrElse(FinancialDetail("9999", items = None)).transactionId
 
