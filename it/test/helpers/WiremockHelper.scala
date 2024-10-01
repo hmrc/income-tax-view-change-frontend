@@ -139,6 +139,17 @@ object WiremockHelper extends Eventually with IntegrationPatience {
       )
     )
 
+  // for now overload the stubPut because there are quite a lot of other tests which do not have the request body supplied
+  def stubPut(url: String, status: Integer, expectedRequestBody: String, responseBody: String): StubMapping =
+    stubFor(put(urlEqualTo(url))
+      .withRequestBody(equalToJson(expectedRequestBody)) // Ensure that the request body matches
+      .willReturn(
+        aResponse().
+          withStatus(status).
+          withBody(responseBody)
+      )
+    )
+
   def stubPut(url: String, status: Integer, responseBody: String): StubMapping =
     stubFor(put(urlEqualTo(url))
       .willReturn(

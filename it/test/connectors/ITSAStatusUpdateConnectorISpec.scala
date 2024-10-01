@@ -18,8 +18,8 @@ package connectors
 
 import _root_.helpers.{ComponentSpecBase, WiremockHelper}
 import connectors.constants.ITSAStatusUpdateConnectorConstants._
+import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ErrorItem, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
-import connectors.itsastatus.{ITSAStatusUpdateConnector, ITSAStatusUpdateRequest}
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.{BAD_REQUEST, NO_CONTENT, OK}
 import play.api.libs.json.Json
@@ -29,49 +29,6 @@ class ITSAStatusUpdateConnectorISpec extends AnyWordSpec with ComponentSpecBase 
   lazy val connector: ITSAStatusUpdateConnector = app.injector.instanceOf[ITSAStatusUpdateConnector]
 
   "ITSAStatusUpdateConnector" when {
-
-    ".updateITSAStatus()" when {
-
-      "happy path" should {
-
-        "return a successful response" in {
-
-          WiremockHelper.stubPut(s"/income-tax-view-change/itsa-status/update/$taxableEntityId", NO_CONTENT, correctOptOutRequestBody, "{}")
-
-          val requestBody = ITSAStatusUpdateRequest(taxYear = connector.toApiFormat(taxYear2024), updateReason = optOutUpdateReason)
-
-          val result = connector.updateITSAStatus(taxableEntityId, requestBody).futureValue
-
-          result.status shouldBe NO_CONTENT
-          result.body shouldBe ""
-
-          WiremockHelper.verifyPut(
-            uri = s"/income-tax-view-change/itsa-status/update/$taxableEntityId",
-            optRequestBody = Some(Json.stringify(Json.parse(correctOptOutRequestBody)))
-          )
-        }
-      }
-
-      "unhappy path" when {
-
-        "BAD_REQUEST" in {
-
-          WiremockHelper.stubPut(s"/income-tax-view-change/itsa-status/update/$taxableEntityId", BAD_REQUEST, correctOptOutRequestBody, invalidPayLoadFailureResponseBody)
-
-          val requestBody = ITSAStatusUpdateRequest(taxYear = connector.toApiFormat(taxYear2024), updateReason = optOutUpdateReason)
-
-          val result = connector.updateITSAStatus(taxableEntityId, requestBody).futureValue
-
-          result.status shouldBe BAD_REQUEST
-          result.body shouldBe invalidPayLoadFailureResponseBody
-
-          WiremockHelper.verifyPut(
-            uri = s"/income-tax-view-change/itsa-status/update/$taxableEntityId",
-            optRequestBody = Some(Json.stringify(Json.parse(correctOptOutRequestBody)))
-          )
-        }
-      }
-    }
 
     ".makeITSAStatusUpdate()" when {
 
