@@ -211,7 +211,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
     private val currentDateIs: LocalDate = dateService.getCurrentDate
     val html: HtmlFormat.Appendable = whatYouOweView(
-      currentDate = currentDateIs,
+      currentDateIs,
       hasOverdueOrAccruingInterestCharges = false,
       creditCharges = creditCharges,
       whatYouOweChargesList = charges,
