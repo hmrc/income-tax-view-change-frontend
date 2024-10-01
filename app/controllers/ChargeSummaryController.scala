@@ -227,19 +227,18 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
     val chargeItem: Option[ChargeItem] = ChargeItem.tryGetChargeItem(isEnabled(CodingOut), isEnabled(ReviewAndReconcilePoa))(
       chargeDetailsForTaxYear.financialDetails)(documentDetailWithDueDate.documentDetail)
 
-    val desiredMainTransaction: String = chargeItem match {
-      case Some(item) if item.transactionType == PaymentOnAccountOne => "4911"
-      case Some(item) if item.transactionType == PaymentOnAccountTwo => "4913"
-      case _ => "no valid case"
-    }
+   chargeItem match {
+      case Some(value) =>
+        val desiredMainTransaction = value.poaLinkForDrilldownPage
+        val extraChargeId = chargeDetailsForTaxYear.financialDetails.find(x => x.taxYear == documentDetailWithDueDate.documentDetail.taxYear.toString
+          && x.mainTransaction.contains(desiredMainTransaction)).getOrElse(FinancialDetail("9999", items = None)).transactionId
 
-    val extraChargeId = chargeDetailsForTaxYear.financialDetails.find(x => x.taxYear == documentDetailWithDueDate.documentDetail.taxYear.toString
-      && x.mainTransaction.contains(desiredMainTransaction)).getOrElse(FinancialDetail("9999", items = None)).transactionId
-
-    extraChargeId match {
-      case Some(validId) =>
-        if (isAgent) Some(controllers.routes.ChargeSummaryController.showAgent(documentDetailWithDueDate.documentDetail.taxYear, validId).url)
-        else Some(controllers.routes.ChargeSummaryController.show(documentDetailWithDueDate.documentDetail.taxYear, validId).url)
+        extraChargeId match {
+          case Some(validId) =>
+            if (isAgent) Some(controllers.routes.ChargeSummaryController.showAgent(documentDetailWithDueDate.documentDetail.taxYear, validId).url)
+            else Some(controllers.routes.ChargeSummaryController.show(documentDetailWithDueDate.documentDetail.taxYear, validId).url)
+          case None => None
+        }
       case None => None
     }
   }
