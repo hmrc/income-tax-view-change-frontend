@@ -59,6 +59,13 @@ case class CheckYourAnswersAuditModel(nino: String, outcome: Outcome, optOutRequ
     "afterAssumedITSAStatusCurrentYearPlusOne" -> afterAssumedITSAStatusCurrentYearMinusOne,
     "currentYearMinusOneCrystallised" -> currentYearMinusOneCrystallised)
 
+  override val detail: JsValue = optOutDetailsJson ++ Json.obj("nino" -> nino)
+
+}
+
+case class Outcome(isSuccessful: Boolean = true,
+                   failureCategory: String = "API_FAILURE",
+                   failureReason: String = "Failure reasons")
   // if 204 back, update afterAssumed
 
   override val detail: JsValue = optOutDetailsJson ++ Json.obj("nino" -> nino)

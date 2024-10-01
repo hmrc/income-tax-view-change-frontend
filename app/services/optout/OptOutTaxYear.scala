@@ -22,6 +22,7 @@ import models.itsaStatus.ITSAStatus.{ITSAStatus, NoStatus, Voluntary}
 
 trait OptOutTaxYear {
   val taxYear: TaxYear
+  val status: ITSAStatus
 
   def canOptOut: Boolean
 

@@ -21,7 +21,7 @@ import auth.MtdItUser
 import cats.data.OptionT
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure}
-import models.incomeSourceDetails.{AnnualReporting, TaxYear}
+import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, Voluntary}
 import models.optout._
@@ -31,11 +31,11 @@ import services.optout.OptOutProposition.createOptOutProposition
 import services.reportingfreq.ReportingFrequency.{QuarterlyUpdatesCountForTaxYearModel, noQuarterlyUpdates}
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService, NextUpdatesService}
 import uk.gov.hmrc.http.HeaderCarrier
+import audit.models.{CheckYourAnswersAuditModel, Outcome}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import audit.AuditingService
-import audit.models.CheckYourAnswersAuditModel
+import scala.util.Success
 
 @Singleton
 class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnector,
@@ -100,41 +100,54 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     val futureResponses = Future.sequence(responsesSeqOfFutures).
       map(responsesSeq => findAnyFailOrFirstSuccess(responsesSeq))
 
-    val CYMinus1 = optOutYearParams.previousYearItsaStatus match {
-      case Voluntary => Annual
-      case Annual => Annual
-      case Mandated => Mandated
-    }
-    val CY = optOutYearParams.currentYearItsaStatus match {
-      case Voluntary => Annual
-      case Annual => Annual
-      case Mandated => Mandated
-    }
-    val CYPlus1 = optOutYearParams.nextYearItsaStatus match {
-      case Voluntary => Annual
-      case Annual => Annual
-      case Mandated => Mandated
-    }
-      auditingService.extendedAudit(CheckYourAnswersAuditModel(
+    def checkVoluntaryElseReturnCurrent(optOutTaxYear: OptOutTaxYear): String = {
 
-        outcome = futureResponses,
-        optOutRequestedFromTaxYear = intentTaxYear,
-        currentYear = optOutYearParams.currentYear,
-        beforeITSAStatusCurrentYearMinusOne = optOutYearParams.previousYearItsaStatus,
-        beforeITSAStatusCurrentYear = optOutYearParams.currentYearItsaStatus,
-        beforeITSAStatusCurrentYearPlusOne = optOutYearParams.nextYearItsaStatus,
+      val isYearUserWantsToUpdate = intentTaxYear == optOutTaxYear.taxYear
 
-        afterAssumedITSAStatusCurrentYearMinusOne = CYMinus1,
-        afterAssumedITSAStatusCurrentYear = CY,
-        afterAssumedITSAStatusCurrentYearPlusOne = CYPlus1,
-        currentYearMinusOneCrystallised = optOutYearParams.previousYearCrystallised)
-      )
-    futureResponses
+      if (isYearUserWantsToUpdate){
+        optOutTaxYear.status match {
+          case Voluntary => s"Voluntary change :: Successful"
+          case Annual => s"Annual change :: Failure"
+          case Mandated => s"Mandated change :: Failure"
+          case _ => s"Other non-changeable status :: Failure"
+        }
+      }else{
+        s"Status of ${optOutTaxYear.taxYear} : ${optOutTaxYear.status} remained the same"
+      }
+
+    }
+
+    auditingService.extendedAudit(CheckYourAnswersAuditModel(
+      nino = user.nino,
+      optOutRequestedFromTaxYear = intentTaxYear.formatTaxYearRange,
+      currentYear = optOutProposition.currentTaxYear.toString,
+      beforeITSAStatusCurrentYearMinusOne = optOutProposition.previousTaxYear.toString,
+      beforeITSAStatusCurrentYear = optOutProposition.currentTaxYear.toString,
+      beforeITSAStatusCurrentYearPlusOne = optOutProposition.nextTaxYear.toString,
+
+      outcome = createOutcome(result.value.getOrElse(ITSAStatusUpdateResponseFailure)
+    ),
+      afterAssumedITSAStatusCurrentYearMinusOne = checkVoluntaryElseReturnCurrent(optOutProposition.previousTaxYear),
+      afterAssumedITSAStatusCurrentYear = checkVoluntaryElseReturnCurrent(optOutProposition.currentTaxYear),
+      afterAssumedITSAStatusCurrentYearPlusOne = checkVoluntaryElseReturnCurrent(optOutProposition.nextTaxYear),
+      currentYearMinusOneCrystallised = ???
+    ))
+
+    result
   }
-  abstract class Outcome {
-    val isSuccessful: Boolean
-    val failureCategory: String
-    val failureReason: String
+
+  private def createOutcome(resolvedResponse: Object): Outcome = {
+
+    resolvedResponse match {
+      case ITSAStatusUpdateResponseFailure => new Outcome {
+        override val isSuccessful: Boolean = false
+      }
+      case _ => new Outcome {
+        override val isSuccessful: Boolean = true
+        override val failureReason: String = ""
+        override val failureCategory: String = ""
+      }
+    }
   }
 
   private def makeUpdateCalls(optOutYearsToUpdate: Seq[TaxYear])
