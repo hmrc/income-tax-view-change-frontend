@@ -127,8 +127,8 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
         afterAssumedITSAStatusCurrentYearMinusOne = CYMinus1,
         afterAssumedITSAStatusCurrentYear = CY,
         afterAssumedITSAStatusCurrentYearPlusOne = CYPlus1,
-        currentYearMinusOneCrystallised = optOutYearParams.previousYearCrystallised
-      ))
+        currentYearMinusOneCrystallised = optOutYearParams.previousYearCrystallised)
+      )
     futureResponses
   }
   abstract class Outcome {
