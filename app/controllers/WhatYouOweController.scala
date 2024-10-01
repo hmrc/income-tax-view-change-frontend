@@ -71,7 +71,7 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
 
       Ok(whatYouOwe(
         currentDate = dateService.getCurrentDate,
-        creditCharges = creditCharges,
+        creditCharges,
         hasOverdueOrAccruingInterestCharges = hasOverdueCharges || hasAccruingInterestReviewAndReconcileCharges,
         whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
         currentTaxYear = dateService.getCurrentTaxYearEnd, backUrl = backUrl, utr = user.saUtr,
