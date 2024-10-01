@@ -1,0 +1,201 @@
+/*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package connectors
+
+import _root_.helpers.{ComponentSpecBase, WiremockHelper}
+import connectors.itsastatus.ITSAStatusUpdateConnector
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ErrorItem, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
+import models.incomeSourceDetails.TaxYear
+import org.scalatest.wordspec.AnyWordSpec
+import play.api.http.Status.{BAD_REQUEST, NO_CONTENT, OK}
+import play.api.libs.json.Json
+
+class ITSAStatusUpdateConnectorISpec extends AnyWordSpec with ComponentSpecBase {
+
+  lazy val connector: ITSAStatusUpdateConnector = app.injector.instanceOf[ITSAStatusUpdateConnector]
+
+  val optOutUpdateReason = "10"
+  val optInUpdateReason = "11"
+  val taxYear2024 = TaxYear.forYearEnd(2024)
+  val taxYear2023 = TaxYear.forYearEnd(2023)
+  val taxableEntityId = "AB123456A"
+
+  val correctOptOutRequestBody =
+    """{
+      | "taxYear":"2023-24",
+      | "updateReason":"10"
+      |}""".stripMargin
+
+  val correctOptIntRequestBody =
+    """{
+      | "taxYear":"2023-24",
+      | "updateReason":"11"
+      |}""".stripMargin
+
+  "ITSAStatusUpdateConnector" when {
+
+    ".makeITSAStatusUpdate()" when {
+
+      "request body" should {
+
+        "be built correctly for OptOutReason" in {
+
+          WiremockHelper.stubPut(s"/income-tax-view-change/itsa-status/update/$taxableEntityId", NO_CONTENT, "{}")
+
+          val result = connector.makeITSAStatusUpdate(taxYear2024, taxableEntityId, optOutUpdateReason).futureValue
+
+          result shouldBe ITSAStatusUpdateResponseSuccess(NO_CONTENT)
+
+          WiremockHelper.verifyPut(
+            uri = s"/income-tax-view-change/itsa-status/update/$taxableEntityId",
+            optRequestBody = Some(Json.stringify(Json.parse(correctOptOutRequestBody)))
+          )
+        }
+
+        "be built correctly for OptInReason" in {
+
+          WiremockHelper.stubPut(s"/income-tax-view-change/itsa-status/update/$taxableEntityId", NO_CONTENT, "{}")
+
+          val result = connector.makeITSAStatusUpdate(taxYear2024, taxableEntityId, optInUpdateReason).futureValue
+
+          result shouldBe ITSAStatusUpdateResponseSuccess(NO_CONTENT)
+
+          WiremockHelper.verifyPut(
+            uri = s"/income-tax-view-change/itsa-status/update/$taxableEntityId",
+            optRequestBody = Some(Json.stringify(Json.parse(correctOptIntRequestBody)))
+          )
+        }
+
+
+        "be built correctly using the supplied tax year (2023)" in {
+
+          val requestBody2023 =
+            """{
+              | "taxYear":"2022-23",
+              | "updateReason":"11"
+              |}""".stripMargin
+
+          WiremockHelper.stubPut(s"/income-tax-view-change/itsa-status/update/$taxableEntityId", NO_CONTENT, "{}")
+
+          val result = connector.makeITSAStatusUpdate(taxYear2023, taxableEntityId, optInUpdateReason).futureValue
+
+          result shouldBe ITSAStatusUpdateResponseSuccess(NO_CONTENT)
+
+          WiremockHelper.verifyPut(
+            uri = s"/income-tax-view-change/itsa-status/update/$taxableEntityId",
+            optRequestBody = Some(Json.stringify(Json.parse(requestBody2023)))
+          )
+        }
+      }
+
+      "happy path" should {
+
+        "return a successful response" in {
+
+          WiremockHelper.stubPut(s"/income-tax-view-change/itsa-status/update/$taxableEntityId", NO_CONTENT, "{}")
+
+          val result = connector.makeITSAStatusUpdate(taxYear2024, taxableEntityId, optOutUpdateReason).futureValue
+
+          result shouldBe ITSAStatusUpdateResponseSuccess(NO_CONTENT)
+
+          WiremockHelper.verifyPut(
+            uri = s"/income-tax-view-change/itsa-status/update/$taxableEntityId",
+            optRequestBody = Some(Json.stringify(Json.parse(correctOptOutRequestBody)))
+          )
+        }
+
+        "handle unexpected HTTP status code" in {
+
+          val unexpectedStatus = 418 // teapot
+
+          val failureResponseBody =
+            """{
+              |  "failures": [
+              |    {
+              |      "code": "UNEXPECTED_ERROR",
+              |      "reason": "Unexpected response code"
+              |    }
+              |  ]
+              |}""".stripMargin
+
+          WiremockHelper.stubPut(s"/income-tax-view-change/itsa-status/update/$taxableEntityId", unexpectedStatus, failureResponseBody)
+
+          val result = connector.makeITSAStatusUpdate(taxYear2024, taxableEntityId, optOutUpdateReason).futureValue
+
+          result shouldBe
+            ITSAStatusUpdateResponseFailure(List(ErrorItem("UNEXPECTED_ERROR", "Unexpected response code")))
+
+          // checks the request being made is performed with the correct body
+          WiremockHelper.verifyPut(
+            uri = s"/income-tax-view-change/itsa-status/update/$taxableEntityId",
+            optRequestBody = Some(Json.stringify(Json.parse(correctOptOutRequestBody)))
+          )
+        }
+      }
+
+      "handle errors" when {
+
+        "not NO_CONTENT" should {
+
+          "return a error response with status INTERNAL_SERVER_ERROR" in {
+
+            WiremockHelper.stubPut(s"/income-tax-view-change/itsa-status/update/$taxableEntityId", OK, "{}")
+
+            val result = connector.makeITSAStatusUpdate(taxYear2024, taxableEntityId, optOutUpdateReason).futureValue
+
+            result shouldBe
+              ITSAStatusUpdateResponseFailure(List(ErrorItem("INTERNAL_SERVER_ERROR", "Request failed due to json response: List((/failures,List(JsonValidationError(List(error.path.missing),List()))))")))
+
+            WiremockHelper.verifyPut(
+              uri = s"/income-tax-view-change/itsa-status/update/$taxableEntityId",
+              optRequestBody = Some(Json.stringify(Json.parse(correctOptOutRequestBody)))
+            )
+          }
+        }
+
+        "status is BAD_REQUEST" when {
+
+          "with INVALID_PAYLOAD" in {
+
+            val failureResponseBody =
+              """{
+                |  "failures": [
+                |    {
+                |      "code": "INVALID_PAYLOAD",
+                |      "reason": "Submission has not passed validation. Invalid payload."
+                |    }
+                |  ]
+                |}""".stripMargin
+
+            WiremockHelper.stubPut(s"/income-tax-view-change/itsa-status/update/$taxableEntityId", BAD_REQUEST, failureResponseBody)
+
+            val result = connector.makeITSAStatusUpdate(taxYear2024, taxableEntityId, optOutUpdateReason).futureValue
+
+            result shouldBe
+              ITSAStatusUpdateResponseFailure(List(ErrorItem("INVALID_PAYLOAD", "Submission has not passed validation. Invalid payload.")))
+
+            WiremockHelper.verifyPut(
+              uri = s"/income-tax-view-change/itsa-status/update/$taxableEntityId",
+              optRequestBody = Some(Json.stringify(Json.parse(correctOptOutRequestBody)))
+            )
+          }
+        }
+      }
+    }
+  }
+
+}

@@ -55,9 +55,9 @@ object WiremockHelper extends Eventually with IntegrationPatience {
   }
 
 
-  def verifyPut(uri: String, optBody: Option[String] = None): Unit = {
+  def verifyPut(uri: String, optRequestBody: Option[String] = None): Unit = {
     val uriMapping = putRequestedFor(urlEqualTo(uri))
-    val putRequest = optBody match {
+    val putRequest = optRequestBody match {
       case Some(body) => uriMapping.withRequestBody(equalTo(body))
       case None => uriMapping
     }
