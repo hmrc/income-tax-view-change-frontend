@@ -44,14 +44,14 @@
     govukInsetText : GovukInsetText
 )
 
-@(creditCharges: List[DocumentDetail],
+@(currentDate: LocalDate,
+    creditCharges: List[DocumentDetail],
     hasOverdueOrAccruingInterestCharges: Boolean,
     whatYouOweChargesList: WhatYouOweChargesList,
     hasLpiWithDunningLock: Boolean,
     currentTaxYear: Int,
     backUrl: String,
     utr: Option[String],
-    btaNavPartial: Option[Html] = None,
     dunningLock: Boolean,
     codingOutEnabled: Boolean,
     reviewAndReconcileEnabled: Boolean,
@@ -69,7 +69,7 @@
     s"whatYouOwe.$key"
 }
 
-@currentDate = @{ dateService.getCurrentDate }
+@btaNavPartial = @{ user.btaNavPartial }
 
 @getMessage(key: String, args: String*) = @{
     messages(s"whatYouOwe.$key", args: _*)

@@ -70,11 +70,11 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
       val hasAccruingInterestReviewAndReconcileCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isAccruingInterest()(dateService))
 
       Ok(whatYouOwe(
+        currentDate = dateService.getCurrentDate,
         creditCharges = creditCharges,
         hasOverdueOrAccruingInterestCharges = hasOverdueCharges || hasAccruingInterestReviewAndReconcileCharges,
         whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
         currentTaxYear = dateService.getCurrentTaxYearEnd, backUrl = backUrl, utr = user.saUtr,
-        btaNavPartial = user.btaNavPartial,
         dunningLock = whatYouOweChargesList.hasDunningLock,
         codingOutEnabled = isEnabled(CodingOut),
         reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
