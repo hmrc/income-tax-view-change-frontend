@@ -64,7 +64,7 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, chargesList: Li
       if (bcdDueDate.isBefore(sortedListOfCharges.get.dueDate.get)) {
         Some((bcdDueDate.getYear, outstandingChargesModel.get.bcdChargeType.get.chargeAmount))
       } else if (sortedListOfCharges.isDefined) {
-          Some((sortedListOfCharges.get.dueDate.get.getYear, sortedListOfCharges.get.remainingToPayByChargeOrLpi))
+          Some((sortedListOfCharges.get.dueDate.get.getYear, sortedListOfCharges.get.remainingToPayByChargeOrInterest))
       } else {
         None
       }
@@ -72,7 +72,7 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, chargesList: Li
       if (outstandingChargesModel.isDefined && outstandingChargesModel.get.bcdChargeType.isDefined) {
         Some((outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.get.getYear, outstandingChargesModel.get.bcdChargeType.get.chargeAmount))
       } else if (sortedListOfCharges.isDefined) {
-          Some((sortedListOfCharges.get.dueDate.get.getYear, sortedListOfCharges.get.remainingToPayByChargeOrLpi))
+          Some((sortedListOfCharges.get.dueDate.get.getYear, sortedListOfCharges.get.remainingToPayByChargeOrInterest))
       } else {
         None
       }

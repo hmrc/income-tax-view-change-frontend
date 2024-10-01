@@ -1025,7 +1025,9 @@ object FinancialDetailsTestConstants {
                                                      outstandingAmount: List[BigDecimal],
                                                      taxYear: String,
                                                      interestOutstandingAmount: List[Option[BigDecimal]] = List(Some(100), Some(100)),
-                                                     latePaymentInterestAmount: List[Option[BigDecimal]] = List(Some(100), Some(100))
+                                                     latePaymentInterestAmount: List[Option[BigDecimal]] = List(Some(100), Some(100)),
+                                                     interestEndDate: List[Option[LocalDate]] = List(Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29))),
+                                                     lpiWithDunningLock: List[Option[BigDecimal]] = List(Some(100), Some(100))
                                                     ): FinancialDetailsModel =
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
@@ -1041,9 +1043,9 @@ object FinancialDetailsTestConstants {
           interestRate = Some(100),
           latePaymentInterestId = Some("latePaymentInterestId"),
           interestFromDate = Some(LocalDate.of(2018, 3, 29)),
-          interestEndDate = Some(LocalDate.of(2018, 3, 29)),
+          interestEndDate = interestEndDate(0),
           latePaymentInterestAmount = latePaymentInterestAmount(0),
-          lpiWithDunningLock = Some(100),
+          lpiWithDunningLock = lpiWithDunningLock(0),
           paymentLotItem = Some("paymentLotItem"),
           paymentLot = Some("paymentLot"),
           effectiveDateOfPayment = dueDate.head,
@@ -1059,9 +1061,9 @@ object FinancialDetailsTestConstants {
           interestRate = Some(100),
           latePaymentInterestId = Some("latePaymentInterestId"),
           interestFromDate = Some(LocalDate.of(2018, 3, 29)),
-          interestEndDate = Some(LocalDate.of(2018, 3, 29)),
+          interestEndDate = interestEndDate(1),
           latePaymentInterestAmount = latePaymentInterestAmount(1),
-          lpiWithDunningLock = Some(100),
+          lpiWithDunningLock = lpiWithDunningLock(0),
           paymentLotItem = Some("paymentLotItem"),
           paymentLot = Some("paymentLot"),
           effectiveDateOfPayment = dueDate(1),
@@ -1088,6 +1090,25 @@ object FinancialDetailsTestConstants {
       financialDetails = List(
         FinancialDetail(fixedDateTwo.getYear.toString, Some("SA POA 1 Reconciliation"), Some("4911"), Some(id1040000123), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDateTwo.minusDays(1)))))),
         FinancialDetail(fixedDateTwo.getYear.toString, Some("SA POA 2 Reconciliation"), Some("4913"), Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDateTwo.plusDays(30))))))
+      )
+    )
+
+  val testFinancialDetailsModelWithReviewAndReconcileInterest: FinancialDetailsModel =
+    FinancialDetailsModel(
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+      documentDetails = List(
+        DocumentDetail(fixedDateTwo.getYear, id1040000125, Some("ITSA- POA 1"), Some("documentText"), 50, 43.21, LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId"),
+          Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(100), Some(100), Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = Some(fixedDateTwo.minusDays(1)), documentDueDate = Some(fixedDateTwo.plusDays(30))),
+        DocumentDetail(fixedDateTwo.getYear, id1040000126, Some("ITSA - POA 2"), Some("documentText"), 50, 43.21, LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId"),
+          Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(100), Some(100), Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = Some(fixedDateTwo.minusDays(1)), documentDueDate = Some(fixedDateTwo.plusDays(30))),
+        DocumentDetail(fixedDateTwo.getYear, id1040000123, Some("SA POA 1 Reconciliation Debit"), Some("documentText"), 0, 43.21, LocalDate.of(2018, 3, 29), Some(100), Some(100), None,
+          Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), None, Some(100), Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = Some(fixedDateTwo.minusDays(1)), documentDueDate = Some(fixedDateTwo.plusDays(30))),
+        DocumentDetail(fixedDateTwo.getYear, id1040000124, Some("SA POA 2 Reconciliation Debit"), Some("documentText"), 0, 12.34, LocalDate.of(2018, 3, 29), Some(100), Some(100), None,
+          Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), None, Some(100), Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = Some(fixedDateTwo.minusDays(1)), documentDueDate = Some(fixedDateTwo.plusDays(30)))
+      ),
+      financialDetails = List(
+        FinancialDetail(fixedDateTwo.getYear.toString, Some("SA POA 1 Reconciliation"), Some("4911"), Some(id1040000123), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(100), Some(100), Some(0), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDateTwo.minusDays(1)))))),
+        FinancialDetail(fixedDateTwo.getYear.toString, Some("SA POA 2 Reconciliation"), Some("4913"), Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(100), Some(100), Some(0), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDateTwo.plusDays(30))))))
       )
     )
 
@@ -1183,7 +1204,37 @@ object FinancialDetailsTestConstants {
   )
 //
 
-//
+  val financialDetailsReviewAndReconcile: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
+    documentDescription = List(Some("SA POA 1 Reconciliation Debit"), Some("SA POA 2 Reconciliation Debit")),
+    mainType = List(Some("SA POA 1 Reconciliation"), Some("SA POA 2 Reconciliation")),
+    mainTransaction = List(Some("4911"), Some("4913")),
+    dueDate = List(Some(fixedDate.minusDays(1)), Some(fixedDate.plusDays(30))),
+    outstandingAmount = List(50, 75),
+    taxYear = fixedDate.getYear.toString,
+    latePaymentInterestAmount = List(None, None)
+  )
+  val financialDetailsReviewAndReconcileNotYetDue: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
+    documentDescription = List(Some("SA POA 1 Reconciliation Debit"), Some("SA POA 2 Reconciliation Debit")),
+    mainType = List(Some("SA POA 1 Reconciliation"), Some("SA POA 2 Reconciliation")),
+    mainTransaction = List(Some("4911"), Some("4913")),
+    dueDate = List(Some(fixedDate.plusYears(100).minusDays(1)), Some(fixedDate.plusYears(100).plusDays(30))),
+    outstandingAmount = List(50, 75),
+    taxYear = fixedDate.getYear.toString,
+    latePaymentInterestAmount = List(None, None)
+  )
+  val financialDetailsReviewAndReconcileInterest: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
+    documentDescription = List(Some("SA POA 1 Reconciliation Debit"), Some("SA POA 2 Reconciliation Debit")),
+    mainType = List(Some("SA POA 1 Reconciliation"), Some("SA POA 2 Reconciliation")),
+    mainTransaction = List(Some("4911"), Some("4913")),
+    dueDate = List(Some(fixedDate.minusDays(1)), Some(fixedDate.plusDays(30))),
+    outstandingAmount = List(0, 0),
+    taxYear = fixedDate.getYear.toString,
+    latePaymentInterestAmount = List(None, None),
+    interestOutstandingAmount = List(Some(100.00), Some(40.00)),
+    interestEndDate = List(Some(LocalDate.of(2100, 1, 1)), Some(LocalDate.of(2100, 1, 1))),
+    lpiWithDunningLock = List(None, None)
+  )
+
   val financialDetailsWithMixedData1: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),

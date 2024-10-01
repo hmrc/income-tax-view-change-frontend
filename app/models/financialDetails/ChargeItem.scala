@@ -49,7 +49,7 @@ case class ChargeItem (
     lpiWithDunningLock.isDefined && lpiWithDunningLock.getOrElse[BigDecimal](0) > 0
 
   def hasAccruingInterest: Boolean =
-    interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0
+    interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0 && !isPaid
 
   def isAccruingInterest()(implicit dateService: DateServiceInterface): Boolean = {
     Seq(PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile).contains(transactionType) && !isPaid && !isOverdue()
@@ -74,6 +74,14 @@ case class ChargeItem (
     case _ => false
   }
 
+  def isOtherInterest: Boolean = interestOutstandingAmount match {
+    case Some(amount) if amount <= 0 => false
+    case Some(_) => true
+    case _ => false
+  }
+
+  def isOnlyInterest(implicit dateService: DateServiceInterface): Boolean = {(isOverdue() && isLatePaymentInterest) || (isOtherInterest && isPaid)}
+
   def isCodingOut: Boolean = {
     val codingOutSubTypes = Seq(Nics2, Accepted, Cancelled)
     subTransactionType.exists(subType => codingOutSubTypes.contains(subType))
@@ -89,8 +97,8 @@ case class ChargeItem (
     else outstandingAmount
   }
 
-  def remainingToPayByChargeOrLpi: BigDecimal = {
-    if (isLatePaymentInterest) interestRemainingToPay
+  def remainingToPayByChargeOrInterest: BigDecimal = {
+    if (isLatePaymentInterest || isOtherInterest) interestRemainingToPay
     else remainingToPay
   }
 
