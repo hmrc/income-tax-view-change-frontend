@@ -32,23 +32,13 @@
 
 @(model: OptInCompletedViewModel)(implicit messages: Messages, user: auth.MtdItUser[_])
 
-@panelBody = @{
-    if(model.isCurrentYear) {
-        if(model.optInIncludedNextYear) {
-            "optin.completedOptIn.followingVoluntary.heading.desc"
-        } else {
-            "optin.completedOptIn.cy.heading.desc"
-        }
-    } else "optin.completedOptIn.ny.heading.desc"
-}
-
 @panel = {
     <div class="govuk-panel govuk-panel--confirmation">
         <h1 class="govuk-panel__title">
             @messages("optin.completedOptIn.heading")
         </h1>
         <div class="govuk-panel__body">
-            @messages(panelBody, model.startYear, model.endYear)
+            @messages(model.headingMessageKey, model.startYear, model.endYear)
         </div>
     </div>
 }
