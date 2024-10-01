@@ -60,7 +60,8 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
                   codingOutEnabled: Boolean = false,
                   reviewAndReconcileEnabled: Boolean = false,
                   isAgent: Boolean = false,
-                  adjustmentHistory: AdjustmentHistoryModel = defaultAdjustmentHistory) {
+                  adjustmentHistory: AdjustmentHistoryModel = defaultAdjustmentHistory,
+                  poaExtraChargeLink: Option[String] = None) {
 
     enable(ReviewAndReconcilePoa)
 
@@ -82,8 +83,8 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       isAgent = isAgent,
       poaOneChargeUrl = "",
       poaTwoChargeUrl = "",
-      adjustmentHistory = adjustmentHistory)
-
+      adjustmentHistory = adjustmentHistory,
+      poaExtraChargeLink = poaExtraChargeLink)
 
 
     val view: Html = chargeSummary(viewModel)
@@ -151,6 +152,10 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     val poa2ReconciliationInterestP1 = messages("chargeSummary.poa2ExtraAmountInterest.p1")
     val poa2ReconciliationInterestP2 = messages("chargeSummary.poa2ExtraAmountInterest.p2")
     val poa2ReconciliationInterestP3 = messages("chargeSummary.poa2ExtraAmountInterest.p3") + " " +  messages("chargeSummary.poa2ExtraAmountInterest.p3LinkText") + " " + messages("chargeSummary.poa2ExtraAmountInterest.p3AfterLink")
+
+    val poaExtraChargeText1: String = messages("chargeSummary.extraCharge.text1")
+    val poaExtraChargeTextLink: String = messages("chargeSummary.extraCharge.linkText")
+    val poaExtraChargeText2: String = messages("chargeSummary.extraCharge.text2")
 
     val bcdTextParagraph = messages("chargeSummary.definition.balancingcharge.p1")
     val bcdTextBullets = messages("chargeSummary.definition.balancingcharge.bullet1") + " " + messages("chargeSummary.definition.balancingcharge.bullet2")
@@ -505,6 +510,15 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         ) {
           document.select("tbody tr").size() shouldBe 1
           document.select("tbody tr td:nth-child(2)").text() shouldBe paymentOnAccountInterestCreated(2)
+        }
+
+        "have a link to extra charge is it is a poa with an extra charge" in new TestSetup(chargeItem = basePaymentOnAccountTwo, poaExtraChargeLink = Some("testLink")) {
+          document.select("#poa-extra-charge-content").text() shouldBe s"$poaExtraChargeText1 $poaExtraChargeTextLink $poaExtraChargeText2"
+          document.select("#poa-extra-charge-link").attr("href") shouldBe "testLink"
+          document.select("#poa-extra-charge-link").text() shouldBe poaExtraChargeTextLink
+        }
+        "not have this extra poa charge content if there is no such charge" in new TestSetup(chargeItem = basePaymentOnAccountTwo) {
+          document.doesNotHave(Selectors.id("poa-extra-charge-content"))
         }
       }
     }

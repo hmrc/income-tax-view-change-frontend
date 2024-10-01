@@ -142,6 +142,12 @@ case class ChargeItem (
         Logger("application").error(s"Missing or non-matching charge type: $error found")
         "unknownCharge"
     }
+
+  def poaLinkForDrilldownPage: String = transactionType match {
+    case PaymentOnAccountOne => "4911"
+    case PaymentOnAccountTwo => "4913"
+    case _ => "no valid case"
+  }
 }
 
 object ChargeItem {
