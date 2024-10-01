@@ -18,8 +18,17 @@ package models.optin
 
 import models.incomeSourceDetails.TaxYear
 
-case class OptInCompletedViewModel(isAgent: Boolean, optInTaxYear: TaxYear, isCurrentYear: Boolean) {
+case class OptInCompletedViewModel(isAgent: Boolean, optInTaxYear: TaxYear, isCurrentYear: Boolean, optInIncludedNextYear: Boolean) {
   val startYear: String = optInTaxYear.startYear.toString
   val endYear: String = optInTaxYear.endYear.toString
   val nextYear: String = optInTaxYear.nextYear.endYear.toString
+
+  def headingMessageKey: String = {
+    (isCurrentYear, optInIncludedNextYear) match {
+      case (true, true)   => "optin.completedOptIn.followingVoluntary.heading.desc"
+      case (true, false)  => "optin.completedOptIn.cy.heading.desc"
+      case _ => "optin.completedOptIn.ny.heading.desc"
+    }
+  }
+
 }

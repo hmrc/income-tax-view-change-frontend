@@ -49,6 +49,7 @@ class TaxCalcBreakdownViewSpec extends TaxCalcBreakdownViewBehaviour {
 abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
   val taxYear2017: Int = 2017
+  val taxYear2024: Int = 2024
   val sectionHeadingPPP: String = messages("taxCal_breakdown.pay_pensions_profit")
   val sectionHeadingLumpSums: String = messages("taxCal_breakdown.lumpSums")
   val sectionHeadingGainsOnLifePolicies: String = messages("taxCal_breakdown.gains_life_policies")
@@ -115,7 +116,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
   "The taxCalc breakdown view with Scotland tax regime" when {
 
-    val taxBands = Seq(
+    val taxBands23AndLess = Seq(
       TaxBands(
         name = "SRT",
         rate = 10.0,
@@ -158,19 +159,69 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       )
     )
 
+    val taxBands24AndUp = Seq(
+      TaxBands(
+        name = "SRT",
+        rate = 10.0,
+        bandLimit = 12500,
+        apportionedBandLimit = 12500,
+        income = 20000,
+        taxAmount = 2000.00
+      ),
+      TaxBands(
+        name = "BRT",
+        rate = 20.0,
+        bandLimit = 12500,
+        apportionedBandLimit = 12500,
+        income = 20000,
+        taxAmount = 4000.00
+      ),
+      TaxBands(
+        name = "IRT",
+        rate = 25.0,
+        bandLimit = 12500,
+        apportionedBandLimit = 12500,
+        income = 20000,
+        taxAmount = 45000.00
+      ),
+      TaxBands(
+        name = "HRT",
+        rate = 40.0,
+        bandLimit = 12500,
+        apportionedBandLimit = 12500,
+        income = 100000,
+        taxAmount = 40000.00
+      ),
+      TaxBands(
+          name = "AVRT",
+          rate = 45.0,
+          bandLimit = 125140,
+          apportionedBandLimit = 106569,
+          income = 100000,
+          taxAmount = 45000.00
+      ),
+      TaxBands(
+        name = "ART_scottish",
+        rate = 45.0,
+        bandLimit = 12500,
+        apportionedBandLimit = 12500,
+        income = 500000,
+        taxAmount = 22500.00
+      )
+    )
+
     "provided with a calculation that is with Pay, pensions and profit table and with all three tax bands including " +
       "top rate displayed " +
       "for the 2017 tax year" should {
 
       val taxDueSummaryViewModel = TaxDueSummaryViewModel(
         taxRegime = "Scotland",
-        payPensionsProfitBands = Some(taxBands),
+        payPensionsProfitBands = Some(taxBands23AndLess),
         transitionProfitRow = TransitionProfitRow(Some(700.00), Some(3500.00))
       )
       lazy val view = taxCalcBreakdown(taxDueSummaryViewModel, taxYear2017, backUrl)
 
       "have a Pay, pensions and profit table" which {
-
         shouldHaveACorrectTableContent(view)(
           tableNumber = 1,
           expectedCaption = sectionHeadingPPP,
@@ -195,11 +246,11 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
       val taxDueSummaryViewModel = TaxDueSummaryViewModel(
         taxRegime = "Scotland",
-        lumpSumsBands = Some(taxBands)
+        lumpSumsBands = Some(taxBands23AndLess)
       )
       lazy val view = taxCalcBreakdown(taxDueSummaryViewModel, taxYear2017, backUrl)
 
-      "have a Lump sums table" which {
+      "have a 2017 Lump sums table" which {
 
         shouldHaveACorrectTableContent(view)(
           tableNumber = 1,
@@ -225,7 +276,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
       val taxDueSummaryViewModel = TaxDueSummaryViewModel(
         taxRegime = "Scotland",
-        gainsOnLifePoliciesBands = Some(taxBands)
+        gainsOnLifePoliciesBands = Some(taxBands23AndLess)
       )
       lazy val view = taxCalcBreakdown(taxDueSummaryViewModel, taxYear2017, backUrl)
 
@@ -242,6 +293,93 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
             (3, messages("taxCal_breakdown.table.IRT", "£20,000.00", "25.0"), "£45,000.00"),
             (4, messages("taxCal_breakdown.table.HRT", "£100,000.00", "40.0"), "£40,000.00"),
             (5, messages("taxCal_breakdown.table.ART_scottish", "£500,000.00", "45.0"), "£22,500.00")
+          )
+        )
+
+      }
+    }
+    "provided with a calculation that is with Pay, pensions and profit table and with all three tax bands including " +
+      "top rate displayed " +
+      "for the 2017 tax year" should {
+
+      val taxDueSummaryViewModel = TaxDueSummaryViewModel(
+        taxRegime = "Scotland",
+        payPensionsProfitBands = Some(taxBands23AndLess),
+        transitionProfitRow = TransitionProfitRow(Some(700.00), Some(3500.00))
+      )
+      lazy val view = taxCalcBreakdown(taxDueSummaryViewModel, taxYear2017, backUrl)
+
+      "have a 2017 Pay, pensions and profit table" which {
+
+        shouldHaveACorrectTableContent(view)(
+          tableNumber = 1,
+          expectedCaption = sectionHeadingPPP,
+          expectedTableRows = Table(
+            ("row index", "column 1", "column 2"),
+            (0, messages("taxCal_breakdown.table.head.rates.scotland"), amountTableHeader),
+            (1, messages("taxCal_breakdown.table.SRT", "£20,000.00", "10.0"), "£2,000.00"),
+            (2, messages("taxCal_breakdown.table.BRT", "£20,000.00", "20.0"), "£4,000.00"),
+            (3, messages("taxCal_breakdown.table.IRT", "£20,000.00", "25.0"), "£45,000.00"),
+            (4, messages("taxCal_breakdown.table.HRT", "£100,000.00", "40.0"), "£40,000.00"),
+            (5, messages("taxCal_breakdown.table.ART_scottish", "£500,000.00", "45.0"), "£22,500.00"),
+            (6, messages("taxCal_breakdown.table.transitional_profit", "£3,500.00"), "£700.00")
+          )
+        )
+
+      }
+    }
+    "should have a Pay, pensions and profit table with 8 rows in total" +
+      "for the 2024 tax year" should {
+
+      val taxDueSummaryViewModel = TaxDueSummaryViewModel(
+        taxRegime = "Scotland",
+        payPensionsProfitBands = Some(taxBands24AndUp),
+        transitionProfitRow = TransitionProfitRow(Some(700.00), Some(3500.00))
+      )
+      lazy val view = taxCalcBreakdown(taxDueSummaryViewModel, taxYear2024, backUrl)
+
+      "have a 2024 Pay, pensions and profit table" which {
+        shouldHaveACorrectTableContent(view)(
+          tableNumber = 1,
+          expectedCaption = sectionHeadingPPP,
+          expectedTableRows = Table(
+            ("row index", "column 1", "column 2"),
+            (0, messages("taxCal_breakdown.table.head.rates.scotland"), amountTableHeader),
+            (1, messages("taxCal_breakdown.table.SRT", "£20,000.00", "10.0"), "£2,000.00"),
+            (2, messages("taxCal_breakdown.table.BRT", "£20,000.00", "20.0"), "£4,000.00"),
+            (3, messages("taxCal_breakdown.table.IRT", "£20,000.00", "25.0"), "£45,000.00"),
+            (4, messages("taxCal_breakdown.table.HRT", "£100,000.00", "40.0"), "£40,000.00"),
+            (5, messages("taxCal_breakdown.table.AVRT", "£100,000.00", "45.0"), "£45,000.00"),
+            (6, messages("taxCal_breakdown.table.ART_scottish", "£500,000.00", "45.0"), "£22,500.00"),
+            (7, messages("taxCal_breakdown.table.transitional_profit", "£3,500.00"), "£700.00")
+          )
+        )
+
+      }
+    }
+    "should have a Lump sums table with 8 rows in total" +
+      "for the 2024 tax year" should {
+
+      val taxDueSummaryViewModel = TaxDueSummaryViewModel(
+        taxRegime = "Scotland",
+        lumpSumsBands = Some(taxBands24AndUp)
+      )
+      lazy val view = taxCalcBreakdown(taxDueSummaryViewModel, taxYear2024, backUrl)
+
+      "have a 2024 Lump sums table" which {
+
+        shouldHaveACorrectTableContent(view)(
+          tableNumber = 1,
+          expectedCaption = sectionHeadingLumpSums,
+          expectedTableRows = Table(
+            ("row index", "column 1", "column 2"),
+            (0, messages("taxCal_breakdown.table.head.rates.scotland"), amountTableHeader),
+            (1, messages("taxCal_breakdown.table.SRT", "£20,000.00", "10.0"), "£2,000.00"),
+            (2, messages("taxCal_breakdown.table.BRT", "£20,000.00", "20.0"), "£4,000.00"),
+            (3, messages("taxCal_breakdown.table.IRT", "£20,000.00", "25.0"), "£45,000.00"),
+            (4, messages("taxCal_breakdown.table.HRT", "£100,000.00", "40.0"), "£40,000.00"),
+            (5, messages("taxCal_breakdown.table.AVRT", "£100,000.00", "45.0"), "£45,000.00"),
+            (6, messages("taxCal_breakdown.table.ART_scottish", "£500,000.00", "45.0"), "£22,500.00")
           )
         )
 

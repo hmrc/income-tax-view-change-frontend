@@ -66,21 +66,25 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
 
       auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList, dateService))
 
+      val hasOverdueCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isOverdue()(dateService))
+      val hasAccruingInterestReviewAndReconcileCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isAccruingInterest()(dateService))
+
       Ok(whatYouOwe(
         currentDate = dateService.getCurrentDate,
         creditCharges,
+        hasOverdueOrAccruingInterestCharges = hasOverdueCharges || hasAccruingInterestReviewAndReconcileCharges,
         whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
         currentTaxYear = dateService.getCurrentTaxYearEnd, backUrl = backUrl, utr = user.saUtr,
-        btaNavPartial = user.btaNavPartial,
         dunningLock = whatYouOweChargesList.hasDunningLock,
         codingOutEnabled = isEnabled(CodingOut),
+        reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
         MFADebitsEnabled = isEnabled(MFACreditsAndDebits),
         isAgent = isAgent,
         whatYouOweCreditAmountEnabled = isEnabled(WhatYouOweCreditAmount),
         isUserMigrated = user.incomeSources.yearOfMigration.isDefined,
         creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
         origin = origin,
-        claimToAdjustViewModel = ctaViewModel)(user, user, messages)
+        claimToAdjustViewModel = ctaViewModel)(user, user, messages, dateService)
       ).addingToSession(gatewayPage -> WhatYouOwePage.name)
     }
   } recover {

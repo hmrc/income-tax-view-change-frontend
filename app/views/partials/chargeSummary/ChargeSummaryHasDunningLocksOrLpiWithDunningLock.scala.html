@@ -24,7 +24,7 @@
 @this(p: p, link: link, implicitDateFormatter: ImplicitDateFormatterImpl)
 
 @(
-    documentDetail: models.financialDetails.DocumentDetail,
+    chargeItem: models.financialDetails.ChargeItem,
     dueDate: Option[LocalDate],
     latePaymentInterestCharge: Boolean,
     appConfig: config.FrontendAppConfig
@@ -58,7 +58,7 @@
                 additionalOpenTabMessage = Some(".")
 
             )
-            @messages("chargeSummary.dunning.locks.banner.note", documentDetail.remainingToPay.toCurrencyString, dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate)
+            @messages("chargeSummary.dunning.locks.banner.note", chargeItem.remainingToPay.toCurrencyString, dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate)
         }
         </b>
     }

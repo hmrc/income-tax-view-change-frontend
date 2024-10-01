@@ -162,7 +162,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
           httpStatus(OK),
           pageTitleIndividual("paymentAllocation.heading"),
           elementAttributeBySelector("#payment-allocation-0 a", "href")(
-            "/report-quarterly/income-and-expenses/view/tax-years/9999/charge?id=PAYID01&latePaymentCharge=true"),
+            "/report-quarterly/income-and-expenses/view/tax-years/9999/charge?id=PAYID01&isInterestCharge=true"),
           elementTextBySelector("#payment-allocation-0 a")(s"${messagesAPI("paymentAllocation.paymentAllocations.balancingCharge.text")} ${messagesAPI("paymentAllocation.taxYear", "9998", "9999")}")
         )
 

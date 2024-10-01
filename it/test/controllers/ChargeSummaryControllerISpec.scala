@@ -289,7 +289,13 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
             "latePaymentInterestAmount" -> 100.0,
             "interestOutstandingAmount" -> 80.0
           )),
-        "financialDetails" -> Json.arr()))
+        "financialDetails" -> Json.arr(
+          Json.obj(
+            "transactionId" -> "1040001234",
+            "taxYear" -> "2018",
+            "mainTransaction" -> "4930"
+          )
+        )))
 
       disable(ChargeHistory)
       enable(PaymentAllocation)
@@ -327,7 +333,13 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
             "originalAmount" -> 2500.00,
             "documentDate" -> "2018-03-29"
           )),
-        "financialDetails" -> Json.arr()))
+        "financialDetails" -> Json.arr(
+          Json.obj(
+          "transactionId" -> "CODINGOUT01",
+          "taxYear" -> "2018",
+          "mainTransaction" -> "4910"
+          )
+        )))
 
 
       val res = IncomeTaxViewChangeFrontend.getChargeSummary("2018", "CODINGOUT01")

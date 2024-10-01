@@ -16,14 +16,15 @@
 
 package models.liabilitycalculation.viewmodels
 
-import models.financialDetails.DocumentDetailWithDueDate
 import models.incomeSourceDetails.TaxYear
 import models.obligations.ObligationsModel
+import models.taxyearsummary.TaxYearSummaryChargeItem
 
 case class TaxYearSummaryViewModel(calculationSummary: Option[CalculationSummary],
-                                   charges: List[DocumentDetailWithDueDate],
+                                   charges: List[TaxYearSummaryChargeItem],
                                    obligations: ObligationsModel,
                                    codingOutEnabled: Boolean,
+                                   reviewAndReconcileEnabled: Boolean,
                                    showForecastData: Boolean = false,
                                    ctaViewModel: TYSClaimToAdjustViewModel
                                   ) {

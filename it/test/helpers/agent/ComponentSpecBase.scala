@@ -264,7 +264,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     }
 
     def getChargeSummaryLatePayment(taxYear: String, id: String, additionalCookies: Map[String, String]): WSResponse =
-      getWithClientDetailsInSession(s"/agents/tax-years/$taxYear/charge?id=$id&latePaymentCharge=true", additionalCookies)
+      getWithClientDetailsInSession(s"/agents/tax-years/$taxYear/charge?id=$id&isInterestCharge=true", additionalCookies)
 
     def getPay(amountInPence: BigDecimal, additionalCookies: Map[String, String]): WSResponse =
       getWithClientDetailsInSession(s"/agents/payment?amountInPence=$amountInPence", additionalCookies)

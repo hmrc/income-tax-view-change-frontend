@@ -36,7 +36,7 @@ trait MockChargeSummary extends BeforeAndAfterEach {
   }
 
   def mockChargeSummary()(response: Html): Unit = {
-    when(chargeSummary.apply(viewModel)(any(), any(), any()))
+    when(chargeSummary.apply(viewModel)(any(), any(), any(), any()))
       .thenReturn(response)
   }
 

@@ -23,11 +23,12 @@ import enums.CodingOutType._
 import helpers.ComponentSpecBase
 import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEvent}
 import helpers.servicemocks._
-import models.admin.{AdjustPaymentsOnAccount, CodingOut, ForecastCalculation, MFACreditsAndDebits, NavBarFs, ReviewAndReconcilePoa}
+import models.admin._
 import models.financialDetails._
 import models.liabilitycalculation.LiabilityCalculationError
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
+import models.taxyearsummary.TaxYearSummaryChargeItem
 import org.jsoup.Jsoup
 import play.api.http.Status._
 import play.api.libs.json.Json
@@ -74,6 +75,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
       FinancialDetail(
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         mainType = Some("SA Payment on Account 1"),
+        mainTransaction = Some("4920"),
         transactionId = Some("testTransactionId"),
         items = Some(Seq(SubItem(Some(LocalDate.of(2021, 4, 23)))))
       )
@@ -99,7 +101,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
       ),
       DocumentDetail(
         taxYear = getCurrentTaxYearEnd.getYear,
-        transactionId = "testTransactionId",
+        transactionId = "testTransactionId2",
         documentDescription = Some("TRM New Charge"),
         documentText = Some("documentText"),
         documentDate = LocalDate.of(2022, 1, 29),
@@ -112,12 +114,14 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
       FinancialDetail(
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         mainType = Some("SA Balancing Charge"),
+        mainTransaction = Some("4910"),
         transactionId = Some("testTransactionId"),
         items = Some(Seq(SubItem(Some(LocalDate.of(2021, 4, 23)))))
       ),
       FinancialDetail(
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         mainType = Some("SA Balancing Charge"),
+        mainTransaction = Some("4910"),
         transactionId = Some("testTransactionId2"),
         items = Some(Seq(SubItem(Some(LocalDate.of(2022, 1, 23)))))
       )
@@ -143,7 +147,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
       ),
       DocumentDetail(
         taxYear = getCurrentTaxYearEnd.getYear,
-        transactionId = "testTransactionId",
+        transactionId = "testTransactionId2",
         documentDescription = Some("TRM New Charge"),
         documentText = Some(CODING_OUT_CANCELLED),
         documentDate = LocalDate.of(2021, 8, 31),
@@ -159,12 +163,14 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         mainType = Some("SA Balancing Charge"),
         transactionId = Some("testTransactionId"),
+        mainTransaction = Some("4910"),
         items = Some(Seq(SubItem(Some(LocalDate.of(2021, 4, 23)))))
       ),
       FinancialDetail(
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         mainType = Some("SA Balancing Charge"),
         transactionId = Some("testTransactionId2"),
+        mainTransaction = Some("4910"),
         items = Some(Seq(SubItem(Some(LocalDate.of(2022, 1, 23)))))
       )
     )
@@ -175,7 +181,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
     List(
       DocumentDetail(
         taxYear = getCurrentTaxYearEnd.getYear,
-        transactionId = "testTransactionId",
+        transactionId = "testTransactionId1",
         documentDescription = Some("TRM New Charge"),
         documentText = Some(CODING_OUT_CLASS2_NICS),
         documentDate = LocalDate.of(2021, 9, 13),
@@ -188,7 +194,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
       ),
       DocumentDetail(
         taxYear = getCurrentTaxYearEnd.getYear,
-        transactionId = "testTransactionId",
+        transactionId = "testTransactionId2",
         documentDescription = Some("TRM New Charge"),
         documentText = Some("documentText"),
         documentDate = LocalDate.of(2021, 8, 31),
@@ -199,7 +205,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
       ),
       DocumentDetail(
         taxYear = getCurrentTaxYearEnd.getYear,
-        transactionId = "testTransactionId",
+        transactionId = "testTransactionId3",
         documentDescription = Some("TRM New Charge"),
         documentText = Some(CODING_OUT_CANCELLED),
         documentDate = LocalDate.of(2022, 1, 31),
@@ -214,19 +220,22 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
       FinancialDetail(
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         mainType = Some("SA Balancing Charge"),
-        transactionId = Some("testTransactionId"),
+        transactionId = Some("testTransactionId1"),
+        mainTransaction = Some("4910"),
         items = Some(Seq(SubItem(Some(LocalDate.of(2020, 7, 13)))))
       ),
       FinancialDetail(
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         mainType = Some("SA Balancing Charge"),
         transactionId = Some("testTransactionId2"),
+        mainTransaction = Some("4910"),
         items = Some(Seq(SubItem(Some(LocalDate.of(2021, 8, 31)))))
       ),
       FinancialDetail(
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         mainType = Some("SA Balancing Charge"),
-        transactionId = Some("testTransactionI3"),
+        transactionId = Some("testTransactionId3"),
+        mainTransaction = Some("4910"),
         items = Some(Seq(SubItem(Some(LocalDate.of(2022, 1, 31)))))
       )
     )
@@ -266,12 +275,14 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         transactionId = Some("testDunningTransactionId"),
         mainType = Some("SA Payment on Account 1"),
+        mainTransaction = Some("4920"),
         items = Some(Seq(SubItem(Some(LocalDate.of(2021, 4, 23)), amount = Some(12), dunningLock = Some("Stand over order"), transactionId = Some("testDunningTransactionId"))))
       ),
       FinancialDetail(
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         transactionId = Some("testDunningTransactionId2"),
         mainType = Some("SA Payment on Account 2"),
+        mainTransaction = Some("4930"),
         items = Some(Seq(SubItem(Some(LocalDate.of(2021, 4, 23)), amount = Some(12), dunningLock = Some("Dunning Lock"), transactionId = Some("testDunningTransactionId2"))))
       )
     )
@@ -311,18 +322,20 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         transactionId = Some("testMFA1"),
         mainType = Some("ITSA PAYE Charge"),
+        mainTransaction = Some("4000"),
         items = Some(Seq(SubItem(Some(LocalDate.of(2021, 4, 23)), amount = Some(12), transactionId = Some("testMFA1"))))
       ),
       FinancialDetail(
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         transactionId = Some("testMFA2"),
         mainType = Some("ITSA Calc Error Correction"),
+        mainTransaction = Some("4001"),
         items = Some(Seq(SubItem(Some(LocalDate.of(2021, 4, 22)), amount = Some(12), transactionId = Some("testMFA2"))))
       )
     )
   )
 
-  val emptyPaymentsList: List[DocumentDetailWithDueDate] = List.empty
+  val emptyPaymentsList: List[TaxYearSummaryChargeItem] = List.empty
 
   val allObligations: ObligationsModel = ObligationsModel(Seq(
     GroupedObligationsModel(
@@ -476,6 +489,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         }
 
         And("The expected result is returned")
+
         res should have(
           httpStatus(OK),
           pageTitleIndividual("tax-year-summary.heading"),
@@ -574,8 +588,8 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
             None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
           )(FakeRequest()),
           messagesAPI, TaxYearSummaryViewModel(Some(CalculationSummary(liabilityCalculationModelSuccessfulExpected)),
-            financialDetailsDunningLockSuccess.getAllDocumentDetailsWithDueDates(),
-            allObligations, codingOutEnabled = true, showForecastData = true, ctaViewModel = emptyCTAModel)))
+            financialDetailsDunningLockSuccess.documentDetails.map(dd => ChargeItem.fromDocumentPair(dd, financialDetailsDunningLockSuccess.financialDetails, true, true)).map(TaxYearSummaryChargeItem.fromChargeItem),
+            allObligations, codingOutEnabled = true, reviewAndReconcileEnabled = true, showForecastData = true, ctaViewModel = emptyCTAModel)))
       }
 
 
@@ -797,7 +811,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
             Some(CalculationSummary(liabilityCalculationModelSuccessful)),
             emptyPaymentsList,
             allObligations,
-            codingOutEnabled = true, showForecastData = true, ctaViewModel = emptyCTAModel
+            codingOutEnabled = true, reviewAndReconcileEnabled = true, showForecastData = true, ctaViewModel = emptyCTAModel
           )))
       }
 
@@ -1127,8 +1141,10 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           )(FakeRequest()),
           messagesAPI, TaxYearSummaryViewModel(
             Some(CalculationSummary(liabilityCalculationModelSuccessful)),
-            auditDD, allObligations,
+
+            auditDD.map(dd => ChargeItem.fromDocumentPair(dd.documentDetail, financialDetailsMFADebits.financialDetails, true, true)).map(TaxYearSummaryChargeItem.fromChargeItem), allObligations,
             codingOutEnabled = true,
+            reviewAndReconcileEnabled = true,
             showForecastData = true, ctaViewModel = emptyCTAModel)))
 
         allObligations.obligations.foreach {

@@ -394,6 +394,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
             documentDetails = List(
               fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(50.0)),
               fullDocumentDetailModel.copy(outstandingAmount = 100.00, originalAmount = 100.00),
+              fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(0.00), interestOutstandingAmount = Some(100.00))
             ),
             financialDetails = List(
               fullFinancialDetailModel
@@ -416,7 +417,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           documentDetails = List(
             fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(50.0)),
             fullDocumentDetailModel.copy(outstandingAmount = 100.00, originalAmount = 100.00),
-            fullDocumentDetailModel.copy(outstandingAmount = 0, originalAmount = -200.00, latePaymentInterestAmount = None)
+            fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(0.00), interestOutstandingAmount = Some(100.00)),
+            fullDocumentDetailModel.copy(outstandingAmount = 0, originalAmount = -200.00, latePaymentInterestAmount = None, interestOutstandingAmount = None)
           ),
           financialDetails = List(
             fullFinancialDetailModel
@@ -426,7 +428,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           taxYear = getTaxEndYear(fixedDate),
           documentDetails = List(
             fullDocumentDetailModel.copy(outstandingAmount = 300.00, originalAmount = 300.00),
-            fullDocumentDetailModel.copy(outstandingAmount = 0.00, originalAmount = -400.00, latePaymentInterestAmount = None),
+            fullDocumentDetailModel.copy(outstandingAmount = 0.00, originalAmount = -400.00, latePaymentInterestAmount = None, interestOutstandingAmount = None),
             fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(25.0))
           ),
           financialDetails = List(
@@ -443,8 +445,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate.minusYears(1)), testNino)(getFinancialDetailSuccess(
           taxYear = getTaxEndYear(fixedDate.minusYears(1)),
           documentDetails = List(
-            fullDocumentDetailModel.copy(outstandingAmount = 0, latePaymentInterestAmount = None),
-            fullDocumentDetailModel.copy(outstandingAmount = 0, latePaymentInterestAmount = None)
+            fullDocumentDetailModel.copy(outstandingAmount = 0, latePaymentInterestAmount = None, interestOutstandingAmount = None),
+            fullDocumentDetailModel.copy(outstandingAmount = 0, latePaymentInterestAmount = None, interestOutstandingAmount = None)
           ),
           financialDetails = List(
             fullFinancialDetailModel,
@@ -454,8 +456,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate), testNino)(getFinancialDetailSuccess(
           taxYear = getTaxEndYear(fixedDate),
           documentDetails = List(
-            fullDocumentDetailModel.copy(outstandingAmount = 0, latePaymentInterestAmount = None),
-            fullDocumentDetailModel.copy(outstandingAmount = 0, latePaymentInterestAmount = None)
+            fullDocumentDetailModel.copy(outstandingAmount = 0, latePaymentInterestAmount = None, interestOutstandingAmount = None),
+            fullDocumentDetailModel.copy(outstandingAmount = 0, latePaymentInterestAmount = None, interestOutstandingAmount = None)
           ),
           financialDetails = List(
             fullFinancialDetailModel,

@@ -77,6 +77,7 @@ case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
       case "BRT" => "Basic rate"
       case "IRT" => "Intermediate rate"
       case "HRT" => "Higher rate"
+      case "AVRT" => "Advanced rate"
       case "ART" => if (scottish) "Top rate" else "Additional rate"
       case "ZRTBR" => "Basic rate band at nil rate"
       case "ZRTHR" => "Higher rate band at nil rate"

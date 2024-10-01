@@ -197,8 +197,8 @@ tax-year-summary.payments.cancelledPayeSelfAssessment.text     = Hunanasesiad TW
 tax-year-summary.payments.hmrcAdjustment.text                  = Addasiad CThEF
 tax-year-summary.payments.overdue                              = Yn hwyr
 tax-year-summary.payments.no-payments                          = Dim taliadau’n ddyledus ar hyn o bryd.
-tax-year-summary.payments.first-poa-extra-amount               = Taliad cyntaf ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
-tax-year-summary.payments.second-poa-extra-amount              = Ail daliad ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
+tax-year-summary.payments.reviewAndReconcilePoa1.text   = Taliad cyntaf ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
+tax-year-summary.payments.reviewAndReconcilePoa2.text   = Ail daliad ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
 tax-year-summary.forecast_tab.insetText                        = Amcangyfrif yw hwn o’ch bil treth ar gyfer y flwyddyn gyfan hyd at 5 Ebrill {0}. Bydd hyn yn cael ei ddiweddaru drwy gydol y flwyddyn wrth i ni gael rhagor o wybodaeth.
 tax-year-summary.forecast_total_title                          = Rhagolwg 6 Ebrill {0} i 5 Ebrill {1}
 tax-year-summary.forecast.tax-due                              = Rhagolwg o swm y dreth Hunanasesiad
@@ -467,6 +467,7 @@ taxCal_breakdown.table.SRT                                          = Cyfradd cy
 taxCal_breakdown.table.BRT                                          = Cyfradd sylfaenol ({0} ar {1}%)
 taxCal_breakdown.table.IRT                                          = Cyfradd ganolradd ({0} ar {1}%)
 taxCal_breakdown.table.HRT                                          = Cyfradd uwch ({0} ar {1}%)
+taxCal_breakdown.table.AVRT                                         = Cyfradd uwch bellach ({0} ar {1}%)
 taxCal_breakdown.table.ART                                          = Cyfradd ychwanegol ({0} ar {1}%)
 taxCal_breakdown.table.ART_scottish                                 = Cyfradd uchaf ({0} ar {1}%)
 taxCal_breakdown.table.ZRTBR                                        = Haen cyfradd sylfaenol ar y gyfradd sero ({0} ar {1}%)
@@ -820,8 +821,8 @@ whatYouOwe.tableHead.amount-due                                 = Swm sy’n ddy
 whatYouOwe.tableHead.tax-year                                   = Blwyddyn dreth
 whatYouOwe.paymentOnAccount1.text							    = Taliad cyntaf ar gyfrif
 whatYouOwe.paymentOnAccount2.text							    = Ail daliad ar gyfrif
-whatYouOwe.reviewAndReconcileOne.text                           = Taliad cyntaf ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
-whatYouOwe.reviewAndReconcileTwo.text                           = Ail daliad ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
+whatYouOwe.reviewAndReconcilePoa1.text                           = Taliad cyntaf ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
+whatYouOwe.reviewAndReconcilePoa2.text                           = Ail daliad ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
 whatYouOwe.hmrcAdjustment.text                                  = Addasiad CThEF
 whatYouOwe.balancingCharge.text  							    = Taliad mantoli
 whatYouOwe.remaining-balance.heading                            = Taliad mantoli
@@ -896,12 +897,13 @@ whatYouOwe.adjust-poa.paid-2                                    = addasu eich ta
 whatYouOwe.adjust-poa.paid-3                                    = ar unrhyw adeg cyn cyflwyno’ch Ffurflen Dreth ar gyfer 2023 i 2024, ac erbyn
 whatYouOwe.adjust-poa.paid-4                                    = 31 Ionawr {0}
 whatYouOwe.adjust-poa.paid-5                                    = fan bellaf.
+whatYouOwe.interestChargesWarning                               = Bydd taliadau llog yn parhau i gynyddu bob dydd nes bod y taliadau y maent yn ymwneud â nhw yn cael eu talu’n llawn.
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad cyntaf ar gyfrif
 chargeSummary.paymentOnAccount2.text                            = Ail daliad ar gyfrif
-chargeSummary.paymentOnAccount1.extraAmount.text				= Taliad cyntaf ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
-chargeSummary.paymentOnAccount2.extraAmount.text				= Ail daliad ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
+chargeSummary.reviewAndReconcilePoa1.text				= Taliad cyntaf ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
+chargeSummary.reviewAndReconcilePoa2.text				= Ail daliad ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
 chargeSummary.balancingCharge.text                              = Taliad mantoli
 chargeSummary.dueDate                                           = Dyddiad dyledus
 chargeSummary.class2Nic.text                                    = Class 2 National Insurance
@@ -967,6 +969,10 @@ chargeSummary.paymentBreakdown.interestLocks.notCharging           = Nid ydym yn
 chargeSummary.paymentBreakdown.interestLocks.charging              = Rydym yn codi llog arnoch ar y taliad hwn
 chargeSummary.paymentBreakdown.interestLocks.previouslyCharged     = Rydym wedi codi llog arnoch ar y taliad hwn yn flaenorol
 chargeSummary.paymentBreakdown.lpiWithDunning.text                 = Llog am dalu’n hwyr
+
+chargeSummary.extraCharge.text1                                    = Mae eich Ffurflen Dreth yn dangos bod eich taliad ar gyfrif wedi’i addasu’n rhy isel, felly mae CThEF wedi ychwanegu
+chargeSummary.extraCharge.linkText                                 = swm ychwanegol
+chargeSummary.extraCharge.text2                                    = i’w dalu.
 
 chargeSummary.interestLocks.text                                   = i wirio a oes gennych unrhyw log ar y taliad hwn.
 chargeSummary.interestLocks.text-agent                             = i wirio a oes ganddo unrhyw log ar y taliad hwn.
@@ -2218,8 +2224,9 @@ optin.optInError.home-bullet-2                     = hafan
 # opt-in completed
 optin.completedOptIn.heading                    = Optio i mewn wedi’i gwblhau
 
-optin.completedOptIn.cy.heading.desc            = Rydych bellach yn cyflwyno adroddiadau’n chwarterol o flwyddyn dreth {0} i {1} ymlaen
-optin.completedOptIn.ny.heading.desc            = Gwnaethoch optio i mewn i adrodd yn chwarterol o flwyddyn dreth {0} i {1} ymlaen
+optin.completedOptIn.cy.heading.desc                     = Rydych bellach yn cyflwyno adroddiadau’n chwarterol o flwyddyn dreth {0} i {1} ymlaen
+optin.completedOptIn.ny.heading.desc                     = Gwnaethoch optio i mewn i adrodd yn chwarterol o flwyddyn dreth {0} i {1} ymlaen
+optin.completedOptIn.followingVoluntary.heading.des      = Rydych bellach yn cyflwyno adroddiadau’n chwarterol o flwyddyn dreth {0} i {1} ymlaen
 
 optin.completedOptIn.nextUpdates                = Eich diweddariadau nesaf sy’n ddyledus
 optin.completedOptIn.nextUpdate.desc1.a         = Gwiriwch y dudalen ynghylch
