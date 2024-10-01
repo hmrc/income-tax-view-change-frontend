@@ -148,13 +148,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
     val html: HtmlFormat.Appendable = whatYouOweView(
       currentDate = dateService.getCurrentDate,
+      hasOverdueOrAccruingInterestCharges = false,
       creditCharges = creditCharges,
       whatYouOweChargesList = charges,
       hasLpiWithDunningLock = hasLpiWithDunningLock,
       currentTaxYear = currentTaxYear,
       backUrl = "testBackURL",
       utr = Some("1234567890"),
-      btaNavPartial = None,
       dunningLock = dunningLock,
       codingOutEnabled = codingOutEnabled,
       reviewAndReconcileEnabled = reviewAndReconcileEnabled,
@@ -212,6 +212,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     private val currentDateIs: LocalDate = dateService.getCurrentDate
     val html: HtmlFormat.Appendable = whatYouOweView(
       currentDateIs,
+      hasOverdueOrAccruingInterestCharges = false,
       creditCharges = creditCharges,
       whatYouOweChargesList = charges,
       hasLpiWithDunningLock = hasLpiWithDunningLock,
