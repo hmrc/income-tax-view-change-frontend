@@ -41,6 +41,7 @@ case class ChargeSummaryViewModel(
                                    origin: Option[String] = None,
                                    gatewayPage: Option[GatewayPage] = None,
                                    adjustmentHistory: AdjustmentHistoryModel,
+                                   poaExtraChargeLink: Option[String] = None,
                                    poaOneChargeUrl: String,
                                    poaTwoChargeUrl: String
                                  ) {

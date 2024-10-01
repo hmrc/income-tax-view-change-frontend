@@ -970,6 +970,10 @@ chargeSummary.paymentBreakdown.interestLocks.charging              = Rydym yn co
 chargeSummary.paymentBreakdown.interestLocks.previouslyCharged     = Rydym wedi codi llog arnoch ar y taliad hwn yn flaenorol
 chargeSummary.paymentBreakdown.lpiWithDunning.text                 = Llog am dalu’n hwyr
 
+chargeSummary.extraCharge.text1                                    = Mae eich Ffurflen Dreth yn dangos bod eich taliad ar gyfrif wedi’i addasu’n rhy isel, felly mae CThEF wedi ychwanegu
+chargeSummary.extraCharge.linkText                                 = swm ychwanegol
+chargeSummary.extraCharge.text2                                    = i’w dalu.
+
 chargeSummary.interestLocks.text                                   = i wirio a oes gennych unrhyw log ar y taliad hwn.
 chargeSummary.interestLocks.text-agent                             = i wirio a oes ganddo unrhyw log ar y taliad hwn.
 chargeSummary.interestLocks.linkText                               = Bwrw golwg dros yr hyn sydd arnoch
