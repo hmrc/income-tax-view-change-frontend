@@ -897,6 +897,7 @@ whatYouOwe.adjust-poa.paid-2                                    = addasu eich ta
 whatYouOwe.adjust-poa.paid-3                                    = ar unrhyw adeg cyn cyflwyno’ch Ffurflen Dreth ar gyfer 2023 i 2024, ac erbyn
 whatYouOwe.adjust-poa.paid-4                                    = 31 Ionawr {0}
 whatYouOwe.adjust-poa.paid-5                                    = fan bellaf.
+whatYouOwe.interestChargesWarning                               = Bydd taliadau llog yn parhau i gynyddu bob dydd nes bod y taliadau y maent yn ymwneud â nhw yn cael eu talu’n llawn.
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad cyntaf ar gyfrif
