@@ -26,7 +26,7 @@ import utils.Utilities.JsonUtil
 
 case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
                                         whatYouOweChargesList: WhatYouOweChargesList,
-                                        implicit val dateService: DateServiceInterface) extends ExtendedAuditModel with AuditFunctions {
+                                        implicit val dateService: DateServiceInterface) extends ExtendedAuditModel with PaymentSharedFunctions {
 
   val currentTaxYear: Int = dateService.getCurrentTaxYearEnd
 

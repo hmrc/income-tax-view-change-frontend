@@ -33,7 +33,7 @@ case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],
                                             messagesApi: MessagesApi,
                                             taxYearSummaryViewModel: TaxYearSummaryViewModel,
                                             messages: Option[Messages] = None
-                                           ) extends ExtendedAuditModel with ImplicitDateParser with AuditFunctions  {
+                                           ) extends ExtendedAuditModel with ImplicitDateParser with PaymentSharedFunctions  {
 
 
   override val transactionName: String = enums.TransactionName.TaxYearOverviewResponse

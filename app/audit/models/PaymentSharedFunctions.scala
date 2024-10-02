@@ -19,7 +19,7 @@ package audit.models
 import models.financialDetails.{Accepted, BalancingCharge, Cancelled, MfaDebitCharge, Nics2, PaymentOnAccountOne, PaymentOnAccountTwo, TransactionItem}
 import services.DateServiceInterface
 
-trait AuditFunctions {
+trait PaymentSharedFunctions {
 
   def isLatePaymentCharge(chargeItem: TransactionItem)(implicit dateService: DateServiceInterface): Boolean = {
     chargeItem.isOverdue() && chargeItem.isLatePaymentInterest

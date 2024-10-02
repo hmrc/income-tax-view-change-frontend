@@ -30,7 +30,7 @@ import utils.Utilities._
 case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], chargeItem: ChargeItem,
                               paymentBreakdown: List[FinancialDetail], chargeHistories: List[ChargeHistoryModel],
                               paymentAllocations: List[PaymentHistoryAllocations], isLatePaymentCharge: Boolean,
-                              isMFADebit: Boolean = false, taxYear: Int)(implicit val dateService: DateServiceInterface) extends ExtendedAuditModel with AuditFunctions {
+                              isMFADebit: Boolean = false, taxYear: Int)(implicit val dateService: DateServiceInterface) extends ExtendedAuditModel with PaymentSharedFunctions {
 
   private val userType: JsObject = mtdItUser.userType match {
     case Some(Agent) => Json.obj("userType" -> "Agent")

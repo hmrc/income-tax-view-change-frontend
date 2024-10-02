@@ -37,7 +37,7 @@ import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
 
-class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with AuditFunctions {
+class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentSharedFunctions {
 
   implicit val dateService: DateService = app.injector.instanceOf[DateService]
 
