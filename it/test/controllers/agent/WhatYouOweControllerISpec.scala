@@ -18,18 +18,19 @@ package controllers.agent
 
 import audit.models.WhatYouOweResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
-import models.admin.{AdjustPaymentsOnAccount, CodingOut, CreditsRefundsRepay}
+import models.admin.{AdjustPaymentsOnAccount, CodingOut, CreditsRefundsRepay, ReviewAndReconcilePoa}
 import models.core.AccountingPeriodModel
-import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
+import models.financialDetails._
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
+import services.DateService
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.address
+import testConstants.ChargeConstants
 import testConstants.FinancialDetailsIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.OutstandingChargesIntegrationTestConstants._
@@ -39,7 +40,8 @@ import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
 
-class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching {
+class WhatYouOweControllerISpec extends ComponentSpecBase  with ChargeConstants with TransactionUtils {
+
 
   val testArn: String = "1"
 
@@ -62,6 +64,17 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
     )),
     properties = Nil
   )
+
+  override implicit val dateService: DateService = app.injector.instanceOf[DateService]
+
+
+  implicit val testUser: MtdItUser[_] = MtdItUser(
+    testMtditid, testNino, Some(Name(Some("Test"), Some("User"))), incomeSourceDetailsModel,
+    None, Some("1234567890"), None, Some(Agent), Some(testArn)
+  )(FakeRequest())
+
+  val configuredChargeItemGetter: List[FinancialDetail] => DocumentDetail => Option[ChargeItem] =
+    getChargeItemOpt(isEnabled(CodingOut), isEnabled(ReviewAndReconcilePoa))
 
   val testValidOutStandingChargeResponseJsonWithAciAndBcdCharges: JsValue = Json.parse(
     s"""
@@ -88,10 +101,6 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
   val testTaxYear: Int = currentTaxYearEnd
 
-  val testUser: MtdItUser[_] = MtdItUser(
-    testMtditid, testNino, Some(Name(Some("Test"), Some("User"))), incomeSourceDetailsModel,
-    None, Some("1234567890"), None, Some(Agent), Some(testArn)
-  )(FakeRequest())
 
   s"GET ${controllers.routes.WhatYouOweController.showAgent.url}" should {
     "SEE_OTHER to " when {
@@ -155,7 +164,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
-      AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataWithDataDueIn30Days, dateService).detail)
+      AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataWithDataDueIn30DaysIt, dateService).detail)
 
       Then("The Payment Due what you owe page is returned to the user")
       result should have(
@@ -199,9 +208,14 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
       val whatYouOweChargesList = {
         val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == currentTaxYearEnd)
+
+        val financialDetails = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear)
+        val chargeItemFromDocumentDetail = configuredChargeItemGetter(financialDetails.financialDetails)
+        val chargeItems = financialDetails.documentDetails.flatMap(chargeItemFromDocumentDetail)
+
         WhatYouOweChargesList(
           balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-          chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()
+          chargesList = chargeItems
         )
       }
       AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList, dateService))
@@ -246,8 +260,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         ),
         "financialDetails" -> Json.arr(
           financialDetailJson((currentTaxYearEnd - 2).toString, transactionId = "transId1"),
-          financialDetailJson((currentTaxYearEnd - 2).toString, "SA Payment on Account 1", testDate.plusDays(1).toString, transactionId = "transId2"),
-          financialDetailJson((currentTaxYearEnd - 2).toString, "SA Payment on Account 2", testDate.minusDays(1).toString, transactionId = "transId3")
+          financialDetailJson(taxYear = (currentTaxYearEnd - 2).toString, mainType = "SA Payment on Account 1", mainTransaction="4920", dueDate = testDate.plusDays(1).toString, transactionId = "transId2"),
+          financialDetailJson((currentTaxYearEnd - 2).toString, "SA Payment on Account 2", mainTransaction="4910", dueDate = testDate.minusDays(1).toString, transactionId = "transId3")
         ))
 
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(
@@ -259,7 +273,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
-      AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweWithAZeroOutstandingAmount, dateService).detail)
+      AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweWithAZeroOutstandingAmount(), dateService).detail)
 
       Then("The Payment Due what you owe page is returned to the user")
       result should have(
@@ -372,7 +386,6 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
     }
   }
 
-
   "render the what you owe page with interest accruing on overdue charges" in {
     stubAuthorisedAgentUser(authorised = true)
 
@@ -484,9 +497,13 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
       val whatYouOweChargesList = {
         val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear)
+        val financialDetails = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear)
+        val chargeItemFromDocumentDetail = configuredChargeItemGetter(financialDetails.financialDetails)
+        val chargeItems = financialDetails.documentDetails.flatMap(chargeItemFromDocumentDetail)
+
         WhatYouOweChargesList(
           balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-          chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()
+          chargesList = chargeItems
         )
       }
       AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList, dateService))
@@ -522,9 +539,13 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
       val whatYouOweChargesList = {
         val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear)
+        val financialDetails = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear)
+        val chargeItemFromDocumentDetail = configuredChargeItemGetter(financialDetails.financialDetails)
+        val chargeItems = financialDetails.documentDetails.flatMap(chargeItemFromDocumentDetail)
+
         WhatYouOweChargesList(
           balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-          chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()
+          chargesList = chargeItems
         )
       }
       AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList, dateService))
@@ -561,9 +582,13 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
       val whatYouOweChargesList = {
         val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear)
+        val financialDetails = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear)
+        val chargeItemFromDocumentDetail = configuredChargeItemGetter(financialDetails.financialDetails)
+        val chargeItems = financialDetails.documentDetails.flatMap(chargeItemFromDocumentDetail)
+
         WhatYouOweChargesList(
           balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-          chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()
+          chargesList = chargeItems
         )
       }
       AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList, dateService))
@@ -725,9 +750,9 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
             documentDetailJson(1000.00, 3000.00, currentTaxYearEnd, transactionId = "transId3")
           ),
           "financialDetails" -> Json.arr(
-            financialDetailJson(currentTaxYearEnd.toString, transactionId = "transId4"),
-            financialDetailJson(currentTaxYearEnd.toString, transactionId = "transId5"),
-            financialDetailJson(currentTaxYearEnd.toString, transactionId = "transId6")
+            financialDetailJson(currentTaxYearEnd.toString, transactionId = "transId1"),
+            financialDetailJson(currentTaxYearEnd.toString, transactionId = "transId2"),
+            financialDetailJson(currentTaxYearEnd.toString, transactionId = "transId3")
           ))
 
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK, mixedJson)

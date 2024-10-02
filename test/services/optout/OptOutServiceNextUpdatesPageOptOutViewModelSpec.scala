@@ -17,20 +17,19 @@
 package services.optout
 
 import auth.MtdItUser
-import connectors.optout.ITSAStatusUpdateConnector
-import connectors.optout.OptOutUpdateRequestModel.OptOutUpdateResponseSuccess
+import connectors.itsastatus.ITSAStatusUpdateConnector
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseSuccess
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockITSAStatusUpdateConnector}
-import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
+import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.{ITSAStatus, StatusDetail}
-import models.optout.{OptOutMultiYearViewModel, OptOutOneYearViewModel, OptOutSessionData}
+import models.optout.{OptOutMultiYearViewModel, OptOutOneYearViewModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfter
-import repositories.UIJourneySessionDataRepository
+import repositories.OptOutSessionDataRepository
 import services.NextUpdatesService
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
-import utils.OptOutJourney
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -44,7 +43,7 @@ class OptOutServiceNextUpdatesPageOptOutViewModelSpec extends UnitSpec
 
   val optOutConnector: ITSAStatusUpdateConnector = mock(classOf[ITSAStatusUpdateConnector])
   val nextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
-  val repository: UIJourneySessionDataRepository = mock(classOf[UIJourneySessionDataRepository])
+  val repository: OptOutSessionDataRepository = mock(classOf[OptOutSessionDataRepository])
 
   val service: OptOutService = new OptOutService(optOutConnector, mockITSAStatusService, mockCalculationListService,
     nextUpdatesService, mockDateService, repository)
@@ -82,13 +81,11 @@ class OptOutServiceNextUpdatesPageOptOutViewModelSpec extends UnitSpec
         when(mockCalculationListService.isTaxYearCrystallised(previousTaxYear)).thenReturn(Future.successful(false))
 
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
-        val optOutSessionData = OptOutSessionData(None, Some(previousTaxYear.toString))
-        val sessionData = Some(UIJourneySessionData(sessionIdValue, OptOutJourney.Name, optOutSessionData = Some(optOutSessionData)))
-        when(repository.get(any(), any())).thenReturn(Future.successful(sessionData))
-        when(repository.set(any())).thenReturn(Future.successful(true))
+        when(repository.initialiseOptOutJourney(any())(any())).thenReturn(Future.successful(true))
+        when(repository.fetchSavedIntent()).thenReturn(Future.successful(Some(previousTaxYear)))
 
-        when(optOutConnector.requestOptOutForTaxYear(any(), any(), any())(any[HeaderCarrier])).thenReturn(Future.successful(
-          OptOutUpdateResponseSuccess()
+        when(optOutConnector.makeITSAStatusUpdate(any(), any(), any())(any[HeaderCarrier])).thenReturn(Future.successful(
+          ITSAStatusUpdateResponseSuccess()
         ))
 
         val result = service.nextUpdatesPageOptOutViewModels()
@@ -119,13 +116,11 @@ class OptOutServiceNextUpdatesPageOptOutViewModelSpec extends UnitSpec
         when(mockCalculationListService.isTaxYearCrystallised(previousTaxYear)).thenReturn(Future.successful(false))
 
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
-        val optOutSessionData = OptOutSessionData(None, Some(previousTaxYear.toString))
-        val sessionData = Some(UIJourneySessionData(sessionIdValue, OptOutJourney.Name, optOutSessionData = Some(optOutSessionData)))
-        when(repository.get(any(), any())).thenReturn(Future.successful(sessionData))
-        when(repository.set(any())).thenReturn(Future.successful(true))
+        when(repository.initialiseOptOutJourney(any())(any())).thenReturn(Future.successful(true))
+        when(repository.fetchSavedIntent()).thenReturn(Future.successful(Some(previousTaxYear)))
 
-        when(optOutConnector.requestOptOutForTaxYear(any(), any(), any())(any[HeaderCarrier])).thenReturn(Future.successful(
-          OptOutUpdateResponseSuccess()
+        when(optOutConnector.makeITSAStatusUpdate(any(), any(), any())(any[HeaderCarrier])).thenReturn(Future.successful(
+          ITSAStatusUpdateResponseSuccess()
         ))
 
         val result = service.nextUpdatesPageOptOutViewModels()

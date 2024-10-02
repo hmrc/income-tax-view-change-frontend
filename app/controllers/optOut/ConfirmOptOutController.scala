@@ -20,15 +20,14 @@ import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import cats.data.OptionT
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import connectors.optout.OptOutUpdateRequestModel.OptOutUpdateResponseSuccess
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseSuccess
 import controllers.agent.predicates.ClientConfirmedController
 import models.optout.{MultiYearOptOutCheckpointViewModel, OneYearOptOutCheckpointViewModel, OptOutCheckpointViewModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.SessionService
 import services.optout.OptOutService
-import utils.{AuthenticatorPredicate, OptOutJourney}
+import utils.AuthenticatorPredicate
 import views.html.optOut.{CheckOptOutAnswers, ConfirmOptOut}
 
 import javax.inject.Inject
@@ -37,15 +36,14 @@ import scala.concurrent.{ExecutionContext, Future}
 class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
                                         checkOptOutAnswers: CheckOptOutAnswers,
                                         optOutService: OptOutService,
-                                        auth: AuthenticatorPredicate,
-                                        override val sessionService: SessionService)
+                                        auth: AuthenticatorPredicate)
                                        (implicit val appConfig: FrontendAppConfig,
                                         val ec: ExecutionContext,
                                         val authorisedFunctions: FrontendAuthorisedFunctions,
                                         val itvcErrorHandler: ItvcErrorHandler,
                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                         override val mcc: MessagesControllerComponents)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport with OptOutJourney {
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
@@ -70,7 +68,7 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
   def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = isAgent) {
     implicit user =>
       optOutService.makeOptOutUpdateRequest().map {
-        case OptOutUpdateResponseSuccess(_) => Redirect(routes.ConfirmedOptOutController.show(isAgent))
+        case ITSAStatusUpdateResponseSuccess(_) => Redirect(routes.ConfirmedOptOutController.show(isAgent))
         case _ => Redirect(routes.OptOutErrorController.show(isAgent))
       }
   }

@@ -22,7 +22,7 @@ import config.featureswitch._
 import exceptions.MissingFieldException
 import models.homePage._
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
-import models.nextUpdates.NextUpdatesTileViewModel
+import models.obligations.NextUpdatesTileViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
@@ -92,6 +92,8 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
   class TestSetup(nextPaymentDueDate: Option[LocalDate] = Some(nextPaymentDue),
                   overduePaymentExists: Boolean = true,
                   overDuePaymentsCount: Int = 0,
+                  paymentsAccruingInterestCount: Int = 0,
+                  reviewAndReconcileEnabled: Boolean = false,
                   nextUpdatesTileViewModel: NextUpdatesTileViewModel = viewModelFuture,
                   utr: Option[String] = None,
                   paymentHistoryEnabled: Boolean = true,
@@ -112,7 +114,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 
     val returnsTileViewModel = ReturnsTileViewModel(currentTaxYear = TaxYear(currentTaxYear - 1, currentTaxYear), iTSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled)
 
-    val nextPaymentsTileViewModel = NextPaymentsTileViewModel(nextPaymentDueDate, overDuePaymentsCount)
+    val nextPaymentsTileViewModel = NextPaymentsTileViewModel(nextPaymentDueDate, overDuePaymentsCount, paymentsAccruingInterestCount, reviewAndReconcileEnabled)
 
     val yourBusinessesTileViewModel = YourBusinessesTileViewModel(displayCeaseAnIncome, incomeSourcesEnabled, incomeSourcesNewJourneyEnabled)
 
@@ -170,11 +172,14 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
           "is overdue" in new TestSetup(nextPaymentDueDate = Some(nextPaymentDue), overDuePaymentsCount = 1) {
             getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"OVERDUE 31 January $year2019")
           }
+          "has payments accruing interest" in new TestSetup(nextPaymentDueDate = Some(nextPaymentDue), paymentsAccruingInterestCount = 2, reviewAndReconcileEnabled = true) {
+            getElementById("accrues-interest-tag").map(_.text()) shouldBe Some(s"DAILY INTEREST CHARGES")
+          }
           "is not overdue" in new TestSetup(nextPaymentDueDate = Some(nextPaymentDue)) {
             getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"31 January $year2019")
           }
           "is a count of overdue payments" in new TestSetup(nextPaymentDueDate = Some(nextPaymentDue), overDuePaymentsCount = 2) {
-            getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"2 OVERDUE PAYMENTS")
+            getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"2 OVERDUE CHARGES")
           }
           "has no next payment" in new TestSetup(nextPaymentDueDate = None) {
             getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"No payments due")
@@ -191,18 +196,24 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
         }
       }
 
-      "dont display an overdue warning message when no payment is overdue" in new TestSetup(overduePaymentExists = false) {
+      "dont display any warning message when no payment is overdue, and no payments are accruing interest" in new TestSetup(overduePaymentExists = false) {
         getTextOfElementById("overdue-warning") shouldBe None
+        getTextOfElementById("accrues-interest-warning") shouldBe None
       }
 
       "display an overdue warning message when a payment is overdue and dunning lock does not exist" in new TestSetup(overDuePaymentsCount = 1) {
-        val overdueMessageWithoutDunningLock = "! Warning Your client has overdue payments. They may be charged interest on these until they are paid in full."
+        val overdueMessageWithoutDunningLock = "! Warning You have overdue charges. You may be charged interest on these until they are paid in full."
         getTextOfElementById("overdue-warning") shouldBe Some(overdueMessageWithoutDunningLock)
       }
 
       "display an overdue warning message when a payment is overdue and dunning lock exists" in new TestSetup(overDuePaymentsCount = 1, dunningLockExists = true) {
         val overdueMessageWithDunningLock = "! Warning Your client has overdue payments and one or more of their tax decisions are being reviewed. They may be charged interest on these until they are paid in full."
         getTextOfElementById("overdue-warning") shouldBe Some(overdueMessageWithDunningLock)
+      }
+
+      "display daily interest warning when payments are accruing interest" in new TestSetup(paymentsAccruingInterestCount = 2, reviewAndReconcileEnabled = true) {
+        val dailyInterestMessage = "! Warning You have charges with added daily interest. These charges will be accruing interest until they are paid in full."
+        getTextOfElementById("accrues-interest-warning") shouldBe Some(dailyInterestMessage)
       }
 
       "have an next updates due tile" which {

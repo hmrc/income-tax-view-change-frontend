@@ -16,104 +16,90 @@
 
 package repositories
 
-import cats.data.OptionT
 import helpers.ComponentSpecBase
-import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
-import models.optout.OptOutSessionData
+import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus._
 import org.mongodb.scala.bson.BsonDocument
 import org.scalatest.concurrent.ScalaFutures
-import play.api.http.HttpEntity.Strict
-import play.api.mvc.Results
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import services.SessionService
-import utils.OptOutJourney
-
-import scala.concurrent.{ExecutionContext, Future}
+import services.optout.OptOutProposition.createOptOutProposition
 
 
 class OptOutSessionDataRepositoryISpec extends ComponentSpecBase with ScalaFutures {
 
-  val sessionService: SessionService = app.injector.instanceOf[SessionService]
-  private val repository = app.injector.instanceOf[UIJourneySessionDataRepository]
+  private val journeyRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
+  private val repository = app.injector.instanceOf[OptOutSessionDataRepository]
+
+  private val taxYearEnd = 2024
+  private val taxYear2023_2024 = TaxYear.forYearEnd(taxYearEnd)
+  private val taxYear2024_2025 = taxYear2023_2024.nextYear
 
   override def beforeEach(): Unit = {
-    await(repository.collection.deleteMany(BsonDocument()).toFuture())
+    await(journeyRepository.collection.deleteMany(BsonDocument()).toFuture())
   }
 
-  "UIJourneySessionDataRepository.set" should {
-    s"save opt-out session-data" should {
-      s"fetch saved opt-out session-data" in {
+  "OptOutSessionDataRepository" should {
+    s"stores the OptOutProposition at initialisation for recall later in the journey" in {
 
-        val currentYear = 2024
-        val sessionId = "123"
-        val expectedOptOutSessionData = OptOutSessionData(None, selectedOptOutYear = Some(TaxYear.forYearEnd(currentYear).toString))
-        val expectedSessionData = UIJourneySessionData(sessionId = sessionId,
-          journeyType = OptOutJourney.Name,
-          optOutSessionData = Some(expectedOptOutSessionData))
+      val optOutProposition =
+        createOptOutProposition(
+          currentYear = taxYear2023_2024,
+          previousYearCrystallised = true,
+          previousYearItsaStatus = Voluntary,
+          currentYearItsaStatus = Mandated,
+          nextYearItsaStatus = NoStatus
+        )
 
-        await(repository.set(expectedSessionData))
+      await(repository.initialiseOptOutJourney(optOutProposition))
 
-        val savedData = repository.get(sessionId, OptOutJourney.Name)
+      repository.recallOptOutProposition().futureValue.get shouldBe optOutProposition
+    }
 
-        val result = for {
-          fetchedOptOutSessionData <- OptionT(savedData)
-        } yield fetchedOptOutSessionData
+    s"Removes the customer intent at journey initialisation" in {
 
-        result.value.futureValue.get.sessionId shouldBe expectedSessionData.sessionId
-        result.value.futureValue.get.journeyType shouldBe expectedSessionData.journeyType
-        result.value.futureValue.get.optOutSessionData shouldBe expectedSessionData.optOutSessionData
-      }
+      await(repository.initialiseOptOutJourney(someOptOutProposition))
+      await(repository.saveIntent(taxYear2024_2025))
+
+      await(repository.initialiseOptOutJourney(someOptOutProposition))
+
+      repository.fetchSavedIntent().futureValue shouldBe None
+    }
+
+    s"save and recall the user choice" in {
+
+      await(repository.initialiseOptOutJourney(someOptOutProposition))
+
+      await(repository.saveIntent(taxYear2024_2025))
+
+      repository.fetchSavedIntent().futureValue.get shouldBe taxYear2024_2025
+    }
+
+    s"not overwrite the OptOutProposition when saving the user choice" in {
+
+      val optOutProposition =
+        createOptOutProposition(
+          currentYear = taxYear2023_2024,
+          previousYearCrystallised = true,
+          previousYearItsaStatus = Voluntary,
+          currentYearItsaStatus = Mandated,
+          nextYearItsaStatus = NoStatus
+        )
+
+      await(repository.initialiseOptOutJourney(optOutProposition))
+      await(repository.saveIntent(taxYear2024_2025))
+
+      repository.recallOptOutProposition().futureValue.get shouldBe optOutProposition
     }
   }
 
-
-  "OptOutJourney.withSessionData" should {
-    s"create opt-out session-data if missing" in {
-
-      class OptOutJourneyTarget(override val sessionService: SessionService)(implicit val ec: ExecutionContext) extends OptOutJourney
-      val target = new OptOutJourneyTarget(sessionService)
-
-      val result = target.withSessionData(
-        data => Future.successful(Results.Ok(s"Yes! I have data: ${data.sessionId}, ${data.optOutSessionData.getOrElse("None")}")),
-        th => Future.successful(Results.BadRequest(s"Oh No! got error: ${th.getMessage}"))
-      )
-
-      val resultAsText = result.futureValue.body match {
-        case Strict(data, _) => data.map(_.toChar).mkString
-        case _ => "No"
-      }
-
-      resultAsText shouldBe "Yes! I have data: xsession-12345, None"
-    }
-  }
-
-  "OptOutJourney.withSessionData" should {
-    s"use saved opt-out session-data if present" in {
-
-      class OptOutJourneyTarget(override val sessionService: SessionService)(implicit val ec: ExecutionContext) extends OptOutJourney
-      val target = new OptOutJourneyTarget(sessionService)
-
-      val currentYear = 2025
-      val sessionId = "xsession-12345"
-      val expectedOptOutSessionData = OptOutSessionData(None, selectedOptOutYear = Some(TaxYear.forYearEnd(currentYear).toString))
-      val expectedSessionData = UIJourneySessionData(sessionId = sessionId,
-        journeyType = OptOutJourney.Name,
-        optOutSessionData = Some(expectedOptOutSessionData))
-
-      repository.set(expectedSessionData)
-
-      val result = target.withSessionData(
-        data => Future.successful(Results.Ok(s"Yes! I have data: ${data.sessionId}, ${data.optOutSessionData.get.selectedOptOutYear.get}")),
-        th => Future.successful(Results.BadRequest(s"Oh No! got error: ${th.getMessage}"))
-      )
-
-      val resultAsText = result.futureValue.body match {
-        case Strict(data, _) => data.map(_.toChar).mkString
-        case _ => "No"
-      }
-
-      resultAsText shouldBe "Yes! I have data: xsession-12345, 2024-2025"
-    }
+  private def someOptOutProposition = {
+    createOptOutProposition(
+      currentYear = taxYear2023_2024,
+      previousYearCrystallised = true,
+      previousYearItsaStatus = Voluntary,
+      currentYearItsaStatus = Voluntary,
+      nextYearItsaStatus = Voluntary
+    )
   }
 
 }

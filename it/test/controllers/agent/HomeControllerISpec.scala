@@ -28,7 +28,7 @@ import models.admin.{IncomeSources, IncomeSourcesNewJourney}
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.financialDetails._
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
-import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel, StatusFulfilled}
+import models.obligations.{SingleObligationModel, GroupedObligationsModel, ObligationsModel, StatusFulfilled}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
@@ -143,10 +143,10 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
               )
 
               val currentObligations: ObligationsModel = ObligationsModel(Seq(
-                NextUpdatesModel(
+                GroupedObligationsModel(
                   identification = "testId",
                   obligations = List(
-                    NextUpdateModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", StatusFulfilled)
+                    SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", StatusFulfilled)
                   ))
               ))
 
@@ -214,10 +214,10 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
               )
 
               val currentObligations: ObligationsModel = ObligationsModel(Seq(
-                NextUpdatesModel(
+                GroupedObligationsModel(
                   identification = "testId",
                   obligations = List(
-                    NextUpdateModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", StatusFulfilled)
+                    SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", StatusFulfilled)
                   ))
               ))
 
@@ -282,10 +282,10 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                 )
 
                 val currentObligations: ObligationsModel = ObligationsModel(Seq(
-                  NextUpdatesModel(
+                  GroupedObligationsModel(
                     identification = "testId",
                     obligations = List(
-                      NextUpdateModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
+                      SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
                     ))
                 ))
 
@@ -351,10 +351,10 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                 )
 
                 val currentObligations: ObligationsModel = ObligationsModel(Seq(
-                  NextUpdatesModel(
+                  GroupedObligationsModel(
                     identification = "testId",
                     obligations = List(
-                      NextUpdateModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
+                      SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
                     ))
                 ))
 
@@ -423,11 +423,11 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
               )
 
               val currentObligations: ObligationsModel = ObligationsModel(Seq(
-                NextUpdatesModel(
+                GroupedObligationsModel(
                   identification = "testId",
                   obligations = List(
-                    NextUpdateModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled),
-                    NextUpdateModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(2), "Quarterly", None, "testPeriodKey", StatusFulfilled)
+                    SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled),
+                    SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(2), "Quarterly", None, "testPeriodKey", StatusFulfilled)
                   ))
               ))
 
@@ -512,10 +512,10 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
               )
 
               val currentObligations: ObligationsModel = ObligationsModel(Seq(
-                NextUpdatesModel(
+                GroupedObligationsModel(
                   identification = "testId",
                   obligations = List(
-                    NextUpdateModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", StatusFulfilled)
+                    SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", StatusFulfilled)
                   ))
               ))
 
@@ -583,10 +583,10 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
             )
 
             val currentObligations: ObligationsModel = ObligationsModel(Seq(
-              NextUpdatesModel(
+              GroupedObligationsModel(
                 identification = "testId",
                 obligations = List(
-                  NextUpdateModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", StatusFulfilled)
+                  SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", StatusFulfilled)
                 ))
             ))
 
@@ -651,10 +651,10 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
           )
 
           val currentObligations: ObligationsModel = ObligationsModel(Seq(
-            NextUpdatesModel(
+            GroupedObligationsModel(
               identification = "testId",
               obligations = List(
-                NextUpdateModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", StatusFulfilled)
+                SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", StatusFulfilled)
               ))
           ))
 

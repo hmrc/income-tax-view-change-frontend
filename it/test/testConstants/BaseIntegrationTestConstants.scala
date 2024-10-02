@@ -22,7 +22,7 @@ import models.btaNavBar.{NavContent, NavLinks}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.{AddressModel, IncomeSourceId}
 import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
-import models.incomeSourceDetails.{LatencyDetails, QuarterTypeElection, QuarterTypeStandard}
+import models.incomeSourceDetails._
 import play.api.http.Status
 import testConstants.PropertyDetailsIntegrationTestConstants.propertyTradingStartDate
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
@@ -32,6 +32,7 @@ import java.time.LocalDate
 object BaseIntegrationTestConstants {
 
   val testDate: LocalDate = LocalDate.of(2018, 5, 5)
+  val futureDate: LocalDate = LocalDate.of(2100, 1, 1)
 
   val testUserTypeIndividual = Individual
   val testUserTypeAgent = Agent
@@ -89,14 +90,14 @@ object BaseIntegrationTestConstants {
 
   val expectedAddress: Option[AddressModel] = Some(AddressModel("Line 1", Some("Line 2"), Some("Line 3"), Some("Line 4"), Some("LN12 2NL"), "NI"))
 
-  val testLatencyDetails3 = LatencyDetails(
+  val testLatencyDetails3: LatencyDetails = LatencyDetails(
     latencyEndDate = LocalDate.of(testYear2023, 1, 1),
     taxYear1 = testYear2023.toString,
     latencyIndicator1 = "A",
     taxYear2 = testYear2024.toString,
     latencyIndicator2 = "Q")
 
-  val quarterTypeElection = QuarterTypeElection("STANDARD", "2021")
+  val quarterTypeElection: QuarterTypeElection = QuarterTypeElection("STANDARD", "2021")
 
   val testNavLinks: NavContent = NavContent(
     NavLinks("testEnHome", "testCyHome", "testUrl"),
@@ -145,9 +146,14 @@ object BaseIntegrationTestConstants {
     tradingStartDate = Some(testDate),
     address = expectedAddress,
     isTraditionalAccountingMethod = false,
-    itsaHasMandatedOrVoluntaryStatusCurrentYear = true,
-    taxYearOneCrystallised = Some(false),
-    taxYearTwoCrystallised = Some(false),
+    latencyYearsQuarterly = LatencyYearsQuarterly(
+      firstYear = Some(true),
+      secondYear = Some(true)
+    ),
+    latencyYearsCrystallised = LatencyYearsCrystallised(
+      firstYear = Some(false),
+      secondYear = Some(false)
+    ),
     latencyDetails = Some(testLatencyDetails3),
     incomeSourceType = SelfEmployment,
     quarterReportingType = Some(QuarterTypeStandard)
@@ -160,9 +166,14 @@ object BaseIntegrationTestConstants {
     tradingStartDate = propertyTradingStartDate,
     address = None,
     isTraditionalAccountingMethod = false,
-    itsaHasMandatedOrVoluntaryStatusCurrentYear = true,
-    taxYearOneCrystallised = Some(false),
-    taxYearTwoCrystallised = Some(false),
+    latencyYearsQuarterly = LatencyYearsQuarterly(
+      firstYear = Some(true),
+      secondYear = Some(true)
+    ),
+    latencyYearsCrystallised = LatencyYearsCrystallised(
+      firstYear = Some(false),
+      secondYear = Some(false)
+    ),
     latencyDetails = Some(testLatencyDetails3),
     incomeSourceType = UkProperty,
     quarterReportingType = Some(QuarterTypeStandard)
@@ -175,9 +186,14 @@ object BaseIntegrationTestConstants {
     tradingStartDate = propertyTradingStartDate,
     address = None,
     isTraditionalAccountingMethod = false,
-    itsaHasMandatedOrVoluntaryStatusCurrentYear = true,
-    taxYearOneCrystallised = Some(false),
-    taxYearTwoCrystallised = Some(false),
+    latencyYearsQuarterly = LatencyYearsQuarterly(
+      firstYear = Some(true),
+      secondYear = Some(true)
+    ),
+    latencyYearsCrystallised = LatencyYearsCrystallised(
+      firstYear = Some(false),
+      secondYear = Some(false)
+    ),
     latencyDetails = Some(testLatencyDetails3),
     incomeSourceType = ForeignProperty,
     quarterReportingType = None

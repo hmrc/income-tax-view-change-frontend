@@ -26,6 +26,7 @@ import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
 import forms.optOut.ConfirmOptOutSingleTaxYearForm
 import helpers.servicemocks.AuditStub
 import helpers.{CustomMatchers, GenericStubMethods, TestDateService, WiremockHelper}
+import models.admin.FeatureSwitchName
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
@@ -39,8 +40,8 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
+import repositories.OptOutSessionDataRepository
 import services.DateServiceInterface
-import services.optout.OptOutService
 import testConstants.BaseIntegrationTestConstants._
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
@@ -84,6 +85,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.income-tax-calculation.port" -> mockPort,
     "microservice.services.citizen-details.host" -> mockHost,
     "microservice.services.citizen-details.port" -> mockPort,
+    "microservice.services.income-tax-session-data.host" -> mockHost,
+    "microservice.services.income-tax-session-data.port" -> mockPort,
     "auditing.consumer.baseUri.host" -> mockHost,
     "auditing.consumer.baseUri.port" -> mockPort,
     "auditing.enabled" -> "true",
@@ -91,6 +94,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.contact-frontend.port" -> mockPort,
     "feature-switches.read-from-mongo" -> "false",
     "feature-switch.enable-time-machine" -> "false",
+    "feature-switch.enable-session-data-storage" -> "true",
     "time-machine.add-years" -> "0",
     "time-machine.add-days" -> "0"
   )
@@ -108,7 +112,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
   val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val cache: AsyncCacheApi = app.injector.instanceOf(classOf[AsyncCacheApi])
-  val optOutService: OptOutService = app.injector.instanceOf[OptOutService]
+  val optOutSessionDataRepository: OptOutSessionDataRepository = app.injector.instanceOf[OptOutSessionDataRepository]
 
   override def beforeAll(): Unit = {
     super.beforeAll()
@@ -120,11 +124,13 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     WireMock.reset()
     AuditStub.stubAuditing()
     cache.removeAll()
+    FeatureSwitchName.allFeatureSwitches foreach disable
   }
 
   override def afterAll(): Unit = {
     stopWiremock()
     super.afterAll()
+    FeatureSwitchName.allFeatureSwitches foreach disable
   }
 
   def getWithClientDetailsInSession(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
@@ -258,7 +264,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     }
 
     def getChargeSummaryLatePayment(taxYear: String, id: String, additionalCookies: Map[String, String]): WSResponse =
-      getWithClientDetailsInSession(s"/agents/tax-years/$taxYear/charge?id=$id&latePaymentCharge=true", additionalCookies)
+      getWithClientDetailsInSession(s"/agents/tax-years/$taxYear/charge?id=$id&isInterestCharge=true", additionalCookies)
 
     def getPay(amountInPence: BigDecimal, additionalCookies: Map[String, String]): WSResponse =
       getWithClientDetailsInSession(s"/agents/payment?amountInPence=$amountInPence", additionalCookies)
@@ -593,6 +599,10 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def postCheckYourAnswersSoleTrader(): WSResponse = {
       post(s"/manage-your-businesses/manage/business-check-your-answers", clientDetailsWithConfirmation)(Map.empty)
+    }
+
+    def getBeforeYouStart(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get("/opt-in/start", additionalCookies)
     }
 
   }

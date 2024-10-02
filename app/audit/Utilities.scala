@@ -16,9 +16,7 @@
 
 package audit
 
-import _root_.models.financialDetails.DocumentDetail
 import auth.MtdItUserBase
-import enums.{Poa1Charge, Poa2Charge, TRMAmmendCharge, TRMNewCharge}
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
@@ -42,16 +40,6 @@ object Utilities {
     case Some(Agent) => Json.obj("userType" -> "Agent")
     case Some(_) => Json.obj("userType" -> "Individual")
     case None => Json.obj()
-  }
-
-  def getChargeType(docDetail: DocumentDetail, latePaymentCharge: Boolean = false): Option[String] =
-    (docDetail.getDocType, docDetail.documentText) match {
-    case (_, Some(documentText)) if (documentText.contains("Class 2 National Insurance")) => Some("Class 2 National Insurance")
-    case(_, Some(documentDescription)) if (documentDescription.contains("Cancelled PAYE Self Assessment")) => Some("Cancelled PAYE Self Assessment (through your PAYE tax code)")
-    case (Poa1Charge, _) => if (latePaymentCharge) Some("Late payment interest for payment on account 1 of 2") else Some("First payment on account")
-    case (Poa2Charge,_) => if (latePaymentCharge) Some("Late payment interest for payment on account 2 of 2") else Some("Second payment on account")
-    case (TRMNewCharge | TRMAmmendCharge,_ ) => if (latePaymentCharge) Some("Late payment interest for remaining balance") else Some("Remaining balance")
-    case (_, _) => docDetail.documentDescription
   }
 
   def ratePctString(rate: BigDecimal): String = s"$rate%"

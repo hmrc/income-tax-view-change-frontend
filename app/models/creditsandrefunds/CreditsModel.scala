@@ -19,7 +19,6 @@ package models.creditsandrefunds
 import models.core.ResponseModel.{AResponseReads, SuccessModel}
 import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
-import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
 import java.time.LocalDate
@@ -31,7 +30,7 @@ case class CreditsModel(availableCredit: BigDecimal,
 
 object CreditsModel {
 
-  implicit val format: OFormat[CreditsModel] = Json.format[CreditsModel ]
+  implicit val format: OFormat[CreditsModel] = Json.format[CreditsModel]
 
   implicit val reads: CreditsResponseReads = new CreditsResponseReads
   class CreditsResponseReads extends AResponseReads[CreditsModel] {

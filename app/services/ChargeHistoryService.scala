@@ -18,6 +18,7 @@ package services
 
 import auth.MtdItUser
 import connectors.ChargeHistoryConnector
+import enums.CreateReversalReason
 import models.chargeHistory._
 import models.financialDetails.DocumentDetail
 import uk.gov.hmrc.http.HeaderCarrier
@@ -43,16 +44,13 @@ class ChargeHistoryService @Inject()(chargeHistoryConnector: ChargeHistoryConnec
   def getAdjustmentHistory(chargeHistory: List[ChargeHistoryModel], documentDetail: DocumentDetail): AdjustmentHistoryModel = {
     chargeHistory match {
       case Nil =>
-        val creation = AdjustmentModel(amount = documentDetail.originalAmount, adjustmentDate = Some(documentDetail.documentDate), reasonCode = "create")
+        val creation = AdjustmentModel(amount = documentDetail.originalAmount,
+          adjustmentDate = Some(documentDetail.documentDate), reasonCode = CreateReversalReason)
         AdjustmentHistoryModel(creation, List.empty)
       case _ =>
-        val creation = AdjustmentModel(amount = chargeHistory.minBy(_.documentDate).totalAmount, adjustmentDate = None, reasonCode = "create")
-        val poaAdjustmentHistory: List[AdjustmentModel] = adjustments(chargeHistory.filter(_.poaAdjustmentReason.isDefined), documentDetail.originalAmount)
-        val otherAdjustmentHistory: List[AdjustmentModel] = chargeHistory.filter(_.poaAdjustmentReason.isEmpty).map(
-          event => AdjustmentModel(event.totalAmount, Some(event.reversalDate), event.reasonCode)
-        )
-        val fullAdjustmentHistory: List[AdjustmentModel] = poaAdjustmentHistory ++ otherAdjustmentHistory
-        AdjustmentHistoryModel(creation, fullAdjustmentHistory.sortBy(_.adjustmentDate))
+        val creation = AdjustmentModel(amount = chargeHistory.minBy(_.documentDate).totalAmount, adjustmentDate = None, reasonCode = CreateReversalReason)
+        val poaAdjustmentHistory: List[AdjustmentModel] = adjustments(chargeHistory.sortBy(_.reversalDate), documentDetail.originalAmount)
+        AdjustmentHistoryModel(creation, poaAdjustmentHistory.sortBy(_.adjustmentDate))
     }
   }
 
@@ -65,7 +63,9 @@ class ChargeHistoryService @Inject()(chargeHistoryConnector: ChargeHistoryConnec
         amount = nextAmount
       )
       (current.totalAmount, newAdjustment :: adjList)
-    }._2
+    } match {
+      case (_, adjustmentModels) => adjustmentModels
+    }
   }
 
 }

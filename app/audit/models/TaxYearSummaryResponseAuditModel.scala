@@ -16,13 +16,14 @@
 
 package audit.models
 
-import audit.Utilities.{getChargeType, userAuditDetails}
+import audit.Utilities.userAuditDetails
 import auth.MtdItUser
 import implicits.ImplicitDateParser
-import models.financialDetails.DocumentDetailWithDueDate
+import models.financialDetails._
 import models.liabilitycalculation.Messages
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
-import models.nextUpdates.NextUpdateModelWithIncomeType
+import models.obligations.ObligationWithIncomeType
+import models.taxyearsummary.TaxYearSummaryChargeItem
 import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json.{JsObject, JsValue, Json}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
@@ -32,11 +33,12 @@ case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],
                                             messagesApi: MessagesApi,
                                             taxYearSummaryViewModel: TaxYearSummaryViewModel,
                                             messages: Option[Messages] = None
-                                           ) extends ExtendedAuditModel with ImplicitDateParser {
+                                           ) extends ExtendedAuditModel with ImplicitDateParser with PaymentSharedFunctions  {
 
 
   override val transactionName: String = enums.TransactionName.TaxYearOverviewResponse
   override val auditType: String = enums.AuditType.TaxYearOverviewResponse
+
 
   private val taxYearSummaryJson = {
     Json.obj() ++
@@ -95,11 +97,11 @@ case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],
       errorMessages
   }
 
-  private def paymentsJson(docDateDetail: DocumentDetailWithDueDate): JsObject = {
-    Json.obj("paymentType" -> getChargeType(docDateDetail.documentDetail),
+  private def paymentsJson(docDateDetail: TaxYearSummaryChargeItem): JsObject = {
+    Json.obj("paymentType" -> getChargeType(docDateDetail, false),
       "underReview" -> docDateDetail.dunningLock,
-      "status" -> docDateDetail.documentDetail.getChargePaidStatus) ++
-      ("amount", Option(docDateDetail.documentDetail.originalAmount)) ++
+      "status" -> docDateDetail.getChargePaidStatus) ++
+      ("amount", Option(docDateDetail.originalAmount)) ++
       ("dueDate", docDateDetail.dueDate)
   }
 
@@ -109,16 +111,16 @@ case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],
     ("taxDue", taxYearSummaryViewModel.calculationSummary.map(_.forecastIncomeTaxAndNics)) ++
     ("totalAllowancesAndDeductions", taxYearSummaryViewModel.calculationSummary.map(_.forecastAllowancesAndDeductions))
 
-  private def paymentsJsonLPI(docDateDetail: DocumentDetailWithDueDate): JsObject = {
-    Json.obj("paymentType" -> getChargeType(docDateDetail.documentDetail, latePaymentCharge = true),
+  private def paymentsJsonLPI(docDateDetail: TaxYearSummaryChargeItem): JsObject = {
+    Json.obj("paymentType" -> getChargeType(docDateDetail, latePaymentCharge = true),
       "underReview" -> docDateDetail.dunningLock,
-      "status" -> docDateDetail.documentDetail.getInterestPaidStatus) ++
-      ("amount", docDateDetail.documentDetail.latePaymentInterestAmount) ++
+      "status" -> docDateDetail.getInterestPaidStatus) ++
+      ("amount", docDateDetail.latePaymentInterestAmount) ++
       ("dueDate", docDateDetail.dueDate)
   }
 
   private val paymentsDetails: Seq[JsObject] = taxYearSummaryViewModel.charges.map(paymentsJson) ++
-    taxYearSummaryViewModel.charges.filter(_.documentDetail.latePaymentInterestAmount.isDefined).map(paymentsJsonLPI)
+    taxYearSummaryViewModel.charges.filter(_.latePaymentInterestAmount.isDefined).map(paymentsJsonLPI)
 
   private def getObligationsType(obligationType: String) = {
     obligationType match {
@@ -137,7 +139,7 @@ case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],
     }
   }
 
-  private def updatesJson(updates: NextUpdateModelWithIncomeType): JsObject = {
+  private def updatesJson(updates: ObligationWithIncomeType): JsObject = {
     Json.obj("updateType" -> getUpdateType(updates.obligation.obligationType),
       "incomeSource" -> getObligationsType(updates.incomeType)) ++
       ("dateSubmitted", updates.obligation.dateReceived)

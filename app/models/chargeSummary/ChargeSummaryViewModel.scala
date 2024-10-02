@@ -16,18 +16,16 @@
 
 package models.chargeSummary
 
-import enums.DocumentType
 import enums.GatewayPage._
 import models.chargeHistory.AdjustmentHistoryModel
-import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsModel}
+import models.financialDetails._
 import play.twirl.api.Html
-import views.html.partials.chargeSummary.{ChargeSummaryHasDunningLocksOrLpiWithDunningLock, ChargeSummaryPaymentAllocation}
 
 import java.time.LocalDate
 
 case class ChargeSummaryViewModel(
                                    currentDate: LocalDate,
-                                   documentDetailWithDueDate: DocumentDetailWithDueDate,
+                                   chargeItem: ChargeItem,
                                    backUrl: String,
                                    paymentBreakdown: List[FinancialDetail],
                                    paymentAllocations: List[PaymentHistoryAllocations],
@@ -35,23 +33,24 @@ case class ChargeSummaryViewModel(
                                    chargeHistoryEnabled: Boolean,
                                    paymentAllocationEnabled: Boolean,
                                    latePaymentInterestCharge: Boolean,
+                                   otherInterestCharge: Boolean,
                                    codingOutEnabled: Boolean,
+                                   reviewAndReconcileEnabled: Boolean,
                                    isAgent: Boolean = false,
                                    btaNavPartial: Option[Html] = None,
                                    origin: Option[String] = None,
                                    gatewayPage: Option[GatewayPage] = None,
-                                   isMFADebit: Boolean,
-                                   documentType: DocumentType,
-                                   adjustmentHistory: AdjustmentHistoryModel
+                                   adjustmentHistory: AdjustmentHistoryModel,
+                                   poaExtraChargeLink: Option[String] = None,
+                                   poaOneChargeUrl: String,
+                                   poaTwoChargeUrl: String
                                  ) {
 
-  val documentDetail: DocumentDetail = documentDetailWithDueDate.documentDetail
-  val dueDate = documentDetailWithDueDate.dueDate
+  val dueDate = chargeItem.dueDate
   val hasDunningLocks = paymentBreakdown.exists(_.dunningLockExists)
   val hasInterestLocks = paymentBreakdown.exists(_.interestLockExists)
   val hasAccruedInterest = paymentBreakdown.exists(_.hasAccruedInterest)
-
-
+  val isInterestCharge = latePaymentInterestCharge || otherInterestCharge
 
   val currentTaxYearEnd = {
     if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) currentDate.getYear
@@ -64,31 +63,38 @@ case class ChargeSummaryViewModel(
   }
 
   val hasPaymentBreakdown = {
-    documentDetail.hasLpiWithDunningLock || (paymentBreakdown.nonEmpty && hasDunningLocks) || (paymentBreakdown.nonEmpty && hasInterestLocks)
+    chargeItem.hasLpiWithDunningLock || (paymentBreakdown.nonEmpty && hasDunningLocks) || (paymentBreakdown.nonEmpty && hasInterestLocks)
   }
 
-  val taxYearFrom = documentDetail.taxYear - 1
-  val taxYearTo = documentDetail.taxYear
+  val taxYearFrom = chargeItem.taxYear.startYear
+  val taxYearTo = chargeItem.taxYear.endYear
 
-  val taxYearFromCodingOut = s"${documentDetail.taxYear.toInt + 1}"
-  val taxYearToCodingOut = s"${documentDetail.taxYear.toInt + 2}"
+  val taxYearFromCodingOut = s"${chargeItem.taxYear.endYear + 1}"
+  val taxYearToCodingOut = s"${chargeItem.taxYear.endYear + 2}"
 
-  val pageTitle: String = {
-    val key = (latePaymentInterestCharge, isMFADebit) match {
-      case (true, _) => s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}"
-      case (_, true) => s"chargeSummary.hmrcAdjustment.text"
-      case (_, _) => s"chargeSummary.${documentDetail.getChargeTypeKey(codingOutEnabled)}"
-    }
-    key
+  val messagePrefix = if(latePaymentInterestCharge)"lpi."
+  else if (otherInterestCharge) "interest."
+  else ""
+  val pageTitle: String =
+    s"chargeSummary.$messagePrefix${chargeItem.getChargeTypeKey(codingOutEnabled, reviewAndReconcileEnabled)}"
+
+  val isBalancingChargeZero: Boolean = chargeItem.transactionType match {
+    case _ if codingOutEnabled && chargeItem.subTransactionType.isDefined => false
+    case BalancingCharge if chargeItem.originalAmount == 0 => true
+    case _ => false
   }
-  val isBalancingChargeZero = documentDetail.isBalancingChargeZero(codingOutEnabled)
-  val codingOutEnabledAndIsClass2NicWithNoIsPayeSelfAssessment: Boolean = codingOutEnabled && documentDetail.isClass2Nic && !documentDetail.isPayeSelfAssessment
-  val noIsAgentAndRemainingToPayWithNoCodingOutEnabledAndIsPayeSelfAssessment: Boolean = !isAgent && documentDetail.remainingToPay > 0 && !(codingOutEnabled && documentDetail.isPayeSelfAssessment)
-  val isAgentAndRemainingToPayWithNoCodingOutEnabledAndIsPayeSelfAssessment: Boolean = isAgent && documentDetail.remainingToPay > 0 && !(codingOutEnabled && documentDetail.isPayeSelfAssessment)
-  val chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZero: Boolean = (chargeHistoryEnabled || (paymentAllocationEnabled && paymentAllocations.nonEmpty)) && !isBalancingChargeZero
-  val noLatePaymentInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment: Boolean = !latePaymentInterestCharge && !(codingOutEnabled && documentDetail.isPayeSelfAssessment)
 
+  val codingOutEnabledAndIsClass2NicWithNoIsPayeSelfAssessment: Boolean =
+    codingOutEnabled && chargeItem.subTransactionType.contains(Nics2)
 
+  val remainingToPayWithNoCodingOutEnabledAndIsPayeSelfAssessment: Boolean = chargeItem.remainingToPay > 0 &&
+    !(codingOutEnabled && chargeItem.subTransactionType.contains(Accepted)) &&
+    !Seq(PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile).contains(chargeItem.transactionType)
+
+  val chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZero: Boolean =
+    (chargeHistoryEnabled || (paymentAllocationEnabled && paymentAllocations.nonEmpty)) && !isBalancingChargeZero
+
+  val noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment: Boolean = !latePaymentInterestCharge && !otherInterestCharge && !(codingOutEnabled && chargeItem.subTransactionType.contains(Accepted))
 
 }
 

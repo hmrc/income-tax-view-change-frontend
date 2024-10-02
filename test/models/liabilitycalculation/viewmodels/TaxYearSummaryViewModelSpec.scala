@@ -16,22 +16,25 @@
 
 package models.liabilitycalculation.viewmodels
 
-import models.financialDetails.DocumentDetailWithDueDate
+import mocks.services.MockDateService
 import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.viewmodels.CalculationSummary.localDate
-import models.nextUpdates.ObligationsModel
-import testConstants.FinancialDetailsTestConstants.{dateService, fullDocumentDetailModel, fullDocumentDetailWithDueDateModel}
+import models.obligations.ObligationsModel
+import models.taxyearsummary.TaxYearSummaryChargeItem
+import services.DateService
+import testConstants.ChargeConstants
 import testConstants.NextUpdatesTestConstants.nextUpdatesDataSelfEmploymentSuccessModel
 import testUtils.UnitSpec
 
 import java.time.LocalDate
 
-class TaxYearSummaryViewModelSpec extends UnitSpec {
+class TaxYearSummaryViewModelSpec extends UnitSpec with ChargeConstants with MockDateService {
 
+  implicit val dateService: DateService = mockDateService
 
-  val testWithMissingOriginalAmountChargesList: List[DocumentDetailWithDueDate] = List(
-    fullDocumentDetailWithDueDateModel.copy(documentDetail = fullDocumentDetailModel.copy(originalAmount = 0))
-  )
+  val testWithMissingOriginalAmountChargesList: List[TaxYearSummaryChargeItem] = List(
+    chargeItemModel(originalAmount = 0)
+  ).map(chargeItem => TaxYearSummaryChargeItem.fromChargeItem(chargeItem, chargeItem.dueDate))
 
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
 
@@ -60,7 +63,7 @@ class TaxYearSummaryViewModelSpec extends UnitSpec {
         val thrown = the[IllegalArgumentException] thrownBy TaxYearSummaryViewModel.apply(
           Some(testCalculationSummary.copy(forecastIncomeTaxAndNics = None)),
           testWithMissingOriginalAmountChargesList,
-          testObligationsModel, codingOutEnabled = true, showForecastData = true, ctaViewModel = testCTAViewModel
+          testObligationsModel, codingOutEnabled = true, reviewAndReconcileEnabled = true, showForecastData = true, ctaViewModel = testCTAViewModel
         )
 
         thrown.getMessage shouldBe "requirement failed: missing Forecast Tax Due"
@@ -72,7 +75,7 @@ class TaxYearSummaryViewModelSpec extends UnitSpec {
         val thrown = the[IllegalArgumentException] thrownBy TaxYearSummaryViewModel(
           Some(testCalculationSummary.copy(timestamp = None)),
           testWithMissingOriginalAmountChargesList,
-          testObligationsModel, codingOutEnabled = true, showForecastData = true, ctaViewModel = testCTAViewModel
+          testObligationsModel, codingOutEnabled = true, reviewAndReconcileEnabled = true, showForecastData = true, ctaViewModel = testCTAViewModel
         )
 
         thrown.getMessage shouldBe "requirement failed: missing Calculation timestamp"

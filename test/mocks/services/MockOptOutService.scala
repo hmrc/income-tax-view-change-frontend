@@ -16,14 +16,13 @@
 
 package mocks.services
 
-import connectors.optout.OptOutUpdateRequestModel.OptOutUpdateResponse
-import models.incomeSourceDetails.TaxYear
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel._
 import models.optout._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
+import services.reportingfreq.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
 import services.optout.{OptOutProposition, OptOutService}
-import services.optout.OptOutService.QuarterlyUpdatesCountForTaxYearModel
 import testUtils.UnitSpec
 
 import scala.concurrent.Future
@@ -61,17 +60,9 @@ trait MockOptOutService extends UnitSpec with BeforeAndAfterEach {
       .thenReturn(out)
   }
 
-  def mockMakeOptOutUpdateRequest(out: Future[OptOutUpdateResponse]): Unit = {
+  def mockMakeOptOutUpdateRequest(out: Future[ITSAStatusUpdateResponse]): Unit = {
     when(mockOptOutService.makeOptOutUpdateRequest()(any(), any(), any()))
       .thenReturn(out)
-  }
-
-  def mockSaveIntent(in: TaxYear, out: Future[Boolean]): Unit = {
-    when(mockOptOutService.saveIntent(any[TaxYear])(any(), any())).thenReturn(out)
-  }
-
-  def mockFetchIntent(out: Future[Option[TaxYear]]): Unit = {
-    when(mockOptOutService.fetchSavedIntent()(any(), any())).thenReturn(out)
   }
 
   def mockRecallOptOutProposition(out: Future[OptOutProposition]): Unit = {

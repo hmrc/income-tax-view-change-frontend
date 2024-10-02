@@ -19,16 +19,18 @@ package audit.models
 import auth.MtdItUser
 import implicits.ImplicitDateParser
 import models.core.AccountingPeriodModel
-import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate}
+import models.financialDetails.{ChargeItem, DocumentDetail, DocumentDetailWithDueDate}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{Message, Messages}
-import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel, StatusFulfilled}
+import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
+import models.taxyearsummary.TaxYearSummaryChargeItem
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import testConstants.BaseTestConstants.taxYear
 import testConstants.BusinessDetailsTestConstants.{address, testIncomeSource}
+import testConstants.ChargeConstants
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
@@ -36,7 +38,7 @@ import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
 
-class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupport with ImplicitDateParser {
+class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupport with ImplicitDateParser with ChargeConstants {
 
   val transactionName: String = "tax-year-overview-response"
   val auditType: String = "TaxYearOverviewResponse"
@@ -75,10 +77,10 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
     forecastAllowancesAndDeductions = forecastAllowancesAndDeductions
   )
 
-  def payments(hasDunningLock: Boolean): List[DocumentDetailWithDueDate] = {
-    List(DocumentDetailWithDueDate(DocumentDetail(2020, "1040000123", Some("ITSA- POA 1"), Some("documentText"), 1400.0, 1400.0, LocalDate.parse("2018-03-29"),
-      Some(80), Some(100), None, Some(LocalDate.parse("2018-03-29")), Some(LocalDate.parse("2018-06-15")),
-      Some(100), Some(100), None, None), Some(LocalDate.parse("2019-05-15")), true, hasDunningLock))
+  def payments(hasDunningLock: Boolean): List[ChargeItem] = {
+    List(
+      chargeItemModel(dunningLock = hasDunningLock)
+    )
   }
 
 
@@ -104,10 +106,10 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
   }
 
   val updates: ObligationsModel = ObligationsModel(Seq(
-    NextUpdatesModel(
+    GroupedObligationsModel(
       identification = "testId",
       obligations = List(
-        NextUpdateModel(
+        SingleObligationModel(
           start = getCurrentTaxYearEnd.minusMonths(3),
           end = getCurrentTaxYearEnd,
           due = getCurrentTaxYearEnd,
@@ -192,7 +194,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
     ), Json.obj(
       "amount" -> 100,
       "dueDate" -> "2019-05-15",
-      "paymentType" -> paymentsLpiPaymentOnAccount1,
+      "paymentType" -> "Late payment interest on first payment on account",
       "underReview" -> false,
       "status" -> "part-paid"
     )),
@@ -237,7 +239,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
     ), Json.obj(
       "amount" -> 100,
       "dueDate" -> "2019-05-15",
-      "paymentType" -> paymentsLpiPaymentOnAccount1,
+      "paymentType" -> "Late payment interest on first payment on account",
       "underReview" -> true,
       "status" -> "part-paid"
     )),
@@ -273,8 +275,8 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
           forecastIncome = forecastIncome,
           forecastIncomeTaxAndNics = forecastIncomeTaxAndNics,
           forecastAllowancesAndDeductions = forecastAllowancesAndDeductions)
-        ), charges = payments(paymentHasADunningLock),
-        obligations = updates, codingOutEnabled = true, ctaViewModel = emptyCTAViewModel
+        ), charges = payments(paymentHasADunningLock).map(TaxYearSummaryChargeItem.fromChargeItem),
+        obligations = updates, codingOutEnabled = true, reviewAndReconcileEnabled = true, ctaViewModel = emptyCTAViewModel
         ),
       messages
     )
@@ -302,8 +304,9 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
         forecastIncome = forecastIncome,
         forecastIncomeTaxAndNics = forecastIncomeTaxAndNics,
         forecastAllowancesAndDeductions = forecastAllowancesAndDeductions)
-      ), charges = payments(paymentHasADunningLock),
-        obligations = updates, showForecastData = true, codingOutEnabled = true, ctaViewModel = emptyCTAViewModel
+      ), charges = payments(paymentHasADunningLock).map(TaxYearSummaryChargeItem.fromChargeItem(_)),
+        obligations = updates, showForecastData = true, codingOutEnabled = true,
+        reviewAndReconcileEnabled = true, ctaViewModel = emptyCTAViewModel
       )
     )
 

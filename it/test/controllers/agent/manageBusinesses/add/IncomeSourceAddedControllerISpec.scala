@@ -22,30 +22,29 @@ import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.IncomeSources
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
-import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel, StatusFulfilled}
+import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.business1
-import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, singleBusinessResponse, ukPropertyOnlyResponse}
+import testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyOnlyResponse, singleBusinessResponse, ukPropertyOnlyResponse}
 import testConstants.PropertyDetailsIntegrationTestConstants.ukProperty
 
 import java.time.LocalDate
 
-class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
+class IncomeSourceAddedControllerISpec extends ComponentSpecBase {
 
   val incomeSourceAddedSelfEmploymentShowAgentUrl: String = controllers.manageBusinesses.add.routes.IncomeSourceAddedController.showAgent(SelfEmployment).url
 
-  val incomeSourceAddedSubmitAgentUrl: String = controllers.manageBusinesses.add.routes.IncomeSourceAddedController.agentSubmit().url
   val addIncomeSourceAgentUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceController.showAgent().url
 
   val testDate: String = "2020-11-10"
   val prefix: String = "business-added"
-  val continueButtonText: String = messagesAPI(s"$prefix.income-sources-button")
+  val viewAllBusinessesLinkText: String = messagesAPI(s"$prefix.view-all-businesses")
   val htmlTitle = " - Manage your Income Tax updates - GOV.UK"
   val day: LocalDate = LocalDate.of(2023, 1, 1)
-  val testObligationsModel: ObligationsModel = ObligationsModel(Seq(NextUpdatesModel("123", List(NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "EOPS", StatusFulfilled)))))
+  val testObligationsModel: ObligationsModel = ObligationsModel(Seq(GroupedObligationsModel("123", List(SingleObligationModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "EOPS", StatusFulfilled)))))
 
   val incomeSourceAddedForeignPropertyShowAgentUrl: String = controllers.manageBusinesses.add.routes.IncomeSourceAddedController.showAgent(ForeignProperty).url
 
@@ -82,14 +81,16 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
 
         When(s"I call GET $incomeSourceAddedSelfEmploymentShowAgentUrl")
 
+        await(sessionService.createSession(JourneyType(Add, SelfEmployment).toString))
+
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
+          addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), dateStarted = Some(LocalDate.of(2024, 1, 1)))))))
+
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
 
         And("API 1330 getNextUpdates returns a success response with a valid ObligationsModel")
         IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
-
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
-          addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId))))))
 
         val result = IncomeTaxViewChangeFrontend.getAddBusinessObligations(clientDetailsWithConfirmation)
 
@@ -108,25 +109,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
         result should have(
           httpStatus(OK),
           pageTitleAgent(expectedText),
-          elementTextByID("continue-button")(continueButtonText)
-        )
-      }
-    }
-  }
-
-  s"calling POST $incomeSourceAddedSelfEmploymentShowAgentUrl" should {
-    s"redirect to $addIncomeSourceAgentUrl" when {
-      "called" in {
-        Given("Income Sources FS is enabled")
-        enable(IncomeSources)
-        stubAuthorisedAgentUser(authorised = true)
-
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-        val result = IncomeTaxViewChangeFrontend.postAddedBusinessObligations(clientDetailsWithConfirmation)
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(s"/report-quarterly/income-and-expenses/view/agents/manage-your-businesses/add/new-income-sources")
+          elementTextByID("view-all-businesses-link")(viewAllBusinessesLinkText)
         )
       }
     }
@@ -142,14 +125,16 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
 
         When(s"I call GET $incomeSourceAddedForeignPropertyShowAgentUrl")
 
+        await(sessionService.createSession(JourneyType(Add, ForeignProperty).toString))
+
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-FP",
+          addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), dateStarted = Some(LocalDate.of(2024, 1, 1)))))))
+
         And("API 1771 returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
         And("API 1330 getNextUpdates returns a success response with a valid ObligationsModel")
         IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
-
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-FP",
-          addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId))))))
 
         val result = IncomeTaxViewChangeFrontend.getForeignPropertyAddedObligations(clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -162,27 +147,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
         result should have(
           httpStatus(OK),
           pageTitleAgent(expectedText),
-          elementTextByID("continue-button")(continueButtonText)
-        )
-      }
-    }
-  }
-
-  s"calling POST $incomeSourceAddedForeignPropertyShowAgentUrl" should {
-    s"redirect to $addIncomeSourceAgentUrl" when {
-      "called" in {
-        stubAuthorisedAgentUser(authorised = true)
-
-        Given("Income Sources FS is enabled")
-        enable(IncomeSources)
-
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
-
-        val result = IncomeTaxViewChangeFrontend.postForeignPropertyAddedObligations(clientDetailsWithConfirmation)
-
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(s"/report-quarterly/income-and-expenses/view/agents/manage-your-businesses/add/new-income-sources")
+          elementTextByID("view-all-businesses-link")(viewAllBusinessesLinkText)
         )
       }
     }
@@ -194,14 +159,17 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
+
+        await(sessionService.createSession(JourneyType(Add, UkProperty).toString))
+
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-UK",
+          addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), dateStarted = Some(LocalDate.of(2024, 1, 1)))))))
+
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         And("API 1330 getNextUpdates return a success response")
         IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
-
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-UK",
-          addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId))))))
 
         Then("user is shown UK property added page")
         val result = IncomeTaxViewChangeFrontend.get(s"/manage-your-businesses/add-uk-property/uk-property-added", clientDetailsWithConfirmation)

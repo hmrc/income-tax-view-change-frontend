@@ -16,6 +16,7 @@
 
 package services
 
+import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, CreateReversalReason}
 import mocks.connectors.MockChargeHistoryConnector
 import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import models.claimToAdjustPoa.{Increase, MainIncomeLower}
@@ -46,6 +47,15 @@ class ChargeHistoryServiceSpec extends TestSupport with MockChargeHistoryConnect
   val chargeHistoryList: List[ChargeHistoryModel] = List(
     ChargeHistoryModel("A", "12345", LocalDate.of(2021, 1, 1), "A", 2500, LocalDate.of(2024, 2, 10), "Reversal", Some(MainIncomeLower.code)),
     ChargeHistoryModel("A", "34556", LocalDate.of(2021, 1, 1), "A", 2000, LocalDate.of(2024, 3, 15), "Reversal", Some(Increase.code))
+  )
+  val jumbledChargeHistoryList: List[ChargeHistoryModel] = List(
+    ChargeHistoryModel("A", "12345", LocalDate.of(2021, 1, 1), "A", 2500, LocalDate.of(2024, 2, 10), "Reversal", Some(MainIncomeLower.code)),
+    ChargeHistoryModel("A", "34556", LocalDate.of(2021, 1, 1), "A", 2300, LocalDate.of(2024, 10, 20), "Reversal", Some(MainIncomeLower.code)),
+      ChargeHistoryModel("A", "77777", LocalDate.of(2021, 1, 1), "A", 2000, LocalDate.of(2024, 7, 15), "Reversal", Some(Increase.code)))
+  val chargeHistoryWithAmended: List[ChargeHistoryModel] = List(
+    ChargeHistoryModel("A", "77777", LocalDate.of(2021, 1, 1), "TRM Amend Charge", 2500, LocalDate.of(2024, 1, 15), "amended return", None),
+    ChargeHistoryModel("A", "12345", LocalDate.of(2021, 1, 1), "A", 2000, LocalDate.of(2024, 2, 10), "Reversal", Some(MainIncomeLower.code)),
+    ChargeHistoryModel("A", "34556", LocalDate.of(2021, 1, 1), "A", 2300, LocalDate.of(2024, 3, 15), "Reversal", Some(Increase.code))
   )
   val unchangedDocumentDetail: DocumentDetail = DocumentDetail(
     1, "A", Some("PoA1"), None, 2500, 2500, LocalDate.of(2024, 1, 10)
@@ -96,7 +106,7 @@ class ChargeHistoryServiceSpec extends TestSupport with MockChargeHistoryConnect
     "return the adjustments in the correct list" when {
       "there is no charge history" in {
         val desiredAdjustments = AdjustmentHistoryModel(
-          creationEvent = AdjustmentModel(2500, Some(LocalDate.of(2024, 1, 10)), "create"),
+          creationEvent = AdjustmentModel(2500, Some(LocalDate.of(2024, 1, 10)), CreateReversalReason),
           adjustments = List.empty
         )
         val res = TestChargeHistoryService.getAdjustmentHistory(Nil, unchangedDocumentDetail)
@@ -104,14 +114,137 @@ class ChargeHistoryServiceSpec extends TestSupport with MockChargeHistoryConnect
       }
       "there is a charge history" in {
         val desiredAdjustments = AdjustmentHistoryModel(
-          creationEvent = AdjustmentModel(2500, None, "create"),
+          creationEvent = AdjustmentModel(2500, None, CreateReversalReason),
           adjustments = List(
-            AdjustmentModel(2000, Some(LocalDate.of(2024, 2, 10)), "adjustment"),
-            AdjustmentModel(2200, Some(LocalDate.of(2024, 3, 15)), "adjustment")
+            AdjustmentModel(2000, Some(LocalDate.of(2024, 2, 10)), AdjustmentReversalReason),
+            AdjustmentModel(2300, Some(LocalDate.of(2024, 7, 15)), AdjustmentReversalReason),
+            AdjustmentModel(2200, Some(LocalDate.of(2024, 10, 20)), AdjustmentReversalReason),
+          )
+        )
+
+        val res = TestChargeHistoryService.getAdjustmentHistory(jumbledChargeHistoryList, adjustedDocumentDetail)
+        res shouldBe desiredAdjustments
+      }
+      "there is a charge history and charge history entries are not in chronological order" in {
+        val desiredAdjustments = AdjustmentHistoryModel(
+          creationEvent = AdjustmentModel(2500, None, CreateReversalReason),
+          adjustments = List(
+            AdjustmentModel(2000, Some(LocalDate.of(2024, 2, 10)), AdjustmentReversalReason),
+            AdjustmentModel(2200, Some(LocalDate.of(2024, 3, 15)), AdjustmentReversalReason)
           )
         )
 
         val res = TestChargeHistoryService.getAdjustmentHistory(chargeHistoryList, adjustedDocumentDetail)
+        res shouldBe desiredAdjustments
+      }
+      "there is a charge history (extensive)" when {
+
+        // assuming:
+        // an initial creation on date unknown, at 1879.93
+        // a change on 19-7-2024 to 1500.00
+        // a change on 2-8-2024 to 1400.00
+        // a change on 3-8-2024 to 1300.00
+
+        // should have from 1554:
+        val chargeHistoryList: List[ChargeHistoryModel] = List(
+          ChargeHistoryModel("2024", "12345", LocalDate.of(2024, 7, 19), "ITSA - POA 2", 1879.93, LocalDate.of(2024, 7, 19), "Reversal", Some(MainIncomeLower.code)),
+          ChargeHistoryModel("2024", "12345", LocalDate.of(2024, 8, 2), "ITSA - POA 2", 1500, LocalDate.of(2024, 8, 2), "Reversal", Some(MainIncomeLower.code)),
+          ChargeHistoryModel("2024", "12345", LocalDate.of(2024, 8, 3), "ITSA - POA 2", 1400, LocalDate.of(2024, 8, 3), "Reversal", Some(MainIncomeLower.code))
+        )
+
+        // the nth change will have a charge history model with the date of the change n, and the amount of change n-1
+        // i.e. change 1 has the original amount, change 2 has the amount after change 1
+
+        // the amount after the final change will be on the DocumentDetail from 1553:
+        val adjustedDocumentDetail: DocumentDetail = DocumentDetail(
+          2024, "12345", Some("ITSA - POA 2"), None, 1300, 1300, LocalDate.of(2024, 8, 3)
+        )
+
+        "with charge history in chronological order" when {
+          val res = TestChargeHistoryService.getAdjustmentHistory(chargeHistoryList, adjustedDocumentDetail)
+
+          // because the first chargeHistoryModel amount is the amount from before the first adjustment
+          "creation amount should match earliest ChargeHistoryModel amount" in {
+            res.creationEvent.amount shouldBe 1879.93
+          }
+
+          "creation date should be unknown" in {
+            res.creationEvent.adjustmentDate shouldBe None
+          }
+
+          "1st adjustment date should match the 1st ChargeHistoryModel date" in {
+            res.adjustments.head.adjustmentDate.get shouldBe LocalDate.of(2024, 7, 19)
+          }
+
+          "1st adjustment amount should match the 2nd ChargeHistoryModel amount" in {
+            res.adjustments.head.amount shouldBe 1500.0
+          }
+
+          "2nd adjustment date should match the 2nd ChargeHistoryModel date" in {
+            res.adjustments(1).adjustmentDate.get shouldBe LocalDate.of(2024, 8, 2)
+          }
+
+          "2nd adjustment amount should match the 3rd ChargeHistoryModel amount" in {
+            res.adjustments(1).amount shouldBe 1400.0
+          }
+
+          "3rd adjustment date should match the 3rd ChargeHistoryModel date" in {
+            res.adjustments(2).adjustmentDate.get shouldBe LocalDate.of(2024, 8, 3)
+          }
+
+          "3rd adjustment amount should match the current value of the charge" in {
+            res.adjustments(2).amount shouldBe 1300.0
+          }
+        }
+
+        "with charge history in reverse chronological order" when {
+          val res = TestChargeHistoryService.getAdjustmentHistory(chargeHistoryList.reverse, adjustedDocumentDetail)
+
+          // because the first chargeHistoryModel amount is the amount from before the first adjustment
+          "creation amount should match earliest ChargeHistoryModel amount" in {
+            res.creationEvent.amount shouldBe 1879.93
+          }
+
+          "creation date should be unknown" in {
+            res.creationEvent.adjustmentDate shouldBe None
+          }
+
+          "1st adjustment date should match the 1sts ChargeHistoryModel date" in {
+            res.adjustments.head.adjustmentDate.get shouldBe LocalDate.of(2024, 7, 19)
+          }
+
+          "1st adjustment amount should match the 2nd ChargeHistoryModel amount" in {
+            res.adjustments.head.amount shouldBe 1500.0
+          }
+
+          "2nd adjustment date should match the 2nd ChargeHistoryModel date" in {
+            res.adjustments(1).adjustmentDate.get shouldBe LocalDate.of(2024, 8, 2)
+          }
+
+          "2nd adjustment amount should match the 3rd ChargeHistoryModel amount" in {
+            res.adjustments(1).amount shouldBe 1400.0
+          }
+
+          "3rd adjustment date should match the 3rd ChargeHistoryModel date" in {
+            res.adjustments(2).adjustmentDate.get shouldBe LocalDate.of(2024, 8, 3)
+          }
+
+          "3rd adjustment amount should match the current value of the charge" in {
+            res.adjustments(2).amount shouldBe 1300.0
+          }
+        }
+      }
+      "there is a charge history including adjustments for tax return amendments" in {
+        val desiredAdjustments = AdjustmentHistoryModel(
+          creationEvent = AdjustmentModel(2500, None, CreateReversalReason),
+          adjustments = List(
+            AdjustmentModel(2000, Some(LocalDate.of(2024, 1, 15)), AmendedReturnReversalReason),
+            AdjustmentModel(2300, Some(LocalDate.of(2024, 2, 10)), AdjustmentReversalReason),
+            AdjustmentModel(2200, Some(LocalDate.of(2024, 3, 15)), AdjustmentReversalReason),
+          )
+        )
+
+        val res = TestChargeHistoryService.getAdjustmentHistory(chargeHistoryWithAmended, adjustedDocumentDetail)
         res shouldBe desiredAdjustments
       }
     }

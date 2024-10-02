@@ -18,12 +18,13 @@ package controllers.agent
 
 import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
+import com.github.tomakehurst.wiremock.client.WireMock
 import config.featureswitch._
 import enums.ChargeType.{ITSA_ENGLAND_AND_NI, ITSA_NI, NIC4_SCOTLAND}
 import enums.CodingOutType._
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuthStub.titleInternalServer
-import helpers.servicemocks.DocumentDetailsStub.docDateDetailWithInterest
+import helpers.servicemocks.ChargeItemStub.chargeItemWithInterest
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.admin.{ChargeHistory, CodingOut, MFACreditsAndDebits, PaymentAllocation}
 import models.chargeHistory.ChargeHistoryModel
@@ -43,6 +44,17 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import java.time.LocalDate
 
 class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
+
+  override def beforeEach(): Unit = {
+    WireMock.reset()
+    AuditStub.stubAuditing()
+    cache.removeAll()
+  }
+
+  override def afterAll(): Unit = {
+    stopWiremock()
+  }
+
   val paymentAllocation: List[PaymentHistoryAllocations] = List(
     paymentsWithCharge("SA Payment on Account 1", ITSA_NI, "2020-08-16", -10000.0),
     paymentsWithCharge("SA Payment on Account 1", NIC4_SCOTLAND, "2023-04-05", -9000.0)
@@ -57,6 +69,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
   val testArn: String = "1"
   val importantPaymentBreakdown: String = s"${messagesAPI("chargeSummary.dunning.locks.banner.title")} ${messagesAPI("chargeSummary.paymentBreakdown.heading")}"
   val paymentHistory: String = messagesAPI("chargeSummary.chargeHistory.Poa1heading")
+  val lpiHistory: String = messagesAPI("chargeSummary.chargeHistory.lateInterestPayment")
   val taxYear: Int = getCurrentTaxYearEnd.getYear
 
 
@@ -114,7 +127,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
           None, Some("1234567890"), None, Some(Agent), Some(testArn)
         )(FakeRequest()),
-        docDateDetailWithInterest(LocalDate.of(2019, 1, 1).toString, "ITSA- POA 1"),
+        chargeItemWithInterest(),
         paymentBreakdown = paymentBreakdown,
         chargeHistories = List.empty,
         paymentAllocations = paymentAllocation,
@@ -148,7 +161,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
           None, Some("1234567890"), None, Some(Agent), Some(testArn)
         )(FakeRequest()),
-        docDateDetailWithInterest(LocalDate.of(2019, 1, 1).toString, "ITSA- POA 1"),
+        chargeItemWithInterest(),
         paymentBreakdown = paymentBreakdown,
         chargeHistories = List.empty,
         paymentAllocations = paymentAllocation,
@@ -187,7 +200,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
           None, Some("1234567890"), None, Some(Agent), Some(testArn)
         )(FakeRequest()),
-        docDateDetailWithInterest(LocalDate.of(2019, 1, 1).toString, "ITSA- POA 1"),
+        chargeItemWithInterest(),
         paymentBreakdown = paymentBreakdown,
         chargeHistories = chargeHistories,
         paymentAllocations = paymentAllocation,
@@ -212,7 +225,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
           None, Some("1234567890"), None, Some(Agent), Some(testArn)
         )(FakeRequest()),
-        docDateDetailWithInterest(LocalDate.of(2019, 1, 1).toString, "ITSA- POA 1"),
+        chargeItemWithInterest(),
         paymentBreakdown = List.empty,
         chargeHistories = List.empty,
         paymentAllocations = paymentAllocation,
@@ -223,7 +236,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       result should have(
         httpStatus(OK),
         pageTitleAgent("chargeSummary.lpi.paymentOnAccount1.text"),
-        elementTextBySelector("main h2")(paymentHistory)
+        elementTextBySelector("main h2")(lpiHistory)
       )
     }
 
@@ -398,6 +411,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
             taxYear = getCurrentTaxYearEnd.getYear.toString,
             transactionId = Some("CHARGEID01"),
             mainType = Some("SA Payment on Account 1"),
+            mainTransaction = Some("4920"),
             chargeReference = Some("ABCD1234"),
             chargeType = chargeType1,
             originalAmount = Some(123.45),
@@ -412,6 +426,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
             taxYear = getCurrentTaxYearEnd.getYear.toString,
             transactionId = Some("CHARGEID01"),
             mainType = Some("SA Payment on Account 1"),
+            mainTransaction = Some("4920"),
             chargeReference = Some("ABCD1234"),
             chargeType = chargeType2,
             originalAmount = Some(123.45),
@@ -427,6 +442,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
             transactionId = Some("PAYID01"),
             chargeReference = Some("ABCD1234"),
             mainType = Some("Payment"),
+            mainTransaction = Some("0060"),
             originalAmount = Some(123.45),
             items = Some(Seq(SubItem(
               Some(currentDate),
@@ -467,7 +483,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           FinancialDetail(
             taxYear = getCurrentTaxYearEnd.getYear.toString,
             transactionId = Some("CODINGOUT01"),
-            mainType = Some("SA Payment on Account 1"),
+            mainType = Some("SA Balancing Charge"),
+            mainTransaction = Some("4910"),
             chargeType = Some(ITSA_NI),
             originalAmount = Some(123.45),
             items = Some(Seq(SubItem(Some(currentDate),
@@ -519,6 +536,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         Json.obj(
           "taxYear" -> s"$testTaxYear",
           "mainType" -> "ITSA Manual Penalty Pre CY-4",
+          "mainTransaction" -> "4002",
           "transactionId" -> "1040000123",
           "chargeType" -> ITSA_NI,
           "originalAmount" -> 1200.00,
@@ -552,22 +570,22 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           "transactionId" -> "2",
           "documentDate" -> "2022-04-06",
           "documentDescription" -> "TRM New Charge",
+          "outstandingAmount" -> 0,
+          "originalAmount" -> 1200.00,
           "documentText" -> "documentText",
           "documentDueDate" -> "2021-04-15",
           "formBundleNumber" -> "88888888",
-          "originalAmount" -> 1200,
-          "outstandingAmount" -> 1200,
           "statisticalFlag" -> false,
           "paymentLot" -> "MA999991A",
           "paymentLotItem" -> "5",
-          "effectiveDateOfPayment" -> "2018-03-30",
-          "documentDueDate" -> "2018-03-30"
+          "effectiveDateOfPayment" -> "2018-03-30"
         )
       ),
       "financialDetails" -> Json.arr(
         Json.obj(
           "taxYear" -> s"$testTaxYear",
           "mainType" -> "ITSA Manual Penalty Pre CY-4",
+          "mainTransaction" -> "4002",
           "transactionId" -> "1",
           "chargeType" -> ITSA_NI,
           "originalAmount" -> 1200.00,
@@ -634,7 +652,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       verifyIncomeSourceDetailsCall(testMtditid)
 
-      val summaryListText = "Due date OVERDUE 30 March 2018 Full payment amount £1,200.00 Remaining to pay £1,200.00"
+      val summaryListText = "Due date OVERDUE 30 March 2018 Amount £1,200.00 Still to pay £1,200.00"
       val hmrcCreated = messagesAPI("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
       val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,200.00"
 
@@ -671,7 +689,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       verifyIncomeSourceDetailsCall(testMtditid)
 
-      val summaryListText = "Due date 30 March 2018 Full payment amount £1,200.00 Remaining to pay £0.00"
+      val summaryListText = "Due date 30 March 2018 Amount £1,200.00 Still to pay £0.00"
       val hmrcCreated = messagesAPI("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
       val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,200.00"
       val paymentHistoryText2 = "28 Jul 2022 Payment put towards HMRC adjustment 2018 £1,200.00"

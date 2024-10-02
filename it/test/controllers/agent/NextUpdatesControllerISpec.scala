@@ -26,7 +26,7 @@ import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.admin.OptOut
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
-import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel, StatusFulfilled}
+import models.obligations.{SingleObligationModel, GroupedObligationsModel, ObligationsModel, StatusFulfilled}
 import play.api.http.Status._
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
@@ -102,10 +102,10 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
       stubAuthorisedAgentUser(authorised = true)
 
       val currentObligations: ObligationsModel = ObligationsModel(Seq(
-        NextUpdatesModel(
+        GroupedObligationsModel(
           identification = "testId",
           obligations = List(
-            NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
+            SingleObligationModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
           ))
       ))
 
@@ -164,10 +164,10 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
       val currentTaxYear = dateService.getCurrentTaxYearEnd
       val previousYear = currentTaxYear - 1
       val currentObligations: ObligationsModel = ObligationsModel(Seq(
-        NextUpdatesModel(
+        GroupedObligationsModel(
           identification = "testId",
           obligations = List(
-            NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
+            SingleObligationModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
           ))
       ))
 
@@ -209,10 +209,10 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
       disable(OptOut)
 
       val currentObligations: ObligationsModel = ObligationsModel(Seq(
-        NextUpdatesModel(
+        GroupedObligationsModel(
           identification = "testId",
           obligations = List(
-            NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
+            SingleObligationModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
           ))
       ))
 
@@ -251,10 +251,10 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
           val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
           val previousYear = currentTaxYear.addYears(-1)
           val currentObligations: ObligationsModel = ObligationsModel(Seq(
-            NextUpdatesModel(
+            GroupedObligationsModel(
               identification = "testId",
               obligations = List(
-                NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
+                SingleObligationModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
               ))
           ))
 
@@ -290,10 +290,10 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
           val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
           val previousYear = currentTaxYear.addYears(-1)
           val currentObligations: ObligationsModel = ObligationsModel(Seq(
-            NextUpdatesModel(
+            GroupedObligationsModel(
               identification = "testId",
               obligations = List(
-                NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
+                SingleObligationModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
               ))
           ))
 
@@ -329,10 +329,10 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
           val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
           val previousYear = currentTaxYear.addYears(-1)
           val currentObligations: ObligationsModel = ObligationsModel(Seq(
-            NextUpdatesModel(
+            GroupedObligationsModel(
               identification = "testId",
               obligations = List(
-                NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
+                SingleObligationModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
               ))
           ))
 

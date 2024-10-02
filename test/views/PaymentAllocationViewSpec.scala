@@ -127,9 +127,26 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
           .getElementsByTag("dd").last.text shouldBe amount
       }
 
-      "checking there is the info text" in new PaymentAllocationSetup() {
-        document.getElementsByClass("govuk-inset-text").text shouldBe messages("paymentAllocation.info")
+      "have payment allocation introduction" in new PaymentAllocationSetup() {
+        document.getElementById("paymentAllocation-intro").text shouldBe messages("paymentAllocation.intro")
       }
+
+      "have payment allocation condition 1" in new PaymentAllocationSetup() {
+        document.getElementById("numbered-element-0").text shouldBe messages("paymentAllocation.condition-1")
+      }
+
+      "have payment allocation condition 2" in new PaymentAllocationSetup() {
+        document.getElementById("numbered-element-1").text shouldBe messages("paymentAllocation.condition-2")
+      }
+
+      "have payment allocation condition 3" in new PaymentAllocationSetup() {
+        document.getElementById("numbered-element-2").text shouldBe messages("paymentAllocation.condition-3")
+      }
+
+      "have payment allocation outro" in new PaymentAllocationSetup() {
+        document.getElementById("paymentAllocation-outro").text shouldBe messages("paymentAllocation.outro")
+      }
+
     }
 
     "check that the second section information is present" when {
@@ -230,9 +247,26 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
           .getElementsByTag("dd").last.text shouldBe amount
       }
 
-      "checking there is the info text" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
-        document.getElementsByClass("govuk-inset-text").text shouldBe messages("paymentAllocation.info")
+      "have payment allocation introduction" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
+        document.getElementById("paymentAllocation-intro").text shouldBe messages("paymentAllocation.intro")
       }
+
+      "have payment allocation condition 1" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
+        document.getElementById("numbered-element-0").text shouldBe messages("paymentAllocation.condition-1")
+      }
+
+      "have payment allocation condition 2" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
+        document.getElementById("numbered-element-1").text shouldBe messages("paymentAllocation.condition-2")
+      }
+
+      "have payment allocation condition 3" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
+        document.getElementById("numbered-element-2").text shouldBe messages("paymentAllocation.condition-3")
+      }
+
+      "have payment allocation outro" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
+        document.getElementById("paymentAllocation-outro").text shouldBe messages("paymentAllocation.outro")
+      }
+
     }
 
     "check that the second section information is present" when {

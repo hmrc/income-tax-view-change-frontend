@@ -30,6 +30,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testRetrievedUserName, testSaUtr, testUserTypeAgent, testUserTypeIndividual}
+import testConstants.ChargeConstants
 import testConstants.FinancialDetailsTestConstants.{fixedDate, testFinancialDetailsModel, _}
 import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.retrieve.Name
@@ -37,7 +38,7 @@ import views.html.WhatYouOwe
 
 import java.time.LocalDate
 
-class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter with ViewSpec {
+class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter with ViewSpec with ChargeConstants {
 
   val whatYouOweView: WhatYouOwe = app.injector.instanceOf[WhatYouOwe]
   val whatYouOweTitle: String = messages("htmlTitle", messages("whatYouOwe.heading"))
@@ -63,6 +64,10 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val poa1Text: String = messages("whatYouOwe.paymentOnAccount1.text")
   val latePoa1Text: String = messages("whatYouOwe.lpi.paymentOnAccount1.text")
   val poa2Text: String = messages("whatYouOwe.paymentOnAccount2.text")
+  val poaExtra1Text: String = messages("whatYouOwe.reviewAndReconcilePoa1.text")
+  val poaExtra2Text: String = messages("whatYouOwe.reviewAndReconcilePoa2.text")
+  val poa1ReconcileInterest: String = messages("whatYouOwe.interest.reviewAndReconcilePoa1.text")
+  val poa2ReconcileInterest: String = messages("whatYouOwe.interest.reviewAndReconcilePoa2.text")
   val remainingBalance: String = messages("whatYouOwe.balancingCharge.text")
   val preMTDRemainingBalance: String = s"${messages("whatYouOwe.balancingCharge.text")} ${messages("whatYouOwe.pre-mtd-digital")}"
   val remainingBalanceLine1: String = messages("whatYouOwe.remaining-balance.line1")
@@ -87,6 +92,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val itsaPOA1: String = "ITSA- POA 1"
   val itsaPOA2: String = "ITSA - POA 2"
   val cancelledPayeSelfAssessment: String = messages("whatYouOwe.cancelledPayeSelfAssessment.text")
+
+  val interestEndDateFuture: LocalDate = LocalDate.of(2100, 1, 1)
 
   def ctaViewModel(isFSEnabled: Boolean): WYOClaimToAdjustViewModel = {
     if (isFSEnabled) {
@@ -120,6 +127,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
                   migrationYear: Int = fixedDate.getYear - 1,
                   codingOutEnabled: Boolean = true,
                   MFADebitsEnabled: Boolean = false,
+                  reviewAndReconcileEnabled: Boolean = false,
                   adjustPaymentsOnAccountFSEnabled: Boolean = false,
                   claimToAdjustViewModel: Option[WYOClaimToAdjustViewModel] = None
                  ) {
@@ -139,19 +147,20 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
     val html: HtmlFormat.Appendable = whatYouOweView(
       currentDate = dateService.getCurrentDate,
+      hasOverdueOrAccruingInterestCharges = false,
       creditCharges = creditCharges,
       whatYouOweChargesList = charges,
       hasLpiWithDunningLock = hasLpiWithDunningLock,
       currentTaxYear = currentTaxYear,
       backUrl = "testBackURL",
       utr = Some("1234567890"),
-      btaNavPartial = None,
       dunningLock = dunningLock,
       codingOutEnabled = codingOutEnabled,
+      reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       MFADebitsEnabled = MFADebitsEnabled,
       whatYouOweCreditAmountEnabled = whatYouOweCreditAmountEnabled,
       creditAndRefundEnabled = true,
-      claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel))(FakeRequest(), individualUser, implicitly)
+      claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel))(FakeRequest(), individualUser, implicitly, dateService)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def findElementById(id: String): Option[Element] = {
@@ -171,6 +180,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
                        currentTaxYear: Int = fixedDate.getYear,
                        migrationYear: Int = fixedDate.getYear - 1,
                        codingOutEnabled: Boolean = true,
+                       reviewAndReconcileEnabled: Boolean = false,
                        MFADebitsEnabled: Boolean = false,
                        whatYouOweCreditAmountEnabled: Boolean = false,
                        dunningLock: Boolean = false,
@@ -201,6 +211,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     private val currentDateIs: LocalDate = dateService.getCurrentDate
     val html: HtmlFormat.Appendable = whatYouOweView(
       currentDateIs,
+      hasOverdueOrAccruingInterestCharges = false,
       creditCharges = creditCharges,
       whatYouOweChargesList = charges,
       hasLpiWithDunningLock = hasLpiWithDunningLock,
@@ -209,38 +220,16 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       utr = Some("1234567890"),
       dunningLock = dunningLock,
       codingOutEnabled = codingOutEnabled,
+      reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       MFADebitsEnabled = MFADebitsEnabled,
       whatYouOweCreditAmountEnabled = whatYouOweCreditAmountEnabled,
       creditAndRefundEnabled = true,
       isAgent = true,
       claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel)
-    )(FakeRequest(), agentUser, implicitly)
+    )(FakeRequest(), agentUser, implicitly, dateService)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
   }
 
-  def financialDetailsOverdueInterestData(latePaymentInterest: List[Option[BigDecimal]]): FinancialDetailsModel = testFinancialDetailsModelWithInterest(
-    documentDescription = List(Some(itsaPOA1), Some(itsaPOA2)),
-    mainType = List(Some(saPaymentOnAccount1), Some(saPaymentOnAccount2)),
-    dueDate = dueDateOverdue,
-    dunningLock = noDunningLocks,
-    outstandingAmount = List(50, 75),
-    taxYear = fixedDate.getYear.toString,
-    interestOutstandingAmount = List(Some(42.50), Some(24.05)),
-    interestRate = List(Some(2.6), Some(6.2)),
-    latePaymentInterestAmount = latePaymentInterest
-  )
-
-  def financialDetailsOverdueWithLpi(latePaymentInterest: List[Option[BigDecimal]], dunningLock: List[Option[String]]): FinancialDetailsModel = testFinancialDetailsModelWithLPI(
-    documentDescription = List(Some(itsaPOA1), Some(itsaPOA2)),
-    mainType = List(Some(saPaymentOnAccount1), Some(saPaymentOnAccount2)),
-    mainTransaction = List(Some("4920"), Some("4930")),
-    dueDate = List(Some(fixedDate.minusDays(10).toString), Some(fixedDate.minusDays(1).toString)),
-    dunningLock = dunningLock,
-    outstandingAmount = List(50, 75),
-    taxYear = fixedDate.getYear.toString,
-    interestRate = List(Some(2.6), Some(6.2)),
-    latePaymentInterestAmount = latePaymentInterest
-  )
 
   def financialDetailsOverdueWithLpiDunningLock(latePaymentInterest: Option[BigDecimal], lpiWithDunningLock: Option[BigDecimal]): FinancialDetailsModel = testFinancialDetailsModelWithLPIDunningLock(
     documentDescription = List(Some(itsaPOA1), Some(itsaPOA2)),
@@ -268,42 +257,45 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
   def whatYouOweDataWithOverdueInterestData(latePaymentInterest: List[Option[BigDecimal]]): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    chargesList = financialDetailsOverdueInterestData(latePaymentInterest).getAllDocumentDetailsWithDueDates(),
-    outstandingChargesModel = Some(outstandingChargesOverdueData)
+    chargesList = financialDetailsOverdueInterestDataCi(latePaymentInterest),
+    outstandingChargesModel = Some(outstandingChargesOverdueDataIt)
   )
 
   def whatYouOweDataWithOverdueLPI(latePaymentInterest: List[Option[BigDecimal]],
                                    dunningLock: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    chargesList = financialDetailsOverdueWithLpi(latePaymentInterest, dunningLock).getAllDocumentDetailsWithDueDates(),
-    outstandingChargesModel = Some(outstandingChargesOverdueData)
+    chargesList = financialDetailsOverdueWithLpi(latePaymentInterest, dunningLock ),
+    outstandingChargesModel = Some(outstandingChargesOverdueDataIt)
   )
 
   def whatYouOweDataWithOverdueLPIDunningLock(latePaymentInterest: Option[BigDecimal],
                                               lpiWithDunningLock: Option[BigDecimal]): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    chargesList = financialDetailsOverdueWithLpiDunningLock(latePaymentInterest, lpiWithDunningLock).getAllDocumentDetailsWithDueDates(),
-    outstandingChargesModel = Some(outstandingChargesOverdueData)
+    chargesList = financialDetailsOverdueWithLpi(
+      List(latePaymentInterest, latePaymentInterest),
+      List(None, None),
+      List(lpiWithDunningLock, lpiWithDunningLock)),
+    outstandingChargesModel = Some(outstandingChargesOverdueDataIt)
   )
 
   def whatYouOweDataWithOverdueLPIDunningLockZero(latePaymentInterest: Option[BigDecimal],
                                                   lpiWithDunningLock: Option[BigDecimal]): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    chargesList = financialDetailsOverdueWithLpiDunningLockZero(latePaymentInterest, lpiWithDunningLock).getAllDocumentDetailsWithDueDates(),
-    outstandingChargesModel = Some(outstandingChargesOverdueData)
+    chargesList = financialDetailsOverdueWithLpiDunningLockZeroCi(TaxYear.forYearEnd(fixedDate.getYear), latePaymentInterest, false, lpiWithDunningLock),
+    outstandingChargesModel = Some(outstandingChargesOverdueDataIt)
   )
 
   def whatYouOweDataWithOverdueMixedData2(latePaymentInterest: List[Option[BigDecimal]]): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    chargesList = List(financialDetailsOverdueWithLpi(latePaymentInterest, noDunningLocks).getAllDocumentDetailsWithDueDates()(dateService)(1))
-      ++ List(financialDetailsWithMixedData3.getAllDocumentDetailsWithDueDates().head),
+    chargesList = List(financialDetailsOverdueWithLpi(latePaymentInterest, noDunningLocks)(1))
+      ++ List(financialDetailsWithMixedData3Ci.head),
 
   )
 
   def whatYouOweDataTestActiveWithMixedData2(latePaymentInterest: List[Option[BigDecimal]]): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    chargesList = List(financialDetailsOverdueWithLpi(latePaymentInterest, noDunningLocks).getAllDocumentDetailsWithDueDates()(dateService)(1))
-      ++ List(financialDetailsWithMixedData3.getAllDocumentDetailsWithDueDates().head),
+    chargesList = List(financialDetailsOverdueWithLpi(latePaymentInterest, noDunningLocks)(1))
+      ++ List(financialDetailsWithMixedData3Ci.head),
     outstandingChargesModel = Some(outstandingChargesWithAciValueZeroAndOverdue)
   )
 
@@ -346,23 +338,23 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
   val whatYouOweDataWithWithAciValueZeroAndOverdue: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    chargesList = List(financialDetailsWithMixedData3.getAllDocumentDetailsWithDueDates()(dateService)(1))
-      ++ List(financialDetailsWithMixedData3.getAllDocumentDetailsWithDueDates().head),
+    chargesList =
+      List(financialDetailsWithMixedData3Ci(1)) ++ List(financialDetailsWithMixedData3Ci.head),
     outstandingChargesModel = Some(outstandingChargesWithAciValueZeroAndOverdue)
   )
 
   val whatYouOweDataWithWithAciValueZeroAndFuturePayments: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    chargesList = List(financialDetailsWithMixedData1.getAllDocumentDetailsWithDueDates()(dateService)(1))
-      ++ List(financialDetailsWithMixedData1.getAllDocumentDetailsWithDueDates().head),
+    chargesList = List(financialDetailsWithMixedData1Ci(1))
+      ++ List(financialDetailsWithMixedData1Ci.head),
     outstandingChargesModel = Some(outstandingChargesWithAciValueZeroAndOverdue)
   )
 
   val whatYouOweDataWithCodingOutNics2: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    chargesList = List(testFinancialDetailsModelWithCodingOutNics2().getAllDocumentDetailsWithDueDates().head),
+    chargesList = List(chargeItemWithCodingOutNics2Ci()),
     outstandingChargesModel = None,
-    codedOutDocumentDetail = Some(codedOutDocumentDetail)
+    codedOutDocumentDetail = Some(codedOutDocumentDetailCi)
   )
 
   val whatYouOweDataNoCharges: WhatYouOweChargesList = WhatYouOweChargesList(
@@ -374,30 +366,30 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
   val whatYouOweDataWithCodingOutFullyCollected: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    chargesList = List(testFinancialDetailsModelWithCodingOutNics2().getAllDocumentDetailsWithDueDates().head),
+    chargesList = List(chargeItemWithCodingOutNics2Ci()),
     outstandingChargesModel = None,
-    codedOutDocumentDetail = Some(codedOutDocumentDetailFullyCollected)
+    codedOutDocumentDetail = Some(codedOutDocumentDetailFullyCollectedCi)
   )
 
   val whatYouOweDataWithMFADebits: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    chargesList = List(financialDetailsMFADebits.getAllDocumentDetailsWithDueDates().head),
+    chargesList = List(financialDetailsMFADebitsCi.head),
     outstandingChargesModel = None,
     codedOutDocumentDetail = None
   )
 
   val whatYouOweDataWithCodingOutFuture: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    chargesList = List(testFinancialDetailsModelWithCodingOutNics2().getAllDocumentDetailsWithDueDates().head),
+    chargesList = List(chargeItemWithCodingOutNics2Ci()),
     outstandingChargesModel = None,
-    codedOutDocumentDetail = Some(codedOutDocumentDetail)
+    codedOutDocumentDetail = Some(codedOutDocumentDetailCi)
   )
 
   val whatYouOweDataCodingOutWithoutAmountCodingOut: WhatYouOweChargesList = whatYouOweDataWithCodingOutNics2.copy(codedOutDocumentDetail = None)
 
   val whatYouOweDataWithCancelledPayeSa: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    chargesList = List(testFinancialDetailsModelWithCancelledPayeSa().getAllDocumentDetailsWithDueDates().head),
+    chargesList = List(chargeItemWithCodingOutCancelledPayeSaCi()),
     outstandingChargesModel = None,
     codedOutDocumentDetail = None
   )
@@ -406,8 +398,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
   val whatYouOweDataWithPayeSA: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None),
-    chargesList = List(testFinancialDetailsModelWithCodingOutNics2().getAllDocumentDetailsWithDueDates().head),
-    codedOutDocumentDetail = Some(codedOutDocumentDetailPayeSA)
+    chargesList =  List(chargeItemWithCodingOutNics2Ci()),
+    codedOutDocumentDetail = Some(codedOutDocumentDetailPayeSACi)
   )
 
   val noUtrModel: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None))
@@ -443,22 +435,57 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
           findElementById("balancing-charge-type-overdue") shouldBe None
         }
-        "have POA data in same table" in new TestSetup(charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
+        "have POA data in same table" in new TestSetup(charges = whatYouOweDataWithDataDueInMoreThan30Days(
+          dueDates = dueDateOverdue
+        )) {
 
           val poa1Table: Element = pageDocument.select("tr").get(2)
-          poa1Table.select("td").first().text() shouldBe fixedDate.plusDays(45).toLongDateShort
+          poa1Table.select("td").first().text() shouldBe fixedDate.minusDays(10).toLongDateShort
           poa1Table.select("td").get(1).text() shouldBe "OVERDUE " + poa1Text + s" 1"
           poa1Table.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
 
           poa1Table.select("td").last().text() shouldBe "£50.00"
 
           val poa2Table: Element = pageDocument.select("tr").get(3)
-          poa2Table.select("td").first().text() shouldBe fixedDate.plusDays(50).toLongDateShort
+          poa2Table.select("td").first().text() shouldBe fixedDate.minusDays(1).toLongDateShort
           poa2Table.select("td").get(1).text() shouldBe "OVERDUE " + poa2Text + s" 2"
           poa2Table.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
 
           poa2Table.select("td").last().text() shouldBe "£75.00"
 
+        }
+        "have review and reconcile extra payments with Accrues Interest tags in the same table" in new TestSetup(
+          charges = whatYouOweWithReviewReconcileDataNotYetDue,
+          reviewAndReconcileEnabled  = true) {
+          val poaExtra1Table: Element = pageDocument.getElementById("due-0")
+          poaExtra1Table.select("td").first().text() shouldBe fixedDate.plusYears(100).minusDays(1).toLongDateShort
+          poaExtra1Table.select("td").get(1).text() shouldBe "ACCRUES INTEREST " + poaExtra1Text + " 1"
+          poaExtra1Table.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
+
+          poaExtra1Table.select("td").last().text() shouldBe "£50.00"
+
+          val poa2ExtraTable: Element = pageDocument.getElementById("due-1")
+          poa2ExtraTable.select("td").first().text() shouldBe fixedDate.plusYears(100).plusDays(30).toLongDateShort
+          poa2ExtraTable.select("td").get(1).text() shouldBe "ACCRUES INTEREST " + poaExtra2Text + " 2"
+          poa2ExtraTable.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
+
+          poa2ExtraTable.select("td").last().text() shouldBe "£75.00"
+        }
+        "have interest charges for paid reconciliation charges in the same table" in new TestSetup(charges = whatYouOweReconciliationInterestData,
+          reviewAndReconcileEnabled = true) {
+          val poaExtra1Table: Element = pageDocument.getElementById("due-0")
+          poaExtra1Table.select("td").first().text() shouldBe interestEndDateFuture.toLongDateShort
+          poaExtra1Table.select("td").get(1).text() shouldBe poa1ReconcileInterest + " 1"
+          poaExtra1Table.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
+
+          poaExtra1Table.select("td").last().text() shouldBe "£100.00"
+
+          val poa2ExtraTable: Element = pageDocument.getElementById("due-1")
+          poa2ExtraTable.select("td").first().text() shouldBe interestEndDateFuture.toLongDateShort
+          poa2ExtraTable.select("td").get(1).text() shouldBe poa2ReconcileInterest + " 2"
+          poa2ExtraTable.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
+
+          poa2ExtraTable.select("td").last().text() shouldBe "£40.00"
         }
         "payment type drop down and content exists" in new TestSetup(charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
           pageDocument.select(".govuk-details__summary-text").text shouldBe dropDownInfo
@@ -721,7 +748,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
             overduePaymentsTableRow1.select("td").last().text() shouldBe "£34.56"
 
             pageDocument.getElementById("due-0-late-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
-              fixedDate.getYear, "1040000124", latePaymentCharge = true).url
+              fixedDate.getYear, "1040000124", isInterestCharge = true).url
             pageDocument.getElementById("due-0-overdue").text shouldBe overdueTag
             pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
               fixedDate.getYear).url
@@ -739,7 +766,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         }
 
         "have overdue payments header, bullet points and data with POA1 charge type and show Late payment interest on payment on account 1 of 2 - LPI Dunning Block" in
-          new TestSetup(charges = whatYouOweDataWithOverdueLPIDunningLock(Some(34.56), Some(1000))) {
+          new TestSetup(charges = whatYouOweDataWithOverdueLPIDunningLock(Some(34.56), Some(100.0))) {
 
             val overdueTableHeader: Element = pageDocument.select("tr").get(0)
             overdueTableHeader.select("th").first().text() shouldBe dueDate
@@ -754,7 +781,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
             overduePaymentsTableRow1.select("td").last().text() shouldBe "£34.56"
 
             pageDocument.getElementById("due-0-late-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
-              fixedDate.getYear, "1040000124", latePaymentCharge = true).url
+              fixedDate.getYear, "1040000124", isInterestCharge = true).url
             pageDocument.getElementById("due-0-overdue").text shouldBe overdueTag
             pageDocument.getElementById("LpiDunningLock").text shouldBe "Payment under review"
             pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
@@ -783,7 +810,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
             overduePaymentsTableRow1.select("td").last().text() shouldBe "£34.56"
 
             pageDocument.getElementById("due-0-late-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
-              fixedDate.getYear, "1040000124", latePaymentCharge = true).url
+              fixedDate.getYear, "1040000124", isInterestCharge = true).url
             pageDocument.getElementById("due-0-overdue").text shouldBe overdueTag
             pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
               fixedDate.getYear).url
@@ -893,7 +920,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           overduePaymentsInterestTableRow("1").select("td").last().text() shouldBe "£24.05"
         }
 
-        "not have a paragraph explaining interest rates when there is no accruing interest" in new TestSetup(charges = whatYouOweDataWithOverdueData()) {
+        "not have a paragraph explaining interest rates when there is no accruing interest" in new TestSetup(charges = whatYouOweDataWithOverdueDataIt()) {
           findElementById(".interest-rate") shouldBe None
         }
 
@@ -905,7 +932,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         }
 
         "display the paragraph about payments under review when there is a dunningLock" in new TestSetup(
-          charges = whatYouOweDataWithOverdueData(twoDunningLocks), dunningLock = true) {
+          charges = whatYouOweDataWithOverdueDataIt(twoDunningLocks), dunningLock = true) {
           val paymentUnderReviewParaLink: Element = pageDocument.getElementById("disagree-with-tax-appeal-link")
 
           pageDocument.getElementById("payment-under-review-info").text shouldBe paymentUnderReviewPara
@@ -914,7 +941,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         }
 
         "not display the paragraph about payments under review when there are no dunningLock" in new TestSetup(
-          charges = whatYouOweDataWithOverdueData(twoDunningLocks)) {
+          charges = whatYouOweDataWithOverdueDataIt(twoDunningLocks)) {
           findElementById("payment-under-review-info") shouldBe None
         }
 

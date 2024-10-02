@@ -16,10 +16,9 @@
 
 package mocks.services
 
-import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatter
 import models.incomeSourceDetails.viewmodels.ObligationsViewModel
-import models.nextUpdates.{NextUpdatesErrorModel, NextUpdatesResponseModel}
+import models.obligations.{ObligationsErrorModel, ObligationsResponseModel}
 import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -32,7 +31,7 @@ import java.time.LocalDate
 import scala.concurrent.Future
 
 
-trait MockNextUpdatesService extends UnitSpec with BeforeAndAfterEach with ImplicitDateFormatter with FeatureSwitching {
+trait MockNextUpdatesService extends UnitSpec with BeforeAndAfterEach with ImplicitDateFormatter {
 
   val mockNextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
 
@@ -41,17 +40,17 @@ trait MockNextUpdatesService extends UnitSpec with BeforeAndAfterEach with Impli
     reset(mockNextUpdatesService)
   }
 
-  def setupMockNextUpdatesResult()(response: NextUpdatesResponseModel): Unit = {
-    when(mockNextUpdatesService.getNextUpdates(any())(any(), any()))
+  def setupMockNextUpdatesResult()(response: ObligationsResponseModel): Unit = {
+    when(mockNextUpdatesService.getOpenObligations()(any(), any()))
       .thenReturn(Future.successful(response))
   }
 
   def mockBusinessError(): Unit = setupMockNextUpdatesResult()(
-    NextUpdatesErrorModel(Status.INTERNAL_SERVER_ERROR, "Test")
+    ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Test")
   )
 
   def mockPropertyError(): Unit = setupMockNextUpdatesResult()(
-    NextUpdatesErrorModel(Status.INTERNAL_SERVER_ERROR, "Test")
+    ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Test")
   )
 
   def mockSingleBusinessIncomeSourceWithDeadlines(): Unit = setupMockNextUpdatesResult()(singleBusinessIncomeWithDeadlines)
@@ -64,15 +63,15 @@ trait MockNextUpdatesService extends UnitSpec with BeforeAndAfterEach with Impli
 
   def mockBothIncomeSourcesBusinessAlignedWithDeadlines(): Unit = setupMockNextUpdatesResult()(businessAndPropertyAlignedWithDeadlines)
 
-  def mockErrorIncomeSourceWithDeadlines(): Unit = setupMockNextUpdatesResult()(NextUpdatesErrorModel(500, "error"))
+  def mockErrorIncomeSourceWithDeadlines(): Unit = setupMockNextUpdatesResult()(ObligationsErrorModel(500, "error"))
 
   def mockGetObligationDueDates(response: Future[Either[(LocalDate, Boolean), Int]]): Unit = {
     when(mockNextUpdatesService.getObligationDueDates(any(), any(), any()))
       .thenReturn(response)
   }
 
-  def mockgetNextUpdates(fromDate: LocalDate, toDate: LocalDate)(response: NextUpdatesResponseModel): Unit = {
-    when(mockNextUpdatesService.getNextUpdates(matches(fromDate), matches(toDate))(any(), any()))
+  def mockgetNextUpdates(fromDate: LocalDate, toDate: LocalDate)(response: ObligationsResponseModel): Unit = {
+    when(mockNextUpdatesService.getAllObligationsWithinDateRange(matches(fromDate), matches(toDate))(any(), any()))
       .thenReturn(Future.successful(response))
   }
 

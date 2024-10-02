@@ -22,7 +22,8 @@ import models.financialDetails.{BalanceDetails, WhatYouOweChargesList}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.libs.json.{JsValue, Json}
 import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testSaUtr}
-import testConstants.FinancialDetailsTestConstants.{dueDateOverdue, whatYouOwePartialChargesList}
+import testConstants.ChargeConstants
+import testConstants.FinancialDetailsTestConstants.dueDateOverdue
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
@@ -30,7 +31,7 @@ import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
 
-class WhatYouOweResponseAuditModelSpec extends TestSupport {
+class WhatYouOweResponseAuditModelSpec extends TestSupport with ChargeConstants {
 
   val transactionName = "what-you-owe-response"
   val auditEvent = "WhatYouOweResponse"
@@ -44,9 +45,10 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
 
   val outStandingCharges: String = fixedDate.minusDays(30).toString
 
+
   def testWhatYouOweResponseAuditModel(userType: Option[AffinityGroup] = Some(Agent),
                                        yearOfMigration: Option[String] = Some("2015"),
-                                       chargesList: WhatYouOweChargesList = whatYouOwePartialChargesList,
+                                       chargesList: WhatYouOweChargesList = whatYouOwePartialChargesListX,
                                       ): WhatYouOweResponseAuditModel = WhatYouOweResponseAuditModel(
     user = MtdItUser(
       mtditid = testMtditid,
@@ -98,7 +100,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
           Json.obj(
             "chargeType" -> paymentOnAccount2,
             "dueDate" -> dueDateOverdue(1).get,
-            "outstandingAmount" -> 75,
+            "outstandingAmount" -> 24.05,
             "accruingInterest" -> 24.05,
             "interestRate" -> "6.2%",
             "interestFromDate" -> "2019-05-25",
@@ -112,24 +114,24 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
             "dueDate" -> dueDateIsSoon,
             "outstandingAmount" -> 100,
             "accruingInterest" -> 100,
-            "interestRate" -> "100%",
+            "interestRate" -> "100.0%",
             "interestFromDate" -> "2018-03-29",
             "interestEndDate" -> "2018-03-29",
             "chargeUnderReview" -> false,
             "endTaxYear" -> 2023,
-            "overDue" -> true
+            "overDue" -> false
           ),
           Json.obj(
             "chargeType" -> paymentOnAccount1,
             "dueDate" -> dueDateInFuture,
-            "outstandingAmount" -> 125,
+            "outstandingAmount" -> 100,
             "accruingInterest" -> 100,
-            "interestRate" -> "100%",
+            "interestRate" -> "100.0%",
             "interestFromDate" -> "2018-03-29",
             "interestEndDate" -> "2018-03-29",
             "chargeUnderReview" -> false,
             "endTaxYear" -> 2023,
-            "overDue" -> true
+            "overDue" -> false
           ),
           Json.obj("accruingInterest" -> 12.67,
             "chargeType" -> "Remaining balance",
@@ -200,7 +202,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
           "chargeUnderReview" -> true,
           "outstandingAmount" -> 42.5,
           "chargeType" -> lpiPaymentOnAccount1,
-          "dueDate" -> "2019-06-25",
+          "dueDate" -> "2023-12-05",
           "endTaxYear" -> fixedDate.getYear,
           "overDue" -> true
         )

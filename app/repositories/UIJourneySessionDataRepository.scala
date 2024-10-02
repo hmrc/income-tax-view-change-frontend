@@ -22,6 +22,7 @@ import models.incomeSourceDetails.UIJourneySessionData
 import org.mongodb.scala.bson.collection.mutable.Document
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Filters.equal
+import org.mongodb.scala.model.Updates.combine
 import org.mongodb.scala.model._
 import org.mongodb.scala.result.UpdateResult
 import play.api.libs.json.Format
@@ -114,6 +115,13 @@ class UIJourneySessionDataRepository @Inject()(
     collection.updateOne(
       filter = dataFilter(data),
       update = Document("$set" -> Document(key -> value))
+    ).toFuture()
+  }
+
+  def updateMultipleData(data: UIJourneySessionData, keyAndValue: Map[String, String]): Future[UpdateResult] = {
+    collection.updateOne(
+      filter = dataFilter(data),
+      update = combine(keyAndValue.map(keyAndValueTuple => org.mongodb.scala.model.Updates.set(keyAndValueTuple._1, keyAndValueTuple._2)).toList: _*)
     ).toFuture()
   }
 

@@ -21,15 +21,17 @@ import auth.MtdItUser
 import enums.ChargeType.{ITSA_ENGLAND_AND_NI, ITSA_NI, NIC4_SCOTLAND}
 import enums.CodingOutType._
 import helpers.ComponentSpecBase
-import helpers.servicemocks.DocumentDetailsStub.{docDateDetail, docDateDetailWithInterestAndOverdue}
+import helpers.servicemocks.ChargeItemStub.{chargeItemWithInterestAndOverdue, docDetail}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.admin.{ChargeHistory, CodingOut, MFACreditsAndDebits, PaymentAllocation}
 import models.chargeHistory.ChargeHistoryModel
 import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails._
+import models.incomeSourceDetails.TaxYear
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
+import services.DateService
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testTaxYear}
 import testConstants.FinancialDetailsIntegrationTestConstants.financialDetailModelPartial
 import testConstants.IncomeSourceIntegrationTestConstants._
@@ -40,10 +42,12 @@ import java.time.LocalDate
 
 class ChargeSummaryControllerISpec extends ComponentSpecBase {
 
+  override implicit val dateService: DateService = app.injector.instanceOf[DateService]
+
   val paymentAllocation: List[PaymentHistoryAllocations] = List(
-    paymentsWithCharge("SA Balancing Charge", ITSA_NI, "2018-04-14", -10000.0),
-    paymentsWithCharge("SA Payment on Account 1", NIC4_SCOTLAND, "2018-04-14", -9000.0),
-    paymentsWithCharge("SA Payment on Account 2", NIC4_SCOTLAND, "2018-04-14", -8000.0)
+    paymentsWithCharge("SA Balancing Charge", ITSA_NI, dateService.getCurrentDate.plusDays(20).toString, -10000.0),
+    paymentsWithCharge("SA Payment on Account 1", NIC4_SCOTLAND, dateService.getCurrentDate.plusDays(20).toString, -9000.0),
+    paymentsWithCharge("SA Payment on Account 2", NIC4_SCOTLAND, dateService.getCurrentDate.plusDays(20).toString, -8000.0)
   )
   val chargeHistories: List[ChargeHistoryModel] = List(ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 2, 14), "ITSA- POA 1", 2500, LocalDate.of(2019, 2, 14), "Customer Request", Some("001")))
   val paymentBreakdown: List[FinancialDetail] = List(
@@ -52,6 +56,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
     financialDetailModelPartial(originalAmount = 123.45, chargeType = NIC4_SCOTLAND, mainType = "SA Payment on Account 2", dunningLock = Some("Dunning Lock"), interestLock = Some("Manual RPI Signal")))
   val importantPaymentBreakdown: String = s"${messagesAPI("chargeSummary.dunning.locks.banner.title")} ${messagesAPI("chargeSummary.paymentBreakdown.heading")}"
   val paymentHistory: String = messagesAPI("chargeSummary.chargeHistory.heading")
+  val lpiHistory: String = messagesAPI("chargeSummary.chargeHistory.lateInterestPayment")
 
   def paymentsWithCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal): PaymentHistoryAllocations =
     PaymentHistoryAllocations(
@@ -93,13 +98,13 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
           Some("12345-credId"), Some(Individual), None
         )(FakeRequest()),
-        docDateDetail("2018-02-14", "ITSA- POA 1"),
+        docDetail(PaymentOnAccountOne),
         paymentBreakdown = List(financialDetailModelPartial(chargeType = ITSA_ENGLAND_AND_NI, originalAmount = 10.34, dunningLock = Some("Stand over order"), interestLock = Some("Breathing Space Moratorium Act"))),
         chargeHistories = List.empty,
         paymentAllocations = List.empty,
         isLatePaymentCharge = false,
         taxYear = testTaxYear
-      ))
+      )(dateService))
     }
 
     "load the page with right audit events when PaymentAllocations FS on and ChargeHistory FS off" in {
@@ -112,7 +117,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
 
       And("I wiremock stub a single financial transaction response")
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testAuditFinancialDetailsModelJson(123.45, 1.2,
-        dunningLock = oneDunningLock, interestLocks = twoInterestLocks, latePaymentInterestAmount = None))
+        dunningLock = oneDunningLock, interestLocks = twoInterestLocks, latePaymentInterestAmount = None,
+        dueDate = dateService.getCurrentDate.plusDays(20).toString))
 
       And("I wiremock stub a charge history response")
       IncomeTaxViewChangeStub.stubChargeHistoryResponse(testNino, "ABCD1234")(OK, testChargeHistoryJson(testNino, "ABCD1234", 2500))
@@ -127,13 +133,14 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
           Some("12345-credId"), Some(Individual), None
         )(FakeRequest()),
-        docDateDetailWithInterestAndOverdue("2018-04-14", "TRM New Charge"),
+        chargeItemWithInterestAndOverdue(BalancingCharge, None,
+          Some(dateService.getCurrentDate.plusDays(20))),
         paymentBreakdown = paymentBreakdown,
         chargeHistories = List.empty,
         paymentAllocations = paymentAllocation,
         isLatePaymentCharge = false,
         taxYear = testTaxYear
-      ))
+      )(dateService))
 
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       res should have(
@@ -147,9 +154,11 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       Given("I wiremock stub a successful Income Source Details response with property only")
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
+      val json = testAuditFinancialDetailsModelJson(123.45, 1.2,
+        dunningLock = oneDunningLock, interestLocks = twoInterestLocks, latePaymentInterestAmount = None, dueDate =
+          dateService.getCurrentDate.plusDays(20).toString)
       And("I wiremock stub a single financial transaction response")
-      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testAuditFinancialDetailsModelJson(123.45, 1.2,
-        dunningLock = oneDunningLock, interestLocks = twoInterestLocks, latePaymentInterestAmount = None))
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, json )
 
       And("I wiremock stub a charge history response")
       IncomeTaxViewChangeStub.stubChargeHistoryResponse(testNino, "ABCD1234")(OK, testChargeHistoryJson(testNino, "ABCD1234", 2500))
@@ -162,19 +171,23 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
 
       verifyIncomeSourceDetailsCall(testMtditid)
 
-      AuditStub.verifyAuditEvent(ChargeSummaryAudit(
+      val x = chargeItemWithInterestAndOverdue(BalancingCharge, None, Some(dateService.getCurrentDate.plusDays(20)))
+
+      val expectedAuditEvent = ChargeSummaryAudit(
         MtdItUser(
           testMtditid, testNino, None,
           multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
           Some("12345-credId"), Some(Individual), None
         )(FakeRequest()),
-        docDateDetailWithInterestAndOverdue("2018-04-14", "TRM New Charge"),
+        x,
         paymentBreakdown = paymentBreakdown,
         chargeHistories = chargeHistories,
         paymentAllocations = paymentAllocation,
         isLatePaymentCharge = false,
         taxYear = testTaxYear
-      ))
+      )(dateService)
+
+      AuditStub.verifyAuditEvent(expectedAuditEvent)
 
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       res should have(
@@ -206,7 +219,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
           Some("12345-credId"), Some(Individual), None
         )(FakeRequest()),
-        docDateDetailWithInterestAndOverdue("2018-02-14", "TRM New Charge"),
+        chargeItemWithInterestAndOverdue(BalancingCharge, None, Some(LocalDate.of(2018,2,14))),
         paymentBreakdown = List.empty,
         chargeHistories = List.empty,
         paymentAllocations = paymentAllocation,
@@ -218,7 +231,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       res should have(
         httpStatus(OK),
         pageTitleIndividual("chargeSummary.lpi.balancingCharge.text"),
-        elementTextBySelector("main h2")(paymentHistory),
+        elementTextBySelector("main h2")(lpiHistory),
         elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")(lpiCreated)
       )
     }
@@ -241,7 +254,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       res should have(
         httpStatus(OK),
         pageTitleIndividual("chargeSummary.lpi.balancingCharge.text"),
-        elementTextBySelector("main h2")(paymentHistory),
+        elementTextBySelector("main h2")(lpiHistory),
         elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")("")
 
       )
@@ -288,7 +301,13 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
             "latePaymentInterestAmount" -> 100.0,
             "interestOutstandingAmount" -> 80.0
           )),
-        "financialDetails" -> Json.arr()))
+        "financialDetails" -> Json.arr(
+          Json.obj(
+            "transactionId" -> "1040001234",
+            "taxYear" -> "2018",
+            "mainTransaction" -> "4930"
+          )
+        )))
 
       disable(ChargeHistory)
       enable(PaymentAllocation)
@@ -326,7 +345,13 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
             "originalAmount" -> 2500.00,
             "documentDate" -> "2018-03-29"
           )),
-        "financialDetails" -> Json.arr()))
+        "financialDetails" -> Json.arr(
+          Json.obj(
+          "transactionId" -> "CODINGOUT01",
+          "taxYear" -> "2018",
+          "mainTransaction" -> "4910"
+          )
+        )))
 
 
       val res = IncomeTaxViewChangeFrontend.getChargeSummary("2018", "CODINGOUT01")
@@ -342,7 +367,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       )
     }
 
-    "load the page with any payments you make" in {
+    "load the page with any payments you make if the charge is not a Review & Reconcile or POA charge" in {
       Given("I wiremock stub a successful Income Source Details response with property only")
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -356,14 +381,14 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       Given("the ChargeHistory feature switch is disabled")
       disable(ChargeHistory)
 
-      val res = IncomeTaxViewChangeFrontend.getChargeSummary("2018", "1040000124")
+      val res = IncomeTaxViewChangeFrontend.getChargeSummary("2018", "1040000123")
 
       verifyIncomeSourceDetailsCall(testMtditid)
 
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       res should have(
         httpStatus(OK),
-        pageTitleIndividual("chargeSummary.paymentOnAccount1.text"),
+        pageTitleIndividual("chargeSummary.balancingCharge.text"),
         elementTextBySelector("#payment-processing-bullets")(paymentprocessingbullet1)
       )
     }
@@ -475,6 +500,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         Json.obj(
           "taxYear" -> s"$testTaxYear",
           "mainType" -> "ITSA Manual Penalty Pre CY-4",
+          "mainTransaction" -> "4002",
           "transactionId" -> "1040000123",
           "chargeType" -> ITSA_NI,
           "originalAmount" -> 1200.00,
@@ -523,6 +549,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         Json.obj(
           "taxYear" -> s"$testTaxYear",
           "mainType" -> "ITSA Manual Penalty Pre CY-4",
+          "mainTransaction" -> "4002",
           "transactionId" -> "1",
           "chargeType" -> ITSA_NI,
           "originalAmount" -> 1200.00,
@@ -569,18 +596,26 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       )
     )
 
-    val docDetailUnpaid = DocumentDetail(
-      taxYear = 2018,
+    val chargeItemUnpaid: ChargeItem = ChargeItem(
       transactionId = "1040000124",
-      documentDescription = Some("TRM New Charge"),
-      documentText = Some("documentText"),
+      taxYear = TaxYear.forYearEnd(2018),
+      transactionType = MfaDebitCharge,
+      subTransactionType = None,
+      documentDate = LocalDate.of(2018, 3, 29),
+      dueDate = Some(LocalDate.parse("2018-03-30")),
       originalAmount = 1200,
       outstandingAmount = 1200,
-      documentDate = LocalDate.of(2018, 3, 29),
-      effectiveDateOfPayment = Some(LocalDate.parse("2018-03-30")),
-      documentDueDate = Some(LocalDate.parse("2018-03-30"))
+      interestOutstandingAmount = None,
+      latePaymentInterestAmount = None,
+      interestFromDate = None,
+      interestEndDate = None,
+      interestRate = None,
+      lpiWithDunningLock = None,
+      amountCodedOut = None,
+      dunningLock = false
     )
-    val docDetailPaid = docDetailUnpaid.copy(outstandingAmount = 0)
+
+    val chargeItemPaid = chargeItemUnpaid.copy(outstandingAmount = 0)
 
     "load the charge summary page with an UNPAID MFADebit" in {
       Given("the MFADebitsAndCredits feature switch is enabled")
@@ -601,7 +636,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
 
       verifyIncomeSourceDetailsCall(testMtditid)
 
-      val summaryListText = "Due date OVERDUE 30 March 2018 Full payment amount £1,200.00 Remaining to pay £1,200.00"
+      val summaryListText = "Due date OVERDUE 30 March 2018 Amount £1,200.00 Still to pay £1,200.00"
       val hmrcCreated = messagesAPI("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
       val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,200.00"
 
@@ -621,8 +656,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
           Some("12345-credId"), Some(Individual), None
         )(FakeRequest()),
-        DocumentDetailWithDueDate(
-          documentDetail = docDetailUnpaid,
+        chargeItemUnpaid.copy(
           dueDate = Some(LocalDate.parse("2018-03-30"))
         ),
         paymentBreakdown = List(),
@@ -654,7 +688,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
 
       verifyIncomeSourceDetailsCall(testMtditid)
 
-      val summaryListText = "Due date 30 March 2018 Full payment amount £1,200.00 Remaining to pay £0.00"
+      val summaryListText = "Due date 30 March 2018 Amount £1,200.00 Still to pay £0.00"
       val hmrcCreated = messagesAPI("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
       val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,200.00"
       val paymentHistoryText2 = "28 Jul 2022 Payment put towards HMRC adjustment 2018 £1,200.00"
@@ -676,10 +710,9 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
           Some("12345-credId"), Some(Individual), None
         )(FakeRequest()),
-        DocumentDetailWithDueDate(
-          documentDetail = docDetailPaid,
-          dueDate = Some(LocalDate.parse("2018-03-30"))
-        ),
+          chargeItemPaid.copy(
+            dueDate = Some(LocalDate.parse("2018-03-30"))
+          ),
         paymentBreakdown = List(),
         chargeHistories = List.empty,
         paymentAllocations = List.empty,

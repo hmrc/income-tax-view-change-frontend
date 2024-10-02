@@ -19,16 +19,16 @@ package services.optout.quarterlyupdates
 import audit.mocks.MockAuditingService
 import config.FrontendAppConfig
 import connectors.ObligationsConnector
-import connectors.optout.ITSAStatusUpdateConnector
+import connectors.itsastatus.ITSAStatusUpdateConnector
 import mocks.MockHttp
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService}
 import org.mockito.Mockito.mock
 import org.scalatest.BeforeAndAfter
 import play.api.Configuration
 import play.mvc.Http.Status
-import repositories.UIJourneySessionDataRepository
+import repositories.{OptOutSessionDataRepository, UIJourneySessionDataRepository}
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
-import services.optout.OptOutService.QuarterlyUpdatesCountForTaxYearModel
+import services.reportingfreq.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
 import services.optout.{OptOutService, OptOutTestSupport}
 import services.{DateService, NextUpdatesService}
 import testConstants.BaseTestConstants.testNino
@@ -56,13 +56,13 @@ class QuarterlyUpdatesCountSpec extends UnitSpec
   val optOutConnector: ITSAStatusUpdateConnector = mock(classOf[ITSAStatusUpdateConnector])
   val obligationsConnector: ObligationsConnector = new ObligationsConnector(httpClientMock, mockAuditingService, appConfig)
   val nextUpdatesService: NextUpdatesService = new NextUpdatesService(obligationsConnector)
-  val repository: UIJourneySessionDataRepository = mock(classOf[UIJourneySessionDataRepository])
+  val repository: OptOutSessionDataRepository = mock(classOf[OptOutSessionDataRepository])
 
   val service: OptOutService = new OptOutService(optOutConnector, mockITSAStatusService, mockCalculationListService,
     nextUpdatesService, mockDateService, repository)
 
   def buildUrl(fromDate: LocalDate, toDate: LocalDate): String = {
-    s"http://localhost:9999/income-tax-view-change/$testNino/report-deadlines/from/$fromDate/to/$toDate"
+    s"http://localhost:9999/income-tax-view-change/$testNino/obligations/from/$fromDate/to/$toDate"
   }
 
   def buildSuccessResponse(): HttpResponse = {

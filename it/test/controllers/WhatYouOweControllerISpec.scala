@@ -21,13 +21,14 @@ import auth.MtdItUser
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.admin._
-import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
+import models.financialDetails.{BalanceDetails, ChargeItem, DocumentDetail, FinancialDetail, FinancialDetailsModel, TransactionUtils, WhatYouOweChargesList}
 import models.incomeSourceDetails.TaxYear
 import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import services.DateServiceInterface
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSaUtr}
+import testConstants.ChargeConstants
 import testConstants.FinancialDetailsIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.OutstandingChargesIntegrationTestConstants._
@@ -37,7 +38,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import java.time.LocalDate
 import java.time.Month.APRIL
 
-class WhatYouOweControllerISpec extends ComponentSpecBase {
+class WhatYouOweControllerISpec extends ComponentSpecBase with ChargeConstants with TransactionUtils {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -52,6 +53,9 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
   val testTaxYearPoa: Int = getCurrentTaxYearEnd.getYear
 
   val testDate: LocalDate = LocalDate.parse("2022-01-01")
+
+  val configuredChargeItemGetter: List[FinancialDetail] => DocumentDetail => Option[ChargeItem] =
+    getChargeItemOpt(isEnabled(CodingOut), isEnabled(ReviewAndReconcilePoa))
 
   val testValidOutStandingChargeResponseJsonWithAciAndBcdCharges: JsValue = Json.parse(
     s"""
@@ -153,7 +157,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
           val res = IncomeTaxViewChangeFrontend.getPaymentsDue
 
-          AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataWithDataDueIn30Days, dateService).detail)
+          AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataWithDataDueIn30DaysIt, dateService).detail)
 
           verifyIncomeSourceDetailsCall(testMtditid)
           IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05", 2)
@@ -200,9 +204,14 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
           val whatYouOweChargesList = {
             val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear)
+
+            val financialDetails = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear)
+            val chargeItemFromDocumentDetail = configuredChargeItemGetter(financialDetails.financialDetails)
+            val chargeItems = financialDetails.documentDetails.flatMap(chargeItemFromDocumentDetail)
+
             WhatYouOweChargesList(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-              chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()
+              chargesList = chargeItems
             )
           }
           AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList, dateService))
@@ -261,7 +270,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
           val res = IncomeTaxViewChangeFrontend.getPaymentsDue
 
-          AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweWithAZeroOutstandingAmount, dateService).detail)
+          AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweWithAZeroOutstandingAmount(), dateService).detail)
 
           verifyIncomeSourceDetailsCall(testMtditid)
           IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05", 2)
@@ -305,9 +314,13 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
           val whatYouOweChargesList = {
             val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear)
+            val financialDetails = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear)
+            val chargeItemFromDocumentDetail = configuredChargeItemGetter(financialDetails.financialDetails)
+            val chargeItems = financialDetails.documentDetails.flatMap(chargeItemFromDocumentDetail)
+
             WhatYouOweChargesList(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-              chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()
+              chargesList = chargeItems
             )
           }
           AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList, dateService))
@@ -344,9 +357,15 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
           val whatYouOweChargesList = {
             val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear)
+
+            val financialDetails = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear)
+            val chargeItemFromDocumentDetail = configuredChargeItemGetter(financialDetails.financialDetails)
+            val chargeItems = financialDetails.documentDetails.flatMap(chargeItemFromDocumentDetail)
+
+
             WhatYouOweChargesList(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-              chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()
+              chargesList = chargeItems
             )
           }
           AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList, dateService))
@@ -383,10 +402,13 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
           val whatYouOweChargesList = {
             val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear)
+            val financialDetails = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear)
+            val chargeItemFromDocumentDetail = configuredChargeItemGetter(financialDetails.financialDetails)
+            val chargeItems = financialDetails.documentDetails.flatMap(chargeItemFromDocumentDetail)
+
             WhatYouOweChargesList(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-              chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()
-            )
+              chargesList = chargeItems)
           }
           AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList, dateService))
 

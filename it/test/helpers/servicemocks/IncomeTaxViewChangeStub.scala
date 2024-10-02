@@ -22,7 +22,7 @@ import models.core.{Nino, NinoResponseError, NinoResponseSuccess}
 import models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
 import models.financialDetails.Payment
 import models.incomeSourceDetails.IncomeSourceDetailsResponse
-import models.nextUpdates.ObligationsModel
+import models.obligations.ObligationsModel
 import models.repaymentHistory.RepaymentHistoryModel
 import play.api.http.Status
 import play.api.http.Status.INTERNAL_SERVER_ERROR
@@ -70,7 +70,7 @@ object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
   }
 
   def stubPostFeedback(status: Int): Unit = {
-    WiremockHelper.stubPost(s"http://localhost:9250/contact/beta-feedback/submit?service=ITVC", status, "")
+    WiremockHelper.stubPost("http://localhost:9250/contact/beta-feedback/submit?service=ITVC", status, "")
   }
 
   // Stub CreateBusinessDetails
@@ -92,11 +92,11 @@ object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
     WiremockHelper.stubGet(fulfilledObligationsUrl(nino), Status.OK, Json.toJson(deadlines).toString())
 
   def allObligationsUrl(nino: String, fromDate: LocalDate, toDate: LocalDate): String = {
-    s"/income-tax-view-change/$nino/report-deadlines/from/$fromDate/to/$toDate"
+    s"/income-tax-view-change/$nino/obligations/from/$fromDate/to/$toDate"
   }
 
   def obligationsUrl(nino: String): String = {
-    s"/income-tax-view-change/$nino/report-deadlines"
+    s"/income-tax-view-change/$nino/open-obligations"
   }
 
   def stubGetAllObligations(nino: String, fromDate: LocalDate, toDate: LocalDate, deadlines: ObligationsModel): Unit =
@@ -120,7 +120,7 @@ object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
 
   //NextUpdates Stubs
   //=====================
-  def nextUpdatesUrl(nino: String): String = s"/income-tax-view-change/$nino/report-deadlines"
+  def nextUpdatesUrl(nino: String): String = s"/income-tax-view-change/$nino/open-obligations"
 
   def stubGetNextUpdates(nino: String, deadlines: ObligationsModel): Unit =
     WiremockHelper.stubGet(nextUpdatesUrl(nino), Status.OK, Json.toJson(deadlines).toString())
@@ -237,4 +237,5 @@ object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
   def stubPostClaimToAdjustPoa(status: Int, response: String): Unit = {
     WiremockHelper.stubPost("/income-tax-view-change/submit-claim-to-adjust-poa", status, response)
   }
+
 }

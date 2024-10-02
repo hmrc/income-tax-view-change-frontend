@@ -18,32 +18,28 @@ package controllers.optOut
 
 import controllers.optOut.OptOutChooseTaxYearControllerISpec._
 import forms.optOut.ConfirmOptOutMultiTaxYearChoiceForm
-import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
-import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.Voluntary
-import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel, StatusFulfilled}
-import models.optout.OptOutContextData.statusToString
-import models.optout.{OptOutContextData, OptOutSessionData}
+import helpers.{ComponentSpecBase, OptOutSessionRepositoryHelper}
+import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus._
+import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import play.api.http.Status
 import play.api.http.Status.OK
 import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
-import utils.OptOutJourney
 
 class OptOutChooseTaxYearControllerISpec extends ComponentSpecBase {
 
-  val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
-  val nextTaxYear = currentTaxYear.nextYear
-  val previousTaxYear = currentTaxYear.previousYear
+  private val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
+  private val previousTaxYear = currentTaxYear.previousYear
 
-  val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
+  private val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
+  private val helper = new OptOutSessionRepositoryHelper(repository)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    repository.clearSession(testSessionId).futureValue shouldBe(true)
+    repository.clearSession(testSessionId).futureValue shouldBe true
   }
 
   def testShowHappyCase(isAgent: Boolean): Unit = {
@@ -56,7 +52,8 @@ class OptOutChooseTaxYearControllerISpec extends ComponentSpecBase {
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-          stubOptOutInitialState(previousYearCrystallised = false,
+          helper.stubOptOutInitialState(currentTaxYear,
+            previousYearCrystallised = false,
             previousYearStatus = Voluntary,
             currentYearStatus = Voluntary,
             nextYearStatus = Voluntary)
@@ -88,7 +85,8 @@ class OptOutChooseTaxYearControllerISpec extends ComponentSpecBase {
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-          stubOptOutInitialState(previousYearCrystallised = false,
+          helper.stubOptOutInitialState(currentTaxYear,
+            previousYearCrystallised = false,
             previousYearStatus = Voluntary,
             currentYearStatus = Voluntary,
             nextYearStatus = Voluntary)
@@ -121,7 +119,8 @@ class OptOutChooseTaxYearControllerISpec extends ComponentSpecBase {
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-          stubOptOutInitialState(previousYearCrystallised = false,
+          helper.stubOptOutInitialState(currentTaxYear,
+            previousYearCrystallised = false,
             previousYearStatus = Voluntary,
             currentYearStatus = Voluntary,
             nextYearStatus = Voluntary)
@@ -149,7 +148,8 @@ class OptOutChooseTaxYearControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        stubOptOutInitialState(previousYearCrystallised = false,
+        helper.stubOptOutInitialState(currentTaxYear,
+          previousYearCrystallised = false,
           previousYearStatus = Voluntary,
           currentYearStatus = Voluntary,
           nextYearStatus = Voluntary)
@@ -172,10 +172,10 @@ class OptOutChooseTaxYearControllerISpec extends ComponentSpecBase {
   }
 
   val allObligations: ObligationsModel = ObligationsModel(Seq(
-    NextUpdatesModel(
+    GroupedObligationsModel(
       identification = "ABC123456789",
       obligations = List(
-        NextUpdateModel(
+        SingleObligationModel(
           start = getCurrentTaxYearEnd.minusMonths(3),
           end = getCurrentTaxYearEnd,
           due = getCurrentTaxYearEnd,
@@ -185,10 +185,10 @@ class OptOutChooseTaxYearControllerISpec extends ComponentSpecBase {
           StatusFulfilled
         ))
     ),
-    NextUpdatesModel(
+    GroupedObligationsModel(
       identification = "ABC123456789",
       obligations = List(
-        NextUpdateModel(
+        SingleObligationModel(
           start = getCurrentTaxYearEnd.minusMonths(3),
           end = getCurrentTaxYearEnd,
           due = getCurrentTaxYearEnd,
@@ -210,22 +210,6 @@ class OptOutChooseTaxYearControllerISpec extends ComponentSpecBase {
     testShowHappyCase(isAgent = true)
     testSubmitHappyCase(isAgent = true)
     testSubmitUnhappyCase(isAgent = true)
-  }
-
-  private def stubOptOutInitialState(previousYearCrystallised: Boolean,
-                                     previousYearStatus: ITSAStatus.Value,
-                                     currentYearStatus: ITSAStatus.Value,
-                                     nextYearStatus: ITSAStatus.Value): Unit = {
-    repository.set(
-      UIJourneySessionData(testSessionId,
-        OptOutJourney.Name,
-        optOutSessionData =
-          Some(OptOutSessionData(
-            Some(OptOutContextData(
-              previousYearCrystallised,
-              statusToString(previousYearStatus),
-              statusToString(currentYearStatus),
-              statusToString(nextYearStatus))), None))))
   }
 
 }

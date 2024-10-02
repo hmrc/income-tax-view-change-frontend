@@ -17,16 +17,17 @@
 package connectors
 
 import config.FrontendAppConfig
+import models.chargeHistory.ChargesHistoryResponse.{ChargesHistoryResponse, ChargesHistoryResponseReads}
 import models.chargeHistory.{ChargeHistoryResponseModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import play.api.Logger
 import play.api.http.Status
-import play.api.http.Status.{FORBIDDEN, NOT_FOUND, OK}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ChargeHistoryConnector @Inject()(val http: HttpClient,
+class ChargeHistoryConnector @Inject()(val httpV2: HttpClientV2,
                                        val appConfig: FrontendAppConfig
                                       )(implicit val ec: ExecutionContext) extends RawResponseReads {
 
@@ -40,35 +41,14 @@ class ChargeHistoryConnector @Inject()(val http: HttpClient,
       case Some(chargeReference) => val url = getChargeHistoryUrl(nino, chargeReference)
         Logger("application").debug(s"GET $url")
 
-        http.GET[HttpResponse](url) map { response =>
-          response.status match {
-            case OK =>
-              Logger("application").debug(s"Status: ${response.status}, json: ${response.json}")
-              response.json.validate[ChargesHistoryModel].fold(
-                invalid => {
-                  Logger("application").error(s"Json Validation Error: $invalid")
-                  ChargesHistoryErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing ChargeHistory Data Response")
-                },
-                valid => valid
-              )
-            case status =>
-              if (status == NOT_FOUND || status == FORBIDDEN) {
-                Logger("application").info(s"No charge history found for $chargeReference - Status: ${response.status}, body: ${response.body}")
-                ChargesHistoryModel("", "", "", None)
-              } else {
-                if (status >= 500) {
-                  Logger("application").error(s"Status: ${response.status}, body: ${response.body}")
-                } else {
-                  Logger("application").warn(s"Status: ${response.status}, body: ${response.body}")
-                }
-                ChargesHistoryErrorModel(response.status, response.body)
-              }
+        httpV2
+          .get(url"$url")
+          .execute[ChargesHistoryResponse]
+          .recover {
+            case ex =>
+              Logger("application").error(s"Unexpected failure, ${ex.getMessage}", ex)
+              ChargesHistoryErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
           }
-        } recover {
-          case ex =>
-            Logger("application").error(s"Unexpected failure, ${ex.getMessage}", ex)
-            ChargesHistoryErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
-        }
       case None => Logger("application").info("No charge history found as no chargeReference value supplied")
         Future(ChargesHistoryModel("", "", "", None))
     }

@@ -20,7 +20,8 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
-import forms.incomeSources.cease.IncomeSourceEndDateForm
+import forms.incomeSources.cease.CeaseIncomeSourceEndDateFormProvider
+import implicits.ImplicitDateFormatterImpl
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
 import models.admin.IncomeSources
@@ -51,12 +52,14 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
 
   object TestIncomeSourceEndDateController extends IncomeSourceEndDateController(
     mockAuthService,
-    app.injector.instanceOf[IncomeSourceEndDateForm],
+    app.injector.instanceOf[CeaseIncomeSourceEndDateFormProvider],
     app.injector.instanceOf[IncomeSourceEndDate],
     sessionService = mockSessionService,
     testAuthenticator)(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
-    ec, app.injector.instanceOf[ItvcErrorHandler],
+    ec,
+    dateService,
+    app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler]) {
 
     def heading(incomeSourceType: IncomeSourceType): String = {
@@ -173,9 +176,9 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         document.getElementById("income-source-end-date-form").attr("action") shouldBe postAction.url
 
         if (isChange) {
-          document.getElementById("income-source-end-date.day").`val`() shouldBe "10"
-          document.getElementById("income-source-end-date.month").`val`() shouldBe "10"
-          document.getElementById("income-source-end-date.year").`val`() shouldBe "2022"
+          document.getElementById("value.day").`val`() shouldBe "10"
+          document.getElementById("value.month").`val`() shouldBe "10"
+          document.getElementById("value.year").`val`() shouldBe "2022"
 
         }
       }
@@ -412,13 +415,15 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
       }
     }
   }
+
   "IncomeSourceEndDateController submit/submitChange/submitAgent/submitChangeAgent" should {
+
     "return 303 SEE_OTHER" when {
       def testSubmitResponse(id: Option[String], incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean): Unit = {
         implicit class FormEncoding(request: FakeRequest[AnyContentAsEmpty.type]) {
           def withDateInFormEncoding: FakeRequest[AnyContentAsFormUrlEncoded] = request.withMethod("POST")
-            .withFormUrlEncodedBody("income-source-end-date.day" -> "27", "income-source-end-date.month" -> "8",
-              "income-source-end-date.year" -> "2022")
+            .withFormUrlEncodedBody("value.day" -> "27", "value.month" -> "8",
+              "value.year" -> "2022")
         }
 
         setupMockAuthorisationSuccess(isAgent)
@@ -426,8 +431,12 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         enable(IncomeSources)
         mockBothPropertyBothBusiness()
         setupMockCreateSession(true)
-        setupMockSetSessionKeyMongo(Right(true))
-        if (incomeSourceType == SelfEmployment) setupMockSetSessionKeyMongo(Right(true))
+
+        if (incomeSourceType == SelfEmployment) {
+          setupMockSetMultipleMongoData(Right(true))
+        } else {
+          setupMockSetSessionKeyMongo(Right(true))
+        }
         if (isChange) {
           setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
         } else {
@@ -451,8 +460,11 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(redirectLocationResult)
 
-        if (incomeSourceType == SelfEmployment) verifyMockSetMongoKeyResponse(2)
-        else verifyMockSetMongoKeyResponse(1)
+        if (incomeSourceType == SelfEmployment) {
+          verifyMockSetMultipleMongoDataResponse(1)
+        } else {
+          verifyMockSetMongoKeyResponse(1)
+        }
       }
 
       "Self Employment - form is completed successfully" when {
@@ -466,6 +478,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
             testSubmitResponse(id = id, incomeSourceType, isAgent = true, isChange = false)
           }
         }
+
         "called .submitChange" when {
           "user is an Individual" in {
             testSubmitResponse(id = id, incomeSourceType, isAgent = false, isChange = true)
@@ -476,6 +489,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         }
 
       }
+
       "UK Property - form is completed successfully" when {
         val incomeSourceType = UkProperty
         val id = None
@@ -495,7 +509,9 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
             testSubmitResponse(id = id, incomeSourceType, isAgent = true, isChange = true)
           }
         }
+
       }
+
       "Foreign Property - form is completed successfully" when {
         val incomeSourceType = ForeignProperty
         val id = None
@@ -517,12 +533,13 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         }
       }
     }
+
     "return 400 BAD_REQUEST" when {
       def testFormError(isAgent: Boolean, isChange: Boolean): Unit = {
         implicit class FormEncoding(request: FakeRequest[AnyContentAsEmpty.type]) {
           def withIncorrectDateInFormEncoding: FakeRequest[AnyContentAsFormUrlEncoded] = request.withMethod("POST")
-            .withFormUrlEncodedBody("income-source-end-date.day" -> "", "income-source-end-date.month" -> "8",
-              "income-source-end-date.year" -> "2022")
+            .withFormUrlEncodedBody("value.day" -> "", "value.month" -> "8",
+              "value.year" -> "2022")
         }
         val id = Some(mkIncomeSourceId(testSelfEmploymentId).toHash.hash)
         val incomeSourceType = SelfEmployment
@@ -546,7 +563,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
 
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title shouldBe TestIncomeSourceEndDateController.getValidationErrorTabTitle(incomeSourceType)
-
+        document.getElementsByClass("govuk-error-message").text() shouldBe "Error:: The date must include a day"
       }
 
       "the form is not completed successfully" when {
@@ -568,12 +585,13 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         }
       }
     }
+
     "return 500 INTERNAL SERVER ERROR to internal server page" when {
       def testInternalServerErrors(isAgent: Boolean, isChange: Boolean, id: Option[String] = None, incomeSourceType: IncomeSourceType = SelfEmployment): Unit = {
         implicit class FormEncoding(request: FakeRequest[AnyContentAsEmpty.type]) {
           def withDateInFormEncoding: FakeRequest[AnyContentAsFormUrlEncoded] = request.withMethod("POST")
-            .withFormUrlEncodedBody("income-source-end-date.day" -> "27", "income-source-end-date.month" -> "8",
-              "income-source-end-date.year" -> "2022")
+            .withFormUrlEncodedBody("value.day" -> "27", "value.month" -> "8",
+              "value.year" -> "2022")
         }
 
         setupMockAuthorisationSuccess(isAgent)

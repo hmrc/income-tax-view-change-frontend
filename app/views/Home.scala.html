@@ -22,7 +22,7 @@
 @import exceptions.MissingFieldException
 @import models.homePage.HomePageViewModel
 @import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
-@import models.nextUpdates.NextUpdatesTileViewModel
+@import models.obligations.NextUpdatesTileViewModel
 @import models.homePage.PaymentCreditAndRefundHistoryTileViewModel
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
@@ -147,13 +147,20 @@ viewModel: HomePageViewModel,
                 @p(classes = "govuk-body margin-bottom-sixty", id = Some("changeClientLink")) {
                     @link(controllers.agent.routes.RemoveClientDetailsSessionsController.show.url, "govuk-link--no-visited-state", "home.agent.changeClientLink")
                 }
-
-                @if(viewModel.nextPaymentsTileViewModel.overDuePaymentsCount > 0) {
-                    <div id="overdue-warning" class="grid-row">
+                @if(viewModel.nextPaymentsTileViewModel.reviewAndReconcileEnabled && viewModel.nextPaymentsTileViewModel.paymentsAccruingInterestCount > 0) {
+                    <div id="accrues-interest-warning" class="grid-row">
                         <div class="column-full">
-                        @govukWarningText(WarningText(content = Text(messages(s"home.agent.overdue.message.dunningLock.${viewModel.dunningLockExists}"))))
+                        @govukWarningText(WarningText(content = Text(messages("home.interest-accruing"))))
                         </div>
                     </div>
+                }else {
+                    @if(viewModel.nextPaymentsTileViewModel.overDuePaymentsCount > 0) {
+                        <div id="overdue-warning" class="grid-row">
+                            <div class="column-full">
+                            @govukWarningText(WarningText(content = Text(messages(s"home.agent.overdue.message.dunningLock.${viewModel.dunningLockExists}"))))
+                            </div>
+                        </div>
+                    }
                 }
             </div>
         </div>
@@ -173,16 +180,21 @@ viewModel: HomePageViewModel,
                 }
 
            <div class="warning-wrapper govuk-!-padding-0">
-                @if(viewModel.nextPaymentsTileViewModel.overDuePaymentsCount > 0) {
-                    <div id="overdue-warning" class="flex-container govuk-!-padding-0">
-                        <div class="column-full">
-                            @govukWarningText(WarningText(
-                                iconFallbackText = Some("Warning"),
-                                content = Text(messages(s"home.overdue.message.dunningLock.${viewModel.dunningLockExists}"))
-                            ))
-                        </div>
-                    </div>
-                }
+           @if(viewModel.nextPaymentsTileViewModel.reviewAndReconcileEnabled && viewModel.nextPaymentsTileViewModel.paymentsAccruingInterestCount > 0) {
+               <div id="accrues-interest-warning" class="grid-row">
+                   <div class="column-full">
+                   @govukWarningText(WarningText(content = Text(messages("home.interest-accruing"))))
+                   </div>
+               </div>
+           }else{
+               @if(viewModel.nextPaymentsTileViewModel.overDuePaymentsCount > 0) {
+                   <div id="overdue-warning" class="grid-row">
+                       <div class="column-full">
+                       @govukWarningText(WarningText(content = Text(messages(s"home.overdue.message.dunningLock.${viewModel.dunningLockExists}"))))
+                       </div>
+                   </div>
+               }
+           }
            </div>
         </div>
     </div>
@@ -192,11 +204,7 @@ viewModel: HomePageViewModel,
 
 @paymentsTile = {
 	@home_tile("payments-tile", messages("home.payments.heading")) {
-		@{viewModel.nextPaymentsTileViewModel.overDuePaymentsCount match {
-			case 0 => p()(paymentsTileContentPaymentsDue0)
-			case 1 => p()(paymentsTileContentPaymentsDue1)
-			case _ => p()(paymentsTileContentPaymentsDueMany)
-		}}
+		@getNextPaymentsTag
 
             @p(classes = "govuk-!-margin-bottom-4"){
                 @link(
@@ -207,6 +215,16 @@ viewModel: HomePageViewModel,
 	}
 }
 
+@getNextPaymentsTag = {
+@if(viewModel.nextPaymentsTileViewModel.reviewAndReconcileEnabled && viewModel.nextPaymentsTileViewModel.paymentsAccruingInterestCount > 0) {
+    <span class="govuk-tag govuk-tag--red" id="accrues-interest-tag"> @messages("home.payments.daily-interest-charges") </span>
+}else @{viewModel.nextPaymentsTileViewModel.overDuePaymentsCount match {
+        case 0 => p()(paymentsTileContentPaymentsDue0)
+        case 1 => p()(paymentsTileContentPaymentsDue1)
+        case _ => p()(paymentsTileContentPaymentsDueMany)
+    }}
+}
+
 @paymentsTileContentPaymentsDue0 = { @getOrElseNextPaymentDueDate }
 
 @paymentsTileContentPaymentsDue1 = {
@@ -215,7 +233,7 @@ viewModel: HomePageViewModel,
 }
 
 @paymentsTileContentPaymentsDueMany = {
-    <span id="overdue-payments-count" class="govuk-tag govuk-tag--red"> @{messages("home.updates.overdue.payments", viewModel.nextPaymentsTileViewModel.overDuePaymentsCount)}</span>
+    <span id="overdue-payments-count" class="govuk-tag govuk-tag--red"> @{messages("home.updates.overdue.charges", viewModel.nextPaymentsTileViewModel.overDuePaymentsCount)}</span>
 }
 
 @getOrElseNextPaymentDueDate = @{

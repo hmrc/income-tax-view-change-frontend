@@ -18,6 +18,7 @@ package services.claimToAdjustPoa
 
 import auth.MtdItUser
 import connectors.{CalculationListConnector, ChargeHistoryConnector}
+import enums.{Poa1Charge, Poa2Charge}
 import models.calculationList.{CalculationListErrorModel, CalculationListModel}
 import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import models.claimToAdjustPoa.PaymentOnAccountViewModel
@@ -27,6 +28,7 @@ import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
 import play.api.Logger
 import services.DateServiceInterface
+import services.claimToAdjustPoa.ClaimToAdjustHelper.{POA1, POA2, isPoAOne, isPoATwo, poaDocumentDescriptions}
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
 import java.time.{LocalDate, Month}
@@ -35,18 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait ClaimToAdjustHelper {
 
-  private val POA1: String = "ITSA- POA 1"
-  private val POA2: String = "ITSA - POA 2"
-
   private val LAST_DAY_OF_JANUARY: Int = 31
-
-  protected val poaDocumentDescriptions: List[String] = List(POA1, POA2)
-
-  private val isPoAOne: DocumentDetail => Boolean = documentDetail =>
-    documentDetail.documentDescription.contains(POA1)
-
-  private val isPoATwo: DocumentDetail => Boolean = documentDetail =>
-    documentDetail.documentDescription.contains(POA2)
 
   private val getTaxReturnDeadline: LocalDate => LocalDate = date =>
     LocalDate.of(date.getYear, Month.JANUARY, LAST_DAY_OF_JANUARY)
@@ -246,4 +237,20 @@ trait ClaimToAdjustHelper {
     }
   }
 
+}
+
+object ClaimToAdjustHelper {
+
+  private final val POA1: String = Poa1Charge.key
+  private final val POA2: String = Poa2Charge.key
+
+  protected val poaDocumentDescriptions: List[String] = List(POA1, POA2)
+
+  val isPoAOne: DocumentDetail => Boolean = _.documentDescription.contains(POA1)
+
+  val isPoATwo: DocumentDetail => Boolean = _.documentDescription.contains(POA2)
+
+  val isPoA: DocumentDetail => Boolean = documentDetail => isPoAOne(documentDetail) || isPoATwo(documentDetail)
+
+  val isPoADocumentDescription: String => Boolean = poaDocumentDescriptions.contains(_)
 }

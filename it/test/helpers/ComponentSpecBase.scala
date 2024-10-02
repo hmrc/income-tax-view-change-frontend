@@ -43,8 +43,7 @@ import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import play.api.{Application, Environment, Mode}
-import repositories.UIJourneySessionDataRepository
-import services.optout.OptOutService
+import repositories.{OptOutSessionDataRepository, UIJourneySessionDataRepository}
 import services.{DateService, DateServiceInterface}
 import testConstants.BaseIntegrationTestConstants._
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
@@ -115,7 +114,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
   implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
   implicit val testAppConfig: FrontendAppConfig = appConfig
-  implicit val optOutService: OptOutService = app.injector.instanceOf[OptOutService]
+  implicit val optOutSessionDataRepository: OptOutSessionDataRepository = app.injector.instanceOf[OptOutSessionDataRepository]
   implicit val uiRepository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
   implicit val dateService: DateService = new DateService()(frontendAppConfig = testAppConfig) {
     override def getCurrentDate: LocalDate = LocalDate.of(2023, 4, 5)
@@ -135,6 +134,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     testMtditid, testNino, None, IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty), None,
     Some("1234567890"), Some("12345-credId"), Some(Individual), None
   )(FakeRequest())
+
   def config: Map[String, Object] = Map(
     "play.filters.disabled" -> Seq("uk.gov.hmrc.play.bootstrap.frontend.filters.SessionIdFilter"),
     "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
@@ -302,7 +302,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getChargeSummary(taxYear: String, id: String): WSResponse = get(s"/tax-years/$taxYear/charge?id=$id")
 
-    def getChargeSummaryLatePayment(taxYear: String, id: String): WSResponse = get(s"/tax-years/$taxYear/charge?id=$id&latePaymentCharge=true")
+    def getChargeSummaryLatePayment(taxYear: String, id: String): WSResponse = get(s"/tax-years/$taxYear/charge?id=$id&isInterestCharge=true")
 
     def getPay(amountInPence: BigDecimal): WSResponse = get(s"/payment?amountInPence=$amountInPence")
 
@@ -670,12 +670,32 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       get("/optout/choose-taxyear", additionalCookies)
     }
 
+    def renderChooseOptInTaxYearPageInMultiYearJourney(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get("/opt-in/choose-tax-year", additionalCookies)
+    }
+
+    def renderCheckYourAnswersOptInJourney(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get("/opt-in/check-your-answers", additionalCookies)
+    }
+
     def submitChoiceOnOptOutChooseTaxYear(body: Map[String, Seq[String]] = Map.empty) = {
       post("/optout/choose-taxyear")(body)
     }
 
+    def submitChoiceOnOptInChooseTaxYear(body: Map[String, Seq[String]] = Map.empty) = {
+      post("/opt-in/choose-tax-year")(body)
+    }
+
+    def submitCheckYourAnswersOptInJourney(body: Map[String, Seq[String]] = Map.empty) = {
+      post("/opt-in/check-your-answers")(body)
+    }
+
     def renderOptOutErrorPage(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       get("/optout/error", additionalCookies)
+    }
+
+    def renderOptInErrorPage(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get("/opt-in/error", additionalCookies)
     }
 
     def postConfirmOptOut(): WSResponse = post(s"/optout/review-confirm-taxyear")(Map.empty)
@@ -695,7 +715,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getChargeSummary(taxYear: String, id: String): WSResponse = get(s"/tax-years/$taxYear/charge?id=$id")
 
-    def getChargeSummaryLatePayment(taxYear: String, id: String): WSResponse = get(s"/tax-years/$taxYear/charge?id=$id&latePaymentCharge=true")
+    def getChargeSummaryLatePayment(taxYear: String, id: String): WSResponse = get(s"/tax-years/$taxYear/charge?id=$id&isInterestCharge=true")
 
     def getPay(amountInPence: BigDecimal): WSResponse = get(s"/payment?amountInPence=$amountInPence")
 
@@ -1015,6 +1035,18 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def postCheckYourAnswersSoleTrader(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       post(s"/manage-your-businesses/manage/business-check-your-answers", additionalCookies)(Map.empty)
+    }
+
+    def getBeforeYouStart(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get("/opt-in/start", additionalCookies)
+    }
+
+    def getConfirmTaxYear(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get("/opt-in/confirm-tax-year", additionalCookies)
+    }
+
+    def submitConfirmTaxYear(body: Map[String, Seq[String]] = Map.empty) = {
+      post("/opt-in/confirm-tax-year")(body)
     }
   }
 

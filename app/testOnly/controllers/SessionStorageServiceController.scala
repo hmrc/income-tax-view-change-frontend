@@ -19,11 +19,13 @@ package testOnly.controllers
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
+import models.sessionData.SessionDataModel
+import models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostSuccess}
+import testOnly.models.SessionDataGetResponse.SessionDataGetSuccess
 import play.api.Logger
 import play.api.mvc._
-import testOnly.models.SessionDataModel
-import testOnly.services.SessionDataService
-import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
+import services.SessionDataService
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.AuthenticatorPredicate
 
 import javax.inject.Inject
@@ -49,51 +51,60 @@ class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContex
   }
 
   private def handleShow(isAgent: Boolean)(implicit hc: HeaderCarrier, ec: ExecutionContext, user: MtdItUser[_]): Future[Result] = {
-    hc.sessionId match {
-      case Some(sessionId: SessionId) => post(isAgent = isAgent, sessionId) flatMap {
-        case Left(ex) =>
-          Logger("application").error(s"${if (isAgent) "Agent" else "Individual"} - POST user data to income-tax-session-data unsuccessful: - ${ex.getMessage} - ${ex.getCause} - ")
-          Future.successful(handleError(isAgent))
-        case Right(id: String) =>
-          handlePostSuccess(id, isAgent)
-      }
+    user.saUtr match {
+      case Some(value) =>
+        val sessionDataModel: SessionDataModel = SessionDataModel(mtditid = user.mtditid, nino = user.nino, utr = value)
+        sessionDataService.postSessionData(sessionDataModel) flatMap {
+          case Left(errorModel: SessionDataPostFailure) =>
+            logErrorWithMessage(isAgent, s"POST user data to income-tax-session-data unsuccessful:" +
+              s" - status: ${errorModel.status} - message: ${errorModel.errorMessage} - ")
+            Future.successful(handleError(isAgent))
+          case Right(successModel: SessionDataPostSuccess) =>
+            Logger("application").debug(s"${if (isAgent) "Agent" else "Individual"} " +
+              s"- POST user data to income-tax-session-data successful! status: ${successModel.status}")
+            handlePostSuccess(isAgent, successModel.status)
+        }
       case None =>
-        Logger("application").error(s"${if (isAgent) "Agent" else "Individual"}" +
-          s" - HeaderCarrier contained no sessionId!")
+        logErrorWithMessage(isAgent, "saUtr was None in the request")
         Future.successful(handleError(isAgent))
     }
   }.recover {
     case ex: Throwable =>
-      Logger("application").error(s"${if (isAgent) "Agent" else "Individual"} - Error on income-tax-session-data service test only page, status: - ${ex.getMessage} - ${ex.getCause} - ")
+      logErrorWithMessage(isAgent, s"Error on income-tax-session-data service test only page, status: - ${ex.getMessage} - ${ex.getCause} - ")
       handleError(isAgent)
   }
 
-  private def handlePostSuccess(id: String, isAgent: Boolean)(implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {
-    sessionDataService.getSessionData(id) map {
-      case Left(ex) =>
+  private def handlePostSuccess(isAgent: Boolean, status: Int)(implicit hc: HeaderCarrier): Future[Result] = {
+    sessionDataService.getSessionData() map {
+      case Left(ex: Throwable) =>
         Logger("application").error(s"${if (isAgent) "Agent" else "Individual"}" +
-          s" - GET user data request to income-tax-session-data unsuccessful: - ${ex.getMessage} - ${ex.getCause} - ")
+          s" - GET user data request to income-tax-session-data unsuccessful: - message: ${ex.getMessage} - cause: ${ex.getCause} - ")
         InternalServerError("Internal server error. There was an unexpected error fetching this data from income-tax-session-data service")
-      case Right(model: SessionDataModel) =>
+      case Right(model: SessionDataGetSuccess) =>
         Ok(
-          s"User model:          ${model.toString}\n" +
-            s"session id:          ${model.sessionID}\n" +
-            s"mtditid:             ${model.mtditid}\n" +
-            s"nino:                ${model.nino}\n" +
-            s"saUtr:               ${model.saUtr}\n" +
-            s"client first name:   ${model.clientFirstName}\n" +
-            s"client last name:    ${model.clientLastName}\n" +
-            s"user type:           ${model.userType}\n")
+          {
+            if (status.equals(CONFLICT))
+              "A complete duplicate of this record was found in the database. We have replaced the old record with the new one."
+            else ""
+          } +
+            s"Session Data Service POST and GET requests were successful with status: $status !\n" +
+            s"User model:        ${model.toString}\n" +
+            s"session id:        ${model.sessionId}\n" +
+            s"internal id:       Not Implemented in FE Auth Predicate\n" +
+            s"mtditid:           ${model.mtditid}\n" +
+            s"nino:              ${model.nino}\n" +
+            s"utr:               ${model.utr}\n"
+        )
     }
   }
-
-  def post(isAgent: Boolean, sessionId: SessionId)(implicit hc: HeaderCarrier, ec: ExecutionContext, user: MtdItUser[_])
-  : Future[Either[Throwable, String]] =
-    sessionDataService.postSessionData(isAgent, sessionId)
 
   private def handleError(isAgent: Boolean)(implicit request: Request[_]): Result = {
     val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
     errorHandler.showInternalServerError()
+  }
+
+  private def logErrorWithMessage(isAgent: Boolean, message: String): Unit = {
+    Logger("application").error(s"${if (isAgent) "Agent" else "Individual"} $message")
   }
 
 }

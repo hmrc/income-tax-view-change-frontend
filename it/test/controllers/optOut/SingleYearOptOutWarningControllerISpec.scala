@@ -17,42 +17,39 @@
 package controllers.optOut
 
 import forms.optOut.ConfirmOptOutSingleTaxYearForm
-import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
-import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.{NoStatus, Voluntary}
-import models.optout.OptOutContextData.statusToString
-import models.optout.{OptOutContextData, OptOutSessionData}
+import helpers.{ComponentSpecBase, OptOutSessionRepositoryHelper}
+import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus._
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
-import utils.OptOutJourney
 
 class SingleYearOptOutWarningControllerISpec extends ComponentSpecBase {
-  val isAgent: Boolean = false
-  val singleYearOptOutWarningPageGETUrl = controllers.optOut.routes.SingleYearOptOutWarningController.show(isAgent).url
-  val singleYearOptOutWarningPagePOSTUrl = controllers.optOut.routes.SingleYearOptOutWarningController.submit(isAgent).url
-  val validYesForm = ConfirmOptOutSingleTaxYearForm(Some(true), "")
-  val validNoForm = ConfirmOptOutSingleTaxYearForm(Some(false), "")
-  val inValidForm = ConfirmOptOutSingleTaxYearForm(None, "")
-  val confirmOptOutPageUrl = controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url
-  val nextUpdatesPageUrl = controllers.routes.NextUpdatesController.show().url
+  private val isAgent: Boolean = false
+  private val singleYearOptOutWarningPageGETUrl = controllers.optOut.routes.SingleYearOptOutWarningController.show(isAgent).url
+  private val singleYearOptOutWarningPagePOSTUrl = controllers.optOut.routes.SingleYearOptOutWarningController.submit(isAgent).url
+  private val validYesForm = ConfirmOptOutSingleTaxYearForm(Some(true), "")
+  private val validNoForm = ConfirmOptOutSingleTaxYearForm(Some(false), "")
+  private val inValidForm = ConfirmOptOutSingleTaxYearForm(None, "")
+  private val confirmOptOutPageUrl = controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url
+  private val nextUpdatesPageUrl = controllers.routes.NextUpdatesController.show().url
 
-  val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
-  val previousYear = currentTaxYear.addYears(-1)
+  private val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
+  private val previousYear = currentTaxYear.addYears(-1)
 
-  val expectedInsetText = s"From 6 April ${previousYear.endYear}, you’ll be required to send quarterly updates again through software."
-  val expectedDetailText = s"You can only opt out and report annually for the ${previousYear.startYear} to ${previousYear.endYear} tax year."
-  val expectedFormTitle = s"Do you still want to opt out for the ${previousYear.startYear} to ${previousYear.endYear} tax year?"
-  val expectedErrorText = s"Select yes to opt out for the ${previousYear.startYear.toString} to ${previousYear.endYear.toString} tax year"
+  private val expectedInsetText = s"From 6 April ${previousYear.endYear}, you’ll be required to send quarterly updates again through software."
+  private val expectedDetailText = s"You can only opt out and report annually for the ${previousYear.startYear} to ${previousYear.endYear} tax year."
+  private val expectedFormTitle = s"Do you still want to opt out for the ${previousYear.startYear} to ${previousYear.endYear} tax year?"
+  private val expectedErrorText = s"Select yes to opt out for the ${previousYear.startYear.toString} to ${previousYear.endYear.toString} tax year"
 
-  val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
+  private val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
+  private val helper = new OptOutSessionRepositoryHelper(repository)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    repository.clearSession(testSessionId).futureValue shouldBe(true)
+    repository.clearSession(testSessionId).futureValue shouldBe true
   }
 
   s"calling GET $singleYearOptOutWarningPageGETUrl" should {
@@ -61,7 +58,8 @@ class SingleYearOptOutWarningControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        stubOptOutInitialState(previousYearCrystallised = false,
+        helper.stubOptOutInitialState(currentTaxYear,
+          previousYearCrystallised = false,
           previousYearStatus = Voluntary,
           currentYearStatus = NoStatus,
           nextYearStatus = NoStatus)
@@ -87,7 +85,8 @@ class SingleYearOptOutWarningControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        stubOptOutInitialState(previousYearCrystallised = false,
+        helper.stubOptOutInitialState(currentTaxYear,
+          previousYearCrystallised = false,
           previousYearStatus = Voluntary,
           currentYearStatus = NoStatus,
           nextYearStatus = NoStatus)
@@ -112,7 +111,8 @@ class SingleYearOptOutWarningControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        stubOptOutInitialState(previousYearCrystallised = false,
+        helper.stubOptOutInitialState(currentTaxYear,
+          previousYearCrystallised = false,
           previousYearStatus = Voluntary,
           currentYearStatus = NoStatus,
           nextYearStatus = NoStatus)
@@ -134,7 +134,8 @@ class SingleYearOptOutWarningControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        stubOptOutInitialState(previousYearCrystallised = false,
+        helper.stubOptOutInitialState(currentTaxYear,
+          previousYearCrystallised = false,
           previousYearStatus = Voluntary,
           currentYearStatus = NoStatus,
           nextYearStatus = NoStatus)
@@ -149,22 +150,6 @@ class SingleYearOptOutWarningControllerISpec extends ComponentSpecBase {
         )
       }
     }
-  }
-
-  private def stubOptOutInitialState(previousYearCrystallised: Boolean,
-                                     previousYearStatus: ITSAStatus.Value,
-                                     currentYearStatus: ITSAStatus.Value,
-                                     nextYearStatus: ITSAStatus.Value): Unit = {
-    repository.set(
-      UIJourneySessionData(testSessionId,
-        OptOutJourney.Name,
-        optOutSessionData =
-          Some(OptOutSessionData(
-            Some(OptOutContextData(
-              previousYearCrystallised,
-              statusToString(previousYearStatus),
-              statusToString(currentYearStatus),
-              statusToString(nextYearStatus))), None))))
   }
 
 }

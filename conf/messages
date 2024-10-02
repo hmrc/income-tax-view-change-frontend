@@ -113,7 +113,8 @@ home.agent.visualHidden.clientsName                             = Client’s nam
 home.agent.your-returns.updatesLink                             = Update and submit your client’s {0} to {1} return
 home.unique.taxpayer.reference                                  = Unique Taxpayer Reference (UTR): {0}
 home.utr                                                        = UTR: {0}
-home.payments.heading                                           = Next payments due
+home.payments.heading                                           = Next charges due
+home.payments.daily-interest-charges                            = DAILY INTEREST CHARGES
 home.payments.no-payments-due                                   = No payments due
 home.payments.view                                              = Check what you owe
 home.updates.heading                                            = Next updates due
@@ -126,8 +127,8 @@ home.paymentHistoryRefund.heading                               = Payment histor
 home.paymentHistoryRefund.view                                  = Payment and refund history
 home.paymentCreditHistory.view                                  = Payment and credit history
 home.paymentCreditRefundHistory.view                            = Payment, credit and refund history
-home.overdue.date.payment.count                                 = {0} OVERDUE PAYMENTS
 home.overdue.date.update.count                                  = {0} OVERDUE UPDATES
+home.overdue.date.payment.count                                 = {0} OVERDUE CHARGES
 home.overdue.date                                               = OVERDUE
 home.tax-years.heading                                          = Returns
 home.tax-years.view                                             = View all tax years
@@ -146,11 +147,12 @@ home.incomeSources.ceaseIncomeSource.view                       = Cease an incom
 home.incomeSources.newJourney.view                              = Add, manage or cease a business or income source
 
 home.agent.overdue.message.dunningLock.true                     = Your client has overdue payments and one or more of their tax decisions are being reviewed. They may be charged interest on these until they are paid in full.
-home.agent.overdue.message.dunningLock.false                    = Your client has overdue payments. They may be charged interest on these until they are paid in full.
+home.agent.overdue.message.dunningLock.false                    = You have overdue charges. You may be charged interest on these until they are paid in full.
 home.overdue.message.dunningLock.true                           = You have overdue payments and one or more of your tax decisions are being reviewed. You may be charged interest on these until they are paid in full.
-home.overdue.message.dunningLock.false                          = You have overdue payments. You may be charged interest on these until they are paid in full.
+home.overdue.message.dunningLock.false                          = You have overdue charges. You may be charged interest on these until they are paid in full.
+home.interest-accruing                                          = You have charges with added daily interest. These charges will be accruing interest until they are paid in full.
 
-home.updates.overdue.payments                                   = {0} OVERDUE PAYMENTS
+home.updates.overdue.charges                                    = {0} OVERDUE CHARGES
 home.updates.overdue.updates                                    = {0} OVERDUE UPDATES
 
 ## List UTRs ##
@@ -164,6 +166,7 @@ taxYears.taxYears                                              = 6 April {0} to 
 taxYears.ongoing                                               = ONGOING
 taxYears.overdue                                               = OVERDUE
 taxYears.complete                                              = COMPLETE
+taxYears.accruesInterest                                       = ACCRUES INTEREST
 taxYears.noEstimates                                           = You don’t have an estimate right now. We’ll show your next Income Tax estimate when you submit a report using software.
 taxYears.table.taxYear.heading                                 = Tax year
 taxYears.table.options.heading                                 = Options
@@ -201,14 +204,16 @@ tax-year-summary.payments.amount                                   = Amount
 tax-year-summary.payments.paymentOnAccount1.text                   = First payment on account
 tax-year-summary.payments.paymentOnAccount2.text                   = Second payment on account
 tax-year-summary.payments.balancingCharge.text                     = Balancing payment
-tax-year-summary.payments.lpi.paymentOnAccount1.text               = Late payment interest for payment on account 1 of 2
-tax-year-summary.payments.lpi.paymentOnAccount2.text               = Late payment interest for payment on account 2 of 2
-tax-year-summary.payments.lpi.balancingCharge.text                 = Late payment interest for Balancing payment
+tax-year-summary.payments.lpi.paymentOnAccount1.text               = Late payment interest on first payment on account
+tax-year-summary.payments.lpi.paymentOnAccount2.text               = Late payment interest on second payment on account
+tax-year-summary.payments.lpi.balancingCharge.text                 = Late payment interest on balancing payment
 tax-year-summary.payments.cancelledPayeSelfAssessment.text         = Cancelled PAYE Self Assessment (through your PAYE tax code)
 tax-year-summary.payments.hmrcAdjustment.text                      = HMRC adjustment
 tax-year-summary.payments.overdue                                  = Overdue
 tax-year-summary.payments.no-payments                              = No payments currently due.
 tax-year-summary.payments.paymentUnderReview                       = Payment under review
+tax-year-summary.payments.reviewAndReconcilePoa1.text              = First payment on account: extra amount from your tax return
+tax-year-summary.payments.reviewAndReconcilePoa2.text              = Second payment on account: extra amount from your tax return
 tax-year-summary.section                                           = Section
 tax-year-summary.amount                                            = Amount
 tax-year-summary.payments.class2Nic.text                           = Class 2 National Insurance
@@ -475,6 +480,7 @@ taxCal_breakdown.table.SRT                                          = Starter ra
 taxCal_breakdown.table.BRT                                          = Basic rate ({0} at {1}%)
 taxCal_breakdown.table.IRT                                          = Intermediate rate ({0} at {1}%)
 taxCal_breakdown.table.HRT                                          = Higher rate ({0} at {1}%)
+taxCal_breakdown.table.AVRT                                         = Advanced rate ({0} at {1}%)
 taxCal_breakdown.table.ART                                          = Additional rate ({0} at {1}%)
 taxCal_breakdown.table.ART_scottish                                 = Top rate ({0} at {1}%)
 taxCal_breakdown.table.ZRTBR                                        = Basic rate band at nil rate ({0} at {1}%)
@@ -799,7 +805,7 @@ nextUpdates.optOutMultiYear-2                                        = opt out o
 ## Payment Due Page ##
 paymentDue.heading                                                 = Payments due
 paymentDue.description                                             = If you have made a payment in the last 7 days, the amounts shown here may not be accurate.
-paymentDue.tax-year                                                = Tax year {0} to {1}
+paymentDue.tax-year                                                = {0} to {1} tax year
 paymentDue.due                                                     = Due
 paymentDue.viewBill                                                = View bill
 paymentDue.payNow                                                  = Make a payment
@@ -839,10 +845,14 @@ whatYouOwe.tableHead.tax-year                                      = Tax year
 whatYouOwe.tableHead.amount-due                                    = Amount due
 whatYouOwe.paymentOnAccount1.text							       = First payment on account
 whatYouOwe.paymentOnAccount2.text							       = Second payment on account
+whatYouOwe.reviewAndReconcilePoa1.text                              = First payment on account: extra amount from your tax return
+whatYouOwe.reviewAndReconcilePoa2.text                              = Second payment on account: extra amount from your tax return
+whatYouOwe.interest.reviewAndReconcilePoa1.text                    = Interest for first payment on account: extra amount
+whatYouOwe.interest.reviewAndReconcilePoa2.text                     = Interest for second payment on account: extra amount
 whatYouOwe.hmrcAdjustment.text                                     = HMRC adjustment
-whatYouOwe.lpi.paymentOnAccount1.text                              = Late payment interest for payment on account 1 of 2
-whatYouOwe.lpi.paymentOnAccount2.text                              = Late payment interest for payment on account 2 of 2
-whatYouOwe.lpi.balancingCharge.text                                = Late payment interest for Balancing payment
+whatYouOwe.lpi.paymentOnAccount1.text                              = Late payment interest on first payment on account
+whatYouOwe.lpi.paymentOnAccount2.text                              = Late payment interest on second payment on account
+whatYouOwe.lpi.balancingCharge.text                                = Late payment interest on balancing payment
 whatYouOwe.balancingCharge.text  							       = Balancing payment
 whatYouOwe.balancingCharge.interest.line1.text                     = Interest on Balancing payment
 whatYouOwe.balancingCharge.interest.line2.text                     = {0} to {1}
@@ -866,6 +876,8 @@ whatYouOwe.cancelled-paye-sa.line1.agent                           = Your client
 whatYouOwe.payments-due                                            = Payments Due
 whatYouOwe.over-due                                                = OVERDUE
 whatYouOwe.over-due.interest.line1                                 = Interest for late payment
+whatYouOwe.over-due.reviewAndReconcileOne.line1                    = Interest for first payment on account: extra amount
+whatYouOwe.over-due.reviewAndReconcileTwo.line1                    = Interest for second payment on account: extra amount
 whatYouOwe.over-due.interest.line2                                 = {0} to {1} at {2}%
 whatYouOwe.over-due.interest-rate                                  = Any overdue payment interest is at the {0}. The rate may have changed since the interest was first charged.
 whatYouOwe.over-due.interest-rate-1                                = Any overdue payment interest is at the {0}
@@ -904,20 +916,25 @@ whatYouOwe.adjust-poa.paid-2                                       = adjust your
 whatYouOwe.adjust-poa.paid-3                                       = at any point before submitting your tax return for {0} to {1}, and no later than
 whatYouOwe.adjust-poa.paid-4                                       = 31 January {0}.
 whatYouOwe.adjust-poa.paid-5                                       =
+whatYouOwe.interestChargesWarning                                  = Interest charges will keep increasing every day until the charges they relate to are paid in full.
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text							   = First payment on account
 chargeSummary.paymentOnAccount2.text							   = Second payment on account
+chargeSummary.interest.reviewAndReconcilePoa1.text                 = Interest for first payment on account: extra amount
+chargeSummary.interest.reviewAndReconcilePoa2.text                 = Interest for second payment on account: extra amount
+chargeSummary.reviewAndReconcilePoa1.text				           = First payment on account: extra amount from your tax return
+chargeSummary.reviewAndReconcilePoa2.text				           = Second payment on account: extra amount from your tax return
 chargeSummary.balancingCharge.text  							   = Balancing payment
 chargeSummary.class2Nic.text                                       = Class 2 National Insurance
 chargeSummary.codingOut.text                                       = Balancing payment collected through PAYE tax code
 chargeSummary.cancelledPayeSelfAssessment.text                     = Cancelled PAYE Self Assessment (through your PAYE tax code)
 chargeSummary.hmrcAdjustment.text                                  = HMRC adjustment
 chargeSummary.dueDate											   = Due date
-chargeSummary.paymentAmount   									   = Full payment amount
+chargeSummary.paymentAmount   									   = Amount
 chargeSummary.paymentAmountCodingOut							   = Payment amount
 chargeSummary.paidToDate    									   = Paid to date
-chargeSummary.remainingDue   									   = Remaining to pay
+chargeSummary.remainingDue   									   = Still to pay
 chargeSummary.overdue                                              = OVERDUE
 chargeSummary.na                                                   = N/A
 
@@ -932,6 +949,35 @@ chargeSummary.paymentsOnAccount.bullet1                            = Income Tax
 chargeSummary.paymentsOnAccount.bullet2                            = Class 4 National Insurance contributions (opens in new tab)
 chargeSummary.paymentsOnAccount.p2                                 = HMRC estimates the total amount based on your previous year’s tax bill. Each payment is half of that amount.
 
+
+chargeSummary.lpi.paymentsOnAccount.poa1                           = You owe HMRC interest because you paid your first payment on account late.
+chargeSummary.lpi.paymentsOnAccount.poa2                           = You owe HMRC interest because you paid your second payment on account late.
+chargeSummary.lpi.paymentsOnAccount.textOne                        = Late payment interest is charged from the first day your payment is overdue until the day it’s paid in full. It’s calculated at the
+chargeSummary.lpi.paymentsOnAccount.linkText                       = Bank of England base rate (opens in new tab)
+chargeSummary.lpi.paymentsOnAccount.textTwo                        = plus 2.5%.
+chargeSummary.lpi.paymentsOnAccount.p3                             = See guidance on the
+chargeSummary.lpi.paymentsOnAccount.p3LinkText                     = interest rates set by HMRC (opens in new tab).
+
+
+chargeSummary.poa1ExtraAmountInterest.p1                            = You owe HMRC interest because your tax return shows that your adjusted first payment on account was too low.
+chargeSummary.poa1ExtraAmountInterest.p2                            = HMRC applies the interest to the extra amount – the difference between your adjusted payment on account and what you actually owe.
+chargeSummary.poa1ExtraAmountInterest.p3                            = Interest is charged from the date your first payment on account was due and calculated at the
+chargeSummary.poa1ExtraAmountInterest.p3LinkText                    = Bank of England base rate (opens in new tab)
+chargeSummary.poa1ExtraAmountInterest.p3AfterLink                   = plus 2.5%.
+
+chargeSummary.poa2ExtraAmountInterest.p1                            = You owe HMRC interest because your tax return shows that your adjusted second payment on account was too low.
+chargeSummary.poa2ExtraAmountInterest.p2                            = HMRC applies the interest to the extra amount – the difference between your adjusted payment on account and what you actually owe.
+chargeSummary.poa2ExtraAmountInterest.p3                            = Interest is charged from the date your second payment on account was due and calculated at the
+chargeSummary.poa2ExtraAmountInterest.p3LinkText                    = Bank of England base rate (opens in new tab)
+chargeSummary.poa2ExtraAmountInterest.p3AfterLink                   = plus 2.5%.
+
+chargeSummary.definition.balancingcharge.p1                        = A balancing payment is the tax you still need to pay for a tax year. This happens if you:
+chargeSummary.definition.balancingcharge.bullet1                   = did not have any tax to pay during the year (for example, if your last Self Assessment tax bill was under £1,000)
+chargeSummary.definition.balancingcharge.bullet2                   = owe more than what you paid during the year (for example, through payments on account or PAYE)
+chargeSummary.definition.balancingcharge.p2                        = You’ll also need to make a balancing payment if you owe anything for Capital Gains Tax or student loans.
+
+chargeSummary.definition.hmrcadjustment                            = HMRC has added this charge after an adjustment to your tax return.
+
 chargeSummary.paymentBreakdown.heading   						   = Payment breakdown
 chargeSummary.paymentBreakdown.incomeTax   						   = Income Tax
 chargeSummary.paymentBreakdown.nic2   							   = Class 2 National Insurance
@@ -944,6 +990,10 @@ chargeSummary.paymentBreakdown.interestLocks.notCharging           = We are not 
 chargeSummary.paymentBreakdown.interestLocks.charging              = We are charging you interest on this payment
 chargeSummary.paymentBreakdown.interestLocks.previouslyCharged     = We have previously charged you interest on this payment
 chargeSummary.paymentBreakdown.lpiWithDunning.text                 = Late payment interest
+
+chargeSummary.extraCharge.text1                                    = Your tax return shows that your adjusted payment on account was too low, so HMRC has added an
+chargeSummary.extraCharge.linkText                                 = extra amount
+chargeSummary.extraCharge.text2                                    = to pay.
 
 chargeSummary.interestLocks.text                                   = to check if you have any interest on this payment.
 chargeSummary.interestLocks.text-agent                             = to check if they have any interest on this payment.
@@ -962,7 +1012,8 @@ chargeSummary.payment-days-note-agent                              = Any payment
 chargeSummary.payments-bullet1-2-agent                             = payment method they use
 chargeSummary.payments-bullet2-agent                               = must reach us by the due date - they’ll be charged interest and may have to pay a penalty if the payment is late
 
-chargeSummary.chargeHistory.heading								        = Payment history
+chargeSummary.chargeHistory.heading								        = History of this charge
+chargeSummary.chargeHistory.lateInterestPayment					        = Late payment interest history
 chargeSummary.chargeHistory.Poa1heading                                 = First payment on account history
 chargeSummary.chargeHistory.Poa2heading                                 = Second payment on account history
 chargeSummary.chargeHistory.date								        = Date
@@ -974,6 +1025,8 @@ chargeSummary.chargeHistory.created.balancingCharge.text		        = Balancing pa
 chargeSummary.chargeHistory.created.class2Nic.text                      = Class 2 National Insurance created
 chargeSummary.chargeHistory.created.codingOut.text                      = Self Assessment payment (through your PAYE tax code) created
 chargeSummary.chargeHistory.created.cancelledPayeSelfAssessment.text	= Cancelled PAYE Self Assessment (through your PAYE tax code) created
+chargeSummary.chargeHistory.created.reviewAndReconcilePoa1.text         = HMRC created this extra amount for your first payment on account based on your tax return
+chargeSummary.chargeHistory.created.reviewAndReconcilePoa2.text         = HMRC created this extra amount for your second payment on account based on your tax return
 chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	        = Payment on account 1 of 2 reduced by taxpayer request
 chargeSummary.chargeHistory.request.paymentOnAccount2.text	   	        = Payment on account 2 of 2 reduced by taxpayer request
 chargeSummary.chargeHistory.request.balancingCharge.text	   	        = Balancing payment reduced by taxpayer request
@@ -983,14 +1036,34 @@ chargeSummary.chargeHistory.amend.balancingCharge.text 	   	   	        = Balanc
 chargeSummary.chargeHistory.adjustment.paymentOnAccount1.text           = You updated your first payment on account
 chargeSummary.chargeHistory.adjustment.paymentOnAccount2.text           = You updated your second payment on account
 chargeSummary.chargeHistory.created.hmrcAdjustment.text                 = HMRC adjustment created
-chargeSummary.lpi.paymentOnAccount1.text						   = Late payment interest on payment on account 1 of 2
-chargeSummary.lpi.paymentOnAccount2.text						   = Late payment interest on payment on account 2 of 2
-chargeSummary.lpi.balancingCharge.text							   = Late payment interest on Balancing payment
+
+chargeSummary.lpi.paymentOnAccount1.text						   = Late payment interest on first payment on account
+chargeSummary.lpi.paymentOnAccount2.text						   = Late payment interest on second payment on account
+chargeSummary.lpi.balancingCharge.text							   = Late payment interest on balancing payment
 chargeSummary.lpi.interestPeriod								   = Interest period
 chargeSummary.lpi.interestPeriod.dates							   = {0} to {1}
 chargeSummary.lpi.chargeHistory.created.paymentOnAccount1.text	   = Late payment interest for payment on account 1 of 2 created
 chargeSummary.lpi.chargeHistory.created.paymentOnAccount2.text	   = Late payment interest for payment on account 2 of 2 created
-chargeSummary.lpi.chargeHistory.created.balancingCharge.text	   = Late payment interest for Balancing payment created
+chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa1.text       = HMRC created this charge
+chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa2.text       = HMRC created this charge
+chargeSummary.lpi.chargeHistory.created.balancingCharge.text	   = Late payment interest on balancing payment created
+
+chargeSummary.lpi.balancingCharge.p1                               = You owe HMRC interest because you paid your balancing payment late.
+chargeSummary.lpi.balancingCharge.textOne                          = Late payment interest is charged from the first day your payment is overdue until the day it’s paid in full. It’s calculated at the
+chargeSummary.lpi.balancingCharge.linkText                         = Bank of England base rate (opens in new tab)
+chargeSummary.lpi.balancingCharge.textTwo                          = plus 2.5%.
+chargeSummary.lpi.balancingCharge.p3                               = See guidance on the
+chargeSummary.lpi.balancingCharge.p3LinkText                       = interest rates set by HMRC (opens in new tab).
+
+chargeSummary.reviewAndReconcilePoa.warning                           = This charge will be accruing interest until it is paid.
+chargeSummary.reviewAndReconcilePoa.p1                                = HMRC has created this charge because your tax return shows that your adjusted
+chargeSummary.reviewAndReconcilePoa1.linkText                         = first payment on account
+chargeSummary.reviewAndReconcilePoa2.linkText                         = second payment on account
+chargeSummary.reviewAndReconcilePoa.comma                             =
+chargeSummary.reviewAndReconcilePoa.p2                                = was too low.
+
+chargeSummary.lpi.poaExtraCharge.link                              = See guidance on the
+chargeSummary.lpi.poaExtraCharge.linkText                          = interest rates set by HMRC (opens in new tab).
 
 chargeSummary.paymentAllocations.poa1.incomeTax                    = Payment allocated to Income Tax for first payment on account
 chargeSummary.paymentAllocations.poa1.nic4                         = Payment allocated to Class 4 National Insurance for first payment on account
@@ -1079,8 +1152,7 @@ paymentAllocation.sa.info                                       = This is money 
 paymentAllocation.earlyTaxYear.heading                          = Credit from an earlier tax year
 paymentAllocation.date                                          = Date
 paymentAllocation.amount                                        = Amount
-paymentAllocation.info                                          = Payments are first allocated to penalties and earlier tax years, then current and future tax years.
-paymentAllocation.tableSection.heading                          = Payment allocations
+paymentAllocation.tableSection.heading                          = Allocations
 paymentAllocation.tableHead.allocation                          = Where your money went
 paymentAllocation.tableHead.allocated-date                      = Date
 paymentAllocation.tableHead.amount                              = Amount
@@ -1089,6 +1161,12 @@ paymentAllocation.creditOnAccount                               = Credit on acco
 paymentAllocation.moneyOnAccount                                = Money in your account
 paymentAllocation.moneyOnAccount.agent                          = Money in your client’s account
 paymentAllocation.na                                            = N/A
+paymentAllocation.intro                                         = When you make a payment, HMRC assigns the money to the different charges in your account in the following order.
+paymentAllocation.condition-1                                   = Overdue charges and any other charges accruing interest.
+paymentAllocation.condition-2                                   = Charges that become due.
+paymentAllocation.condition-3                                   = Charges due within 30 days.
+paymentAllocation.outro                                         = You can see how this payment was allocated in the table below.
+
 
 paymentAllocation.paymentAllocations.poa1.incomeTax             = Income Tax for payment on account 1 of 2
 paymentAllocation.paymentAllocations.poa1.nic4                  = Class 4 National Insurance for payment on account 1 of 2
@@ -1102,7 +1180,7 @@ paymentAllocation.paymentAllocations.bcd.sl                     = Student Loans 
 paymentAllocation.paymentAllocations.bcd.cgt                    = Capital Gains Tax for Balancing payment
 paymentAllocation.paymentAllocations.paymentOnAccount1.text     = Late payment interest for payment on account 1 of 2
 paymentAllocation.paymentAllocations.paymentOnAccount2.text     = Late payment interest for payment on account 2 of 2
-paymentAllocation.paymentAllocations.balancingCharge.text       = Late payment interest for Balancing payment
+paymentAllocation.paymentAllocations.balancingCharge.text       = Late payment interest on balancing payment
 paymentAllocation.paymentAllocations.hmrcAdjustment.text        = HMRC adjustment
 
 ##Tax Years Overview Update Tab##
@@ -1360,6 +1438,8 @@ dateForm.error.dayMonthAndYear.required                             = The date m
 dateForm.error.dayMonthAndYear.required.se                          = Enter the date your self-employed business stopped
 dateForm.error.dayMonthAndYear.required.uk                          = Enter the date your UK property business stopped
 dateForm.error.dayMonthAndYear.required.fp                          = Enter the date your foreign property business stopped
+dateForm.error.required.two                                         = The date must include a {0} and a {1}
+dateForm.error.required                                             = The date must include a {0}
 dateForm.error.future                                               = You cannot provide a cessation date that is beyond the current day or a date in the future
 dateForm.error.invalid                                              = The date must be a real date
 dateFrom.error.beforeStartDate                                      = The cessation date cannot be earlier than the start date for the business
@@ -1435,6 +1515,33 @@ add-foreign-property-start-date-check.error                          = Select ye
 incomeSources.add.foreignProperty.startDate.check.radio.yes          = Yes
 incomeSources.add.foreignProperty.startDate.check.radio.no           = No
 
+date.day                     = Day
+date.month                   = Month
+date.year                    = Year
+
+date.error.day               = day
+date.error.month             = month
+date.error.year              = year
+
+add-business-start-date.invalid        = The date must be a real date
+add-business-start-date.required.all   = Enter the date your business started trading
+add-business-start-date.required.two   = The date must include a {0} and a {1}
+add-business-start-date.required       = The date must include a {0}
+add-business-start-date.future         = The date your business started trading must be before {0}
+
+incomeSources.add.UKPropertyStartDate.invalid        = The date must be a real date
+incomeSources.add.UKPropertyStartDate.required.all   = Enter the date your UK property business started
+incomeSources.add.UKPropertyStartDate.required.two   = The date must include a {0} and a {1}
+incomeSources.add.UKPropertyStartDate.required       = The date must include a {0}
+incomeSources.add.UKPropertyStartDate.future         = The date your UK property business started must be before {0}
+
+incomeSources.add.foreignProperty.startDate.invalid        = The date must be a real date
+incomeSources.add.foreignProperty.startDate.required.all   = Enter the date your foreign property business started
+incomeSources.add.foreignProperty.startDate.required.two   = The date must include a {0} and a {1}
+incomeSources.add.foreignProperty.startDate.required       = The date must include a {0}
+incomeSources.add.foreignProperty.startDate.future         = The date your foreign property business started must be before {0}
+
+
 # add foreign property accounting method
 incomeSources.add.FP.AccountingMethod.heading                 = What accounting method do you use for your foreign property business?
 incomeSources.add.FP.AccountingMethod.example                 = Show me an example
@@ -1484,7 +1591,6 @@ add-business-start-date.day                          = Day
 add-business-start-date.form.month                   = Month
 add-business-start-date.form.year                    = Year
 add-business-start-date.error.future                 = The date your business started trading must be before {0}
-add-business-start-date.error.required               = Enter the date your business started trading
 add-business-start-date.error.invalid                = The date must be a real date
 
 # add Business start date check
@@ -1603,16 +1709,50 @@ business-added.uk-property.base                         = has been added to your
 business-added.sole-trader.head                         =
 business-added.sole-trader.base                         = has been added to your account
 
-business-added.quarterly-heading                        = Send quarterly updates
-business-added.quarterly-p1                             = You must send quarterly updates of your income and expenses using compatible software by the following deadlines:
-business-added.final-declaration-heading                = Submit final declarations and pay your tax
-business-added.final-declaration-text                   = You must submit your final declarations and pay the tax you owe by the deadline.
-business-added.table.heading-1                          = Tax year
-business-added.table.heading-2                          = Deadline
-business-added.income-sources-button                    = Your income sources
-business-added.previous-tax-years-heading               = Previous tax years
-business-added.previous-tax-years-t1                    = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
+business-added.quarterly-heading                              = Send quarterly updates
+business-added.quarterly-p1                                   = You must send quarterly updates of your income and expenses using compatible software by the following deadlines:
+business-added.final-declaration-heading                      = Submit final declarations and pay your tax
+business-added.final-declaration-text                         = You must submit your final declarations and pay the tax you owe by the deadline.
+business-added.table.heading-1                                = Tax year
+business-added.table.heading-2                                = Deadline
+business-added.income-sources-button                          = Your income sources
+business-added.previous-tax-years-heading                     = Previous tax years
+business-added.previous-tax-years-t1                          = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
 
+business-added.view-all-businesses                                                      = View all your businesses
+business-added.obligation.inset.single-annual-overdue.text                              = You have <b>1 overdue update</b>. You must submit your yearly tax return and pay the tax you owe.
+business-added.obligation.inset.single-quarterly-overdue.text                           = You have <b>1 overdue update</b> for 3 months of the {0} to {1} tax year. You must submit these updates with all required income and expenses through your compatible software.
+business-added.obligation.inset.multiple-quarterly-overdue.text                         = You have <b>{0} overdue updates</b> for {1} months of the {2} to {3} tax year. You must submit these updates with all required income and expenses through your compatible software.
+business-added.obligation.inset.multiple-tax-years-single-quarterly-overdue.text        = You have <b>1 overdue update</b>. You must submit these updates with all required income and expenses through your compatible software.
+business-added.obligation.inset.multiple-tax-years-multiple-quarterly-overdue.text      = You have <b>{0} overdue updates</b>. You must submit these updates with all required income and expenses through your compatible software.
+business-added.obligation.inset.single-historic-overdue.text                            = You have <b>1 overdue update</b>. You must make sure that you have sent all the required income and expenses for tax years earlier than {0} to {1}.
+business-added.obligation.inset.multiple-historic-overdue.text                          = You have <b>{0} overdue updates</b>. You must make sure that you have sent all the required income and expenses for tax years earlier than {1} to {2}.
+business-added.obligation.view-overdue-upcoming-updates.text                            = View your overdue and upcoming updates
+business-added.obligation.view-upcoming-updates.text                                    = View your upcoming updates
+
+business-added.next-quarterly-obligation-text               = Your next quarterly update for the {0} to {1} tax year is due by <b>{2}</b> for the quarterly period {3} to {4}
+business-added.final-dec-text                               = Your tax return for the {0} to {1} tax year is due by <b>{2}</b>
+
+business-added.quarterly-opt-out-text-1                     = You can decide at any time to opt out of quarterly reporting and report annually for all your businesses on
+business-added.quarterly-opt-out-link                       = your reporting frequency
+business-added.quarterly-opt-out-text-2                     = page.
+
+business-added.quarterly-opt-out-hybrid-text-1              = Depending on your circumstances, you may be able to
+business-added.quarterly-opt-out-hybrid-link                = view and change your reporting frequency
+business-added.quarterly-opt-out-hybrid-text-2              = for all your businesses.
+
+business-added.default-annual-reporting-frequency-text      = You are set to report annually for your new business. Find out more about
+business-added.default-annual-reporting-frequency-link      = your reporting frequency.
+
+business-added.submit-software-text                         = Submit updates in software
+business-added.submit-software-quarterly-text               = For any tax year you are reporting quarterly, you will need
+business-added.submit-software-quarterly-link               = software compatible with Making Tax Digital for Income Tax (opens in new tab).
+
+business-added.submit-tax-return                            = Submit your tax return
+business-added.submit-tax-return-text                       = When reporting annually, you can submit your tax return directly through your HMRC online account or
+business-added.submit-tax-return-link                       = software compatible with Making Tax Digital for Income Tax (opens in new tab).
+
+business-added.submit-hybrid-annual-text                    = When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software.
 
 ## You cannot go back - Your business has been added page ##
 
@@ -1757,7 +1897,6 @@ incomeSources.manage.quarterly-period.calendar.content.p1             =   This b
 incomeSources.manage.quarterly-period.calendar.content.p2             =   You can change this to report by standard quarters, in line with the tax year, so you report from 6th April. This change can only be made in your compatible software.
 incomeSources.manage.quarterly-period.content.p3                      =   Learn more about standard and calendar quarters
 incomeSources.manage.quarterly-period.content.external-ref-link       =   https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax#send-quarterly-updates
-incomeSources.manage.quarterly-period.content.graceperiod.info        =   The business is currently within a grace period. From April {0} when the grace period ends, you will be required to report quarterly.
 
 
 incomeSources.manage.business-manage-details.heading                  =   Manage your details
@@ -1769,12 +1908,14 @@ incomeSources.manage.business-manage-details.accounting-method        =   Accoun
 incomeSources.manage.business-manage-details.reporting-method         =   Reporting frequency {0} to {1}
 incomeSources.manage.business-manage-details.change                   =   Change
 incomeSources.manage.business-manage-details.quarterly                =   Quarterly
-incomeSources.manage.business-manage-details.annually                 =   Annually
-incomeSources.manage.business-manage-details.quarterly.graceperiod    =   Quarterly (grace period)
-incomeSources.manage.business-manage-details.annually.graceperiod     =   Annually (grace period)
+incomeSources.manage.business-manage-details.annually                 =   Annual
+incomeSources.manage.business-manage-details.quarterly.graceperiod    =   Quarterly
+incomeSources.manage.business-manage-details.annually.graceperiod     =   Annual
 incomeSources.manage.business-manage-details.cash-accounting          =   Cash basis accounting
 incomeSources.manage.business-manage-details.traditional-accounting   =   Traditional accounting
 incomeSources.manage.business-manage-details.tradetype                =   Type of trade
+incomeSources.manage.business-manage-details.reportingFrequency       =   View and change your reporting frequency for all your businesses
+incomeSources.manage.business-manage-details.insetText                =   Because this is still a new business, you can change how often you report for it for up to 2 tax years. From April {0}, you could be required to report quarterly.
 
 incomeSources.manage.uk-property-manage-details.uk-property-section              =   UK property
 incomeSources.manage.uk-property-manage-details.accounting-method                =   Accounting method
@@ -2112,3 +2253,93 @@ optout.optOutError.nextUpdates-link                  = next updates
 optout.optOutError.nextUpdates-bullet-2              = and try again
 optout.optOutError.home-bullet-1                     = go back to the
 optout.optOutError.home-bullet-2                     = homepage
+
+#######################################################################################################################
+## Opt In ##
+#######################################################################################################################
+
+# opt in before you start
+optIn.beforeYouStart.heading                   = Before you start
+optIn.beforeYouStart.desc1                     = Reporting quarterly allows HMRC to give you a more precise forecast of how much tax you owe to help you budget more accurately.
+optIn.beforeYouStart.desc2                     = To report quarterly you will need compatible software. There are both paid and free options for you or your agent to choose from.
+optIn.beforeYouStart.reportQuarterly           = Reporting quarterly
+optIn.beforeYouStart.reportQuarterly.text      = If you choose to opt in:
+optIn.beforeYouStart.reportQuarterly.text.p1   = you will need to submit an update every 3 months in addition to your tax return.
+optIn.beforeYouStart.reportQuarterly.text.p2   = all your income sources will move to quarterly reporting.
+optIn.beforeYouStart.voluntaryStatus           = Your voluntary status
+optIn.beforeYouStart.voluntaryStatus.text      = As you would be voluntarily opting in to reporting quarterly, you can decide to opt out and return to reporting annually at any time.
+optIn.beforeYouStart.button.start              = Start
+
+# opt in choose tax year
+optin.chooseOptInTaxYear.heading                     = Voluntarily opting in to reporting quarterly
+optin.chooseOptInTaxYear.desc1                       = If you opt in to the next tax year, you will not have to submit a quarterly update until then.
+optin.chooseOptInTaxYear.whichTaxYear                = Which tax year do you want to opt in from?
+optin.chooseOptInTaxYear.taxYearOnwards              = {0} to {1} onwards
+optin.chooseOptInTaxYear.continue                    = Continue
+optin.confirmOptIn.cancel                            = Cancel
+optIn.ConfirmOptInMultiTaxYearChoice.form.no-select.error = Select the tax year that you want to report quarterly from
+
+# opt in check your answers
+optin.checkAnswers.taxYears = {0} to {1} tax year onwards
+optin.checkAnswers.heading = Check your answers
+optin.checkAnswers.optin = Opt in from
+optin.checkAnswers.change = Change
+optin.checkAnswers.cy = If you opt in, you will need to submit your quarterly update through compatible software.
+optin.checkAnswers.ny = If you opt in from the next tax year onwards, from 6 April {0} you will need to submit your quarterly updates through compatible software.
+optin.checkAnswers.confirm = Confirm and save
+optin.checkAnswers.cancel = Cancel
+optin.checkAnswers.submissionsMade = Any income and expenses already submitted for this tax year will be deleted. You will need to include this information in your quarterly updates.
+
+# opt in error page
+optin.optInError.heading                           = Sorry, there is a problem with the service
+optin.optInError.options                           = You can:
+optin.optInError.nextUpdates-bullet-1              = go back to your
+optin.optInError.nextUpdates-link                  = next updates
+optin.optInError.nextUpdates-bullet-2              = and try again
+optin.optInError.home-bullet-1                     = go back to the
+optin.optInError.home-bullet-2                     = homepage
+
+# opt-in completed
+optin.completedOptIn.heading                    = Opt in completed
+
+optin.completedOptIn.cy.heading.desc                     = You are now reporting quarterly from {0} to {1} tax year onwards
+optin.completedOptIn.ny.heading.desc                     = You opted in to quarterly reporting from {0} to {1} tax year onwards
+optin.completedOptIn.followingVoluntary.heading.desc     = You are now reporting quarterly for {0} to {1} tax year
+
+optin.completedOptIn.nextUpdates                = Your next updates due
+optin.completedOptIn.nextUpdate.desc1.a         = Check the
+optin.completedOptIn.nextUpdate.desc1.b         = updates and deadlines
+optin.completedOptIn.nextUpdate.desc1.c         = page for the current tax year’s deadlines. Deadlines for future years will not be visible until they become the current year.
+optin.completedOptIn.nextUpdate.desc2.a         = You can decide at any time to opt out of reporting quarterly for all your businesses on
+optin.completedOptIn.nextUpdate.desc2.b         = your reporting frequency
+optin.completedOptIn.nextUpdate.desc2.c         = page.
+
+optin.completedOptIn.submitUpdates              = Submit updates in software
+optin.completedOptIn.submitUpdates.desc1.a      = For any tax year you are reporting quarterly, you will need
+optin.completedOptIn.submitUpdates.desc1.b      = software compatible with Making Tax Digital for Income Tax (opens in new tab).
+optin.completedOptIn.submitUpdates.desc1.b.url  = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax
+
+optin.completedOptIn.ny.submitUpdates.desc2     = When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software.
+
+optin.completedOptIn.futureReporting            = Reporting in the future
+optin.completedOptIn.cy.futureReporting.desc1   = You have just chosen to voluntarily report quarterly from the {0} to {1} tax year onwards, but in the future it could be mandatory for you if:
+optin.completedOptIn.ny.futureReporting.desc1   = You are voluntarily opted in to reporting quarterly from the next tax year onwards, but in the future it could be mandatory for you if:
+optin.completedOptIn.futureReporting.p1         = HMRC lowers the income threshold for Making Tax Digital for Income Tax
+optin.completedOptIn.futureReporting.p2         = you report an increase in your qualifying income in a tax return
+optin.completedOptIn.futureReporting.scenario   = For example, if your income from self-employment or property, or both, exceeds the threshold in the {0} to {1} tax year, you would have to report quarterly from 6 April {2}.
+optin.completedOptIn.futureReporting.desc2      = If this happens, we will write to you to let you know.
+
+optin.completedOptIn.incomeThreshold.desc.a     = You can check the threshold for qualifying income in the
+optin.completedOptIn.incomeThreshold.desc.b     = criteria for people who will need to sign up for Making Tax Digital for Income Tax (opens in new tab).
+optin.completedOptIn.incomeThreshold.desc.b.url = https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up
+
+# opt in confirm tax year
+
+optIn.confirmTaxYear.heading                        = Confirm and opt in for {0} to {1} tax year
+optIn.confirmTaxYear.desc                           = Opting in will mean you need to submit your quarterly updates through compatible software.
+optIn.confirmTaxYear.text                           = If you have submitted any income and expenses for this tax year to HMRC, this will be deleted from our records. So make sure you keep hold of this information because you will need to include it in your quarterly updates.
+optIn.confirmTaxYear.confirmSaveBtn                 = Confirm and save
+optIn.confirmTaxYear.cancel                         = Cancel
+
+optIn.confirmNextTaxYear.heading                    = Confirm and opt in from {0} to {1} tax year onwards
+optIn.confirmNextTaxYear.desc                       = If you opt in for the next tax year, from {0} you will need to submit your quarterly updates through compatible software.
