@@ -177,8 +177,8 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
               .map(ci => TaxYearSummaryChargeItem.fromChargeItem(ci, financialDetails.findDueDateByDocumentDetails(dd))))
             .filterNot(_.originalAmount < 0)
             .filter(ChargeItem.filterCharge(isEnabled(MFACreditsAndDebits), MfaDebitCharge))
-            .filter(ChargeItem.filterCharge(isEnabled(ReviewAndReconcilePoa), PaymentOnAccountOneReviewAndReconcile))
-            .filter(ChargeItem.filterCharge(isEnabled(ReviewAndReconcilePoa), PaymentOnAccountTwoReviewAndReconcile))
+            .filter(ChargeItem.filterChargeWithOutstandingAmount(isEnabled(ReviewAndReconcilePoa),
+              PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile))
         }
 
         val chargeItemsLpi: List[TaxYearSummaryChargeItem] = {

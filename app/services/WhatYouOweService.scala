@@ -128,7 +128,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
           .flatMap(dd => getChargeItem(financialDetails.financialDetails)(dd.documentDetail))})
       .filter(validChargeTypeCondition)
       .filterNot(_.subTransactionType.contains(Accepted))
-      .filter(_.remainingToPayByChargeOrLpi > 0)
+      .filter(_.remainingToPayByChargeOrInterest > 0)
       .filterNot(_.transactionType == MfaDebitCharge && !isMFACreditsEnabled)
       .sortBy(_.dueDate.get)
   }

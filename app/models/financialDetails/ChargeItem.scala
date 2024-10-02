@@ -17,6 +17,7 @@
 package models.financialDetails
 
 import exceptions.CouldNotCreateChargeItemException
+import models.admin.ReviewAndReconcilePoa
 import models.incomeSourceDetails.TaxYear
 import models.taxyearsummary.TaxYearSummaryChargeItem
 import play.api.Logger
@@ -24,7 +25,6 @@ import play.api.libs.json.{Format, Json}
 import services.DateServiceInterface
 
 import java.time.LocalDate
-import scala.util.{Failure, Success, Try}
 
 case class ChargeItem (
                         transactionId: String,
@@ -51,7 +51,7 @@ case class ChargeItem (
     lpiWithDunningLock.isDefined && lpiWithDunningLock.getOrElse[BigDecimal](0) > 0
 
   def hasAccruingInterest: Boolean =
-    interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0
+    interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0 && !isPaid
 
   def isAccruingInterest()(implicit dateService: DateServiceInterface): Boolean = {
     Seq(PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile).contains(transactionType) && !isPaid && !isOverdue()
@@ -76,6 +76,14 @@ case class ChargeItem (
     case _ => false
   }
 
+  def isOtherInterest: Boolean = interestOutstandingAmount match {
+    case Some(amount) if amount <= 0 => false
+    case Some(_) => true
+    case _ => false
+  }
+
+  def isOnlyInterest(implicit dateService: DateServiceInterface): Boolean = {(isOverdue() && isLatePaymentInterest) || (isOtherInterest && isPaid)}
+
   def isCodingOut: Boolean = {
     val codingOutSubTypes = Seq(Nics2, Accepted, Cancelled)
     subTransactionType.exists(subType => codingOutSubTypes.contains(subType))
@@ -91,8 +99,8 @@ case class ChargeItem (
     else outstandingAmount
   }
 
-  def remainingToPayByChargeOrLpi: BigDecimal = {
-    if (isLatePaymentInterest) interestRemainingToPay
+  def remainingToPayByChargeOrInterest: BigDecimal = {
+    if (isLatePaymentInterest || isOtherInterest) interestRemainingToPay
     else remainingToPay
   }
 
@@ -136,16 +144,31 @@ case class ChargeItem (
         Logger("application").error(s"Missing or non-matching charge type: $error found")
         "unknownCharge"
     }
+
+  def poaLinkForDrilldownPage: String = transactionType match {
+    case PaymentOnAccountOne => "4911"
+    case PaymentOnAccountTwo => "4913"
+    case _ => "no valid case"
+  }
 }
 
 object ChargeItem {
 
   implicit val format: Format[ChargeItem] = Json.format[ChargeItem]
 
-  def filterCharge(isChargeTypeEnabled:Boolean, chargeType: ChargeType)
-                  (chargeItem: TaxYearSummaryChargeItem): Boolean = {
+  def filterCharge(isChargeTypeEnabled:Boolean, chargeType: ChargeType*)
+                  (chargeItem: TransactionItem): Boolean = {
     (isChargeTypeEnabled, chargeItem.transactionType) match {
-      case (false, transactionType) if transactionType == chargeType => false
+      case (false, transactionType) if chargeType.toList.contains(transactionType) => false
+      case _ => true
+    }
+  }
+
+  def filterChargeWithOutstandingAmount(isChargeTypeEnabled:Boolean, chargeType: ChargeType*)
+                  (chargeItem: TransactionItem): Boolean = {
+    (isChargeTypeEnabled, chargeItem.transactionType) match {
+      case (false, transactionType) if chargeType.toList.contains(transactionType) => false
+      case (true, transactionType) if chargeType.toList.contains(transactionType) && chargeItem.outstandingAmount <= 0  => false
       case _ => true
     }
   }

@@ -17,7 +17,7 @@
 package models.financialDetails
 
 import auth.MtdItUser
-import enums.{Poa1Charge, Poa2Charge, TRMAmendCharge, TRMNewCharge}
+import enums.{Poa1Charge, Poa1ReconciliationDebit, Poa2Charge, Poa2ReconciliationDebit, TRMAmendCharge, TRMNewCharge}
 import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails.ReviewAndReconcileDebitUtils.{isReviewAndReconcilePoaOne, isReviewAndReconcilePoaTwo}
 import play.api.libs.json.{Format, Json}
@@ -146,7 +146,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
   def validChargeTypeCondition: DocumentDetail => Boolean = documentDetail => {
     (documentDetail.documentText, documentDetail.getDocType) match {
       case (Some(documentText), _) if documentText.contains("Class 2 National Insurance") => true
-      case (_, Poa1Charge | Poa2Charge | TRMNewCharge | TRMAmendCharge) => true
+      case (_, Poa1Charge | Poa2Charge | Poa1ReconciliationDebit | Poa2ReconciliationDebit | TRMNewCharge | TRMAmendCharge) => true
       case (_, _) => false
     }
   }

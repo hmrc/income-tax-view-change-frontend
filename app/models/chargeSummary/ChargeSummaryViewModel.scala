@@ -33,6 +33,7 @@ case class ChargeSummaryViewModel(
                                    chargeHistoryEnabled: Boolean,
                                    paymentAllocationEnabled: Boolean,
                                    latePaymentInterestCharge: Boolean,
+                                   otherInterestCharge: Boolean,
                                    codingOutEnabled: Boolean,
                                    reviewAndReconcileEnabled: Boolean,
                                    isAgent: Boolean = false,
@@ -40,6 +41,7 @@ case class ChargeSummaryViewModel(
                                    origin: Option[String] = None,
                                    gatewayPage: Option[GatewayPage] = None,
                                    adjustmentHistory: AdjustmentHistoryModel,
+                                   poaExtraChargeLink: Option[String] = None,
                                    poaOneChargeUrl: String,
                                    poaTwoChargeUrl: String
                                  ) {
@@ -48,6 +50,7 @@ case class ChargeSummaryViewModel(
   val hasDunningLocks = paymentBreakdown.exists(_.dunningLockExists)
   val hasInterestLocks = paymentBreakdown.exists(_.interestLockExists)
   val hasAccruedInterest = paymentBreakdown.exists(_.hasAccruedInterest)
+  val isInterestCharge = latePaymentInterestCharge || otherInterestCharge
 
   val currentTaxYearEnd = {
     if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) currentDate.getYear
@@ -69,8 +72,11 @@ case class ChargeSummaryViewModel(
   val taxYearFromCodingOut = s"${chargeItem.taxYear.endYear + 1}"
   val taxYearToCodingOut = s"${chargeItem.taxYear.endYear + 2}"
 
+  val messagePrefix = if(latePaymentInterestCharge)"lpi."
+  else if (otherInterestCharge) "interest."
+  else ""
   val pageTitle: String =
-    s"chargeSummary.${if(latePaymentInterestCharge)"lpi."else ""}${chargeItem.getChargeTypeKey(codingOutEnabled, reviewAndReconcileEnabled)}"
+    s"chargeSummary.$messagePrefix${chargeItem.getChargeTypeKey(codingOutEnabled, reviewAndReconcileEnabled)}"
 
   val isBalancingChargeZero: Boolean = chargeItem.transactionType match {
     case _ if codingOutEnabled && chargeItem.subTransactionType.isDefined => false
@@ -88,7 +94,7 @@ case class ChargeSummaryViewModel(
   val chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZero: Boolean =
     (chargeHistoryEnabled || (paymentAllocationEnabled && paymentAllocations.nonEmpty)) && !isBalancingChargeZero
 
-  val noLatePaymentInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment: Boolean = !latePaymentInterestCharge && !(codingOutEnabled && chargeItem.subTransactionType.contains(Accepted))
+  val noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment: Boolean = !latePaymentInterestCharge && !otherInterestCharge && !(codingOutEnabled && chargeItem.subTransactionType.contains(Accepted))
 
 }
 

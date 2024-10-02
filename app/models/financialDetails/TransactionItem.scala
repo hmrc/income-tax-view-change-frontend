@@ -29,6 +29,8 @@ trait TransactionItem {
 
   val taxYear: TaxYear
 
+  val outstandingAmount: BigDecimal
+
   val isLatePaymentInterest: Boolean
 
   def isOverdue()(implicit dateService: DateServiceInterface): Boolean

@@ -29,6 +29,7 @@
 @import models.financialDetails.Nics2
 @import models.financialDetails.MfaDebitCharge
 @import services.DateServiceInterface
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
 
 @this(
     mainTemplate: unifiedLayout,
@@ -39,17 +40,18 @@
     p: p,
     link: link,
     detailsDropdown: detailsDropdown,
+    govukWarningText: GovukWarningText,
     govukInsetText : GovukInsetText
 )
 
 @(currentDate: LocalDate,
     creditCharges: List[DocumentDetail],
+    hasOverdueOrAccruingInterestCharges: Boolean,
     whatYouOweChargesList: WhatYouOweChargesList,
     hasLpiWithDunningLock: Boolean,
     currentTaxYear: Int,
     backUrl: String,
     utr: Option[String],
-    btaNavPartial: Option[Html] = None,
     dunningLock: Boolean,
     codingOutEnabled: Boolean,
     reviewAndReconcileEnabled: Boolean,
@@ -66,6 +68,8 @@
 @getPrefix(key: String) = @{
     s"whatYouOwe.$key"
 }
+
+@btaNavPartial = @{ user.btaNavPartial }
 
 @getMessage(key: String, args: String*) = @{
     messages(s"whatYouOwe.$key", args: _*)
@@ -218,19 +222,21 @@
     </thead>
 }
 
-@paymentTypeEntry(chargeItem: ChargeItem, rowId: String, isLatePaymentInterest: Boolean,
+@paymentTypeEntry(chargeItem: ChargeItem, rowId: String, isLatePaymentInterest: Boolean, isOtherInterest: Boolean,
     isMFADebit: Boolean, linkSuffix: String, index: Int) = @{
 
     val chargeTypeKey = chargeItem.getChargeTypeKey(codingOutEnabled, reviewAndReconcileEnabled)
-    val lpi = if (isLatePaymentInterest) "lpi." else ""
+    val isInterest = isLatePaymentInterest || isOtherInterest
+    val lpi = if (isLatePaymentInterest) "lpi." else if (isOtherInterest) "interest." else ""
     val linkText = getMessage(s"${lpi}${chargeTypeKey}")
     val taxYear = chargeItem.taxYear
     val linkHref = if(isAgent) {
+
         controllers.routes.ChargeSummaryController.showAgent(taxYear.endYear,
-            chargeItem.transactionId, isLatePaymentInterest)
+            chargeItem.transactionId, isInterest)
     } else {
         controllers.routes.ChargeSummaryController.show(taxYear.endYear,
-            chargeItem.transactionId, isLatePaymentInterest, origin)
+            chargeItem.transactionId, isInterest, origin)
     }
     paymentTypeEntryHTML(linkText = linkText, linkHref = linkHref, taxYear = taxYear.endYear, rowId = rowId,
         linkSuffix: String, index+1)
@@ -246,6 +252,7 @@
 
 @getPaymentTypeEntry(chargeItem: ChargeItem, rowId: String, isOverduePayment: Boolean, isMFADebit: Boolean, index: Int) = @{
     val isLatePaymentInterest = isOverduePayment && chargeItem.isLatePaymentInterest
+    val isOtherInterest = chargeItem.isPaid && chargeItem.isOtherInterest
     def getLinkSuffix() : String = {
         if(!isOverduePayment) {
             "link"
@@ -257,7 +264,7 @@
             }
         }
     }
-    paymentTypeEntry(chargeItem, rowId, isLatePaymentInterest = isLatePaymentInterest,
+    paymentTypeEntry(chargeItem, rowId, isLatePaymentInterest = isLatePaymentInterest, isOtherInterest = isOtherInterest,
     linkSuffix = getLinkSuffix(), isMFADebit = isMFADebit, index = index)
 }
 
@@ -285,8 +292,12 @@
 
 @tableRow(rowId2: String, chargeItem: ChargeItem, isOverduePayment: Boolean, index:Int, id:String) = {
     <tr class="govuk-table__row" id="@rowId2">
-        <td class="govuk-table__cell govuk-!-width-one-quarter" >
-            @chargeItem.dueDate.getOrElse(throw MissingFieldException("document due date of Payment")).toLongDateShort
+        <td class="govuk-table__cell govuk-!-width-one-quarter">
+            @if(chargeItem.isOtherInterest && chargeItem.isPaid) {
+                 @chargeItem.interestEndDate.getOrElse(throw MissingFieldException("document interest end date")).toLongDateShort
+             }else{
+                @chargeItem.dueDate.getOrElse(throw MissingFieldException("document due date of Payment")).toLongDateShort
+            }
         </td>
         <td class="govuk-table__cell govuk-!-width-one-half">
             @if(chargeItem.isAccruingInterest()) {
@@ -310,7 +321,7 @@
         </td>
         <td class="govuk-table__cell numeric govuk-!-width-one-quarter"> @taxYearSummaryLink(chargeItem.taxYear.endYear, index, id)</td>
         <td class="govuk-table__cell numeric govuk-!-width-one-quarter govuk-table__cell--numeric">@{
-            if(isOverduePayment && chargeItem.isLatePaymentInterest) {
+            if(chargeItem.isOnlyInterest) {
                 chargeItem.interestRemainingToPay.toCurrency
             } else {
                 chargeItem.remainingToPay.toCurrency
@@ -385,6 +396,13 @@
 
         @saNoteParagraph
     } else {
+
+        @if(hasOverdueOrAccruingInterestCharges) {
+            @govukWarningText(WarningText(
+                attributes = Map("id" -> "interest-charges-warning"),
+                content = Text(getMessage("interestChargesWarning"))
+            ))
+        }
 
         <div>
 
