@@ -16,6 +16,7 @@
 
 package services.optout.quarterlyupdates
 
+import audit.AuditingService
 import audit.mocks.MockAuditingService
 import config.FrontendAppConfig
 import connectors.ObligationsConnector
@@ -57,9 +58,10 @@ class QuarterlyUpdatesCountSpec extends UnitSpec
   val obligationsConnector: ObligationsConnector = new ObligationsConnector(httpClientMock, mockAuditingService, appConfig)
   val nextUpdatesService: NextUpdatesService = new NextUpdatesService(obligationsConnector)
   val repository: OptOutSessionDataRepository = mock(classOf[OptOutSessionDataRepository])
+  val auditingService: AuditingService = mock(classOf[AuditingService])
 
   val service: OptOutService = new OptOutService(optOutConnector, mockITSAStatusService, mockCalculationListService,
-    nextUpdatesService, mockDateService, repository)
+    nextUpdatesService, mockDateService, auditingService, repository)
 
   def buildUrl(fromDate: LocalDate, toDate: LocalDate): String = {
     s"http://localhost:9999/income-tax-view-change/$testNino/obligations/from/$fromDate/to/$toDate"

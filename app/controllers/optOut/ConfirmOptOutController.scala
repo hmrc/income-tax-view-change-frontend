@@ -38,8 +38,7 @@ import audit.AuditingService
 class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
                                         checkOptOutAnswers: CheckOptOutAnswers,
                                         optOutService: OptOutService,
-                                        auth: AuthenticatorPredicate,
-                                        auditingService: AuditingService)
+                                        auth: AuthenticatorPredicate)
                                        (implicit val appConfig: FrontendAppConfig,
                                         val ec: ExecutionContext,
                                         val authorisedFunctions: FrontendAuthorisedFunctions,
