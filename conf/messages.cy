@@ -961,6 +961,9 @@ chargeSummary.reviewAndReconcilePoa2.linkText                         = ail dali
 chargeSummary.reviewAndReconcilePoa.comma                             = ,
 chargeSummary.reviewAndReconcilePoa.p2                                = a gafodd ei addasu, yn rhy isel.
 
+chargeSummary.lpi.poaExtraCharge.link                              = See guidance on the
+chargeSummary.lpi.poaExtraCharge.linkText                          = interest rates set by HMRC (opens in new tab).
+
 chargeSummary.paymentBreakdown.heading   						   = Dadansoddiad o’r taliad
 chargeSummary.paymentBreakdown.incomeTax   						   = Treth Incwm
 chargeSummary.paymentBreakdown.nic2   							   = Yswiriant Gwladol Dosbarth 2
