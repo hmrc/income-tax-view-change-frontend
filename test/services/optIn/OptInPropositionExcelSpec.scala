@@ -67,8 +67,8 @@ class OptInPropositionExcelSpec extends UnitSpec {
         case "N/A" => Seq()
         case "CY" => Seq(quote("CY"))
         case "CY+1" => Seq(quote("CY+1"))
-        case "CY and CY+1" => Seq(quote("CY"),quote("CY+1"))
-        case "CY+1 and CY" => Seq(quote("CY"),quote("CY+1"))
+        case "CY and CY+1" => Seq(quote("CY"), quote("CY+1"))
+        case "CY+1 and CY" => Seq(quote("CY"), quote("CY+1"))
         case "" => Seq()
         case _ => throw new RuntimeException(s"Unexpected presented in View and Change value: $input")
       }
@@ -152,14 +152,14 @@ class OptInPropositionExcelSpec extends UnitSpec {
   "check all required scenarios" in {
 
     forAll(scenarios) { (
-                         cyStatus: String,
-                         nyStatus: String,
-                         intent: String,
-                         valid: Boolean,
-                         presented: List[String],
-                         sent: String,
-                         expectedCY: String,
-                         expectedNY: String
+                          cyStatus: String,
+                          nyStatus: String,
+                          intent: String,
+                          valid: Boolean,
+                          presented: List[String],
+                          sent: String,
+                          expectedCY: String,
+                          expectedNY: String
                         ) =>
 
       val currentYear = CurrentOptInTaxYear(toITSAStatus(cyStatus), taxYear = currentTaxYear)
@@ -188,12 +188,12 @@ class OptInPropositionExcelSpec extends UnitSpec {
 
     assert(optInProposition.availableTaxYearsForOptIn === presented.map(v => toTaxYear(v)))
 
-    if(valid) {
+    if (valid) {
 
       val intentTaxYear = toTaxYear(intent)
       assert(optInProposition.availableTaxYearsForOptIn.contains(intentTaxYear))
 
-      if(intent == "CY") {
+      if (intent == "CY") {
         assert(sent == "CY")
         assert(expectedCY == "V")
         assert(optInProposition.nextTaxYear.status == toITSAStatus(expectedNY))
@@ -213,10 +213,13 @@ class OptInPropositionExcelSpec extends UnitSpec {
     }
   }
 
-  def toITSAStatus(status: String): ITSAStatus = status match {
-    case "M" => Mandated
-    case "V" => Voluntary
-    case "A" => Annual
-    case " " => NoStatus
-  }
+  def toITSAStatus(status: String): ITSAStatus =
+    status match {
+      case "M" => Mandated
+      case "V" => Voluntary
+      case "A" => Annual
+      case " " => NoStatus
+    }
+
+
 }

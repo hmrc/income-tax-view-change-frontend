@@ -19,7 +19,7 @@ package controllers.optIn
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
 import controllers.optIn.ConfirmTaxYearControllerISpec._
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import helpers.{ComponentSpecBase, ITSAStatusUpdateConnectorStub}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
@@ -129,8 +129,10 @@ class ConfirmTaxYearControllerISpec extends ComponentSpecBase {
     val confirmTaxYearControllerURL = routes.ConfirmTaxYearController.show(isAgent).url
 
     s"submit page form, calling POST $confirmTaxYearControllerURL" should {
+
       s"successfully render opt-in confirm current tax year page" in {
 
+        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(2023)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
         setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual, currentTaxYear)
@@ -149,6 +151,7 @@ class ConfirmTaxYearControllerISpec extends ComponentSpecBase {
 
       s"successfully render opt-in confirm next tax year page" in {
 
+        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(2023)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
         setupOptInSessionData(currentTaxYear, currentYearStatus = Mandated, nextYearStatus = Annual, intent = nextTaxYear)
@@ -172,9 +175,12 @@ class ConfirmTaxYearControllerISpec extends ComponentSpecBase {
     val confirmTaxYearControllerURL = routes.ConfirmTaxYearController.show(isAgent).url
 
     s"no tax-year choice is made and" when {
+
       s"submit page form, calling POST $confirmTaxYearControllerURL" should {
+
         s"show page again with error message" in {
 
+          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(2023)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
           setupOptInSessionData(currentTaxYear, currentYearStatus = Voluntary, nextYearStatus = Voluntary, currentTaxYear)

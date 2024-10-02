@@ -82,7 +82,7 @@ class OptInPropositionSpec extends UnitSpec {
           assertOptInPropositionType(offered.size - 1)() shouldBe true
 
           val yearCodes = proposition.availableOptInYears.map {
-            case _:CurrentOptInTaxYear => "CY"
+            case _: CurrentOptInTaxYear => "CY"
             case _ => "NY"
           }.sortBy(_.trim)
 
@@ -90,6 +90,57 @@ class OptInPropositionSpec extends UnitSpec {
           yearCodes.contains(intent) shouldBe true
 
         }
+      }
+    }
+  }
+
+  ".anyYearsAnnual()" when {
+
+    "both the current and next year contains Annual" should {
+
+      "return true" in {
+
+        val currentOptInTaxYear = CurrentOptInTaxYear(Annual, currentTaxYear)
+        val nextOptInTaxYear = NextOptInTaxYear(Annual, currentTaxYear.nextYear, currentOptInTaxYear)
+        val proposition = OptInProposition(currentOptInTaxYear, nextOptInTaxYear)
+
+        proposition.anyYearsAnnual shouldBe true
+      }
+    }
+
+    "current year is Annual and next year contains a different ITSAStatus" should {
+
+      "return true" in {
+
+        val currentOptInTaxYear = CurrentOptInTaxYear(Annual, currentTaxYear)
+        val nextOptInTaxYear = NextOptInTaxYear(Voluntary, currentTaxYear.nextYear, currentOptInTaxYear)
+        val proposition = OptInProposition(currentOptInTaxYear, nextOptInTaxYear)
+
+        proposition.anyYearsAnnual shouldBe true
+      }
+    }
+
+    "current year different ITSAStatus and next year is Annual" should {
+
+      "return true" in {
+
+        val currentOptInTaxYear = CurrentOptInTaxYear(Voluntary, currentTaxYear)
+        val nextOptInTaxYear = NextOptInTaxYear(Annual, currentTaxYear.nextYear, currentOptInTaxYear)
+        val proposition = OptInProposition(currentOptInTaxYear, nextOptInTaxYear)
+
+        proposition.anyYearsAnnual shouldBe true
+      }
+    }
+
+    "both years are not Annual" should {
+
+      "return false" in {
+
+        val currentOptInTaxYear = CurrentOptInTaxYear(Voluntary, currentTaxYear)
+        val nextOptInTaxYear = NextOptInTaxYear(Voluntary, currentTaxYear.nextYear, currentOptInTaxYear)
+        val proposition = OptInProposition(currentOptInTaxYear, nextOptInTaxYear)
+
+        proposition.anyYearsAnnual shouldBe false
       }
     }
   }

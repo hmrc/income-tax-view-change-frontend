@@ -40,5 +40,4 @@ trait MockITSAStatusService extends UnitSpec with BeforeAndAfterEach {
     when(mockITSAStatusService.getStatusTillAvailableFutureYears(ArgumentMatchers.eq(taxYear))(any(), any(), any()))
       .thenReturn(out)
   }
-
 }

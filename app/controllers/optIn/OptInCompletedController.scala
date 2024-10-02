@@ -56,20 +56,23 @@ class OptInCompletedController @Inject()(val view: OptInCompletedView,
   def show(isAgent: Boolean = false): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       withRecover(isAgent) {
-
         for {
           proposition <- optInService.fetchOptInProposition()
           intent <- optInService.fetchSavedChosenTaxYear()
         } yield {
           intent.map { optInTaxYear =>
-            val model = OptInCompletedViewModel(isAgent = isAgent,
-                                                optInTaxYear = optInTaxYear,
-                                                isCurrentYear = proposition.isCurrentTaxYear(optInTaxYear),
-                                                optInIncludedNextYear = proposition.nextTaxYear.status == Voluntary)
+            val model =
+              OptInCompletedViewModel(
+                isAgent = isAgent,
+                optInTaxYear = optInTaxYear,
+                isCurrentYear = proposition.isCurrentTaxYear(optInTaxYear),
+                isAnyYearAnnual = proposition.anyYearsAnnual,
+                optInIncludedNextYear = proposition.nextTaxYear.status == Voluntary
+              )
             Ok(view(model))
           }.getOrElse(errorHandler(isAgent).showInternalServerError())
         }
-
       }
   }
+
 }

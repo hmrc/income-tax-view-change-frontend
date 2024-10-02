@@ -22,22 +22,26 @@ import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateRes
 import controllers.routes
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockITSAStatusUpdateConnector}
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
-import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Voluntary}
-import models.itsaStatus.StatusDetail
+import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, NoStatus, Voluntary}
+import models.itsaStatus.{ITSAStatus, StatusDetail}
 import models.optin.{MultiYearCheckYourAnswersViewModel, OptInContextData, OptInSessionData}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.{BeforeAndAfter, OneInstancePerTest}
-import repositories.ITSAStatusRepositorySupport._
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import repositories.ITSAStatusRepositorySupport.statusToString
 import repositories.UIJourneySessionDataRepository
 import services.NextUpdatesService
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import services.optIn.OptInServiceSpec.statusDetailWith
+import services.optIn.core.{CurrentOptInTaxYear, NextOptInTaxYear, OptInProposition}
+import testConstants.ITSAStatusTestConstants.yearToStatus2024
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 import utils.OptInJourney
 
+import java.time.{LocalDateTime, ZoneOffset}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -47,13 +51,14 @@ object OptInServiceSpec {
   }
 }
 
-class OptInServiceSpec extends UnitSpec
-  with BeforeAndAfter
-  with MockITSAStatusService
-  with MockCalculationListService
-  with MockDateService
-  with OneInstancePerTest
-  with MockITSAStatusUpdateConnector {
+class OptInServiceSpec
+  extends UnitSpec
+    with BeforeAndAfter
+    with MockITSAStatusService
+    with MockCalculationListService
+    with MockDateService
+    with OneInstancePerTest
+    with MockITSAStatusUpdateConnector {
 
   implicit val user: MtdItUser[_] = mock(classOf[MtdItUser[_]])
   implicit val hc: HeaderCarrier = mock(classOf[HeaderCarrier])
@@ -72,12 +77,200 @@ class OptInServiceSpec extends UnitSpec
 
     reset(hc)
     reset(repository)
-
     when(hc.sessionId).thenReturn(Some(SessionId("123")))
     when(repository.set(any())).thenReturn(Future.successful(true))
   }
 
+  def executionContext()(implicit executionContext: ExecutionContext): ExecutionContext = executionContext
+
+  def mockRepository(optInContextData: Option[OptInContextData] = None, selectedOptInYear: Option[String] = None): Unit = {
+
+    val sessionData =
+      UIJourneySessionData(
+        hc.sessionId.get.value,
+        OptInJourney.Name,
+        optInSessionData = Some(OptInSessionData(optInContextData, selectedOptInYear))
+      )
+
+    when(repository.get(hc.sessionId.get.value, OptInJourney.Name)).thenReturn(Future.successful(Some(sessionData)))
+  }
+
+  "OptInService" when {
+
+    ".saveOptInSessionData()" should {
+
+      "save desired OptInSessionData fields in the UIJourneySessionData" in {
+
+        val lastUpdatedInstant = LocalDateTime.of(2024, 1, 1, 0, 0, 0).toInstant(ZoneOffset.UTC)
+
+        val data =
+          UIJourneySessionData(
+            sessionId = hc.sessionId.get.value,
+            journeyType = OptInJourney.Name,
+            optInSessionData = Some(OptInSessionData(None, selectedOptInYear = None)),
+            lastUpdated = lastUpdatedInstant
+          )
+
+        when(repository.get(hc.sessionId.get.value, OptInJourney.Name)).thenReturn(Future.successful(Some(data)))
+
+        val actual = service.saveOptInSessionData("2024", Annual, Annual).futureValue
+        val expected = UIJourneySessionData("123", "OPTIN", None, None, None, None, Some(OptInSessionData(Some(OptInContextData("2024", "A", "A")), None)), lastUpdatedInstant)
+
+        actual shouldBe expected
+      }
+    }
+
+    ".getSelectedOptInYear()" when {
+
+      "there is a tax year chosen" should {
+
+        "get the user chosen SelectedOptInYear from the UIJourneySessionData" in {
+
+          val lastUpdatedInstant = LocalDateTime.of(2024, 1, 1, 0, 0, 0).toInstant(ZoneOffset.UTC)
+
+          val data =
+            UIJourneySessionData(
+              sessionId = hc.sessionId.get.value,
+              journeyType = OptInJourney.Name,
+              optInSessionData = Some(OptInSessionData(None, selectedOptInYear = Some("2024-2025"))),
+              lastUpdated = lastUpdatedInstant
+            )
+
+          when(repository.get(hc.sessionId.get.value, OptInJourney.Name)).thenReturn(Future.successful(Some(data)))
+
+          val actual = service.getSelectedOptInTaxYear().futureValue
+          val expected = Some(TaxYear(2024, 2025))
+
+          actual shouldBe expected
+        }
+      }
+
+      "there is no tax year chosen" should {
+
+        "return None " in {
+
+          val lastUpdatedInstant = LocalDateTime.of(2024, 1, 1, 0, 0, 0).toInstant(ZoneOffset.UTC)
+
+          val data =
+            UIJourneySessionData(
+              sessionId = hc.sessionId.get.value,
+              journeyType = OptInJourney.Name,
+              optInSessionData = Some(OptInSessionData(None, selectedOptInYear = None)),
+              lastUpdated = lastUpdatedInstant
+            )
+
+          when(repository.get(hc.sessionId.get.value, OptInJourney.Name)).thenReturn(Future.successful(Some(data)))
+
+          val actual = service.getSelectedOptInTaxYear().futureValue
+          val expected = None
+
+          actual shouldBe expected
+        }
+      }
+    }
+
+    ".updateOptInPropositionYearStatuses()" when {
+
+      // TODO: Find out why the dates are 1 year ahead in the tests
+
+      "given original session OptInContextData itsa statuses are both Voluntary, method supplied itsa statuses - Annual for both current tax year and next tax year" should {
+
+        "create a OptInProposition() with the current tax year and next tax year status set to Annual" in {
+
+          val lastUpdatedInstant = LocalDateTime.of(2024, 1, 1, 0, 0, 0).toInstant(ZoneOffset.UTC)
+
+          val data =
+            UIJourneySessionData(
+              sessionId = hc.sessionId.get.value,
+              journeyType = OptInJourney.Name,
+              optInSessionData = Some(OptInSessionData(
+                Some(OptInContextData("2023", "V", "V")), selectedOptInYear = Some("2023-2024")
+              )),
+              lastUpdated = lastUpdatedInstant
+            )
+
+
+          when(repository.get(hc.sessionId.get.value, OptInJourney.Name)).thenReturn(Future(Some(data)))
+
+          when(mockDateService.getCurrentTaxYear).thenReturn(TaxYear(2023, 2024))
+          when(mockDateService.getCurrentTaxYear.nextYear).thenReturn(TaxYear(2024, 2025))
+
+          when(mockITSAStatusService.getStatusTillAvailableFutureYears(any())(any(), any(), any()))
+            .thenReturn(Future(yearToStatus2024))
+
+          val actual =
+            await(
+              service.updateOptInPropositionYearStatuses(Some(Annual), Some(Annual))
+            )
+
+          val expected =
+            OptInProposition(
+              CurrentOptInTaxYear(
+                status = Annual,
+                taxYear = TaxYear(2024, 2025)
+              ),
+              NextOptInTaxYear(
+                status = Annual,
+                taxYear = TaxYear(2025, 2026),
+                currentOptInTaxYear = CurrentOptInTaxYear(Annual, TaxYear(2024, 2025))
+              )
+            )
+
+          actual shouldBe expected
+        }
+      }
+
+      "given original session OptInContextData itsa statuses are both Voluntary, method supplied itsa status - Annual for only current tax year" should {
+
+        "create a OptInProposition() with the current tax year to Annual" in {
+
+          val lastUpdatedInstant = LocalDateTime.of(2024, 1, 1, 0, 0, 0).toInstant(ZoneOffset.UTC)
+
+          val data =
+            UIJourneySessionData(
+              sessionId = hc.sessionId.get.value,
+              journeyType = OptInJourney.Name,
+              optInSessionData = Some(OptInSessionData(
+                Some(OptInContextData("2023", "V", "V")), selectedOptInYear = Some("2023-2024")
+              )),
+              lastUpdated = lastUpdatedInstant
+            )
+
+
+          when(repository.get(hc.sessionId.get.value, OptInJourney.Name)).thenReturn(Future(Some(data)))
+
+          when(mockDateService.getCurrentTaxYear).thenReturn(TaxYear(2023, 2024))
+          when(mockDateService.getCurrentTaxYear.nextYear).thenReturn(TaxYear(2024, 2025))
+
+          when(mockITSAStatusService.getStatusTillAvailableFutureYears(any())(any(), any(), any()))
+            .thenReturn(Future(yearToStatus2024))
+
+          val actual =
+            await(
+              service.updateOptInPropositionYearStatuses(Some(Annual), None)
+            )
+
+          val expected =
+            OptInProposition(
+              CurrentOptInTaxYear(
+                status = Annual,
+                taxYear = TaxYear(2024, 2025)
+              ),
+              NextOptInTaxYear(
+                status = NoStatus,
+                taxYear = TaxYear(2025, 2026),
+                currentOptInTaxYear = CurrentOptInTaxYear(Annual, TaxYear(2024, 2025))
+              )
+            )
+
+          actual shouldBe expected
+        }
+      }
+    }
+  }
+
   "OptInService.saveIntent" should {
+
     "save selectedOptInYear in session data" in {
 
       val data = UIJourneySessionData(
@@ -98,6 +291,7 @@ class OptInServiceSpec extends UnitSpec
   }
 
   "OptInService.saveIntent and no session data" should {
+
     "save selectedOptInYear in session data" in {
 
       val jsd = UIJourneySessionData(hc.sessionId.get.value, OptInJourney.Name)
@@ -228,7 +422,6 @@ class OptInServiceSpec extends UnitSpec
 
       result.isInstanceOf[ITSAStatusUpdateResponseFailure] shouldBe true
     }
-
   }
 
   "OptInService.getMultiYearCheckYourAnswersViewModel" should {
@@ -244,12 +437,13 @@ class OptInServiceSpec extends UnitSpec
 
       val result = service.getMultiYearCheckYourAnswersViewModel(isAgent)
 
-      result.futureValue.get shouldBe MultiYearCheckYourAnswersViewModel(
-        intentTaxYear = currentTaxYear,
-        isAgent = isAgent,
-        cancelURL = routes.ReportingFrequencyPageController.show(isAgent).url,
-        intentIsNextYear = false
-      )
+      result.futureValue.get shouldBe
+        MultiYearCheckYourAnswersViewModel(
+          intentTaxYear = currentTaxYear,
+          isAgent = isAgent,
+          cancelURL = routes.ReportingFrequencyPageController.show(isAgent).url,
+          intentIsNextYear = false
+        )
     }
 
     "return model when intent is next tax-year" in {
@@ -270,16 +464,5 @@ class OptInServiceSpec extends UnitSpec
         intentIsNextYear = true
       )
     }
-
-  }
-
-  def executionContext()(implicit executionContext: ExecutionContext): ExecutionContext = executionContext
-
-  def mockRepository(optInContextData: Option[OptInContextData] = None, selectedOptInYear: Option[String] = None): Unit = {
-
-    val sessionData = UIJourneySessionData(hc.sessionId.get.value, OptInJourney.Name,
-      optInSessionData = Some(OptInSessionData(optInContextData, selectedOptInYear)))
-
-    when(repository.get(hc.sessionId.get.value, OptInJourney.Name)).thenReturn(Future.successful(Some(sessionData)))
   }
 }

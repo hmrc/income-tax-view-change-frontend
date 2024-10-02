@@ -58,7 +58,6 @@ class ChooseYearController @Inject()(val optInService: OptInService,
   def show(isAgent: Boolean = false): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       withRecover(isAgent) {
-
         optInService.availableOptInTaxYear().flatMap { taxYears =>
           (for {
             savedTaxYear <- OptionT(optInService.fetchSavedChosenTaxYear())

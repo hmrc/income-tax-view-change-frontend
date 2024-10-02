@@ -19,7 +19,7 @@ package controllers.optIn
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
 import controllers.optIn.CheckYourAnswersControllerISpec._
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import helpers.{ComponentSpecBase, ITSAStatusUpdateConnectorStub}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
@@ -38,6 +38,7 @@ import utils.OptInJourney
 import scala.concurrent.Future
 
 object CheckYourAnswersControllerISpec {
+
   val headingText = "Check your answers"
   val optInSummary = "If you opt in, you will need to submit your quarterly update through compatible software."
   val optInSummaryNextYear = "If you opt in from the next tax year onwards, from 6 April 2023 you will need to submit " +
@@ -62,6 +63,28 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
   override def beforeEach(): Unit = {
     super.beforeEach()
     repository.clearSession(testSessionId).futureValue shouldBe true
+  }
+
+  private def setupOptInSessionData(currentTaxYear: TaxYear,
+                                    currentYearStatus: ITSAStatus.Value,
+                                    nextYearStatus: ITSAStatus.Value,
+                                    intent: TaxYear
+                                   ): Future[Boolean] = {
+    repository.set(
+      UIJourneySessionData(
+        sessionId = testSessionId,
+        journeyType = OptInJourney.Name,
+        optInSessionData =
+          Some(OptInSessionData(
+            optInContextData =
+              Some(OptInContextData(
+                currentTaxYear = currentTaxYear.toString,
+                currentYearITSAStatus = statusToString(currentYearStatus),
+                nextYearITSAStatus = statusToString(nextYearStatus)
+              )),
+            selectedOptInYear = Some(intent.toString),
+          ))
+      ))
   }
 
   def testShowHappyCase(isAgent: Boolean): Unit = {
@@ -127,14 +150,19 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
     val chooseOptOutTaxYearPageUrl = controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent).url
 
     s"submit page form, calling POST $chooseOptOutTaxYearPageUrl" should {
+
       s"successfully render opt-in check your answers page" in {
+
+        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(2023)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual, currentTaxYear)
+        setupOptInSessionData(currentTaxYear = currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual, intent = currentTaxYear)
 
-        ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
-          Status.NO_CONTENT, emptyBodyString
+        ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(
+          taxableEntityId = propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
+          status = Status.NO_CONTENT,
+          responseBody = emptyBodyString
         )
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses.submitCheckYourAnswersOptInJourney()
@@ -153,15 +181,26 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
     val chooseOptOutTaxYearPageUrl = routes.CheckYourAnswersController.show(isAgent).url
 
     s"no tax-year choice is made and" when {
+
       s"submit page form, calling POST $chooseOptOutTaxYearPageUrl" should {
+
         s"show page again with error message" in {
+
+          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(2023)
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-          setupOptInSessionData(currentTaxYear, currentYearStatus = Voluntary, nextYearStatus = Voluntary, currentTaxYear)
+          setupOptInSessionData(
+            currentTaxYear = currentTaxYear,
+            currentYearStatus = Voluntary,
+            nextYearStatus = Voluntary,
+            intent = currentTaxYear
+          )
 
-          ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
-            BAD_REQUEST, Json.toJson(ITSAStatusUpdateResponseFailure.defaultFailure()).toString()
+          ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(
+            taxableEntityId = propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
+            status = BAD_REQUEST,
+            responseBody = Json.toJson(ITSAStatusUpdateResponseFailure.defaultFailure()).toString()
           )
 
           val result = IncomeTaxViewChangeFrontendManageBusinesses.submitCheckYourAnswersOptInJourney()
@@ -188,17 +227,4 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
     testSubmitHappyCase(isAgent = true)
     testSubmitUnhappyCase(isAgent = true)
   }
-
-  private def setupOptInSessionData(currentTaxYear: TaxYear, currentYearStatus: ITSAStatus.Value,
-                                    nextYearStatus: ITSAStatus.Value, intent: TaxYear): Future[Boolean] = {
-    repository.set(
-      UIJourneySessionData(testSessionId,
-        OptInJourney.Name,
-        optInSessionData =
-          Some(OptInSessionData(
-            Some(OptInContextData(
-              currentTaxYear.toString, statusToString(currentYearStatus),
-              statusToString(nextYearStatus))), Some(intent.toString)))))
-  }
-
 }

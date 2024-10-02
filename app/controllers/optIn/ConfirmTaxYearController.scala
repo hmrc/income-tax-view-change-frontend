@@ -22,12 +22,15 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseSuccess
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.optIn.routes.OptInErrorController
+import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus.Voluntary
 import models.optin.ConfirmTaxYearViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.DateService
 import services.optIn.OptInService
+import services.optIn.core.OptInProposition
 import utils.AuthenticatorPredicate
 import views.html.optIn.ConfirmTaxYear
 
@@ -73,9 +76,29 @@ class ConfirmTaxYearController @Inject()(val view: ConfirmTaxYear,
 
   def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
-      optInService.makeOptInCall() map {
-        case ITSAStatusUpdateResponseSuccess(_) => redirectToCheckpointPage(isAgent)
-        case _ => Redirect(OptInErrorController.show(isAgent))
+      for {
+        selectedTaxYear: Option[TaxYear] <- optInService.getSelectedOptInTaxYear()
+        optInProposition: OptInProposition <- {
+          selectedTaxYear match {
+            case Some(year) if year == dateService.getCurrentTaxYear =>
+              optInService.updateOptInPropositionYearStatuses(Some(Voluntary), Some(Voluntary))
+            case Some(year) if year == dateService.getCurrentTaxYear.nextYear =>
+              optInService.updateOptInPropositionYearStatuses(None, Some(Voluntary))
+            case _ => optInService.updateOptInPropositionYearStatuses(None, None)
+          }
+        }
+        _ <-
+          optInService.saveOptInSessionData(
+            currentTaxYear = optInProposition.currentTaxYear.taxYear.toString,
+            currentYearITSAStatus = optInProposition.currentTaxYear.status,
+            nextYearITSAStatus = optInProposition.nextTaxYear.status
+          )
+        redirect <- optInService.makeOptInCall().map {
+          case ITSAStatusUpdateResponseSuccess(_) => redirectToCheckpointPage(isAgent)
+          case _ => Redirect(OptInErrorController.show(isAgent))
+        }
+      } yield {
+        redirect
       }
   }
 

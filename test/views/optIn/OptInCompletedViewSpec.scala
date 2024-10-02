@@ -33,7 +33,9 @@ class OptInCompletedViewSpec extends TestSupport {
   val view: OptInCompletedView = app.injector.instanceOf[OptInCompletedView]
 
   class SetupForCurrentYear(isAgent: Boolean = true, taxYear: TaxYear, followingYearVoluntary: Boolean) {
-    val model: OptInCompletedViewModel = OptInCompletedViewModel(isAgent = isAgent, optInTaxYear = taxYear, isCurrentYear = true, optInIncludedNextYear = followingYearVoluntary)
+
+    val model: OptInCompletedViewModel =
+      OptInCompletedViewModel(isAgent = isAgent, optInTaxYear = taxYear, isCurrentYear = true, isAnyYearAnnual = false, optInIncludedNextYear = followingYearVoluntary)
     val pageDocument: Document = Jsoup.parse(contentAsString(view(model = model)))
   }
 
@@ -89,11 +91,12 @@ class OptInCompletedViewSpec extends TestSupport {
   }
 
   class SetupNextYear(isAgent: Boolean = true, taxYear: TaxYear) {
-    val model: OptInCompletedViewModel = OptInCompletedViewModel(isAgent = isAgent, optInTaxYear = taxYear, isCurrentYear = false, optInIncludedNextYear = false)
+    val model: OptInCompletedViewModel = OptInCompletedViewModel(isAgent = isAgent, optInTaxYear = taxYear, isCurrentYear = false, isAnyYearAnnual = true, optInIncludedNextYear = false)
     val pageDocument: Document = Jsoup.parse(contentAsString(view(model = model)))
   }
 
   s"has the correct content for year $taxYear22_23 which is the next year" in new SetupNextYear(false, taxYear22_23) {
+
     pageDocument.title() shouldBe "Opt in completed - Manage your Income Tax updates - GOV.UK"
 
     pageDocument.getElementsByClass("govuk-panel__title").text() shouldBe "Opt in completed"
@@ -107,11 +110,13 @@ class OptInCompletedViewSpec extends TestSupport {
 
     pageDocument.getElementById("optin-completed-view-p3").text() shouldBe "For any tax year you are reporting " +
       "quarterly, you will need software compatible with Making Tax Digital for Income Tax (opens in new tab)."
+
     pageDocument.getElementById("optin-completed-view-p4").text() shouldBe "When reporting annually, you can submit " +
       "your tax return directly through your HMRC online account or compatible software."
 
     pageDocument.getElementById("optin-completed-view-p5").text() shouldBe "You are voluntarily opted in to reporting " +
       "quarterly from the next tax year onwards, but in the future it could be mandatory for you if:"
+
     pageDocument.getElementById("optin-completed-view-p6").text() shouldBe "You can check the threshold for qualifying " +
       "income in the criteria for people who will need to sign up for Making Tax Digital for Income Tax " +
       "(opens in new tab)."

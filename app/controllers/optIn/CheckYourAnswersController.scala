@@ -17,22 +17,22 @@
 package controllers.optIn
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import cats.data.OptionT
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseSuccess
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.optIn.routes.OptInErrorController
-import controllers.routes.ReportingFrequencyPageController
 import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus.Voluntary
 import models.optin.MultiYearCheckYourAnswersViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.DateService
 import services.optIn.OptInService
+import services.optIn.core.OptInProposition
 import utils.AuthenticatorPredicate
-import views.html.optIn.{CheckYourAnswersView, ChooseTaxYearView}
+import views.html.optIn.CheckYourAnswersView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -77,9 +77,29 @@ class CheckYourAnswersController @Inject()(val view: CheckYourAnswersView,
 
   def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
-      optInService.makeOptInCall() map {
-        case ITSAStatusUpdateResponseSuccess(_) => redirectToCheckpointPage(isAgent)
-        case _ => Redirect(OptInErrorController.show(isAgent))
+      for {
+        selectedTaxYear: Option[TaxYear] <- optInService.getSelectedOptInTaxYear()
+        optInProposition: OptInProposition <- {
+          selectedTaxYear match {
+            case Some(year) if year == dateService.getCurrentTaxYear =>
+              optInService.updateOptInPropositionYearStatuses(Some(Voluntary), Some(Voluntary))
+            case Some(year) if year == dateService.getCurrentTaxYear.nextYear =>
+              optInService.updateOptInPropositionYearStatuses(None, Some(Voluntary))
+            case _ => optInService.updateOptInPropositionYearStatuses(None, None)
+          }
+        }
+        _ <-
+          optInService.saveOptInSessionData(
+            currentTaxYear = optInProposition.currentTaxYear.taxYear.toString,
+            currentYearITSAStatus = optInProposition.currentTaxYear.status,
+            nextYearITSAStatus = optInProposition.nextTaxYear.status
+          )
+        redirect <- optInService.makeOptInCall().map {
+          case ITSAStatusUpdateResponseSuccess(_) => redirectToCheckpointPage(isAgent)
+          case _ => Redirect(OptInErrorController.show(isAgent))
+        }
+      } yield {
+        redirect
       }
   }
 

@@ -131,4 +131,9 @@ object ITSAStatusTestConstants {
   val yearToStatus: Map[TaxYear, StatusDetail] = Map(TaxYear.forYearEnd(2020) -> statusDetail, TaxYear.forYearEnd(2021) -> statusDetailMTDMandated)
   val yearToUnknownStatus: Map[TaxYear, StatusDetail] = Map(TaxYear.forYearEnd(2020) -> statusDetail, TaxYear.forYearEnd(2021) -> statusDetail, TaxYear.forYearEnd(2022) -> statusDetail)
 
+
+  val statusDetail2024 = StatusDetail("2023-06-15T15:38:33.960Z", ITSAStatus.NoStatus, "Sign up - return available", Some(8000.25))
+  val statusDetailMTDMandated2024 = StatusDetail("2024-06-15T15:38:33.960Z", ITSAStatus.Mandated, "Sign up - return available", Some(8000.25))
+  val yearToStatus2024: Map[TaxYear, StatusDetail] = Map(TaxYear(2023, 2024) -> statusDetail2024, TaxYear(2024, 2025) -> statusDetailMTDMandated2024)
+
 }

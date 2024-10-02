@@ -79,6 +79,7 @@ object ITSAStatusDetailsStub extends ComponentSpecBase {
   }
 
   case class ITSAYearStatus(previousYear: ITSAStatus.ITSAStatus, currentYear: ITSAStatus.ITSAStatus, nextYear: ITSAStatus.ITSAStatus)
+
   def stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(taxYear: Int, yearStatus: ITSAYearStatus): StubMapping = {
     val previousYear = taxYear - 1
     val futureYear = taxYear + 1

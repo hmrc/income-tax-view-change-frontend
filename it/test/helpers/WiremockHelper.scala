@@ -192,7 +192,10 @@ trait WiremockHelper {
 
   lazy val ws = app.injector.instanceOf[WSClient]
 
-  lazy val wmConfig = wireMockConfig().port(wiremockPort).notifier(new ConsoleNotifier(true))
+  lazy val wmConfig =
+    wireMockConfig()
+    .port(wiremockPort)
+    .notifier(new ConsoleNotifier(false))  // turn this to true for verbose logs
 
   lazy val wireMockServer = new WireMockServer(wmConfig)
 

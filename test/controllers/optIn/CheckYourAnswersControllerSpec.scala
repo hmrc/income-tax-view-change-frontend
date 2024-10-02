@@ -19,16 +19,20 @@ package controllers.optIn
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import controllers.routes
+import enums.IncomeSourceJourney.SelfEmployment
+import enums.JourneyType.{Add, JourneyType}
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockDateService, MockOptInService, MockOptOutService}
-import models.incomeSourceDetails.TaxYear
-import models.optin.MultiYearCheckYourAnswersViewModel
+import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
+import models.itsaStatus.ITSAStatus
+import models.optin.{MultiYearCheckYourAnswersViewModel, OptInContextData, OptInSessionData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import play.api.http.Status
-import play.api.http.Status.OK
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
+import services.optIn.core.{CurrentOptInTaxYear, NextOptInTaxYear, OptInProposition}
+import testConstants.BaseTestConstants.testSessionId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
 import views.html.optIn.CheckYourAnswersView
@@ -53,13 +57,18 @@ class CheckYourAnswersControllerSpec extends TestSupport
   )
 
   val endTaxYear = 2023
-  val taxYear2023 = TaxYear.forYearEnd(endTaxYear)
+  val taxYear2023: TaxYear = TaxYear.forYearEnd(endTaxYear)
+
+  val taxYear2024: TaxYear = TaxYear(2024, 2025)
 
   def showTests(isAgent: Boolean): Unit = {
-    "show page" should {
 
-      s"return result with $OK status" in {
+    ".show()" should {
+
+      s"return result with OK 200 status" in {
+
         setupMockAuthorisationSuccess(isAgent)
+
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
         when(mockOptInService.getMultiYearCheckYourAnswersViewModel(any())(any(), any(), any()))
@@ -74,7 +83,8 @@ class CheckYourAnswersControllerSpec extends TestSupport
         status(result) shouldBe Status.OK
       }
 
-      s"return result with $INTERNAL_SERVER_ERROR status" in {
+      s"return result with INTERNAL_SERVER_ERROR - 500" in {
+
         setupMockAuthorisationSuccess(isAgent)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
@@ -89,14 +99,52 @@ class CheckYourAnswersControllerSpec extends TestSupport
   }
 
   def submitTest(isAgent: Boolean): Unit = {
-    val testName = "MultiYear Opt-In"
+
     val requestPOST = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
 
-    s"submit method is invoked $testName" should {
+    s".submit() is invoked MultiYear Opt-In" should {
 
-      s"return result with $OK status for $testName" in {
+      s"return result with OK 200 status for MultiYear Opt-In" in {
+
         setupMockAuthorisationSuccess(isAgent)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+        when(mockOptInService.getSelectedOptInTaxYear()(any(), any(), any()))
+          .thenReturn(
+            Future(Some(taxYear2024))
+          )
+
+        when(mockDateService.getCurrentTaxYear)
+          .thenReturn(taxYear2024)
+
+        when(mockDateService.getCurrentTaxYear.nextYear)
+          .thenReturn(taxYear2024.nextYear)
+
+        when(mockOptInService.updateOptInPropositionYearStatuses(any(), any())(any(), any(), any()))
+          .thenReturn(
+            Future(OptInProposition(
+              CurrentOptInTaxYear(ITSAStatus.Annual, taxYear2024),
+              NextOptInTaxYear(ITSAStatus.Annual, taxYear2024.nextYear, CurrentOptInTaxYear(ITSAStatus.Annual, taxYear2024))
+            ))
+          )
+
+
+        def sessionData(): UIJourneySessionData =
+          UIJourneySessionData(
+            sessionId = testSessionId,
+            journeyType = JourneyType(Add, SelfEmployment).toString,
+            optInSessionData = Some(OptInSessionData(
+              Some(OptInContextData(
+                currentTaxYear = "2024-2025",
+                currentYearITSAStatus = "A",
+                nextYearITSAStatus = "V"
+              )),
+              None
+            ))
+          )
+
+        when(mockOptInService.saveOptInSessionData(any(), any(), any())(any(), any()))
+          .thenReturn(Future(sessionData()))
 
         when(mockOptInService.makeOptInCall()(any(), any(), any()))
           .thenReturn(Future.successful(ITSAStatusUpdateResponseSuccess()))
@@ -107,9 +155,47 @@ class CheckYourAnswersControllerSpec extends TestSupport
       }
     }
 
-    s"return result with $SEE_OTHER status for $testName and update fails" in {
+    s"return result with SEE_OTHER 303 status for MultiYear Opt-In and update fails" in {
+
       setupMockAuthorisationSuccess(isAgent)
       setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+      when(mockOptInService.getSelectedOptInTaxYear()(any(), any(), any()))
+        .thenReturn(
+          Future(Some(TaxYear(2024, 2025)))
+        )
+
+      when(mockDateService.getCurrentTaxYear)
+        .thenReturn(taxYear2024)
+
+      when(mockDateService.getCurrentTaxYear.nextYear)
+        .thenReturn(taxYear2024.nextYear)
+
+      when(mockOptInService.updateOptInPropositionYearStatuses(any(), any())(any(), any(), any()))
+        .thenReturn(
+          Future(OptInProposition(
+            CurrentOptInTaxYear(ITSAStatus.Annual, taxYear2024),
+            NextOptInTaxYear(ITSAStatus.Annual, taxYear2024.nextYear, CurrentOptInTaxYear(ITSAStatus.Annual, taxYear2024))
+          ))
+        )
+
+      def sessionData(): UIJourneySessionData =
+        UIJourneySessionData(
+          sessionId = testSessionId,
+          journeyType = JourneyType(Add, SelfEmployment).toString,
+          optInSessionData = Some(OptInSessionData(
+            Some(OptInContextData(
+              currentTaxYear = "2024-2025",
+              currentYearITSAStatus = "A",
+              nextYearITSAStatus = "V"
+            )),
+            None
+          ))
+        )
+
+      when(mockOptInService.saveOptInSessionData(any(), any(), any())(any(), any()))
+        .thenReturn(Future(sessionData()))
+
 
       when(mockOptInService.makeOptInCall()(any(), any(), any()))
         .thenReturn(Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure()))
