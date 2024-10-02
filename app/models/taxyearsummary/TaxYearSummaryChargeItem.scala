@@ -17,6 +17,7 @@
 package models.taxyearsummary
 
 import models.financialDetails.{Accepted, BalancingCharge, Cancelled, ChargeItem, ChargeType, MfaDebitCharge, Nics2, PaymentOnAccountOne, PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwo, PaymentOnAccountTwoReviewAndReconcile, SubTransactionType, TransactionItem}
+import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import services.DateServiceInterface
 
@@ -70,7 +71,7 @@ import java.time.LocalDate
   }
   case class TaxYearSummaryChargeItem (
                           transactionId: String,
-                          taxYear: Int,
+                          taxYear: TaxYear,
                           transactionType: ChargeType,
                           subTransactionType: Option[SubTransactionType],
                           documentDate: LocalDate,

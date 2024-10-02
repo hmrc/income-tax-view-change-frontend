@@ -62,7 +62,7 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
                                         mcc: MessagesControllerComponents,
                                         val ec: ExecutionContext,
                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport with FallBackBackLinks {
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport with FallBackBackLinks with TransactionUtils {
 
   def onError(message: String, isAgent: Boolean, showInternalServerError: Boolean)(implicit request: Request[_]): Result = {
     val errorPrefix: String = s"[ChargeSummaryController]${if (isAgent) "[Agent]" else ""}[showChargeSummary]"
@@ -171,7 +171,7 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
           documentDetailWithDueDate.documentDetail.isCancelledPayeSelfAssessment)) {
           onError("Coding Out is disabled and redirected to not found page", isAgent, showInternalServerError = false)
         } else {
-          auditChargeSummary(documentDetailWithDueDate, paymentBreakdown, chargeHistory, paymentAllocations,
+          auditChargeSummary(chargeItem, paymentBreakdown, chargeHistory, paymentAllocations,
             isLatePaymentCharge, isMFADebit, taxYear)
 
 
@@ -224,7 +224,7 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
   }
 
   private def checkForPoaExtraChargeLink(chargeDetailsForTaxYear: FinancialDetailsModel, documentDetailWithDueDate: DocumentDetailWithDueDate, isAgent: Boolean)(implicit user: MtdItUser[_]): Option[String] = {
-    val chargeItem: Option[ChargeItem] = ChargeItem.tryGetChargeItem(isEnabled(CodingOut), isEnabled(ReviewAndReconcilePoa))(
+    val chargeItem: Option[ChargeItem] = getChargeItemOpt(isEnabled(CodingOut), isEnabled(ReviewAndReconcilePoa))(
       chargeDetailsForTaxYear.financialDetails)(documentDetailWithDueDate.documentDetail)
 
    chargeItem match {
@@ -272,14 +272,14 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
   }
 
 
-  private def auditChargeSummary(documentDetailWithDueDate: DocumentDetailWithDueDate,
+  private def auditChargeSummary(chargeItem: ChargeItem,
                                  paymentBreakdown: List[FinancialDetail], chargeHistories: List[ChargeHistoryModel],
                                  paymentAllocations: List[PaymentHistoryAllocations], isLatePaymentCharge: Boolean,
                                  isMFADebit: Boolean, taxYear: Int)
                                 (implicit hc: HeaderCarrier, user: MtdItUser[_]): Unit = {
     auditingService.extendedAudit(ChargeSummaryAudit(
       mtdItUser = user,
-      docDateDetail = documentDetailWithDueDate,
+      chargeItem = chargeItem,
       paymentBreakdown = paymentBreakdown,
       chargeHistories = chargeHistories,
       paymentAllocations = paymentAllocations,

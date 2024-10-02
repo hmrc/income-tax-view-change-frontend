@@ -22,10 +22,9 @@ import enums.CodingOutType.{CODING_OUT_ACCEPTED, CODING_OUT_CANCELLED}
 import models.chargeHistory.ChargeHistoryModel
 import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails._
-import models.incomeSourceDetails.IncomeSourceDetailsModel
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
-import play.api.Logger
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -38,7 +37,7 @@ import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
 
-class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers {
+class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentSharedFunctions {
 
   implicit val dateService: DateService = app.injector.instanceOf[DateService]
 
@@ -107,22 +106,45 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers {
     financialDetail(originalAmount = 2345.67, chargeType = NIC2_GB, interestLock = Some("Breathing Space Moratorium Act")),
     financialDetail(originalAmount = 3456.78, chargeType = VOLUNTARY_NIC2_NI, dunningLock = Some("Stand over order")),
     financialDetail(originalAmount = 9876.54, chargeType = CGT))
-  val docDateDetail: DocumentDetailWithDueDate = DocumentDetailWithDueDate(
-    documentDetail = docDetail,
-    dueDate = Some(fixedDate)
+
+
+
+
+  val chargeItemWithNoInterest: ChargeItem = ChargeItem(
+    transactionId = "1040000124",
+    taxYear = TaxYear.forYearEnd(taxYear),
+    transactionType = PaymentOnAccountOne,
+    subTransactionType = None,
+    documentDate = LocalDate.of(2018, 3, 29),
+    dueDate = Some(fixedDate),
+    originalAmount = 10.34,
+    outstandingAmount = 0.0,
+    interestOutstandingAmount = None,
+    latePaymentInterestAmount = None,
+    interestFromDate = None,
+    interestEndDate = None,
+    interestRate = None,
+    lpiWithDunningLock = None,
+    amountCodedOut = None,
+    dunningLock = false
   )
-  val docDateDetailWithCodingOutAccepted: DocumentDetailWithDueDate = DocumentDetailWithDueDate(
-    documentDetail = docDetailWithCodingOutAccepted,
-    dueDate = Some(fixedDate)
+  val chargeItemWithCodingOutAccepted: ChargeItem = chargeItemWithNoInterest.copy(
+    transactionType = BalancingCharge,
+    subTransactionType = Some(Accepted)
   )
-  val docDateDetailWithCodingOutRejected: DocumentDetailWithDueDate = DocumentDetailWithDueDate(
-    documentDetail = docDetailWithCodingOutRejected,
-    dueDate = Some(fixedDate)
+  val chargeItemWithCodingOutRejected: ChargeItem =  chargeItemWithNoInterest.copy(
+    transactionType = BalancingCharge,
+    subTransactionType = Some(Cancelled)
   )
-  val docDateDetailWithInterest: DocumentDetailWithDueDate = DocumentDetailWithDueDate(
-    documentDetail = docDetailWithInterest,
-    dueDate = Some(fixedDate)
+  val chargeItemWithInterest: ChargeItem = chargeItemWithNoInterest.copy(
+    latePaymentInterestAmount = Some(54.32),
+    interestOutstandingAmount = Some(2),
+    interestFromDate = Some(LocalDate.of(2021, 10, 6)),
+    interestEndDate = Some(LocalDate.of(2022, 1, 6))
   )
+
+
+
   val chargeSummaryAuditMin: ChargeSummaryAudit = ChargeSummaryAudit(
     mtdItUser = MtdItUser(
       mtditid = "mtditid",
@@ -135,7 +157,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers {
       userType = None,
       arn = None
     ),
-    docDateDetail = docDateDetail,
+    chargeItem = chargeItemWithNoInterest,
     paymentBreakdown = List.empty,
     chargeHistories = List.empty,
     paymentAllocations = List.empty,
@@ -153,27 +175,9 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers {
           clearingId = None
         )), chargeMainType = Some(mainType), chargeType = Some(chargeType))
 
-  def getChargeType(latePayment: Boolean, documentDetail: DocumentDetail): String =
-    (documentDetail.documentDescription, documentDetail.documentText) match {
-    case (_, Some(text)) if text.contains("Cancelled PAYE Self Assessment") =>
-      "Cancelled PAYE Self Assessment (through your PAYE tax code)"
-    case (_, Some(text)) if text.contains("Balancing payment collected through PAYE tax code") =>
-      "Balancing payment collected through PAYE tax code"
-    case (Some("ITSA- POA 1"), _) =>
-      if (latePayment) "Late Payment Interest on payment on account 1 of 2" else "Payment on account 1 of 2"
-    case (Some("ITSA - POA 2"), _) =>
-      if (latePayment) "Late Payment Interest on payment on account 2 of 2" else "Payment on account 2 of 2"
-    case (Some("TRM New Charge"), _) | (Some("TRM Amend Charge"), _) =>
-      if (latePayment) "Late Payment Interest on remaining balance" else "Remaining balance"
-    case error => {
-      Logger("application")
-        .error(s"Missing or non-matching charge type: $error found")
-      "unknownCharge"
-    }
-  }
 
   def chargeSummaryAuditFull(userType: Option[AffinityGroup] = Some(Agent),
-                             docDateDetails: DocumentDetailWithDueDate, paymentBreakdown: List[FinancialDetail],
+                             chargeItem: ChargeItem, paymentBreakdown: List[FinancialDetail],
                              chargeHistories: List[ChargeHistoryModel], paymentAllocations: List[PaymentHistoryAllocations],
                              agentReferenceNumber: Option[String] = Some("agentReferenceNumber"), isLateInterestCharge: Boolean = true): ChargeSummaryAudit = ChargeSummaryAudit(
     mtdItUser = MtdItUser(
@@ -187,7 +191,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers {
       userType = userType,
       arn = agentReferenceNumber
     ),
-    docDateDetail = docDateDetails,
+    chargeItem = chargeItem,
     paymentBreakdown = if (!isLateInterestCharge) paymentBreakdowns else List.empty,
     chargeHistories = if (!isLateInterestCharge) chargeHistory else List.empty,
     paymentAllocations = paymentAllocation,
@@ -199,7 +203,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers {
 
     s"have the correct transaction name of '$transactionName'" in {
       chargeSummaryAuditFull(None,
-        docDateDetailWithInterest,
+        chargeItemWithInterest,
         paymentBreakdown = paymentBreakdowns,
         chargeHistories = chargeHistory,
         paymentAllocations = paymentAllocation,
@@ -209,7 +213,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers {
 
     s"have the correct audit event type of '$auditType'" in {
       chargeSummaryAuditFull(None,
-        docDateDetailWithInterest,
+        chargeItemWithInterest,
         paymentBreakdown = paymentBreakdowns,
         chargeHistories = chargeHistory,
         paymentAllocations = paymentAllocation,
@@ -222,7 +226,8 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers {
         "there are charge details" in {
           chargeSummaryAuditFull(
             userType = Some(Agent),
-            docDateDetailWithInterest,
+            chargeItemWithInterest
+            .copy(latePaymentInterestAmount = None),
             paymentBreakdown = paymentBreakdowns,
             chargeHistories = chargeHistory,
             paymentAllocations = paymentAllocation,
@@ -232,11 +237,11 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers {
             "charge" -> Json.obj(
               "remainingToPay" -> docDetailWithInterest.remainingToPay,
               "fullPaymentAmount" -> docDetailWithInterest.originalAmount,
-              "dueDate" -> docDateDetail.dueDate,
-              "chargeType" -> getChargeType(false, docDetailWithInterest),
+              "dueDate" -> chargeItemWithNoInterest.dueDate,
+              "chargeType" -> getChargeType(chargeItemWithInterest, latePaymentCharge = false),
               "interestPeriod" -> "2021-10-06 to 2022-01-06",
               "endTaxYear" -> taxYear,
-              "overdue" -> docDateDetail.isOverdue
+              "overdue" -> chargeItemWithNoInterest.isOverdue()
             ),
             "saUtr" -> "saUtr",
             "nino" -> "nino",
@@ -298,7 +303,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers {
         "there are charge details with coding out accepted" in {
           chargeSummaryAuditFull(
             userType = Some(Agent),
-            docDateDetailWithCodingOutAccepted,
+            chargeItemWithCodingOutAccepted,
             paymentBreakdown = paymentBreakdowns,
             chargeHistories = chargeHistory,
             paymentAllocations = paymentAllocation,
@@ -308,10 +313,10 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers {
             "charge" -> Json.obj(
               "remainingToPay" -> docDetailWithCodingOutAccepted.remainingToPay,
               "fullPaymentAmount" -> docDetailWithCodingOutRejected.originalAmount,
-              "dueDate" -> docDateDetailWithCodingOutAccepted.dueDate,
-              "chargeType" -> getChargeType(latePayment = false, docDetailWithCodingOutAccepted),
+              "dueDate" -> chargeItemWithCodingOutAccepted.dueDate,
+              "chargeType" -> getChargeType(chargeItemWithCodingOutAccepted, latePaymentCharge = false),
               "endTaxYear" -> taxYear,
-              "overdue" -> docDateDetailWithCodingOutAccepted.isOverdue
+              "overdue" -> chargeItemWithCodingOutAccepted.isOverdue()
             ),
             "saUtr" -> "saUtr",
             "nino" -> "nino",
@@ -373,7 +378,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers {
         "there are charge details with coding out rejected" in {
           chargeSummaryAuditFull(
             userType = Some(Agent),
-            docDateDetailWithCodingOutRejected,
+            chargeItemWithCodingOutRejected,
             paymentBreakdown = paymentBreakdowns,
             chargeHistories = chargeHistory,
             paymentAllocations = paymentAllocation,
@@ -383,10 +388,10 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers {
             "charge" -> Json.obj(
               "remainingToPay" -> docDetailWithCodingOutRejected.remainingToPay,
               "fullPaymentAmount" -> docDetailWithCodingOutRejected.originalAmount,
-              "dueDate" -> docDateDetailWithCodingOutRejected.dueDate,
-              "chargeType" -> getChargeType(latePayment = false, docDetailWithCodingOutRejected),
+              "dueDate" -> chargeItemWithCodingOutRejected.dueDate,
+              "chargeType" -> getChargeType(chargeItemWithCodingOutRejected, latePaymentCharge = false),
               "endTaxYear" -> taxYear,
-              "overdue" -> docDateDetailWithCodingOutRejected.isOverdue
+              "overdue" -> chargeItemWithCodingOutRejected.isOverdue()
             ),
             "saUtr" -> "saUtr",
             "nino" -> "nino",
@@ -449,7 +454,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers {
 
           chargeSummaryAuditFull(
             userType = Some(Agent),
-            docDateDetailWithInterest,
+            chargeItemWithInterest,
             paymentBreakdown = paymentBreakdowns,
             chargeHistories = chargeHistory,
             paymentAllocations = paymentAllocation,
@@ -460,10 +465,10 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers {
               "remainingToPay" -> docDetailWithInterest.interestRemainingToPay,
               "fullPaymentAmount" -> docDetailWithInterest.latePaymentInterestAmount,
               "dueDate" -> docDetailWithInterest.interestEndDate,
-              "chargeType" -> getChargeType(latePayment = true, docDetailWithInterest),
+              "chargeType" -> getChargeType(chargeItemWithInterest, latePaymentCharge = true),
               "interestPeriod" -> "2021-10-06 to 2022-01-06",
               "endTaxYear" -> taxYear,
-              "overdue" -> docDateDetail.isOverdue
+              "overdue" -> chargeItemWithNoInterest.isOverdue()
             ),
             "saUtr" -> "saUtr",
             "nino" -> "nino",
@@ -483,10 +488,10 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers {
             "charge" -> Json.obj(
               "remainingToPay" -> docDetail.remainingToPay,
               "fullPaymentAmount" -> docDetail.originalAmount,
-              "dueDate" -> docDateDetail.dueDate,
-              "chargeType" -> getChargeType(latePayment = false, docDetail),
+              "dueDate" -> chargeItemWithNoInterest.dueDate,
+              "chargeType" -> getChargeType(chargeItemWithNoInterest, latePaymentCharge = false),
               "endTaxYear" -> taxYear,
-              "overdue" -> docDateDetail.isOverdue),
+              "overdue" -> chargeItemWithNoInterest.isOverdue()),
             "nino" -> "nino",
             "paymentBreakdown" -> Json.arr(),
             "paymentAllocationsChargeHistory" -> Json.arr(),

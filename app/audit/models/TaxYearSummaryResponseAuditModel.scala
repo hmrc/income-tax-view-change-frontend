@@ -33,21 +33,12 @@ case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],
                                             messagesApi: MessagesApi,
                                             taxYearSummaryViewModel: TaxYearSummaryViewModel,
                                             messages: Option[Messages] = None
-                                           ) extends ExtendedAuditModel with ImplicitDateParser {
+                                           ) extends ExtendedAuditModel with ImplicitDateParser with PaymentSharedFunctions  {
 
 
   override val transactionName: String = enums.TransactionName.TaxYearOverviewResponse
   override val auditType: String = enums.AuditType.TaxYearOverviewResponse
 
-  def getChargeType(docDetail: TaxYearSummaryChargeItem, latePaymentCharge: Boolean): Option[String] =
-    (docDetail.transactionType, docDetail.subTransactionType) match {
-      case (_, Some(Nics2))       => Some("Class 2 National Insurance")
-      case(_, Some(Cancelled))    => Some("Cancelled PAYE Self Assessment (through your PAYE tax code)")
-      case (PaymentOnAccountOne,  _) => if (latePaymentCharge) Some("Late payment interest on first payment on account") else Some("First payment on account")
-      case (PaymentOnAccountTwo,  _) => if (latePaymentCharge) Some("Late payment interest on second payment on account") else Some("Second payment on account")
-      case (BalancingCharge, None ) => if (latePaymentCharge) Some("Late payment interest for remaining balance") else Some("Remaining balance")
-      case (_, _) => Some(docDetail.transactionType.key)
-    }
 
   private val taxYearSummaryJson = {
     Json.obj() ++

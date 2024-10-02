@@ -16,17 +16,19 @@
 
 package models.financialDetails
 
-import exceptions.CouldNotCreateChargeItem
+import exceptions.CouldNotCreateChargeItemException
+import models.admin.ReviewAndReconcilePoa
+import models.incomeSourceDetails.TaxYear
+import models.taxyearsummary.TaxYearSummaryChargeItem
 import play.api.Logger
 import play.api.libs.json.{Format, Json}
 import services.DateServiceInterface
 
 import java.time.LocalDate
-import scala.util.{Failure, Success, Try}
 
 case class ChargeItem (
                         transactionId: String,
-                        taxYear: Int,
+                        taxYear: TaxYear,
                         transactionType: ChargeType,
                         subTransactionType: Option[SubTransactionType],
                         documentDate: LocalDate,
@@ -68,7 +70,7 @@ case class ChargeItem (
     case _ => false
   }
 
-  def isLatePaymentInterest: Boolean = latePaymentInterestAmount match {
+  val isLatePaymentInterest: Boolean = latePaymentInterestAmount match {
     case Some(amount) if amount <= 0 => false
     case Some(_) => true
     case _ => false
@@ -154,22 +156,20 @@ object ChargeItem {
 
   implicit val format: Format[ChargeItem] = Json.format[ChargeItem]
 
-  def tryGetChargeItem(codingOutEnabled: Boolean, reviewAndReconcileEnabled: Boolean)
-                      (financialDetails: List[FinancialDetail])
-                      (documentDetail: DocumentDetail): Option[ChargeItem] = {
-    Try(ChargeItem.fromDocumentPair(
-      documentDetail,
-      financialDetails,
-      codingOutEnabled,
-      reviewAndReconcileEnabled)
-    ) match {
-      case Failure(exception) =>
-        Logger("application").warn(exception.getMessage)
-        None
-      case Success(value) if value.isCodingOut && !codingOutEnabled =>
-        None
-      case Success(value) =>
-        Some(value)
+  def filterCharge(isChargeTypeEnabled:Boolean, chargeType: ChargeType*)
+                  (chargeItem: TransactionItem): Boolean = {
+    (isChargeTypeEnabled, chargeItem.transactionType) match {
+      case (false, transactionType) if chargeType.toList.contains(transactionType) => false
+      case _ => true
+    }
+  }
+
+  def filterChargeWithOutstandingAmount(isChargeTypeEnabled:Boolean, chargeType: ChargeType*)
+                  (chargeItem: TransactionItem): Boolean = {
+    (isChargeTypeEnabled, chargeItem.transactionType) match {
+      case (false, transactionType) if chargeType.toList.contains(transactionType) => false
+      case (true, transactionType) if chargeType.toList.contains(transactionType) && chargeItem.outstandingAmount <= 0  => false
+      case _ => true
     }
   }
 
@@ -178,17 +178,17 @@ object ChargeItem {
 
     val financialDetail = financialDetails.find(_.transactionId.contains(documentDetail.transactionId)) match {
       case Some(fd) => fd
-      case _ => throw CouldNotCreateChargeItem(s"Financial detail is not defined for charge ${documentDetail.transactionId}")
+      case _ => throw CouldNotCreateChargeItemException(s"Financial detail is not defined for charge ${documentDetail.transactionId}")
     }
 
     val mainTransaction = financialDetail.mainTransaction match {
       case Some(mt) => mt
-      case _ => throw CouldNotCreateChargeItem(s"Main transaction is not defined for charge ${documentDetail.transactionId}")
+      case _ => throw CouldNotCreateChargeItemException(s"Main transaction is not defined for charge ${documentDetail.transactionId}")
     }
 
     val chargeType = ChargeType.fromCode(mainTransaction, reviewAndReconcile) match {
       case Some(ct) => ct
-      case _ => throw CouldNotCreateChargeItem(s"Could not identify charge type from $mainTransaction for charge ${documentDetail.transactionId}")
+      case _ => throw CouldNotCreateChargeItemException(s"Could not identify charge type from $mainTransaction for charge ${documentDetail.transactionId}")
     }
 
     val dunningLockExists =
@@ -196,7 +196,7 @@ object ChargeItem {
 
     ChargeItem(
       transactionId = documentDetail.transactionId,
-      taxYear = documentDetail.taxYear,
+      taxYear = TaxYear.forYearEnd(documentDetail.taxYear),
       transactionType = chargeType,
       subTransactionType = documentDetail.documentText
         .flatMap(SubTransactionType.fromDocumentText),
@@ -231,9 +231,10 @@ object ChargeItem {
 
       ChargeItem(
         transactionId = transactionId,
-        taxYear = dd.taxYear,
+        taxYear = TaxYear.forYearEnd(dd.taxYear),
         transactionType = chargeType,
-        subTransactionType = dd.documentText.flatMap(SubTransactionType.fromDocumentText)
+        subTransactionType = dd.documentText
+          .flatMap(SubTransactionType.fromDocumentText)
           .filter(_ => codingOut),
         documentDate = dd.documentDate,
         dueDate = dd.documentDueDate,

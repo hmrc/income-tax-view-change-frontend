@@ -24,7 +24,7 @@ import enums.ChargeType.{ITSA_ENGLAND_AND_NI, ITSA_NI, NIC4_SCOTLAND}
 import enums.CodingOutType._
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuthStub.titleInternalServer
-import helpers.servicemocks.DocumentDetailsStub.docDateDetailWithInterest
+import helpers.servicemocks.ChargeItemStub.chargeItemWithInterest
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.admin.{ChargeHistory, CodingOut, MFACreditsAndDebits, PaymentAllocation}
 import models.chargeHistory.ChargeHistoryModel
@@ -127,7 +127,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
           None, Some("1234567890"), None, Some(Agent), Some(testArn)
         )(FakeRequest()),
-        docDateDetailWithInterest(LocalDate.of(2019, 1, 1).toString, "ITSA- POA 1"),
+        chargeItemWithInterest(),
         paymentBreakdown = paymentBreakdown,
         chargeHistories = List.empty,
         paymentAllocations = paymentAllocation,
@@ -161,7 +161,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
           None, Some("1234567890"), None, Some(Agent), Some(testArn)
         )(FakeRequest()),
-        docDateDetailWithInterest(LocalDate.of(2019, 1, 1).toString, "ITSA- POA 1"),
+        chargeItemWithInterest(),
         paymentBreakdown = paymentBreakdown,
         chargeHistories = List.empty,
         paymentAllocations = paymentAllocation,
@@ -200,7 +200,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
           None, Some("1234567890"), None, Some(Agent), Some(testArn)
         )(FakeRequest()),
-        docDateDetailWithInterest(LocalDate.of(2019, 1, 1).toString, "ITSA- POA 1"),
+        chargeItemWithInterest(),
         paymentBreakdown = paymentBreakdown,
         chargeHistories = chargeHistories,
         paymentAllocations = paymentAllocation,
@@ -225,7 +225,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
           None, Some("1234567890"), None, Some(Agent), Some(testArn)
         )(FakeRequest()),
-        docDateDetailWithInterest(LocalDate.of(2019, 1, 1).toString, "ITSA- POA 1"),
+        chargeItemWithInterest(),
         paymentBreakdown = List.empty,
         chargeHistories = List.empty,
         paymentAllocations = paymentAllocation,

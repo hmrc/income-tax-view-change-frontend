@@ -231,13 +231,14 @@
     val linkText = getMessage(s"${lpi}${chargeTypeKey}")
     val taxYear = chargeItem.taxYear
     val linkHref = if(isAgent) {
-        controllers.routes.ChargeSummaryController.showAgent(taxYear.toInt,
+
+        controllers.routes.ChargeSummaryController.showAgent(taxYear.endYear,
             chargeItem.transactionId, isInterest)
     } else {
-        controllers.routes.ChargeSummaryController.show(taxYear.toInt,
+        controllers.routes.ChargeSummaryController.show(taxYear.endYear,
             chargeItem.transactionId, isInterest, origin)
     }
-    paymentTypeEntryHTML(linkText = linkText, linkHref = linkHref, taxYear = taxYear, rowId = rowId,
+    paymentTypeEntryHTML(linkText = linkText, linkHref = linkHref, taxYear = taxYear.endYear, rowId = rowId,
         linkSuffix: String, index+1)
 }
 
@@ -318,7 +319,7 @@
                 <div class="form-hint govuk-body-s" id="LpiDunningLock"> @getMessage("paymentUnderReview") </div>
             }
         </td>
-        <td class="govuk-table__cell numeric govuk-!-width-one-quarter"> @taxYearSummaryLink(chargeItem.taxYear.toInt, index, id)</td>
+        <td class="govuk-table__cell numeric govuk-!-width-one-quarter"> @taxYearSummaryLink(chargeItem.taxYear.endYear, index, id)</td>
         <td class="govuk-table__cell numeric govuk-!-width-one-quarter govuk-table__cell--numeric">@{
             if(chargeItem.isOnlyInterest) {
                 chargeItem.interestRemainingToPay.toCurrency
@@ -470,7 +471,7 @@
                                                 </div>
                                             </td>
                                             <td class="govuk-table__cell numeric govuk-!-width-one-quarter">
-                                            @taxYearSummaryLink(charge.taxYear.toInt, index, "taxYearSummary-accuring-interest-link")
+                                            @taxYearSummaryLink(charge.taxYear.endYear, index, "taxYearSummary-accuring-interest-link")
                                             </td>
                                             <td class="govuk-table__cell numeric govuk-!-width-one-quarter govuk-table__cell--numeric">@{
                                                 charge.interestOutstandingAmount.getOrElse(throw MissingFieldException("Overdue Payment Interest Outstanding Amount")).toCurrency
@@ -566,12 +567,12 @@
         } else {
             @getMessage("credit-overpaid-prefix")
         }
-        <a class="govuk-link" id="coding-out-summary-link" href="@getCodingOutHref(codedOutDocumentDetail.taxYear, codedOutDocumentDetail.transactionId)">
+        <a class="govuk-link" id="coding-out-summary-link" href="@getCodingOutHref(codedOutDocumentDetail.taxYear.endYear, codedOutDocumentDetail.transactionId)">
             @codedOutDocumentDetail.amountCodedOut.getOrElse(throw new MissingFieldException("ChargeItem.amountCodedOut")).toCurrency
         </a>
         @getMessage("codingOut-1b")
-        <b>@getMessage("codingOut-2", (codedOutDocumentDetail.taxYear - 1).toString(),
-            codedOutDocumentDetail.taxYear.toString())</b>
+        <b>@getMessage("codingOut-2", (codedOutDocumentDetail.taxYear.endYear - 1).toString(),
+            codedOutDocumentDetail.taxYear.endYear.toString)</b>
         @if(isAgent) {
             @getMessage("codingOut-3")
         } else {

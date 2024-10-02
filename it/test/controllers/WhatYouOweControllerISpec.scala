@@ -21,7 +21,7 @@ import auth.MtdItUser
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.admin._
-import models.financialDetails.{BalanceDetails, ChargeItem, DocumentDetail, FinancialDetail, FinancialDetailsModel, WhatYouOweChargesList}
+import models.financialDetails.{BalanceDetails, ChargeItem, DocumentDetail, FinancialDetail, FinancialDetailsModel, TransactionUtils, WhatYouOweChargesList}
 import models.incomeSourceDetails.TaxYear
 import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
@@ -38,7 +38,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import java.time.LocalDate
 import java.time.Month.APRIL
 
-class WhatYouOweControllerISpec extends ComponentSpecBase with ChargeConstants {
+class WhatYouOweControllerISpec extends ComponentSpecBase with ChargeConstants with TransactionUtils {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -55,7 +55,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with ChargeConstants {
   val testDate: LocalDate = LocalDate.parse("2022-01-01")
 
   val configuredChargeItemGetter: List[FinancialDetail] => DocumentDetail => Option[ChargeItem] =
-    ChargeItem.tryGetChargeItem(isEnabled(CodingOut), isEnabled(ReviewAndReconcilePoa))
+    getChargeItemOpt(isEnabled(CodingOut), isEnabled(ReviewAndReconcilePoa))
 
   val testValidOutStandingChargeResponseJsonWithAciAndBcdCharges: JsValue = Json.parse(
     s"""

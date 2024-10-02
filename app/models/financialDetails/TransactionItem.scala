@@ -16,11 +16,22 @@
 
 package models.financialDetails
 
+import models.incomeSourceDetails.TaxYear
+import services.DateServiceInterface
+
 trait TransactionItem {
 
   val transactionId: String
 
   val transactionType: TransactionType
 
-  val taxYear: Int
+  val subTransactionType: Option[SubTransactionType]
+
+  val taxYear: TaxYear
+
+  val outstandingAmount: BigDecimal
+
+  val isLatePaymentInterest: Boolean
+
+  def isOverdue()(implicit dateService: DateServiceInterface): Boolean
 }
