@@ -22,12 +22,11 @@ import testConstants.BaseIntegrationTestConstants.testTaxYear
 
 import java.time.LocalDate
 
-object DocumentDetailsStub {
+object ChargeItemStub {
   def docDetail(chargeType: ChargeType): ChargeItem = ChargeItem(
     transactionId = "1040000124",
     taxYear = TaxYear.forYearEnd(testTaxYear),
     transactionType = chargeType,
-//    subTransactionType = Some(Nics2),
     subTransactionType = None,
     documentDate = LocalDate.of(2018, 3, 29),
     dueDate = Some(LocalDate.parse("2018-02-14")),
@@ -42,11 +41,6 @@ object DocumentDetailsStub {
     amountCodedOut = Some(2500),
     dunningLock = false
   )
-//
-//  def docDateDetail(dueDate: String, chargeType: String)(implicit dateService: DateServiceInterface): DocumentDetailWithDueDate = DocumentDetailWithDueDate(
-//    documentDetail = docDetail(chargeType),
-//    dueDate = Some(LocalDate.parse(dueDate))
-//  )
 
   def chargeItemWithInterest( chargeType: ChargeType = PaymentOnAccountOne,
                               subTransactionType: Option[SubTransactionType] = None): ChargeItem = ChargeItem(
