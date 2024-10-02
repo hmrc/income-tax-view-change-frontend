@@ -16,73 +16,76 @@
 
 package helpers.servicemocks
 
-import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate}
-import services.DateServiceInterface
+import models.financialDetails._
+import models.incomeSourceDetails.TaxYear
 import testConstants.BaseIntegrationTestConstants.testTaxYear
 
 import java.time.LocalDate
 
 object DocumentDetailsStub {
-  def docDetail(documentDescription: String): DocumentDetail = DocumentDetail(
-    taxYear = testTaxYear,
+  def docDetail(chargeType: ChargeType): ChargeItem = ChargeItem(
     transactionId = "1040000124",
-    documentDescription = Some(documentDescription),
-    documentText = Some("Class 2 National Insurance"),
+    taxYear = TaxYear.forYearEnd(testTaxYear),
+    transactionType = chargeType,
+//    subTransactionType = Some(Nics2),
+    subTransactionType = None,
+    documentDate = LocalDate.of(2018, 3, 29),
+    dueDate = Some(LocalDate.parse("2018-02-14")),
     originalAmount = 10.34,
     outstandingAmount = 1.2,
-    documentDate = LocalDate.of(2018, 3, 29),
+    interestOutstandingAmount = None,
+    latePaymentInterestAmount = None,
+    interestFromDate = None,
+    interestEndDate = None,
+    interestRate = None,
+    lpiWithDunningLock = None,
     amountCodedOut = Some(2500),
-    effectiveDateOfPayment = Some(LocalDate.parse("2018-02-14")),
-    documentDueDate = Some(LocalDate.parse("2018-02-14"))
+    dunningLock = false
   )
+//
+//  def docDateDetail(dueDate: String, chargeType: String)(implicit dateService: DateServiceInterface): DocumentDetailWithDueDate = DocumentDetailWithDueDate(
+//    documentDetail = docDetail(chargeType),
+//    dueDate = Some(LocalDate.parse(dueDate))
+//  )
 
-  def docDateDetail(dueDate: String, chargeType: String)(implicit dateService: DateServiceInterface): DocumentDetailWithDueDate = DocumentDetailWithDueDate(
-    documentDetail = docDetail(chargeType),
-    dueDate = Some(LocalDate.parse(dueDate))
-  )
-
-
-  def docDetailWithInterest(documentDescription: String): DocumentDetail = DocumentDetail(
-    taxYear = testTaxYear,
+  def chargeItemWithInterest( chargeType: ChargeType = PaymentOnAccountOne,
+                              subTransactionType: Option[SubTransactionType] = None): ChargeItem = ChargeItem(
     transactionId = "1040000124",
-    documentDescription = Some(documentDescription),
-    documentText = Some("documentText"),
+    taxYear = TaxYear.forYearEnd(testTaxYear),
+    transactionType = chargeType,
+    subTransactionType = subTransactionType,
+    documentDate = LocalDate.of(2018, 3, 29),
+    dueDate = Some(LocalDate.of(2023, 7, 1)),
     originalAmount = 123.45,
     outstandingAmount = 1.2,
+    interestOutstandingAmount = Some(42.50),
+    latePaymentInterestAmount = Some(54.32),
+    interestFromDate = Some(LocalDate.of(2018, 4, 14)),
+    interestEndDate = Some(LocalDate.of(2019, 1, 1)),
+    interestRate = None,
+    lpiWithDunningLock = None,
+    amountCodedOut = Some(2500),
+    dunningLock = false
+  )
+
+  def chargeItemWithInterestAndOverdue( chargeType: ChargeType = PaymentOnAccountOne,
+                              subTransactionType: Option[SubTransactionType] = None,
+                               dueDate: Option[LocalDate] = Some(LocalDate.of(2017, 7, 1))): ChargeItem = ChargeItem(
+    transactionId = "1040000124",
+    taxYear = TaxYear.forYearEnd(testTaxYear),
+    transactionType = chargeType,
+    subTransactionType = subTransactionType,
     documentDate = LocalDate.of(2018, 3, 29),
+    dueDate = dueDate,
+    originalAmount = 123.45,
+    outstandingAmount = 1.2,
     latePaymentInterestAmount = Some(54.32),
     interestOutstandingAmount = Some(42.50),
     interestFromDate = Some(LocalDate.of(2018, 4, 14)),
     interestEndDate = Some(LocalDate.of(2019, 1, 1)),
+    interestRate = None,
+    lpiWithDunningLock = None,
     amountCodedOut = Some(2500),
-    effectiveDateOfPayment = Some(LocalDate.of(2023, 7, 1)),
-    documentDueDate = Some(LocalDate.of(2023, 7, 1))
-  )
+    dunningLock = false)
 
-  def docDateDetailWithInterest(dueDate: String, chargeType: String)(implicit dateService: DateServiceInterface): DocumentDetailWithDueDate = DocumentDetailWithDueDate(
-    documentDetail = docDetailWithInterest(chargeType),
-    dueDate = Some(LocalDate.parse(dueDate))
-  )
-
-  def docDetailWithInterestAndOverdue(documentDescription: String): DocumentDetail = DocumentDetail(
-    taxYear = testTaxYear,
-    transactionId = "1040000124",
-    documentDescription = Some(documentDescription),
-    documentText = Some("documentText"),
-    originalAmount = 123.45,
-    outstandingAmount = 1.2,
-    documentDate = LocalDate.of(2018, 3, 29),
-    latePaymentInterestAmount = Some(54.32),
-    interestOutstandingAmount = Some(42.50),
-    interestFromDate = Some(LocalDate.of(2018, 4, 14)),
-    interestEndDate = Some(LocalDate.of(2019, 1, 1)),
-    amountCodedOut = Some(2500),
-    effectiveDateOfPayment = Some(LocalDate.of(2017, 7, 1)),
-    documentDueDate = Some(LocalDate.of(2017, 7, 1))
-  )
-
-  def docDateDetailWithInterestAndOverdue(dueDate: String, chargeType: String)(implicit dateService: DateServiceInterface): DocumentDetailWithDueDate = DocumentDetailWithDueDate(
-    documentDetail = docDetailWithInterestAndOverdue(chargeType),
-    dueDate = Some(LocalDate.parse(dueDate))
-  )
 }

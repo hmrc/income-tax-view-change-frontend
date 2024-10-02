@@ -18,39 +18,24 @@ package audit.models
 
 import auth.MtdItUser
 import enums.AuditType.ChargeSummary
-import enums.{Poa1Charge, Poa2Charge, TRMAmendCharge, TRMNewCharge}
 import models.chargeHistory.ChargeHistoryModel
 import models.chargeSummary.PaymentHistoryAllocations
-import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetail}
-import play.api.Logger
+import models.financialDetails._
 import play.api.libs.json.{JsObject, JsValue, Json}
+import services.DateServiceInterface
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import utils.Utilities._
 
 
-case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDetailWithDueDate,
+case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], chargeItem: ChargeItem,
                               paymentBreakdown: List[FinancialDetail], chargeHistories: List[ChargeHistoryModel],
                               paymentAllocations: List[PaymentHistoryAllocations], isLatePaymentCharge: Boolean,
-                              isMFADebit: Boolean = false, taxYear: Int) extends ExtendedAuditModel {
+                              isMFADebit: Boolean = false, taxYear: Int)(implicit val dateService: DateServiceInterface) extends ExtendedAuditModel with AuditFunctions {
 
   private val userType: JsObject = mtdItUser.userType match {
     case Some(Agent) => Json.obj("userType" -> "Agent")
     case Some(_) => Json.obj("userType" -> "Individual")
     case None => Json.obj()
-  }
-
-  val getChargeType: String = (docDateDetail.documentDetail.getDocType, docDateDetail.documentDetail.documentText) match {
-    case _ if isMFADebit => "MFADebit"
-    case (_, Some(text)) if text.contains("Cancelled PAYE Self Assessment") => "Cancelled PAYE Self Assessment (through your PAYE tax code)"
-    case (_, Some(text)) if text.contains("Balancing payment collected through PAYE tax code") => "Balancing payment collected through PAYE tax code"
-    case (Poa1Charge, _) => if (isLatePaymentCharge) "Late Payment Interest on payment on account 1 of 2" else "Payment on account 1 of 2"
-    case (Poa2Charge, _) => if (isLatePaymentCharge) "Late Payment Interest on payment on account 2 of 2" else "Payment on account 2 of 2"
-    case (TRMNewCharge, _) | (TRMAmendCharge, _) =>
-      if (isLatePaymentCharge) "Late Payment Interest on remaining balance" else "Remaining balance"
-    case error => {
-      Logger("application").error(s"Missing or non-matching charge type: $error found")
-      "unknownCharge"
-    }
   }
 
   private def getAllocationDescriptionFromKey(key: Option[String]): String = {
@@ -101,7 +86,7 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
     case _ => s"Some unexpected message key: $key"
   }
 
-  private val interestPeriod: Option[String] = (docDateDetail.documentDetail.interestFromDate, docDateDetail.documentDetail.interestEndDate) match {
+  private val interestPeriod: Option[String] = (chargeItem.interestFromDate, chargeItem.interestEndDate) match {
     case (Some(fromDate), Some(endDate)) => Some(s"$fromDate to $endDate")
     case _ => None
   }
@@ -111,7 +96,7 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
   private def chargeHistoryJson(chargeHistory: ChargeHistoryModel): JsObject = Json.obj(
     "date" -> chargeHistory.reversalDate,
     "description" -> getChargeTypeFromKey(
-      Some(s"chargeSummary.chargeHistory.${chargeHistory.reasonCode.value}.${docDateDetail.documentDetail.getChargeTypeKey()}")),
+      Some(s"chargeSummary.chargeHistory.${chargeHistory.reasonCode.value}.${chargeItem.getChargeTypeKey()}")),
     "amount" -> chargeHistory.totalAmount
   )
 
@@ -121,9 +106,9 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
   }
 
   private def paymentAllocationsChargeHistoryJSon(paymentAllocation: PaymentHistoryAllocations): Seq[JsObject] = {
-    val description = if (docDateDetail.documentDetail.isPayeSelfAssessment) {
+    val description = if (chargeItem.subTransactionType.contains(Accepted)) {
       Some(getAllocationDescriptionFromKey(Some("codingOut.accepted")))
-    } else if (docDateDetail.documentDetail.isCancelledPayeSelfAssessment) {
+    } else if (chargeItem.subTransactionType.contains(Cancelled)) {
       Some(getAllocationDescriptionFromKey(Some("codingOut.cancelled")))
     } else {
       Some(getAllocationDescriptionFromKey(paymentAllocation.getPaymentAllocationTextInChargeSummary))
@@ -145,20 +130,20 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
     "interestLock" -> paymentBreakdown.interestLockExists)
 
   private val fullPaymentAmount = if (isLatePaymentCharge)
-    docDateDetail.documentDetail.latePaymentInterestAmount else Option(docDateDetail.documentDetail.originalAmount)
+    chargeItem.latePaymentInterestAmount else Option(chargeItem.originalAmount)
 
   private val remainingToPay = if (isLatePaymentCharge)
-    docDateDetail.documentDetail.interestRemainingToPay else docDateDetail.documentDetail.remainingToPay
+    chargeItem.interestRemainingToPay else chargeItem.remainingToPay
 
-  private val dueDate = if (isLatePaymentCharge) docDateDetail.documentDetail.interestEndDate else docDateDetail.dueDate
+  private val dueDate = if (isLatePaymentCharge)chargeItem.interestEndDate else chargeItem.dueDate
 
   private val chargeDetails: JsObject = Json.obj(
-    "chargeType" -> getChargeType) ++
+    "chargeType" -> getChargeType(chargeItem, chargeItem.isOverdue() && chargeItem.isLatePaymentInterest)) ++
     ("interestPeriod", interestPeriod) ++
     ("dueDate", dueDate) ++
     ("fullPaymentAmount", fullPaymentAmount) ++
     Json.obj("endTaxYear" -> taxYear) ++
-    Json.obj("overdue" -> docDateDetail.isOverdue) ++
+    Json.obj("overdue" -> chargeItem.isOverdue()) ++
     Json.obj("remainingToPay" -> remainingToPay)
 
   def release6Update: JsObject = {

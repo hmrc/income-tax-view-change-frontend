@@ -30,7 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsService,
                                   val financialDetailsConnector: FinancialDetailsConnector,
                                   implicit val dateService: DateServiceInterface)
-                                 (implicit ec: ExecutionContext, implicit val appConfig: FrontendAppConfig) {
+                                 (implicit ec: ExecutionContext, implicit val appConfig: FrontendAppConfig) extends TransactionUtils {
 
   implicit lazy val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
 
@@ -78,14 +78,13 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
           .map(_.balanceDetails).getOrElse(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None))
         val codedOutChargeItem = if (isCodingOutEnabled) {
 
-          def chargeItemf: DocumentDetail => Option[ChargeItem] = ChargeItem
-            .tryGetChargeItem(isCodingOutEnabled, isReviewAndReconciledEnabled)(financialDetailsModelList
+          def chargeItemf: DocumentDetail => Option[ChargeItem] = getChargeItemOpt(isCodingOutEnabled, isReviewAndReconciledEnabled)(financialDetailsModelList
               .flatMap(_.financialDetails))(_)
 
           financialDetailsModelList.flatMap(_.documentDetails)
             .flatMap(chargeItemf)
             .filter(_.subTransactionType.contains(Accepted))
-            .find(_.taxYear == (dateService.getCurrentTaxYearEnd - 1))
+            .find(_.taxYear.endYear == (dateService.getCurrentTaxYearEnd - 1))
         } else None
 
         val whatYouOweChargesList = WhatYouOweChargesList(
@@ -118,7 +117,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
                                      isMFACreditsEnabled: Boolean, isCodingOutEnabled: Boolean, isReviewAndReconciled: Boolean): List[ChargeItem] = {
 
     def getChargeItem(financialDetails: List[FinancialDetail]): DocumentDetail => Option[ChargeItem] =
-      ChargeItem.tryGetChargeItem(
+      getChargeItemOpt(
         codingOutEnabled = isCodingOutEnabled,
         reviewAndReconcileEnabled = isReviewAndReconciled
       )(financialDetails)

@@ -63,11 +63,11 @@ case class ChargeSummaryViewModel(
     chargeItem.hasLpiWithDunningLock || (paymentBreakdown.nonEmpty && hasDunningLocks) || (paymentBreakdown.nonEmpty && hasInterestLocks)
   }
 
-  val taxYearFrom = chargeItem.taxYear - 1
-  val taxYearTo = chargeItem.taxYear
+  val taxYearFrom = chargeItem.taxYear.endYear - 1
+  val taxYearTo = chargeItem.taxYear.endYear
 
-  val taxYearFromCodingOut = s"${chargeItem.taxYear.toInt + 1}"
-  val taxYearToCodingOut = s"${chargeItem.taxYear.toInt + 2}"
+  val taxYearFromCodingOut = s"${chargeItem.taxYear.endYear + 1}"
+  val taxYearToCodingOut = s"${chargeItem.taxYear.endYear + 2}"
 
   val pageTitle: String =
     s"chargeSummary.${if(latePaymentInterestCharge)"lpi."else ""}${chargeItem.getChargeTypeKey(codingOutEnabled, reviewAndReconcileEnabled)}"

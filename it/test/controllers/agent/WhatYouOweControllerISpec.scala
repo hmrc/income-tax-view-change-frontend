@@ -40,7 +40,7 @@ import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
 
-class WhatYouOweControllerISpec extends ComponentSpecBase  with ChargeConstants {
+class WhatYouOweControllerISpec extends ComponentSpecBase  with ChargeConstants with TransactionUtils {
 
 
   val testArn: String = "1"
@@ -74,7 +74,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase  with ChargeConstants 
   )(FakeRequest())
 
   val configuredChargeItemGetter: List[FinancialDetail] => DocumentDetail => Option[ChargeItem] =
-    ChargeItem.tryGetChargeItem(isEnabled(CodingOut), isEnabled(ReviewAndReconcilePoa))
+    getChargeItemOpt(isEnabled(CodingOut), isEnabled(ReviewAndReconcilePoa))
 
   val testValidOutStandingChargeResponseJsonWithAciAndBcdCharges: JsValue = Json.parse(
     s"""
@@ -386,52 +386,49 @@ class WhatYouOweControllerISpec extends ComponentSpecBase  with ChargeConstants 
     }
   }
 
-  "x in" when {
+  "render the what you owe page with interest accruing on overdue charges" in {
+    stubAuthorisedAgentUser(authorised = true)
 
-    "render the what you owe page with interest accruing on overdue charges" in {
-      stubAuthorisedAgentUser(authorised = true)
-
-      Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+    Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 
 
-      And("I wiremock stub a multiple financial details response")
-      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
-        testValidFinancialDetailsModelJsonAccruingInterest(2000, 2000, testTaxYear.toString, testDate.minusDays(15).toString))
-      IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-        "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+    And("I wiremock stub a multiple financial details response")
+    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
+      testValidFinancialDetailsModelJsonAccruingInterest(2000, 2000, testTaxYear.toString, testDate.minusDays(15).toString))
+    IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+      "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
 
-      When("I call GET /report-quarterly/income-and-expenses/view/agents/payments-owed")
-      val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
+    When("I call GET /report-quarterly/income-and-expenses/view/agents/payments-owed")
+    val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
-      AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges(), dateService).detail)
+    AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges(), dateService).detail)
 
-      verifyIncomeSourceDetailsCall(testMtditid)
-      IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05", 2)
-      IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+    verifyIncomeSourceDetailsCall(testMtditid)
+    IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05", 2)
+    IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
-      Then("the result should have a HTTP status of OK (200) and the payments due page")
-      result should have(
-        httpStatus(OK),
-        pageTitleAgent("whatYouOwe.heading-agent"),
-        isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
-        isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
-        isElementVisibleById("payment-details-content-0")(expectedValue = true),
-        isElementVisibleById("payment-details-content-1")(expectedValue = true),
-        isElementVisibleById("payment-details-content-2")(expectedValue = true),
-        isElementVisibleById("payment-details-content-3")(expectedValue = true),
-        isElementVisibleById("payment-details-content-4")(expectedValue = true),
-        isElementVisibleById("due-0")(expectedValue = true),
-        isElementVisibleById("charge-interest-0")(expectedValue = true),
-        isElementVisibleById("due-1")(expectedValue = true),
-        isElementVisibleById("charge-interest-1")(expectedValue = true),
-        isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-        isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
-        isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
-        isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
-      )
-    }
+    Then("the result should have a HTTP status of OK (200) and the payments due page")
+    result should have(
+      httpStatus(OK),
+      pageTitleAgent("whatYouOwe.heading-agent"),
+      isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
+      isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
+      isElementVisibleById("payment-details-content-0")(expectedValue = true),
+      isElementVisibleById("payment-details-content-1")(expectedValue = true),
+      isElementVisibleById("payment-details-content-2")(expectedValue = true),
+      isElementVisibleById("payment-details-content-3")(expectedValue = true),
+      isElementVisibleById("payment-details-content-4")(expectedValue = true),
+      isElementVisibleById("due-0")(expectedValue = true),
+      isElementVisibleById("charge-interest-0")(expectedValue = true),
+      isElementVisibleById("due-1")(expectedValue = true),
+      isElementVisibleById("charge-interest-1")(expectedValue = true),
+      isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
+      isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
+      isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
+      isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
+    )
   }
 
   "render the what you owe page with no interest accruing on overdue charges when there is late payment interest" in {

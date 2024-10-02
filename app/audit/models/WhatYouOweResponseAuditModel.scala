@@ -18,7 +18,7 @@ package audit.models
 
 import audit.Utilities._
 import auth.MtdItUser
-import models.financialDetails.{BalancingCharge, Cancelled, ChargeItem, Nics2, PaymentOnAccountOne, PaymentOnAccountTwo, WhatYouOweChargesList}
+import models.financialDetails.{ChargeItem, WhatYouOweChargesList}
 import models.outstandingCharges.OutstandingChargesModel
 import play.api.libs.json._
 import services.DateServiceInterface
@@ -26,7 +26,7 @@ import utils.Utilities.JsonUtil
 
 case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
                                         whatYouOweChargesList: WhatYouOweChargesList,
-                                        implicit val dateService: DateServiceInterface) extends ExtendedAuditModel {
+                                        implicit val dateService: DateServiceInterface) extends ExtendedAuditModel with AuditFunctions {
 
   val currentTaxYear: Int = dateService.getCurrentTaxYearEnd
 
@@ -66,15 +66,7 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
     else Json.obj()
   }
 
-  def getChargeType(chargeItem: ChargeItem, latePaymentCharge: Boolean): Option[String] =
-    (chargeItem.transactionType, chargeItem.subTransactionType) match {
-      case (_, Some(Nics2))       => Some("Class 2 National Insurance")
-      case(_, Some(Cancelled))    => Some("Cancelled PAYE Self Assessment (through your PAYE tax code)")
-      case (PaymentOnAccountOne,  _) => if (latePaymentCharge) Some("Late payment interest on first payment on account") else Some("First payment on account")
-      case (PaymentOnAccountTwo,  _) => if (latePaymentCharge) Some("Late payment interest on second payment on account") else Some("Second payment on account")
-      case (BalancingCharge, None ) => if (latePaymentCharge) Some("Late payment interest for remaining balance") else Some("Remaining balance")
-      case (_, _) => Some(chargeItem.transactionType.key)
-    }
+
 
   private def documentDetails(chargeItem: ChargeItem): JsObject = {
     Json.obj(
@@ -84,7 +76,7 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
       ("chargeType", getChargeType(chargeItem, chargeItem.isLatePaymentInterest)) ++
       ("dueDate", chargeItem.dueDate) ++
       accruingInterestJson(chargeItem) ++
-      Json.obj("endTaxYear" -> chargeItem.taxYear.toInt) ++
+      Json.obj("endTaxYear" -> chargeItem.taxYear.endYear) ++
       Json.obj("overDue" -> chargeItem.isOverdue())
   }
 
@@ -110,7 +102,7 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
   private def codingOut(chargeItem: ChargeItem): JsObject = {
       Json.obj(
         "amountCodedOut" -> chargeItem.amountCodedOut,
-        "endTaxYear" -> chargeItem.taxYear.toString
+        "endTaxYear" -> chargeItem.taxYear.endYear.toString
       )
   }
 }

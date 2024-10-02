@@ -19,7 +19,7 @@ package models.financialDetails
 import enums.CodingOutType.{CODING_OUT_ACCEPTED, CODING_OUT_CANCELLED, CODING_OUT_CLASS2_NICS}
 import play.api.libs.json._
 
-sealed trait SubTransactionType extends TransactionType {
+sealed trait SubTransactionType  {
   val key: String
 }
 

@@ -77,9 +77,9 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
 
   def whatYouOweChargesListFull: WhatYouOweChargesList = WhatYouOweChargesList(
     BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    List(chargeItemModel(2019))
-      ++ List(chargeItemModel(2020))
-      ++ List(chargeItemModel(2021)),
+    List(chargeItemModel(TaxYear.forYearEnd(2019)))
+      ++ List(chargeItemModel(TaxYear.forYearEnd(2020)))
+      ++ List(chargeItemModel(TaxYear.forYearEnd(2021))),
     Some(OutstandingChargesModel(List(
       OutstandingChargeModel("BCD", Some(LocalDate.parse("2020-12-31")), 10.23, 1234), OutstandingChargeModel("ACI", None, 1.23, 1234))
     ))

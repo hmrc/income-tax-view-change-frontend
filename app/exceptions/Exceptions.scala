@@ -25,4 +25,4 @@ case class NoIncomeSourceFound(hash: String) extends RuntimeException(s"User has
 case class MultipleIncomeSourcesFound(hash: String, incomeSourceIds: List[String]) extends
   RuntimeException(s"User has multiple matching incomeSources. hash: <$hash>. incomeSourceIds: <$incomeSourceIds>")
 
-case class CouldNotCreateChargeItem(msg: String) extends RuntimeException(s"Could not create charge item: $msg")
+case class CouldNotCreateChargeItemException(msg: String) extends RuntimeException(s"Could not create charge item: $msg")
