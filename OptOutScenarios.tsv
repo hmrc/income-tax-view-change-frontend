@@ -1,0 +1,294 @@
+CY-1	ITSA Status								Expected Outcome		
+Finalised	CY-1	CY	CY+1	Options presented to customer for opt out within V and C	Customer intent	Valid?		Which years will be sent from V & C to ITSD	CY-1	CY	CY+1
+N	M	M	M	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	M	M	M
+Y	M	M	M	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	M	M	M
+N	M	M	M	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	M	M	M
+Y	M	M	M	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	M	M	M
+N	M	M	M	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	M	M	M
+Y	M	M	M	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	M	M	M
+N	M	M		Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	M	M	
+Y	M	M		Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	M	M	
+N	M	M		Nothing displayed	Customer wants to opt out from CY	N/A		N/A	M	M	
+Y	M	M		Nothing displayed	Customer wants to opt out from CY	N/A		N/A	M	M	
+N	M	M		Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	M	M	
+Y	M	M		Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	M	M	
+N	M	M	V	CY+1	Customer wants to opt out from CY-1	N/A		N/A	M	M	V
+Y	M	M	V	CY+1	Customer wants to opt out from CY-1	N/A		N/A	M	M	V
+N	M	M	V	CY+1	Customer wants to opt out from CY	N/A		N/A	M	M	V
+Y	M	M	V	CY+1	Customer wants to opt out from CY	N/A		N/A	M	M	V
+N	M	M	V	CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	M	M	A
+Y	M	M	V	CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	M	M	A
+N	M	M	A	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	M	M	A
+Y	M	M	A	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	M	M	A
+N	M	M	A	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	M	M	A
+Y	M	M	A	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	M	M	A
+N	M	M	A	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	M	M	A
+Y	M	M	A	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	M	M	A
+N	M	V	M	CY	Customer wants to opt out from CY-1	N/A		N/A	M	V	M
+Y	M	V	M	CY	Customer wants to opt out from CY-1	N/A		N/A	M	V	M
+N	M	V	M	CY	Customer wants to opt out from CY	Allowed		CY 	M	A	M
+Y	M	V	M	CY	Customer wants to opt out from CY	Allowed		CY 	M	A	M
+N	M	V	M	CY	Customer wants to opt out from CY+1	N/A		N/A	M	V	M
+Y	M	V	M	CY	Customer wants to opt out from CY+1	N/A		N/A	M	V	M
+N	M	V		CY and CY+1	Customer wants to opt out from CY-1	N/A		N/A	M	V	
+Y	M	V		CY and CY+1	Customer wants to opt out from CY-1	N/A		N/A	M	V	
+N	M	V		CY and CY+1	Customer wants to opt out from CY	Allowed		CY	M	A	
+Y	M	V		CY and CY+1	Customer wants to opt out from CY	Allowed		CY	M	A	
+N	M	V		CY and CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	M	V	A
+Y	M	V		CY and CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	M	V	A
+N	M	V	V	CY and CY+1	Customer wants to opt out from CY-1	N/A		N/A	M	V	V
+Y	M	V	V	CY and CY+1	Customer wants to opt out from CY-1	N/A		N/A	M	V	V
+N	M	V	V	CY and CY+1	Customer wants to opt out from CY	Allowed		CY and CY+1	M	A	A
+Y	M	V	V	CY and CY+1	Customer wants to opt out from CY	Allowed		CY and CY+1	M	A	A
+N	M	V	V	CY and CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	M	V	A
+Y	M	V	V	CY and CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	M	V	A
+N	M	V	A	CY	Customer wants to opt out from CY-1	N/A		N/A	M	V	A
+Y	M	V	A	CY	Customer wants to opt out from CY-1	N/A		N/A	M	V	A
+N	M	V	A	CY	Customer wants to opt out from CY	Allowed		CY	M	A	A
+Y	M	V	A	CY	Customer wants to opt out from CY	Allowed		CY	M	A	A
+N	M	V	A	CY	Customer wants to opt out from CY+1	N/A		N/A	M	V	A
+Y	M	V	A	CY	Customer wants to opt out from CY+1	N/A		N/A	M	V	A
+N	M	A	M	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	M	A	M
+Y	M	A	M	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	M	A	M
+N	M	A	M	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	M	A	M
+Y	M	A	M	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	M	A	M
+N	M	A	M	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	M	A	M
+Y	M	A	M	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	M	A	M
+N	M	A		Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	M	A	
+Y	M	A		Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	M	A	
+N	M	A		Nothing displayed	Customer wants to opt out from CY	N/A		N/A	M	A	
+Y	M	A		Nothing displayed	Customer wants to opt out from CY	N/A		N/A	M	A	
+N	M	A		Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	M	A	
+Y	M	A		Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	M	A	
+N	M	A	V	CY+1	Customer wants to opt out from CY-1	N/A		N/A	M	A	V
+Y	M	A	V	CY+1	Customer wants to opt out from CY-1	N/A		N/A	M	A	V
+N	M	A	V	CY+1	Customer wants to opt out from CY	N/A		N/A	M	A	V
+Y	M	A	V	CY+1	Customer wants to opt out from CY	N/A		N/A	M	A	V
+N	M	A	V	CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	M	A	A
+Y	M	A	V	CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	M	A	A
+N	M	A	A	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	M	A	A
+Y	M	A	A	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	M	A	A
+N	M	A	A	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	M	A	A
+Y	M	A	A	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	M	A	A
+N	M	A	A	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	M	A	A
+Y	M	A	A	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	M	A	A
+N	V	M	M	CY-1	Customer wants to opt out from CY-1	Allowed		CY-1	A	M	M
+Y	V	M	M	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	A	M	M
+N	V	M	M	CY-1	Customer wants to opt out from CY	N/A		N/A	V	M	M
+Y	V	M	M	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	V	M	M
+N	V	M	M	CY-1	Customer wants to opt out from CY+1	N/A		N/A	V	M	M
+Y	V	M	M	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	V	M	M
+N	V	M		CY-1	Customer wants to opt out from CY-1	Allowed		CY-1	A	M	
+Y	V	M		Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	A	M	
+N	V	M		CY-1	Customer wants to opt out from CY	N/A		N/A	V	M	
+Y	V	M		Nothing displayed	Customer wants to opt out from CY	N/A		N/A	V	M	
+N	V	M		CY-1	Customer wants to opt out from CY+1	N/A		N/A	V	M	
+Y	V	M		Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	V	M	
+N	V	M	V	CY-1 and CY+1	Customer wants to opt out from CY-1	Allowed		CY-1 and CY+1	A	M	A
+Y	V	M	V	CY+1	Customer wants to opt out from CY-1	N/A		N/A	A	M	V
+N	V	M	V	CY-1 and CY+1	Customer wants to opt out from CY	N/A		N/A	V	M	V
+Y	V	M	V	CY+1	Customer wants to opt out from CY	N/A		N/A	V	M	V
+N	V	M	V	CY-1 and CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	V	M	A
+Y	V	M	V	CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	V	M	A
+N	V	M	A	CY-1	Customer wants to opt out from CY-1	Allowed		CY-1	A	M	A
+Y	V	M	A	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	A	M	A
+N	V	M	A	CY-1	Customer wants to opt out from CY	N/A		N/A	V	M	A
+Y	V	M	A	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	V	M	A
+N	V	M	A	CY-1	Customer wants to opt out from CY+1	N/A		N/A	V	M	A
+Y	V	M	A	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	V	M	A
+N	V	V	M	CY-1 and CY	Customer wants to opt out from CY-1	Allowed		CY-1 and CY	A	A	M
+Y	V	V	M	CY	Customer wants to opt out from CY-1	N/A		N/A	A	A	M
+N	V	V	M	CY-1 and CY	Customer wants to opt out from CY	Allowed		CY	V	A	M
+Y	V	V	M	CY	Customer wants to opt out from CY	Allowed		CY	V	A	M
+N	V	V	M	CY-1 and CY	Customer wants to opt out from CY+1	N/A		N/A	V	V	M
+Y	V	V	M	CY	Customer wants to opt out from CY+1	N/A		N/A	V	V	M
+N	V	V		CY-1, CY and CY+1	Customer wants to opt out from CY-1	Allowed		CY-1, CY	A	A	
+Y	V	V		CY and CY+1	Customer wants to opt out from CY-1	N/A		N/A	A	A	
+N	V	V		CY-1, CY and CY+1	Customer wants to opt out from CY	Allowed		CY	V	A	
+Y	V	V		CY and CY+1	Customer wants to opt out from CY	Allowed		CY	V	A	
+N	V	V		CY-1, CY and CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	V	V	A
+Y	V	V		CY and CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	V	V	A
+N	V	V	V	CY-1, CY and CY+1	Customer wants to opt out from CY-1	Allowed		CY-1, CY and CY+1	A	A	A
+Y	V	V	V	CY and CY+1	Customer wants to opt out from CY-1	N/A		N/A	A	A	A
+N	V	V	V	CY-1, CY and CY+1	Customer wants to opt out from CY	Allowed		CY and CY+1	V	A	A
+Y	V	V	V	CY and CY+1	Customer wants to opt out from CY	Allowed		CY and CY+1	V	A	A
+N	V	V	V	CY-1, CY and CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	V	V	A
+Y	V	V	V	CY and CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	V	V	A
+N	V	V	A	CY-1 and CY	Customer wants to opt out from CY-1	Allowed		CY-1 And CY	A	A	A
+Y	V	V	A	CY	Customer wants to opt out from CY-1	N/A		N/A	A	A	A
+N	V	V	A	CY-1 and CY	Customer wants to opt out from CY	Allowed		CY	V	A	A
+Y	V	V	A	CY	Customer wants to opt out from CY	Allowed		CY	V	A	A
+N	V	V	A	CY-1 and CY	Customer wants to opt out from CY+1	N/A		N/A	V	V	A
+Y	V	V	A	CY	Customer wants to opt out from CY+1	N/A		N/A	V	V	A
+N	V	A	M	CY-1	Customer wants to opt out from CY-1	Allowed		CY-1	A	A	M
+Y	V	A	M	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	A	A	M
+N	V	A	M	CY-1	Customer wants to opt out from CY	N/A		N/A	V	A	M
+Y	V	A	M	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	V	A	M
+N	V	A	M	CY-1	Customer wants to opt out from CY+1	N/A		N/A	V	A	M
+Y	V	A	M	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	V	A	M
+N	V	A		CY-1	Customer wants to opt out from CY-1	Allowed		CY-1	A	A	
+Y	V	A		Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	A	A	
+N	V	A		CY-1	Customer wants to opt out from CY	N/A		N/A	V	A	
+Y	V	A		Nothing displayed	Customer wants to opt out from CY	N/A		N/A	V	A	
+N	V	A		CY-1	Customer wants to opt out from CY+1	N/A		N/A	V	A	
+Y	V	A		Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	V	A	
+N	V	A	V	CY-1 and CY+1	Customer wants to opt out from CY-1	Allowed		CY-1 and CY+1	A	A	A
+Y	V	A	V	CY+1	Customer wants to opt out from CY-1	N/A		N/A	A	A	V
+N	V	A	V	CY-1 and CY+1	Customer wants to opt out from CY	N/A		N/A	V	A	V
+Y	V	A	V	CY+1	Customer wants to opt out from CY	N/A		N/A	V	A	V
+N	V	A	V	CY-1 and CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	V	A	A
+Y	V	A	V	CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	V	A	A
+N	V	A	A	CY-1	Customer wants to opt out from CY-1	Allowed		CY-1	A	A	A
+Y	V	A	A	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	A	A	A
+N	V	A	A	CY-1	Customer wants to opt out from CY	N/A		N/A	V	A	A
+Y	V	A	A	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	V	A	A
+N	V	A	A	CY-1	Customer wants to opt out from CY+1	N/A		N/A	V	A	A
+Y	V	A	A	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	V	A	A
+N	A	M	M	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	A	M	M
+Y	A	M	M	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	A	M	M
+N	A	M	M	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	A	M	M
+Y	A	M	M	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	A	M	M
+N	A	M	M	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	A	M	M
+Y	A	M	M	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	A	M	M
+N	A	M		Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	A	M	
+Y	A	M		Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	A	M	
+N	A	M		Nothing displayed	Customer wants to opt out from CY	N/A		N/A	A	M	
+Y	A	M		Nothing displayed	Customer wants to opt out from CY	N/A		N/A	A	M	
+N	A	M		Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	A	M	
+Y	A	M		Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	A	M	
+N	A	M	V	CY+1	Customer wants to opt out from CY-1	N/A		N/A	A	M	V
+Y	A	M	V	CY+1	Customer wants to opt out from CY-1	N/A		N/A	A	M	V
+N	A	M	V	CY+1	Customer wants to opt out from CY	N/A		N/A	A	M	V
+Y	A	M	V	CY+1	Customer wants to opt out from CY	N/A		N/A	A	M	V
+N	A	M	V	CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	A	M	A
+Y	A	M	V	CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	A	M	A
+N	A	M	A	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	A	M	A
+Y	A	M	A	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	A	M	A
+N	A	M	A	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	A	M	A
+Y	A	M	A	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	A	M	A
+N	A	M	A	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	A	M	A
+Y	A	M	A	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	A	M	A
+N	A	V	M	CY	Customer wants to opt out from CY-1	N/A		N/A	A	V	M
+Y	A	V	M	CY	Customer wants to opt out from CY-1	N/A		N/A	A	V	M
+N	A	V	M	CY	Customer wants to opt out from CY	Allowed		CY	A	A	M
+Y	A	V	M	CY	Customer wants to opt out from CY	Allowed		CY	A	A	M
+N	A	V	M	CY	Customer wants to opt out from CY+1	N/A		N/A	A	V	M
+Y	A	V	M	CY	Customer wants to opt out from CY+1	N/A		N/A	A	V	M
+N	A	V		CY and CY+1	Customer wants to opt out from CY-1	N/A		N/A	A	V	
+Y	A	V		CY and CY+1	Customer wants to opt out from CY-1	N/A		N/A	A	V	
+N	A	V		CY and CY+1	Customer wants to opt out from CY	Allowed		CY	A	A	
+Y	A	V		CY and CY+1	Customer wants to opt out from CY	Allowed		CY	A	A	
+N	A	V		CY and CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	A	V	A
+Y	A	V		CY and CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	A	V	A
+N	A	V	V	CY and CY+1	Customer wants to opt out from CY-1	N/A		N/A	A	V	V
+Y	A	V	V	CY and CY+1	Customer wants to opt out from CY-1	N/A		N/A	A	V	V
+N	A	V	V	CY and CY+1	Customer wants to opt out from CY	Allowed		CY and CY+1	A	A	A
+Y	A	V	V	CY and CY+1	Customer wants to opt out from CY	Allowed		CY and CY+1	A	A	A
+N	A	V	V	CY and CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	A	V	A
+Y	A	V	V	CY and CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	A	V	A
+N	A	V	A	CY	Customer wants to opt out from CY-1	N/A		N/A	A	V	A
+Y	A	V	A	CY	Customer wants to opt out from CY-1	N/A		N/A	A	V	A
+N	A	V	A	CY	Customer wants to opt out from CY	Allowed		CY	A	A	A
+Y	A	V	A	CY	Customer wants to opt out from CY	Allowed		CY	A	A	A
+N	A	V	A	CY	Customer wants to opt out from CY+1	N/A		N/A	A	V	A
+Y	A	V	A	CY	Customer wants to opt out from CY+1	N/A		N/A	A	V	A
+N	A	A	M	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	A	A	M
+Y	A	A	M	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	A	A	M
+N	A	A	M	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	A	A	M
+Y	A	A	M	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	A	A	M
+N	A	A	M	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	A	A	M
+Y	A	A	M	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	A	A	M
+N	A	A		Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	A	A	
+Y	A	A		Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	A	A	
+N	A	A		Nothing displayed	Customer wants to opt out from CY	N/A		N/A	A	A	
+Y	A	A		Nothing displayed	Customer wants to opt out from CY	N/A		N/A	A	A	
+N	A	A		Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	A	A	
+Y	A	A		Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	A	A	
+N	A	A	V	CY+1	Customer wants to opt out from CY-1	N/A		N/A	A	A	V
+Y	A	A	V	CY+1	Customer wants to opt out from CY-1	N/A		N/A	A	A	V
+N	A	A	V	CY+1	Customer wants to opt out from CY	N/A		N/A	A	A	V
+Y	A	A	V	CY+1	Customer wants to opt out from CY	N/A		N/A	A	A	V
+N	A	A	V	CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	A	A	A
+Y	A	A	V	CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	A	A	A
+N	A	A	A	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	A	A	A
+Y	A	A	A	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	A	A	A
+N	A	A	A	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	A	A	A
+Y	A	A	A	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	A	A	A
+N	A	A	A	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	A	A	A
+Y	A	A	A	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	A	A	A
+N		M	M	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A		M	M
+Y		M	M	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A		M	M
+N		M	M	Nothing displayed	Customer wants to opt out from CY	N/A		N/A		M	M
+Y		M	M	Nothing displayed	Customer wants to opt out from CY	N/A		N/A		M	M
+N		M	M	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A		M	M
+Y		M	M	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A		M	M
+N		M		Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A		M	
+Y		M		Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A		M	
+N		M		Nothing displayed	Customer wants to opt out from CY	N/A		N/A		M	
+Y		M		Nothing displayed	Customer wants to opt out from CY	N/A		N/A		M	
+N		M		Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A		M	
+Y		M		Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A		M	
+N		M	V	CY+1	Customer wants to opt out from CY-1	N/A		N/A		M	V
+Y		M	V	CY+1	Customer wants to opt out from CY-1	N/A		N/A		M	V
+N		M	V	CY+1	Customer wants to opt out from CY	N/A		N/A		M	V
+Y		M	V	CY+1	Customer wants to opt out from CY	N/A		N/A		M	V
+N		M	V	CY+1	Customer wants to opt out from CY+1	Allowed		CY+1		M	A
+Y		M	V	CY+1	Customer wants to opt out from CY+1	Allowed		CY+1		M	A
+N		M	A	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A		M	A
+Y		M	A	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A		M	A
+N		M	A	Nothing displayed	Customer wants to opt out from CY	N/A		N/A		M	A
+Y		M	A	Nothing displayed	Customer wants to opt out from CY	N/A		N/A		M	A
+N		M	A	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A		M	A
+Y		M	A	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A		M	A
+N		V	M	CY	Customer wants to opt out from CY-1	N/A		N/A		V	M
+Y		V	M	CY	Customer wants to opt out from CY-1	N/A		N/A		V	M
+N		V	M	CY	Customer wants to opt out from CY	Allowed		CY		A	M
+Y		V	M	CY	Customer wants to opt out from CY	Allowed		CY		A	M
+N		V	M	CY	Customer wants to opt out from CY+1	N/A		N/A		V	M
+Y		V	M	CY	Customer wants to opt out from CY+1	N/A		N/A		V	M
+N		V		CY and CY+1	Customer wants to opt out from CY-1	N/A		N/A		V	
+Y		V		CY and CY+1	Customer wants to opt out from CY-1	N/A		N/A		V	
+N		V		CY and CY+1	Customer wants to opt out from CY	Allowed		CY		A	
+Y		V		CY and CY+1	Customer wants to opt out from CY	Allowed		CY		A	
+N		V		CY and CY+1	Customer wants to opt out from CY+1	Allowed		CY+1		V	A
+Y		V		CY and CY+1	Customer wants to opt out from CY+1	Allowed		CY+1		V	A
+N		V	V	CY and CY+1	Customer wants to opt out from CY-1	N/A		N/A		V	V
+Y		V	V	CY and CY+1	Customer wants to opt out from CY-1	N/A		N/A		V	V
+N		V	V	CY and CY+1	Customer wants to opt out from CY	Allowed		CY And CY+1		A	A
+Y		V	V	CY and CY+1	Customer wants to opt out from CY	Allowed		CY And CY+1		A	A
+N		V	V	CY and CY+1	Customer wants to opt out from CY+1	Allowed		CY+1		V	A
+Y		V	V	CY and CY+1	Customer wants to opt out from CY+1	Allowed		CY+1		V	A
+N		V	A	CY	Customer wants to opt out from CY-1	N/A		N/A		V	A
+Y		V	A	CY	Customer wants to opt out from CY-1	N/A		N/A		V	A
+N		V	A	CY	Customer wants to opt out from CY	Allowed		CY		A	A
+Y		V	A	CY	Customer wants to opt out from CY	Allowed		CY		A	A
+N		V	A	CY	Customer wants to opt out from CY+1	N/A		N/A		V	A
+Y		V	A	CY	Customer wants to opt out from CY+1	N/A		N/A		V	A
+N		A	M	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A		A	M
+Y		A	M	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A		A	M
+N		A	M	Nothing displayed	Customer wants to opt out from CY	N/A		N/A		A	M
+Y		A	M	Nothing displayed	Customer wants to opt out from CY	N/A		N/A		A	M
+N		A	M	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A		A	M
+Y		A	M	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A		A	M
+N		A		Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A		A	
+Y		A		Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A		A	
+N		A		Nothing displayed	Customer wants to opt out from CY	N/A		N/A		A	
+Y		A		Nothing displayed	Customer wants to opt out from CY	N/A		N/A		A	
+N		A		Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A		A	
+Y		A		Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A		A	
+N		A	V	CY+1	Customer wants to opt out from CY-1	N/A		N/A		A	V
+Y		A	V	CY+1	Customer wants to opt out from CY-1	N/A		N/A		A	V
+N		A	V	CY+1	Customer wants to opt out from CY	N/A		N/A		A	V
+Y		A	V	CY+1	Customer wants to opt out from CY	N/A		N/A		A	V
+N		A	V	CY+1	Customer wants to opt out from CY+1	Allowed		CY+1		A	A
+Y		A	V	CY+1	Customer wants to opt out from CY+1	Allowed		CY+1		A	A
+N		A	A	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A		A	A
+Y		A	A	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A		A	A
+N		A	A	Nothing displayed	Customer wants to opt out from CY	N/A		N/A		A	A
+Y		A	A	Nothing displayed	Customer wants to opt out from CY	N/A		N/A		A	A
+N		A	A	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A		A	A
+Y		A	A	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A		A	A
+N			V	CY+1	Customer wants to opt out from CY+1	Allowed		CY+1			A
+Y			V	CY+1	Customer wants to opt out from CY+1	Allowed		CY+1			A
+N			M	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A			M
+Y			M	Nothing displayed	Customer wants to opt out from CY+1	N/A	N/A	N/A			M

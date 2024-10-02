@@ -25,7 +25,7 @@ import scala.io.Source
 
 class OptOutPropositionSpec extends UnitSpec {
 
-  "Parse opt out scenarios from tsv file" ignore {
+  "Parse opt out scenarios from tsv file" in {
     /*  The programme has specified all required Opt Out scenarios in a large spreadsheet.
         This code can ingest the data and convert to parameters for table based test found below.
         This generator is currently ignored but can be reactivated to regenerate the test data if needed.
@@ -76,6 +76,15 @@ class OptOutPropositionSpec extends UnitSpec {
         case _ => throw new RuntimeException(s"Unexpected ITSA status data $input")
       }
 
+    def parseExpectedOutcome(input: String): String =
+      input match {
+        case "A" => "A"
+        case "V" => "V"
+        case "M" => "M"
+        case "" => " "
+        case _ => throw new RuntimeException(s"Unexpected ITSA status data $input - in 'Expected Outcome'")
+      }
+
     def parseIsValid(valid: String): Boolean =
       valid match {
         case "Allowed" => true
@@ -91,14 +100,15 @@ class OptOutPropositionSpec extends UnitSpec {
       "\"" + input + "\""
     }
 
-    println("""("Crystallised", "CY-1", "CY", "CY+1", "Expected Opt Out years offered", "Customer intent", "Valid", "Expected Opt Out years"),""")
+    println("""("Crystallised", "CY-1", "CY", "CY+1", "Expected Opt Out years offered", "Customer intent", "Valid", "Expected Opt Out years", "CY-1", "CY", "CY+1"),""")
 
     val tsvOptOut = Source.fromFile("OptOutScenarios.tsv")
     val rowsWithoutHeaders = tsvOptOut.getLines().drop(2)
+    val noOfColumns = 12
 
     rowsWithoutHeaders.foreach(line => {
-      val cells = line.split("\t").take(9)
-      //println(cells.mkString("  --  "))
+      val cells = line.split("\t").take(noOfColumns)
+      println(cells.mkString("  --  "))
       println(s"(${
         Seq(
           quote(parseCrystallisedStatus(cells(0))),
@@ -108,7 +118,10 @@ class OptOutPropositionSpec extends UnitSpec {
           formatTaxYears(parseTaxYears(cells(4))),
           quote(parseCustomerIntent(cells(5))),
           parseIsValid(cells(6)).toString,
-          formatTaxYears(parseTaxYears(cells(8)))
+          formatTaxYears(parseTaxYears(cells(8))),
+          quote(parseExpectedOutcome(cells(9))),
+          quote(parseExpectedOutcome(cells(10))),
+          quote(parseExpectedOutcome(cells(11))),
         ).mkString(", ")
       }),")
     })
@@ -415,98 +428,6 @@ class OptOutPropositionSpec extends UnitSpec {
       ("Y", " ", " ", "V", Seq("CY+1"), "CY+1", true, Seq("CY+1")),
       ("N", " ", " ", "M", Seq(), "CY+1", false, Seq()),
       ("Y", " ", " ", "M", Seq(), "CY+1", false, Seq()),
-      ("N", " ", " ", " ", Seq(), "CY", false, Seq()),
-      ("N", " ", " ", " ", Seq(), "CY+1", false, Seq()),
-      ("N", " ", " ", " ", Seq(), "CY-1", false, Seq()),
-      ("N", " ", " ", "A", Seq(), "CY", false, Seq()),
-      ("N", " ", " ", "A", Seq(), "CY+1", false, Seq()),
-      ("N", " ", " ", "A", Seq(), "CY-1", false, Seq()),
-      ("N", " ", " ", "M", Seq(), "CY", false, Seq()),
-      ("N", " ", " ", "M", Seq(), "CY-1", false, Seq()),
-      ("N", " ", " ", "V", Seq("CY+1"), "CY", false, Seq()),
-      ("N", " ", " ", "V", Seq("CY+1"), "CY-1", false, Seq()),
-      ("N", "A", " ", " ", Seq(), "CY", false, Seq()),
-      ("N", "A", " ", " ", Seq(), "CY+1", false, Seq()),
-      ("N", "A", " ", " ", Seq(), "CY-1", false, Seq()),
-      ("N", "A", " ", "A", Seq(), "CY", false, Seq()),
-      ("N", "A", " ", "A", Seq(), "CY+1", false, Seq()),
-      ("N", "A", " ", "A", Seq(), "CY-1", false, Seq()),
-      ("N", "A", " ", "M", Seq(), "CY", false, Seq()),
-      ("N", "A", " ", "M", Seq(), "CY+1", false, Seq()),
-      ("N", "A", " ", "M", Seq(), "CY-1", false, Seq()),
-      ("N", "A", " ", "V", Seq("CY+1"), "CY", false, Seq()),
-      ("N", "A", " ", "V", Seq("CY+1"), "CY+1", false, Seq("CY+1")),
-      ("N", "A", " ", "V", Seq("CY+1"), "CY-1", false, Seq()),
-      ("N", "M", " ", " ", Seq(), "CY", false, Seq()),
-      ("N", "M", " ", " ", Seq(), "CY+1", false, Seq()),
-      ("N", "M", " ", " ", Seq(), "CY-1", false, Seq()),
-      ("N", "M", " ", "A", Seq(), "CY", false, Seq()),
-      ("N", "M", " ", "A", Seq(), "CY+1", false, Seq()),
-      ("N", "M", " ", "A", Seq(), "CY-1", false, Seq()),
-      ("N", "M", " ", "M", Seq(), "CY", false, Seq()),
-      ("N", "M", " ", "M", Seq(), "CY+1", false, Seq()),
-      ("N", "M", " ", "M", Seq(), "CY-1", false, Seq()),
-      ("N", "M", " ", "V", Seq("CY+1"), "CY", false, Seq()),
-      ("N", "M", " ", "V", Seq("CY+1"), "CY+1", false, Seq("CY+1")),
-      ("N", "M", " ", "V", Seq("CY+1"), "CY-1", false, Seq()),
-      ("N", "V", " ", " ", Seq("CY-1"), "CY", false, Seq()),
-      ("N", "V", " ", " ", Seq("CY-1"), "CY+1", false, Seq()),
-      ("N", "V", " ", " ", Seq("CY-1"), "CY-1", false, Seq("CY-1")),
-      ("N", "V", " ", "A", Seq("CY-1"), "CY", false, Seq()),
-      ("N", "V", " ", "A", Seq("CY-1"), "CY+1", false, Seq()),
-      ("N", "V", " ", "A", Seq("CY-1"), "CY-1", false, Seq("CY-1")),
-      ("N", "V", " ", "M", Seq("CY-1"), "CY", false, Seq()),
-      ("N", "V", " ", "M", Seq("CY-1"), "CY+1", false, Seq()),
-      ("N", "V", " ", "M", Seq("CY-1"), "CY-1", false, Seq("CY-1")),
-      ("N", "V", " ", "V", Seq("CY-1", "CY+1"), "CY", false, Seq()),
-      ("N", "V", " ", "V", Seq("CY-1", "CY+1"), "CY+1", false, Seq("CY+1")),
-      ("N", "V", " ", "V", Seq("CY-1", "CY+1"), "CY-1", false, Seq("CY-1", "CY+1")),
-      ("Y", " ", " ", " ", Seq(), "CY", false, Seq()),
-      ("Y", " ", " ", " ", Seq(), "CY+1", false, Seq()),
-      ("Y", " ", " ", " ", Seq(), "CY-1", false, Seq()),
-      ("Y", " ", " ", "A", Seq(), "CY", false, Seq()),
-      ("Y", " ", " ", "A", Seq(), "CY+1", false, Seq()),
-      ("Y", " ", " ", "A", Seq(), "CY-1", false, Seq()),
-      ("Y", " ", " ", "M", Seq(), "CY", false, Seq()),
-      ("Y", " ", " ", "M", Seq(), "CY-1", false, Seq()),
-      ("Y", " ", " ", "V", Seq("CY+1"), "CY", false, Seq()),
-      ("Y", " ", " ", "V", Seq("CY+1"), "CY-1", false, Seq()),
-      ("Y", "A", " ", " ", Seq(), "CY", false, Seq()),
-      ("Y", "A", " ", " ", Seq(), "CY+1", false, Seq()),
-      ("Y", "A", " ", " ", Seq(), "CY-1", false, Seq()),
-      ("Y", "A", " ", "A", Seq(), "CY", false, Seq()),
-      ("Y", "A", " ", "A", Seq(), "CY+1", false, Seq()),
-      ("Y", "A", " ", "A", Seq(), "CY-1", false, Seq()),
-      ("Y", "A", " ", "M", Seq(), "CY", false, Seq()),
-      ("Y", "A", " ", "M", Seq(), "CY+1", false, Seq()),
-      ("Y", "A", " ", "M", Seq(), "CY-1", false, Seq()),
-      ("Y", "A", " ", "V", Seq("CY+1"), "CY", false, Seq()),
-      ("Y", "A", " ", "V", Seq("CY+1"), "CY+1", false, Seq("CY+1")),
-      ("Y", "A", " ", "V", Seq("CY+1"), "CY-1", false, Seq()),
-      ("Y", "M", " ", " ", Seq(), "CY", false, Seq()),
-      ("Y", "M", " ", " ", Seq(), "CY+1", false, Seq()),
-      ("Y", "M", " ", " ", Seq(), "CY-1", false, Seq()),
-      ("Y", "M", " ", "A", Seq(), "CY", false, Seq()),
-      ("Y", "M", " ", "A", Seq(), "CY+1", false, Seq()),
-      ("Y", "M", " ", "A", Seq(), "CY-1", false, Seq()),
-      ("Y", "M", " ", "M", Seq(), "CY", false, Seq()),
-      ("Y", "M", " ", "M", Seq(), "CY+1", false, Seq()),
-      ("Y", "M", " ", "M", Seq(), "CY-1", false, Seq()),
-      ("Y", "M", " ", "V", Seq("CY+1"), "CY", false, Seq()),
-      ("Y", "M", " ", "V", Seq("CY+1"), "CY+1", false, Seq("CY+1")),
-      ("Y", "M", " ", "V", Seq("CY+1"), "CY-1", false, Seq()),
-      ("Y", "V", " ", " ", Seq(), "CY", false, Seq()),
-      ("Y", "V", " ", " ", Seq(), "CY+1", false, Seq()),
-      ("Y", "V", " ", " ", Seq(), "CY-1", false, Seq()),
-      ("Y", "V", " ", "A", Seq(), "CY", false, Seq()),
-      ("Y", "V", " ", "A", Seq(), "CY+1", false, Seq()),
-      ("Y", "V", " ", "A", Seq(), "CY-1", false, Seq()),
-      ("Y", "V", " ", "M", Seq(), "CY", false, Seq()),
-      ("Y", "V", " ", "M", Seq(), "CY+1", false, Seq()),
-      ("Y", "V", " ", "M", Seq(), "CY-1", false, Seq()),
-      ("Y", "V", " ", "V", Seq("CY+1"), "CY", false, Seq()),
-      ("Y", "V", " ", "V", Seq("CY+1"), "CY+1", false, Seq("CY+1")),
-      ("Y", "V", " ", "V", Seq("CY+1"), "CY-1", false, Seq()),
     )
 
   "check all required scenarios" in {

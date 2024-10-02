@@ -114,7 +114,6 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
       }else{
         s"Status of ${optOutTaxYear.taxYear} : ${optOutTaxYear.status} remained the same"
       }
-
     }
 
     auditingService.extendedAudit(CheckYourAnswersAuditModel(
@@ -125,7 +124,7 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
       beforeITSAStatusCurrentYear = optOutProposition.currentTaxYear.taxYear.toString,
       beforeITSAStatusCurrentYearPlusOne = optOutProposition.nextTaxYear.taxYear.toString,
 
-      outcome = createOutcome(result.value.getOrElse(ITSAStatusUpdateResponseFailure)
+      outcome = createOutcome(result.value.getOrElse(ITSAStatusUpdateResponseFailure) //TODO needs to be changed to resolve into a Success(ITSAResponse)
     ),
       afterAssumedITSAStatusCurrentYearMinusOne = checkVoluntaryElseReturnCurrent(optOutProposition.previousTaxYear),
       afterAssumedITSAStatusCurrentYear = checkVoluntaryElseReturnCurrent(optOutProposition.currentTaxYear),
@@ -133,7 +132,6 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
       currentYearMinusOneCrystallised = optOutProposition.previousTaxYear.crystallised
     ))
 
-    println("YYYYYYYYYYYYYYYY" + result)
     result
   }
   private def createOutcome(resolvedResponse: Object): Outcome = {
