@@ -961,8 +961,8 @@ chargeSummary.reviewAndReconcilePoa2.linkText                         = ail dali
 chargeSummary.reviewAndReconcilePoa.comma                             = ,
 chargeSummary.reviewAndReconcilePoa.p2                                = a gafodd ei addasu, yn rhy isel.
 
-chargeSummary.lpi.poaExtraCharge.link                              = See guidance on the
-chargeSummary.lpi.poaExtraCharge.linkText                          = interest rates set by HMRC (opens in new tab).
+chargeSummary.lpi.poaExtraCharge.link                              = Gweler yr arweiniad ynghylch
+chargeSummary.lpi.poaExtraCharge.linkText                          = y cyfraddau llog a bennir gan CThEF (yn agor tab newydd).
 
 chargeSummary.paymentBreakdown.heading   						   = Dadansoddiad o’r taliad
 chargeSummary.paymentBreakdown.incomeTax   						   = Treth Incwm
@@ -992,8 +992,8 @@ chargeSummary.lpi.chargeHistory.created.paymentOnAccount1.text          = Llog a
 chargeSummary.lpi.chargeHistory.created.paymentOnAccount2.text          = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o2 wedi’i greu
 chargeSummary.lpi.chargeHistory.created.balancingCharge.text            = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli wedi’i greu
 
-chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa1.text       = HMRC created this charge
-chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa2.text       = HMRC created this charge
+chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa1.text       = CThEF sydd wedi creu’r tâl hwn
+chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa2.text       = CThEF sydd wedi creu’r tâl hwn
 
 chargeSummary.nic2TaxYear                                               = This is the Class 2 National Insurance payment for the {0} to {1} tax year.
 
@@ -1010,11 +1010,11 @@ chargeSummary.poa1ExtraAmountInterest.p2                            = Mae CThEF 
 chargeSummary.poa1ExtraAmountInterest.p3                            = Mae llog yn cael ei godi o’r dyddiad yr oedd eich taliad cyntaf ar gyfrif yn ddyledus, ac yn cael ei gyfrifo ar
 chargeSummary.poa1ExtraAmountInterest.p3LinkText                    = gyfradd sail Banc Lloegr (yn agor tab newydd)
 chargeSummary.poa1ExtraAmountInterest.p3AfterLink                   = , ynghyd â 2.5%.
-chargeSummary.poa2ExtraAmountInterest.p1                            = You owe HMRC interest because your tax return shows that your adjusted second payment on account was too low.
-chargeSummary.poa2ExtraAmountInterest.p2                            = HMRC applies the interest to the extra amount – the difference between your adjusted payment on account and what you actually owe.
-chargeSummary.poa2ExtraAmountInterest.p3                            = Interest is charged from the date your second payment on account was due and calculated at the
-chargeSummary.poa2ExtraAmountInterest.p3LinkText                    = Bank of England base rate (opens in new tab)
-chargeSummary.poa2ExtraAmountInterest.p3AfterLink                   = plus 2.5%.
+chargeSummary.poa2ExtraAmountInterest.p1                            = Mae arnoch log i CThEF oherwydd bod eich Ffurflen Dreth yn dangos bod eich ail daliad ar gyfrif, a gafodd ei addasu, yn rhy isel.
+chargeSummary.poa2ExtraAmountInterest.p2                            = Mae CThEF yn codi’r llog ar y swm ychwanegol – y gwahaniaeth rhwng eich taliad ar gyfrif, a gafodd ei addasu, a’r hyn sydd arnoch mewn gwirionedd.
+chargeSummary.poa2ExtraAmountInterest.p3                            = Mae llog yn cael ei godi o’r dyddiad yr oedd eich ail daliad ar gyfrif yn ddyledus, ac yn cael ei gyfrifo ar
+chargeSummary.poa2ExtraAmountInterest.p3LinkText                    = gyfradd sail Banc Lloegr (yn agor tab newydd)
+chargeSummary.poa2ExtraAmountInterest.p3AfterLink                   = , ynghyd â 2.5%.
 
 chargeSummary.definition.balancingcharge.p1                        = Taliad mantoli yw’r dreth sydd dal gennych i’w thalu ar gyfer blwyddyn dreth. Mae hyn yn digwydd os yw’r canlynol yn wir:
 chargeSummary.definition.balancingcharge.bullet1                   = nid oedd gennych unrhyw dreth i’w thalu yn ystod y flwyddyn (er enghraifft, os oedd eich bil treth Hunanasesiad diwethaf o dan £1,000)
