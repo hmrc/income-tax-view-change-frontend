@@ -74,13 +74,7 @@ case class ChargeItem (
     case _ => false
   }
 
-  def isOtherInterest: Boolean = interestOutstandingAmount match {
-    case Some(amount) if amount <= 0 => false
-    case Some(_) => true
-    case _ => false
-  }
-
-  def isOnlyInterest(implicit dateService: DateServiceInterface): Boolean = {(isOverdue() && isLatePaymentInterest) || (isOtherInterest && isPaid)}
+  def isOnlyInterest(implicit dateService: DateServiceInterface): Boolean = {(isOverdue() && isLatePaymentInterest) || (interestRemainingToPay > 0 && isPaid)}
 
   def isCodingOut: Boolean = {
     val codingOutSubTypes = Seq(Nics2, Accepted, Cancelled)
@@ -98,7 +92,7 @@ case class ChargeItem (
   }
 
   def remainingToPayByChargeOrInterest: BigDecimal = {
-    if (isLatePaymentInterest || isOtherInterest) interestRemainingToPay
+    if (isLatePaymentInterest) interestRemainingToPay
     else remainingToPay
   }
 
