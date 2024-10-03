@@ -43,7 +43,8 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
                               calculationListService: CalculationListService,
                               nextUpdatesService: NextUpdatesService,
                               dateService: DateServiceInterface,
-                              repository: OptOutSessionDataRepository) {
+                              repository: OptOutSessionDataRepository,
+                              auditingService: AuditingService) {
 
   def fetchOptOutProposition()(implicit user: MtdItUser[_],
                                hc: HeaderCarrier,

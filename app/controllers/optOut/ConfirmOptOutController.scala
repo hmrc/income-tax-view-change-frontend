@@ -32,14 +32,11 @@ import views.html.optOut.{CheckOptOutAnswers, ConfirmOptOut}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import audit.AuditingService
-//import audit.models.{CheckYourAnswersAuditModel, Outcome}
 
 class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
                                         checkOptOutAnswers: CheckOptOutAnswers,
                                         optOutService: OptOutService,
-                                        auth: AuthenticatorPredicate,
-                                        auditingService: AuditingService)
+                                        auth: AuthenticatorPredicate)
                                        (implicit val appConfig: FrontendAppConfig,
                                         val ec: ExecutionContext,
                                         val authorisedFunctions: FrontendAuthorisedFunctions,
