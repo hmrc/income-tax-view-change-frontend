@@ -16,6 +16,7 @@
 
 package services.optout
 
+import audit.AuditingService
 import auth.MtdItUser
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseSuccess
@@ -44,9 +45,10 @@ class OptOutServiceNextUpdatesPageOptOutViewModelSpec extends UnitSpec
   val optOutConnector: ITSAStatusUpdateConnector = mock(classOf[ITSAStatusUpdateConnector])
   val nextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
   val repository: OptOutSessionDataRepository = mock(classOf[OptOutSessionDataRepository])
+  val auditingService: AuditingService = mock(classOf[AuditingService])
 
   val service: OptOutService = new OptOutService(optOutConnector, mockITSAStatusService, mockCalculationListService,
-    nextUpdatesService, mockDateService, repository)
+    nextUpdatesService, mockDateService, auditingService, repository)
 
   implicit val user: MtdItUser[_] = mock(classOf[MtdItUser[_]])
   implicit val hc: HeaderCarrier = mock(classOf[HeaderCarrier])

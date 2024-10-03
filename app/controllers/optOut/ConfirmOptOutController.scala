@@ -32,6 +32,8 @@ import views.html.optOut.{CheckOptOutAnswers, ConfirmOptOut}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import audit.AuditingService
+//import audit.models.{CheckYourAnswersAuditModel, Outcome}
 
 class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
                                         checkOptOutAnswers: CheckOptOutAnswers,
@@ -71,6 +73,22 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
         case ITSAStatusUpdateResponseSuccess(_) => Redirect(routes.ConfirmedOptOutController.show(isAgent))
         case _ => Redirect(routes.OptOutErrorController.show(isAgent))
       }
+
+//      for {
+//        clientName <- fetchClientName
+//        nino <- request.session.get(SessionKeys.clientNino)
+//        clientMTDID <- request.session.get(SessionKeys.clientMTDID)
+//        arn <- user.agentReferenceNumber
+//        saUtr <- request.session.get(SessionKeys.clientUTR)
+//      } yield
+//        auditingService.extendedAudit(ConfirmClientDetailsAuditModel(
+//          clientName = clientName,
+//          nino = nino,
+//          mtditid = clientMTDID,
+//          arn = arn,
+//          saUtr = saUtr,
+//          credId = user.credId
+//        ))
   }
 
   private def withRecover(isAgent: Boolean)(code: => Future[Result])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {

@@ -16,6 +16,7 @@
 
 package services.optout
 
+import audit.AuditingService
 import auth.MtdItUser
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ErrorItem, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess, optOutUpdateReason}
@@ -76,6 +77,7 @@ class OptOutServiceSpec extends UnitSpec
   val optOutConnector: ITSAStatusUpdateConnector = mock(classOf[ITSAStatusUpdateConnector])
   val nextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
   val repository: OptOutSessionDataRepository = mock(classOf[OptOutSessionDataRepository])
+  val auditingService: AuditingService = mock(classOf[AuditingService])
 
   implicit val user: MtdItUser[_] = mock(classOf[MtdItUser[_]])
   implicit val hc: HeaderCarrier = mock(classOf[HeaderCarrier])
@@ -92,11 +94,14 @@ class OptOutServiceSpec extends UnitSpec
   val error = new RuntimeException("Some Error")
 
   val service: OptOutService = new OptOutService(optOutConnector, mockITSAStatusService,
-    mockCalculationListService, nextUpdatesService, mockDateService, repository)
+    mockCalculationListService, nextUpdatesService, mockDateService, auditingService, repository)
 
   val noOptOutOptionAvailable: Option[Nothing] = None
 
   val apiError: String = "some api error"
+
+
+
 
   "OptOutService.getSubmissionCountForTaxYear" when {
     "three years offered for opt-out; end-year 2023, 2024, 2025" when {
@@ -613,6 +618,10 @@ class OptOutServiceSpec extends UnitSpec
       }
 
     }
+
+  }
+  "OptOutService.makeOptOutUpdateRequest for single year case" when {
+
 
   }
 
