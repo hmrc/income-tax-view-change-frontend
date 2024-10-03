@@ -16,14 +16,13 @@
 
 package services.optout
 
-import audit.AuditingService
 import auth.MtdItUser
 import cats.data.OptionT
 import connectors.itsastatus.ITSAStatusUpdateConnector
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure}
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
+import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, Voluntary}
 import models.optout._
 import repositories.OptOutSessionDataRepository
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
@@ -31,11 +30,12 @@ import services.optout.OptOutProposition.createOptOutProposition
 import services.reportingfreq.ReportingFrequency.{QuarterlyUpdatesCountForTaxYearModel, noQuarterlyUpdates}
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService, NextUpdatesService}
 import uk.gov.hmrc.http.HeaderCarrier
+import audit.AuditingService
+import audit.models.{CheckYourAnswersAuditModel, Outcome}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import audit.AuditingService
-//import audit.models.CheckYourAnswersAuditModel
+import scala.util.Success
 
 @Singleton
 class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnector,
@@ -97,9 +97,60 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
                              (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[ITSAStatusUpdateResponse] = {
     val yearsToUpdate = optOutProposition.optOutYearsToUpdate(intentTaxYear)
     val responsesSeqOfFutures = makeUpdateCalls(yearsToUpdate)
-    Future.sequence(responsesSeqOfFutures).
+    val result = Future.sequence(responsesSeqOfFutures).
       map(responsesSeq => findAnyFailOrFirstSuccess(responsesSeq))
 
+    def checkVoluntaryElseReturnCurrent(optOutTaxYear: OptOutTaxYear): String = {
+
+      val isYearUserWantsToUpdate = intentTaxYear == optOutTaxYear.taxYear
+
+      if (isYearUserWantsToUpdate){
+        optOutTaxYear.status match {
+          case Voluntary => s"Voluntary change :: Successful"
+          case Annual => s"Annual change :: Failure"
+          case Mandated => s"Mandated change :: Failure"
+          case _ => s"Other non-changeable status :: Failure"
+        }
+      }else{
+        s"Status of ${optOutTaxYear.taxYear} : ${optOutTaxYear.status} remained the same"
+      }
+    }
+
+    auditingService.extendedAudit(CheckYourAnswersAuditModel(
+      nino = user.nino,
+      optOutRequestedFromTaxYear = intentTaxYear.formatTaxYearRange,
+      currentYear = optOutProposition.currentTaxYear.taxYear.toString,
+      beforeITSAStatusCurrentYearMinusOne = optOutProposition.previousTaxYear.taxYear.toString,
+      beforeITSAStatusCurrentYear = optOutProposition.currentTaxYear.taxYear.toString,
+      beforeITSAStatusCurrentYearPlusOne = optOutProposition.nextTaxYear.taxYear.toString,
+
+      outcome = createOutcome(result.value.getOrElse(ITSAStatusUpdateResponseFailure) //TODO needs to be changed to resolve into a Success(ITSAResponse)
+    ),
+      afterAssumedITSAStatusCurrentYearMinusOne = checkVoluntaryElseReturnCurrent(optOutProposition.previousTaxYear),
+      afterAssumedITSAStatusCurrentYear = checkVoluntaryElseReturnCurrent(optOutProposition.currentTaxYear),
+      afterAssumedITSAStatusCurrentYearPlusOne = checkVoluntaryElseReturnCurrent(optOutProposition.nextTaxYear),
+      currentYearMinusOneCrystallised = optOutProposition.previousTaxYear.crystallised
+    ))
+
+    result
+  }
+  private def createOutcome(resolvedResponse: Object): Outcome = {
+
+    resolvedResponse match {
+      case ITSAStatusUpdateResponseFailure => new Outcome {
+        override val isSuccessful: Boolean = false
+      }
+      case ITSAStatusUpdateResponseSuccess => new Outcome {
+        override val isSuccessful: Boolean = true
+        override val failureReason: String = ""
+        override val failureCategory: String = ""
+      }
+      case _ => new Outcome {
+        override val isSuccessful: Boolean = false
+        override val failureReason: String = "Unknown reason"
+        override val failureCategory: String = "Unknown"
+      }
+    }
   }
 
   private def makeUpdateCalls(optOutYearsToUpdate: Seq[TaxYear])
