@@ -118,7 +118,7 @@ case class ChargeItem (
   }
   def interestRemainingToPay: BigDecimal = {
     if (interestIsPaid) BigDecimal(0)
-    else interestOutstandingAmount.getOrElse(latePaymentInterestAmount.get)
+    else interestOutstandingAmount.getOrElse(latePaymentInterestAmount.getOrElse(0))
   }
 
   def getChargeTypeKey(codedOutEnabled: Boolean = false, reviewAndReconcileEnabled: Boolean = false): String =
