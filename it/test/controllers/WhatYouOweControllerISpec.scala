@@ -21,7 +21,7 @@ import auth.MtdItUser
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.admin._
-import models.financialDetails.{BalanceDetails, ChargeItem, DocumentDetail, FinancialDetail, FinancialDetailsModel, TransactionUtils, WhatYouOweChargesList}
+import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
 import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
