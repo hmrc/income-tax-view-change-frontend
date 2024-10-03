@@ -153,8 +153,8 @@ object CreditType {
   private val mfaCredit = Range.inclusive(4004, 4025)
     .filterNot(_ == 4010).filterNot(_ == 4020).map(_.toString)
     .toList
-  lazy val paymentOnAccountOneReviewAndReconcileCredit = "4912"
-  lazy val paymentOnAccountTwoReviewAndReconcileCredit = "4914"
+  private val paymentOnAccountOneReviewAndReconcileCredit = "4912"
+  private val paymentOnAccountTwoReviewAndReconcileCredit = "4914"
 
   private val payment = List("0060")
 

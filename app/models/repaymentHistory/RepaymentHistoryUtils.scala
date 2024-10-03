@@ -81,7 +81,8 @@ object  RepaymentHistoryUtils {
 
     val filteredPayments = payments.flatMap(payment => filterPayment(payment, isAgent, MFACreditsEnabled, CutOverCreditsEnabled, reviewAndReconcileEnabled))
 
-    val filteredRepayments = repayments.filter(_.status.isInstanceOf[Approved]).map(repayment => filterRepayment(repayment)(messages, languageUtils, dateServiceInterface))
+    val filteredRepayments = repayments.filter(_.status.isInstanceOf[Approved]).map(
+      repayment => filterRepayment(repayment)(messages, languageUtils, dateServiceInterface))
 
     filteredPayments ++ filteredRepayments
   }
@@ -96,19 +97,20 @@ object  RepaymentHistoryUtils {
     val hasCredit = payment.credit.isDefined
     val hasLot    = payment.lot.isDefined && payment.lotItem.isDefined
 
-    payment.creditType match {
-      case Some(MfaCreditType)                                       if hasCredit && MFACreditsEnabled          => Some(mfaCreditEntry(payment, isAgent))
-      case Some(CutOverCreditType)                                   if hasCredit && CutOverCreditsEnabled      => Some(creditEntry(payment, isAgent))
-      case Some(BalancingChargeCreditType)                           if hasCredit                               => Some(creditEntry(payment, isAgent))
-      case Some(RepaymentInterest)                                   if hasCredit                               => Some(creditEntry(payment, isAgent))
-      case Some(PaymentOnAccountOneReviewAndReconcileCredit)         if hasCredit && reviewAndReconcileEnabled  => Some(creditEntry(payment, isAgent))
-      case Some(PaymentOnAccountTwoReviewAndReconcileCredit)         if hasCredit && reviewAndReconcileEnabled  => Some(creditEntry(payment, isAgent))
-      case Some(PaymentType)                                         if !hasCredit && hasLot                    => Some(paymentToHMRCEntry(payment, isAgent))
-      case _ => None
+    (hasCredit, MFACreditsEnabled, CutOverCreditsEnabled, reviewAndReconcileEnabled, hasLot, payment.creditType.getOrElse(None)) match {
+      case (true,  true,    _,    _,    _, MfaCreditType)                               => Some(mfaCreditEntry(payment, isAgent))
+      case (true,     _, true,    _,    _, CutOverCreditType)                           => Some(creditEntry(payment, isAgent))
+      case (true,     _,    _, true,    _, PaymentOnAccountOneReviewAndReconcileCredit) => Some(creditEntry(payment, isAgent))
+      case (true,     _,    _, true,    _, PaymentOnAccountTwoReviewAndReconcileCredit) => Some(creditEntry(payment, isAgent))
+      case (true,     _,    _,    _,    _, BalancingChargeCreditType)                   => Some(creditEntry(payment, isAgent))
+      case (true,     _,    _,    _,    _, RepaymentInterest)                           => Some(creditEntry(payment, isAgent))
+      case (false,    _,    _,    _, true, PaymentType)                                 => Some(paymentToHMRCEntry(payment, isAgent))
+      case _                                                                            => None
     }
   }
 
-  private def paymentToHMRCEntry(payment: Payment, isAgent: Boolean)(implicit messages: Messages, dateServiceInterface: DateServiceInterface): PaymentHistoryEntry = {
+  private def paymentToHMRCEntry(payment: Payment, isAgent: Boolean)
+                                (implicit messages: Messages, dateServiceInterface: DateServiceInterface): PaymentHistoryEntry = {
     Logger("application").info("json:" + Json.prettyPrint(Json.toJson(payment)))
     PaymentHistoryEntry(
       date = payment.dueDate.getOrElse(throw MissingFieldException("Payment Due Date")),
@@ -120,7 +122,8 @@ object  RepaymentHistoryUtils {
     )
   }
 
-  private def mfaCreditEntry(payment: Payment, isAgent: Boolean)(implicit messages: Messages, dateServiceInterface: DateServiceInterface): PaymentHistoryEntry = {
+  private def mfaCreditEntry(payment: Payment, isAgent: Boolean)
+                            (implicit messages: Messages, dateServiceInterface: DateServiceInterface): PaymentHistoryEntry = {
     PaymentHistoryEntry(
       date = payment.documentDate,
       creditType = MfaCreditType,
@@ -141,9 +144,11 @@ object  RepaymentHistoryUtils {
     )
   }
 
-  private def filterRepayment(repayment: RepaymentHistory)(implicit messages: Messages, languageUtils: LanguageUtils, dateServiceInterface: DateServiceInterface): PaymentHistoryEntry = {
+  private def filterRepayment(repayment: RepaymentHistory)
+                             (implicit messages: Messages, languageUtils: LanguageUtils, dateServiceInterface: DateServiceInterface): PaymentHistoryEntry = {
     PaymentHistoryEntry(
-      date = LocalDate.parse(languageUtils.Dates.shortDate(repayment.estimatedRepaymentDate.getOrElse(throw MissingFieldException("Estimated Repayment Date")))(messages)),
+      date = LocalDate.parse(languageUtils.Dates.shortDate(repayment.estimatedRepaymentDate
+        .getOrElse(throw MissingFieldException("Estimated Repayment Date")))(messages)),
       creditType = Repayment,
       amount = repayment.totalRepaymentAmount,
       linkUrl = s"refund-to-taxpayer/${repayment.repaymentRequestNumber}",
