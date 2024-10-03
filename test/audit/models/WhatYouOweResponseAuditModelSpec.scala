@@ -36,6 +36,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport with ChargeConstants 
   val transactionName = "what-you-owe-response"
   val auditEvent = "WhatYouOweResponse"
   val lpiPaymentOnAccount1: String = messages("whatYouOwe.lpi.paymentOnAccount1.text")
+  val lpiPaymentOnAccount2: String = messages("whatYouOwe.lpi.paymentOnAccount2.text")
   val paymentOnAccount1: String = messages("whatYouOwe.paymentOnAccount1.text")
   val paymentOnAccount2: String = messages("whatYouOwe.paymentOnAccount2.text")
   val class2Nic: String = messages("whatYouOwe.class2Nic.text")
@@ -98,13 +99,9 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport with ChargeConstants 
             "overDue" -> true
           ),
           Json.obj(
-            "chargeType" -> paymentOnAccount2,
+            "chargeType" -> lpiPaymentOnAccount2,
             "dueDate" -> dueDateOverdue(1).get,
             "outstandingAmount" -> 24.05,
-            "accruingInterest" -> 24.05,
-            "interestRate" -> "6.2%",
-            "interestFromDate" -> "2019-05-25",
-            "interestEndDate" -> "2019-06-25",
             "chargeUnderReview" -> false,
             "endTaxYear" -> 2023,
             "overDue" -> true
@@ -124,7 +121,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport with ChargeConstants 
           Json.obj(
             "chargeType" -> paymentOnAccount1,
             "dueDate" -> dueDateInFuture,
-            "outstandingAmount" -> 100,
+            "outstandingAmount" -> 125,
             "accruingInterest" -> 100,
             "interestRate" -> "100.0%",
             "interestFromDate" -> "2018-03-29",

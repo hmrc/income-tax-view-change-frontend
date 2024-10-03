@@ -525,7 +525,7 @@ trait ChargeConstants {
     dueDate = List(Some(fixedDate.plusYears(100).minusDays(1)), Some(fixedDate.plusYears(100).plusDays(30))),
     outstandingAmount = List(0, 0),
     taxYear = fixedDate.getYear.toString,
-    latePaymentInterestAmount = List(None, None),
+    latePaymentInterestAmount = List(Some(150), Some(150)),
     dunningLock = noDunningLocks,
     outstandingInterest = List(Some(100), Some(40)),
     interestEndDate = List(Some(LocalDate.of(2100,1,1)), Some(LocalDate.of(2100,1,1))),
@@ -852,7 +852,7 @@ trait ChargeConstants {
       dunningLock = oneDunningLock,
       outstandingInterest = List(Some(42.50), Some(24.05)),
       interestRate = List(Some(2.6), Some(6.2)),
-      latePaymentInterestAmount = List(Some(34.56), None),
+      latePaymentInterestAmount = List(Some(54.56), Some(98.76)),
       outstandingAmount = List(50, 75),
       taxYear = fixedDate.getYear.toString
     ) ++ Seq(chargeItemModel(

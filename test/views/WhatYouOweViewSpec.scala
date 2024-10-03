@@ -66,8 +66,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val poa2Text: String = messages("whatYouOwe.paymentOnAccount2.text")
   val poaExtra1Text: String = messages("whatYouOwe.reviewAndReconcilePoa1.text")
   val poaExtra2Text: String = messages("whatYouOwe.reviewAndReconcilePoa2.text")
-  val poa1ReconcileInterest: String = messages("whatYouOwe.interest.reviewAndReconcilePoa1.text")
-  val poa2ReconcileInterest: String = messages("whatYouOwe.interest.reviewAndReconcilePoa2.text")
+  val poa1ReconcileInterest: String = messages("whatYouOwe.lpi.reviewAndReconcilePoa1.text")
+  val poa2ReconcileInterest: String = messages("whatYouOwe.lpi.reviewAndReconcilePoa2.text")
   val remainingBalance: String = messages("whatYouOwe.balancingCharge.text")
   val preMTDRemainingBalance: String = s"${messages("whatYouOwe.balancingCharge.text")} ${messages("whatYouOwe.pre-mtd-digital")}"
   val remainingBalanceLine1: String = messages("whatYouOwe.remaining-balance.line1")
