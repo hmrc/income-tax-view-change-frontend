@@ -2025,7 +2025,7 @@ manageBusinesses.check-answers.change                                    = Chang
 # what you need to know
 claimToAdjustPoa.whatYouNeedToKnow.heading                              = 	What you need to know
 claimToAdjustPoa.whatYouNeedToKnow.h1                                   = 	What you need to know
-claimToAdjustPoa.whatYouNeedToKnow.caption                              =   Adjust payments on account for {0} to {1} tax year
+claimToAdjustPoa.whatYouNeedToKnow.caption                              =   {0} to {1} tax year
 claimToAdjustPoa.whatYouNeedToKnow.p1                                   =   You can adjust your payments on account at any point before submitting your tax return for {0} to {1}, and no later than
 claimToAdjustPoa.whatYouNeedToKnow.bold                                 =   31 January {0}
 claimToAdjustPoa.whatYouNeedToKnow.onlyForWelsh                         =   .
@@ -2054,7 +2054,7 @@ claimToAdjustPoa.selectYourReason.p2.link                               =   you 
 claimToAdjustPoa.selectYourReason.p2.b                                  =   .
 claimToAdjustPoa.selectYourReason.h2                                    =   Why are you reducing your payments on account?
 claimToAdjustPoa.selectYourReason.h2.caption.hidden                     =   This section is
-claimToAdjustPoa.selectYourReason.h2.caption                            =   Adjust payments on account for {0} to {1} tax year
+claimToAdjustPoa.selectYourReason.h2.caption                            =   {0} to {1} tax year
 claimToAdjustPoa.selectYourReason.radios.main-lower                     =   My main income will be lower
 claimToAdjustPoa.selectYourReason.radios.main-lower.hint                =   For example, sole trader or property business profits.
 claimToAdjustPoa.selectYourReason.radios.other-lower                    =   My other income will be lower
@@ -2093,7 +2093,7 @@ claimToAdjustPoa.apiFailure.bullet2Link              = homepage
 
 # Adjust payments on account
 
-claimToAdjustPoa.confirmation.caption                                   =   Adjust payments on account for {0} to {1} tax year
+claimToAdjustPoa.confirmation.caption                                   =   {0} to {1} tax year
 claimToAdjustPoa.confirmation.heading                                   =   Confirm this is true
 claimToAdjustPoa.confirmation.p1                                        =   I believe that the total of my Income Tax and Class 4 National Insurance contributions, after tax deducted at source (for example under PAYE), for this tax year will be less than the previous year.
 claimToAdjustPoa.confirmation.p2                                        =   I believe I will not have to pay any Income Tax or Class 4 National Insurance contributions, or my Income Tax will be deducted at source (for example under PAYE) this year.
@@ -2101,7 +2101,7 @@ claimToAdjustPoa.confirmation.continue                                  =   Acce
 claimToAdjustPoa.confirmation.cancel                                    =   Cancel
 
 
-paymentOnAccount.caption                             = Adjust payments on account for {0} to {1} tax year
+paymentOnAccount.caption                             = {0} to {1} tax year
 paymentOnAccount.heading                             = Adjusting your payments on account
 paymentOnAccount.p1                                  = You can adjust both payments on account if you expect the total of your Income Tax and
 paymentOnAccount.class4NationalInsurance.link.text   = Class 4 National Insurance contributions (opens in a new tab)
@@ -2117,7 +2117,7 @@ paymentOnAccount.button                              = Adjust my payments on acc
 paymentOnAccount.cancel.link                         = Cancel
 
 # Check your answers
-claimToAdjustPoa.checkYourAnswers.caption                    = Adjust payments on account for {0} to {1} tax year
+claimToAdjustPoa.checkYourAnswers.caption                    = {0} to {1} tax year
 claimToAdjustPoa.checkYourAnswers.heading                    = Check your answers
 claimToAdjustPoa.checkYourAnswers.summary-list-1.key         = Why are you reducing your payments on account?
 claimToAdjustPoa.checkYourAnswers.summary-list-2.key         = How much should each payment on account be?
@@ -2128,7 +2128,7 @@ claimToAdjustPoa.checkYourAnswers.cancel                     = Cancel
 claimToAdjustPoa.checkYourAnswers.confirm-and-save           = Confirm and save
 
 # Enter POA Amount
-claimToAdjustPoa.enterPoaAmount.caption                       = Adjust payments on account for {0} to {1} tax year
+claimToAdjustPoa.enterPoaAmount.caption                       = {0} to {1} tax year
 claimToAdjustPoa.enterPoaAmount.heading                       = Enter a new amount
 claimToAdjustPoa.enterPoaAmount.p1                            = Each payment on account should be half the amount of your expected tax bill, which includes:
 claimToAdjustPoa.enterPoaAmount.bullet1                       = Income Tax
