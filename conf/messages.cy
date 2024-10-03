@@ -821,8 +821,10 @@ whatYouOwe.tableHead.amount-due                                 = Swm sy’n ddy
 whatYouOwe.tableHead.tax-year                                   = Blwyddyn dreth
 whatYouOwe.paymentOnAccount1.text							    = Taliad cyntaf ar gyfrif
 whatYouOwe.paymentOnAccount2.text							    = Ail daliad ar gyfrif
-whatYouOwe.reviewAndReconcilePoa1.text                           = Taliad cyntaf ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
-whatYouOwe.reviewAndReconcilePoa2.text                           = Ail daliad ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
+whatYouOwe.reviewAndReconcilePoa1.text                          = Taliad cyntaf ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
+whatYouOwe.reviewAndReconcilePoa2.text                          = Ail daliad ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
+whatYouOwe.lpi.reviewAndReconcilePoa1.text                      = Llog ar y taliad cyntaf ar gyfrif: swm ychwanegol
+whatYouOwe.lpie.reviewAndReconcilePoa2.text                     = Llog ar yr ail daliad ar gyfrif: swm ychwanegol
 whatYouOwe.hmrcAdjustment.text                                  = Addasiad CThEF
 whatYouOwe.balancingCharge.text  							    = Taliad mantoli
 whatYouOwe.remaining-balance.heading                            = Taliad mantoli
@@ -902,8 +904,10 @@ whatYouOwe.interestChargesWarning                               = Bydd taliadau 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad cyntaf ar gyfrif
 chargeSummary.paymentOnAccount2.text                            = Ail daliad ar gyfrif
-chargeSummary.reviewAndReconcilePoa1.text				= Taliad cyntaf ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
-chargeSummary.reviewAndReconcilePoa2.text				= Ail daliad ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
+chargeSummary.reviewAndReconcilePoa1.text				        = Taliad cyntaf ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
+chargeSummary.reviewAndReconcilePoa2.text				        = Ail daliad ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
+chargeSummary.lpi.reviewAndReconcilePoa1.text                   = Llog ar y taliad cyntaf ar gyfrif: swm ychwanegol
+chargeSummary.lpi.reviewAndReconcilePoa2.text                   = Llog ar yr ail daliad ar gyfrif: swm ychwanegol
 chargeSummary.balancingCharge.text                              = Taliad mantoli
 chargeSummary.dueDate                                           = Dyddiad dyledus
 chargeSummary.class2Nic.text                                    = Class 2 National Insurance
@@ -957,6 +961,9 @@ chargeSummary.reviewAndReconcilePoa2.linkText                         = ail dali
 chargeSummary.reviewAndReconcilePoa.comma                             = ,
 chargeSummary.reviewAndReconcilePoa.p2                                = a gafodd ei addasu, yn rhy isel.
 
+chargeSummary.lpi.poaExtraCharge.link                              = Gweler yr arweiniad ynghylch
+chargeSummary.lpi.poaExtraCharge.linkText                          = y cyfraddau llog a bennir gan CThEF (yn agor tab newydd).
+
 chargeSummary.paymentBreakdown.heading   						   = Dadansoddiad o’r taliad
 chargeSummary.paymentBreakdown.incomeTax   						   = Treth Incwm
 chargeSummary.paymentBreakdown.nic2   							   = Yswiriant Gwladol Dosbarth 2
@@ -985,6 +992,9 @@ chargeSummary.lpi.chargeHistory.created.paymentOnAccount1.text          = Llog a
 chargeSummary.lpi.chargeHistory.created.paymentOnAccount2.text          = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o2 wedi’i greu
 chargeSummary.lpi.chargeHistory.created.balancingCharge.text            = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli wedi’i greu
 
+chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa1.text       = CThEF sydd wedi creu’r tâl hwn
+chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa2.text       = CThEF sydd wedi creu’r tâl hwn
+
 chargeSummary.nic2TaxYear                                               = This is the Class 2 National Insurance payment for the {0} to {1} tax year.
 
 chargeSummary.lpi.paymentsOnAccount.poa1                               = Mae arnoch log i CThEF oherwydd eich bod wedi talu’ch taliad ar gyfrif cyntaf yn hwyr.
@@ -995,6 +1005,16 @@ chargeSummary.lpi.paymentsOnAccount.textTwo                            = plws 2.
 chargeSummary.lpi.paymentsOnAccount.p3                                 = Gweler yr arweiniad ynghylch y
 chargeSummary.lpi.paymentsOnAccount.p3LinkText                         = cyfraddau llog a bennir gan CThEF (yn agor tab newydd).
 
+chargeSummary.poa1ExtraAmountInterest.p1                            = Mae arnoch log i CThEF oherwydd bod eich Ffurflen Dreth yn dangos bod eich taliad cyntaf ar gyfrif, a gafodd ei addasu, yn rhy isel.
+chargeSummary.poa1ExtraAmountInterest.p2                            = Mae CThEF yn codi’r llog ar y swm ychwanegol – y gwahaniaeth rhwng eich taliad ar gyfrif, a gafodd ei addasu, a’r hyn sydd arnoch mewn gwirionedd.
+chargeSummary.poa1ExtraAmountInterest.p3                            = Mae llog yn cael ei godi o’r dyddiad yr oedd eich taliad cyntaf ar gyfrif yn ddyledus, ac yn cael ei gyfrifo ar
+chargeSummary.poa1ExtraAmountInterest.p3LinkText                    = gyfradd sail Banc Lloegr (yn agor tab newydd)
+chargeSummary.poa1ExtraAmountInterest.p3AfterLink                   = , ynghyd â 2.5%.
+chargeSummary.poa2ExtraAmountInterest.p1                            = Mae arnoch log i CThEF oherwydd bod eich Ffurflen Dreth yn dangos bod eich ail daliad ar gyfrif, a gafodd ei addasu, yn rhy isel.
+chargeSummary.poa2ExtraAmountInterest.p2                            = Mae CThEF yn codi’r llog ar y swm ychwanegol – y gwahaniaeth rhwng eich taliad ar gyfrif, a gafodd ei addasu, a’r hyn sydd arnoch mewn gwirionedd.
+chargeSummary.poa2ExtraAmountInterest.p3                            = Mae llog yn cael ei godi o’r dyddiad yr oedd eich ail daliad ar gyfrif yn ddyledus, ac yn cael ei gyfrifo ar
+chargeSummary.poa2ExtraAmountInterest.p3LinkText                    = gyfradd sail Banc Lloegr (yn agor tab newydd)
+chargeSummary.poa2ExtraAmountInterest.p3AfterLink                   = , ynghyd â 2.5%.
 
 chargeSummary.definition.balancingcharge.p1                        = Taliad mantoli yw’r dreth sydd dal gennych i’w thalu ar gyfer blwyddyn dreth. Mae hyn yn digwydd os yw’r canlynol yn wir:
 chargeSummary.definition.balancingcharge.bullet1                   = nid oedd gennych unrhyw dreth i’w thalu yn ystod y flwyddyn (er enghraifft, os oedd eich bil treth Hunanasesiad diwethaf o dan £1,000)

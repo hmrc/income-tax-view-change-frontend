@@ -80,12 +80,6 @@ case class DocumentDetail(taxYear: Int,
     case _ => false
   }
 
-  def isOtherInterest: Boolean = interestOutstandingAmount match {
-    case Some(amount) if amount <= 0 => false
-    case Some(_) => true
-    case _ => false
-  }
-
   def isPaid: Boolean = outstandingAmount match {
     case amount if amount == 0 => true
     case _ => false
@@ -117,7 +111,7 @@ case class DocumentDetail(taxYear: Int,
   }
 
   def remainingToPayByChargeOrInterest: BigDecimal = {
-    if (isLatePaymentInterest || isOtherInterest) interestRemainingToPay
+    if (isLatePaymentInterest) interestRemainingToPay
     else remainingToPay
   }
 
@@ -126,10 +120,9 @@ case class DocumentDetail(taxYear: Int,
     else interestOutstandingAmount.getOrElse(latePaymentInterestAmount.get)
   }
 
-  def isInterest: Boolean = isLatePaymentInterest || isOtherInterest
 
   def checkIfEitherChargeOrLpiHasRemainingToPay: Boolean = {
-    if (isLatePaymentInterest || isOtherInterest) interestRemainingToPay > 0
+    if (isLatePaymentInterest) interestRemainingToPay > 0
     else remainingToPay > 0
   }
 
@@ -238,7 +231,7 @@ case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Op
     isReviewAndReconcileDebit && !documentDetail.isPaid && !isOverdue
   }
 
-  def isOnlyInterest: Boolean = {(isOverdue && isLatePaymentInterest) || (documentDetail.isOtherInterest && documentDetail.isPaid)}
+  def isOnlyInterest: Boolean = {(isOverdue && isLatePaymentInterest) || (documentDetail.interestRemainingToPay > 0 && documentDetail.isPaid)}
 }
 
 object DocumentDetail {

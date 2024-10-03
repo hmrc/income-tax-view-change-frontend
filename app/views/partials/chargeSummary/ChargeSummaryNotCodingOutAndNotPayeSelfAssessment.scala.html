@@ -28,8 +28,7 @@
 
 @(
     chargeItem: models.financialDetails.ChargeItem,
-    latePaymentInterestCharge: Boolean,
-    otherInterestCharge: Boolean,
+    interestCharge: Boolean,
     codingOutEnabled: Boolean,
     taxYearFromCodingOut: String,
     taxYearToCodingOut: String,
@@ -42,11 +41,11 @@
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">@messages("chargeSummary.dueDate")</dt>
         <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
-            @if(chargeItem.isOverdue() && !chargeItem.checkIsPaid(latePaymentInterestCharge)) {
+            @if(chargeItem.isOverdue() && !chargeItem.checkIsPaid(interestCharge)) {
                 <span class="govuk-tag govuk-tag--red">@messages("chargeSummary.overdue")</span>
             }
             @{
-                if(latePaymentInterestCharge) {
+                if(interestCharge) {
                     chargeItem.interestEndDate.getOrElse(throw MissingFieldException("Interest End Date")).toLongDate
                 } else if(chargeItem.transactionType == models.financialDetails.BalancingCharge && chargeItem.subTransactionType == None) {
                     chargeItem.getDueDateForNonZeroBalancingCharge(codingOutEnabled).map(_.toLongDate).getOrElse(messages("tax-year-summary.na"))
@@ -57,7 +56,7 @@
         </dd>
     </div>
 
-    @if(latePaymentInterestCharge || otherInterestCharge) {
+    @if(interestCharge) {
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">@messages("chargeSummary.lpi.interestPeriod")</dt>
             <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
@@ -77,8 +76,7 @@
         <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
             <span>
             @{
-                if (latePaymentInterestCharge) chargeItem.latePaymentInterestAmount.getOrElse(throw MissingFieldException("Late Payment Interest Amount")).toCurrency
-                else if (otherInterestCharge) chargeItem.interestOutstandingAmount.getOrElse(throw MissingFieldException("Interest Amount")).toCurrency
+                if (interestCharge) chargeItem.latePaymentInterestAmount.getOrElse(throw MissingFieldException("Late Payment Interest Amount")).toCurrency
                 else chargeItem.originalAmount.toCurrency
             }
             </span>
@@ -90,7 +88,7 @@
         @{
             if (codingOutEnabled && chargeItem.subTransactionType == Some(models.financialDetails.Accepted)) {
                 messages("chargeSummary.codingOutRemainingToPay", taxYearFromCodingOut, taxYearToCodingOut)
-            } else if (latePaymentInterestCharge || otherInterestCharge) chargeItem.interestRemainingToPay.toCurrency
+            } else if (interestCharge) chargeItem.interestRemainingToPay.toCurrency
             else chargeItem.remainingToPay.toCurrency
         }
         </dd>
