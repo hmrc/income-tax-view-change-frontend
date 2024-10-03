@@ -17,10 +17,9 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.itsaStatus.{ITSAStatusResponse, ITSAStatusResponseError, ITSAStatusResponseModel}
+import models.itsaStatus.{ITSAStatusError, ITSAStatusResponse, ITSAStatusResponseError, ITSAStatusResponseModel}
 import play.api.Logger
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
-import play.api.libs.json.{JsError, Json}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import javax.inject.{Inject, Singleton}
@@ -36,7 +35,7 @@ class ITSAStatusConnector @Inject()(val http: HttpClient,
   }
 
   def getITSAStatusDetail(nino: String, taxYear: String, futureYears: Boolean, history: Boolean)
-                         (implicit headerCarrier: HeaderCarrier): Future[Either[ITSAStatusResponse, List[ITSAStatusResponseModel]]] = {
+                         (implicit headerCarrier: HeaderCarrier): Future[Either[ITSAStatusError, List[ITSAStatusResponseModel]]] = {
     val url = getITSAStatusDetailUrl(nino, taxYear)
     val queryParams = Seq("futureYears" -> futureYears.toString, "history" -> history.toString)
     http.GET[HttpResponse](url = url, queryParams = queryParams)(

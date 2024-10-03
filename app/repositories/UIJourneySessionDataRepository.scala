@@ -111,6 +111,20 @@ class UIJourneySessionDataRepository @Inject()(
       .map(_.wasAcknowledged())
   }
 
+  def cleanSet(data: UIJourneySessionData): Future[UIJourneySessionData] = {
+
+    val updatedAnswers = data.copy(lastUpdated = Instant.now(clock))
+
+    collection
+      .replaceOne(
+        filter = dataFilter(data),
+        replacement = updatedAnswers,
+        options = ReplaceOptions().upsert(true)
+      )
+      .toFuture()
+      .map(_ => data)
+  }
+
   def updateData(data: UIJourneySessionData, key: String, value: String): Future[UpdateResult] = {
     collection.updateOne(
       filter = dataFilter(data),

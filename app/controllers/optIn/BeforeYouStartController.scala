@@ -24,6 +24,7 @@ import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import services.DateServiceInterface
 import services.optIn.OptInService
 import utils.AuthenticatorPredicate
 import views.html.optIn.BeforeYouStart
@@ -31,8 +32,11 @@ import views.html.optIn.BeforeYouStart
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class BeforeYouStartController @Inject()(val beforeYouStart: BeforeYouStart,
-                                         val optInService: OptInService)
+class BeforeYouStartController @Inject()(
+                                          val beforeYouStart: BeforeYouStart,
+                                          val optInService: OptInService,
+                                          dateService: DateServiceInterface
+                                        )
                                         (implicit val appConfig: FrontendAppConfig,
                                          val ec: ExecutionContext,
                                          val auth: AuthenticatorPredicate,
@@ -58,16 +62,23 @@ class BeforeYouStartController @Inject()(val beforeYouStart: BeforeYouStart,
       case Seq(singleYear) =>
         optInService.saveIntent(TaxYear.makeTaxYearWithEndYear(singleYear.endYear))
         controllers.optIn.routes.ConfirmTaxYearController.show(isAgent)
-      case _ => controllers.optIn.routes.ChooseYearController.show(isAgent)
+      case _ =>
+        controllers.optIn.routes.ChooseYearController.show(isAgent)
     }
   }
 
   def show(isAgent: Boolean = false): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       withRecover(isAgent) {
-        optInService.availableOptInTaxYear().flatMap { availableYears =>
-          Future.successful(Ok(beforeYouStart(isAgent, startButtonUrl(isAgent, availableYears).url)))
+        for {
+          availableYears: Seq[TaxYear] <- optInService.availableOptInTaxYear()
+//          _ <- Future.traverse(availableYears)(taxYear => optInService.retrieveAndSetOptInSessionData(taxYear))
+          _ <- optInService.retrieveAndSetOptInSessionData(dateService.getCurrentTaxYear)
+//          _ <- optInService.retrieveAndSetOptInSessionData(dateService.getCurrentTaxYear.nextYear)
+        } yield {
+          Ok(beforeYouStart(isAgent, startButtonUrl(isAgent, availableYears).url))
         }
       }
   }
+
 }

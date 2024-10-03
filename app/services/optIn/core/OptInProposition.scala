@@ -17,7 +17,7 @@
 package services.optIn.core
 
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus.Annual
+import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus}
 import services.optIn.core.OptInProposition.OneItem
 
 object OptInProposition {
@@ -68,4 +68,10 @@ case class OptInProposition(currentTaxYear: CurrentOptInTaxYear, nextTaxYear: Ne
   def isCurrentTaxYear(target: TaxYear): Boolean = currentTaxYear.taxYear == target
 
   def anyYearsAnnual: Boolean = Seq(currentTaxYear.status, nextTaxYear.status).contains(Annual)
+
+//  def afterwardsStatus(selectedTaxYear: TaxYear): Seq[ITSAStatus] = {
+//
+//  }
+
+
 }

@@ -29,9 +29,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
-                                  dateService: DateService,
-                                  implicit val appConfig: FrontendAppConfig) extends FeatureSwitching {
+class ITSAStatusService @Inject()(
+                                   itsaStatusConnector: ITSAStatusConnector,
+                                   dateService: DateService,
+                                   implicit val appConfig: FrontendAppConfig
+                                 ) extends FeatureSwitching {
+
   private def getITSAStatusDetail(taxYear: TaxYear, futureYears: Boolean, history: Boolean)
                                  (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[List[ITSAStatusResponseModel]] = {
     itsaStatusConnector.getITSAStatusDetail(
