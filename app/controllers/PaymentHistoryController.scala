@@ -17,7 +17,6 @@
 package controllers
 
 import audit.AuditingService
-import audit.models.PaymentHistoryResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
@@ -69,41 +68,38 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
                     origin: Option[String] = None,
                     isAgent: Boolean,
                     itvcErrorHandler: ShowInternalServerError)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
-    paymentHistoryService.getPaymentHistory.flatMap {
+                   (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] =
+    for {
+      payments                       <- paymentHistoryService.getPaymentHistory
+      repayments                     <- paymentHistoryService.getRepaymentHistory(isEnabled(PaymentHistoryRefunds))
+    } yield (payments, repayments) match {
 
-      case Right(payments) =>
-        val MFACreditsEnabled = isEnabled(MFACreditsAndDebits)
-        val CutOverCreditsEnabled = isEnabled(CutOverCredits)
-        val paymentHistoryAndRefundsEnabled = isEnabled(PaymentHistoryRefunds)
+      case (Right(payments), Right(repayments)) =>
+
+        val paymentHistoryEntries = RepaymentHistoryUtils.getGroupedPaymentHistoryData(
+          isAgent = isAgent,
+          payments = payments,
+          repayments = repayments,
+          languageUtils = languageUtils,
+          CutOverCreditsEnabled = isEnabled(CutOverCredits),
+          MFACreditsEnabled = isEnabled(MFACreditsAndDebits)
+        )
+
         val viewModel = PaymentCreditAndRefundHistoryViewModel(isEnabled(CreditsRefundsRepay), isEnabled(PaymentHistoryRefunds))
-        if (paymentHistoryAndRefundsEnabled) {
-          paymentHistoryService.getRepaymentHistory.map {
-            case Right(repayments) =>
-              auditingService.extendedAudit(PaymentHistoryResponseAuditModel(user, payments,
-                CutOverCreditsEnabled = CutOverCreditsEnabled,
-                MFACreditsEnabled = MFACreditsEnabled))
-              val paymentHistoryEntries = RepaymentHistoryUtils.getGroupedPaymentHistoryData(payments, repayments, isAgent,
-                MFACreditsEnabled = MFACreditsEnabled, CutOverCreditsEnabled = CutOverCreditsEnabled, languageUtils)
-              Ok(paymentHistoryView(paymentHistoryEntries, viewModel, paymentHistoryAndRefundsEnabled, backUrl, user.saUtr,
-                btaNavPartial = user.btaNavPartial, isAgent = isAgent)
-              ).addingToSession(gatewayPage -> PaymentHistoryPage.name)
-            case Left(_) => itvcErrorHandler.showInternalServerError()
-          }
-        } else {
-          auditingService.extendedAudit(PaymentHistoryResponseAuditModel(user, payments,
-            CutOverCreditsEnabled = CutOverCreditsEnabled,
-            MFACreditsEnabled = MFACreditsEnabled))
-          val paymentHistoryEntries = RepaymentHistoryUtils.getGroupedPaymentHistoryData(payments, List(), isAgent,
-            MFACreditsEnabled = MFACreditsEnabled, CutOverCreditsEnabled = CutOverCreditsEnabled, languageUtils)
-          Future(Ok(paymentHistoryView(paymentHistoryEntries, viewModel, paymentHistoryAndRefundsEnabled, backUrl, user.saUtr,
-            btaNavPartial = user.btaNavPartial, isAgent = isAgent)
-          ).addingToSession(gatewayPage -> PaymentHistoryPage.name))
-        }
 
-      case Left(_) => Future(itvcErrorHandler.showInternalServerError())
+        Ok(paymentHistoryView(
+          backUrl = backUrl,
+          isAgent = isAgent,
+          saUtr = user.saUtr,
+          viewModel = viewModel,
+          btaNavPartial = user.btaNavPartial,
+          groupedPayments = paymentHistoryEntries,
+          paymentHistoryAndRefundsEnabled = isEnabled(PaymentHistoryRefunds)
+        ))
+          .addingToSession(gatewayPage -> PaymentHistoryPage.name)
+
+      case _ => itvcErrorHandler.showInternalServerError()
     }
-  }
 
   def show(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
