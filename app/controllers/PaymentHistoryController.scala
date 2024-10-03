@@ -138,7 +138,6 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
       case Left(_) =>
         Future.successful(itvcErrorHandler.showInternalServerError())
     }
-
   }
 
   def refundStatus(isAgent: Boolean): Action[AnyContent] =
