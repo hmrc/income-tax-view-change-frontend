@@ -16,6 +16,7 @@
 
 package services.optout
 
+import audit.AuditingService
 import auth.MtdItUser
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ErrorItem, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
@@ -76,6 +77,7 @@ class OptOutServiceSpec extends UnitSpec
   val optOutConnector: ITSAStatusUpdateConnector = mock(classOf[ITSAStatusUpdateConnector])
   val nextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
   val repository: OptOutSessionDataRepository = mock(classOf[OptOutSessionDataRepository])
+  val auditingService: AuditingService = mock(classOf[AuditingService])
 
   implicit val user: MtdItUser[_] = mock(classOf[MtdItUser[_]])
   implicit val hc: HeaderCarrier = mock(classOf[HeaderCarrier])
@@ -92,7 +94,7 @@ class OptOutServiceSpec extends UnitSpec
   val error = new RuntimeException("Some Error")
 
   val service: OptOutService = new OptOutService(optOutConnector, mockITSAStatusService,
-    mockCalculationListService, nextUpdatesService, mockDateService, repository)
+    mockCalculationListService, nextUpdatesService, mockDateService, repository, auditingService)
 
   val noOptOutOptionAvailable: Option[Nothing] = None
 
@@ -613,7 +615,6 @@ class OptOutServiceSpec extends UnitSpec
       }
 
     }
-
   }
 
   private def stubOptOut(currentTaxYear: TaxYear,
