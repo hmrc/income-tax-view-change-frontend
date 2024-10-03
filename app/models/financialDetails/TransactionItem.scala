@@ -36,6 +36,7 @@ trait TransactionItem {
 
   def isOverdue()(implicit dateService: DateServiceInterface): Boolean
 
+  // TODO: duplicate logic, in scope of => https://jira.tools.tax.service.gov.uk/browse/MISUV-8557
   def getChargeTypeKey(codedOutEnabled: Boolean = false, reviewAndReconcileEnabled: Boolean = false): String =
     (transactionType, subTransactionType) match {
       case (PaymentOnAccountOne, _) => "paymentOnAccount1.text"
