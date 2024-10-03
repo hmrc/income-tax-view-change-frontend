@@ -113,9 +113,9 @@ object ChargeType {
         Some(PaymentOnAccountTwo)
       case (ChargeType.balancingCharge, _) =>
         Some(BalancingCharge)
-      case (ChargeType.`paymentOnAccountOneReviewAndReconcileDebit`, true) =>
+      case (ChargeType.paymentOnAccountOneReviewAndReconcileDebit, true) =>
         Some(PaymentOnAccountOneReviewAndReconcile)
-      case (ChargeType.`paymentOnAccountTwoReviewAndReconcileDebit`, true) =>
+      case (ChargeType.paymentOnAccountTwoReviewAndReconcileDebit, true) =>
         Some(PaymentOnAccountTwoReviewAndReconcile)
       case (x, _) if ChargeType.mfaDebit.contains(x) =>
         Some(MfaDebitCharge)
