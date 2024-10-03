@@ -17,10 +17,7 @@
 package models.financialDetails
 
 import exceptions.CouldNotCreateChargeItemException
-import models.admin.ReviewAndReconcilePoa
 import models.incomeSourceDetails.TaxYear
-import models.taxyearsummary.TaxYearSummaryChargeItem
-import play.api.Logger
 import play.api.libs.json.{Format, Json}
 import services.DateServiceInterface
 
@@ -129,22 +126,6 @@ case class ChargeItem (
     else interestOutstandingAmount.getOrElse(latePaymentInterestAmount.get)
   }
 
-  def getChargeTypeKey(codedOutEnabled: Boolean = false, reviewAndReconcileEnabled: Boolean = false): String =
-    (transactionType, subTransactionType) match {
-      case (PaymentOnAccountOne, _)                                 => "paymentOnAccount1.text"
-      case (PaymentOnAccountTwo, _)                                 => "paymentOnAccount2.text"
-      case (MfaDebitCharge,      _)                                 => "hmrcAdjustment.text"
-      case (BalancingCharge, Some(Nics2))     if codedOutEnabled    => "class2Nic.text"
-      case (BalancingCharge, Some(Accepted))  if codedOutEnabled    => "codingOut.text"
-      case (BalancingCharge, Some(Cancelled)) if codedOutEnabled    => "cancelledPayeSelfAssessment.text"
-      case (BalancingCharge, _)                                     => "balancingCharge.text"
-      case (PaymentOnAccountOneReviewAndReconcile, _) if reviewAndReconcileEnabled => "reviewAndReconcilePoa1.text"
-      case (PaymentOnAccountTwoReviewAndReconcile, _) if reviewAndReconcileEnabled => "reviewAndReconcilePoa2.text"
-      case error =>
-        Logger("application").error(s"Missing or non-matching charge type: $error found")
-        "unknownCharge"
-    }
-
   def poaLinkForDrilldownPage: String = transactionType match {
     case PaymentOnAccountOne => "4911"
     case PaymentOnAccountTwo => "4913"
@@ -213,43 +194,6 @@ object ChargeItem {
       amountCodedOut = documentDetail.amountCodedOut,
       dunningLock = dunningLockExists
     )
-  }
-
-  def fromFinancialDetailModel(transactionId: String, financialDetailsModel: FinancialDetailsModel, codingOut: Boolean,
-                               reviewAndReconcile: Boolean): Option[ChargeItem] = {
-
-    for {
-      dd <- financialDetailsModel.documentDetails.find(_.transactionId == transactionId)
-      fd <- financialDetailsModel.financialDetails.find(_.transactionId.contains(transactionId))
-      mainTransaction <- fd.mainTransaction
-      chargeType <- ChargeType.fromCode(mainTransaction, reviewAndReconcile)
-    } yield {
-
-      val dunningLockExists =
-        financialDetailsModel.financialDetails
-          .exists(financialDetail => financialDetail.transactionId.contains(dd.transactionId) && financialDetail.dunningLockExists)
-
-      ChargeItem(
-        transactionId = transactionId,
-        taxYear = TaxYear.forYearEnd(dd.taxYear),
-        transactionType = chargeType,
-        subTransactionType = dd.documentText
-          .flatMap(SubTransactionType.fromDocumentText)
-          .filter(_ => codingOut),
-        documentDate = dd.documentDate,
-        dueDate = dd.documentDueDate,
-        originalAmount = dd.originalAmount,
-        outstandingAmount = dd.outstandingAmount,
-        interestOutstandingAmount = dd.interestOutstandingAmount,
-        latePaymentInterestAmount = dd.latePaymentInterestAmount,
-        interestFromDate = dd.interestFromDate,
-        interestEndDate = dd.interestEndDate,
-        interestRate = dd.interestRate,
-        lpiWithDunningLock = dd.lpiWithDunningLock,
-        amountCodedOut = dd.amountCodedOut,
-        dunningLock = dunningLockExists
-      )
-    }
   }
 
 }

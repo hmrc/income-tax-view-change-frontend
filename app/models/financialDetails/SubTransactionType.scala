@@ -49,10 +49,8 @@ object SubTransactionType {
     }
   }
 
-  implicit val write: Writes[SubTransactionType] = new Writes[SubTransactionType] {
-    def writes(transactionType: SubTransactionType): JsValue = {
-      JsString(transactionType.key)
-    }
+  implicit val write: Writes[SubTransactionType] = (transactionType: SubTransactionType) => {
+    JsString(transactionType.key)
   }
 
   val read: Reads[SubTransactionType] = (JsPath).read[String].collect(JsonValidationError("Could not parse transactionType")) {
