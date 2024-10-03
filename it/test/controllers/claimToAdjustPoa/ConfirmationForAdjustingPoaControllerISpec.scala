@@ -45,6 +45,7 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
   private val url: String = "/adjust-poa/confirmation"
   private val validFinancialDetailsResponseBody: JsValue =
     testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
+  val caption: String = s"${testTaxYear - 2} to ${testTaxYear - 1} tax year"
 
   override def beforeEach(): Unit = {
 
@@ -94,7 +95,8 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
         val res = get(url)
 
         res should have(
-          httpStatus(OK)
+          httpStatus(OK),
+          elementTextByClass("govuk-caption-l")(caption)
         )
       }
     }
