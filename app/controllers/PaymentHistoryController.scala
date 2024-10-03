@@ -17,6 +17,7 @@
 package controllers
 
 import audit.AuditingService
+import audit.models.PaymentHistoryResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
@@ -75,6 +76,13 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
     } yield (payments, repayments) match {
 
       case (Right(payments), Right(repayments)) =>
+
+        auditingService.extendedAudit(PaymentHistoryResponseAuditModel(
+          mtdItUser = user,
+          payments = payments,
+          CutOverCreditsEnabled = isEnabled(CutOverCredits),
+          MFACreditsEnabled = isEnabled(MFACreditsAndDebits)
+        ))
 
         val paymentHistoryEntries = RepaymentHistoryUtils.getGroupedPaymentHistoryData(
           isAgent = isAgent,
