@@ -32,14 +32,14 @@
 
 package audit.models
 
-import audit.models.CheckYourAnswersAuditModel.format
+import audit.models.OptOutAuditModel.format
 import play.api.libs.json.{JsObject, JsValue, Json, OFormat}
 
-case class CheckYourAnswersAuditModel(nino: String, outcome: Outcome, optOutRequestedFromTaxYear: String, currentYear: String,
-                                      beforeITSAStatusCurrentYearMinusOne: String, beforeITSAStatusCurrentYear: String,
-                                      beforeITSAStatusCurrentYearPlusOne: String, afterAssumedITSAStatusCurrentYearMinusOne: String,
-                                      afterAssumedITSAStatusCurrentYear: String, afterAssumedITSAStatusCurrentYearPlusOne: String,
-                                      currentYearMinusOneCrystallised: Boolean) extends ExtendedAuditModel {
+case class OptOutAuditModel(nino: String, outcome: Outcome, optOutRequestedFromTaxYear: String, currentYear: String,
+                            beforeITSAStatusCurrentYearMinusOne: String, beforeITSAStatusCurrentYear: String,
+                            beforeITSAStatusCurrentYearPlusOne: String, afterAssumedITSAStatusCurrentYearMinusOne: String,
+                            afterAssumedITSAStatusCurrentYear: String, afterAssumedITSAStatusCurrentYearPlusOne: String,
+                            currentYearMinusOneCrystallised: Boolean) extends ExtendedAuditModel {
 
 
   override val transactionName: String = enums.TransactionName.ClientDetailsConfirmed
@@ -67,7 +67,7 @@ case class Outcome(isSuccessful: Boolean = true,
                    failureCategory: String = "API_FAILURE",
                    failureReason: String = "Failure reasons")
 
-object CheckYourAnswersAuditModel {
+object OptOutAuditModel {
 
   implicit val format: OFormat[Outcome] = Json.format[Outcome]
 }

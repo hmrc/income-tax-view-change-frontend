@@ -19,10 +19,10 @@ package services.optout
 import auth.MtdItUser
 import cats.data.OptionT
 import connectors.itsastatus.ITSAStatusUpdateConnector
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure}
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
+import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, Voluntary}
 import models.optout._
 import repositories.OptOutSessionDataRepository
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
@@ -30,9 +30,12 @@ import services.optout.OptOutProposition.createOptOutProposition
 import services.reportingfreq.ReportingFrequency.{QuarterlyUpdatesCountForTaxYearModel, noQuarterlyUpdates}
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService, NextUpdatesService}
 import uk.gov.hmrc.http.HeaderCarrier
+import audit.AuditingService
+import audit.models.{OptOutAuditModel, Outcome}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import audit.OptOutAudit
 
 @Singleton
 class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnector,
@@ -92,10 +95,17 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
 
   def makeOptOutUpdateRequest(optOutProposition: OptOutProposition, intentTaxYear: TaxYear)
                              (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[ITSAStatusUpdateResponse] = {
+
     val yearsToUpdate = optOutProposition.optOutYearsToUpdate(intentTaxYear)
     val responsesSeqOfFutures = makeUpdateCalls(yearsToUpdate)
-    Future.sequence(responsesSeqOfFutures).
+    val result = Future.sequence(responsesSeqOfFutures).
       map(responsesSeq => findAnyFailOrFirstSuccess(responsesSeq))
+    val resolvedResult = result.value.getOrElse(ITSAStatusUpdateResponseFailure)
+    val audit = new OptOutAudit()(auditingService)
+
+    audit.generateOptOutAudit(optOutProposition, intentTaxYear, resolvedResult)
+
+    result
   }
 
   private def makeUpdateCalls(optOutYearsToUpdate: Seq[TaxYear])
