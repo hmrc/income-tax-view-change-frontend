@@ -19,7 +19,7 @@ package models.financialDetails
 import enums.CodingOutType.{CODING_OUT_ACCEPTED, CODING_OUT_CANCELLED, CODING_OUT_CLASS2_NICS}
 import play.api.libs.json._
 
-sealed trait SubTransactionType extends TransactionType {
+sealed trait SubTransactionType  {
   val key: String
 }
 
@@ -49,10 +49,8 @@ object SubTransactionType {
     }
   }
 
-  implicit val write: Writes[SubTransactionType] = new Writes[SubTransactionType] {
-    def writes(transactionType: SubTransactionType): JsValue = {
-      JsString(transactionType.key)
-    }
+  implicit val write: Writes[SubTransactionType] = (transactionType: SubTransactionType) => {
+    JsString(transactionType.key)
   }
 
   val read: Reads[SubTransactionType] = (JsPath).read[String].collect(JsonValidationError("Could not parse transactionType")) {

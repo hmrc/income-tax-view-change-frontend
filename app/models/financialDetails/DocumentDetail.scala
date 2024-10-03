@@ -69,11 +69,6 @@ case class DocumentDetail(taxYear: Int,
   def hasAccruingInterest: Boolean =
     interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0 && !isPaid
 
-  def originalAmountIsNotNegative: Boolean = originalAmount match {
-    case amount if amount < 0 => false
-    case _ => true
-  }
-
   def originalAmountIsNotZeroOrNegative: Boolean = originalAmount match {
     case amount if amount <= 0 => false
     case _ => true
@@ -179,6 +174,7 @@ case class DocumentDetail(taxYear: Int,
     }
   }
 
+  // TODO: duplicate logic, in scope of => https://jira.tools.tax.service.gov.uk/browse/MISUV-8557
   def getChargeTypeKey(codedOutEnabled: Boolean = false): String = documentDescription match {
     case Some(Poa1Charge.key) => "paymentOnAccount1.text"
     case Some(Poa2Charge.key) => "paymentOnAccount2.text"

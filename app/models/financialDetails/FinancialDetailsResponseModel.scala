@@ -104,6 +104,14 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
         documentDetail, documentDetail.getDueDate(), dunningLock = dunningLockExists(documentDetail.transactionId)))
   }
 
+  def findDueDateByDocumentDetails(documentDetail: DocumentDetail): Option[LocalDate] = {
+    financialDetails.find { fd =>
+      fd.transactionId.contains(documentDetail.transactionId) &&
+        fd.taxYear.toInt == documentDetail.taxYear
+    } flatMap (_ => documentDetail.documentDueDate)
+  }
+
+
   def getAllDocumentDetailsWithDueDates(codingOutEnabled: Boolean = false, reviewAndReconcileEnabled: Boolean = false)(implicit dateService: DateServiceInterface): List[DocumentDetailWithDueDate] = {
     documentDetails.map(documentDetail =>
       DocumentDetailWithDueDate(documentDetail, documentDetail.getDueDate(),

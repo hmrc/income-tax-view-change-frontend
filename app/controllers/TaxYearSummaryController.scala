@@ -64,7 +64,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
                                          val agentItvcErrorHandler: AgentItvcErrorHandler,
                                          mcc: MessagesControllerComponents,
                                          val ec: ExecutionContext)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport with ImplicitDateFormatter {
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport with ImplicitDateFormatter with TransactionUtils {
 
   private def showForecast(calculationSummary: Option[CalculationSummary])(implicit user: MtdItUser[_]): Boolean = {
     val isCrystallised = calculationSummary.flatMap(_.crystallised).contains(true)
@@ -155,29 +155,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
     financialDetailsService.getFinancialDetails(taxYear, user.nino) flatMap {
       case financialDetails@FinancialDetailsModel(_, documentDetails, _) =>
 
-        def filterMfa(chargeItem: TaxYearSummaryChargeItem): Boolean = {
-          (isEnabled(MFACreditsAndDebits), chargeItem.transactionType) match {
-            case (false, MfaDebitCharge) => false
-            case _ => true
-          }
-        }
-
-        def filterReviewAndReconcile(chargeItem: TaxYearSummaryChargeItem): Boolean = {
-          (isEnabled(ReviewAndReconcilePoa), chargeItem.transactionType) match {
-            case (false, PaymentOnAccountOneReviewAndReconcile | PaymentOnAccountTwoReviewAndReconcile) => false
-            case (true, PaymentOnAccountOneReviewAndReconcile | PaymentOnAccountTwoReviewAndReconcile) if chargeItem.outstandingAmount <= 0 => false
-            case _ => true
-          }
-        }
-
-        def findDueDateByDocumentDetails(documentDetail: DocumentDetail): Option[LocalDate] = {
-          financialDetails.financialDetails.find { fd =>
-            fd.transactionId.contains(documentDetail.transactionId) &&
-              fd.taxYear.toInt == documentDetail.taxYear
-          } flatMap (_ => documentDetail.documentDueDate)
-        }
-
-        val getChargeItem: DocumentDetail => Option[ChargeItem] = ChargeItem.tryGetChargeItem(
+        val getChargeItem: DocumentDetail => Option[ChargeItem] = getChargeItemOpt(
           codingOutEnabled = isEnabled(CodingOut),
           reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa)
         )(
@@ -196,10 +174,11 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
           chargeItemsNoPayments
             .filter(_.isNotCodingOutDocumentDetail)
             .flatMap(dd => getChargeItem(dd)
-              .map(ci => TaxYearSummaryChargeItem.fromChargeItem(ci, findDueDateByDocumentDetails(dd))))
+              .map(ci => TaxYearSummaryChargeItem.fromChargeItem(ci, financialDetails.findDueDateByDocumentDetails(dd))))
             .filterNot(_.originalAmount < 0)
-            .filter(filterMfa)
-            .filter(filterReviewAndReconcile)
+            .filter(ChargeItem.filterCharge(isEnabled(MFACreditsAndDebits), MfaDebitCharge))
+            .filter(ChargeItem.filterChargeWithOutstandingAmount(isEnabled(ReviewAndReconcilePoa),
+              PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile))
         }
 
         val chargeItemsLpi: List[TaxYearSummaryChargeItem] = {

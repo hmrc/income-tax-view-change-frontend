@@ -24,6 +24,7 @@ import models.admin.ReviewAndReconcilePoa
 import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargeHistoryModel}
 import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails._
+import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
@@ -642,7 +643,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
            "Coding Out is Disabled" in new TestSetup(
             creditItemCodingOut.copy(
-              taxYear = 2019,
+              taxYear = TaxYear.forYearEnd(2019),
               subTransactionType = None,
               outstandingAmount = 2500.00,
               originalAmount = 2500.00),
@@ -714,7 +715,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       }
 
       "have the correct heading for a new balancing charge" in new TestSetup(
-        chargeItem = baseBalancing.copy(taxYear = 2019)) {
+        chargeItem = baseBalancing.copy(taxYear = TaxYear.forYearEnd(2019))) {
         document.select("h1").text() shouldBe balancingChargeHeading(2019)
       }
 
@@ -734,14 +735,14 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       }
 
       "have the correct heading for a new balancing charge late interest charge" in new TestSetup(
-        chargeItem = baseBalancing.copy(taxYear = 2019),
+        chargeItem = baseBalancing.copy(taxYear = TaxYear.forYearEnd(2019)),
         latePaymentInterestCharge = true
       ) {
         document.select("h1").text() shouldBe balancingChargeInterestHeading(2019)
       }
 
       "have the correct heading for an amend balancing charge late interest charge" in new TestSetup(
-        chargeItem = baseBalancing.copy(taxYear = 2019),
+        chargeItem = baseBalancing.copy(taxYear = TaxYear.forYearEnd(2019)),
         latePaymentInterestCharge = true) {
         document.select("h1").text() shouldBe balancingChargeInterestHeading(2019)
       }
@@ -780,7 +781,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       "display balancing charge due date as N/A and hide sections - Payment Breakdown, Make a payment button," +
         "Any payments you make, Payment History when balancing charge is 0" in new TestSetup(
           baseBalancing.copy(
-              taxYear = 2018,
+              taxYear = TaxYear.forYearEnd(2018),
               outstandingAmount = 0,
               originalAmount = BigDecimal(0),
               documentDate = LocalDate.of(2018, 3, 29),
@@ -810,7 +811,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       }
 
       "Display an unpaid MFA Credit" in new TestSetup(
-        chargeItem = mfaChargeItem.copy(taxYear = 2019)
+        chargeItem = mfaChargeItem.copy(taxYear = TaxYear.forYearEnd(2019))
       ) {
         val summaryListText = "Due date OVERDUE 15 May 2019 Amount £1,400.00 Still to pay £1,400.00 "
         val hmrcCreated = messages("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
@@ -828,7 +829,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       }
 
       "Display a paid MFA Credit" in new TestSetup(
-        chargeItem = mfaChargeItem.copy(taxYear = 2019, outstandingAmount = 0.0),
+        chargeItem = mfaChargeItem.copy(taxYear = TaxYear.forYearEnd(2019), outstandingAmount = 0.0),
         paymentAllocationEnabled = true,
         paymentAllocations = paymentAllocations
       ) {
@@ -1327,7 +1328,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       val mfaChargeItem = chargeItemModel(transactionType = MfaDebitCharge)
 
       "Display an unpaid MFA Credit" in new TestSetup(
-        chargeItem = mfaChargeItem.copy(taxYear = 2019),
+        chargeItem = mfaChargeItem.copy(taxYear = TaxYear.forYearEnd(2019)),
         isAgent = true) {
         val summaryListText = "Due date OVERDUE 15 May 2019 Amount £1,400.00 Still to pay £1,400.00 "
         val hmrcCreated = messages("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
@@ -1345,7 +1346,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       }
 
       "Display a paid MFA Credit" in new TestSetup(
-        chargeItem = mfaChargeItem.copy(taxYear = 2019, outstandingAmount = 0.0), isAgent = true,
+        chargeItem = mfaChargeItem.copy(taxYear = TaxYear.forYearEnd(2019), outstandingAmount = 0.0), isAgent = true,
         paymentAllocationEnabled = true, paymentAllocations = paymentAllocations) {
         val summaryListText = "Due date 15 May 2019 Amount £1,400.00 Still to pay £0.00 "
         val hmrcCreated = messages("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
