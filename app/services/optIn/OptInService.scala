@@ -91,47 +91,31 @@ class OptInService @Inject()(
         itsaStatusConnector.getITSAStatusDetail(user.nino, taxYear.formatTaxYearRange, futureYears = false, history = false)
       itsaStatusDataNextYear: Either[ITSAStatusError, List[ITSAStatusResponseModel]] <-
         itsaStatusConnector.getITSAStatusDetail(user.nino, taxYear.nextYear.formatTaxYearRange, futureYears = false, history = false)
-      _ <- itsaStatusDataCurrentYear match {
-        case Right(apiData) =>
-          println("++++++++++++ " + apiData)
-          val aa: Option[List[ITSAStatus]] = apiData.find(_.taxYear == taxYear.toApiFormat).flatMap(_.itsaStatusDetails.map(_.map(_.status)))
-//          val bb: Option[List[ITSAStatus]] = apiData.find(_.taxYear == taxYear.nextYear.toApiFormat).flatMap(_.itsaStatusDetails.map(_.map(_.status)))
-          val apiStatusForCurrentTaxYear: ITSAStatus = aa.flatMap(_.headOption).getOrElse(NoStatus)
-//          val apiStatusForCurrentNextYear: ITSAStatus = bb.flatMap(_.headOption).getOrElse(NoStatus)
-//          optInSessionData.optInContextData match {
-//            case Some(optInData) =>
-//              println("Hello **********")
-//              // get from session if session has data prior and save
-//              saveOptInSessionData(taxYear.toString, stringToStatus(optInData.currentYearITSAStatus), stringToStatus(optInData.nextYearITSAStatus))
-//            case None =>
-//              // get from api if session has no data and save the statuses
-//              saveOptInSessionData(taxYear.toString, apiStatusForCurrentTaxYear, apiStatusForCurrentNextYear)
-          apiStatusForCurrentTaxYear
-        case Left(e) =>
-//          val originalUIData = uiJourneySessionData
-          Future(NoStatus)
+      currentYearITSAStatus <-
+        itsaStatusDataCurrentYear match {
+          case Right(apiData) =>
+            println("++++++++++++ " + apiData)
+            val aa: Option[List[ITSAStatus]] = apiData.find(_.taxYear == taxYear.toApiFormat).flatMap(_.itsaStatusDetails.map(_.map(_.status)))
+            val apiStatusForCurrentTaxYear: ITSAStatus = aa.flatMap(_.headOption).getOrElse(NoStatus)
+            Future(apiStatusForCurrentTaxYear)
+          case Left(_) =>
+            Future(NoStatus)
+        }
+      nextYearITSAStatus <-
+        itsaStatusDataNextYear match {
+          case Right(apiData) =>
+            println("++++++++++++ " + apiData)
+            val aa: Option[List[ITSAStatus]] = apiData.find(_.taxYear == taxYear.nextYear.toApiFormat).flatMap(_.itsaStatusDetails.map(_.map(_.status)))
+            val apiStatusForCurrentTaxYear: ITSAStatus = aa.flatMap(_.headOption).getOrElse(NoStatus)
+            Future(apiStatusForCurrentTaxYear)
+          case Left(_) =>
+            Future(NoStatus)
+        }
+      updatedUISessionData <- {
+        println(currentYearITSAStatus)
+        println(nextYearITSAStatus)
+        saveOptInSessionData(taxYear.formatTaxYearRange, currentYearITSAStatus, nextYearITSAStatus)
       }
-      updatedUISessionData: UIJourneySessionData <- itsaStatusDataNextYear match {
-        case Right(apiData) =>
-          println("++++++++++++ " + apiData)
-          val aa: Option[List[ITSAStatus]] = apiData.find(_.taxYear == taxYear.toApiFormat).flatMap(_.itsaStatusDetails.map(_.map(_.status)))
-          val bb: Option[List[ITSAStatus]] = apiData.find(_.taxYear == taxYear.nextYear.toApiFormat).flatMap(_.itsaStatusDetails.map(_.map(_.status)))
-          val apiStatusForCurrentTaxYear: ITSAStatus = aa.flatMap(_.headOption).getOrElse(NoStatus)
-          val apiStatusForCurrentNextYear: ITSAStatus = bb.flatMap(_.headOption).getOrElse(NoStatus)
-          optInSessionData.optInContextData match {
-            case Some(optInData) =>
-              println("Hello **********")
-              // get from session if session has data prior and save
-              saveOptInSessionData(taxYear.toString, stringToStatus(optInData.currentYearITSAStatus), stringToStatus(optInData.nextYearITSAStatus))
-            case None =>
-              // get from api if session has no data and save the statuses
-              saveOptInSessionData(taxYear.toString, apiStatusForCurrentTaxYear, apiStatusForCurrentNextYear)
-          }
-        case Left(e) =>
-          val originalUIData = uiJourneySessionData
-          Future(originalUIData)
-      }
-
     } yield {
       updatedUISessionData
     }
