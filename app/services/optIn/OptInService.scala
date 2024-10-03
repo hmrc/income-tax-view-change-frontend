@@ -107,13 +107,13 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
       optInSessionData <- OptionT(fetchSavedOptInSessionData())
       contextData <- OptionT.fromOption[Future](optInSessionData.optInContextData)
       currentYearAsTaxYear <- OptionT.fromOption[Future](contextData.currentYearAsTaxYear())
-      nextTaxYearAsTaxYear <- OptionT.fromOption[Future](contextData.nextTaxYearAsTaxYear())
 
       currentYearITSAStatus = stringToStatus(contextData.currentYearITSAStatus)
       nextYearITSAStatus = stringToStatus(contextData.nextYearITSAStatus)
 
-      optInInitialState = OptInInitialState(currentYearITSAStatus, nextYearITSAStatus)
-      proposition = createOptInProposition(currentYearAsTaxYear, nextTaxYearAsTaxYear, optInInitialState)
+      proposition = createOptInProposition(currentYearAsTaxYear,
+                                           currentYearITSAStatus,
+                                           nextYearITSAStatus)
 
     } yield proposition
 
@@ -130,7 +130,9 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
         val currentYear = dateService.getCurrentTaxYear
         val nextYear = currentYear.nextYear
         fetchOptInInitialState(currentYear, nextYear)
-          .map(initialState => createOptInProposition(currentYear, nextYear, initialState))
+          .map(initialState => createOptInProposition(currentYear,
+                                                      initialState.currentYearItsaStatus,
+                                                      initialState.nextYearItsaStatus))
       }
     }
   }

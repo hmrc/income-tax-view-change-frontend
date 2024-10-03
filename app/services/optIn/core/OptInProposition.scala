@@ -24,17 +24,6 @@ object OptInProposition {
   private val OneItem = 1
 
   def createOptInProposition(currentYear: TaxYear,
-                             nextYear: TaxYear,
-                             initialState: OptInInitialState
-                            ): OptInProposition = {
-
-    val currentYearItsaStatus = initialState.currentYearItsaStatus
-    val nextYearItsaStatus = initialState.nextYearItsaStatus
-
-    createOptInProposition(currentYear, currentYearItsaStatus, nextYearItsaStatus)
-  }
-
-  def createOptInProposition(currentYear: TaxYear,
                              currentYearItsaStatus: ITSAStatus,
                              nextYearItsaStatus: ITSAStatus): OptInProposition = {
 
