@@ -35,8 +35,12 @@ case class NextOptInTaxYear(status: ITSAStatus, taxYear: TaxYear, currentOptInTa
 
   def expectedItsaStatusAfter(customerIntent: TaxYear): ITSAStatus =
     if (status == Annual ||
-      (customerIntent == taxYear && currentOptInTaxYear.status == Annual && status == NoStatus))
+      (isNextYear(customerIntent) && currentOptInTaxYear.status == Annual && status == NoStatus))
       Voluntary
     else
       status
+
+  private def isNextYear(customerIntent: TaxYear) = {
+    customerIntent == taxYear
+  }
 }
