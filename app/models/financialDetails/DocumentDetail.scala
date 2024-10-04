@@ -69,23 +69,12 @@ case class DocumentDetail(taxYear: Int,
   def hasAccruingInterest: Boolean =
     interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0 && !isPaid
 
-  def originalAmountIsNotNegative: Boolean = originalAmount match {
-    case amount if amount < 0 => false
-    case _ => true
-  }
-
   def originalAmountIsNotZeroOrNegative: Boolean = originalAmount match {
     case amount if amount <= 0 => false
     case _ => true
   }
 
   def isLatePaymentInterest: Boolean = latePaymentInterestAmount match {
-    case Some(amount) if amount <= 0 => false
-    case Some(_) => true
-    case _ => false
-  }
-
-  def isOtherInterest: Boolean = interestOutstandingAmount match {
     case Some(amount) if amount <= 0 => false
     case Some(_) => true
     case _ => false
@@ -122,7 +111,7 @@ case class DocumentDetail(taxYear: Int,
   }
 
   def remainingToPayByChargeOrInterest: BigDecimal = {
-    if (isLatePaymentInterest || isOtherInterest) interestRemainingToPay
+    if (isLatePaymentInterest) interestRemainingToPay
     else remainingToPay
   }
 
@@ -131,10 +120,9 @@ case class DocumentDetail(taxYear: Int,
     else interestOutstandingAmount.getOrElse(latePaymentInterestAmount.get)
   }
 
-  def isInterest: Boolean = isLatePaymentInterest || isOtherInterest
 
   def checkIfEitherChargeOrLpiHasRemainingToPay: Boolean = {
-    if (isLatePaymentInterest || isOtherInterest) interestRemainingToPay > 0
+    if (isLatePaymentInterest) interestRemainingToPay > 0
     else remainingToPay > 0
   }
 
@@ -186,6 +174,7 @@ case class DocumentDetail(taxYear: Int,
     }
   }
 
+  // TODO: duplicate logic, in scope of => https://jira.tools.tax.service.gov.uk/browse/MISUV-8557
   def getChargeTypeKey(codedOutEnabled: Boolean = false): String = documentDescription match {
     case Some(Poa1Charge.key) => "paymentOnAccount1.text"
     case Some(Poa2Charge.key) => "paymentOnAccount2.text"
@@ -242,7 +231,7 @@ case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Op
     isReviewAndReconcileDebit && !documentDetail.isPaid && !isOverdue
   }
 
-  def isOnlyInterest: Boolean = {(isOverdue && isLatePaymentInterest) || (documentDetail.isOtherInterest && documentDetail.isPaid)}
+  def isOnlyInterest: Boolean = {(isOverdue && isLatePaymentInterest) || (documentDetail.interestRemainingToPay > 0 && documentDetail.isPaid)}
 }
 
 object DocumentDetail {

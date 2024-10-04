@@ -34,14 +34,6 @@
     messages(s"claimToAdjustPoa.success.$key", args: _*)
 }
 
-@taxYearSummaryUrl = @{
-    if(isAgent) {
-        controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(poaTaxYear.endYear).url
-    } else {
-        controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(poaTaxYear.endYear).url
-    }
-}
-
 @whatYouOweUrl = @{
     if(isAgent) {
         controllers.routes.WhatYouOweController.showAgent.url
@@ -61,11 +53,6 @@
     @p(id = Some("p2")) {
         @getMessage("p2", poaTaxYear.startYear.toString, poaTaxYear.endYear.toString, (poaTaxYear.nextYear.endYear).toString)
     }
-
-    @p(id = Some("p3"))(Html(getMessage("checkYour") + link(link = taxYearSummaryUrl,
-        outerMessage = " " + getMessage("afterLinkText"),
-        messageKey = getMessage("link", poaTaxYear.startYear.toString, poaTaxYear.endYear.toString),
-        id = Some("TYSLink")).toString()))
 
     @if(showOverdueCharges){
         @h2(optId = Some("overdueTitle"), msg = getMessage("overdueTitle"))

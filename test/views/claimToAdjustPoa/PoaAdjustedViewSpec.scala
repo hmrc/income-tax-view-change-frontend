@@ -68,12 +68,6 @@ class PoaAdjustedViewSpec extends TestSupport{
         document.getElementById("p2").text shouldBe
           msgs("claimToAdjustPoa.success.p2", taxYear.startYear.toString, taxYear.endYear.toString, taxYear.nextYear.endYear.toString)
       }
-      "render the third paragraph" in new Setup(isAgent = false) {
-        document.getElementById("p3").text shouldBe
-          msgs("claimToAdjustPoa.success.checkYour") + " " + msgs("claimToAdjustPoa.success.link", taxYear.startYear.toString, taxYear.endYear.toString) + " " +
-            msgs("claimToAdjustPoa.success.afterLinkText")
-        document.getElementById("p3").getElementById("TYSLink").attr("href") shouldBe taxYearSummaryUrl(false)
-      }
       "render the final paragraph when no overdue charges without extra heading" in new Setup(isAgent = false) {
         Option(document.getElementById("overdueTitle")) shouldBe None
         document.getElementById("p4").text shouldBe
@@ -104,12 +98,6 @@ class PoaAdjustedViewSpec extends TestSupport{
       "render the second paragraph" in new Setup(isAgent = true) {
         document.getElementById("p2").text shouldBe
           msgs("claimToAdjustPoa.success.p2", taxYear.startYear.toString, taxYear.endYear.toString, taxYear.nextYear.endYear.toString)
-      }
-      "render the third paragraph" in new Setup(isAgent = true) {
-        document.getElementById("p3").text shouldBe
-          msgs("claimToAdjustPoa.success.checkYour") + " " + msgs("claimToAdjustPoa.success.link", taxYear.startYear.toString, taxYear.endYear.toString) + " " +
-            msgs("claimToAdjustPoa.success.afterLinkText")
-        document.getElementById("p3").getElementById("TYSLink").attr("href") shouldBe taxYearSummaryUrl(true)
       }
       "render the final paragraph when no overdue charges" in new Setup(isAgent = true) {
         document.getElementById("p4").text shouldBe
