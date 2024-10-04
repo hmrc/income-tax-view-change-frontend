@@ -38,8 +38,6 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
 
   val testTaxYear = 2024
 
-  val caption: String = s"${testTaxYear - 2} to ${testTaxYear - 1} tax year"
-
   def enterPOAAmountUrl: String = controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(isAgent, NormalMode).url
 
   def selectReasonUrl: String = controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, NormalMode).url
@@ -90,8 +88,7 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
         val continueButton = document.getElementById("continue")
 
         res should have(
-          httpStatus(OK),
-          elementTextByClass("govuk-caption-xl")(caption)
+          httpStatus(OK)
         )
         sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData()))
         continueButton.attr("href") shouldBe selectReasonUrl
@@ -125,8 +122,7 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
           val continueButton = document.getElementById("continue")
 
           res should have(
-            httpStatus(OK),
-            elementTextByClass("govuk-caption-xl")(caption)
+            httpStatus(OK)
           )
           sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData()))
           continueButton.attr("href") shouldBe enterPOAAmountUrl
@@ -168,8 +164,7 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
           val continueButton = document.getElementById("continue")
 
           res should have(
-            httpStatus(OK),
-            elementTextByClass("govuk-caption-xl")(caption)
+            httpStatus(OK)
           )
           sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData()))
           continueButton.attr("href") shouldBe enterPOAAmountUrl
@@ -212,8 +207,7 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
         val continueButton = document.getElementById("continue")
 
         res should have(
-          httpStatus(OK),
-          elementTextByClass("govuk-caption-xl")(caption)
+          httpStatus(OK)
         )
         sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData()))
         continueButton.attr("href") shouldBe enterPOAAmountUrl

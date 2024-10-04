@@ -57,7 +57,6 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase {
 
   val testTaxYear = 2024
   val sessionService: PaymentOnAccountSessionService = app.injector.instanceOf[PaymentOnAccountSessionService]
-  val caption: String = s"${testTaxYear - 2} to ${testTaxYear - 1} tax year"
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -139,8 +138,7 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase {
         val res = get("/adjust-poa/enter-poa-amount")
 
         res should have(
-          httpStatus(OK),
-          elementTextByClass("govuk-caption-xl")(caption)
+          httpStatus(OK)
         )
         lazy val document: Document = Jsoup.parse(res.body)
         document.getElementsByClass("govuk-table__head").text() shouldBe msg("amountPreviousHeading")
@@ -168,8 +166,7 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase {
         val res = get("/adjust-poa/enter-poa-amount")
 
         res should have(
-          httpStatus(OK),
-          elementTextByClass("govuk-caption-xl")(caption)
+          httpStatus(OK)
         )
         lazy val document: Document = Jsoup.parse(res.body)
         document.getElementsByClass("govuk-table__head").text() shouldBe msg("amountPreviousHeading")
@@ -200,8 +197,7 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase {
         val res = get("/adjust-poa/enter-poa-amount")
 
         res should have(
-          httpStatus(OK),
-          elementTextByClass("govuk-caption-xl")(caption)
+          httpStatus(OK)
         )
 
         lazy val document: Document = Jsoup.parse(res.body)

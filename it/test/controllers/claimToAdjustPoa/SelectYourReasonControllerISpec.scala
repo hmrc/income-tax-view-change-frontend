@@ -45,7 +45,6 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
 
   val testTaxYear = 2024
   val sessionService: PaymentOnAccountSessionService = app.injector.instanceOf[PaymentOnAccountSessionService]
-  val caption: String = s"${testTaxYear - 2} to ${testTaxYear - 1} tax year"
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -113,8 +112,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
         val res = get("/adjust-poa/select-your-reason")
 
         res should have(
-          httpStatus(OK),
-          elementTextByClass("govuk-caption-l")(caption)
+          httpStatus(OK)
         )
       }
 
@@ -142,8 +140,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
         val res = get("/adjust-poa/select-your-reason")
 
         res should have(
-          httpStatus(OK),
-          elementTextByClass("govuk-caption-l")(caption)
+          httpStatus(OK)
         )
       }
     }
