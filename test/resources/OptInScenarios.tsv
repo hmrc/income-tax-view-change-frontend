@@ -1,28 +1,28 @@
 ﻿ITSA Status	CY	CY+1	Customer Intent	Valid?	Options presented in V and C	Which years will be sent from V & C to ITSD	CY outcome	CY+1 outcome	Comments
 M	M	M	Customer wants to opt back in from CY	N/A	N/A	N/A	M	M	Invalid as customer is already mandated and in MTD for CY
 M	M	M	Customer wants to opt in from CY+1	N/A	N/A	N/A	M	M	Invalid as customer is already mandated and in MTD for CY+1
-M	M		Customer wants to opt in from CY	N/A	N/A	N/A	M		Invalid as customer is already mandated and in MTD for CY
-M	M		Customer wants to opt back in from CY+1	N/A	N/A	N/A	M		Invalid as customer is already in MTD
+M		M	Customer wants to opt in from CY	N/A	N/A	N/A	M		Invalid as customer is already mandated and in MTD for CY
+M		M	Customer wants to opt back in from CY+1	N/A	N/A	N/A	M		Invalid as customer is already in MTD
 M	V	V	Customer wants to opt in from CY	N/A	N/A	N/A	M	V	Invalid as customer is already mandated for CY
 M	V	V	Customer wants to opt in from CY+1	N/A	N/A	N/A	M	V	Invalid as customer is already Voluntary and in MTD for CY+1
 M	A	A	Customer wants to opt in from CY	N/A	CY+1	N/A	M	A	Invalid as customer is already mandated and in MTD for CY
-M	A	A	Customer wants to opt in from CY+1	Allowed	CY+1	CY+1	M	V	Need to consider why customer is Annual for CY+1 and whether it is relevant for the customer to Opt Back In (e.g., ceased income source and started a new one).
+M	A	A	Customer wants to opt in from CY+1	Allowed	CY+1	CY+1	M	V	Need to consider why the customer is Annual for CY+1 and whether it is relevant for the customer to opt back in (e.g., ceased income source and started a new one)
 V	M	M	Customer wants to opt in from CY	N/A	N/A	N/A	V	M	Invalid as customer is already Voluntary and in MTD for CY
 V	M	M	Customer wants to opt in from CY+1	N/A	N/A	N/A	V	M	Invalid as customer is already mandated and in MTD for CY+1
-V	V		Customer wants to opt in from CY	N/A	N/A	N/A	V		Invalid as customer is already Voluntary and in MTD for CY
-V	V		Customer wants to opt in from CY+1	N/A	N/A	N/A	V		Invalid as customer is already in MTD
+V		V	Customer wants to opt in from CY	N/A	N/A	N/A	V		Invalid as customer is already Voluntary and in MTD for CY
+V		V	Customer wants to opt in from CY+1	N/A	N/A	N/A	V		Invalid as customer is already in MTD
 V	V	V	Customer wants to opt in from CY	N/A	N/A	N/A	V	V	Invalid as customer is already Voluntary and in MTD for CY
 V	V	V	Customer wants to opt in from CY+1	N/A	N/A	N/A	V	V	Invalid as customer is already Voluntary and in MTD for CY+1
 V	A	A	Customer wants to opt in from CY	N/A	CY+1	N/A	V	A	Invalid as customer is already Voluntary and in MTD for CY
 V	A	A	Customer wants to opt in from CY+1	Allowed	CY+1	CY+1	V	V	Customer is Annual so can opt back in for CY+1
 A	M	M	Customer wants to opt in from CY	Allowed	CY	CY	V	M	Customer is Annual so can opt back in for CY
 A	M	M	Customer wants to opt in from CY+1	N/A	CY	N/A	A	M	Invalid as customer is already mandated and in MTD for CY+1
-A		A	Customer wants to opt in from CY	Allowed	CY and CY+1	CY	V	Customer is Annual so can opt back in for CY. Annual check/rollover determines CY+1.
-A		A	Customer wants to opt in from CY+1	Allowed	CY and CY+1	CY+1	A	V	Provided customer's most recent ITSA Status is Annual and they can report quarterly, this should be allowed. Set status to voluntary from CY+1.
+A		A	Customer wants to opt in from CY	Allowed	CY and CY+1	CY	V		Customer is Annual so can opt back in for CY. Annual check/rollover determines CY+1
+A		A	Customer wants to opt in from CY+1	Allowed	CY and CY+1	CY+1	A	V	Provided the customer's most recent ITSA Status is Annual and they can report quarterly, this should be allowed. Set status to voluntary effective from CY+1
 A	V	V	Customer wants to opt in from CY	Allowed	CY	CY	V	V	Customer is Annual so can opt back in for CY
 A	V	V	Customer wants to opt in from CY+1	N/A	CY	N/A	A	V	Invalid as customer is already Voluntary and in MTD for CY+1
-A	A	A	Customer wants to opt back in from CY	Allowed	CY and CY+1	CY	V	V	Customer is Annual so can opt back in for CY. ITSD will update both CY and CY+1 as both are Annual.
-A	A	A	Customer wants to opt in from CY+1	Allowed	CY and CY+1	CY+1	A	V	Customer is Annual so can opt back in for CY+1. If the annual check has not run, ITSD will update CY+1.
+A	A	A	Customer wants to opt back in from CY	Allowed	CY and CY+1	CY	V	V	Customer is Annual so can opt back in for CY. ITSD will receive the request for CY from V&C, and subsequently update both CY and CY+1 as Annual
+A	A	A	Customer wants to opt in from CY+1	Allowed	CY and CY+1	CY+1	A	V	Customer is Annual so can opt back in for CY+1. If the annual check has not run, ITSD will need to update CY+1
 	A	A	Customer wants to opt in from CY+1	TBC	CY+1	CY+1		V
 	M	M	Customer wants to opt in from CY+1	N/A			M
 	V	V	Customer wants to opt in from CY+1	N/A			V

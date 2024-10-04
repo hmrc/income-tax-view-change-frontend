@@ -58,17 +58,18 @@ class OptInCompletedController @Inject()(val view: OptInCompletedView,
       withRecover(isAgent) {
 
         for {
-          proposition <- optInService.fetchOptInProposition()  // fetched Annual here for both via api
-          _ = println("********** " + proposition)
+          proposition <- optInService.fetchOptInProposition() // fetched Annual here for both via api
           intent <- optInService.fetchSavedChosenTaxYear()
         } yield {
           intent.map { optInTaxYear =>
-            println("********** " + proposition.expectedItsaStatuesAfter(optInTaxYear))
             val model = OptInCompletedViewModel(
               isAgent = isAgent,
               optInTaxYear = optInTaxYear,
               isCurrentYear = proposition.isCurrentTaxYear(optInTaxYear),
-              isAnyAnnual = proposition.expectedItsaStatuesAfter(optInTaxYear).contains(Annual),
+              isAnyAnnual =
+                proposition
+                  .expectedItsaStatusesAfter(optInTaxYear)
+                  .contains(Annual),
               optInIncludedNextYear = proposition.nextTaxYear.status == Voluntary
             )
             Ok(view(model))
