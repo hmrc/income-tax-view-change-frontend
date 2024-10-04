@@ -2074,9 +2074,10 @@ claimToAdjustPoa.enterPoaAmount.emptyError              = Nodwch swm newydd ar g
 claimToAdjustPoa.enterPoaAmount.sameError               = Mae’n rhaid i swm pob taliad ar gyfrif fod yn wahanol i’r swm presennol ({0})
 claimToAdjustPoa.enterPoaAmount.higherError             = Mae’n rhaid i swm pob taliad ar gyfrif fod yn llai na’r swm a gyfrifwyd gan CThEF yn wreiddiol ({0})
 claimToAdjustPoa.enterPoaAmount.invalidError            = Mae’n rhaid i’r swm fod yn rhif, megis 1000 neu 1000.00
-claimToAdjustPoa.enterPoaAmount.insetText.firstAttempt.para1  = <b>Bydd y ddau daliad ar gyfrif yn cael eu newid.</b> Os ydych eisoes wedi talu eich taliad ar gyfrif cyntaf, bydd CThEF yn talu’r gwahaniaeth yn ôl i chi.
+claimToAdjustPoa.enterPoaAmount.insetText.h2            = Bydd y ddau daliad ar gyfrif yn cael eu newid
+claimToAdjustPoa.enterPoaAmount.insetText.firstAttempt.para1  = Os ydych eisoes wedi talu eich taliad ar gyfrif cyntaf, bydd CThEF yn talu’r gwahaniaeth yn ôl i chi.
 claimToAdjustPoa.enterPoaAmount.insetText.firstAttempt.para2  = Er enghraifft, os ydych eisoes wedi talu £2,000 ar gyfer eich taliad ar gyfrif cyntaf a bod angen i chi leihau’r ddau daliad ar gyfrif i £1,500, bydd CThEF yn ychwanegu £500 at eich cyfrif ar gyfer y taliad cyntaf.
-claimToAdjustPoa.enterPoaAmount.insetText.secondAttempt.para1 = <b>Bydd y ddau daliad ar gyfrif yn cael eu newid.</b> Os ydych eisoes wedi gwneud taliad, bydd CThEF naill ai yn ychwanegu credyd neu dâl am fod yn hwyr at eich cyfrif, yn seiliedig ar y gwahaniaeth.
+claimToAdjustPoa.enterPoaAmount.insetText.secondAttempt.para1 = Os ydych eisoes wedi gwneud taliad, bydd CThEF naill ai yn ychwanegu credyd neu dâl am fod yn hwyr at eich cyfrif, yn seiliedig ar y gwahaniaeth.
 claimToAdjustPoa.enterPoaAmount.insetText.secondAttempt.para2 = Er enghraifft, os ydych eisoes wedi lleihau eich taliadau ar gyfrif i £2,000 ac wedi gwneud y taliad cyntaf. Os byddwch yn lleihau’ch taliadau ar gyfrif i £1,500, bydd CThEF yn ychwanegu credyd o £500. Os byddwch yn cynyddu’ch taliadau ar gyfrif i £2,500, bydd CThEF yn ychwanegu tâl am fod yn hwyr o £500.
 
 # API Failure
