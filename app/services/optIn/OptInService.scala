@@ -126,10 +126,11 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
                               ec: ExecutionContext): Future[OptInProposition] = {
 
     fetchSavedOptInProposition().flatMap { savedProposition =>
+      println("[OptInService][fetchOptInProposition] " + savedProposition)
       savedProposition.map(Future.successful).getOrElse {
         val currentYear = dateService.getCurrentTaxYear
         val nextYear = currentYear.nextYear
-        fetchOptInInitialState(currentYear, nextYear)
+        fetchOptInInitialState(currentYear, nextYear)  // api call
           .map(initialState => createOptInProposition(currentYear, nextYear, initialState))
       }
     }

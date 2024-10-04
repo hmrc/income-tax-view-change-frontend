@@ -88,7 +88,7 @@
                 @messages("optin.completedOptIn.submitUpdates.desc1.b")
             </a>
         </p>
-        @if(!model.isCurrentYear) {
+        @if(model.isAnyAnnual) {
             <p id="optin-completed-view-p4" class="govuk-body" >@messages("optin.completedOptIn.ny.submitUpdates.desc2")</p>
         }
     </div>

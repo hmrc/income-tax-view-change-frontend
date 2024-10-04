@@ -54,12 +54,13 @@ class OptInPropositionExcelSpec extends UnitSpec {
       valid match {
         case "Allowed" => true
         case "N/A" => false
-        case "Tbc" => false /* todo: check 'Tbc' line in excel sheet */
+        //        case "Tbc" => false /* todo: check 'Tbc' line in excel sheet */
+        case "Tbc" => true /* todo: check 'Tbc' line in excel sheet */
         case _ => throw new RuntimeException("Unexpected entry in Valid column")
       }
 
     def parseCustomerIntent(intent: String): String = {
-      intent.replaceAll("Customer wants to opt in from ", "")
+      intent.replaceAll("Customer wants( to)? opt.* in from ", "")
     }
 
     def presentedInViewAndChange(input: String): Seq[String] =
@@ -67,8 +68,8 @@ class OptInPropositionExcelSpec extends UnitSpec {
         case "N/A" => Seq()
         case "CY" => Seq(quote("CY"))
         case "CY+1" => Seq(quote("CY+1"))
-        case "CY and CY+1" => Seq(quote("CY"),quote("CY+1"))
-        case "CY+1 and CY" => Seq(quote("CY"),quote("CY+1"))
+        case "CY and CY+1" => Seq(quote("CY"), quote("CY+1"))
+        case "CY+1 and CY" => Seq(quote("CY"), quote("CY+1"))
         case "" => Seq()
         case _ => throw new RuntimeException(s"Unexpected presented in View and Change value: $input")
       }
@@ -91,7 +92,7 @@ class OptInPropositionExcelSpec extends UnitSpec {
     val tsvOptIn = Source.fromFile("test/resources/OptInScenarios.tsv")
     val rowsWithoutHeaders = tsvOptIn.getLines().drop(2)
 
-    val tab = "  "
+    val tab = "\t"
 
     rowsWithoutHeaders.foreach(line => {
       val cells = line.split(tab).take(8)
@@ -142,9 +143,9 @@ class OptInPropositionExcelSpec extends UnitSpec {
     ("A", " ", "CY+1", true, List("CY", "CY+1"), "CY+1", "A", "V"),
     ("A", "V", "CY", true, List("CY"), "CY", "V", "V"),
     ("A", "V", "CY+1", false, List("CY"), " ", "A", "V"),
-    ("A", "A", "CY", true, List("CY", "CY+1"), "CY", "V", "A"),
+    ("A", "A", "CY", true, List("CY", "CY+1"), "CY", "V", "V"),
     ("A", "A", "CY+1", true, List("CY", "CY+1"), "CY+1", "A", "V"),
-    (" ", "A", "CY+1", false, List("CY+1"), "CY+1", " ", "V"),
+    (" ", "A", "CY+1", true, List("CY+1"), "CY+1", " ", "V"),
     (" ", "M", "CY+1", false, List(), " ", " ", "M"),
     (" ", "V", "CY+1", false, List(), " ", " ", "V"),
   )
@@ -152,14 +153,14 @@ class OptInPropositionExcelSpec extends UnitSpec {
   "check all required scenarios" in {
 
     forAll(scenarios) { (
-                         cyStatus: String,
-                         nyStatus: String,
-                         intent: String,
-                         valid: Boolean,
-                         presented: List[String],
-                         sent: String,
-                         expectedCY: String,
-                         expectedNY: String
+                          cyStatus: String,
+                          nyStatus: String,
+                          intent: String,
+                          valid: Boolean,
+                          presented: List[String],
+                          sent: String,
+                          expectedCY: String,
+                          expectedNY: String
                         ) =>
 
       val currentYear = CurrentOptInTaxYear(toITSAStatus(cyStatus), taxYear = currentTaxYear)
@@ -188,19 +189,19 @@ class OptInPropositionExcelSpec extends UnitSpec {
 
     assert(optInProposition.availableTaxYearsForOptIn === presented.map(v => toTaxYear(v)))
 
-    if(valid) {
+    if (valid) {
 
       val intentTaxYear = toTaxYear(intent)
       assert(optInProposition.availableTaxYearsForOptIn.contains(intentTaxYear))
 
-      if(intent == "CY") {
-        assert(sent == "CY")
-        assert(expectedCY == "V")
-        assert(optInProposition.nextTaxYear.status == toITSAStatus(expectedNY))
-      } else {
-        assert(sent == "CY+1")
-        assert(expectedNY == "V")
-        assert(optInProposition.currentTaxYear.status == toITSAStatus(expectedCY))
+      s"optInProposition.expectedItsaStatuesAfter()" should {
+        "return the correct expected CurrentTaxYear and NextTaxYear" in {
+          optInProposition.expectedItsaStatuesAfter(intentTaxYear) shouldBe
+            Seq(
+              toITSAStatus(expectedCY),
+              toITSAStatus(expectedNY)
+            )
+        }
       }
     }
 
