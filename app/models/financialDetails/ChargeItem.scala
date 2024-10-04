@@ -80,13 +80,6 @@ case class ChargeItem (
     subTransactionType.exists(subType => codingOutSubTypes.contains(subType))
   }
 
-  def notCodedOutPoa: Boolean = {
-    transactionType match {
-      case PaymentOnAccountOne | PaymentOnAccountTwo if amountCodedOut.getOrElse[BigDecimal](0) > 0 => false
-      case _ => true
-    }
-  }
-
   def interestIsPaid: Boolean = interestOutstandingAmount match {
     case Some(amount) if amount == 0 => true
     case _ => false
