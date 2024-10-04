@@ -161,6 +161,7 @@
         @govukInsetText(InsetText(
             id = Some("insetText-firstAttempt"),
             content = HtmlContent(s"""
+                    |<h2 class=govuk-heading-s>${getMessage("insetText.h2")}</h2>
                     |<p class=govuk-body>${getMessage("insetText.firstAttempt.para1")}</p>
                     |<p class=govuk-body>${getMessage("insetText.firstAttempt.para2")}</p>
                     |""".stripMargin)
@@ -169,6 +170,7 @@
         @govukInsetText(InsetText(
             id = Some("insetText-secondAttempt"),
             content = HtmlContent(s"""
+                    |<h2 class=govuk-heading-s>${getMessage("insetText.h2")}</h2>
                     |<p class=govuk-body>${getMessage("insetText.secondAttempt.para1")}</p>
                     |<p class=govuk-body>${getMessage("insetText.secondAttempt.para2")}</p>
                     |""".stripMargin)
