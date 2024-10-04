@@ -1939,6 +1939,8 @@ credit.description.balancingCharge                                      = Credyd
 credit.description.cutOver                                              = Credyd o flwyddyn dreth gynharach
 credit.description.mfa                                                  = Credyd o ganlyniad i addasiad gan CThEF
 credit.description.repaymentInterest                                    = Credyd o log ar ad-daliadau
+credit.description.POA1RR-credit                                        = Taliad cyntaf ar gyfrif: credyd o’ch Ffurflen Dreth
+credit.description.POA2RR-credit                                        = Ail daliad ar gyfrif: credyd o’ch Ffurflen Dreth
 
 # businesses that have ceased
 manageBusinesses.ceased.heading                                          = Busnesau sydd wedi dod i ben

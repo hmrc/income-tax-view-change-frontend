@@ -2005,6 +2005,8 @@ credit.description.balancingCharge                                    = Credit f
 credit.description.cutOver                                            = Credit from an earlier tax year
 credit.description.mfa                                                = Credit from HMRC adjustment
 credit.description.repaymentInterest                                  = Credit from repayment interest
+credit.description.POA1RR-credit                                      = First payment on account: credit from your tax return
+credit.description.POA2RR-credit                                      = Second payment on account: credit from your tax return
 
 # businesses that have ceased
 manageBusinesses.ceased.heading                                          = Businesses that have ceased
