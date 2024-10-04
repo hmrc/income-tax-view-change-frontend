@@ -1977,7 +1977,7 @@ manageBusinesses.check-answers.change                                    = Newid
 #######################################################################################################################
 
 # Adjust payments on account
-paymentOnAccount.caption                             = blwyddyn dreth {0} i {1}
+paymentOnAccount.caption                             = Blwyddyn dreth {0} i {1}
 paymentOnAccount.heading                             = Addasu eich taliadau ar gyfrif
 paymentOnAccount.p1                                  = Gallwch addasu’r ddau daliad ar gyfrif os ydych yn disgwyl i gyfanswm eich Treth Incwm a’ch
 paymentOnAccount.class4NationalInsurance.link.text   = Cyfraniadau Yswiriant Gwladol Dosbarth 4 (yn agor tab newydd)
@@ -1993,7 +1993,7 @@ paymentOnAccount.button                              = Addasu fy nhaliadau ar gy
 paymentOnAccount.cancel.link                         = Canslo
 
 # Check your answers
-claimToAdjustPoa.checkYourAnswers.caption                    = blwyddyn dreth {0} i {1}
+claimToAdjustPoa.checkYourAnswers.caption                    = Blwyddyn dreth {0} i {1}
 claimToAdjustPoa.checkYourAnswers.heading                    = Gwiriwch eich atebion
 claimToAdjustPoa.checkYourAnswers.summary-list-1.key         = Pam ydych yn gostwng eich taliadau ar gyfrif?
 claimToAdjustPoa.checkYourAnswers.summary-list-2.key         = Faint a ddylai bob taliad ar gyfrif fod?
@@ -2006,7 +2006,7 @@ claimToAdjustPoa.checkYourAnswers.confirm-and-save           = Cadarnhau a chadw
 # what you need to know
 claimToAdjustPoa.whatYouNeedToKnow.heading                              = 	Yr hyn y mae angen i chi ei wybod
 claimToAdjustPoa.whatYouNeedToKnow.h1                                   = 	Yr hyn y mae angen i chi ei wybod
-claimToAdjustPoa.whatYouNeedToKnow.caption                              =   blwyddyn dreth {0} i {1}
+claimToAdjustPoa.whatYouNeedToKnow.caption                              =   Blwyddyn dreth {0} i {1}
 claimToAdjustPoa.whatYouNeedToKnow.p1                                   =   Gallwch addasu eich taliadau ar gyfrif ar unrhyw adeg cyn cyflwyno’ch Ffurflen Dreth ar gyfer {0} i {1}, ac erbyn
 claimToAdjustPoa.whatYouNeedToKnow.bold                                 =   31 Ionawr {0}
 claimToAdjustPoa.whatYouNeedToKnow.onlyForWelsh                         =   {0}fan bellaf.
@@ -2027,7 +2027,7 @@ claimToAdjustPoa.whatYouNeedToKnow.cancel                               =   Cans
 
 # confirmation
 
-claimToAdjustPoa.confirmation.caption                                   =   blwyddyn dreth {0} i {1}
+claimToAdjustPoa.confirmation.caption                                   =   Blwyddyn dreth {0} i {1}
 claimToAdjustPoa.confirmation.heading                                   =   Cadarnhau bod hyn yn wir
 claimToAdjustPoa.confirmation.p1                                        =   Rwyf o’r farn y bydd cyfanswm fy Nhreth Incwm a chyfraniadau Yswiriant Gwladol Dosbarth 4 ar gyfer y flwyddyn dreth hon, ar ôl didynnu treth wrth y ffynhonnell (er enghraifft, o dan TWE), yn llai na chyfanswm y llynedd.
 claimToAdjustPoa.confirmation.p2                                        =   Rwy’n credu na fydd yn rhaid i mi dalu unrhyw gyfraniadau Yswiriant Gwladol Dosbarth 4 neu Dreth Incwm (er enghraifft o dan TWE) eleni.
@@ -2044,7 +2044,7 @@ claimToAdjustPoa.selectYourReason.p2.link                               =   gall
 claimToAdjustPoa.selectYourReason.p2.b                                  =   .
 claimToAdjustPoa.selectYourReason.h2                                    =   Pam ydych yn gostwng eich taliadau ar gyfrif?
 claimToAdjustPoa.selectYourReason.h2.caption.hidden                     =   Yr adran hon yw
-claimToAdjustPoa.selectYourReason.h2.caption                            =   blwyddyn dreth {0} i {1}
+claimToAdjustPoa.selectYourReason.h2.caption                            =   Blwyddyn dreth {0} i {1}
 claimToAdjustPoa.selectYourReason.radios.main-lower                     =   Bydd fy mhrif incwm yn is
 claimToAdjustPoa.selectYourReason.radios.main-lower.hint                =   Er enghraifft, elw busnes eiddo neu unig fasnachwr.
 claimToAdjustPoa.selectYourReason.radios.other-lower                    =   Bydd fy incwm arall yn is
@@ -2057,7 +2057,7 @@ claimToAdjustPoa.selectYourReason.continue                              =   Yn e
 claimToAdjustPoa.selectYourReason.cancel                                =   Canslo
 claimToAdjustPoa.selectYourReason.error.required                        =   Dewiswch y prif reswm dros ostwng eich taliadau ar gyfrif
 
-claimToAdjustPoa.enterPoaAmount.caption                 = blwyddyn dreth {0} i {1}
+claimToAdjustPoa.enterPoaAmount.caption                 = Blwyddyn dreth {0} i {1}
 claimToAdjustPoa.enterPoaAmount.heading                 = Nodwch swm newydd
 claimToAdjustPoa.enterPoaAmount.p1                      = Dylai pob taliad ar gyfrif fod yn hanner swm eich bil treth disgwyliedig, sy’n cynnwys:
 claimToAdjustPoa.enterPoaAmount.bullet1                 = Treth Incwm
