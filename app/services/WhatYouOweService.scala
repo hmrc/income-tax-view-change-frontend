@@ -43,6 +43,13 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
     }
   }
 
+  val notCodedOutPoa: ChargeItem => Boolean = chargeItem => {
+    chargeItem.transactionType match {
+      case PaymentOnAccountOne | PaymentOnAccountTwo if chargeItem.amountCodedOut.getOrElse[BigDecimal](0) > 0 => false
+      case _ => true
+    }
+  }
+
   // TODO: This is only used in WhatYouOweController. Return value never used?
   def getCreditCharges()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[List[DocumentDetail]] = {
     financialDetailsService.getAllCreditFinancialDetails.map {
@@ -130,6 +137,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
       .filterNot(_.subTransactionType.contains(Accepted))
       .filter(_.remainingToPayByChargeOrInterest > 0)
       .filterNot(_.transactionType == MfaDebitCharge && !isMFACreditsEnabled)
+      .filter(notCodedOutPoa)
       .sortBy(_.dueDate.get)
   }
 }

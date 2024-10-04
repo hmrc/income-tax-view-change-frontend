@@ -149,6 +149,13 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
     }
   }
 
+  private val notCodedOutPoa: TaxYearSummaryChargeItem => Boolean = chargeItem => {
+    chargeItem.transactionType match {
+      case PaymentOnAccountOne | PaymentOnAccountTwo if chargeItem.amountCodedOut.getOrElse[BigDecimal](0) > 0 => false
+      case _ => true
+    }
+  }
+
   private def withTaxYearFinancials(taxYear: Int, isAgent: Boolean)(f: List[TaxYearSummaryChargeItem] => Future[Result])
                                    (implicit user: MtdItUser[_]): Future[Result] = {
 
@@ -176,6 +183,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
             .flatMap(dd => getChargeItem(dd)
               .map(ci => TaxYearSummaryChargeItem.fromChargeItem(ci, financialDetails.findDueDateByDocumentDetails(dd))))
             .filterNot(_.originalAmount < 0)
+            .filter(notCodedOutPoa)
             .filter(ChargeItem.filterCharge(isEnabled(MFACreditsAndDebits), MfaDebitCharge))
             .filter(ChargeItem.filterChargeWithOutstandingAmount(isEnabled(ReviewAndReconcilePoa),
               PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile))
