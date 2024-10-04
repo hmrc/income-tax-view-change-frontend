@@ -2128,27 +2128,27 @@ claimToAdjustPoa.checkYourAnswers.cancel                     = Cancel
 claimToAdjustPoa.checkYourAnswers.confirm-and-save           = Confirm and save
 
 # Enter POA Amount
-claimToAdjustPoa.enterPoaAmount.caption                       = {0} to {1} tax year
-claimToAdjustPoa.enterPoaAmount.heading                       = Enter a new amount
-claimToAdjustPoa.enterPoaAmount.p1                            = Each payment on account should be half the amount of your expected tax bill, which includes:
-claimToAdjustPoa.enterPoaAmount.bullet1                       = Income Tax
-claimToAdjustPoa.enterPoaAmount.bullet2                       = Class 4 National Insurance contributions (opens in new tab)
-claimToAdjustPoa.enterPoaAmount.amountPreviousHeading         = Amount based on previous tax bill
-claimToAdjustPoa.enterPoaAmount.adjustedAmount                = Adjusted amount
-claimToAdjustPoa.enterPoaAmount.firstPayment                  = First payment on account
-claimToAdjustPoa.enterPoaAmount.secondPayment                 = Second payment on account
-claimToAdjustPoa.enterPoaAmount.howMuch                       = How much should each payment on account be?
-claimToAdjustPoa.enterPoaAmount.howMuchHint                   = Enter half the amount you think your final tax bill will be
-claimToAdjustPoa.enterPoaAmount.cancel                        = Cancel
-claimToAdjustPoa.enterPoaAmount.emptyError                    = Enter a new amount for each payment on account
-claimToAdjustPoa.enterPoaAmount.sameError                     = The amount for each payment on account must be different from the current amount ({0})
-claimToAdjustPoa.enterPoaAmount.higherError                   = The amount for each payment on account must be lower than the amount initially created by HMRC ({0})
-claimToAdjustPoa.enterPoaAmount.invalidError                  = The amount must be a number, like 1000 or 1000.00
-claimToAdjustPoa.enterPoaAmount.insetText.h2                  = Both payments on account will be changed
-claimToAdjustPoa.enterPoaAmount.insetText.firstAttempt.para1  = If you’ve already paid your first payment on account, HMRC will pay you back the difference.
-claimToAdjustPoa.enterPoaAmount.insetText.firstAttempt.para2  = For example, if you’ve already paid £2,000 for your first payment on account and need to reduce both payments on account to £1,500, HMRC will add £500 to your account for the first payment.
-claimToAdjustPoa.enterPoaAmount.insetText.secondAttempt.para1 = If you’ve already made a payment, HMRC will add either a credit or an overdue charge to your account, based on the difference.
-claimToAdjustPoa.enterPoaAmount.insetText.secondAttempt.para2 = For example, let’s say you’ve already reduced your payments on account to £2,000 and paid the first payment. If you reduce your payments on account to £1,500, HMRC will add £500 credit. If you increase your payments on account to £2,500, HMRC will add an overdue charge of £500.
+claimToAdjustPoa.enterPoaAmount.caption                               = {0} to {1} tax year
+claimToAdjustPoa.enterPoaAmount.heading                               = Enter a new amount
+claimToAdjustPoa.enterPoaAmount.p1                                    = Each payment on account should be half the amount of your expected tax bill, which includes:
+claimToAdjustPoa.enterPoaAmount.bullet1                               = Income Tax
+claimToAdjustPoa.enterPoaAmount.bullet2                               = Class 4 National Insurance contributions (opens in new tab)
+claimToAdjustPoa.enterPoaAmount.amountPreviousHeading                 = Amount based on previous tax bill
+claimToAdjustPoa.enterPoaAmount.adjustedAmount                        = Adjusted amount
+claimToAdjustPoa.enterPoaAmount.firstPayment                          = First payment on account
+claimToAdjustPoa.enterPoaAmount.secondPayment                         = Second payment on account
+claimToAdjustPoa.enterPoaAmount.howMuch                               = How much should each payment on account be?
+claimToAdjustPoa.enterPoaAmount.howMuchHint                           = Enter half the amount you think your final tax bill will be
+claimToAdjustPoa.enterPoaAmount.cancel                                = Cancel
+claimToAdjustPoa.enterPoaAmount.emptyError                            = Enter a new amount for each payment on account
+claimToAdjustPoa.enterPoaAmount.sameError                             = The amount for each payment on account must be different from the current amount ({0})
+claimToAdjustPoa.enterPoaAmount.higherError                           = The amount for each payment on account must be lower than the amount initially created by HMRC ({0})
+claimToAdjustPoa.enterPoaAmount.invalidError                          = The amount must be a number, like 1000 or 1000.00
+claimToAdjustPoa.enterPoaAmount.insetText.h2                          = Both payments on account will be changed
+claimToAdjustPoa.enterPoaAmount.insetText.firstAttempt.para1          = If you’ve already paid your first payment on account, HMRC will pay you back the difference.
+claimToAdjustPoa.enterPoaAmount.insetText.firstAttempt.para2          = For example, if you’ve already paid £2,000 for your first payment on account and need to reduce both payments on account to £1,500, HMRC will add £500 to your account for the first payment.
+claimToAdjustPoa.enterPoaAmount.insetText.secondAttempt.para1         = If you’ve already made a payment, HMRC will add either a credit or an overdue charge to your account, based on the difference.
+claimToAdjustPoa.enterPoaAmount.insetText.secondAttempt.para2         = For example, let’s say you’ve already reduced your payments on account to £2,000 and paid the first payment. If you reduce your payments on account to £1,500, HMRC will add £500 credit. If you increase your payments on account to £2,500, HMRC will add an overdue charge of £500.
 
 # success
 
