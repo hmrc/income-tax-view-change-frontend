@@ -194,7 +194,7 @@ class OptInPropositionExcelSpec extends UnitSpec {
       val intentTaxYear = toTaxYear(intent)
       assert(optInProposition.availableTaxYearsForOptIn.contains(intentTaxYear))
 
-      assert(optInProposition.expectedItsaStatuesAfter(intentTaxYear) ===
+      assert(optInProposition.expectedItsaStatusesAfter(intentTaxYear) ===
         Seq(
           toITSAStatus(expectedCY),
           toITSAStatus(expectedNY))
