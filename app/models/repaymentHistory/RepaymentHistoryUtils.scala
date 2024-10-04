@@ -97,14 +97,14 @@ object  RepaymentHistoryUtils {
     val hasLot    = payment.lot.isDefined && payment.lotItem.isDefined
 
     (hasCredit, MFACreditsEnabled, CutOverCreditsEnabled, reviewAndReconcileEnabled, hasLot, payment.creditType) match {
-      case (true,  true,    _,    _,    _,    Some(MfaCreditType                               )) => Some(mfaCreditEntry(payment, isAgent))
-      case (true,  _,       true, _,    _,    Some(CutOverCreditType                           )) => Some(creditEntry(payment, isAgent))
-      case (true,  _,       _,    true, _,    Some(PaymentOnAccountOneReviewAndReconcileCredit )) => Some(creditEntry(payment, isAgent))
-      case (true,  _,       _,    true, _,    Some(PaymentOnAccountTwoReviewAndReconcileCredit )) => Some(creditEntry(payment, isAgent))
-      case (true,  _,       _,    _,    _,    Some(BalancingChargeCreditType                   )) => Some(creditEntry(payment, isAgent))
-      case (true,  _,       _,    _,    _,    Some(RepaymentInterest                           )) => Some(creditEntry(payment, isAgent))
-      case (false, _,       _,    _,    true, Some(PaymentType                                 )) => Some(paymentToHMRCEntry(payment, isAgent))
-      case (_,     _,       _,    _,    _,    Some(_                                           )) => None
+      case (true,  true,    _,    _,    _,    Some(MfaCreditType)                               ) => Some(mfaCreditEntry(payment, isAgent))
+      case (true,  _,       true, _,    _,    Some(CutOverCreditType)                           ) => Some(creditEntry(payment, isAgent))
+      case (true,  _,       _,    true, _,    Some(PaymentOnAccountOneReviewAndReconcileCredit) ) => Some(creditEntry(payment, isAgent))
+      case (true,  _,       _,    true, _,    Some(PaymentOnAccountTwoReviewAndReconcileCredit) ) => Some(creditEntry(payment, isAgent))
+      case (true,  _,       _,    _,    _,    Some(BalancingChargeCreditType)                   ) => Some(creditEntry(payment, isAgent))
+      case (true,  _,       _,    _,    _,    Some(RepaymentInterest)                           ) => Some(creditEntry(payment, isAgent))
+      case (false, _,       _,    _,    true, Some(PaymentType)                                 ) => Some(paymentToHMRCEntry(payment, isAgent))
+      case (_,     _,       _,    _,    _,    _                                                 ) => None
     }
   }
 
