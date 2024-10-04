@@ -48,5 +48,4 @@ object ITSAStatusUpdateConnectorModel {
   implicit val formatSuccess: Format[ITSAStatusUpdateResponseSuccess] = Json.format[ITSAStatusUpdateResponseSuccess]
   implicit val formatErrorItem: Format[ErrorItem] = Json.format[ErrorItem]
   implicit val formatFailure: Format[ITSAStatusUpdateResponseFailure] = Json.format[ITSAStatusUpdateResponseFailure]
-  implicit val format: OFormat[ITSAStatusUpdateRequest] = Json.format[ITSAStatusUpdateRequest]
 }
