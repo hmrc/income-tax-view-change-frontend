@@ -16,37 +16,33 @@
 
 package controllers.claimToAdjustPoa
 
+import auth.authV2.AuthActions
 import cats.data.EitherT
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
-import models.claimToAdjustPoa.PaymentOnAccountViewModel
-import models.core.NormalMode
 import models.claimToAdjustPoa.{PaymentOnAccountViewModel, WhatYouNeedToKnowViewModel}
-import models.core.{Nino, NormalMode}
-import play.api.Logger
+import models.core.NormalMode
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.ErrorRecovery
 import utils.claimToAdjust.{ClaimToAdjustUtils, WithSessionAndPoa}
-import utils.AuthenticatorPredicate
 import views.html.claimToAdjustPoa.WhatYouNeedToKnow
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedFunctions,
+class WhatYouNeedToKnowController @Inject()(val authActions: AuthActions,
                                             val view: WhatYouNeedToKnow,
                                             implicit val itvcErrorHandler: ItvcErrorHandler,
-                                            auth: AuthenticatorPredicate,
                                             val claimToAdjustService: ClaimToAdjustService,
                                             val poaSessionService: PaymentOnAccountSessionService,
                                             implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                            (implicit val appConfig: FrontendAppConfig,
-                                            mcc: MessagesControllerComponents,
+                                            override implicit val controllerComponents: MessagesControllerComponents,
                                             val ec: ExecutionContext)
-  extends ClientConfirmedController with I18nSupport with ClaimToAdjustUtils with WithSessionAndPoa {
+  extends FrontendBaseController with I18nSupport with ClaimToAdjustUtils with WithSessionAndPoa with ErrorRecovery {
 
   def getRedirect(isAgent: Boolean, poa: PaymentOnAccountViewModel): String = {
     (if (poa.totalAmountLessThanPoa) {
@@ -56,15 +52,14 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
     }).url
   }
 
-  def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def show(isAgent: Boolean): Action[AnyContent] = authActions.individualOrAgentWithClient async {
     implicit user =>
       withSessionDataAndPoa() { (_, poa) =>
         val viewModel = WhatYouNeedToKnowViewModel(poa.taxYear, poa.partiallyPaidAndTotalAmountLessThanPoa, getRedirect(isAgent, poa))
         EitherT.rightT(Ok(view(isAgent, viewModel)))
       } recover {
         case ex: Exception =>
-          Logger("application").error(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
-          showInternalServerError(isAgent)
+          logAndRedirect(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
       }
   }
 

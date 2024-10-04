@@ -17,10 +17,10 @@
 package controllers.claimToAdjustPoa
 
 import auth.MtdItUser
+import auth.authV2.AuthActions
 import cats.data.EitherT
 import com.google.inject.Singleton
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
 import controllers.claimToAdjustPoa.routes._
 import forms.adjustPoa.SelectYourReasonFormProvider
 import models.claimToAdjustPoa.{Increase, PaymentOnAccountViewModel, SelectYourReason}
@@ -29,29 +29,28 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.claimToAdjust.{ClaimToAdjustUtils, WithSessionAndPoa}
-import utils.AuthenticatorPredicate
 import views.html.claimToAdjustPoa.SelectYourReasonView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SelectYourReasonController @Inject()(
+class SelectYourReasonController @Inject()( val authActions: AuthActions,
                                             val view: SelectYourReasonView,
                                             val formProvider: SelectYourReasonFormProvider,
                                             val poaSessionService: PaymentOnAccountSessionService,
                                             val claimToAdjustService: ClaimToAdjustService,
                                             val authorisedFunctions: AuthorisedFunctions,
                                             implicit val itvcErrorHandler: ItvcErrorHandler,
-                                            implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                            auth: AuthenticatorPredicate)
+                                            implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                           (implicit val appConfig: FrontendAppConfig,
-                                           implicit override val mcc: MessagesControllerComponents,
+                                           implicit override val controllerComponents: MessagesControllerComponents,
                                            val ec: ExecutionContext)
-  extends ClientConfirmedController with I18nSupport with ClaimToAdjustUtils with WithSessionAndPoa {
+  extends FrontendBaseController with I18nSupport with ClaimToAdjustUtils with WithSessionAndPoa {
 
-  def show(isAgent: Boolean, mode: Mode): Action[AnyContent] = auth.authenticatedAction(isAgent = isAgent) {
+  def show(isAgent: Boolean, mode: Mode): Action[AnyContent] = authActions.individualOrAgentWithClient async {
     implicit user =>
       withSessionDataAndPoa() { (session, poa) =>
         session.newPoAAmount match {
@@ -69,7 +68,7 @@ class SelectYourReasonController @Inject()(
       }
   }
 
-  def submit(isAgent: Boolean, mode: Mode): Action[AnyContent] = auth.authenticatedAction(isAgent = isAgent) {
+  def submit(isAgent: Boolean, mode: Mode): Action[AnyContent] = authActions.individualOrAgentWithClient async {
     implicit request =>
       withSessionDataAndPoa() { (_, poa) =>
         formProvider.apply()

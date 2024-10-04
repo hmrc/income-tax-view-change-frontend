@@ -188,8 +188,10 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
           httpStatus(INTERNAL_SERVER_ERROR),
           if(isAgent) {
             pageTitleAgent("standardError.heading", isErrorPage = true)
+            elementAttributeBySelector(".govuk-phase-banner__text a", "href")("/report-quarterly/income-and-expenses/view/agents/feedback")
           } else {
             pageTitleIndividual("standardError.heading", isErrorPage = true)
+            elementAttributeBySelector(".govuk-phase-banner__text a", "href")("/report-quarterly/income-and-expenses/view/feedback")
           }
         )
       }
@@ -255,6 +257,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
         Then("The user is redirected to")
         result should have(
           httpStatus(SEE_OTHER),
+          redirectURI("/report-quarterly/income-and-expenses/view/sign-in")
         )
       }
     }

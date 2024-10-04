@@ -17,26 +17,27 @@
 package controllers.claimToAdjustPoa
 
 import auth.MtdItUser
+import auth.authV2.AuthActions
 import cats.data.EitherT
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
 import controllers.claimToAdjustPoa.routes._
 import models.claimToAdjustPoa.{PoAAmendmentData, SelectYourReason}
 import models.core.CheckMode
 import play.api.Logger
+import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.claimToAdjustPoa.{ClaimToAdjustPoaCalculationService, RecalculatePoaHelper}
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.claimToAdjust.{ClaimToAdjustUtils, WithSessionAndPoa}
-import utils.AuthenticatorPredicate
+import utils.{AuthenticatorPredicate, ErrorRecovery}
 import views.html.claimToAdjustPoa.CheckYourAnswers
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFunctions,
+class CheckYourAnswersController @Inject()(val authActions: AuthActions,
                                            val claimToAdjustService: ClaimToAdjustService,
                                            val poaSessionService: PaymentOnAccountSessionService,
                                            val ctaCalculationService: ClaimToAdjustPoaCalculationService,
@@ -45,12 +46,12 @@ class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFu
                                            implicit val itvcErrorHandler: ItvcErrorHandler,
                                            implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                           (implicit val appConfig: FrontendAppConfig,
-                                           implicit override val mcc: MessagesControllerComponents,
+                                           implicit override val controllerComponents: MessagesControllerComponents,
                                            val ec: ExecutionContext)
-  extends ClientConfirmedController with ClaimToAdjustUtils with RecalculatePoaHelper with WithSessionAndPoa {
+  extends FrontendBaseController with ClaimToAdjustUtils with RecalculatePoaHelper with I18nSupport with WithSessionAndPoa with ErrorRecovery{
 
   def show(isAgent: Boolean): Action[AnyContent] =
-    auth.authenticatedAction(isAgent) {
+    authActions.individualOrAgentWithClient async {
       implicit user =>
         withSessionDataAndPoa() { (session, poa) =>
           withValidSession(isAgent, session) { (reason, amount) =>
@@ -69,11 +70,7 @@ class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFu
               )
             )
           }
-        } recover {
-          case ex: Throwable =>
-            Logger("application").error(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
-            showInternalServerError(isAgent)
-        }
+        } recover logAndRedirect
     }
 
   def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
@@ -83,7 +80,7 @@ class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFu
         ctaCalculationService = ctaCalculationService,
         poaSessionService = poaSessionService,
         isAgent = isAgent
-      )
+      ) recover logAndRedirect
   }
 
   private def withValidSession(isAgent: Boolean, session: PoAAmendmentData)

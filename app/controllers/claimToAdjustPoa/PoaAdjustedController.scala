@@ -17,46 +17,45 @@
 package controllers.claimToAdjustPoa
 
 import auth.MtdItUser
+import auth.authV2.AuthActions
 import cats.data.EitherT
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.AfterSubmissionPage
 import models.claimToAdjustPoa.{Increase, PaymentOnAccountViewModel, PoAAmendmentData, SelectYourReason}
 import models.incomeSourceDetails.TaxYear
 import play.api.Logger
+import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{ClaimToAdjustService, DateService, PaymentOnAccountSessionService}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.ErrorRecovery
 import utils.claimToAdjust.{ClaimToAdjustUtils, WithSessionAndPoa}
-import utils.AuthenticatorPredicate
 import views.html.claimToAdjustPoa.PoaAdjustedView
 
 import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class PoaAdjustedController @Inject()(val authorisedFunctions: AuthorisedFunctions,
+class PoaAdjustedController @Inject()(val authActions: AuthActions,
                                       val view: PoaAdjustedView,
                                       val poaSessionService: PaymentOnAccountSessionService,
                                       val claimToAdjustService: ClaimToAdjustService,
-                                      auth: AuthenticatorPredicate,
                                       implicit val itvcErrorHandler: ItvcErrorHandler,
                                       implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                       val dateService: DateService)
                                      (implicit val appConfig: FrontendAppConfig,
-                                                    implicit override val mcc: MessagesControllerComponents,
-                                                    val ec: ExecutionContext)
-  extends ClientConfirmedController with ClaimToAdjustUtils with WithSessionAndPoa {
+                                      implicit override val controllerComponents: MessagesControllerComponents,
+                                      val ec: ExecutionContext)
+  extends FrontendBaseController with ClaimToAdjustUtils with I18nSupport with WithSessionAndPoa with ErrorRecovery {
 
-  def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def show(isAgent: Boolean): Action[AnyContent] = authActions.individualOrAgentWithClient async {
     implicit user =>
       withSessionDataAndPoa(journeyState = AfterSubmissionPage) { (session, poa) =>
         checkAndLogAPIDataSet(session, poa)
         EitherT.liftF(handleView(isAgent, poa, session))
       } recover {
         case ex: Exception =>
-          Logger("application").error(if (isAgent) "[Agent]" else "" + s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
-          showInternalServerError(isAgent)
+          logAndRedirect(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
       }
   }
 
@@ -73,8 +72,7 @@ class PoaAdjustedController @Inject()(val authorisedFunctions: AuthorisedFunctio
     poaSessionService.setCompletedJourney(hc, ec).flatMap {
       case Right(_) => Future.successful(Ok(view(isAgent, poa.taxYear, poa.totalAmountOne, showOverdueCharges(poa.taxYear, session.poaAdjustmentReason))))
       case Left(ex) =>
-        Logger("application").error(s"Error setting journey completed flag in mongo${ex.getMessage} - ${ex.getCause}")
-        Future.successful(showInternalServerError(isAgent))
+        Future.successful(logAndRedirect(s"Error setting journey completed flag in mongo${ex.getMessage} - ${ex.getCause}"))
     }
   }
 

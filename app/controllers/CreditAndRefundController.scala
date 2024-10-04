@@ -34,6 +34,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.language.LanguageUtils
+import utils.ErrorRecovery
 import views.html.CreditAndRefunds
 import views.html.errorPages.CustomNotFoundError
 
@@ -56,7 +57,7 @@ class CreditAndRefundController @Inject()(val authActions: AuthActions,
                                           val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                           val view: CreditAndRefunds,
                                           val customNotFoundErrorView: CustomNotFoundError)
-  extends FrontendBaseController with FeatureSwitching with I18nSupport {
+  extends FrontendBaseController with FeatureSwitching with I18nSupport with ErrorRecovery {
 
   def show(origin: Option[String] = None): Action[AnyContent] =
     authActions.individualOrAgentWithClient async {
@@ -65,7 +66,7 @@ class CreditAndRefundController @Inject()(val authActions: AuthActions,
           backUrl = controllers.routes.HomeController.show(origin).url,
           itvcErrorHandler = itvcErrorHandler,
           isAgent = false
-        )
+        ) recover logAndRedirect
     }
 
   def handleRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
@@ -81,9 +82,7 @@ class CreditAndRefundController @Inject()(val authActions: AuthActions,
         auditClaimARefund(creditsModel)
 
         Ok(view(viewModel, isAgent, backUrl, isMFACreditsAndDebitsEnabled, isCutOverCreditsEnabled)(user, user, messages))
-      case _ => Logger("application").error(
-        s"${if (isAgent) "[Agent]"}Invalid response from financial transactions")
-        itvcErrorHandler.showInternalServerError()
+      case _ => logAndRedirect("Invalid response from financial transactions")
     }
   }
 
@@ -94,7 +93,7 @@ class CreditAndRefundController @Inject()(val authActions: AuthActions,
           backUrl = controllers.routes.HomeController.showAgent.url,
           itvcErrorHandler = itvcErrorHandlerAgent,
           isAgent = true
-        )
+        ) recover logAndRedirect
     }
   }
 
@@ -111,7 +110,7 @@ class CreditAndRefundController @Inject()(val authActions: AuthActions,
               backUrl = "", // TODO: do we need a backUrl
               itvcErrorHandler = itvcErrorHandler,
               isAgent = false
-            )
+            ) recover logAndRedirect
         }
     }
 
