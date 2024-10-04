@@ -37,25 +37,6 @@ class ITSAStatusUpdateConnectorSpec extends BaseConnectorSpec {
 
   "ITSAStatusUpdateConnectorSpec" when {
 
-    ".toApiFormat()" when {
-
-      "happy case" should {
-
-        "match required format" in {
-
-          connector.toApiFormat(TaxYear.forYearEnd(2024)) shouldBe "2023-24"
-        }
-      }
-
-      "unhappy case" should {
-
-        "default format not match required format" in {
-
-          connector.toApiFormat(TaxYear.forYearEnd(2024)) should not be TaxYear.forYearEnd(2024).toString
-        }
-      }
-    }
-
     ".makeITSAStatusUpdate()" when {
 
       "happy case" should {

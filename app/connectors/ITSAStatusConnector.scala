@@ -20,7 +20,6 @@ import config.FrontendAppConfig
 import models.itsaStatus.{ITSAStatusResponse, ITSAStatusResponseError, ITSAStatusResponseModel}
 import play.api.Logger
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
-import play.api.libs.json.{JsError, Json}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import javax.inject.{Inject, Singleton}
