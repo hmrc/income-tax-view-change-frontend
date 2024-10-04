@@ -171,6 +171,7 @@ class TaxYearSpec extends UnitSpec with TestSupport {
       }
     }
   }
+
   "makeTaxYearWithEndYear" should {
     "create a TaxYear object" when {
       "given the Tax Year end year" in {
@@ -260,4 +261,11 @@ class TaxYearSpec extends UnitSpec with TestSupport {
     }
   }
 
+  ".toApiFormat()" should {
+
+      "match required format" in {
+
+        TaxYear.forYearEnd(2024).toApiFormat shouldBe "2023-24"
+      }
+    }
 }

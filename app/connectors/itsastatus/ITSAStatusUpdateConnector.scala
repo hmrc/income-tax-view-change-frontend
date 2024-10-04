@@ -35,10 +35,6 @@ class ITSAStatusUpdateConnector @Inject()(val httpClient: HttpClientV2, val appC
 
   private val log = Logger("application")
 
-  private[connectors] def toApiFormat(taxYear: TaxYear): String = {
-    s"${taxYear.startYear}-${taxYear.endYear.toString.toSeq.drop(2)}"
-  }
-
   def optOut(taxYear: TaxYear, taxableEntityId: String)
             (implicit headerCarrier: HeaderCarrier): Future[ITSAStatusUpdateResponse] = {
     makeITSAStatusUpdate(taxYear, taxableEntityId, optOutUpdateReason)
@@ -64,7 +60,7 @@ class ITSAStatusUpdateConnector @Inject()(val httpClient: HttpClientV2, val appC
   def makeITSAStatusUpdate(taxYear: TaxYear, taxableEntityId: String, updateReason: String)
                           (implicit headerCarrier: HeaderCarrier): Future[ITSAStatusUpdateResponse] = {
 
-    val body = ITSAStatusUpdateRequest(taxYear = toApiFormat(taxYear), updateReason = updateReason)
+    val body = ITSAStatusUpdateRequest(taxYear = taxYear.toApiFormat, updateReason = updateReason)
 
     updateITSAStatus(taxableEntityId, requestBody = body)
       .map { response =>
