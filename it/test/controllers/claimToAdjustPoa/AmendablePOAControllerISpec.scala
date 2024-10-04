@@ -31,7 +31,7 @@ class AmendablePOAControllerISpec extends ComponentSpecBase {
   private val amendPoaUrl = controllers.claimToAdjustPoa.routes.AmendablePOAController.show(isAgent = false).url
   private val testTaxYear = 2024
   val sessionService: PaymentOnAccountSessionService = app.injector.instanceOf[PaymentOnAccountSessionService]
-  val caption: String = s"This section is ${testTaxYear - 2} to ${testTaxYear - 1} tax year"
+  val caption: String = s"${testTaxYear - 2} to ${testTaxYear - 1} tax year"
 
   s"calling GET $amendPoaUrl" should {
     s"return status $OK and render the Adjusting your payments on account page" when {

@@ -47,7 +47,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
   val url: String = "/adjust-poa/check-your-answers"
   private val validFinancialDetailsResponseBody: JsValue =
     testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
-  val caption: String = s"This section is ${testTaxYear - 2} to ${testTaxYear - 1} tax year"
+  val caption: String = s"${testTaxYear - 2} to ${testTaxYear - 1} tax year"
 
   override def beforeEach(): Unit = {
     super.beforeEach()

@@ -231,10 +231,10 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
 
       Then(s"the text of the element should be '$expectedValue")
       HavePropertyMatchResult(
-        body.getElementsByClass(className).first().text() == expectedValue,
+        body.getElementsByClass(className).first().ownText() == expectedValue,
         s"select($className)",
         expectedValue,
-        body.getElementsByClass(className).first().text()
+        body.getElementsByClass(className).first().ownText()
       )
     }
   }
