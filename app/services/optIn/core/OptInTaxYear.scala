@@ -27,7 +27,10 @@ case class CurrentOptInTaxYear(status: ITSAStatus, taxYear: TaxYear) extends Opt
   def canOptIn: Boolean = status == Annual
 
   def expectedItsaStatusAfter(customerIntent: TaxYear): ITSAStatus =
-    if (customerIntent == taxYear && status == Annual) Voluntary else status
+    if (customerIntent == taxYear && status == Annual)
+      Voluntary
+    else
+      status
 }
 case class NextOptInTaxYear(status: ITSAStatus, taxYear: TaxYear, currentOptInTaxYear: CurrentOptInTaxYear) extends OptInTaxYear {
   def canOptIn: Boolean = (status == Annual) || (currentOptInTaxYear.status == Annual && status == NoStatus)

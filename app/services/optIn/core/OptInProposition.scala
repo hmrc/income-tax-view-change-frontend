@@ -67,5 +67,6 @@ case class OptInProposition(currentTaxYear: CurrentOptInTaxYear, nextTaxYear: Ne
 
   def expectedItsaStatusesAfter(customerIntent: TaxYear): Seq[ITSAStatus] = Seq(
     currentTaxYear.expectedItsaStatusAfter(customerIntent),
-    nextTaxYear.expectedItsaStatusAfter(customerIntent))
+    nextTaxYear.expectedItsaStatusAfter(customerIntent)
+  )
 }
