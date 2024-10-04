@@ -34,7 +34,16 @@ trait TransactionItem {
 
   val isLatePaymentInterest: Boolean
 
+  val amountCodedOut: Option[BigDecimal]
+
   def isOverdue()(implicit dateService: DateServiceInterface): Boolean
+
+  def notCodedOutPoa: Boolean = {
+    transactionType match {
+      case PaymentOnAccountOne | PaymentOnAccountTwo if amountCodedOut.getOrElse[BigDecimal](0) > 0 => false
+      case _ => true
+    }
+  }
 
   // TODO: duplicate logic, in scope of => https://jira.tools.tax.service.gov.uk/browse/MISUV-8557
   def getChargeTypeKey(codedOutEnabled: Boolean = false, reviewAndReconcileEnabled: Boolean = false): String =
