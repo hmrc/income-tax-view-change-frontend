@@ -38,7 +38,7 @@ class ITSAStatusUpdateConnectorISpec extends AnyWordSpec with ComponentSpecBase 
 
           WiremockHelper.stubPut(s"/income-tax-view-change/itsa-status/update/$taxableEntityId", NO_CONTENT, correctOptOutRequestBody, "{}")
 
-          val requestBody = ITSAStatusUpdateRequest(taxYear = taxYear2024.toApiFormat, updateReason = optOutUpdateReason)
+          val requestBody = ITSAStatusUpdateRequest(taxYear = taxYear2024.formatToYYYY_YY, updateReason = optOutUpdateReason)
 
           val result = connector.updateITSAStatus(taxableEntityId, requestBody).futureValue
 
@@ -58,7 +58,7 @@ class ITSAStatusUpdateConnectorISpec extends AnyWordSpec with ComponentSpecBase 
 
           WiremockHelper.stubPut(s"/income-tax-view-change/itsa-status/update/$taxableEntityId", BAD_REQUEST, correctOptOutRequestBody, invalidPayLoadFailureResponseBody)
 
-          val requestBody = ITSAStatusUpdateRequest(taxYear = taxYear2024.toApiFormat, updateReason = optOutUpdateReason)
+          val requestBody = ITSAStatusUpdateRequest(taxYear = taxYear2024.formatToYYYY_YY, updateReason = optOutUpdateReason)
 
           val result = connector.updateITSAStatus(taxableEntityId, requestBody).futureValue
 
