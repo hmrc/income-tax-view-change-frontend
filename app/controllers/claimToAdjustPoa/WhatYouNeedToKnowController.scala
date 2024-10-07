@@ -16,6 +16,7 @@
 
 package controllers.claimToAdjustPoa
 
+import auth.MtdItUser
 import auth.authV2.AuthActions
 import cats.data.EitherT
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
@@ -35,28 +36,28 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class WhatYouNeedToKnowController @Inject()(val authActions: AuthActions,
                                             val view: WhatYouNeedToKnow,
-                                            implicit val itvcErrorHandler: ItvcErrorHandler,
                                             val claimToAdjustService: ClaimToAdjustService,
-                                            val poaSessionService: PaymentOnAccountSessionService,
-                                            implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                            val poaSessionService: PaymentOnAccountSessionService)
                                            (implicit val appConfig: FrontendAppConfig,
+                                            implicit val individualErrorHandler: ItvcErrorHandler,
+                                            implicit val agentErrorHandler: AgentItvcErrorHandler,
                                             override implicit val controllerComponents: MessagesControllerComponents,
                                             val ec: ExecutionContext)
   extends FrontendBaseController with I18nSupport with ClaimToAdjustUtils with WithSessionAndPoa with ErrorRecovery {
 
-  def getRedirect(isAgent: Boolean, poa: PaymentOnAccountViewModel): String = {
+  def getRedirect(isAgent: Boolean, poa: PaymentOnAccountViewModel)(implicit user: MtdItUser[_]): String = {
     (if (poa.totalAmountLessThanPoa) {
-      controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(isAgent, NormalMode)
+      controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(user.isAgent(), NormalMode)
     } else {
-      controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, NormalMode)
+      controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(user.isAgent(), NormalMode)
     }).url
   }
 
   def show(isAgent: Boolean): Action[AnyContent] = authActions.individualOrAgentWithClient async {
     implicit user =>
       withSessionDataAndPoa() { (_, poa) =>
-        val viewModel = WhatYouNeedToKnowViewModel(poa.taxYear, poa.partiallyPaidAndTotalAmountLessThanPoa, getRedirect(isAgent, poa))
-        EitherT.rightT(Ok(view(isAgent, viewModel)))
+        val viewModel = WhatYouNeedToKnowViewModel(poa.taxYear, poa.partiallyPaidAndTotalAmountLessThanPoa, getRedirect(user.isAgent(), poa))
+        EitherT.rightT(Ok(view(user.isAgent(), viewModel)))
       } recover {
         case ex: Exception =>
           logAndRedirect(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")

@@ -27,8 +27,8 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.ErrorRecovery
 import utils.claimToAdjust.{ClaimToAdjustUtils, WithSessionAndPoa}
-import utils.{AuthenticatorPredicate, ErrorRecovery}
 import views.html.claimToAdjustPoa.AmendablePaymentOnAccount
 
 import javax.inject.{Inject, Singleton}
@@ -37,12 +37,11 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class AmendablePOAController @Inject()(val authActions: AuthActions,
                                        val claimToAdjustService: ClaimToAdjustService,
-                                       val auth: AuthenticatorPredicate,
                                        val poaSessionService: PaymentOnAccountSessionService,
-                                       view: AmendablePaymentOnAccount,
-                                       implicit val itvcErrorHandler: ItvcErrorHandler,
-                                       implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                       view: AmendablePaymentOnAccount)
                                       (implicit val appConfig: FrontendAppConfig,
+                                       implicit val individualErrorHandler: ItvcErrorHandler,
+                                       implicit val agentErrorHandler: AgentItvcErrorHandler,
                                        implicit override val controllerComponents: MessagesControllerComponents,
                                        val ec: ExecutionContext)
   extends FrontendBaseController with I18nSupport with ClaimToAdjustUtils with ImplicitCurrencyFormatter with WithSessionAndPoa with ErrorRecovery {
@@ -57,7 +56,7 @@ class AmendablePOAController @Inject()(val authActions: AuthActions,
         }.value.flatMap {
           case Right(viewModel) =>
             Future.successful(
-              Ok(view(isAgent, viewModel))
+              Ok(view(user.isAgent(), viewModel))
             )
           case Left(ex) =>
             Logger("application").error(s"Exception: ${ex.getMessage} - ${ex.getCause}")

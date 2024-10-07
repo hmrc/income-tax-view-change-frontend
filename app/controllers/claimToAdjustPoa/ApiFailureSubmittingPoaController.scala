@@ -41,8 +41,8 @@ class ApiFailureSubmittingPoaController @Inject()(val authActions: AuthActions,
   def show(isAgent: Boolean): Action[AnyContent] = {
     authActions.individualOrAgentWithClient async {
       implicit user =>
-        ifAdjustPoaIsEnabled(isAgent) {
-          Future.successful(Ok(view(isAgent)))
+        ifAdjustPoaIsEnabled(user.isAgent()) {
+          Future.successful(Ok(view(user.isAgent())))
         }
     }
   }

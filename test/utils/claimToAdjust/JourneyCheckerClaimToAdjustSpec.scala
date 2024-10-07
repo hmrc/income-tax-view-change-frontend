@@ -20,8 +20,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{AfterSubmissionPage, BeforeSubmissionPage, CannotGoBackPage, InitialPage}
 import mocks.services.MockPaymentOnAccountSessionService
 import models.admin.AdjustPaymentsOnAccount
-import models.claimToAdjustPoa.{PoAAmendmentData, WhatYouNeedToKnowViewModel}
-import models.incomeSourceDetails.TaxYear
+import models.claimToAdjustPoa.PoAAmendmentData
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers
@@ -44,16 +43,16 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
   val TestJourneyCheckerClaimToAdjust: JourneyCheckerClaimToAdjust = new JourneyCheckerClaimToAdjust {
     override val appConfig: FrontendAppConfig = mockAppConfig
     override val poaSessionService: PaymentOnAccountSessionService = mockPaymentOnAccountSessionService
-    override val itvcErrorHandler: ItvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler]
-    override val itvcErrorHandlerAgent: AgentItvcErrorHandler = app.injector.instanceOf[AgentItvcErrorHandler]
+    override val individualErrorHandler: ItvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler]
+    override val agentErrorHandler: AgentItvcErrorHandler = app.injector.instanceOf[AgentItvcErrorHandler]
     override implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
   }
 
   val TestJourneyCheckerClaimToAdjustSpy: JourneyCheckerClaimToAdjust = spy(new JourneyCheckerClaimToAdjust {
     override val appConfig: FrontendAppConfig = mockAppConfig
     override val poaSessionService: PaymentOnAccountSessionService = mockPaymentOnAccountSessionService
-    override val itvcErrorHandler: ItvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler]
-    override val itvcErrorHandlerAgent: AgentItvcErrorHandler = app.injector.instanceOf[AgentItvcErrorHandler]
+    override val individualErrorHandler: ItvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler]
+    override val agentErrorHandler: AgentItvcErrorHandler = app.injector.instanceOf[AgentItvcErrorHandler]
     override implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
   })
 
@@ -69,46 +68,6 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
   override def beforeEach(): Unit = {
     super.beforeEach()
     enable(AdjustPaymentsOnAccount)
-  }
-
-  "JourneyCheckerClaimToAdjust.isAgent" should {
-    "return true" when {
-      "user is an agent" in {
-
-        val res = TestJourneyCheckerClaimToAdjust.isAgent(tsTestUserAgent)
-
-        res shouldBe true
-
-      }
-    }
-    "return false" when {
-      "user is an individual" in {
-
-        val res = TestJourneyCheckerClaimToAdjust.isAgent(tsTestUser)
-
-        res shouldBe false
-
-      }
-    }
-  }
-
-  "JourneyCheckerClaimToAdjust.errorHandler" should {
-    "return the correct error handler" when {
-      "user is an agent" in {
-
-        val res = TestJourneyCheckerClaimToAdjust.errorHandler(tsTestUserAgent)
-
-        res.getClass shouldBe classOf[AgentItvcErrorHandler]
-
-      }
-      "user is an individual" in {
-
-        val res = TestJourneyCheckerClaimToAdjust.errorHandler(tsTestUser)
-
-        res.getClass shouldBe classOf[ItvcErrorHandler]
-
-      }
-    }
   }
 
   "JourneyCheckerClaimToAdjust.redirectToYouCannotGoBackPage" should {

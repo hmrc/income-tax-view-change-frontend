@@ -37,10 +37,10 @@ class ConfirmationForAdjustingPoaController @Inject()(val authActions: AuthActio
                                                       val claimToAdjustService: ClaimToAdjustService,
                                                       val poaSessionService: PaymentOnAccountSessionService,
                                                       val ctaCalculationService: ClaimToAdjustPoaCalculationService,
-                                                      val view: ConfirmationForAdjustingPoa,
-                                                      implicit val itvcErrorHandler: ItvcErrorHandler,
-                                                      implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                                      val view: ConfirmationForAdjustingPoa)
                                                      (implicit val appConfig: FrontendAppConfig,
+                                                      implicit val individualErrorHandler: ItvcErrorHandler,
+                                                      implicit val agentErrorHandler: AgentItvcErrorHandler,
                                                       override implicit val controllerComponents: MessagesControllerComponents,
                                                       val ec: ExecutionContext)
   extends FrontendBaseController with I18nSupport with FeatureSwitching with RecalculatePoaHelper with WithSessionAndPoa {
@@ -52,7 +52,7 @@ class ConfirmationForAdjustingPoaController @Inject()(val authActions: AuthActio
           case Some(value) =>
             val isAmountZero: Boolean = value.equals(BigDecimal(0))
             val viewModel = ConfirmationForAdjustingPoaViewModel(poa.taxYear, isAmountZero)
-            EitherT.rightT(Ok(view(isAgent, viewModel)))
+            EitherT.rightT(Ok(view(user.isAgent(), viewModel)))
           case None =>
 
             EitherT.rightT(logAndRedirect(s"Error, New PoA Amount was not found in session"))
@@ -68,8 +68,7 @@ class ConfirmationForAdjustingPoaController @Inject()(val authActions: AuthActio
       handleSubmitPoaData(
         claimToAdjustService = claimToAdjustService,
         ctaCalculationService = ctaCalculationService,
-        poaSessionService = poaSessionService,
-        isAgent = isAgent
+        poaSessionService = poaSessionService
       )
   }
 

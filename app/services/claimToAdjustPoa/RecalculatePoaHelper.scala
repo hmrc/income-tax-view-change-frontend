@@ -18,7 +18,6 @@ package services.claimToAdjustPoa
 
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.routes.HomeController
 import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoAAmendmentData}
@@ -45,17 +44,16 @@ trait RecalculatePoaHelper extends FeatureSwitching with ErrorRecovery {
   }
 
   private def handlePoaAndOtherData(poa: PaymentOnAccountViewModel,
-                                      otherData: PoAAmendmentData, isAgent: Boolean, nino: Nino, ctaCalculationService: ClaimToAdjustPoaCalculationService)
-                                     (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext,
-                                      itvcErrorHandler: ItvcErrorHandler, itvcErrorHandlerAgent: AgentItvcErrorHandler): Future[Result] = {
+                                      otherData: PoAAmendmentData, nino: Nino, ctaCalculationService: ClaimToAdjustPoaCalculationService)
+                                     (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
     otherData match {
       case PoAAmendmentData(Some(poaAdjustmentReason), Some(amount), _) =>
         ctaCalculationService.recalculate(nino, poa.taxYear, amount, poaAdjustmentReason) map {
           case Left(ex) =>
             Logger("application").error(s"POA recalculation request failed: ${ex.getMessage}")
-            Redirect(controllers.claimToAdjustPoa.routes.ApiFailureSubmittingPoaController.show(isAgent))
+            Redirect(controllers.claimToAdjustPoa.routes.ApiFailureSubmittingPoaController.show(user.isAgent()))
           case Right(_) =>
-            Redirect(controllers.claimToAdjustPoa.routes.PoaAdjustedController.show(isAgent))
+            Redirect(controllers.claimToAdjustPoa.routes.PoaAdjustedController.show(user.isAgent()))
         }
       case PoAAmendmentData(_, _, _) =>
         Future.successful(logAndRedirect("Missing poaAdjustmentReason and/or amount"))
@@ -63,8 +61,8 @@ trait RecalculatePoaHelper extends FeatureSwitching with ErrorRecovery {
   }
 
   protected def handleSubmitPoaData(claimToAdjustService: ClaimToAdjustService, ctaCalculationService: ClaimToAdjustPoaCalculationService,
-                                    poaSessionService: PaymentOnAccountSessionService, isAgent: Boolean)
-                                   (implicit user: MtdItUser[_], hc: HeaderCarrier, itvcErrorHandler: ItvcErrorHandler, itvcErrorHandlerAgent: AgentItvcErrorHandler, ec: ExecutionContext): Future[Result] = {
+                                    poaSessionService: PaymentOnAccountSessionService)
+                                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
     if (isEnabled(AdjustPaymentsOnAccount)) {
       {
         for {
@@ -72,7 +70,7 @@ trait RecalculatePoaHelper extends FeatureSwitching with ErrorRecovery {
         } yield poaMaybe match {
           case Right(Some(poa)) =>
             dataFromSession(poaSessionService).flatMap(otherData =>
-              handlePoaAndOtherData(poa, otherData, isAgent, Nino(user.nino), ctaCalculationService)
+              handlePoaAndOtherData(poa, otherData, Nino(user.nino), ctaCalculationService)
             )
           case Right(None) =>
             Future.successful(logAndRedirect("Failed to create PaymentOnAccount model"))
@@ -82,9 +80,8 @@ trait RecalculatePoaHelper extends FeatureSwitching with ErrorRecovery {
       }.flatten
     } else {
       Future.successful(
-        Redirect(if (isAgent) HomeController.showAgent else HomeController.show())
+        Redirect(if (user.isAgent()) HomeController.showAgent else HomeController.show())
       )
     }
   }
-
 }

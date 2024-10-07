@@ -35,19 +35,19 @@ import scala.concurrent.ExecutionContext
 class YouCannotGoBackController @Inject()(val authActions: AuthActions,
                                           val claimToAdjustService: ClaimToAdjustService,
                                           val poaSessionService: PaymentOnAccountSessionService,
-                                          val view: YouCannotGoBackView,
-                                          implicit val itvcErrorHandler: ItvcErrorHandler,
-                                          implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                          val view: YouCannotGoBackView)
                                          (implicit val appConfig: FrontendAppConfig,
+                                          implicit val individualErrorHandler: ItvcErrorHandler,
+                                          implicit val agentErrorHandler: AgentItvcErrorHandler,
                                           override implicit val controllerComponents: MessagesControllerComponents,
                                           val ec: ExecutionContext)
   extends FrontendBaseController with I18nSupport with FeatureSwitching with RecalculatePoaHelper with WithSessionAndPoa {
 
   def show(isAgent: Boolean): Action[AnyContent] = authActions.individualOrAgentWithClient async {
     implicit user =>
-      withSessionDataAndPoa(journeyState = CannotGoBackPage) {(x, poa) =>
+      withSessionDataAndPoa(journeyState = CannotGoBackPage) {(_, poa) =>
         EitherT.rightT(Ok(view(
-          isAgent = isAgent,
+          isAgent = user.isAgent(),
           poaTaxYear = poa.taxYear
         )))
       } recover {

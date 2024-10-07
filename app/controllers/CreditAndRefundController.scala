@@ -46,7 +46,7 @@ class CreditAndRefundController @Inject()(val authActions: AuthActions,
                                           val retrieveBtaNavBar: NavBarPredicate,
                                           val checkSessionTimeout: SessionTimeoutPredicate,
                                           val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                                          val itvcErrorHandler: ItvcErrorHandler,
+                                          val individualErrorHandler: ItvcErrorHandler,
                                           val incomeSourceDetailsService: IncomeSourceDetailsService,
                                           val repaymentService: RepaymentService,
                                           val auditingService: AuditingService,
@@ -54,7 +54,7 @@ class CreditAndRefundController @Inject()(val authActions: AuthActions,
                                          (implicit val appConfig: FrontendAppConfig,
                                           val languageUtils: LanguageUtils,
                                           val ec: ExecutionContext,
-                                          val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                          val agentErrorHandler: AgentItvcErrorHandler,
                                           val view: CreditAndRefunds,
                                           val customNotFoundErrorView: CustomNotFoundError)
   extends FrontendBaseController with FeatureSwitching with I18nSupport with ErrorRecovery {
@@ -64,7 +64,7 @@ class CreditAndRefundController @Inject()(val authActions: AuthActions,
       implicit user =>
         handleRequest(
           backUrl = controllers.routes.HomeController.show(origin).url,
-          itvcErrorHandler = itvcErrorHandler,
+          itvcErrorHandler = individualErrorHandler,
           isAgent = false
         ) recover logAndRedirect
     }
@@ -91,7 +91,7 @@ class CreditAndRefundController @Inject()(val authActions: AuthActions,
       implicit mtdItUser =>
         handleRequest(
           backUrl = controllers.routes.HomeController.showAgent.url,
-          itvcErrorHandler = itvcErrorHandlerAgent,
+          itvcErrorHandler = agentErrorHandler,
           isAgent = true
         ) recover logAndRedirect
     }
@@ -104,11 +104,11 @@ class CreditAndRefundController @Inject()(val authActions: AuthActions,
           case _ if !isEnabled(CreditsRefundsRepay) =>
             Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
           case Some(Agent) =>
-            Future.successful(itvcErrorHandlerAgent.showInternalServerError())
+            Future.successful(agentErrorHandler.showInternalServerError())
           case _ =>
             handleRefundRequest(
               backUrl = "", // TODO: do we need a backUrl
-              itvcErrorHandler = itvcErrorHandler,
+              itvcErrorHandler = individualErrorHandler,
               isAgent = false
             ) recover logAndRedirect
         }

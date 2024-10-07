@@ -40,10 +40,10 @@ class PoaAdjustedController @Inject()(val authActions: AuthActions,
                                       val view: PoaAdjustedView,
                                       val poaSessionService: PaymentOnAccountSessionService,
                                       val claimToAdjustService: ClaimToAdjustService,
-                                      implicit val itvcErrorHandler: ItvcErrorHandler,
-                                      implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                       val dateService: DateService)
                                      (implicit val appConfig: FrontendAppConfig,
+                                      implicit val individualErrorHandler: ItvcErrorHandler,
+                                      implicit val agentErrorHandler: AgentItvcErrorHandler,
                                       implicit override val controllerComponents: MessagesControllerComponents,
                                       val ec: ExecutionContext)
   extends FrontendBaseController with ClaimToAdjustUtils with I18nSupport with WithSessionAndPoa with ErrorRecovery {
@@ -52,7 +52,7 @@ class PoaAdjustedController @Inject()(val authActions: AuthActions,
     implicit user =>
       withSessionDataAndPoa(journeyState = AfterSubmissionPage) { (session, poa) =>
         checkAndLogAPIDataSet(session, poa)
-        EitherT.liftF(handleView(isAgent, poa, session))
+        EitherT.liftF(handleView(user.isAgent(), poa, session))
       } recover {
         case ex: Exception =>
           logAndRedirect(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
@@ -70,7 +70,8 @@ class PoaAdjustedController @Inject()(val authActions: AuthActions,
 
   private def handleView(isAgent: Boolean, poa: PaymentOnAccountViewModel, session: PoAAmendmentData)(implicit user: MtdItUser[_]): Future[Result] = {
     poaSessionService.setCompletedJourney(hc, ec).flatMap {
-      case Right(_) => Future.successful(Ok(view(isAgent, poa.taxYear, poa.totalAmountOne, showOverdueCharges(poa.taxYear, session.poaAdjustmentReason))))
+      case Right(_) => Future.successful(
+        Ok(view(user.isAgent(), poa.taxYear, poa.totalAmountOne, showOverdueCharges(poa.taxYear, session.poaAdjustmentReason))))
       case Left(ex) =>
         Future.successful(logAndRedirect(s"Error setting journey completed flag in mongo${ex.getMessage} - ${ex.getCause}"))
     }

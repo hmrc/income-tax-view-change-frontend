@@ -23,7 +23,7 @@ import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoAAmendmentData}
 import models.core.Nino
 import play.api.Logger
 import play.api.mvc.Result
-import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
+import services.ClaimToAdjustService
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,7 +36,7 @@ trait WithSessionAndPoa extends JourneyCheckerClaimToAdjust {
   def withSessionDataAndPoa(journeyState: JourneyState = BeforeSubmissionPage)
                            (codeBlock: (PoAAmendmentData, PaymentOnAccountViewModel) => EitherT[Future, Throwable, Result])
                            (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
-    ifAdjustPoaIsEnabled(isAgent(user)) {
+    ifAdjustPoaIsEnabled(user.isAgent()) {
       {
         if (journeyState == InitialPage) {
           handleSessionAndPoaStartPage(codeBlock)
@@ -44,7 +44,7 @@ trait WithSessionAndPoa extends JourneyCheckerClaimToAdjust {
           handleSessionAndPoa(journeyState)(codeBlock)
         }
       } fold (
-        logAndShowErrorPage(isAgent(user)),
+        logAndRedirect,
         view => view
       )
     }
@@ -67,8 +67,7 @@ trait WithSessionAndPoa extends JourneyCheckerClaimToAdjust {
         case (None, Some(p)) =>
           createSessionCodeBlock(p)(codeBlock)
         case (_, None) =>
-          Logger("application").error(s"Error: POA missing")
-          val x: EitherT[Future, Throwable, Result] = EitherT.rightT(errorHandler.showInternalServerError())
+          val x: EitherT[Future, Throwable, Result] = EitherT.rightT(logAndRedirect(s"Error: POA missing"))
           x
       }
     } yield result
@@ -81,9 +80,8 @@ trait WithSessionAndPoa extends JourneyCheckerClaimToAdjust {
       case Right(_) =>
         codeBlock(PoAAmendmentData(), p).value
       case Left(ex: Throwable) =>
-        Logger("application").error(if (isAgent(user)) "[Agent]" else "" +
-          s"There was an error while retrieving the mongo data. < Exception message: ${ex.getMessage}, Cause: ${ex.getCause} >")
-        val x: EitherT[Future, Throwable, Result] = EitherT.rightT(errorHandler.showInternalServerError())
+        val x: EitherT[Future, Throwable, Result] = EitherT.rightT(
+          logAndRedirect(s"There was an error while retrieving the mongo data. < Exception message: ${ex.getMessage}, Cause: ${ex.getCause} >"))
         x.value
     }.flatten)
   }
@@ -100,20 +98,13 @@ trait WithSessionAndPoa extends JourneyCheckerClaimToAdjust {
         case (Some(s), Some(p)) =>
           codeBlock(s, p)
         case (None, _) =>
-          Logger("application").error(s"Error, session missing")
-          val x: EitherT[Future, Throwable, Result] = EitherT.rightT(errorHandler.showInternalServerError())
+          val x: EitherT[Future, Throwable, Result] = EitherT.rightT(logAndRedirect(s"Error, session missing"))
           x
         case (_, None) =>
-          Logger("application").error(s"Error, relevant POA not found")
-          val x: EitherT[Future, Throwable, Result] = EitherT.rightT(errorHandler.showInternalServerError())
+          val x: EitherT[Future, Throwable, Result] = EitherT.rightT(logAndRedirect(s"Error, relevant POA not found"))
           x
       }
     } yield result
-  }
-
-  private def logAndShowErrorPage(isAgent: Boolean)(ex: Throwable)(implicit user: MtdItUser[_]): Result = {
-    Logger("application").error(if (isAgent) "[Agent]" else "" + s"${ex.getMessage} - ${ex.getCause}")
-    errorHandler.showInternalServerError()
   }
 
 }

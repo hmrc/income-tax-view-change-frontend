@@ -28,7 +28,6 @@ import models.core.{Mode, NormalMode}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.claimToAdjust.{ClaimToAdjustUtils, WithSessionAndPoa}
 import views.html.claimToAdjustPoa.SelectYourReasonView
@@ -37,15 +36,14 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SelectYourReasonController @Inject()( val authActions: AuthActions,
-                                            val view: SelectYourReasonView,
-                                            val formProvider: SelectYourReasonFormProvider,
-                                            val poaSessionService: PaymentOnAccountSessionService,
-                                            val claimToAdjustService: ClaimToAdjustService,
-                                            val authorisedFunctions: AuthorisedFunctions,
-                                            implicit val itvcErrorHandler: ItvcErrorHandler,
-                                            implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+class SelectYourReasonController @Inject()(val authActions: AuthActions,
+                                           val view: SelectYourReasonView,
+                                           val formProvider: SelectYourReasonFormProvider,
+                                           val poaSessionService: PaymentOnAccountSessionService,
+                                           val claimToAdjustService: ClaimToAdjustService)
                                           (implicit val appConfig: FrontendAppConfig,
+                                           implicit val individualErrorHandler: ItvcErrorHandler,
+                                           implicit val agentErrorHandler: AgentItvcErrorHandler,
                                            implicit override val controllerComponents: MessagesControllerComponents,
                                            val ec: ExecutionContext)
   extends FrontendBaseController with I18nSupport with ClaimToAdjustUtils with WithSessionAndPoa {
@@ -55,13 +53,13 @@ class SelectYourReasonController @Inject()( val authActions: AuthActions,
       withSessionDataAndPoa() { (session, poa) =>
         session.newPoAAmount match {
           case Some(amount) if amount >= poa.totalAmount =>
-            saveValueAndRedirect(mode, isAgent, Increase, poa)
+            saveValueAndRedirect(mode, user.isAgent(), Increase, poa)
           case _ =>
             val form = formProvider.apply()
             EitherT.rightT(Ok(view(
               selectYourReasonForm = session.poaAdjustmentReason.fold(form)(form.fill),
               taxYear = poa.taxYear,
-              isAgent = isAgent,
+              isAgent = user.isAgent(),
               mode = mode,
               useFallbackLink = true)))
         }
@@ -69,15 +67,15 @@ class SelectYourReasonController @Inject()( val authActions: AuthActions,
   }
 
   def submit(isAgent: Boolean, mode: Mode): Action[AnyContent] = authActions.individualOrAgentWithClient async {
-    implicit request =>
+    implicit user =>
       withSessionDataAndPoa() { (_, poa) =>
         formProvider.apply()
           .bindFromRequest()
           .fold(
             formWithErrors =>
-              EitherT.rightT(BadRequest(view(formWithErrors, poa.taxYear, isAgent, mode, true)))
+              EitherT.rightT(BadRequest(view(formWithErrors, poa.taxYear, user.isAgent(), mode, true)))
             ,
-            value => saveValueAndRedirect(mode, isAgent, value, poa)
+            value => saveValueAndRedirect(mode, user.isAgent(), value, poa)
           )
       }
   }
@@ -90,8 +88,8 @@ class SelectYourReasonController @Inject()( val authActions: AuthActions,
     } yield {
       res match {
         case _ => (mode, poa.totalAmountLessThanPoa) match {
-          case (NormalMode, false) if value != Increase => Redirect(EnterPoAAmountController.show(isAgent, NormalMode))
-          case (_, _) => Redirect(CheckYourAnswersController.show(isAgent))
+          case (NormalMode, false) if value != Increase => Redirect(EnterPoAAmountController.show(user.isAgent(), NormalMode))
+          case (_, _) => Redirect(CheckYourAnswersController.show(user.isAgent()))
         }
       }
     }

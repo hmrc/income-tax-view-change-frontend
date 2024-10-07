@@ -55,7 +55,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
       retrieveBtaNavBar = MockNavBarPredicate,
       checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
       retrieveNinoWithIncomeSources = MockIncomeSourceDetailsPredicate,
-      itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
+      individualErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
       incomeSourceDetailsService = mockIncomeSourceDetailsService,
       creditService = mockCreditService,
       repaymentService = mockRepaymentService,
@@ -65,7 +65,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
       appConfig = app.injector.instanceOf[FrontendAppConfig],
       languageUtils = languageUtils,
       ec = ec,
-      itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
+      agentErrorHandler = app.injector.instanceOf[AgentItvcErrorHandler],
       view = app.injector.instanceOf[CreditAndRefunds],
       customNotFoundErrorView = app.injector.instanceOf[CustomNotFoundError]
     )
