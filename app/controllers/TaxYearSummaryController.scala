@@ -176,6 +176,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
             .flatMap(dd => getChargeItem(dd)
               .map(ci => TaxYearSummaryChargeItem.fromChargeItem(ci, financialDetails.findDueDateByDocumentDetails(dd))))
             .filterNot(_.originalAmount < 0)
+            .filter(_.notCodedOutPoa)
             .filter(ChargeItem.filterCharge(isEnabled(MFACreditsAndDebits), MfaDebitCharge))
             .filter(ChargeItem.filterChargeWithOutstandingAmount(isEnabled(ReviewAndReconcilePoa),
               PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile))
