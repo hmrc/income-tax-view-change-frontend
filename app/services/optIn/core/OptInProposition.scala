@@ -17,24 +17,24 @@
 package services.optIn.core
 
 import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus.ITSAStatus
 import services.optIn.core.OptInProposition.OneItem
 
 object OptInProposition {
-  val OneItem = 1
+  private val OneItem = 1
 
   def createOptInProposition(currentYear: TaxYear,
-                             nextYear: TaxYear,
-                             initialState: OptInInitialState
-                            ): OptInProposition = {
+                             currentYearItsaStatus: ITSAStatus,
+                             nextYearItsaStatus: ITSAStatus): OptInProposition = {
 
     val currentOptInTaxYear = CurrentOptInTaxYear(
-      status = initialState.currentYearItsaStatus,
+      status = currentYearItsaStatus,
       taxYear = currentYear
     )
 
     val nextYearOptOut = NextOptInTaxYear(
-      status = initialState.nextYearItsaStatus,
-      taxYear = nextYear,
+      status = nextYearItsaStatus,
+      taxYear = currentYear.nextYear,
       currentOptInTaxYear = currentOptInTaxYear
     )
 

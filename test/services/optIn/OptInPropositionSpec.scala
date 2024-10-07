@@ -19,6 +19,7 @@ package services.optIn
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Voluntary}
 import services.optIn.OptInPropositionSpec.TestData
+import services.optIn.core.OptInProposition.createOptInProposition
 import services.optIn.core._
 import testUtils.UnitSpec
 
@@ -57,9 +58,7 @@ class OptInPropositionSpec extends UnitSpec {
           s"nextTaxYearStatus: ${nextTaxYearStatus.toString}, currentTaxYear: ${currentTaxYear.toString}" in {
 
           val expectedAvailableOptInYearsSize = offered.size
-          val currentOptInTaxYear = CurrentOptInTaxYear(currentTaxYearStatus, currentTaxYear)
-          val nextOptInTaxYear = NextOptInTaxYear(nextTaxYearStatus, currentTaxYear.nextYear, currentOptInTaxYear)
-          val proposition = OptInProposition(currentOptInTaxYear, nextOptInTaxYear)
+          val proposition = createOptInProposition(currentTaxYear, currentTaxYearStatus, nextTaxYearStatus)
 
           proposition.isOneYearOptIn shouldBe offered.size == 1
           proposition.isTwoYearOptIn shouldBe offered.size > 1

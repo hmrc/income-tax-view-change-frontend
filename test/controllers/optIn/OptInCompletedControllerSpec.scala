@@ -24,7 +24,7 @@ import models.itsaStatus.ITSAStatus
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
-import services.optIn.core.{CurrentOptInTaxYear, NextOptInTaxYear, OptInProposition}
+import services.optIn.core.OptInProposition.createOptInProposition
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
 import views.html.optIn.OptInCompletedView
@@ -56,9 +56,7 @@ class OptInCompletedControllerSpec extends TestSupport
         setupMockAuthorisationSuccess(isAgent)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        val currentTaxYear = CurrentOptInTaxYear(ITSAStatus.Annual, taxYear2023)
-        val nextTaxYear = NextOptInTaxYear(ITSAStatus.Annual, taxYear2023.nextYear, currentTaxYear)
-        val proposition = OptInProposition(currentTaxYear, nextTaxYear)
+        val proposition = createOptInProposition(taxYear2023, ITSAStatus.Annual, ITSAStatus.Annual)
         mockFetchOptInProposition(Some(proposition))
         mockFetchSavedChosenTaxYear(Some(taxYear2023))
 
@@ -74,9 +72,7 @@ class OptInCompletedControllerSpec extends TestSupport
         setupMockAuthorisationSuccess(isAgent)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        val currentTaxYear = CurrentOptInTaxYear(ITSAStatus.Annual, taxYear2023)
-        val nextTaxYear = NextOptInTaxYear(ITSAStatus.Annual, taxYear2023.nextYear, currentTaxYear)
-        val proposition = OptInProposition(currentTaxYear, nextTaxYear)
+        val proposition = createOptInProposition(taxYear2023, ITSAStatus.Annual, ITSAStatus.Annual)
         mockFetchOptInProposition(Some(proposition))
         mockFetchSavedChosenTaxYear(Some(taxYear2023.nextYear))
 
@@ -110,9 +106,7 @@ class OptInCompletedControllerSpec extends TestSupport
         setupMockAuthorisationSuccess(isAgent)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        val currentTaxYear = CurrentOptInTaxYear(ITSAStatus.Annual, taxYear2023)
-        val nextTaxYear = NextOptInTaxYear(ITSAStatus.Annual, taxYear2023.nextYear, currentTaxYear)
-        val proposition = OptInProposition(currentTaxYear, nextTaxYear)
+        val proposition = createOptInProposition(taxYear2023, ITSAStatus.Annual, ITSAStatus.Annual)
         mockFetchOptInProposition(Some(proposition))
         mockFetchSavedChosenTaxYear(None)
 
