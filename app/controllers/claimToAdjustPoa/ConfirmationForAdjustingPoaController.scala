@@ -16,6 +16,7 @@
 
 package controllers.claimToAdjustPoa
 
+import audit.AuditingService
 import cats.data.EitherT
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
@@ -23,7 +24,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import models.claimToAdjustPoa.ConfirmationForAdjustingPoaViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.{MessagesControllerComponents, _}
 import services.claimToAdjustPoa.{ClaimToAdjustPoaCalculationService, RecalculatePoaHelper}
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
@@ -40,6 +41,7 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
                                                       val poaSessionService: PaymentOnAccountSessionService,
                                                       val ctaCalculationService: ClaimToAdjustPoaCalculationService,
                                                       val view: ConfirmationForAdjustingPoa,
+                                                      val auditingService: AuditingService,
                                                       implicit val itvcErrorHandler: ItvcErrorHandler,
                                                       auth: AuthenticatorPredicate,
                                                       implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
@@ -73,7 +75,8 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
         claimToAdjustService = claimToAdjustService,
         ctaCalculationService = ctaCalculationService,
         poaSessionService = poaSessionService,
-        isAgent = isAgent
+        isAgent = isAgent,
+        auditingService = auditingService
       )
   }
 

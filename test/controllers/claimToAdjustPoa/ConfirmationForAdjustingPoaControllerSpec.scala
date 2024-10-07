@@ -16,6 +16,7 @@
 
 package controllers.claimToAdjustPoa
 
+import audit.AuditingService
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
@@ -61,7 +62,7 @@ class ConfirmationForAdjustingPoaControllerSpec extends MockAuthenticationPredic
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
     view = app.injector.instanceOf[ConfirmationForAdjustingPoa],
     poaSessionService = mockPaymentOnAccountSessionService,
-
+    auditingService = app.injector.instanceOf[AuditingService]
   )(
     appConfig = app.injector.instanceOf[FrontendAppConfig],
     mcc = app.injector.instanceOf[MessagesControllerComponents],

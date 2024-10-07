@@ -16,6 +16,7 @@
 
 package controllers.claimToAdjustPoa
 
+import audit.AuditingService
 import auth.MtdItUser
 import cats.data.EitherT
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
@@ -42,6 +43,7 @@ class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFu
                                            val ctaCalculationService: ClaimToAdjustPoaCalculationService,
                                            val auth: AuthenticatorPredicate,
                                            val checkYourAnswers: CheckYourAnswers,
+                                           val auditingService: AuditingService,
                                            implicit val itvcErrorHandler: ItvcErrorHandler,
                                            implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                           (implicit val appConfig: FrontendAppConfig,
@@ -82,7 +84,8 @@ class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFu
         claimToAdjustService = claimToAdjustService,
         ctaCalculationService = ctaCalculationService,
         poaSessionService = poaSessionService,
-        isAgent = isAgent
+        isAgent = isAgent,
+        auditingService = auditingService
       )
   }
 

@@ -17,6 +17,8 @@
 package services.claimToAdjustPoa
 
 import auth.MtdItUser
+import audit.AuditingService
+import audit.models.AdjustPaymentsOnAccountAuditModel
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
@@ -25,6 +27,7 @@ import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoAAmendmentData}
 import models.core.Nino
 import play.api.Logger
+import play.api.i18n.Messages
 import play.api.mvc.Result
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -44,7 +47,7 @@ trait RecalculatePoaHelper extends ClientConfirmedController with FeatureSwitchi
   }
 
   private def handlePoaAndOtherData(poa: PaymentOnAccountViewModel,
-                                      otherData: PoAAmendmentData, isAgent: Boolean, nino: Nino, ctaCalculationService: ClaimToAdjustPoaCalculationService)
+                                      otherData: PoAAmendmentData, isAgent: Boolean, nino: Nino, ctaCalculationService: ClaimToAdjustPoaCalculationService, auditingService: AuditingService)
                                      (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext,
                                       itvcErrorHandler: ItvcErrorHandler, itvcErrorHandlerAgent: AgentItvcErrorHandler): Future[Result] = {
     otherData match {
@@ -52,8 +55,24 @@ trait RecalculatePoaHelper extends ClientConfirmedController with FeatureSwitchi
         ctaCalculationService.recalculate(nino, poa.taxYear, amount, poaAdjustmentReason) map {
           case Left(ex) =>
             Logger("application").error(s"POA recalculation request failed: ${ex.getMessage}")
+            auditingService.extendedAudit(AdjustPaymentsOnAccountAuditModel(
+              isSuccessful = false,
+              previousPaymentOnAccountAmount = poa.totalAmountOne,
+              requestedPaymentOnAccountAmount = amount,
+              adjustmentReasonCode = poaAdjustmentReason.code,
+              adjustmentReasonDescription = Messages(poaAdjustmentReason.messagesKey),
+              isDecreased = amount < poa.totalAmountOne
+            ))
             Redirect(controllers.claimToAdjustPoa.routes.ApiFailureSubmittingPoaController.show(isAgent))
           case Right(_) =>
+            auditingService.extendedAudit(AdjustPaymentsOnAccountAuditModel(
+              isSuccessful = true,
+              previousPaymentOnAccountAmount = poa.totalAmountOne,
+              requestedPaymentOnAccountAmount = amount,
+              adjustmentReasonCode = poaAdjustmentReason.code,
+              adjustmentReasonDescription = Messages(poaAdjustmentReason.messagesKey),
+              isDecreased = amount < poa.totalAmountOne
+            ))
             Redirect(controllers.claimToAdjustPoa.routes.PoaAdjustedController.show(isAgent))
         }
       case PoAAmendmentData(_, _, _) =>
@@ -62,7 +81,7 @@ trait RecalculatePoaHelper extends ClientConfirmedController with FeatureSwitchi
   }
 
   protected def handleSubmitPoaData(claimToAdjustService: ClaimToAdjustService, ctaCalculationService: ClaimToAdjustPoaCalculationService,
-                                    poaSessionService: PaymentOnAccountSessionService, isAgent: Boolean)
+                                    poaSessionService: PaymentOnAccountSessionService, isAgent: Boolean, auditingService: AuditingService)
                                    (implicit user: MtdItUser[_], itvcErrorHandler: ItvcErrorHandler, itvcErrorHandlerAgent: AgentItvcErrorHandler): Future[Result] = {
     if (isEnabled(AdjustPaymentsOnAccount)) {
       {
@@ -71,7 +90,7 @@ trait RecalculatePoaHelper extends ClientConfirmedController with FeatureSwitchi
         } yield poaMaybe match {
           case Right(Some(poa)) =>
             dataFromSession(poaSessionService).flatMap(otherData =>
-              handlePoaAndOtherData(poa, otherData, isAgent, Nino(user.nino), ctaCalculationService)
+              handlePoaAndOtherData(poa, otherData, isAgent, Nino(user.nino), ctaCalculationService, auditingService)
             )
           case Right(None) =>
             Logger("application").error(s"Failed to create PaymentOnAccount model")

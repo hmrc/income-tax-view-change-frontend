@@ -16,22 +16,32 @@
 
 package controllers.claimToAdjustPoa
 
+import audit.models.AdjustPaymentsOnAccountAuditModel
+import auth.MtdItUser
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import controllers.claimToAdjustPoa.routes.{ApiFailureSubmittingPoaController, PoaAdjustedController}
 import helpers.ComponentSpecBase
+import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.ClaimToAdjustPoaResponse.ClaimToAdjustPoaSuccess
 import models.claimToAdjustPoa.PoAAmendmentData
+import models.core.AccountingPeriodModel
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.WSResponse
+import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.PaymentOnAccountSessionService
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testDate, testMtditid, testNino}
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testDate, testIncomeSource, testMtditid, testNino, testUserTypeAgent, testUserTypeIndividual}
+import testConstants.BusinessDetailsIntegrationTestConstants.address
 import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.validSession
 import testConstants.FinancialDetailsTestConstants.testFinancialDetailsErrorModelJson
 import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
+import uk.gov.hmrc.auth.core.retrieve.Name
+
+import java.time.LocalDate
 
 class CheckYourAnswersControllerISpec extends ComponentSpecBase {
 
@@ -47,6 +57,42 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
   val url: String = "/adjust-poa/check-your-answers"
   private val validFinancialDetailsResponseBody: JsValue =
     testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
+  lazy val fixedDate : LocalDate = LocalDate.of(2024, 6, 5)
+  lazy val incomeSource: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testNino,
+    mtdbsa = testMtditid,
+    yearOfMigration = None,
+    businesses = List(BusinessDetailsModel(
+      "testId",
+      incomeSource = Some(testIncomeSource),
+      Some(AccountingPeriodModel(fixedDate, fixedDate.plusYears(1))),
+      None,
+      None,
+      Some(getCurrentTaxYearEnd),
+      None,
+      address = Some(address),
+      cashOrAccruals = false
+    )),
+    properties = Nil
+  )
+  lazy val testUser: MtdItUser[_] = {
+    if (isAgent)
+      MtdItUser(
+        testMtditid, testNino, Some(Name(Some("Test"), Some("User"))), incomeSource,
+        None, Some("1234567890"), credId = None, Some(testUserTypeAgent), Some("1"))(FakeRequest())
+    else
+      MtdItUser(
+        testMtditid, testNino, Some(Name(Some("Test"), Some("User"))), incomeSource,
+        None, Some("1234567890"), credId = None, Some(testUserTypeIndividual), None)(FakeRequest())
+  }
+  private def auditAdjustPayementsOnAccount(isSuccessful: Boolean): AdjustPaymentsOnAccountAuditModel = AdjustPaymentsOnAccountAuditModel(
+    isSuccessful = isSuccessful,
+    previousPaymentOnAccountAmount = 2000.00,
+    requestedPaymentOnAccountAmount = 1000.00,
+    adjustmentReasonCode = "001",
+    adjustmentReasonDescription = "My main income will be lower",
+    isDecreased = true
+  )(testUser)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -260,6 +306,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
           httpStatus(SEE_OTHER),
           redirectURI(ApiFailureSubmittingPoaController.show(isAgent).url)
         )
+        verifyAuditContainsDetail(auditAdjustPayementsOnAccount(false).detail)
       }
 
       "a success response is returned when submitting POA" in {
@@ -281,6 +328,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
           httpStatus(SEE_OTHER),
           redirectURI(PoaAdjustedController.show(isAgent).url)
         )
+        verifyAuditContainsDetail(auditAdjustPayementsOnAccount(true).detail)
       }
     }
     s"return status $INTERNAL_SERVER_ERROR" when {
