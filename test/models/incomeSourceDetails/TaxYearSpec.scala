@@ -261,11 +261,11 @@ class TaxYearSpec extends UnitSpec with TestSupport {
     }
   }
 
-  ".toApiFormat()" should {
+  ".formatToYYYY_YY()" should {
 
       "match required format" in {
 
-        TaxYear.forYearEnd(2024).toApiFormat shouldBe "2023-24"
+        TaxYear.forYearEnd(2024).formatToYYYY_YY shouldBe "2023-24"
       }
     }
 }
