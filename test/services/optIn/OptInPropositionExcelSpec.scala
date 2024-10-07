@@ -19,7 +19,8 @@ package services.optIn
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Voluntary}
 import org.scalatest.prop.TableDrivenPropertyChecks._
-import services.optIn.core.{CurrentOptInTaxYear, NextOptInTaxYear, OptInProposition}
+import services.optIn.core.OptInProposition
+import services.optIn.core.OptInProposition.createOptInProposition
 import testUtils.UnitSpec
 
 import scala.io.Source
@@ -162,9 +163,9 @@ class OptInPropositionExcelSpec extends UnitSpec {
                          expectedNY: String
                         ) =>
 
-      val currentYear = CurrentOptInTaxYear(toITSAStatus(cyStatus), taxYear = currentTaxYear)
-      val nextYear = NextOptInTaxYear(toITSAStatus(nyStatus), taxYear = currentTaxYear.nextYear, currentOptInTaxYear = currentYear)
-      val optInProposition = OptInProposition(currentYear, nextYear)
+      val optInProposition = createOptInProposition(currentTaxYear,
+                                                    toITSAStatus(cyStatus),
+                                                    toITSAStatus(nyStatus))
 
       testOptIntScenario(optInProposition,
         valid,
@@ -188,12 +189,12 @@ class OptInPropositionExcelSpec extends UnitSpec {
 
     assert(optInProposition.availableTaxYearsForOptIn === presented.map(v => toTaxYear(v)))
 
-    if(valid) {
+    if (valid) {
 
       val intentTaxYear = toTaxYear(intent)
       assert(optInProposition.availableTaxYearsForOptIn.contains(intentTaxYear))
 
-      if(intent == "CY") {
+      if (intent == "CY") {
         assert(sent == "CY")
         assert(expectedCY == "V")
         assert(optInProposition.nextTaxYear.status == toITSAStatus(expectedNY))
