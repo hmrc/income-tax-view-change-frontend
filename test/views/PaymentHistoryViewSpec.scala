@@ -146,6 +146,13 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
   val entry = PaymentHistoryEntry(date = "2020-12-25", creditType = MfaCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
     linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface)
 
+  def getContent(row: Int)(implicit layoutContent: Element): String = {
+    val sectionContent = layoutContent.selectHead(s"#accordion-default-content-1")
+    val tbody = sectionContent.selectHead("table > tbody")
+    val rowHtml = tbody.selectNth("tr", row + 1)
+    rowHtml.selectNth("td", 2).select("a.govuk-link").first().ownText()
+  }
+
   "The payments history view" when {
 
     "logged in as a user" when {
