@@ -175,8 +175,8 @@
 
 @getExplanationContent = @{(viewModel.chargeItem.transactionType, viewModel.chargeItem.subTransactionType) match {
     case (MfaDebitCharge, _)                                                                     => hmrcAdjustmentExplanation
-    case (PaymentOnAccountOneReviewAndReconcile, _)  if !viewModel.otherInterestCharge           => reviewAndReconcilePoaOneDebitExplanation
-    case (PaymentOnAccountTwoReviewAndReconcile, _)  if !viewModel.otherInterestCharge           => reviewAndReconcilePoaTwoDebitExplanation
+    case (PaymentOnAccountOneReviewAndReconcile, _)  if !viewModel.latePaymentInterestCharge           => reviewAndReconcilePoaOneDebitExplanation
+    case (PaymentOnAccountTwoReviewAndReconcile, _)  if !viewModel.latePaymentInterestCharge           => reviewAndReconcilePoaTwoDebitExplanation
     case (PaymentOnAccountOneReviewAndReconcile, _)                                              => getPoa1ExtraChargeInterestExplanationContent
     case (PaymentOnAccountTwoReviewAndReconcile, _)                                              => getPoa2ExtraChargeInterestExplanationContent
     case (PaymentOnAccountOne | PaymentOnAccountTwo, _) if !viewModel.latePaymentInterestCharge  => paymentOnAccountExplanation
@@ -284,7 +284,7 @@
     </h1>
 
 
-    @if(Seq(PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile).contains(viewModel.chargeItem.transactionType) && !viewModel.isInterestCharge) {
+    @if(Seq(PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile).contains(viewModel.chargeItem.transactionType) && !viewModel.latePaymentInterestCharge) {
         @govukWarningText(WarningText(content = Text(messages("chargeSummary.reviewAndReconcilePoa.warning"))))
     }
 
@@ -316,7 +316,6 @@
         @chargeSummaryNotCodingOutAndNotPayeSelfAssessment(
             viewModel.chargeItem,
             viewModel.latePaymentInterestCharge,
-            viewModel.otherInterestCharge,
             viewModel.codingOutEnabled,
             viewModel.taxYearFromCodingOut,
             viewModel.taxYearToCodingOut,
@@ -351,7 +350,7 @@
         }
     }
 
-    @if(viewModel.otherInterestCharge) @{
+    @if(viewModel.latePaymentInterestCharge) @{
         getInterestRatesLink
     }
 
@@ -437,14 +436,6 @@
                     </tr>
                 }
 
-                @if(viewModel.otherInterestCharge){
-                    <tr>
-                        <td class="govuk-table__cell govuk-!-width-one-quarter">@{viewModel.chargeItem.interestEndDate.get.toLongDateShort}</td>
-                        <td class="govuk-table__cell">@messages(s"chargeSummary.lpi.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey(viewModel.codingOutEnabled, viewModel.reviewAndReconcileEnabled)}")</td>
-                        <td class="govuk-table__cell govuk-!-text-align-right">@{viewModel.chargeItem.interestOutstandingAmount.get.toCurrency}</td>
-                    </tr>
-                }
-
                 @if(viewModel.codingOutEnabled && viewModel.chargeItem.subTransactionType == Some(Accepted)) {
                     <tr>
                         <td class="govuk-table__cell govuk-!-width-one-quarter">@{viewModel.chargeItem.documentDate.toLongDateShort}</td>
@@ -462,7 +453,7 @@
                 }
             }
 
-            @if(viewModel.paymentAllocationEnabled && !viewModel.isInterestCharge) {
+            @if(viewModel.paymentAllocationEnabled && !viewModel.latePaymentInterestCharge) {
                 @chargeSummaryPaymentAllocation(viewModel.paymentAllocations, viewModel.payments, viewModel.chargeItem, viewModel.isAgent, None, viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)
             }
             </tbody>

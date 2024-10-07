@@ -111,7 +111,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
   val successHeadingForBCD = s"2017 to 2018 tax year ${messages("chargeSummary.balancingCharge.text")}"
   def successHeadingForRAR1(startYear: String, endYear: String) = s"$startYear to $endYear tax year ${messages("chargeSummary.reviewAndReconcilePoa1.text")}"
   def successHeadingForRAR2(startYear: String, endYear: String) = s"$startYear to $endYear tax year ${messages("chargeSummary.reviewAndReconcilePoa2.text")}"
-  def successHeadingRAR1Interest(startYear: String, endYear: String) = s"$startYear to $endYear tax year ${messages("chargeSummary.interest.reviewAndReconcilePoa1.text")}"
+  def successHeadingRAR1Interest(startYear: String, endYear: String) = s"$startYear to $endYear tax year ${messages("chargeSummary.lpi.reviewAndReconcilePoa1.text")}"
   val dunningLocksBannerHeading: String = messages("chargeSummary.dunning.locks.banner.title")
   val paymentBreakdownHeading: String = messages("chargeSummary.paymentBreakdown.heading")
   val paymentHistoryHeadingForPOA1Charge: String = messages("chargeSummary.chargeHistory.Poa1heading")

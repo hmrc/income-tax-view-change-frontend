@@ -821,8 +821,10 @@ whatYouOwe.tableHead.amount-due                                 = Swm sy’n ddy
 whatYouOwe.tableHead.tax-year                                   = Blwyddyn dreth
 whatYouOwe.paymentOnAccount1.text							    = Taliad cyntaf ar gyfrif
 whatYouOwe.paymentOnAccount2.text							    = Ail daliad ar gyfrif
-whatYouOwe.reviewAndReconcilePoa1.text                           = Taliad cyntaf ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
-whatYouOwe.reviewAndReconcilePoa2.text                           = Ail daliad ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
+whatYouOwe.reviewAndReconcilePoa1.text                          = Taliad cyntaf ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
+whatYouOwe.reviewAndReconcilePoa2.text                          = Ail daliad ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
+whatYouOwe.lpi.reviewAndReconcilePoa1.text                      = Llog ar y taliad cyntaf ar gyfrif: swm ychwanegol
+whatYouOwe.lpie.reviewAndReconcilePoa2.text                     = Llog ar yr ail daliad ar gyfrif: swm ychwanegol
 whatYouOwe.hmrcAdjustment.text                                  = Addasiad CThEF
 whatYouOwe.balancingCharge.text  							    = Taliad mantoli
 whatYouOwe.remaining-balance.heading                            = Taliad mantoli
@@ -902,8 +904,10 @@ whatYouOwe.interestChargesWarning                               = Bydd taliadau 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad cyntaf ar gyfrif
 chargeSummary.paymentOnAccount2.text                            = Ail daliad ar gyfrif
-chargeSummary.reviewAndReconcilePoa1.text				= Taliad cyntaf ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
-chargeSummary.reviewAndReconcilePoa2.text				= Ail daliad ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
+chargeSummary.reviewAndReconcilePoa1.text				        = Taliad cyntaf ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
+chargeSummary.reviewAndReconcilePoa2.text				        = Ail daliad ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
+chargeSummary.lpi.reviewAndReconcilePoa1.text                   = Llog ar y taliad cyntaf ar gyfrif: swm ychwanegol
+chargeSummary.lpi.reviewAndReconcilePoa2.text                   = Llog ar yr ail daliad ar gyfrif: swm ychwanegol
 chargeSummary.balancingCharge.text                              = Taliad mantoli
 chargeSummary.dueDate                                           = Dyddiad dyledus
 chargeSummary.class2Nic.text                                    = Class 2 National Insurance
@@ -957,6 +961,9 @@ chargeSummary.reviewAndReconcilePoa2.linkText                         = ail dali
 chargeSummary.reviewAndReconcilePoa.comma                             = ,
 chargeSummary.reviewAndReconcilePoa.p2                                = a gafodd ei addasu, yn rhy isel.
 
+chargeSummary.lpi.poaExtraCharge.link                              = Gweler yr arweiniad ynghylch
+chargeSummary.lpi.poaExtraCharge.linkText                          = y cyfraddau llog a bennir gan CThEF (yn agor tab newydd).
+
 chargeSummary.paymentBreakdown.heading   						   = Dadansoddiad o’r taliad
 chargeSummary.paymentBreakdown.incomeTax   						   = Treth Incwm
 chargeSummary.paymentBreakdown.nic2   							   = Yswiriant Gwladol Dosbarth 2
@@ -985,6 +992,9 @@ chargeSummary.lpi.chargeHistory.created.paymentOnAccount1.text          = Llog a
 chargeSummary.lpi.chargeHistory.created.paymentOnAccount2.text          = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o2 wedi’i greu
 chargeSummary.lpi.chargeHistory.created.balancingCharge.text            = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli wedi’i greu
 
+chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa1.text       = CThEF sydd wedi creu’r tâl hwn
+chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa2.text       = CThEF sydd wedi creu’r tâl hwn
+
 chargeSummary.nic2TaxYear                                               = This is the Class 2 National Insurance payment for the {0} to {1} tax year.
 
 chargeSummary.lpi.paymentsOnAccount.poa1                               = Mae arnoch log i CThEF oherwydd eich bod wedi talu’ch taliad ar gyfrif cyntaf yn hwyr.
@@ -995,6 +1005,16 @@ chargeSummary.lpi.paymentsOnAccount.textTwo                            = plws 2.
 chargeSummary.lpi.paymentsOnAccount.p3                                 = Gweler yr arweiniad ynghylch y
 chargeSummary.lpi.paymentsOnAccount.p3LinkText                         = cyfraddau llog a bennir gan CThEF (yn agor tab newydd).
 
+chargeSummary.poa1ExtraAmountInterest.p1                            = Mae arnoch log i CThEF oherwydd bod eich Ffurflen Dreth yn dangos bod eich taliad cyntaf ar gyfrif, a gafodd ei addasu, yn rhy isel.
+chargeSummary.poa1ExtraAmountInterest.p2                            = Mae CThEF yn codi’r llog ar y swm ychwanegol – y gwahaniaeth rhwng eich taliad ar gyfrif, a gafodd ei addasu, a’r hyn sydd arnoch mewn gwirionedd.
+chargeSummary.poa1ExtraAmountInterest.p3                            = Mae llog yn cael ei godi o’r dyddiad yr oedd eich taliad cyntaf ar gyfrif yn ddyledus, ac yn cael ei gyfrifo ar
+chargeSummary.poa1ExtraAmountInterest.p3LinkText                    = gyfradd sail Banc Lloegr (yn agor tab newydd)
+chargeSummary.poa1ExtraAmountInterest.p3AfterLink                   = , ynghyd â 2.5%.
+chargeSummary.poa2ExtraAmountInterest.p1                            = Mae arnoch log i CThEF oherwydd bod eich Ffurflen Dreth yn dangos bod eich ail daliad ar gyfrif, a gafodd ei addasu, yn rhy isel.
+chargeSummary.poa2ExtraAmountInterest.p2                            = Mae CThEF yn codi’r llog ar y swm ychwanegol – y gwahaniaeth rhwng eich taliad ar gyfrif, a gafodd ei addasu, a’r hyn sydd arnoch mewn gwirionedd.
+chargeSummary.poa2ExtraAmountInterest.p3                            = Mae llog yn cael ei godi o’r dyddiad yr oedd eich ail daliad ar gyfrif yn ddyledus, ac yn cael ei gyfrifo ar
+chargeSummary.poa2ExtraAmountInterest.p3LinkText                    = gyfradd sail Banc Lloegr (yn agor tab newydd)
+chargeSummary.poa2ExtraAmountInterest.p3AfterLink                   = , ynghyd â 2.5%.
 
 chargeSummary.definition.balancingcharge.p1                        = Taliad mantoli yw’r dreth sydd dal gennych i’w thalu ar gyfer blwyddyn dreth. Mae hyn yn digwydd os yw’r canlynol yn wir:
 chargeSummary.definition.balancingcharge.bullet1                   = nid oedd gennych unrhyw dreth i’w thalu yn ystod y flwyddyn (er enghraifft, os oedd eich bil treth Hunanasesiad diwethaf o dan £1,000)
@@ -1959,7 +1979,7 @@ manageBusinesses.check-answers.change                                    = Newid
 #######################################################################################################################
 
 # Adjust payments on account
-paymentOnAccount.caption                             = Addasu taliadau ar gyfrif ar gyfer blwyddyn dreth {0} i {1}
+paymentOnAccount.caption                             = Blwyddyn dreth {0} i {1}
 paymentOnAccount.heading                             = Addasu eich taliadau ar gyfrif
 paymentOnAccount.p1                                  = Gallwch addasu’r ddau daliad ar gyfrif os ydych yn disgwyl i gyfanswm eich Treth Incwm a’ch
 paymentOnAccount.class4NationalInsurance.link.text   = Cyfraniadau Yswiriant Gwladol Dosbarth 4 (yn agor tab newydd)
@@ -1975,7 +1995,7 @@ paymentOnAccount.button                              = Addasu fy nhaliadau ar gy
 paymentOnAccount.cancel.link                         = Canslo
 
 # Check your answers
-claimToAdjustPoa.checkYourAnswers.caption                    = Addasu taliadau ar gyfrif ar gyfer blwyddyn dreth {0} i {1}
+claimToAdjustPoa.checkYourAnswers.caption                    = Blwyddyn dreth {0} i {1}
 claimToAdjustPoa.checkYourAnswers.heading                    = Gwiriwch eich atebion
 claimToAdjustPoa.checkYourAnswers.summary-list-1.key         = Pam ydych yn gostwng eich taliadau ar gyfrif?
 claimToAdjustPoa.checkYourAnswers.summary-list-2.key         = Faint a ddylai bob taliad ar gyfrif fod?
@@ -1988,7 +2008,7 @@ claimToAdjustPoa.checkYourAnswers.confirm-and-save           = Cadarnhau a chadw
 # what you need to know
 claimToAdjustPoa.whatYouNeedToKnow.heading                              = 	Yr hyn y mae angen i chi ei wybod
 claimToAdjustPoa.whatYouNeedToKnow.h1                                   = 	Yr hyn y mae angen i chi ei wybod
-claimToAdjustPoa.whatYouNeedToKnow.caption                              =   Addasu taliadau ar gyfrif ar gyfer blwyddyn dreth {0} i {1}
+claimToAdjustPoa.whatYouNeedToKnow.caption                              =   Blwyddyn dreth {0} i {1}
 claimToAdjustPoa.whatYouNeedToKnow.p1                                   =   Gallwch addasu eich taliadau ar gyfrif ar unrhyw adeg cyn cyflwyno’ch Ffurflen Dreth ar gyfer {0} i {1}, ac erbyn
 claimToAdjustPoa.whatYouNeedToKnow.bold                                 =   31 Ionawr {0}
 claimToAdjustPoa.whatYouNeedToKnow.onlyForWelsh                         =   {0}fan bellaf.
@@ -2009,7 +2029,7 @@ claimToAdjustPoa.whatYouNeedToKnow.cancel                               =   Cans
 
 # confirmation
 
-claimToAdjustPoa.confirmation.caption                                   =   Addasu taliadau ar gyfrif ar gyfer blwyddyn dreth {0} i {1}
+claimToAdjustPoa.confirmation.caption                                   =   Blwyddyn dreth {0} i {1}
 claimToAdjustPoa.confirmation.heading                                   =   Cadarnhau bod hyn yn wir
 claimToAdjustPoa.confirmation.p1                                        =   Rwyf o’r farn y bydd cyfanswm fy Nhreth Incwm a chyfraniadau Yswiriant Gwladol Dosbarth 4 ar gyfer y flwyddyn dreth hon, ar ôl didynnu treth wrth y ffynhonnell (er enghraifft, o dan TWE), yn llai na chyfanswm y llynedd.
 claimToAdjustPoa.confirmation.p2                                        =   Rwy’n credu na fydd yn rhaid i mi dalu unrhyw gyfraniadau Yswiriant Gwladol Dosbarth 4 neu Dreth Incwm (er enghraifft o dan TWE) eleni.
@@ -2026,7 +2046,7 @@ claimToAdjustPoa.selectYourReason.p2.link                               =   gall
 claimToAdjustPoa.selectYourReason.p2.b                                  =   .
 claimToAdjustPoa.selectYourReason.h2                                    =   Pam ydych yn gostwng eich taliadau ar gyfrif?
 claimToAdjustPoa.selectYourReason.h2.caption.hidden                     =   Yr adran hon yw
-claimToAdjustPoa.selectYourReason.h2.caption                            =   Addasu taliadau ar gyfrif ar gyfer blwyddyn dreth {0} i {1}
+claimToAdjustPoa.selectYourReason.h2.caption                            =   Blwyddyn dreth {0} i {1}
 claimToAdjustPoa.selectYourReason.radios.main-lower                     =   Bydd fy mhrif incwm yn is
 claimToAdjustPoa.selectYourReason.radios.main-lower.hint                =   Er enghraifft, elw busnes eiddo neu unig fasnachwr.
 claimToAdjustPoa.selectYourReason.radios.other-lower                    =   Bydd fy incwm arall yn is
@@ -2039,7 +2059,7 @@ claimToAdjustPoa.selectYourReason.continue                              =   Yn e
 claimToAdjustPoa.selectYourReason.cancel                                =   Canslo
 claimToAdjustPoa.selectYourReason.error.required                        =   Dewiswch y prif reswm dros ostwng eich taliadau ar gyfrif
 
-claimToAdjustPoa.enterPoaAmount.caption                 = Addasu taliadau ar gyfrif ar gyfer blwyddyn dreth {0} i {1}
+claimToAdjustPoa.enterPoaAmount.caption                 = Blwyddyn dreth {0} i {1}
 claimToAdjustPoa.enterPoaAmount.heading                 = Nodwch swm newydd
 claimToAdjustPoa.enterPoaAmount.p1                      = Dylai pob taliad ar gyfrif fod yn hanner swm eich bil treth disgwyliedig, sy’n cynnwys:
 claimToAdjustPoa.enterPoaAmount.bullet1                 = Treth Incwm
@@ -2077,9 +2097,6 @@ claimToAdjustPoa.success.heading                    = Taliadau ar gyfrif wedi’
 claimToAdjustPoa.success.h1                         = Taliadau ar gyfrif wedi’u diweddaru
 claimToAdjustPoa.success.p1                         = Mae’ch taliadau ar gyfrif ar gyfer blwyddyn dreth 2023 i 2024 yn {2} yr un erbyn hyn
 claimToAdjustPoa.success.p2                         = Gallwch addasu’ch taliadau ar gyfrif eto, hyd at y swm cychwynnol a gyfrifwyd gan CThEF, mor aml ag sydd ei angen cyn cyflwyno’ch Ffurflen Dreth ar gyfer {0} i {1}, ac erbyn 31 Ionawr {2} fan bellaf.
-claimToAdjustPoa.success.checkYour                  = Gwiriwch eich
-claimToAdjustPoa.success.link                       = crynodeb o flwyddyn dreth {0} i {1}
-claimToAdjustPoa.success.afterLinkText              = i weld y newidiadau a wnaethoch i’ch taliadau ar gyfrif.
 claimToAdjustPoa.success.check                      = Gwirio’r
 claimToAdjustPoa.success.whatYouOwe                 = hyn sydd arnoch
 claimToAdjustPoa.success.forUpcomingCharges         = ar gyfer newidiadau sydd ar y gweill.

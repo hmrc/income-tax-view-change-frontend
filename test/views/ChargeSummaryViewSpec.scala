@@ -57,7 +57,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
                   chargeHistoryEnabled: Boolean = true,
                   paymentAllocationEnabled: Boolean = false,
                   latePaymentInterestCharge: Boolean = false,
-                  otherInterestCharge: Boolean = false,
                   codingOutEnabled: Boolean = false,
                   reviewAndReconcileEnabled: Boolean = false,
                   isAgent: Boolean = false,
@@ -78,7 +77,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       chargeHistoryEnabled = chargeHistoryEnabled,
       paymentAllocationEnabled = paymentAllocationEnabled,
       latePaymentInterestCharge = latePaymentInterestCharge,
-      otherInterestCharge = otherInterestCharge,
       codingOutEnabled = codingOutEnabled,
       reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       isAgent = isAgent,
@@ -220,7 +218,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
     def paymentOnAccountInterestCreated(number: Int) = s"Late payment interest for payment on account $number of 2 created"
 
-    val hmrcCreated: String = messages("chargeSummary.lpi.chargeHistory.created.poa1ExtraCharge.text")
+    val hmrcCreated: String = messages("chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa1.text")
 
     val balancingChargeCreated: String = messages("chargeSummary.chargeHistory.created.balancingCharge.text")
     val balancingChargeInterestCreated: String = messages("chargeSummary.lpi.chargeHistory.created.balancingCharge.text")
@@ -513,7 +511,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
           document.select("tbody tr td:nth-child(2)").text() shouldBe paymentOnAccountInterestCreated(2)
         }
 
-        "have a link to extra charge is it is a poa with an extra charge" in new TestSetup(chargeItem = basePaymentOnAccountTwo, poaExtraChargeLink = Some("testLink")) {
+        "have a link to extra charge if it is a poa with an extra charge" in new TestSetup(chargeItem = basePaymentOnAccountTwo, poaExtraChargeLink = Some("testLink")) {
           document.select("#poa-extra-charge-content").text() shouldBe s"$poaExtraChargeText1 $poaExtraChargeTextLink $poaExtraChargeText2"
           document.select("#poa-extra-charge-link").attr("href") shouldBe "testLink"
           document.select("#poa-extra-charge-link").text() shouldBe poaExtraChargeTextLink
@@ -522,6 +520,47 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
           document.doesNotHave(Selectors.id("poa-extra-charge-content"))
         }
       }
+    }
+
+    "charge is a POA 1 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PaymentOnAccountOneReviewAndReconcile), reviewAndReconcileEnabled = true) {
+      document.select("h1").text() shouldBe poa1ReconcileHeading(2018, 2)
+    }
+    "charge is a POA 2 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PaymentOnAccountTwoReviewAndReconcile), reviewAndReconcileEnabled = true) {
+      document.select("h1").text() shouldBe poa2ReconcileHeading(2018, 2)
+    }
+    "charge is interest for a POA 1 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PaymentOnAccountOneReviewAndReconcile), reviewAndReconcileEnabled = true, latePaymentInterestCharge = true) {
+      document.select("h1").text() shouldBe poa1ReconcileInterestHeading(2018, 2)
+
+      document.selectById("poa1-extra-charge-p1").text() shouldBe poa1ReconciliationInterestP1
+      document.selectById("poa1-extra-charge-p2").text() shouldBe poa1ReconciliationInterestP2
+      document.selectById("poa1-extra-charge-p3").text() shouldBe poa1ReconciliationInterestP3
+
+      verifySummaryListRowNumeric(1, dueDate, "OVERDUE 15 June 2018")
+      verifySummaryListRowNumeric(2, interestPeriod, "29 Mar 2018 to 15 Jun 2018")
+      verifySummaryListRowNumeric(3, amount, "£100.00")
+      verifySummaryListRowNumeric(4, remainingToPay, "£80.00")
+
+      document.select("tbody tr").size() shouldBe 1
+      document.select("tbody tr td:nth-child(1)").text() shouldBe "15 Jun 2018"
+      document.select("tbody tr td:nth-child(2)").text() shouldBe hmrcCreated
+      document.select("tbody tr td:nth-child(3)").text() shouldBe "£100.00"
+    }
+    "charge is interest for a POA 2 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PaymentOnAccountTwoReviewAndReconcile), reviewAndReconcileEnabled = true, latePaymentInterestCharge = true) {
+      document.select("h1").text() shouldBe poa2ReconcileInterestHeading(2018, 2)
+
+      document.selectById("poa2-extra-charge-p1").text() shouldBe poa2ReconciliationInterestP1
+      document.selectById("poa2-extra-charge-p2").text() shouldBe poa2ReconciliationInterestP2
+      document.selectById("poa2-extra-charge-p3").text() shouldBe poa2ReconciliationInterestP3
+
+      verifySummaryListRowNumeric(1, dueDate, "OVERDUE 15 June 2018")
+      verifySummaryListRowNumeric(2, interestPeriod, "29 Mar 2018 to 15 Jun 2018")
+      verifySummaryListRowNumeric(3, amount, "£100.00")
+      verifySummaryListRowNumeric(4, remainingToPay, "£80.00")
+
+      document.select("tbody tr").size() shouldBe 1
+      document.select("tbody tr td:nth-child(1)").text() shouldBe "15 Jun 2018"
+      document.select("tbody tr td:nth-child(2)").text() shouldBe hmrcCreated
+      document.select("tbody tr td:nth-child(3)").text() shouldBe "£100.00"
     }
 
     "charge is a balancing payment" when {
@@ -1214,7 +1253,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         chargeHistoryEnabled = true,
         paymentAllocationEnabled = false,
         latePaymentInterestCharge = false,
-        otherInterestCharge = false,
         codingOutEnabled = false,
         reviewAndReconcileEnabled = false,
         isAgent = false,
