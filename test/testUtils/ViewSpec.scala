@@ -39,6 +39,13 @@ trait ViewSpec extends TestSupport {
     lazy val content: Element = document.selectHead("#content")
     lazy val layoutContent: Element = document.selectHead("#main-content")
 
+    def getContent(row: Int): String = {
+      val sectionContent = layoutContent.selectHead(s"#accordion-default-content-1")
+      val tbody = sectionContent.selectHead("table > tbody")
+      val rowHtml = tbody.selectNth("tr", row + 1)
+      rowHtml.selectNth("td", 2).select("a.govuk-link").first().ownText()
+    }
+
     def pageContent(pageContentSelector: String) = document.selectHead(pageContentSelector)
 
     def findElementById(id: String): Option[Element] = {

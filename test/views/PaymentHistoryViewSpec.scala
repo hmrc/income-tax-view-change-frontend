@@ -143,15 +143,14 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
 
   val paymentHistoryMessageInfo = s"${messages("paymentHistory.info")} ${messages("taxYears.oldSa.agent.content.2")} ${messages("pagehelp.opensInNewTabText")}. ${messages("paymentHistory.info.2")}"
 
+  val entry = PaymentHistoryEntry(date = "2020-12-25", creditType = MfaCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
+    linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface)
+
   "The payments history view" when {
 
     "logged in as a user" when {
 
       "the user has payment history for a single Year" should {
-
-
-          val entry = PaymentHistoryEntry(date = "2020-12-25", creditType = MfaCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
-          linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface)
 
           s"display correct content" in new PaymentHistorySetup(List(
             (2020, List(
@@ -162,19 +161,20 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
               entry.copy(date = "2020-12-20", creditType = PaymentType)(dateServiceInterface),
               entry.copy(date = "2020-12-19", creditType = Repayment)(dateServiceInterface))))) {
 
-            def getContent(row: Int): String = {
-              val sectionContent = layoutContent.selectHead(s"#accordion-default-content-1")
-              val tbody = sectionContent.selectHead("table > tbody")
-              val rowHtml = tbody.selectNth("tr", row + 1)
-              rowHtml.selectNth("td", 2).select("a.govuk-link").first().ownText()
-            }
-
             getContent(0) shouldBe "Credit from HMRC adjustment"
             getContent(1) shouldBe "Credit from an earlier tax year"
             getContent(2) shouldBe "Credit from overpaid tax"
             getContent(3) shouldBe "Credit from repayment interest"
             getContent(4) shouldBe "Payment you made to HMRC"
             getContent(5) shouldBe "Refund issued"
+        }
+        s"display Review and Reconcile Credits" in new PaymentHistorySetup(List(
+          (2020, List(
+            entry.copy(date = "2020-12-23", creditType = PaymentOnAccountTwoReviewAndReconcileCredit)(dateServiceInterface),
+            entry.copy(date = "2020-12-23", creditType = PaymentOnAccountOneReviewAndReconcileCredit)(dateServiceInterface))))) {
+
+          getContent(0) shouldBe "First payment on account: credit from your tax return"
+          getContent(1) shouldBe "Second payment on account: credit from your tax return"
         }
 
         "has payment and refund history title when CreditsRefundsRepay OFF / PaymentHistoryRefunds ON" in
@@ -273,6 +273,15 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
     }
 
     "logged as an Agent" should {
+
+      s"display Review and Reconcile Credits" in new PaymentHistorySetup(isAgent = true, testPayments = List(
+        (2020, List(
+          entry.copy(date = "2020-12-23", creditType = PaymentOnAccountTwoReviewAndReconcileCredit)(dateServiceInterface),
+          entry.copy(date = "2020-12-23", creditType = PaymentOnAccountOneReviewAndReconcileCredit)(dateServiceInterface))))) {
+
+        getContent(0) shouldBe "First payment on account: credit from your tax return"
+        getContent(1) shouldBe "Second payment on account: credit from your tax return"
+      }
 
       s"have the title '${PaymentHistoryMessages.agentTitle}'" in new PaymentHistorySetupWhenAgentView(paymentEntriesMFA) {
         document.title() shouldBe PaymentHistoryMessages.agentTitle
