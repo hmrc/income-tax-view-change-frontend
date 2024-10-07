@@ -98,14 +98,14 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
 
     val yearsToUpdate = optOutProposition.optOutYearsToUpdate(intentTaxYear)
     val responsesSeqOfFutures = makeUpdateCalls(yearsToUpdate)
-    val result = Future.sequence(responsesSeqOfFutures).
-      map(responsesSeq => findAnyFailOrFirstSuccess(responsesSeq))
-    val resolvedResult = result.value.getOrElse(ITSAStatusUpdateResponseFailure)
-    val audit = new OptOutAudit()(auditingService)
+    Future.sequence(responsesSeqOfFutures)
+      .map(responsesSeq => findAnyFailOrFirstSuccess(responsesSeq))
+      .map { res =>
+        val auditModel = OptOutAudit.generateOptOutAudit(optOutProposition, intentTaxYear, res)
+        auditingService.extendedAudit(auditModel)
 
-    audit.generateOptOutAudit(optOutProposition, intentTaxYear, resolvedResult)
-
-    result
+        res
+      }
   }
 
   private def makeUpdateCalls(optOutYearsToUpdate: Seq[TaxYear])
