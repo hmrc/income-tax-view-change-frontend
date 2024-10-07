@@ -61,21 +61,21 @@ class OptInCompletedController @Inject()(val view: OptInCompletedView,
 
           for {
             proposition: OptInProposition <- optInService.fetchOptInProposition()
-            intent <- optInService.fetchSavedChosenTaxYear()
-          } yield {
-            intent.map { optInTaxYear =>
-              val model =
-                OptInCompletedViewModel(
-                  isAgent = isAgent,
-                  optInTaxYear = optInTaxYear,
+          intent <- optInService.fetchSavedChosenTaxYear()
+        } yield {
+          intent.map { optInTaxYear =>
+            val model =
+              OptInCompletedViewModel(
+                isAgent = isAgent,
+                optInTaxYear = optInTaxYear,
                   showAnnualReportingAdvice = proposition.showAnnualReportingAdvice(optInTaxYear),
-                  isCurrentYear = proposition.isCurrentTaxYear(optInTaxYear),
-                  optInIncludedNextYear = proposition.nextTaxYear.status == Voluntary
-                )
-              Ok(view(model))
-            }.getOrElse(errorHandler(isAgent).showInternalServerError())
-          }
+                showAnnualReportingAdvice = proposition.expectedItsaStatusesAfter(optInTaxYear).contains(Annual),
+                isCurrentYear = proposition.isCurrentTaxYear(optInTaxYear),
+                optInIncludedNextYear = proposition.nextTaxYear.status == Voluntary
+              )
+            Ok(view(model))
+          }.getOrElse(errorHandler(isAgent).showInternalServerError())
         }
+}
     }
-
 }
