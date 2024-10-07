@@ -17,7 +17,7 @@
 package audit
 
 import audit.models.{OptOutAuditModel, Outcome}
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import services.optout.OptOutProposition
 import _root_.models.incomeSourceDetails.TaxYear
 import auth.MtdItUser
@@ -25,13 +25,13 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext
 
-class OptOutAudit()(auditingService: AuditingService) {
+object OptOutAudit {
 
   def generateOptOutAudit(optOutProposition: OptOutProposition,
                           intentTaxYear: TaxYear,
-                          resolvedOutcome: Object
-                         )(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Unit = {
-    val optOutModel = OptOutAuditModel(
+                          resolvedOutcome: ITSAStatusUpdateResponse
+                         )(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): OptOutAuditModel = {
+    OptOutAuditModel(
       nino = user.nino,
       optOutRequestedFromTaxYear = intentTaxYear.formatTaxYearRange,
       currentYear = optOutProposition.currentTaxYear.taxYear.toString,
@@ -49,15 +49,15 @@ class OptOutAudit()(auditingService: AuditingService) {
       currentYearMinusOneCrystallised = optOutProposition.previousTaxYear.crystallised
     )
 
-    auditingService.extendedAudit(optOutModel)
+
   }
 
-  private def createOutcome(resolvedResponse: Object): Outcome = {
+  private def createOutcome(resolvedResponse: ITSAStatusUpdateResponse): Outcome = {
     resolvedResponse match {
-      case ITSAStatusUpdateResponseFailure => new Outcome {
+      case _: ITSAStatusUpdateResponseFailure => new Outcome {
         override val isSuccessful: Boolean = false
       }
-      case ITSAStatusUpdateResponseSuccess => new Outcome {
+      case _: ITSAStatusUpdateResponseSuccess => new Outcome {
         override val isSuccessful: Boolean = true
         override val failureReason: String = ""
         override val failureCategory: String = ""
