@@ -56,13 +56,16 @@ class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistor
     }
   }
 
-  def getRepaymentHistory(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[RepaymentHistoryErrorModel.type, List[RepaymentHistory]]] = {
+  def getRepaymentHistory(paymentHistoryAndRefundsEnabled: Boolean)
+                         (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[RepaymentHistoryErrorModel.type, List[RepaymentHistory]]] = {
 
-    repaymentHistoryConnector.getRepaymentHistoryByNino(Nino(user.nino)).map {
-      case RepaymentHistoryModel(repaymentsViewerDetails) => Right(repaymentsViewerDetails)
-      case RepaymentHistoryErrorModel(status, _) if status == 404 => Right(List())
-      case RepaymentHistoryErrorModel(_, _) => Left(RepaymentHistoryErrorModel)
-    }
+    if (paymentHistoryAndRefundsEnabled)
+      repaymentHistoryConnector.getRepaymentHistoryByNino(Nino(user.nino)).map {
+        case RepaymentHistoryModel(repaymentsViewerDetails) => Right(repaymentsViewerDetails)
+        case RepaymentHistoryErrorModel(status, _) if status == 404 => Right(List())
+        case RepaymentHistoryErrorModel(_, _) => Left(RepaymentHistoryErrorModel)
+      }
+    else Future(Right(Nil))
   }
 }
 

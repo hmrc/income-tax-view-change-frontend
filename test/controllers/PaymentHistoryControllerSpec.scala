@@ -26,6 +26,7 @@ import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import models.admin.PaymentHistoryRefunds
 import models.financialDetails.Payment
+import models.repaymentHistory.RepaymentHistory
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
@@ -94,6 +95,9 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
         when(paymentHistoryService.getPaymentHistory(any(), any()))
           .thenReturn(Future.successful(Right(testPayments)))
 
+        when(paymentHistoryService.getRepaymentHistory(any())(any(), any()))
+          .thenReturn(Future.successful(Right(List.empty[RepaymentHistory])))
+
         val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.OK
@@ -107,6 +111,9 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
         mockSingleBusinessIncomeSource()
         when(paymentHistoryService.getPaymentHistory(any(), any()))
           .thenReturn(Future.successful(Left(PaymentHistoryError)))
+
+        when(paymentHistoryService.getRepaymentHistory(any())(any(), any()))
+          .thenReturn(Future.successful(Right(List.empty[RepaymentHistory])))
 
         val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
@@ -163,8 +170,13 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
         mockSingleBusinessIncomeSource()
+
         when(paymentHistoryService.getPaymentHistory(any(), any()))
           .thenReturn(Future.successful(Right(testPayments)))
+
+        when(paymentHistoryService.getRepaymentHistory(any())(any(), any()))
+          .thenReturn(Future.successful(Right(List.empty[RepaymentHistory])))
+
         val result = controller.showAgent()(fakeRequestConfirmedClient())
         status(result) shouldBe Status.OK
         result.futureValue.session.get(gatewayPage) shouldBe Some("paymentHistory")
