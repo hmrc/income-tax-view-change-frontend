@@ -56,7 +56,6 @@
     codingOutEnabled: Boolean,
     reviewAndReconcileEnabled: Boolean,
     MFADebitsEnabled: Boolean,
-    whatYouOweCreditAmountEnabled: Boolean,
     isAgent: Boolean = false,
     isUserMigrated: Boolean = false,
     creditAndRefundEnabled: Boolean,
@@ -504,11 +503,9 @@
         @if(!whatYouOweChargesList.isChargesListEmpty) {
             @saNoteParagraph
         }
-        @if(whatYouOweCreditAmountEnabled) {
-            @whatYouOweChargesList.balanceDetails.getAbsoluteUnAllocatedCreditAmount.map { unallocatedCreditAmt =>
-                @if(unallocatedCreditAmt > 0) {
-                    @unallocatedCreditParagraphContent(unallocatedCreditAmt.toCurrencyString)
-                }
+        @whatYouOweChargesList.balanceDetails.getAbsoluteUnAllocatedCreditAmount.map { unallocatedCreditAmt =>
+            @if(unallocatedCreditAmt > 0) {
+                @unallocatedCreditParagraphContent(unallocatedCreditAmt.toCurrencyString)
             }
         }
         @if(utr.isDefined && !isAgent && whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.isDefined) {
