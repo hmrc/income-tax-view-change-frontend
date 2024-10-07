@@ -105,8 +105,8 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
         elementTextBySelector("#refundstatus")(""),
       )
 
-      verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, payments, CutOverCreditsEnabled = false,
-        MFACreditsEnabled = false).detail)
+      verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, payments, cutOverCreditsEnabled = false,
+        mfaCreditsEnabled = false).detail)
     }
 
     "return payment from earlier tax year description when CutOverCreditsEnabled and credit is defined" in {
@@ -130,8 +130,8 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
       )
 
 
-      verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, payments, CutOverCreditsEnabled = true,
-        MFACreditsEnabled = true).detail)
+      verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, payments, cutOverCreditsEnabled = true,
+        mfaCreditsEnabled = true).detail)
     }
 
 

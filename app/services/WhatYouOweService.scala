@@ -130,6 +130,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
       .filterNot(_.subTransactionType.contains(Accepted))
       .filter(_.remainingToPayByChargeOrInterest > 0)
       .filterNot(_.transactionType == MfaDebitCharge && !isMFACreditsEnabled)
+      .filter(_.notCodedOutPoa)
       .sortBy(_.dueDate.get)
   }
 }
