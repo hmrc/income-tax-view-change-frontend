@@ -24,8 +24,7 @@ import utils.Utilities.JsonUtil
 
 case class PaymentHistoryResponseAuditModel(mtdItUser: MtdItUser[_],
                                             payments: Seq[Payment],
-                                            cutOverCreditsEnabled: Boolean,
-                                            mfaCreditsEnabled: Boolean
+                                            MFACreditsEnabled: Boolean
                                            ) extends ExtendedAuditModel {
 
   override val transactionName: String = enums.TransactionName.PaymentHistoryResponse
@@ -39,10 +38,10 @@ case class PaymentHistoryResponseAuditModel(mtdItUser: MtdItUser[_],
     val hasCredit = payment.credit.isDefined
     val hasLot    = payment.lot.isDefined && payment.lotItem.isDefined
     payment.creditType match {
-      case Some(MfaCreditType)             if hasCredit && mfaCreditsEnabled      => Some(getPayment(payment, "Credit from HMRC adjustment"))
-      case Some(CutOverCreditType)         if hasCredit && cutOverCreditsEnabled  => Some(getPayment(payment, "Credit from an earlier tax year"))
+      case Some(MfaCreditType)             if hasCredit && MFACreditsEnabled      => Some(getPayment(payment, "Credit from HMRC adjustment"))
+      case Some(CutOverCreditType)         if hasCredit                           => Some(getPayment(payment, "Credit from an earlier tax year"))
       case Some(BalancingChargeCreditType) if hasCredit                           => Some(getPayment(payment, "Balancing charge credit"))
-      case Some(RepaymentInterest)      if hasCredit                           => Some(getPayment(payment, "Interest on set off charge"))
+      case Some(RepaymentInterest)         if hasCredit                           => Some(getPayment(payment, "Interest on set off charge"))
       case Some(PaymentType)               if !hasCredit && hasLot                => Some(getPayment(payment, "Payment Made to HMRC"))
       case _ => None
     }

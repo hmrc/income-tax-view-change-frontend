@@ -69,7 +69,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
   private def showForecast(calculationSummary: Option[CalculationSummary])(implicit user: MtdItUser[_]): Boolean = {
     val isCrystallised = calculationSummary.flatMap(_.crystallised).contains(true)
     val forecastDataPresent = calculationSummary.flatMap(_.forecastIncome).isDefined
-    isEnabled(ForecastCalculation) && calculationSummary.isDefined && !isCrystallised && forecastDataPresent
+    calculationSummary.isDefined && !isCrystallised && forecastDataPresent
   }
 
   private def view(liabilityCalc: LiabilityCalculationResponseModel,
@@ -122,7 +122,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
           obligations,
           codingOutEnabled,
           isEnabled(ReviewAndReconcilePoa),
-          isEnabled(ForecastCalculation),
+          showForecastData = true,
           claimToAdjustViewModel)
 
         auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(

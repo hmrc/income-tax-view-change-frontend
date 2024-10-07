@@ -34,8 +34,7 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
   val auditEvent = "PaymentHistoryResponse"
   val paymentFromEarlierYear: String = messages("paymentHistory.paymentFromEarlierYear")
 
-  private def paymentHistoryAuditFullTxm(userType: Option[AffinityGroup] = Some(Individual), MFA: Boolean = true,
-                                         CutOver: Boolean = true) = PaymentHistoryResponseAuditModel(
+  private def paymentHistoryAuditFullTxm(userType: Option[AffinityGroup] = Some(Individual), MFA: Boolean = true) = PaymentHistoryResponseAuditModel(
     mtdItUser = MtdItUser(
       mtditid = testMtditid,
       nino = testNino,
@@ -65,8 +64,6 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
         method = Some("method"), mainType = Some("ITSA Overpayment Relief"), mainTransaction = Some("4004"), lot = None, lotItem = None,
         dueDate = None, documentDate = LocalDate.parse("2018-02-05"), transactionId = None, documentDescription = None)
     ),
-    cutOverCreditsEnabled = CutOver,
-    mfaCreditsEnabled = MFA,
   )
 
   val paymentHistoryAuditMin: PaymentHistoryResponseAuditModel = PaymentHistoryResponseAuditModel(
@@ -80,13 +77,11 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
       userType = None,
       arn = None
     ),
-    payments = Seq.empty[Payment],
-    cutOverCreditsEnabled = false,
-    mfaCreditsEnabled = false,
+    payments = Seq.empty[Payment]
   )
 
-  def getExpectedJson(MFA: Boolean = true, CutOver: Boolean = true): JsObject = {
-    def getCutOver(CutOver:Boolean): JsArray = if (CutOver) Json.arr(
+  def getExpectedJson(MFA: Boolean = true): JsObject = {
+    def getCutOver: JsArray = Json.arr(
       Json.obj(
         "paymentDate" -> "2018-02-02",
         "description" -> "Credit from an earlier tax year",
@@ -97,7 +92,7 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
         "description" -> "Credit from an earlier tax year",
         "amount" -> -100.00
       ),
-    ) else Json.arr()
+    )
 
     def getMFA(MFA: Boolean): JsArray = if (MFA) Json.arr(
       Json.obj(
@@ -123,7 +118,7 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
           "description" -> "Payment Made to HMRC",
           "amount" -> 100.00
         )
-      ) ++ getCutOver(CutOver) ++ getMFA(MFA))
+      ) ++ getCutOver ++ getMFA(MFA))
     )
   }
 
@@ -139,20 +134,12 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
 
     "Have the correct details for the audit event" when {
       "Audit expected behaviour" when {
-        "CutOverCredits is enabled, MFACredits is enabled" in {
-          paymentHistoryAuditFullTxm(MFA = true, CutOver = true).detail shouldBe getExpectedJson(true, true)
+        "MFACredits is enabled" in {
+          paymentHistoryAuditFullTxm().detail shouldBe getExpectedJson()
         }
 
-        "CutOverCredits is enabled, MFACredits is disabled" in {
-          paymentHistoryAuditFullTxm(MFA = false, CutOver = true).detail shouldBe getExpectedJson(false, true)
-        }
-
-        "CutOverCredits is disabled, MFACredits is enabled" in {
-          paymentHistoryAuditFullTxm(MFA = true, CutOver = false).detail shouldBe getExpectedJson(true, false)
-        }
-
-        "CutOverCredits is disabled, MFACredits is disabled" in {
-          paymentHistoryAuditFullTxm(MFA = false, CutOver = false).detail shouldBe getExpectedJson(false, false)
+        "MFACredits is disabled" in {
+          paymentHistoryAuditFullTxm(MFA = false).detail shouldBe getExpectedJson(false)
         }
 
         "the audit is empty" in {

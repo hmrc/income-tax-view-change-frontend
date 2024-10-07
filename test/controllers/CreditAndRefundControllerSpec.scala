@@ -22,7 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.SessionTimeoutPredicate
 import mocks.auth.{MockAuthActions, MockFrontendAuthorisedFunctions}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
-import models.admin.{CreditsRefundsRepay, CutOverCredits, MFACreditsAndDebits}
+import models.admin.{CreditsRefundsRepay, MFACreditsAndDebits}
 import models.financialDetails.FinancialDetailsModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -119,7 +119,6 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
       "MFACreditsAndDebits enabled: credit charges are returned in sorted order of credits" in new Setup {
         enable(CreditsRefundsRepay)
         enable(MFACreditsAndDebits)
-        enable(CutOverCredits)
 
         mockSingleBISWithCurrentYearAsMigrationYear()
 

@@ -43,7 +43,7 @@ refundViewRow: refundViewRow,
 govukInsetText : GovukInsetText
 )
 @(viewModel: CreditAndRefundViewModel,
-    isAgent: Boolean = false, backUrl: String, isMFACreditsAndDebitsEnabled: Boolean = false, isCutOverCreditsEnabled: Boolean = false)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
+    isAgent: Boolean = false, backUrl: String, isMFACreditsAndDebitsEnabled: Boolean = false)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 @import implicitDateFormatter.longDate
 
 @getWhatYouOwe(isAgent: Boolean) = @{

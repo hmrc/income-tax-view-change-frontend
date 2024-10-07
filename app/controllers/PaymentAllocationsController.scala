@@ -25,7 +25,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import enums.GatewayPage.GatewayPage
 import forms.utils.SessionKeys.gatewayPage
 import implicits.ImplicitDateFormatterImpl
-import models.admin.{CreditsRefundsRepay, CutOverCredits, PaymentAllocation}
+import models.admin.{CreditsRefundsRepay, PaymentAllocation}
 import models.core.Nino
 import models.paymentAllocationCharges.{PaymentAllocationError, PaymentAllocationViewModel}
 import play.api.Logger
@@ -85,20 +85,15 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
       case Right(paymentAllocations: PaymentAllocationViewModel) =>
         val taxYearOpt = paymentAllocations.originalPaymentAllocationWithClearingDate.headOption.flatMap(_.allocationDetail.flatMap(_.getTaxYearOpt))
         val backUrl = getPaymentAllocationBackUrl(sessionGatewayPage, taxYearOpt, origin, isAgent)
-        if (!isEnabled(CutOverCredits) && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
-          Logger("application").warn("CutOverCredits is disabled and redirected to not found page")
-          Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show.url)
-        } else {
-          auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations))
-          val dueDate: Option[LocalDate] = paymentAllocations.paymentAllocationChargeModel.financialDetails.headOption
-            .flatMap(_.items.flatMap(_.headOption.flatMap(_.dueDate)))
-          val outstandingAmount: Option[BigDecimal] = paymentAllocations.paymentAllocationChargeModel.documentDetails.headOption.map(_.outstandingAmount)
-          Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, user.saUtr,
-            CutOverCreditsEnabled = isEnabled(CutOverCredits), btaNavPartial = user.btaNavPartial,
-            isAgent = isAgent, origin = origin, gatewayPage = sessionGatewayPage,
-            creditsRefundsRepayEnabled = isEnabled(CreditsRefundsRepay), dueDate = dueDate,
-            outstandingAmount = outstandingAmount)(implicitly, messages))
-        }
+        auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations))
+        val dueDate: Option[LocalDate] = paymentAllocations.paymentAllocationChargeModel.financialDetails.headOption
+          .flatMap(_.items.flatMap(_.headOption.flatMap(_.dueDate)))
+        val outstandingAmount: Option[BigDecimal] = paymentAllocations.paymentAllocationChargeModel.documentDetails.headOption.map(_.outstandingAmount)
+        Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, user.saUtr,
+          btaNavPartial = user.btaNavPartial,
+          isAgent = isAgent, origin = origin, gatewayPage = sessionGatewayPage,
+          creditsRefundsRepayEnabled = isEnabled(CreditsRefundsRepay), dueDate = dueDate,
+          outstandingAmount = outstandingAmount)(implicitly, messages))
 
       case Left(PaymentAllocationError(Some(Http.Status.NOT_FOUND))) =>
         Redirect(redirectUrl)

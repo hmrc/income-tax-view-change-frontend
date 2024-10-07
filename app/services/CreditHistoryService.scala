@@ -61,7 +61,7 @@ class CreditHistoryService @Inject()(financialDetailsConnector: FinancialDetails
     }
   }
 
-  def getCreditsHistory(calendarYear: Int, nino: String, isMFACreditsEnabled: Boolean, isCutoverCreditsEnabled: Boolean)
+  def getCreditsHistory(calendarYear: Int, nino: String, isMFACreditsEnabled: Boolean)
                        (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
 
     for {
@@ -71,26 +71,23 @@ class CreditHistoryService @Inject()(financialDetailsConnector: FinancialDetails
       case (Right(creditModelTY), Right(creditModelTYandOne)) =>
         val creditsForTaxYearAndPlusOne =
           (creditModelTY ++ creditModelTYandOne).filter(creditDetailModel => creditDetailModel.documentDetail.taxYear == calendarYear)
-        Right(filterExcludedCredits(creditsForTaxYearAndPlusOne, isMFACreditsEnabled, isCutoverCreditsEnabled))
+        Right(filterExcludedCredits(creditsForTaxYearAndPlusOne, isMFACreditsEnabled))
       case (Right(creditModelTY), Left(_)) =>
         val creditsForTaxYear =
           creditModelTY.filter(creditDetailModel => creditDetailModel.documentDetail.taxYear == calendarYear)
-        Right(filterExcludedCredits(creditsForTaxYear, isMFACreditsEnabled, isCutoverCreditsEnabled))
+        Right(filterExcludedCredits(creditsForTaxYear, isMFACreditsEnabled))
       case (Left(_), Right(creditModelTYandOne)) =>
         val creditsForTaxYearPlusOne =
           creditModelTYandOne.filter(creditDetailModel => creditDetailModel.documentDetail.taxYear == calendarYear)
-        Right(filterExcludedCredits(creditsForTaxYearPlusOne, isMFACreditsEnabled, isCutoverCreditsEnabled))
+        Right(filterExcludedCredits(creditsForTaxYearPlusOne, isMFACreditsEnabled))
       case (_, _) =>
         Left(CreditHistoryError)
     }
   }
 
-  private def filterExcludedCredits(credits: List[CreditDetailModel], isMFACreditsEnabled: Boolean,
-                                    isCutoverCreditsEnabled: Boolean): List[CreditDetailModel] = {
-    (isMFACreditsEnabled, isCutoverCreditsEnabled) match {
-      case (true, false) => credits.filterNot(_.creditType == CutOverCreditType)
-      case (false, true) => credits.filterNot(_.creditType == MfaCreditType)
-      case (false, false) => credits.filterNot(c => c.creditType == MfaCreditType || c.creditType == CutOverCreditType)
+  private def filterExcludedCredits(credits: List[CreditDetailModel], isMFACreditsEnabled: Boolean): List[CreditDetailModel] = {
+    isMFACreditsEnabled match {
+      case false => credits.filterNot(_.creditType == MfaCreditType)
       case _ => credits
     }
   }
