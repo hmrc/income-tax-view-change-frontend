@@ -111,12 +111,12 @@ class EnterPoAAmountViewSpec extends TestSupport{
       tableBody.select(".govuk-table__row:nth-of-type(2)").select(".govuk-table__cell:nth-of-type(2)").text shouldBe poAAmountViewModel(poaPreviouslyAdjusted = Some(true)).totalAmountOne.toCurrencyString
     }
     "render the inset text specific to the first adjustment attempt" in new Setup(viewModel = poAAmountViewModel(poaPartiallyPaid = true)) {
-      val expectedText: String = (msg("insetText.firstAttempt.para1") + " " + msg("insetText.firstAttempt.para2")).replaceAll("<b>", "").replaceAll("</b>", "")
+      val expectedText: String = (msg("insetText.h2") + " " + msg("insetText.firstAttempt.para1") + " " + msg("insetText.firstAttempt.para2")).replaceAll("<b>", "").replaceAll("</b>", "")
       document.getElementById("insetText-firstAttempt").text() shouldBe expectedText
     }
     "render the inset text specific to the second adjustment attempt" in
       new Setup(viewModel = poAAmountViewModel(poaPartiallyPaid = true, poaPreviouslyAdjusted = Some(true))) {
-        val expectedText: String = (msg("insetText.secondAttempt.para1") + " " + msg("insetText.secondAttempt.para2")).replaceAll("<b>", "").replaceAll("</b>", "")
+        val expectedText: String = (msg("insetText.h2") + " " + msg("insetText.secondAttempt.para1") + " " + msg("insetText.secondAttempt.para2")).replaceAll("<b>", "").replaceAll("</b>", "")
         document.getElementById("insetText-secondAttempt").text() shouldBe expectedText
       }
     "not render any inset text if poAs are unpaid" in new Setup(viewModel = poAAmountViewModel()) {
