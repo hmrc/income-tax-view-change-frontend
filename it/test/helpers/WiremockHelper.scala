@@ -203,7 +203,7 @@ trait WiremockHelper {
 
   lazy val ws = app.injector.instanceOf[WSClient]
 
-  lazy val wmConfig = wireMockConfig().port(wiremockPort).notifier(new ConsoleNotifier(false)) // turn off verbose logging in the Integration tests
+  lazy val wmConfig = wireMockConfig().port(wiremockPort).notifier(new ConsoleNotifier(false)) // for more verbose logging
 
   lazy val wireMockServer = new WireMockServer(wmConfig)
 
