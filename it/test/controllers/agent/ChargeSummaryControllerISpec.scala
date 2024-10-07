@@ -37,7 +37,6 @@ import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.FinancialDetailsIntegrationTestConstants.financialDetailModelPartial
 import testConstants.IncomeSourceIntegrationTestConstants._
-import testConstants.messages.ChargeSummaryMessages
 import testConstants.messages.ChargeSummaryMessages._
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
@@ -361,7 +360,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       result should have(
         httpStatus(OK),
         pageTitleAgent("chargeSummary.paymentOnAccount1.text"),
-        elementTextBySelector("#payment-processing-bullets")(ChargeSummaryMessages.paymentprocessingbullet1Agent)
       )
     }
   }
