@@ -157,37 +157,37 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
     "getGroupedPaymentHistoryData should combine payments and approved repayments and group by year" when {
       "both payments and repayments are present" in {
         getGroupedPaymentHistoryData(payments, repaymentHistory, isAgent = false,
-          MFACreditsEnabled = true, CutOverCreditsEnabled = true, reviewAndReconcileEnabled = true, languageUtils
+          mfaCreditsEnabled = true, cutOverCreditsEnabled = true, reviewAndReconcileEnabled = true, languageUtils
         )(messages, dateService ) shouldBe groupedRepayments() ++ groupedPayments()
       }
 
       "only payments are present" in {
         getGroupedPaymentHistoryData(payments, List(), isAgent = false,
-          MFACreditsEnabled = true, CutOverCreditsEnabled = true, reviewAndReconcileEnabled = true, languageUtils
+          mfaCreditsEnabled = true, cutOverCreditsEnabled = true, reviewAndReconcileEnabled = true, languageUtils
         )(messages, dateService) shouldBe groupedPayments()
       }
 
       "only approved repayments are present" in {
         getGroupedPaymentHistoryData(List(), repaymentHistory, isAgent = false,
-          MFACreditsEnabled = true, CutOverCreditsEnabled = true, reviewAndReconcileEnabled = true, languageUtils
+          mfaCreditsEnabled = true, cutOverCreditsEnabled = true, reviewAndReconcileEnabled = true, languageUtils
         )(messages, dateService) shouldBe groupedRepayments()
       }
 
       "cutover credits are NOT present when switch is OFF" in {
         getGroupedPaymentHistoryData(payments, List(), isAgent = false,
-          MFACreditsEnabled = true, CutOverCreditsEnabled = false, reviewAndReconcileEnabled = true, languageUtils
+          mfaCreditsEnabled = true, cutOverCreditsEnabled = false, reviewAndReconcileEnabled = true, languageUtils
         )(messages, dateService) shouldBe groupedPayments(false, true, true)
       }
 
       "mfa credits are NOT present when switch is OFF" in {
         getGroupedPaymentHistoryData(payments, List(), isAgent = false,
-          MFACreditsEnabled = false, CutOverCreditsEnabled = true, reviewAndReconcileEnabled = true, languageUtils
+          mfaCreditsEnabled = false, cutOverCreditsEnabled = true, reviewAndReconcileEnabled = true, languageUtils
         )(messages, dateService) shouldBe groupedPayments(true, false, true)
       }
 
       "review and reconcile credits are NOT present when switch is OFF" in {
         getGroupedPaymentHistoryData(payments, List(), isAgent = false,
-          MFACreditsEnabled = true, CutOverCreditsEnabled = true, reviewAndReconcileEnabled = false, languageUtils
+          mfaCreditsEnabled = true, cutOverCreditsEnabled = true, reviewAndReconcileEnabled = false, languageUtils
         )(messages, dateService) shouldBe groupedPayments(true, true, false)
       }
     }

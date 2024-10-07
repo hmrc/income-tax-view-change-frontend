@@ -80,8 +80,8 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
         auditingService.extendedAudit(PaymentHistoryResponseAuditModel(
           mtdItUser = user,
           payments = payments,
-          CutOverCreditsEnabled = isEnabled(CutOverCredits),
-          MFACreditsEnabled = isEnabled(MFACreditsAndDebits)
+          cutOverCreditsEnabled = isEnabled(CutOverCredits),
+          mfaCreditsEnabled = isEnabled(MFACreditsAndDebits)
         ))
 
         val paymentHistoryEntries = RepaymentHistoryUtils.getGroupedPaymentHistoryData(
@@ -89,8 +89,8 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
           payments = payments,
           repayments = repayments,
           languageUtils = languageUtils,
-          CutOverCreditsEnabled = isEnabled(CutOverCredits),
-          MFACreditsEnabled = isEnabled(MFACreditsAndDebits),
+          cutOverCreditsEnabled = isEnabled(CutOverCredits),
+          mfaCreditsEnabled = isEnabled(MFACreditsAndDebits),
           reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa)
         )
 
