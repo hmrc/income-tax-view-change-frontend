@@ -17,7 +17,6 @@
 package models.optin
 
 import models.incomeSourceDetails.TaxYear
-import models.optin.OptInCompletedViewModel
 import testUtils.UnitSpec
 
 class OptInCompletedViewModelSpec extends UnitSpec {
@@ -30,30 +29,33 @@ class OptInCompletedViewModelSpec extends UnitSpec {
     val optInTaxYear = currentTaxYear
 
     s"Individual" in {
-      val model = OptInCompletedViewModel(isAgent = false, optInTaxYear = optInTaxYear, isCurrentYear = false, optInIncludedNextYear = false)
+      val model = OptInCompletedViewModel(isAgent = false, optInTaxYear = optInTaxYear, isCurrentYear = false, showAnnualReportingAdvice = false, optInIncludedNextYear = false)
 
       model.startYear shouldBe "2022"
       model.endYear shouldBe "2023"
       model.isAgent shouldBe false
+      model.showAnnualReportingAdvice shouldBe false
       model.nextYear shouldBe "2024"
     }
 
     s"Individual with following year Voluntary" in {
-      val model = OptInCompletedViewModel(isAgent = false, optInTaxYear = optInTaxYear, isCurrentYear = false, optInIncludedNextYear = true)
+      val model = OptInCompletedViewModel(isAgent = false, optInTaxYear = optInTaxYear, isCurrentYear = false, showAnnualReportingAdvice = false, optInIncludedNextYear = true)
 
       model.startYear shouldBe "2022"
       model.endYear shouldBe "2023"
       model.isAgent shouldBe false
+      model.showAnnualReportingAdvice shouldBe false
       model.nextYear shouldBe "2024"
       model.optInIncludedNextYear shouldBe true
     }
 
     s"Agent" in {
-      val model = OptInCompletedViewModel(isAgent = true, optInTaxYear = optInTaxYear, isCurrentYear = true, optInIncludedNextYear = false)
+      val model = OptInCompletedViewModel(isAgent = true, optInTaxYear = optInTaxYear, isCurrentYear = true, showAnnualReportingAdvice = false, optInIncludedNextYear = false)
 
       model.startYear shouldBe "2022"
       model.endYear shouldBe "2023"
       model.isAgent shouldBe true
+      model.showAnnualReportingAdvice shouldBe false
       model.nextYear shouldBe "2024"
     }
   }
@@ -63,20 +65,22 @@ class OptInCompletedViewModelSpec extends UnitSpec {
     val optInTaxYear = currentTaxYear.nextYear
 
     s"Individual" in {
-      val model = OptInCompletedViewModel(isAgent = false, optInTaxYear = optInTaxYear, isCurrentYear = true, optInIncludedNextYear = false)
+      val model = OptInCompletedViewModel(isAgent = false, optInTaxYear = optInTaxYear, isCurrentYear = true, showAnnualReportingAdvice = false, optInIncludedNextYear = false)
 
       model.startYear shouldBe "2023"
       model.endYear shouldBe "2024"
       model.isAgent shouldBe false
+      model.showAnnualReportingAdvice shouldBe false
       model.nextYear shouldBe "2025"
     }
 
     s"Agent" in {
-      val model = OptInCompletedViewModel(isAgent = true, optInTaxYear = optInTaxYear, isCurrentYear = true, optInIncludedNextYear = false)
+      val model = OptInCompletedViewModel(isAgent = true, optInTaxYear = optInTaxYear, isCurrentYear = true, showAnnualReportingAdvice = false, optInIncludedNextYear = false)
 
       model.startYear shouldBe "2023"
       model.endYear shouldBe "2024"
       model.isAgent shouldBe true
+      model.showAnnualReportingAdvice shouldBe false
       model.nextYear shouldBe "2025"
     }
   }
