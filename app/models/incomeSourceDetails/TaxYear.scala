@@ -61,7 +61,7 @@ case class TaxYear(startYear: Int, endYear: Int) {
     LocalDate.of(this.endYear, April, Fifth)
   }
 
-  def formatToYYYY_YY: String = {
+  def shortenTaxYearEnd: String = {
     s"$startYear-${endYear.toString.toSeq.drop(2)}"
   }
 

@@ -60,7 +60,7 @@ class ITSAStatusUpdateConnector @Inject()(val httpClient: HttpClientV2, val appC
   def makeITSAStatusUpdate(taxYear: TaxYear, taxableEntityId: String, updateReason: String)
                           (implicit headerCarrier: HeaderCarrier): Future[ITSAStatusUpdateResponse] = {
 
-    val body = ITSAStatusUpdateRequest(taxYear = taxYear.formatToYYYY_YY, updateReason = updateReason)
+    val body = ITSAStatusUpdateRequest(taxYear = taxYear.shortenTaxYearEnd, updateReason = updateReason)
 
     updateITSAStatus(taxableEntityId, requestBody = body)
       .map { response =>
