@@ -68,14 +68,4 @@ class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContex
         )
     }
   }
-
-  private def handleError(isAgent: Boolean)(implicit request: Request[_]): Result = {
-    val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-    errorHandler.showInternalServerError()
-  }
-
-  private def logErrorWithMessage(isAgent: Boolean, message: String): Unit = {
-    Logger("application").error(s"${if (isAgent) "Agent" else "Individual"} $message")
-  }
-
 }
