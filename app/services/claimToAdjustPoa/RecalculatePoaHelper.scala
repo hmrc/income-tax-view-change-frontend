@@ -27,14 +27,15 @@ import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoAAmendmentData}
 import models.core.Nino
 import play.api.Logger
-import play.api.i18n.Messages
+import play.api.i18n.{Lang, Messages,LangImplicits}
+import play.api.i18n.MessagesApi
 import play.api.mvc.Result
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait RecalculatePoaHelper extends ClientConfirmedController with FeatureSwitching {
+trait RecalculatePoaHelper extends ClientConfirmedController with FeatureSwitching with LangImplicits{
 
   private def dataFromSession(poaSessionService: PaymentOnAccountSessionService)(implicit hc: HeaderCarrier, ec: ExecutionContext)
   : Future[PoAAmendmentData] = {
@@ -50,6 +51,7 @@ trait RecalculatePoaHelper extends ClientConfirmedController with FeatureSwitchi
                                       otherData: PoAAmendmentData, isAgent: Boolean, nino: Nino, ctaCalculationService: ClaimToAdjustPoaCalculationService, auditingService: AuditingService)
                                      (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext,
                                       itvcErrorHandler: ItvcErrorHandler, itvcErrorHandlerAgent: AgentItvcErrorHandler): Future[Result] = {
+    implicit val lang : Lang = Lang("en")
     otherData match {
       case PoAAmendmentData(Some(poaAdjustmentReason), Some(amount), _) =>
         ctaCalculationService.recalculate(nino, poa.taxYear, amount, poaAdjustmentReason) map {
@@ -60,7 +62,7 @@ trait RecalculatePoaHelper extends ClientConfirmedController with FeatureSwitchi
               previousPaymentOnAccountAmount = poa.totalAmountOne,
               requestedPaymentOnAccountAmount = amount,
               adjustmentReasonCode = poaAdjustmentReason.code,
-              adjustmentReasonDescription = Messages(poaAdjustmentReason.messagesKey),
+              adjustmentReasonDescription = Messages(poaAdjustmentReason.messagesKey)(lang2Messages),
               isDecreased = amount < poa.totalAmountOne
             ))
             Redirect(controllers.claimToAdjustPoa.routes.ApiFailureSubmittingPoaController.show(isAgent))
@@ -70,7 +72,7 @@ trait RecalculatePoaHelper extends ClientConfirmedController with FeatureSwitchi
               previousPaymentOnAccountAmount = poa.totalAmountOne,
               requestedPaymentOnAccountAmount = amount,
               adjustmentReasonCode = poaAdjustmentReason.code,
-              adjustmentReasonDescription = Messages(poaAdjustmentReason.messagesKey),
+              adjustmentReasonDescription = Messages(poaAdjustmentReason.messagesKey,lang)(lang2Messages),
               isDecreased = amount < poa.totalAmountOne
             ))
             Redirect(controllers.claimToAdjustPoa.routes.PoaAdjustedController.show(isAgent))
