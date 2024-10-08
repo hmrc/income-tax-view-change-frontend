@@ -91,7 +91,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
             utr = validUTR
           ) flatMap {
             case Right(clientDetails) =>
-              checkAgentAuthorisedAndGetRole(clientDetails.mtdItId).flatMap{userRole =>
+              checkAgentAuthorisedAndGetRole(clientDetails.mtdItId).flatMap{ userRole =>
                 val sessionCookieData: SessionCookieData = SessionCookieData(clientDetails, validUTR, userRole == SecondaryAgent)
                 handleSessionCookies(sessionCookieData) { sessionCookies =>
                   sendAudit(true, user, sessionCookieData.utr, sessionCookieData.nino, sessionCookieData.mtditid)
@@ -124,7 +124,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
       .authorised(Enrolment(primaryAgentEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
         .withDelegatedAuthRule(primaryAgentAuthRule)).retrieve(allEnrolments and affinityGroup and confidenceLevel and credentials) {
         case _ ~ _ ~ _ ~ _ => Future.successful(PrimaryAgent)
-      }.fallbackTo {
+      }.recoverWith { case e =>
         authorisedFunctions
           .authorised(Enrolment(secondaryAgentEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
             .withDelegatedAuthRule(secondaryAgentAuthRule)).retrieve(allEnrolments and affinityGroup and confidenceLevel and credentials)

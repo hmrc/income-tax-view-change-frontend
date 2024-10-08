@@ -109,6 +109,16 @@ trait MockFrontendAuthorisedFunctions extends BeforeAndAfterEach {
         })
   }
 
+  def setupMockEmptyPredicate[X, Y](retrievalValue: X ~ Y): Unit = {
+    when(mockAuthService.authorised(EmptyPredicate))
+      .thenReturn(
+        new mockAuthService.AuthorisedFunction(EmptyPredicate) {
+          override def retrieve[A](retrieval: Retrieval[A]) = new mockAuthService.AuthorisedFunctionWithResult[A](EmptyPredicate, retrieval) {
+            override def apply[B](body: A => Future[B])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[B] = body.apply(retrievalValue.asInstanceOf[A])
+          }
+        })
+  }
+
   def setupMockAgentAuthorisationException(exception: AuthorisationException = new InvalidBearerToken, withClientPredicate: Boolean = true): Unit = {
 
     {

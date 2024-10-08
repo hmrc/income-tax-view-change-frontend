@@ -138,8 +138,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
       "redirect to the confirm client details page" when {
         "the utr entered is valid, there is a client/primary agent relationship and the POST request to session data service is successful" in {
           val validUTR: String = "1234567890"
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-
+          setupMockEmptyPredicate(testAgentAuthRetrievalSuccess)
 
           setupMockPostSessionData(Right(SessionDataPostSuccess(OK)))
 
@@ -164,9 +163,10 @@ class EnterClientsUTRControllerSpec extends TestSupport
           verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(EmptyPredicate))
           verify(mockAuthService, times(1)).authorised(Enrolment("HMRC-MTD-IT").withIdentifier("MTDITID", testMtditid).withDelegatedAuthRule("mtd-it-auth"))
         }
+
         "the utr entered is valid, there is a client/secondary agent relationship and the POST request to session data service is successful" in {
           val validUTR: String = "1234567890"
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+          setupMockEmptyPredicate(testAgentAuthRetrievalSuccess)
 
           setupMockPostSessionData(Right(SessionDataPostSuccess(OK)))
 
@@ -198,7 +198,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
           val validUTR: String = "1234567890"
           val utrWithSpaces: String = " 1 2 3 4 5 6 7 8 9 0 "
 
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+          setupMockEmptyPredicate(testAgentAuthRetrievalSuccess)
           setupMockPostSessionData(Right(SessionDataPostSuccess(OK)))
 
           mockClientDetails(validUTR)(
@@ -228,7 +228,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
           val validUTR: String = "1234567890"
           val utrWithSpaces: String = " 1 2 3 4 5 6 7 8 9 0 "
 
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+          setupMockEmptyPredicate(testAgentAuthRetrievalSuccess)
           setupMockPostSessionData(Right(SessionDataPostSuccess(OK)))
 
           mockClientDetails(validUTR)(
