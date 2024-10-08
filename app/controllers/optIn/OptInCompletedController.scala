@@ -17,6 +17,7 @@
 package controllers.optIn
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
+import cats.data.OptionT
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
@@ -58,7 +59,7 @@ class OptInCompletedController @Inject()(val view: OptInCompletedView,
       implicit user =>
         withRecover(isAgent) {
 
-          for {
+          OptionT(for {
             proposition <- optInService.fetchOptInProposition()
             intent <- optInService.fetchSavedChosenTaxYear()
           } yield {
@@ -70,7 +71,7 @@ class OptInCompletedController @Inject()(val view: OptInCompletedView,
                 isCurrentYear = proposition.isCurrentTaxYear(optInTaxYear),
                 optInIncludedNextYear = proposition.nextTaxYear.status == Voluntary
               ))
-          }
+          })
             .map(model => Ok(view(model)))
             .getOrElse(errorHandler(isAgent).showInternalServerError())
         }
