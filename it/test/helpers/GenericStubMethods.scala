@@ -49,6 +49,7 @@ trait GenericStubMethods extends CustomMatchers {
     if (authorised) {
       if (hasAgentEnrolment) {
         Given("I stub the primary agent is authorised with an agent reference number")
+        AuthStub.stubAuthorisedNullPredicate(clientMtdId)
         AuthStub.stubPrimaryAuthorisedAgent(clientMtdId)
       } else {
         Given("I stub the primary agent is authorised without an agent reference number")
@@ -64,6 +65,8 @@ trait GenericStubMethods extends CustomMatchers {
     if (authorised) {
       if (hasAgentEnrolment) {
         Given("I stub the secondary agent is authorised with an agent reference number")
+        AuthStub.stubAuthorisedNullPredicate(clientMtdId)
+        AuthStub.failedPrimaryAgent(clientMtdId)
         AuthStub.stubSecondaryAuthorisedAgent(clientMtdId)
       } else {
         Given("I stub the secondary agent is authorised without an agent reference number")
