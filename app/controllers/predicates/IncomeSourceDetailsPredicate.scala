@@ -16,17 +16,14 @@
 
 package controllers.predicates
 
-import auth.{MtdItUser, MtdItUserOptionNino, MtdItUserWithNino}
+import auth.{MtdItUser, MtdItUserOptionNino}
 import config.ItvcErrorHandler
 import controllers.BaseController
-import models.core.{NinoResponseError, NinoResponseSuccess}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
-import play.api.Logger
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import uk.gov.hmrc.http.HeaderNames
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -46,7 +43,7 @@ class IncomeSourceDetailsPredicate @Inject()(val incomeSourceDetailsService: Inc
     // no caching for now
     incomeSourceDetailsService.getIncomeSourceDetails() map {
       case response: IncomeSourceDetailsModel =>
-        Right(MtdItUser(request.mtditid, response.nino, request.userName, response, None, request.saUtr, request.credId, request.userType, None))
+        Right(MtdItUser(request.mtditid, response.nino, request.userName, response, None, request.saUtr, request.credId, request.userType, request.arn))
       case _ => Left(itvcErrorHandler.showInternalServerError())
     }
   }

@@ -28,7 +28,7 @@ import play.api.mvc.{AnyContent, MessagesControllerComponents, Request, Result}
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.Name
-import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames, InternalServerException}
+import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
 import scala.concurrent.Future
 
