@@ -54,19 +54,9 @@ object OptOutAudit {
 
   private def createOutcome(resolvedResponse: ITSAStatusUpdateResponse): Outcome = {
     resolvedResponse match {
-      case _: ITSAStatusUpdateResponseFailure => new Outcome {
-        override val isSuccessful: Boolean = false
-      }
-      case _: ITSAStatusUpdateResponseSuccess => new Outcome {
-        override val isSuccessful: Boolean = true
-        override val failureReason: String = ""
-        override val failureCategory: String = ""
-      }
-      case _ => new Outcome {
-        override val isSuccessful: Boolean = false
-        override val failureReason: String = "Unknown failure reason"
-        override val failureCategory: String = "Unknown failure category"
-      }
+      case _: ITSAStatusUpdateResponseFailure => Outcome(isSuccessful = false, failureCategory = Some("API_FAILURE"), failureReason = Some("Failure reasons"))
+      case _: ITSAStatusUpdateResponseSuccess => Outcome(isSuccessful = true, failureCategory = None, failureReason = None)
+      case _ => Outcome(isSuccessful = false, failureCategory = Some("Unknown failure reason"), failureReason = Some("Unknown failure category"))
     }
   }
 

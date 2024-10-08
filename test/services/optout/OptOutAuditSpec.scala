@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package services.optout
 
 import audit.OptOutAudit
@@ -40,7 +41,7 @@ class OptOutAuditSpec extends UnitSpec {
         val intentTextYear: TaxYear = new TaxYear(22, 23)
         val resolvedResponse: ITSAStatusUpdateResponse = ITSAStatusUpdateResponseSuccess(OK)
         val auditModel: OptOutAuditModel = OptOutAudit.generateOptOutAudit(optOutProposition, intentTextYear, resolvedResponse)
-        val expectedOutcome: Outcome = Outcome(isSuccessful = true, "", "")
+        val expectedOutcome: Outcome = Outcome(isSuccessful = true, None, None)
 
         auditModel.nino shouldEqual user.nino
         auditModel.currentYear shouldEqual "2023-2024"
@@ -54,7 +55,7 @@ class OptOutAuditSpec extends UnitSpec {
         val intentTextYear: TaxYear = new TaxYear(22, 23)
         val resolvedResponse: ITSAStatusUpdateResponse = ITSAStatusUpdateResponseFailure.defaultFailure()
         val auditModel: OptOutAuditModel = OptOutAudit.generateOptOutAudit(optOutProposition, intentTextYear, resolvedResponse)
-        val expectedOutcome: Outcome = Outcome(isSuccessful = false, "API_FAILURE", "Failure reasons")
+        val expectedOutcome: Outcome = Outcome(isSuccessful = false, Some("API_FAILURE"), Some("Failure reasons"))
 
         auditModel.outcome shouldEqual expectedOutcome
 

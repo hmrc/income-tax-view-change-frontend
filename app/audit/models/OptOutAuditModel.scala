@@ -63,9 +63,9 @@ case class OptOutAuditModel(nino: String, outcome: Outcome, optOutRequestedFromT
 
 }
 
-case class Outcome(isSuccessful: Boolean = true,
-                   failureCategory: String = "API_FAILURE",
-                   failureReason: String = "Failure reasons")
+case class Outcome(isSuccessful: Boolean,
+                   failureCategory: Option[String],
+                   failureReason: Option[String])
 
 object OptOutAuditModel {
 
