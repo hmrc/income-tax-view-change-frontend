@@ -30,10 +30,9 @@
  * limitations under the License.
  */
 
-package connectors.optout
+package connectors.itsastatus
 
 import config.FrontendAppConfig
-import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnector._
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel._
 import models.incomeSourceDetails.TaxYear
@@ -45,6 +44,7 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.Json
 import play.mvc.Http.Status.{BAD_REQUEST, NO_CONTENT}
+import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -52,10 +52,11 @@ import scala.concurrent.Future
 
 class ITSAStatusUpdateConnectorSpec extends AnyWordSpecLike with Matchers with BeforeAndAfter with ScalaFutures {
 
+  val httpClient2: HttpClientV2 = mock(classOf[HttpClientV2])
   val httpClient: HttpClient = mock(classOf[HttpClient])
   val appConfig: FrontendAppConfig = mock(classOf[FrontendAppConfig])
   implicit val headerCarrier: HeaderCarrier = mock(classOf[HeaderCarrier])
-  val connector = new ITSAStatusUpdateConnector(httpClient, appConfig)
+  val connector = new ITSAStatusUpdateConnector(httpClient2, httpClient, appConfig)
 
   val taxYear = TaxYear.forYearEnd(2024)
   val taxableEntityId: String = "AB123456A"

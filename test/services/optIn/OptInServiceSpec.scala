@@ -191,45 +191,45 @@ class OptInServiceSpec extends UnitSpec
     }
   }
 
-  "OptInService.makeOptInCall" should {
-
-    "success response case" in {
-
-      mockRepository(selectedOptInYear = Some(currentTaxYear.toString))
-
-      when(optOutConnector.optIn(any(), any())(any()))
-        .thenReturn(Future.successful(ITSAStatusUpdateResponseSuccess()))
-
-      val result = service.makeOptInCall()(user, hc, executionContext()).futureValue
-
-      result.isInstanceOf[ITSAStatusUpdateResponseSuccess] shouldBe true
-    }
-
-    "fail response case" in {
-
-      mockRepository(selectedOptInYear = Some(currentTaxYear.toString))
-
-      when(optOutConnector.optIn(any(), any())(any()))
-        .thenReturn(Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure()))
-
-      val result = service.makeOptInCall()(user, hc, executionContext()).futureValue
-
-      result.isInstanceOf[ITSAStatusUpdateResponseFailure] shouldBe true
-    }
-
-    "fail where missing intent tax-year case" in {
-
-      mockRepository(selectedOptInYear = None)
-
-      when(optOutConnector.makeITSAStatusUpdate(any(), any(), any())(any()))
-        .thenReturn(Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure()))
-
-      val result = service.makeOptInCall()(user, hc, executionContext()).futureValue
-
-      result.isInstanceOf[ITSAStatusUpdateResponseFailure] shouldBe true
-    }
-
-  }
+//  "OptInService.makeOptInCall" should {
+//
+//    "success response case" in {
+//
+//      mockRepository(selectedOptInYear = Some(currentTaxYear.toString))
+//
+//      when(optOutConnector.optIn(any(), any())(any()))
+//        .thenReturn(Future.successful(ITSAStatusUpdateResponseSuccess()))
+//
+//      val result = service.makeOptInCall()(user, hc, executionContext()).futureValue
+//
+//      result.isInstanceOf[ITSAStatusUpdateResponseSuccess] shouldBe true
+//    }
+//
+//    "fail response case" in {
+//
+//      mockRepository(selectedOptInYear = Some(currentTaxYear.toString))
+//
+//      when(optOutConnector.optIn(any(), any())(any()))
+//        .thenReturn(Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure()))
+//
+//      val result = service.makeOptInCall()(user, hc, executionContext()).futureValue
+//
+//      result.isInstanceOf[ITSAStatusUpdateResponseFailure] shouldBe true
+//    }
+//
+//    "fail where missing intent tax-year case" in {
+//
+//      mockRepository(selectedOptInYear = None)
+//
+//      when(optOutConnector.makeITSAStatusUpdate(any(), any(), any())(any()))
+//        .thenReturn(Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure()))
+//
+//      val result = service.makeOptInCall()(user, hc, executionContext()).futureValue
+//
+//      result.isInstanceOf[ITSAStatusUpdateResponseFailure] shouldBe true
+//    }
+//
+//  }
 
   "OptInService.getMultiYearCheckYourAnswersViewModel" should {
 

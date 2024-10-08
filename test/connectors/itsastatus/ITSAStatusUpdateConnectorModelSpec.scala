@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package connectors.optout
+package connectors.itsastatus
 
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel._
 import models.incomeSourceDetails.TaxYear
@@ -22,7 +22,7 @@ import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.{JsSuccess, Json}
 import testUtils.UnitSpec
 
-class OptOutUpdateRequestModelSpec extends UnitSpec with Matchers {
+class ITSAStatusUpdateConnectorModelSpec extends UnitSpec with Matchers {
 
   val endYear = 2024
 

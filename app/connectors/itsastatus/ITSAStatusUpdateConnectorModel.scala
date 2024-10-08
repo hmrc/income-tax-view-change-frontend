@@ -29,7 +29,7 @@ object ITSAStatusUpdateConnectorModel {
 
   case class ITSAStatusUpdateResponseSuccess(statusCode: Int = NO_CONTENT) extends ITSAStatusUpdateResponse
   case class ErrorItem(code: String, reason: String)
-  case class ITSAStatusUpdateResponseFailure(failures: List[ErrorItem]) extends ITSAStatusUpdateResponse
+  case class ITSAStatusUpdateResponseFailure(failures: List[ErrorItem] = List()) extends ITSAStatusUpdateResponse
 
   object ITSAStatusUpdateResponseFailure {
     def defaultFailure(message: String = "unknown reason"): ITSAStatusUpdateResponseFailure =
