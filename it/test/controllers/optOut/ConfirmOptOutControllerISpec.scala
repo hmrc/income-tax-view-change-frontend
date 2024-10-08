@@ -16,7 +16,9 @@
 
 package controllers.optOut
 
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
+import audit.OptOutAudit
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
+import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import helpers.{ComponentSpecBase, ITSAStatusUpdateConnectorStub, OptOutSessionRepositoryHelper}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
@@ -26,6 +28,7 @@ import play.api.libs.json.Json
 import play.mvc.Http.Status
 import play.mvc.Http.Status.{BAD_REQUEST, SEE_OTHER}
 import repositories.UIJourneySessionDataRepository
+import services.optout.{OptOutProposition, OptOutTestSupport}
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
@@ -128,6 +131,12 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
           httpStatus(SEE_OTHER),
           redirectURI(confirmedPageUrl)
         )
+
+        val optOutProposition: OptOutProposition = OptOutTestSupport.buildThreeYearOptOutProposition()
+        val resolvedResponse: ITSAStatusUpdateResponse = ITSAStatusUpdateResponseSuccess(SEE_OTHER)
+        val audit = OptOutAudit.generateOptOutAudit(optOutProposition, currentTaxYear, resolvedResponse)
+
+        verifyAuditContainsDetail(audit.detail)
 
       }
     }
