@@ -21,6 +21,8 @@ import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockOptInService, MockOptOutService}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
@@ -28,6 +30,8 @@ import services.optIn.core.OptInProposition.createOptInProposition
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
 import views.html.optIn.OptInCompletedView
+
+import scala.concurrent.Future
 
 class OptInCompletedControllerSpec extends TestSupport
   with MockAuthenticationPredicate with MockOptOutService with MockOptInService {
@@ -51,6 +55,7 @@ class OptInCompletedControllerSpec extends TestSupport
   def testShowSuccessCase(isAgent: Boolean): Unit = {
 
     "show page for current year" should {
+
       s"return result with $OK status" in {
 
         setupMockAuthorisationSuccess(isAgent)
@@ -59,6 +64,9 @@ class OptInCompletedControllerSpec extends TestSupport
         val proposition = createOptInProposition(taxYear2023, ITSAStatus.Annual, ITSAStatus.Annual)
         mockFetchOptInProposition(Some(proposition))
         mockFetchSavedChosenTaxYear(Some(taxYear2023))
+
+        when(mockOptInService.optinCompletedPageModel(any())(any(), any(), any()))
+          .thenReturn(Future.successful(intentOpl))
 
         val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
         val result = controller.show(isAgent).apply(requestGET)

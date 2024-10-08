@@ -23,7 +23,7 @@ import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateRes
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import controllers.routes
 import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.ITSAStatus
+import models.itsaStatus.ITSAStatus.{ITSAStatus, Voluntary}
 import models.optin.{ConfirmTaxYearViewModel, MultiYearCheckYourAnswersViewModel, OptInCompletedViewModel, OptInSessionData}
 import repositories.ITSAStatusRepositorySupport._
 import repositories.UIJourneySessionDataRepository
@@ -112,8 +112,8 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
       nextYearITSAStatus = stringToStatus(contextData.nextYearITSAStatus)
 
       proposition = createOptInProposition(currentYearAsTaxYear,
-                                           currentYearITSAStatus,
-                                           nextYearITSAStatus)
+        currentYearITSAStatus,
+        nextYearITSAStatus)
 
     } yield proposition
 
@@ -131,8 +131,8 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
         val nextYear = currentYear.nextYear
         fetchOptInInitialState(currentYear, nextYear)
           .map(initialState => createOptInProposition(currentYear,
-                                                      initialState.currentYearItsaStatus,
-                                                      initialState.nextYearItsaStatus))
+            initialState.currentYearItsaStatus,
+            initialState.nextYearItsaStatus))
       }
     }
   }
@@ -193,23 +193,22 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
     result.value
   }
 
-
-
-//  for {
-//    proposition: OptInProposition <- optInService.fetchOptInProposition()
-//    intent <- optInService.fetchSavedChosenTaxYear()
-//  } yield {
-//    intent.map { optInTaxYear =>
-//      val model =
-//        OptInCompletedViewModel(
-//          isAgent = isAgent,
-//          optInTaxYear = optInTaxYear,
-//          showAnnualReportingAdvice = proposition.showAnnualReportingAdvice(optInTaxYear),
-//          isCurrentYear = proposition.isCurrentTaxYear(optInTaxYear),
-//          optInIncludedNextYear = proposition.nextTaxYear.status == Voluntary
-//        )
-//      Ok(view(model))
-//    }.getOrElse(errorHandler(isAgent).showInternalServerError())
-//  }
+  def optinCompletedPageModel(isAgent: Boolean)(implicit user: MtdItUser[_],
+                                                hc: HeaderCarrier,
+                                                ec: ExecutionContext): OptionT[Future, OptInCompletedViewModel] = {
+    OptionT(for {
+      proposition <- fetchOptInProposition()
+      intent <- fetchSavedChosenTaxYear()
+    } yield {
+      intent.map(optInTaxYear =>
+        OptInCompletedViewModel(
+          isAgent = isAgent,
+          optInTaxYear = optInTaxYear,
+          showAnnualReportingAdvice = proposition.showAnnualReportingAdvice(optInTaxYear),
+          isCurrentYear = proposition.isCurrentTaxYear(optInTaxYear),
+          optInIncludedNextYear = proposition.nextTaxYear.status == Voluntary
+        ))
+    })
+  }
 
 }
