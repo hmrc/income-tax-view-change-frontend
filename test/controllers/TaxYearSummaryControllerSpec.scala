@@ -535,9 +535,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
 
 
 
-      def testMFADebits(MFAEnabled: Boolean): Assertion = {
-        if (MFAEnabled) enable(MFACreditsAndDebits) else disable(MFACreditsAndDebits)
-
+      def testMFADebits(): Assertion = {
         mockSingleBusinessIncomeSource()
         mockCalculationSuccessfulNew(testMtditid)
         mockFinancialDetailsSuccess(financialDetailsModelResponse = MFADebitsFinancialDetails)
@@ -553,7 +551,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         ).map(TaxYearSummaryChargeItem.fromChargeItem)
 
         val calcOverview: CalculationSummary = CalculationSummary(liabilityCalculationModelSuccessful)
-        val charges = if (MFAEnabled) mfaCharges else testEmptyChargesList
+        val charges = mfaCharges
         val expectedContent: String = taxYearSummaryView(
           testTaxYear,
           TaxYearSummaryViewModel(
@@ -572,11 +570,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         contentAsString(result) shouldBe expectedContent
       }
 
-      "display MFA Debits when FS is enabled" in {
-        testMFADebits(true)
-      }
-      "not display MFA Debits when FS is disabled" in {
-        testMFADebits(false)
+      "display MFA Debits" in {
+        testMFADebits()
       }
     }
 

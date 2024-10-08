@@ -55,7 +55,6 @@
     dunningLock: Boolean,
     codingOutEnabled: Boolean,
     reviewAndReconcileEnabled: Boolean,
-    MFADebitsEnabled: Boolean,
     isAgent: Boolean = false,
     isUserMigrated: Boolean = false,
     creditAndRefundEnabled: Boolean,
@@ -188,12 +187,10 @@
     <div id="payment-details-content-4" >
         @getCancelPayeMessage
     </div>
-    @if(MFADebitsEnabled) {
-        <div id="payment-details-content-5" >
-            @h2(msg = "whatYouOwe.hmrcAdjustment.heading", optId = Some("hmrc-adjustment-heading"))
-            @p(id = Some("hmrc-adjustment-line1"))(Html(messages("whatYouOwe.hmrcAdjustment.line1")))
-        </div>
-    }
+    <div id="payment-details-content-5" >
+        @h2(msg = "whatYouOwe.hmrcAdjustment.heading", optId = Some("hmrc-adjustment-heading"))
+        @p(id = Some("hmrc-adjustment-line1"))(Html(messages("whatYouOwe.hmrcAdjustment.line1")))
+    </div>
 }
 
 @dunningLockParagraph = {

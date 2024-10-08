@@ -34,7 +34,7 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
   val auditEvent = "PaymentHistoryResponse"
   val paymentFromEarlierYear: String = messages("paymentHistory.paymentFromEarlierYear")
 
-  private def paymentHistoryAuditFullTxm(userType: Option[AffinityGroup] = Some(Individual), MFA: Boolean = true) = PaymentHistoryResponseAuditModel(
+  private def paymentHistoryAuditFullTxm(userType: Option[AffinityGroup] = Some(Individual)) = PaymentHistoryResponseAuditModel(
     mtdItUser = MtdItUser(
       mtditid = testMtditid,
       nino = testNino,
@@ -63,7 +63,7 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
       Payment(reference = Some("mfa2"), amount = Some(-100.00), outstandingAmount = None,
         method = Some("method"), mainType = Some("ITSA Overpayment Relief"), mainTransaction = Some("4004"), lot = None, lotItem = None,
         dueDate = None, documentDate = LocalDate.parse("2018-02-05"), transactionId = None, documentDescription = None)
-    ),
+    )
   )
 
   val paymentHistoryAuditMin: PaymentHistoryResponseAuditModel = PaymentHistoryResponseAuditModel(
@@ -134,12 +134,8 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
 
     "Have the correct details for the audit event" when {
       "Audit expected behaviour" when {
-        "MFACredits is enabled" in {
+        "MFACredits is available" in {
           paymentHistoryAuditFullTxm().detail shouldBe getExpectedJson()
-        }
-
-        "MFACredits is disabled" in {
-          paymentHistoryAuditFullTxm(MFA = false).detail shouldBe getExpectedJson(false)
         }
 
         "the audit is empty" in {

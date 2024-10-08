@@ -61,7 +61,6 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
                    creditAndRefundModel: CreditsModel,
                    isAgent: Boolean = false,
                    backUrl: String = "testString",
-                   isMFACreditsAndDebitsEnabled: Boolean = false,
                    welshLang: Boolean  = false) {
 
     val testMessages: Messages = if(welshLang) {
@@ -74,8 +73,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
       creditAndRefundView(
         viewModel,
         isAgent = isAgent,
-        backUrl,
-        isMFACreditsAndDebitsEnabled = isMFACreditsAndDebitsEnabled
+        backUrl
       )(FakeRequest(), implicitly, testMessages)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
     lazy val layoutContent: Element = document.selectHead("#main-content")
@@ -239,8 +237,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
             .withMfaCredit(dueDate = LocalDate.of(2018, 1, 1), 1400.0)
             .withMfaCredit(dueDate = LocalDate.of(2018, 2, 1), 1000.0)
             .withAvailableCredit(0.0)
-            .get(),
-          isMFACreditsAndDebitsEnabled = true
+            .get()
         ) {
 
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
@@ -285,8 +282,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
             .withBalancingChargeCredit(LocalDate.of(2022, 1, 1), 200.0)
             .withRepaymentInterest(LocalDate.of(2020, 1, 1), 400.0)
             .withMfaCredit(LocalDate.of(2019, 1, 1), 500.0)
-            .get(),
-          isMFACreditsAndDebitsEnabled = true
+            .get()
         ) {
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
@@ -311,7 +307,6 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
             .withRepaymentInterest(LocalDate.of(2020, 1, 1), 400.0)
             .withMfaCredit(LocalDate.of(2019, 1, 1), 500.0)
             .get(),
-          isMFACreditsAndDebitsEnabled = true,
           welshLang = true
         ) {
           document.title() shouldBe "Hawlio ad-daliad - Rheoli’ch diweddariadau Treth Incwm - GOV.UK"

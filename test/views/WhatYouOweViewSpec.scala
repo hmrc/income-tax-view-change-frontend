@@ -125,7 +125,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
                   dunningLock: Boolean = false,
                   migrationYear: Int = fixedDate.getYear - 1,
                   codingOutEnabled: Boolean = true,
-                  MFADebitsEnabled: Boolean = false,
                   reviewAndReconcileEnabled: Boolean = false,
                   adjustPaymentsOnAccountFSEnabled: Boolean = false,
                   claimToAdjustViewModel: Option[WYOClaimToAdjustViewModel] = None
@@ -156,7 +155,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       dunningLock = dunningLock,
       codingOutEnabled = codingOutEnabled,
       reviewAndReconcileEnabled = reviewAndReconcileEnabled,
-      MFADebitsEnabled = MFADebitsEnabled,
       creditAndRefundEnabled = true,
       claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel))(FakeRequest(), individualUser, implicitly, dateService)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
@@ -179,7 +177,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
                        migrationYear: Int = fixedDate.getYear - 1,
                        codingOutEnabled: Boolean = true,
                        reviewAndReconcileEnabled: Boolean = false,
-                       MFADebitsEnabled: Boolean = false,
                        dunningLock: Boolean = false,
                        hasLpiWithDunningLock: Boolean = false,
                        adjustPaymentsOnAccountFSEnabled: Boolean = false,
@@ -218,7 +215,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       dunningLock = dunningLock,
       codingOutEnabled = codingOutEnabled,
       reviewAndReconcileEnabled = reviewAndReconcileEnabled,
-      MFADebitsEnabled = MFADebitsEnabled,
       creditAndRefundEnabled = true,
       isAgent = true,
       claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel)
@@ -1250,14 +1246,14 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   }
 
   "MFA Debits is enabled" should {
-    "have an HMRC adjustment payment due" in new TestSetup(charges = whatYouOweDataWithMFADebits, MFADebitsEnabled = true) {
+    "have an HMRC adjustment payment due" in new TestSetup(charges = whatYouOweDataWithMFADebits) {
       pageDocument.title() shouldBe whatYouOweTitle
       pageDocument.selectFirst("h1").text shouldBe whatYouOweHeading
       pageDocument.getElementById("due-0").text.contains(hmrcAdjustment)
       pageDocument.select("#due-0 a").get(0).text() shouldBe hmrcAdjustment + s" 1"
       pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
     }
-    "display the payment details content" in new TestSetup(charges = whatYouOweDataWithMFADebits, MFADebitsEnabled = true) {
+    "display the payment details content" in new TestSetup(charges = whatYouOweDataWithMFADebits) {
       pageDocument.getElementById("hmrc-adjustment-heading").text shouldBe hmrcAdjustmentHeading
       pageDocument.getElementById("hmrc-adjustment-line1").text shouldBe hmrcAdjustmentLine1
     }

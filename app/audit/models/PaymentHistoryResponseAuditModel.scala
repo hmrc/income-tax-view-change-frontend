@@ -23,9 +23,7 @@ import play.api.libs.json.{JsObject, JsValue, Json}
 import utils.Utilities.JsonUtil
 
 case class PaymentHistoryResponseAuditModel(mtdItUser: MtdItUser[_],
-                                            payments: Seq[Payment],
-                                            MFACreditsEnabled: Boolean
-                                           ) extends ExtendedAuditModel {
+                                            payments: Seq[Payment]) extends ExtendedAuditModel {
 
   override val transactionName: String = enums.TransactionName.PaymentHistoryResponse
   override val auditType: String = enums.AuditType.PaymentHistoryResponse
@@ -38,7 +36,7 @@ case class PaymentHistoryResponseAuditModel(mtdItUser: MtdItUser[_],
     val hasCredit = payment.credit.isDefined
     val hasLot    = payment.lot.isDefined && payment.lotItem.isDefined
     payment.creditType match {
-      case Some(MfaCreditType)             if hasCredit && MFACreditsEnabled      => Some(getPayment(payment, "Credit from HMRC adjustment"))
+      case Some(MfaCreditType)             if hasCredit                           => Some(getPayment(payment, "Credit from HMRC adjustment"))
       case Some(CutOverCreditType)         if hasCredit                           => Some(getPayment(payment, "Credit from an earlier tax year"))
       case Some(BalancingChargeCreditType) if hasCredit                           => Some(getPayment(payment, "Balancing charge credit"))
       case Some(RepaymentInterest)         if hasCredit                           => Some(getPayment(payment, "Interest on set off charge"))

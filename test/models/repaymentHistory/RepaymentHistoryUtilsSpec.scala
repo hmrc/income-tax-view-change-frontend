@@ -156,16 +156,25 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
   "RepaymentHistoryUtils" should {
     "getGroupedPaymentHistoryData should combine payments and approved repayments and group by year" when {
       "both payments and repayments are present" in {
+<<<<<<< HEAD
         getGroupedPaymentHistoryData(payments, repaymentHistory, isAgent = false, reviewAndReconcileEnabled = true, languageUtils
+=======
+        getGroupedPaymentHistoryData(payments, repaymentHistory, isAgent = false, languageUtils
+>>>>>>> 1e6237942 (Removed mfa credits and debits FS)
         )(messages, dateService ) shouldBe groupedRepayments() ++ groupedPayments()
       }
 
       "only payments are present" in {
+<<<<<<< HEAD
         getGroupedPaymentHistoryData(payments, List(), isAgent = false, reviewAndReconcileEnabled = true, languageUtils
+=======
+        getGroupedPaymentHistoryData(payments, List(), isAgent = false, languageUtils
+>>>>>>> 1e6237942 (Removed mfa credits and debits FS)
         )(messages, dateService) shouldBe groupedPayments()
       }
 
       "only approved repayments are present" in {
+<<<<<<< HEAD
         getGroupedPaymentHistoryData(List(), repaymentHistory, isAgent = false, reviewAndReconcileEnabled = true, languageUtils
         )(messages, dateService) shouldBe groupedRepayments()
       }
@@ -174,6 +183,11 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
         getGroupedPaymentHistoryData(payments, List(), isAgent = false, reviewAndReconcileEnabled = false, languageUtils
         )(messages, dateService) shouldBe groupedPayments(true, true, false)
       }
+=======
+        getGroupedPaymentHistoryData(List(), repaymentHistory, isAgent = false, languageUtils
+        )(messages, dateService) shouldBe groupedRepayments()
+      }
+>>>>>>> 1e6237942 (Removed mfa credits and debits FS)
     }
   }
 }

@@ -93,8 +93,6 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
         case (year, response) if year == taxYear => response
       }
       matchingYear.headOption match {
-        case Some(fdm: FinancialDetailsModel) if (!isEnabled(MFACreditsAndDebits) && isMFADebit(fdm, id)) =>
-          Future.successful(Ok(customNotFoundErrorView()))
         case Some(fdmForTaxYear: FinancialDetailsModel) if fdmForTaxYear.documentDetails.exists(_.transactionId == id) =>
           doShowChargeSummary(taxYear, id, isInterestCharge, fdmForTaxYear, paymentsFromAllYears, isAgent, origin, isMFADebit(fdmForTaxYear, id))
         case Some(_: FinancialDetailsModel) =>

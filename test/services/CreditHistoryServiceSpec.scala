@@ -19,7 +19,6 @@ package services
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import mocks.connectors.MockFinancialDetailsConnector
-import models.admin.MFACreditsAndDebits
 import models.financialDetails.FinancialDetailsErrorModel
 import play.api.test.FakeRequest
 import services.CreditHistoryService.CreditHistoryError
@@ -57,40 +56,27 @@ class CreditHistoryServiceSpec extends TestSupport with MockFinancialDetailsConn
       "return a credit history error (~getFinancialDetails failed)" in {
         setupMockGetFinancialDetails(taxYear, nino)(FinancialDetailsErrorModel(500, "ERROR"))
         setupMockGetFinancialDetails(taxYear + 1, nino)(FinancialDetailsErrorModel(500, "ERROR"))
-        TestCreditHistoryService.getCreditsHistory(taxYear, nino, isMFACreditsEnabled = false).futureValue shouldBe Left(CreditHistoryError)
+        TestCreditHistoryService.getCreditsHistory(taxYear, nino).futureValue shouldBe Left(CreditHistoryError)
       }
     }
 
     "a successful response returned from the connector" when {
-      "feature switches of MFACreditsAndDebits are enabled" should {
+      "entering the service" should {
         "return a list of MFA/BC/CutOver credits" in {
-          enable(MFACreditsAndDebits)
           setupMockGetFinancialDetails(taxYear, nino)(taxYearFinancialDetails)
           setupMockGetFinancialDetails(taxYear + 1, nino)(taxYearFinancialDetails_PlusOneYear)
-          val futureResult = TestCreditHistoryService.getCreditsHistory(taxYear, nino, isMFACreditsEnabled = true)
+          val futureResult = TestCreditHistoryService.getCreditsHistory(taxYear, nino)
           whenReady(futureResult) { result =>
             result shouldBe Right(List(creditDetailModelasCutOver, creditDetailModelasMfa, creditDetailModelasBCC))
           }
         }
         "return a list of all credits" in {
-          enable(MFACreditsAndDebits)
           setupMockGetFinancialDetails(taxYear, nino)(taxYearFinancialDetailsAllCredits)
           setupMockGetFinancialDetails(taxYear + 1, nino)(taxYearFinancialDetailsAllCreditsPlusOneYear)
-          val futureResult = TestCreditHistoryService.getCreditsHistory(taxYear, nino, isMFACreditsEnabled = true)
+          val futureResult = TestCreditHistoryService.getCreditsHistory(taxYear, nino)
           whenReady(futureResult) { result =>
             result shouldBe Right(List(
               creditDetailModelasSetInterest, creditDetailModelasCutOver, creditDetailModelasMfa, creditDetailModelasBCC))
-          }
-        }
-      }
-      "feature switch of MFACreditsAndDebits is disabled" should {
-        "return a list of Cutover and BC credits" in {
-          disable(MFACreditsAndDebits)
-          setupMockGetFinancialDetails(taxYear, nino)(taxYearFinancialDetails)
-          setupMockGetFinancialDetails(taxYear + 1, nino)(taxYearFinancialDetails_PlusOneYear)
-          val futureResult = TestCreditHistoryService.getCreditsHistory(taxYear, nino, isMFACreditsEnabled = false)
-          whenReady(futureResult) { result =>
-            result shouldBe Right(List(creditDetailModelasCutOver, creditDetailModelasBCC))
           }
         }
       }

@@ -23,7 +23,6 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.FeatureSwitching
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import models.admin.MFACreditsAndDebits
 import models.creditDetailModel.CreditDetailModel
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -93,7 +92,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
                     origin: Option[String] = None)
                    (implicit user: MtdItUser[_],
                     hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
-    creditHistoryService.getCreditsHistory(calendarYear, user.nino, isEnabled(MFACreditsAndDebits)).flatMap {
+    creditHistoryService.getCreditsHistory(calendarYear, user.nino).flatMap {
       case Right(credits) =>
         val charges: List[CreditDetailModel] = credits.sortBy(_.date.toEpochDay)
         val maybeAvailableCredit: Option[BigDecimal] =

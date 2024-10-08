@@ -61,7 +61,7 @@ class CreditHistoryService @Inject()(financialDetailsConnector: FinancialDetails
     }
   }
 
-  def getCreditsHistory(calendarYear: Int, nino: String, isMFACreditsEnabled: Boolean)
+  def getCreditsHistory(calendarYear: Int, nino: String)
                        (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
 
     for {
@@ -71,24 +71,17 @@ class CreditHistoryService @Inject()(financialDetailsConnector: FinancialDetails
       case (Right(creditModelTY), Right(creditModelTYandOne)) =>
         val creditsForTaxYearAndPlusOne =
           (creditModelTY ++ creditModelTYandOne).filter(creditDetailModel => creditDetailModel.documentDetail.taxYear == calendarYear)
-        Right(filterExcludedCredits(creditsForTaxYearAndPlusOne, isMFACreditsEnabled))
+        Right(creditsForTaxYearAndPlusOne)
       case (Right(creditModelTY), Left(_)) =>
         val creditsForTaxYear =
           creditModelTY.filter(creditDetailModel => creditDetailModel.documentDetail.taxYear == calendarYear)
-        Right(filterExcludedCredits(creditsForTaxYear, isMFACreditsEnabled))
+        Right(creditsForTaxYear)
       case (Left(_), Right(creditModelTYandOne)) =>
         val creditsForTaxYearPlusOne =
           creditModelTYandOne.filter(creditDetailModel => creditDetailModel.documentDetail.taxYear == calendarYear)
-        Right(filterExcludedCredits(creditsForTaxYearPlusOne, isMFACreditsEnabled))
+        Right(creditsForTaxYearPlusOne)
       case (_, _) =>
         Left(CreditHistoryError)
-    }
-  }
-
-  private def filterExcludedCredits(credits: List[CreditDetailModel], isMFACreditsEnabled: Boolean): List[CreditDetailModel] = {
-    isMFACreditsEnabled match {
-      case false => credits.filterNot(_.creditType == MfaCreditType)
-      case _ => credits
     }
   }
 }

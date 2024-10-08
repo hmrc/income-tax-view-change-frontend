@@ -64,6 +64,7 @@ object RepaymentHistoryUtils {
   def getGroupedPaymentHistoryData(payments: List[Payment], repayments: List[RepaymentHistory], isAgent: Boolean, reviewAndReconcileEnabled: Boolean, languageUtils: LanguageUtils
                                   )(implicit messages: Messages, dateServiceInterface: DateServiceInterface): List[(Int, List[PaymentHistoryEntry])] = {
     val combinedPayments = combinePaymentHistoryData(payments, repayments, isAgent, reviewAndReconcileEnabled, languageUtils
+
     )
     groupedPayments(combinedPayments)
   }
