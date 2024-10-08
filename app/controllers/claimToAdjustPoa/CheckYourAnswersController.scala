@@ -76,7 +76,7 @@ class CheckYourAnswersController @Inject()(val authActions: AuthActions,
       handleSubmitPoaData(
         claimToAdjustService = claimToAdjustService,
         ctaCalculationService = ctaCalculationService,
-        poaSessionService = poaSessionService,
+        poaSessionService = poaSessionService
       ) recover logAndRedirect
   }
 
