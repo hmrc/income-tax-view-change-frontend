@@ -2312,7 +2312,7 @@ optin.completedOptIn.submitUpdates.desc1.a      = For any tax year you are repor
 optin.completedOptIn.submitUpdates.desc1.b      = software compatible with Making Tax Digital for Income Tax (opens in new tab).
 optin.completedOptIn.submitUpdates.desc1.b.url  = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax
 
-optin.completedOptIn.ny.submitUpdates.desc2     = When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software.
+optin.completedOptIn.submitUpdates.annualReportingAdvice     = When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software.
 
 optin.completedOptIn.futureReporting            = Reporting in the future
 optin.completedOptIn.cy.futureReporting.desc1   = You have just chosen to voluntarily report quarterly from the {0} to {1} tax year onwards, but in the future it could be mandatory for you if:
