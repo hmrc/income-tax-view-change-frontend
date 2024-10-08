@@ -24,7 +24,7 @@ import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import controllers.routes
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
-import models.optin.{ConfirmTaxYearViewModel, MultiYearCheckYourAnswersViewModel, OptInSessionData}
+import models.optin.{ConfirmTaxYearViewModel, MultiYearCheckYourAnswersViewModel, OptInCompletedViewModel, OptInSessionData}
 import repositories.ITSAStatusRepositorySupport._
 import repositories.UIJourneySessionDataRepository
 import services.optIn.core.OptInProposition._
@@ -192,5 +192,24 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
 
     result.value
   }
+
+
+
+//  for {
+//    proposition: OptInProposition <- optInService.fetchOptInProposition()
+//    intent <- optInService.fetchSavedChosenTaxYear()
+//  } yield {
+//    intent.map { optInTaxYear =>
+//      val model =
+//        OptInCompletedViewModel(
+//          isAgent = isAgent,
+//          optInTaxYear = optInTaxYear,
+//          showAnnualReportingAdvice = proposition.showAnnualReportingAdvice(optInTaxYear),
+//          isCurrentYear = proposition.isCurrentTaxYear(optInTaxYear),
+//          optInIncludedNextYear = proposition.nextTaxYear.status == Voluntary
+//        )
+//      Ok(view(model))
+//    }.getOrElse(errorHandler(isAgent).showInternalServerError())
+//  }
 
 }
