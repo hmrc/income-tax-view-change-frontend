@@ -389,7 +389,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       res should have(
         httpStatus(OK),
         pageTitleIndividual("chargeSummary.balancingCharge.text"),
-        elementTextBySelector("#payment-processing-bullets")(paymentprocessingbullet1)
       )
     }
   }
@@ -645,7 +644,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         httpStatus(OK),
         pageTitleIndividual("chargeSummary.hmrcAdjustment.text"),
         elementTextBySelector(".govuk-summary-list")(summaryListText),
-        elementCountBySelector(s"#payment-link-$testTaxYear")(1),
         elementCountBySelector("#payment-history-table tr")(2),
         elementTextBySelector("#payment-history-table tr")(paymentHistoryText)
       )

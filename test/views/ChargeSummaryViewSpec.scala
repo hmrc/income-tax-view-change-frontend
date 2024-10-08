@@ -618,7 +618,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
             document.select("#coding-out-notice").text() shouldBe insetPara
             document.select("#coding-out-message").text() shouldBe codingOutMessage2017To2018WithStringMessagesArgument
             document.select("#coding-out-notice-link").attr("href") shouldBe cancellledPayeTaxCodeInsetLink
-            document.select("a.govuk-button").size() shouldBe 0
             document.select(".govuk-table").size() shouldBe 1
             document.select(".govuk-table tbody tr").size() shouldBe 1
             document.select(".govuk-table tbody tr").get(0).text() shouldBe s"29 Mar 2018 ${messages("chargeSummary.codingOutPayHistoryAmount", "2019", "2020")} £2,500.00"
@@ -637,7 +636,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
             document.select("#coding-out-notice-link").attr("href") shouldBe cancellledPayeTaxCodeInsetLink
             document.selectById("paymentAmount").text() shouldBe "Payment amount £2,500.00"
             document.selectById("codingOutRemainingToPay").text() shouldBe messages("chargeSummary.codingOutRemainingToPay", "2019", "2020")
-            document.select("a.govuk-button").size() shouldBe 0
             document.select(".govuk-table tbody tr").size() shouldBe 1
           }
 
@@ -656,7 +654,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
             document.select("#coding-out-notice").text() shouldBe ""
             document.select("#coding-out-message").text() shouldBe ""
             document.select("#coding-out-notice-link").attr("href") shouldBe ""
-            document.select("a.govuk-button").size() shouldBe 1
             document.select(".govuk-table").size() shouldBe 1
             document.select(".govuk-table tbody tr").size() shouldBe 1
           }
@@ -686,13 +683,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
           paymentBreakdown = Nil
         ) {
           document.doesNotHave(Selectors.id("heading-payment-breakdown"))
-        }
-
-        "have payment link for cancelled PAYE self assessment" in new TestSetup(
-          chargeItem = baseBalancingCancelled,
-          codingOutEnabled = true
-        ) {
-          document.select("div#payment-link-2018").text() shouldBe s"${messages("paymentDue.payNow")} ${messages("paymentDue.pay-now-hidden", "2017", "2018")}"
         }
 
         "display a payment history" in new TestSetup(
@@ -778,7 +768,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe balancingChargeRequest
       }
 
-      "display balancing charge due date as N/A and hide sections - Payment Breakdown, Make a payment button," +
+      "display balancing charge due date as N/A and hide sections - Payment Breakdown," +
         "Any payments you make, Payment History when balancing charge is 0" in new TestSetup(
           baseBalancing.copy(
               taxYear = TaxYear.forYearEnd(2018),
@@ -821,8 +811,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
           messages("chargeSummary.hmrcAdjustment.text")
         // remaining to pay should be the same as payment amount
         document.select(".govuk-summary-list").text() shouldBe summaryListText
-        // there should be a "make a payment" button
-        document.select("#payment-link-2019").size() shouldBe 1
         // payment history should show only "HMRC adjustment created"
         document.select("#payment-history-table tr").size shouldBe 2
         document.select("#payment-history-table tr").text() shouldBe paymentHistoryText
@@ -844,8 +832,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
           messages("chargeSummary.hmrcAdjustment.text")
         // remaining to pay should be zero
         document.select(".govuk-summary-list").text() shouldBe summaryListText
-        // there should not be a "make a payment" button
-        document.select("#payment-link-2019").size() shouldBe 0
         // payment history should show two rows "HMRC adjustment created" and "payment put towards HMRC Adjustment"
         document.select("#payment-history-table tr").size shouldBe 4
         document.select("#payment-history-table tr:nth-child(1)").text() shouldBe paymentHistoryText
@@ -1050,18 +1036,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       }
     }
 
-    "have a payment link when an outstanding amount is to be paid" in new TestSetup(
-      chargeItem = chargeItemModel(transactionType = BalancingCharge)
-    ) {
-      document.select("div#payment-link-2018").text() shouldBe s"${messages("paymentDue.payNow")} ${messages("paymentDue.pay-now-hidden", "2017", "2018")}"
-    }
-
-    "have a payment processing information section" in new TestSetup(
-      chargeItem = chargeItemModel(transactionType = BalancingCharge, lpiWithDunningLock = None),
-      isAgent = true
-    ) {
-      document.select("#payment-processing-bullets li:nth-child(1)").text() shouldBe paymentprocessingbullet1Agent
-    }
 
     "have a interest lock payment link when the interest is accruing" in new TestSetup(
       chargeItem = chargeItemModel(lpiWithDunningLock = None),
@@ -1095,26 +1069,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     ) {
       document.select("#what-you-owe-link").text() shouldBe interestLinkText
       document.select("#what-you-owe-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
-    }
-
-    "does not have any payment lock notes or link when there is no interest locks on the page" in new TestSetup(
-      chargeItem = chargeItemModel(transactionType = BalancingCharge),
-      paymentBreakdown = paymentBreakdown) {
-      document.select("div#payment-link-2018").text() shouldBe s"${messages("paymentDue.payNow")} ${messages("paymentDue.pay-now-hidden", "2017", "2018")}"
-    }
-
-    "does not have any payment processing info or link when the charge is Review And Reconcile" in new TestSetup(
-      chargeItemModel(transactionType = PaymentOnAccountOneReviewAndReconcile),
-      paymentBreakdown = paymentBreakdown,
-      reviewAndReconcileEnabled = true) {
-      Try(document.getElementById("payment-days-note").text()).toOption.isDefined shouldBe false
-      Try(document.getElementById("payment-link-2018").text()).toOption.isDefined shouldBe false
-    }
-
-    "not have a payment link when there is an outstanding amount of 0" in new TestSetup(
-      chargeItem = chargeItemModel().copy(outstandingAmount = 0)
-    ) {
-      document.select("div#payment-link-2018").text() shouldBe ""
     }
 
     "charge history" should {
@@ -1270,14 +1224,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
   "agent" when {
     "The charge summary view" should {
 
-      "should not have a payment link when an outstanding amount is to be paid" in new TestSetup(chargeItem = chargeItemModel(), isAgent = true) {
-        document.select("div#payment-link-2018").text() shouldBe ""
-      }
-
-      "should have a payment processing information section" in new TestSetup(chargeItem = chargeItemModel(lpiWithDunningLock = None), isAgent = true) {
-        document.select("#payment-processing-bullets li:nth-child(1)").text() shouldBe paymentprocessingbullet1Agent
-      }
-
       "have a interest lock payment link when the interest is accruing" in new TestSetup(chargeItem = chargeItemModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues, isAgent = true) {
         document.select("#what-you-owe-interest-link-agent").text() shouldBe interestLinkTextAgent
         document.select("#what-you-owe-interest-link-agent").attr("href") shouldBe whatYouOweAgentUrl
@@ -1338,8 +1284,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
           messages("chargeSummary.hmrcAdjustment.text")
         // remaining to pay should be the same as payment amount
         document.select(".govuk-summary-list").text() shouldBe summaryListText
-        // there should be a "make a payment" button
-        document.select("#payment-link-2019").size() shouldBe 0
         // payment history should show only "HMRC adjustment created"
         document.select("#payment-history-table tr").size shouldBe 2
         document.select("#payment-history-table tr").text() shouldBe paymentHistoryText
@@ -1359,8 +1303,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
           messages("chargeSummary.hmrcAdjustment.text")
         // remaining to pay should be zero
         document.select(".govuk-summary-list").text() shouldBe summaryListText
-        // there should not be a "make a payment" button
-        document.select("#payment-link-2019").size() shouldBe 0
         // payment history should show two rows "HMRC adjustment created" and "payment put towards HMRC Adjustment"
         document.select("#payment-history-table tr").size shouldBe 4
 
