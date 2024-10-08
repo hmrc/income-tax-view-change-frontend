@@ -21,7 +21,7 @@ import auth.MtdItUser
 import helpers.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{CutOverCredits, MFACreditsAndDebits, PaymentHistoryRefunds}
+import models.admin.PaymentHistoryRefunds
 import models.financialDetails.Payment
 import play.api.http.Status._
 import play.api.libs.ws.WSResponse
@@ -91,8 +91,6 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
     "the payment history feature switch is enabled" in {
       isAuthorisedUser(authorised = true)
       stubUserDetails()
-      disable(CutOverCredits)
-      disable(MFACreditsAndDebits)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
       IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$twoPreviousTaxYearEnd-04-06", s"$previousTaxYearEnd-04-05")(OK, payments)
 
@@ -105,13 +103,10 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
         elementTextBySelector("#refundstatus")(""),
       )
 
-      verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, payments, cutOverCreditsEnabled = false,
-        mfaCreditsEnabled = false).detail)
+      verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, payments).detail)
     }
 
     "return payment from earlier tax year description when CutOverCreditsEnabled and credit is defined" in {
-      enable(CutOverCredits)
-      enable(MFACreditsAndDebits)
       enable(PaymentHistoryRefunds)
       isAuthorisedUser(authorised = true)
       stubUserDetails()
@@ -129,17 +124,13 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
           messagesAPI("paymentHistory.check-refund-2") + " " + messagesAPI("paymentHistory.check-refund-3")),
       )
 
-
-      verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, payments, cutOverCreditsEnabled = true,
-        mfaCreditsEnabled = true).detail)
+      verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, payments).detail)
     }
 
 
     "Show the user the payments history page" when {
       "The feature switch is disabled" in {
         disable(PaymentHistoryRefunds)
-        enable(CutOverCredits)
-        enable(MFACreditsAndDebits)
         isAuthorisedUser(authorised = true)
         stubUserDetails()
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
