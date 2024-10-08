@@ -239,7 +239,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         val validUTR: String = "1234567890"
         val utrWithSpaces: String = " 1 2 3 4 5 6 7 8 9 0 "
 
-        stubAuthorisedAgentUser(authorised = true, clientMtdId = testMtdItId)
+        stubPrimaryAuthorisedAgentUser(authorised = true, clientMtdId = testMtdItId)
 
         Then(s"I stub the session-data service call to return status $OK")
         stubPostSessionDataResponseOkResponse()
@@ -272,7 +272,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         val validUTR: String = "1234567890"
         val utrWithSpaces: String = " 1 2 3 4 5 6 7 8 9 0 "
 
-        stubAuthorisedAgentUser(authorised = true, clientMtdId = testMtdItId)
+        stubPrimaryAuthorisedAgentUser(authorised = true, clientMtdId = testMtdItId)
 
         Then(s"I stub the session-data service call to return status $CONFLICT")
         stubPostSessionDataResponseConflictResponse()

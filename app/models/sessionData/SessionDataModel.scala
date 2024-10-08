@@ -21,7 +21,8 @@ import play.api.libs.json.{Json, OFormat}
 case class SessionDataModel(
                              mtditid: String,
                              nino: String,
-                             utr: String
+                             utr: String,
+                             isSupportingAgent: Boolean = false
                            )
 
 object SessionDataModel {

@@ -27,7 +27,7 @@ case class SessionCookieData(mtditid: String,
                              isSupportingAgent: Boolean = false
                             ) {
   val toSessionDataModel: SessionDataModel = {
-    SessionDataModel(mtditid = mtditid, nino = nino, utr = utr)
+    SessionDataModel(mtditid = mtditid, nino = nino, utr = utr, isSupportingAgent)
   }
 
   val toSessionCookieSeq: Seq[(String, String)] = {
