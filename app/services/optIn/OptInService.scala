@@ -193,6 +193,26 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
     result.value
   }
 
+  // Native Version
+//  def optinCompletedPageModel(isAgent: Boolean)(implicit user: MtdItUser[_],
+//                                                hc: HeaderCarrier,
+//                                                ec: ExecutionContext): Future[Option[OptInCompletedViewModel]] = {
+//    for {
+//      proposition <- fetchOptInProposition()
+//      intent <- fetchSavedChosenTaxYear()
+//    } yield {
+//      intent.map(optInTaxYear =>
+//        OptInCompletedViewModel(
+//          isAgent = isAgent,
+//          optInTaxYear = optInTaxYear,
+//          showAnnualReportingAdvice = proposition.showAnnualReportingAdvice(optInTaxYear),
+//          isCurrentYear = proposition.isCurrentTaxYear(optInTaxYear),
+//          optInIncludedNextYear = proposition.nextTaxYear.status == Voluntary
+//        ))
+//    }
+//  }
+
+  // Cats version
   def optinCompletedPageModel(isAgent: Boolean)(implicit user: MtdItUser[_],
                                                 hc: HeaderCarrier,
                                                 ec: ExecutionContext): OptionT[Future, OptInCompletedViewModel] = {

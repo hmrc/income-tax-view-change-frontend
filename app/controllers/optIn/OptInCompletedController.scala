@@ -17,12 +17,9 @@
 package controllers.optIn
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import cats.data.OptionT
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import models.itsaStatus.ITSAStatus.Voluntary
-import models.optin.OptInCompletedViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -54,13 +51,29 @@ class OptInCompletedController @Inject()(val view: OptInCompletedView,
     }
   }
 
-  def show(isAgent: Boolean = false): Action[AnyContent] =
-    auth.authenticatedAction(isAgent) {
-      implicit user =>
-        withRecover(isAgent) {
-          optInService.optinCompletedPageModel(isAgent)
-            .map(model => Ok(view(model)))
-            .getOrElse(errorHandler(isAgent).showInternalServerError())
-        }
-    }
+  // Native version
+//  def show(isAgent: Boolean = false): Action[AnyContent] =
+//    auth.authenticatedAction(isAgent) {
+//      implicit user =>
+//        withRecover(isAgent) {
+//          for {
+//            optModel <- optInService.optinCompletedPageModel(isAgent)
+//          } yield {
+//            optModel
+//              .map(model => Ok(view(model)))
+//              .getOrElse(errorHandler(isAgent).showInternalServerError())
+//          }
+//        }
+//    }
+
+  // Cats version
+    def show(isAgent: Boolean = false): Action[AnyContent] =
+      auth.authenticatedAction(isAgent) {
+        implicit user =>
+          withRecover(isAgent) {
+            optInService.optinCompletedPageModel(isAgent)
+              .map(model => Ok(view(model)))
+              .getOrElse(errorHandler(isAgent).showInternalServerError())
+          }
+      }
 }
