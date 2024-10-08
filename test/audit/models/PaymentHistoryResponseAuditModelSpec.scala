@@ -65,8 +65,8 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
         method = Some("method"), mainType = Some("ITSA Overpayment Relief"), mainTransaction = Some("4004"), lot = None, lotItem = None,
         dueDate = None, documentDate = LocalDate.parse("2018-02-05"), transactionId = None, documentDescription = None)
     ),
-    CutOverCreditsEnabled = CutOver,
-    MFACreditsEnabled = MFA,
+    cutOverCreditsEnabled = CutOver,
+    mfaCreditsEnabled = MFA,
   )
 
   val paymentHistoryAuditMin: PaymentHistoryResponseAuditModel = PaymentHistoryResponseAuditModel(
@@ -81,8 +81,8 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
       arn = None
     ),
     payments = Seq.empty[Payment],
-    CutOverCreditsEnabled = false,
-    MFACreditsEnabled = false,
+    cutOverCreditsEnabled = false,
+    mfaCreditsEnabled = false,
   )
 
   def getExpectedJson(MFA: Boolean = true, CutOver: Boolean = true): JsObject = {

@@ -82,13 +82,21 @@ case object Repayment extends CreditType {
   override val key = "refund"
 }
 
+case object PaymentOnAccountOneReviewAndReconcileCredit extends CreditType {
+  override val key = "POA1RR-credit"
+}
+
+case object PaymentOnAccountTwoReviewAndReconcileCredit extends CreditType {
+  override val key = "POA2RR-credit"
+}
+
 object ChargeType {
 
   // values come from EPID #1138
   private val balancingCharge = "4910"
 
-  lazy val paymentOnAccountOneReviewAndReconcile = "4911"
-  lazy val paymentOnAccountTwoReviewAndReconcile = "4913"
+  lazy val paymentOnAccountOneReviewAndReconcileDebit = "4911"
+  lazy val paymentOnAccountTwoReviewAndReconcileDebit = "4913"
 
   private val paymentOnAccountOne = "4920"
   private val paymentOnAccountTwo = "4930"
@@ -105,9 +113,9 @@ object ChargeType {
         Some(PaymentOnAccountTwo)
       case (ChargeType.balancingCharge, _) =>
         Some(BalancingCharge)
-      case (ChargeType.paymentOnAccountOneReviewAndReconcile, true) =>
+      case (ChargeType.paymentOnAccountOneReviewAndReconcileDebit, true) =>
         Some(PaymentOnAccountOneReviewAndReconcile)
-      case (ChargeType.paymentOnAccountTwoReviewAndReconcile, true) =>
+      case (ChargeType.paymentOnAccountTwoReviewAndReconcileDebit, true) =>
         Some(PaymentOnAccountTwoReviewAndReconcile)
       case (x, _) if ChargeType.mfaDebit.contains(x) =>
         Some(MfaDebitCharge)
@@ -145,6 +153,9 @@ object CreditType {
   private val mfaCredit = Range.inclusive(4004, 4025)
     .filterNot(_ == 4010).filterNot(_ == 4020).map(_.toString)
     .toList
+  private val paymentOnAccountOneReviewAndReconcileCredit = "4912"
+  private val paymentOnAccountTwoReviewAndReconcileCredit = "4914"
+
   private val payment = List("0060")
 
   def fromCode(mainTransaction: String): Option[CreditType] = {
@@ -155,6 +166,10 @@ object CreditType {
         Some(BalancingChargeCreditType)
       case CreditType.repaymentInterest =>
         Some(RepaymentInterest)
+      case CreditType.paymentOnAccountOneReviewAndReconcileCredit =>
+        Some(PaymentOnAccountOneReviewAndReconcileCredit)
+      case CreditType.paymentOnAccountTwoReviewAndReconcileCredit =>
+        Some(PaymentOnAccountTwoReviewAndReconcileCredit)
       case x if mfaCredit.contains(x) =>
         Some(MfaCreditType)
       case x if payment.contains(x) =>

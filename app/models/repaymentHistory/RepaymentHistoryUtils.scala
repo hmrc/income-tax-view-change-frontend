@@ -27,7 +27,7 @@ import uk.gov.hmrc.play.language.LanguageUtils
 
 import java.time.LocalDate
 
-object  RepaymentHistoryUtils {
+object RepaymentHistoryUtils {
 
   private def getControllerHref(transactionId: Option[String], isAgent: Boolean) = {
     if (isAgent) {
@@ -62,10 +62,10 @@ object  RepaymentHistoryUtils {
   }
 
   def getGroupedPaymentHistoryData(payments: List[Payment], repayments: List[RepaymentHistory], isAgent: Boolean,
-                                   MFACreditsEnabled: Boolean, CutOverCreditsEnabled: Boolean, languageUtils: LanguageUtils
+                                   mfaCreditsEnabled: Boolean, cutOverCreditsEnabled: Boolean, reviewAndReconcileEnabled: Boolean, languageUtils: LanguageUtils
                                   )(implicit messages: Messages, dateServiceInterface: DateServiceInterface): List[(Int, List[PaymentHistoryEntry])] = {
     val combinedPayments = combinePaymentHistoryData(payments, repayments, isAgent,
-      MFACreditsEnabled, CutOverCreditsEnabled, languageUtils
+      mfaCreditsEnabled, cutOverCreditsEnabled, reviewAndReconcileEnabled, languageUtils
     )
     groupedPayments(combinedPayments)
   }
@@ -75,10 +75,11 @@ object  RepaymentHistoryUtils {
                                         isAgent: Boolean,
                                         MFACreditsEnabled: Boolean,
                                         CutOverCreditsEnabled: Boolean,
+                                        reviewAndReconcileEnabled: Boolean,
                                         languageUtils: LanguageUtils
                                        )(implicit messages: Messages, dateServiceInterface: DateServiceInterface): List[PaymentHistoryEntry] = {
 
-    val filteredPayments = payments.flatMap(payment => filterPayment(payment, isAgent, MFACreditsEnabled, CutOverCreditsEnabled))
+    val filteredPayments = payments.flatMap(payment => filterPayment(payment, isAgent, MFACreditsEnabled, CutOverCreditsEnabled, reviewAndReconcileEnabled))
 
     val filteredRepayments = repayments.filter(_.status.isInstanceOf[Approved]).map(repayment => filterRepayment(repayment)(messages, languageUtils, dateServiceInterface))
 
@@ -88,19 +89,22 @@ object  RepaymentHistoryUtils {
   private def filterPayment(payment: Payment,
                             isAgent: Boolean,
                             MFACreditsEnabled: Boolean,
-                            CutOverCreditsEnabled: Boolean
+                            CutOverCreditsEnabled: Boolean,
+                            reviewAndReconcileEnabled: Boolean
                            )(implicit messages: Messages, dateservice: DateServiceInterface): Option[PaymentHistoryEntry] = {
 
     val hasCredit = payment.credit.isDefined
-    val hasLot    = payment.lot.isDefined && payment.lotItem.isDefined
+    val hasLot = payment.lot.isDefined && payment.lotItem.isDefined
 
-    payment.creditType match {
-      case Some(MfaCreditType)             if hasCredit && MFACreditsEnabled      => Some(mfaCreditEntry(payment, isAgent))
-      case Some(CutOverCreditType)         if hasCredit && CutOverCreditsEnabled  => Some(creditEntry(payment, isAgent))
-      case Some(BalancingChargeCreditType) if hasCredit                           => Some(creditEntry(payment, isAgent))
-      case Some(RepaymentInterest)         if hasCredit                           => Some(creditEntry(payment, isAgent))
-      case Some(PaymentType)               if !hasCredit && hasLot                => Some(paymentToHMRCEntry(payment, isAgent))
-      case _ => None
+    (hasCredit, MFACreditsEnabled, CutOverCreditsEnabled, reviewAndReconcileEnabled, hasLot, payment.creditType) match {
+      case (true, true, _, _, _,  Some(MfaCreditType))                               => Some(mfaCreditEntry(payment, isAgent))
+      case (true, _, true, _, _,  Some(CutOverCreditType))                           => Some(creditEntry(payment, isAgent))
+      case (true, _, _, true, _,  Some(PaymentOnAccountOneReviewAndReconcileCredit)) => Some(creditEntry(payment, isAgent))
+      case (true, _, _, true, _,  Some(PaymentOnAccountTwoReviewAndReconcileCredit)) => Some(creditEntry(payment, isAgent))
+      case (true, _, _, _, _,     Some(BalancingChargeCreditType))                   => Some(creditEntry(payment, isAgent))
+      case (true, _, _, _, _,     Some(RepaymentInterest))                           => Some(creditEntry(payment, isAgent))
+      case (false, _, _, _, true, Some(PaymentType))                                 => Some(paymentToHMRCEntry(payment, isAgent))
+      case (_, _, _, _, _, _)                                                        => None
     }
   }
 
