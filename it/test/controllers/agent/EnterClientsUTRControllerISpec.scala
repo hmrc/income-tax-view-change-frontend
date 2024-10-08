@@ -177,9 +177,38 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
     }
 
     s"redirect ($SEE_OTHER) to the next page" when {
-      "the utr submitted is valid and session data service post returns an OK response" in {
+      "the utr is submitted by a primary agent is valid and session data service post returns an OK response" in {
         val validUTR: String = "1234567890"
-        stubAuthorisedAgentUser(authorised = true, clientMtdId = testMtdItId)
+        stubPrimaryAuthorisedAgentUser(authorised = true, clientMtdId = testMtdItId)
+        CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
+          status = OK,
+          response = CitizenDetailsStub.validCitizenDetailsResponse(
+            firstName = "testFirstName",
+            lastName = "testLastName",
+            nino = testNino
+          )
+        )
+        IncomeTaxViewChangeStub.stubGetBusinessDetails(testNino)(
+          status = OK,
+          response = Json.toJson(singleBusinessResponse)
+        )
+        Then(s"I stub the session-data service call to return status $OK")
+        stubPostSessionDataResponseOkResponse()
+
+        val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some(validUTR))
+
+        AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some("1"), saUtr = validUTR, credId = None))
+
+        Then("The enter clients utr page is returned with an error")
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.agent.routes.ConfirmClientUTRController.show.url)
+        )
+      }
+
+      "the utr is submitted by a secondary agent is valid and session data service post returns an OK response" in {
+        val validUTR: String = "1234567890"
+        stubSecondaryAuthorisedAgentUser(authorised = true, clientMtdId = testMtdItId)
         CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
           status = OK,
           response = CitizenDetailsStub.validCitizenDetailsResponse(

@@ -45,6 +45,36 @@ trait GenericStubMethods extends CustomMatchers {
     }
   }
 
+  def stubPrimaryAuthorisedAgentUser(authorised: Boolean, hasAgentEnrolment: Boolean = true, clientMtdId: String = "mtdbsaId"): Unit = {
+    if (authorised) {
+      if (hasAgentEnrolment) {
+        Given("I stub the primary agent is authorised with an agent reference number")
+        AuthStub.stubPrimaryAuthorisedAgent(clientMtdId)
+      } else {
+        Given("I stub the primary agent is authorised without an agent reference number")
+        AuthStub.stubAuthorisedAgentNoARN()
+      }
+    } else {
+      Given("I stub the unauthorised agent")
+      AuthStub.stubUnauthorised()
+    }
+  }
+
+  def stubSecondaryAuthorisedAgentUser(authorised: Boolean, hasAgentEnrolment: Boolean = true, clientMtdId: String = "mtdbsaId"): Unit = {
+    if (authorised) {
+      if (hasAgentEnrolment) {
+        Given("I stub the secondary agent is authorised with an agent reference number")
+        AuthStub.stubSecondaryAuthorisedAgent(clientMtdId)
+      } else {
+        Given("I stub the secondary agent is authorised without an agent reference number")
+        AuthStub.stubAuthorisedAgentNoARN()
+      }
+    } else {
+      Given("I stub the unauthorised agent")
+      AuthStub.stubUnauthorised()
+    }
+  }
+
   def stubUserDetails(): Unit = {
     And("I wiremock stub a response from the User Details service")
     UserDetailsStub.stubGetUserDetails()

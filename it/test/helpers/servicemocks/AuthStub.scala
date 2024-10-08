@@ -16,10 +16,13 @@
 
 package helpers.servicemocks
 
-import testConstants.BaseIntegrationTestConstants._
+import controllers.agent.AuthUtils._
 import helpers.{ComponentSpecBase, WiremockHelper}
 import play.api.http.Status
-import play.api.libs.json.Json
+import play.api.libs.json.{JsString, JsValue, Json}
+import testConstants.BaseIntegrationTestConstants._
+import uk.gov.hmrc.auth.core.Enrolment
+import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
 
 object AuthStub extends ComponentSpecBase {
 
@@ -158,6 +161,171 @@ object AuthStub extends ComponentSpecBase {
         "confidenceLevel" -> requiredConfidenceLevel
       ))
     )
+  }
+
+  def stubPrimaryAuthorisedAgent(mtdItId: String = "mtdbsaId"): Unit = {
+
+    val primaryEnrolment = Enrolment(primaryAgentEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
+      .withDelegatedAuthRule(primaryAgentAuthRule)
+    val jsonRequest = getAuthRequest(Some(primaryEnrolment))
+
+    WiremockHelper.stubPostWithRequest(
+      url = postAuthoriseUrl,
+      requestBody = jsonRequest,
+      status = Status.OK,
+      responseBody = Json.stringify(Json.obj(
+        "allEnrolments" -> Json.arr(
+          Json.obj(
+            "key" -> "HMRC-AS-AGENT",
+            "identifiers" -> Json.arr(
+              Json.obj(
+                "key" -> "AgentReferenceNumber",
+                "value" -> "1"
+              )
+            )
+          ),
+          Json.obj(
+            "key" -> "HMRC-MTD-IT",
+            "identifiers" -> Json.arr(
+              Json.obj(
+                "key" -> "MTDITID",
+                "value" -> mtdItId
+              )
+            ),
+            "delegatedAuthRule" -> "mtd-it-auth"
+          )
+        ),
+        "affinityGroup" -> "Agent",
+        "confidenceLevel" -> requiredConfidenceLevel
+      ))
+    )
+  }
+
+  def stubSecondaryAuthorisedAgent(mtdItId: String = "mtdbsaId"): Unit = {
+
+    val secondaryEnrolment = Enrolment(secondaryAgentEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
+      .withDelegatedAuthRule(secondaryAgentAuthRule)
+    val jsonRequest = getAuthRequest(Some(secondaryEnrolment))
+
+    WiremockHelper.stubPostWithRequest(
+      url = postAuthoriseUrl,
+      requestBody = jsonRequest,
+      status = Status.OK,
+      responseBody = Json.stringify(Json.obj(
+        "allEnrolments" -> Json.arr(
+          Json.obj(
+            "key" -> "HMRC-AS-AGENT",
+            "identifiers" -> Json.arr(
+              Json.obj(
+                "key" -> "AgentReferenceNumber",
+                "value" -> "1"
+              )
+            )
+          ),
+          Json.obj(
+            "key" -> "HMRC-MTD-IT-SUPP",
+            "identifiers" -> Json.arr(
+              Json.obj(
+                "key" -> "MTDITID",
+                "value" -> mtdItId
+              )
+            ),
+            "delegatedAuthRule" -> "mtd-it-auth-supp"
+          )
+        ),
+        "affinityGroup" -> "Agent",
+        "confidenceLevel" -> requiredConfidenceLevel
+      ))
+    )
+  }
+
+  def stubAuthorisedNullPredicate(mtdItId: String = "mtdbsaId"): Unit = {
+
+
+    val jsonRequest = getAuthRequest(None)
+
+    WiremockHelper.stubPostWithRequest(
+      url = postAuthoriseUrl,
+      requestBody = jsonRequest,
+      status = Status.OK,
+      responseBody = Json.stringify(Json.obj(
+        "allEnrolments" -> Json.arr(
+          Json.obj(
+            "key" -> "HMRC-AS-AGENT",
+            "identifiers" -> Json.arr(
+              Json.obj(
+                "key" -> "AgentReferenceNumber",
+                "value" -> "1"
+              )
+            )
+          ),
+          Json.obj(
+            "key" -> "HMRC-MTD-IT-SUPP",
+            "identifiers" -> Json.arr(
+              Json.obj(
+                "key" -> "MTDITID",
+                "value" -> mtdItId
+              )
+            ),
+            "delegatedAuthRule" -> "mtd-it-auth-supp"
+          )
+        ),
+        "affinityGroup" -> "Agent",
+        "confidenceLevel" -> requiredConfidenceLevel
+      ))
+    )
+  }
+
+  def failedPrimaryAgent(mtdItId : String = "MtdItId" ) : Unit = {
+
+    val primaryEnrolment = Enrolment(primaryAgentEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
+      .withDelegatedAuthRule(primaryAgentAuthRule)
+    val jsonRequest = getAuthRequest(Some(primaryEnrolment))
+
+    WiremockHelper.stubPostWithRequest(postAuthoriseUrl, jsonRequest, Status.INTERNAL_SERVER_ERROR,
+      Json.parse(
+        s"""{
+           |"allEnrolments":[{}],
+           |"userDetailsUri":"$testUserDetailsWiremockUrl"
+           |}
+         """.stripMargin).toString()
+    )
+  }
+
+
+def failedSecondaryAgent(mtdItId : String = "MtdItId" ) : Unit = {
+
+  val secondaryEnrolment = Enrolment(secondaryAgentEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
+    .withDelegatedAuthRule(secondaryAgentAuthRule)
+  val jsonRequest = getAuthRequest(Some(secondaryEnrolment))
+
+  WiremockHelper.stubPostWithRequest(postAuthoriseUrl, jsonRequest, Status.INTERNAL_SERVER_ERROR,
+    Json.parse(
+      s"""{
+         |"allEnrolments":[{}],
+         |"userDetailsUri":"$testUserDetailsWiremockUrl"
+         |}
+         """.stripMargin).toString()
+  )
+}
+
+
+
+
+  def getAuthRequest(optEnrolment : Option[Enrolment] ): JsValue = {
+
+    val authorisedJson = optEnrolment.getOrElse(EmptyPredicate)
+
+    Json.obj(
+      "authorise" -> authorisedJson.toJson,
+      "retrieve" -> Json.arr(
+        JsString("allEnrolments"),
+        JsString("affinityGroup"),
+        JsString("confidenceLevel"),
+        JsString("optionalCredentials")
+      )
+    )
+
   }
 
   def stubAuthorisedAgentNoARN(): Unit = {
