@@ -2253,7 +2253,7 @@ optin.completedOptIn.submitUpdates.desc1.a      = Os ydych yn adrodd am flwyddyn
 optin.completedOptIn.submitUpdates.desc1.b      = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd).
 optin.completedOptIn.submitUpdates.desc1.b.url  = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax.cy
 
-optin.completedOptIn.ny.submitUpdates.desc2     = Wrth adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth yn uniongyrchol drwy’ch cyfrif ar-lein CThEF neu drwy ddefnyddio meddalwedd sy’n cydweddu.
+optin.completedOptIn.submitUpdates.annualReportingAdvice     = Wrth adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth yn uniongyrchol drwy’ch cyfrif ar-lein CThEF neu drwy ddefnyddio meddalwedd sy’n cydweddu.
 
 optin.completedOptIn.futureReporting            = Adrodd yn y dyfodol
 optin.completedOptIn.cy.futureReporting.desc1   = Rydych newydd ddewis adrodd yn chwarterol o flwyddyn dreth {0} i {1} ymlaen yn wirfoddol. Fodd bynnag, yn y dyfodol gallai fod yn orfodol i chi adrodd yn chwarterol os bydd y canlynol yn wir:
