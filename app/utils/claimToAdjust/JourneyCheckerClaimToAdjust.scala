@@ -17,30 +17,26 @@
 package utils.claimToAdjust
 
 import auth.MtdItUser
-import config.{AgentItvcErrorHandler, ItvcErrorHandler, ShowInternalServerError}
 import enums.IncomeSourceJourney._
 import models.claimToAdjustPoa.PoAAmendmentData
 import play.api.Logger
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import services.PaymentOnAccountSessionService
-import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
+import utils.ErrorRecovery
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait JourneyCheckerClaimToAdjust extends ClaimToAdjustUtils {
+trait JourneyCheckerClaimToAdjust extends ClaimToAdjustUtils with ErrorRecovery {
   self =>
 
   val poaSessionService: PaymentOnAccountSessionService
-  val itvcErrorHandler: ItvcErrorHandler
-  val itvcErrorHandlerAgent: AgentItvcErrorHandler
   implicit val ec: ExecutionContext
 
   def withSessionData(journeyState: JourneyState = BeforeSubmissionPage)(codeBlock: PoAAmendmentData => Future[Result])
                      (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
-    ifAdjustPoaIsEnabled(isAgent(user)) {
+    ifAdjustPoaIsEnabled(user.isAgent()) {
       if (journeyState == InitialPage) {
         handleSession(codeBlock)
       } else {
@@ -50,24 +46,17 @@ trait JourneyCheckerClaimToAdjust extends ClaimToAdjustUtils {
           case Right(Some(_)) =>
             Future.successful(redirectToYouCannotGoBackPage(user))
           case Right(None) =>
-            Logger("application").error(if (isAgent(user)) "[Agent]" else "" + s"Necessary session data was empty in mongo")
-            Future.successful(errorHandler.showInternalServerError())
+            Future.successful(logAndRedirect(s"Necessary session data was empty in mongo"))
           case Left(ex: Throwable) =>
-            Logger("application").error(if (isAgent(user)) "[Agent]" else "" +
-              s"There was an error while retrieving the mongo data. < Exception message: ${ex.getMessage}, Cause: ${ex.getCause} >")
-            Future.successful(errorHandler.showInternalServerError())
+            Future.successful(
+              logAndRedirect(s"There was an error while retrieving the mongo data. < Exception message: ${ex.getMessage}, Cause: ${ex.getCause} >"))
         }
       }
     }
   }
 
-  def errorHandler(implicit user: MtdItUser[_]): FrontendErrorHandler with ShowInternalServerError =
-    if (isAgent(user)) itvcErrorHandlerAgent else itvcErrorHandler
-
-  lazy val isAgent: MtdItUser[_] => Boolean = (user: MtdItUser[_]) => user.userType.contains(Agent)
-
   def redirectToYouCannotGoBackPage(user: MtdItUser[_]): Result = {
-    Redirect(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(isAgent(user)).url)
+    Redirect(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(user.isAgent()).url)
   }
 
   def showCannotGoBackErrorPage(journeyCompleted: Boolean, journeyState: JourneyState): Boolean = {
@@ -87,9 +76,8 @@ trait JourneyCheckerClaimToAdjust extends ClaimToAdjustUtils {
           poaSessionService.createSession.flatMap {
             case Right(_) => codeBlock(poaData)
             case Left(ex: Throwable) =>
-              Logger("application").error(if (isAgent(user)) "[Agent]" else "" +
-                s"There was an error while retrieving the mongo data. < Exception message: ${ex.getMessage}, Cause: ${ex.getCause} >")
-              Future.successful(errorHandler.showInternalServerError())
+              Future.successful(logAndRedirect(
+                s"There was an error while retrieving the mongo data. < Exception message: ${ex.getMessage}, Cause: ${ex.getCause} >"))
           }
         } else {
           Logger("application").info(s"The current active mongo Claim to Adjust POA session has not been completed by the user")
@@ -101,9 +89,8 @@ trait JourneyCheckerClaimToAdjust extends ClaimToAdjustUtils {
           _ => codeBlock(PoAAmendmentData())
         )
       case Left(ex) =>
-        Logger("application").error(if (isAgent(user)) "[Agent]" else "" +
-          s"There was an error while retrieving the mongo data. < Exception message: ${ex.getMessage}, Cause: ${ex.getCause} >")
-        Future.successful(errorHandler.showInternalServerError())
+        Future.successful(logAndRedirect(
+          s"There was an error while retrieving the mongo data. < Exception message: ${ex.getMessage}, Cause: ${ex.getCause} >"))
     }
   }
 

@@ -188,8 +188,10 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
           httpStatus(INTERNAL_SERVER_ERROR),
           if(isAgent) {
             pageTitleAgent("standardError.heading", isErrorPage = true)
+            elementAttributeBySelector(".govuk-phase-banner__text a", "href")("/report-quarterly/income-and-expenses/view/agents/feedback")
           } else {
             pageTitleIndividual("standardError.heading", isErrorPage = true)
+            elementAttributeBySelector(".govuk-phase-banner__text a", "href")("/report-quarterly/income-and-expenses/view/feedback")
           }
         )
       }
@@ -255,6 +257,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
         Then("The user is redirected to")
         result should have(
           httpStatus(SEE_OTHER),
+          redirectURI("/report-quarterly/income-and-expenses/view/sign-in")
         )
       }
     }
@@ -270,10 +273,12 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
       enable(CutOverCredits)
       enable(MFACreditsAndDebits)
 
+
+
       val mtdUser = if(isAgent) {
-        MtdItUser(testMtditid, testNino, None,
-          multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
-          None, Some(Agent), Some("1"))(FakeRequest())
+        MtdItUser(testMtditid, testNino, userName = None,
+          incomeSources = multipleBusinessesAndPropertyResponse, btaNavPartial = None, saUtr = Some("1234567890"),
+          credId = None, userType = Some(Agent), arn = Some("1"))(FakeRequest())
       } else {
         MtdItUser(
           testMtditid, testNino, None,

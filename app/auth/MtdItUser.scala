@@ -21,10 +21,8 @@ import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.mvc.{Request, WrappedRequest}
 import play.twirl.api.Html
 import uk.gov.hmrc.auth.core.AffinityGroup
-import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.Name
-
-import javax.inject.Inject
 
 abstract class MtdItUserBase[A](implicit request: Request[A]) extends WrappedRequest[A](request) {
   def mtditid: String
@@ -70,4 +68,8 @@ case class MtdItUser[A](mtditid: String,
                         userType: Option[AffinityGroup],
                         arn: Option[String],
                         featureSwitches: List[FeatureSwitch] = List.empty // TODO: remove default
-                       )(implicit request: Request[A]) extends MtdItUserBase[A]
+                       )(implicit request: Request[A]) extends MtdItUserBase[A] {
+  
+  def isAgent(): Boolean = userType.contains(Agent)
+
+}

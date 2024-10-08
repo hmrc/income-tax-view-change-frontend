@@ -146,6 +146,15 @@ object AuthStub extends ComponentSpecBase {
             )
           ),
           Json.obj(
+            "key" -> s"$testSaUtrEnrolmentKey",
+            "identifiers" -> Json.arr(
+              Json.obj(
+                "key" -> s"$testSaUtrEnrolmentIdentifier",
+                "value" -> s"$testSaUtr"
+              )
+            )
+          ),
+          Json.obj(
             "key" -> "HMRC-MTD-IT",
             "identifiers" -> Json.arr(
               Json.obj(

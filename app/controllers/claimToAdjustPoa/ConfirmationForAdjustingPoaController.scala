@@ -16,18 +16,16 @@
 
 package controllers.claimToAdjustPoa
 
+import auth.authV2.AuthActions
 import cats.data.EitherT
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
 import models.claimToAdjustPoa.ConfirmationForAdjustingPoaViewModel
-import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.claimToAdjustPoa.{ClaimToAdjustPoaCalculationService, RecalculatePoaHelper}
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.AuthenticatorPredicate
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.claimToAdjust.WithSessionAndPoa
 import views.html.claimToAdjustPoa.ConfirmationForAdjustingPoa
 
@@ -35,46 +33,40 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: AuthorisedFunctions,
+class ConfirmationForAdjustingPoaController @Inject()(val authActions: AuthActions,
                                                       val claimToAdjustService: ClaimToAdjustService,
                                                       val poaSessionService: PaymentOnAccountSessionService,
                                                       val ctaCalculationService: ClaimToAdjustPoaCalculationService,
-                                                      val view: ConfirmationForAdjustingPoa,
-                                                      implicit val itvcErrorHandler: ItvcErrorHandler,
-                                                      auth: AuthenticatorPredicate,
-                                                      implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                                      val view: ConfirmationForAdjustingPoa)
                                                      (implicit val appConfig: FrontendAppConfig,
-                                                      mcc: MessagesControllerComponents,
+                                                      implicit val individualErrorHandler: ItvcErrorHandler,
+                                                      implicit val agentErrorHandler: AgentItvcErrorHandler,
+                                                      override implicit val controllerComponents: MessagesControllerComponents,
                                                       val ec: ExecutionContext)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching with RecalculatePoaHelper with WithSessionAndPoa {
+  extends FrontendBaseController with I18nSupport with FeatureSwitching with RecalculatePoaHelper with WithSessionAndPoa {
 
-  def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def show(isAgent: Boolean): Action[AnyContent] = authActions.individualOrAgentWithClient async {
     implicit user =>
       withSessionDataAndPoa() { (sessionData, poa) =>
         sessionData.newPoAAmount match {
           case Some(value) =>
             val isAmountZero: Boolean = value.equals(BigDecimal(0))
             val viewModel = ConfirmationForAdjustingPoaViewModel(poa.taxYear, isAmountZero)
-            EitherT.rightT(Ok(view(isAgent, viewModel)))
+            EitherT.rightT(Ok(view(user.isAgent(), viewModel)))
           case None =>
-            Logger("application").error(s"Error, New PoA Amount was not found in session")
-            EitherT.rightT(showInternalServerError(isAgent))
+
+            EitherT.rightT(logAndRedirect(s"Error, New PoA Amount was not found in session"))
         }
-      } recover {
-        case ex: Exception =>
-          Logger("application").error(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
-          showInternalServerError(isAgent)
-      }
+      } recover logAndRedirect
   }
 
-  def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def submit(isAgent: Boolean): Action[AnyContent] = authActions.individualOrAgentWithClient async {
     implicit user =>
       handleSubmitPoaData(
         claimToAdjustService = claimToAdjustService,
         ctaCalculationService = ctaCalculationService,
-        poaSessionService = poaSessionService,
-        isAgent = isAgent
-      )
+        poaSessionService = poaSessionService
+      ) recover logAndRedirect
   }
 
 }

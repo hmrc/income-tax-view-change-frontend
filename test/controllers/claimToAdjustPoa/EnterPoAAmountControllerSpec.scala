@@ -18,11 +18,11 @@ package controllers.claimToAdjustPoa
 
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.sessionUtils
+import mocks.auth.MockAuthActions
 import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
-import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.admin.AdjustPaymentsOnAccount
-import models.claimToAdjustPoa.{Increase, MainIncomeLower, PoAAmendmentData, PaymentOnAccountViewModel}
+import models.claimToAdjustPoa.{Increase, MainIncomeLower, PaymentOnAccountViewModel, PoAAmendmentData}
 import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
@@ -39,24 +39,23 @@ import views.html.claimToAdjustPoa.EnterPoAAmountView
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
-  with TestSupport
+class EnterPoAAmountControllerSpec extends TestSupport
   with MockClaimToAdjustService
   with MockCalculationListService
   with MockCalculationListConnector
   with MockFinancialDetailsConnector
-  with MockPaymentOnAccountSessionService {
+  with MockPaymentOnAccountSessionService
+  with MockAuthActions {
 
   object TestEnterPoAAmountController extends EnterPoAAmountController(
-    authorisedFunctions = mockAuthService,
+    authActions = mockAuthActions,
     claimToAdjustService = mockClaimToAdjustService,
-    auth = testAuthenticator,
-    itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
-    itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
     view = app.injector.instanceOf[EnterPoAAmountView],
     poaSessionService = mockPaymentOnAccountSessionService
   )(
-    mcc = app.injector.instanceOf[MessagesControllerComponents],
+    controllerComponents = app.injector.instanceOf[MessagesControllerComponents],
+    individualErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
+    agentErrorHandler = app.injector.instanceOf[AgentItvcErrorHandler],
     appConfig = app.injector.instanceOf[FrontendAppConfig],
     ec = app.injector.instanceOf[ExecutionContext]
   )
@@ -111,57 +110,51 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
     "return Ok" when {
       "PaymentOnAccount model is returned successfully with PoA tax year crystallized does not exist in session" in {
         enable(AdjustPaymentsOnAccount)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
-
         setupMockPaymentOnAccountSessionService(Future(Right(Some(PoAAmendmentData(Some(MainIncomeLower))))))
-
         setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
         setupMockTaxYearNotCrystallised()
 
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestEnterPoAAmountController.show(isAgent = false, NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestEnterPoAAmountController.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
-
         status(result) shouldBe OK
-        status(resultAgent) shouldBe OK
         Jsoup.parse(contentAsString(result)).select("#poa-amount").attr("value") shouldBe ""
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestEnterPoAAmountController.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
+        status(resultAgent) shouldBe OK
         Jsoup.parse(contentAsString(resultAgent)).select("#poa-amount").attr("value") shouldBe ""
       }
       "PaymentOnAccount model is returned successfully with PoA tax year crystallized and newPoAAmount exists in session" in {
         enable(AdjustPaymentsOnAccount)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
-
         setupMockPaymentOnAccountSessionService(Future(Right(Some(PoAAmendmentData(Some(MainIncomeLower), Some(BigDecimal(1111.22)))))))
-
         setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
         setupMockTaxYearNotCrystallised()
 
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestEnterPoAAmountController.show(isAgent = false, NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestEnterPoAAmountController.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
-
         status(result) shouldBe OK
-        status(resultAgent) shouldBe OK
         Jsoup.parse(contentAsString(result)).select("#poa-amount").attr("value") shouldBe "1111.22"
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestEnterPoAAmountController.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
+        status(resultAgent) shouldBe OK
         Jsoup.parse(contentAsString(resultAgent)).select("#poa-amount").attr("value") shouldBe "1111.22"
       }
     }
     "redirect to the home page" when {
       "FS is disabled" in {
         disable(AdjustPaymentsOnAccount)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
 
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestEnterPoAAmountController.show(isAgent = false, NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestEnterPoAAmountController.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
-
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestEnterPoAAmountController.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
         status(resultAgent) shouldBe SEE_OTHER
         redirectLocation(resultAgent) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
@@ -169,21 +162,18 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
     "redirect to the You Cannot Go Back page" when {
       "FS is enabled and the journeyCompleted flag is set to true in session" in {
         enable(AdjustPaymentsOnAccount)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
-
         setupMockPaymentOnAccountSessionService(Future(Right(Some(PoAAmendmentData(Some(MainIncomeLower), None, journeyCompleted = true)))))
-
         setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
         setupMockTaxYearNotCrystallised()
 
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestEnterPoAAmountController.show(isAgent = false, NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestEnterPoAAmountController.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
-
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(false).url)
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestEnterPoAAmountController.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
         status(resultAgent) shouldBe SEE_OTHER
         redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(true).url)
       }
@@ -191,71 +181,61 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
     "return an error 500" when {
       "Error retrieving mongo session" in {
         enable(AdjustPaymentsOnAccount)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
-
         setupMockPaymentOnAccountSessionService(Future(Left(new Error(""))))
-
         setupMockGetPaymentOnAccountViewModel()
         setupMockTaxYearNotCrystallised()
 
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestEnterPoAAmountController.show(isAgent = false, NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestEnterPoAAmountController.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
-
         status(result) shouldBe INTERNAL_SERVER_ERROR
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestEnterPoAAmountController.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
         status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
       }
       "Retrieving mongo session fails" in {
         enable(AdjustPaymentsOnAccount)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
-
         setupMockPaymentOnAccountSessionService(Future.failed(new Error("")))
-
         setupMockGetPaymentOnAccountViewModel()
         setupMockTaxYearNotCrystallised()
 
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestEnterPoAAmountController.show(isAgent = false, NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestEnterPoAAmountController.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
-
         status(result) shouldBe INTERNAL_SERVER_ERROR
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestEnterPoAAmountController.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
         status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
       }
       "User does not have an active mongo session" in {
         enable(AdjustPaymentsOnAccount)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
-
         setupMockPaymentOnAccountSessionService(Future(Right(None)))
-
         setupMockGetPaymentOnAccountViewModel()
         setupMockTaxYearNotCrystallised()
 
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestEnterPoAAmountController.show(isAgent = false, NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestEnterPoAAmountController.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
-
         status(result) shouldBe INTERNAL_SERVER_ERROR
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestEnterPoAAmountController.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
         status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
       }
       "an Exception is returned from ClaimToAdjustService" in {
         enable(AdjustPaymentsOnAccount)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
-
         setupMockPaymentOnAccountSessionService(Future(Right(Some(PoAAmendmentData()))))
         setupMockGetPoaAmountViewModelFailure()
 
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestEnterPoAAmountController.show(isAgent = false, NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent: Future[Result] = TestEnterPoAAmountController.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
-
         result.futureValue.header.status shouldBe INTERNAL_SERVER_ERROR
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent: Future[Result] = TestEnterPoAAmountController.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
         resultAgent.futureValue.header.status shouldBe INTERNAL_SERVER_ERROR
       }
     }
@@ -265,68 +245,64 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
     "redirect to the check your answers page" when {
       "The user is on the decrease only journey and form returned with no errors" in {
         enable(AdjustPaymentsOnAccount)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
-
         setupMockGetPoaAmountViewModel(Right(poaViewModelDecreaseJourney))
-
         when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
 
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "1234.56"))
-        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "1234.56"))
-        val resultChange = TestEnterPoAAmountController.submit(isAgent = false, CheckMode)(getPostRequest(isAgent = false, CheckMode, "1234.56"))
-
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(false).url)
-        status(resultAgent) shouldBe SEE_OTHER
-        redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(true).url)
+
+        val resultChange = TestEnterPoAAmountController.submit(isAgent = false, CheckMode)(getPostRequest(isAgent = false, CheckMode, "1234.56"))
         status(resultChange) shouldBe SEE_OTHER
         redirectLocation(resultChange) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(false).url)
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "1234.56"))
+        status(resultAgent) shouldBe SEE_OTHER
+        redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(true).url)
       }
+
       "The user is on the increase/decrease journey and chooses to increase" in {
         enable(AdjustPaymentsOnAccount)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
-
         setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
 
         when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
         when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Right(())))
 
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "4500"))
-        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "4500"))
-
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(false).url)
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "4500"))
         status(resultAgent) shouldBe SEE_OTHER
         redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(true).url)
       }
+
       "CHANGE Only: The user is on the increase/decrease journey and has come from CYA" when {
         "They had previously decreased, and are now increasing" in {
           enable(AdjustPaymentsOnAccount)
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           mockSingleBISWithCurrentYearAsMigrationYear()
-
           setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
-
           when(mockPaymentOnAccountSessionService.getMongo(any(),any())).thenReturn(Future(Right(Some(PoAAmendmentData(Some(MainIncomeLower), Some(100))))))
           when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
           when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Right(())))
 
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           val result = TestEnterPoAAmountController.submit(isAgent = false, CheckMode)(getPostRequest(isAgent = false, CheckMode, "4500"))
-          val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, CheckMode)(getPostRequest(isAgent = true, CheckMode, "4500"))
-
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(false).url)
+
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+          val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, CheckMode)(getPostRequest(isAgent = true, CheckMode, "4500"))
           status(resultAgent) shouldBe SEE_OTHER
           redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(true).url)
         }
+
         "They had previously decreased, and are still decreasing" in {
           enable(AdjustPaymentsOnAccount)
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
@@ -340,32 +316,33 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
           when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
           when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Right(())))
 
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           val result = TestEnterPoAAmountController.submit(isAgent = false, CheckMode)(getPostRequest(isAgent = false, CheckMode, "1000"))
-          val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, CheckMode)(getPostRequest(isAgent = true, CheckMode, "1000"))
-
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(false).url)
+
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+          val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, CheckMode)(getPostRequest(isAgent = true, CheckMode, "1000"))
           status(resultAgent) shouldBe SEE_OTHER
           redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(true).url)
         }
+
         "They had previously increased, and are still increasing" in {
           enable(AdjustPaymentsOnAccount)
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           mockSingleBISWithCurrentYearAsMigrationYear()
-
           setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
 
           when(mockPaymentOnAccountSessionService.getMongo(any(),any())).thenReturn(Future(Right(Some(PoAAmendmentData(Some(MainIncomeLower), Some(4600))))))
           when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
           when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Right(())))
 
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           val result = TestEnterPoAAmountController.submit(isAgent = false, CheckMode)(getPostRequest(isAgent = false, CheckMode, "4500"))
-          val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, CheckMode)(getPostRequest(isAgent = true, CheckMode, "4500"))
-
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(false).url)
+
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+          val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, CheckMode)(getPostRequest(isAgent = true, CheckMode, "4500"))
           status(resultAgent) shouldBe SEE_OTHER
           redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(true).url)
         }
@@ -374,42 +351,37 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
     "redirect to the Select Reason page" when {
       "The user is on the increase/decrease journey and chooses to decrease" in {
         enable(AdjustPaymentsOnAccount)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
-
         setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
-
         when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
 
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "1234.56"))
-        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "1234.56"))
-
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(false, NormalMode).url)
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "1234.56"))
         status(resultAgent) shouldBe SEE_OTHER
         redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(true, NormalMode).url)
       }
+
       "CHANGE Only: The user is on the increase/decrease journey and has come from CYA" when {
         "They had previously increased, and are now decreasing" in {
           enable(AdjustPaymentsOnAccount)
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           mockSingleBISWithCurrentYearAsMigrationYear()
-
           setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
-
           when(mockPaymentOnAccountSessionService.getMongo(any(),any())).thenReturn(Future(Right(Some(PoAAmendmentData(Some(Increase), Some(4500))))))
           when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
           when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Right(())))
 
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           val result = TestEnterPoAAmountController.submit(isAgent = false, CheckMode)(getPostRequest(isAgent = false, CheckMode, "500"))
-          val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, CheckMode)(getPostRequest(isAgent = true, CheckMode, "500"))
-
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(false, CheckMode).url)
+
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+          val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, CheckMode)(getPostRequest(isAgent = true, CheckMode, "500"))
           status(resultAgent) shouldBe SEE_OTHER
           redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(true, CheckMode).url)
         }
@@ -418,141 +390,121 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
     "redirect back to the Enter PoA Amount page with a 500 response" when {
       "No PoA Amount is input" in {
         enable(AdjustPaymentsOnAccount)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
-
         setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
-
         when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
 
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, ""))
-        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, ""))
-
         status(result) shouldBe BAD_REQUEST
         redirectLocation(result) shouldBe None
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, ""))
         status(resultAgent) shouldBe BAD_REQUEST
         redirectLocation(resultAgent) shouldBe None
       }
       "Input PoA Amount is not a valid number" in {
         enable(AdjustPaymentsOnAccount)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
-
         setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
-
         when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
 
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "test"))
-        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "invalid"))
-
         status(result) shouldBe BAD_REQUEST
         redirectLocation(result) shouldBe None
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "invalid"))
         status(resultAgent) shouldBe BAD_REQUEST
         redirectLocation(resultAgent) shouldBe None
       }
       "Input PoA Amount is higher than relevant amount" in {
         enable(AdjustPaymentsOnAccount)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
-
         setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
-
         when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
 
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "6000"))
-        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "6000"))
-
         status(result) shouldBe BAD_REQUEST
         redirectLocation(result) shouldBe None
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "6000"))
         status(resultAgent) shouldBe BAD_REQUEST
         redirectLocation(resultAgent) shouldBe None
       }
       "Input PoA Amount is equal to previous PoA amount" in {
         enable(AdjustPaymentsOnAccount)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
-
         setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
-
         when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
 
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "4000"))
-        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "4000"))
-
         status(result) shouldBe BAD_REQUEST
         redirectLocation(result) shouldBe None
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "4000"))
         status(resultAgent) shouldBe BAD_REQUEST
         redirectLocation(resultAgent) shouldBe None
       }
+
       "Error setting new poa amount in mongo" in {
         enable(AdjustPaymentsOnAccount)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
-
         setupMockGetPoaAmountViewModel(Right(poaViewModelDecreaseJourney))
-
         when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Left(new Error("Error setting poa amount"))))
 
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "1234.56"))
-        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "1234.56"))
-
         status(result) shouldBe INTERNAL_SERVER_ERROR
         redirectLocation(result) shouldBe None
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "1234.56"))
         status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
         redirectLocation(resultAgent) shouldBe None
       }
       "Error setting adjustment reason in mongo" in {
         enable(AdjustPaymentsOnAccount)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
-
         setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
-
         when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
         when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Left(new Error("Error setting adjustment reason"))))
 
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "4500"))
-        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "4500"))
-
         status(result) shouldBe INTERNAL_SERVER_ERROR
         redirectLocation(result) shouldBe None
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "4500"))
         status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
         redirectLocation(resultAgent) shouldBe None
       }
       "Error getting adjustment reason from mongo" in {
         enable(AdjustPaymentsOnAccount)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
-
         setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
 
         when(mockPaymentOnAccountSessionService.getMongo(any(),any())).thenReturn(Future(Left(new Error("Error getting mongo data"))))
         when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
         when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Right(())))
 
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestEnterPoAAmountController.submit(isAgent = false, CheckMode)(getPostRequest(isAgent = false, CheckMode, "1000"))
-        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, CheckMode)(getPostRequest(isAgent = true, CheckMode, "1000"))
-
         status(result) shouldBe INTERNAL_SERVER_ERROR
         redirectLocation(result) shouldBe None
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, CheckMode)(getPostRequest(isAgent = true, CheckMode, "1000"))
         status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
         redirectLocation(resultAgent) shouldBe None
       }
     }
   }
-
 }

@@ -50,6 +50,8 @@ trait MockFrontendAuthorisedFunctions extends BeforeAndAfterEach {
     else setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
   }
 
+
+
   def setupMockAuthRetrievalSuccess[X, Y](retrievalValue: X ~ Y): Unit = {
     when(mockAuthService.authorised(Enrolment("HMRC-MTD-IT")))
       .thenReturn(

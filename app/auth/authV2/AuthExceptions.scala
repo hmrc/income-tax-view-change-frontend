@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,15 @@
  * limitations under the License.
  */
 
-package controllers.predicates.agent
+package auth.authV2
 
-object Constants {
+import uk.gov.hmrc.auth.core.AuthorisationException
 
-  val agentServiceEnrolmentName = "HMRC-AS-AGENT"
-  val agentServiceIdentifierKey = "AgentReferenceNumber"
+object AuthExceptions {
 
-  val ninoEnrolmentName = "HMRC-NI"
-  val ninoEnrolmentIdentifierKey = "NINO"
-
-  val saEnrolmentName = "IR-SA"
-  val saEnrolmentIdentifierKey = "UTR"
-
-  val mtdEnrolmentName = "HMRC-MTD-IT"
-  val mtdEnrolmentIdentifierKey = "MTDITID"
-
+  case class MissingMtdId(r:String = "Could not retrieve MTD ID from request")
+    extends AuthorisationException(r)
+  case class MissingAgentReferenceNumber(r:String = "Agent Reference Number was not found in user's enrolments")
+    extends AuthorisationException(r)
 
 }

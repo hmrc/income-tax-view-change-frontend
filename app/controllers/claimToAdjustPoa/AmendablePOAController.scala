@@ -16,9 +16,9 @@
 
 package controllers.claimToAdjustPoa
 
+import auth.authV2.AuthActions
 import cats.data.EitherT
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.InitialPage
 import implicits.ImplicitCurrencyFormatter
 import models.core.Nino
@@ -26,29 +26,28 @@ import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.ErrorRecovery
 import utils.claimToAdjust.{ClaimToAdjustUtils, WithSessionAndPoa}
-import utils.AuthenticatorPredicate
 import views.html.claimToAdjustPoa.AmendablePaymentOnAccount
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AmendablePOAController @Inject()(val authorisedFunctions: AuthorisedFunctions,
+class AmendablePOAController @Inject()(val authActions: AuthActions,
                                        val claimToAdjustService: ClaimToAdjustService,
-                                       val auth: AuthenticatorPredicate,
                                        val poaSessionService: PaymentOnAccountSessionService,
-                                       view: AmendablePaymentOnAccount,
-                                       implicit val itvcErrorHandler: ItvcErrorHandler,
-                                       implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                       view: AmendablePaymentOnAccount)
                                       (implicit val appConfig: FrontendAppConfig,
-                                       implicit override val mcc: MessagesControllerComponents,
+                                       implicit val individualErrorHandler: ItvcErrorHandler,
+                                       implicit val agentErrorHandler: AgentItvcErrorHandler,
+                                       implicit override val controllerComponents: MessagesControllerComponents,
                                        val ec: ExecutionContext)
-  extends ClientConfirmedController with I18nSupport with ClaimToAdjustUtils with ImplicitCurrencyFormatter with WithSessionAndPoa {
+  extends FrontendBaseController with I18nSupport with ClaimToAdjustUtils with ImplicitCurrencyFormatter with WithSessionAndPoa with ErrorRecovery {
 
   def show(isAgent: Boolean): Action[AnyContent] =
-    auth.authenticatedAction(isAgent) {
+    authActions.individualOrAgentWithClient async {
       implicit user =>
         withSessionData(journeyState = InitialPage) { _ => {
           for {
@@ -57,16 +56,12 @@ class AmendablePOAController @Inject()(val authorisedFunctions: AuthorisedFuncti
         }.value.flatMap {
           case Right(viewModel) =>
             Future.successful(
-              Ok(view(isAgent, viewModel))
+              Ok(view(user.isAgent(), viewModel))
             )
           case Left(ex) =>
             Logger("application").error(s"Exception: ${ex.getMessage} - ${ex.getCause}")
             Future.failed(ex)
         }
-        } recover {
-          case ex: Exception =>
-            Logger("application").error(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
-            showInternalServerError(isAgent)
-        }
+      } recover logAndRedirect
     }
 }
