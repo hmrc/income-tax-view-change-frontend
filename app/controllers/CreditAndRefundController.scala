@@ -19,59 +19,51 @@ package controllers
 
 import audit.AuditingService
 import audit.models.ClaimARefundAuditModel
-import auth.{FrontendAuthorisedFunctions, MtdItUser}
+import auth.MtdItUser
+import auth.authV2.AuthActions
 import config.featureswitch._
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import controllers.agent.predicates.ClientConfirmedController
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates._
 import models.admin.{CreditsRefundsRepay, CutOverCredits, MFACreditsAndDebits}
 import models.creditsandrefunds.{CreditAndRefundViewModel, CreditsModel}
-import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{CreditService, DateServiceInterface, IncomeSourceDetailsService, RepaymentService}
+import services.{CreditService, RepaymentService}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.language.LanguageUtils
-import utils.AuthenticatorPredicate
+import utils.ErrorRecovery
 import views.html.CreditAndRefunds
 import views.html.errorPages.CustomNotFoundError
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
+class CreditAndRefundController @Inject()(val authActions: AuthActions,
                                           val creditService: CreditService,
-                                          val retrieveBtaNavBar: NavBarPredicate,
-                                          val authenticate: AuthenticationPredicate,
-                                          val checkSessionTimeout: SessionTimeoutPredicate,
-                                          val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                                          val itvcErrorHandler: ItvcErrorHandler,
-                                          val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                          val view: CreditAndRefunds,
                                           val repaymentService: RepaymentService,
                                           val auditingService: AuditingService,
-                                          val auth: AuthenticatorPredicate)
+                                          val controllerComponents: MessagesControllerComponents)
                                          (implicit val appConfig: FrontendAppConfig,
-                                          dateService: DateServiceInterface,
+                                          implicit val individualErrorHandler: ItvcErrorHandler,
+                                          implicit val agentErrorHandler: AgentItvcErrorHandler,
                                           val languageUtils: LanguageUtils,
-                                          mcc: MessagesControllerComponents,
                                           val ec: ExecutionContext,
-                                          val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                          val view: CreditAndRefunds,
                                           val customNotFoundErrorView: CustomNotFoundError)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
+  extends FrontendBaseController with FeatureSwitching with I18nSupport with ErrorRecovery {
 
   def show(origin: Option[String] = None): Action[AnyContent] =
-    auth.authenticatedAction(isAgent = false) {
+    authActions.individualOrAgentWithClient async {
       implicit user =>
         handleRequest(
           backUrl = controllers.routes.HomeController.show(origin).url,
-          itvcErrorHandler = itvcErrorHandler,
           isAgent = false
-        )
+        ) recover logAndRedirect
     }
 
-  def handleRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
+  def handleRequest(isAgent: Boolean, backUrl: String)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     creditService.getAllCredits map {
       case _ if !isEnabled(CreditsRefundsRepay) =>
@@ -80,59 +72,52 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
         val isMFACreditsAndDebitsEnabled: Boolean = isEnabled(MFACreditsAndDebits)
         val isCutOverCreditsEnabled: Boolean = isEnabled(CutOverCredits)
         val viewModel = CreditAndRefundViewModel.fromCreditAndRefundModel(creditsModel)
-
         auditClaimARefund(creditsModel)
-
         Ok(view(viewModel, isAgent, backUrl, isMFACreditsAndDebitsEnabled, isCutOverCreditsEnabled)(user, user, messages))
-      case _ => Logger("application").error(
-        s"${if (isAgent) "[Agent]"}Invalid response from financial transactions")
-        itvcErrorHandler.showInternalServerError()
+      case _ => logAndRedirect("Invalid response from financial transactions")
     }
   }
 
   def showAgent(): Action[AnyContent] = {
-    auth.authenticatedAction(isAgent = true) {
+    authActions.individualOrAgentWithClient async {
       implicit mtdItUser =>
         handleRequest(
           backUrl = controllers.routes.HomeController.showAgent.url,
-          itvcErrorHandler = itvcErrorHandlerAgent,
           isAgent = true
-        )
+        ) recover logAndRedirect
     }
   }
 
   def startRefund(): Action[AnyContent] =
-    auth.authenticatedAction(isAgent = false) {
+    authActions.individualOrAgentWithClient async {
       implicit user =>
         user.userType match {
           case _ if !isEnabled(CreditsRefundsRepay) =>
             Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
           case Some(Agent) =>
-            Future.successful(itvcErrorHandlerAgent.showInternalServerError())
+            Future.successful(agentErrorHandler.showInternalServerError())
           case _ =>
             handleRefundRequest(
               backUrl = "", // TODO: do we need a backUrl
-              itvcErrorHandler = itvcErrorHandler,
               isAgent = false
-            )
+            ) recover logAndRedirect
         }
     }
 
-  private def handleRefundRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
+  private def handleRefundRequest(isAgent: Boolean, backUrl: String)
                                  (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     creditService.getAllCredits flatMap {
       case _ if !isEnabled(CreditsRefundsRepay) =>
         Future.successful(Ok(customNotFoundErrorView()(user, messages)))
-
-      case financialDetailsModel: CreditsModel =>
-        repaymentService.start(user.nino, Some(financialDetailsModel.availableCredit)) map {
+      case creditsModel: CreditsModel =>
+        repaymentService.start(user.nino, Some(creditsModel.availableCredit)) map {
           case Right(nextUrl) =>
             Redirect(nextUrl)
-          case Left(_) =>
-            itvcErrorHandler.showInternalServerError()
+          case Left(ex) =>
+            logAndRedirect(ex.getLocalizedMessage)
         }
-      case _ => Logger("application").error("")
-        Future.successful(itvcErrorHandler.showInternalServerError())
+      case _ =>
+        Future.successful(logAndRedirect("Could not get CreditsModel"))
     }
   }
 

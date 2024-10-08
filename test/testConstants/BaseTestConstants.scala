@@ -144,6 +144,7 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
 
   def testAuthAgentSuccessWithSaUtrResponse(confidenceLevel: ConfidenceLevel = testConfidenceLevel,
                                        affinityGroup: AffinityGroup = AffinityGroup.Agent) = new ~(new ~(new ~(new ~(Enrolments(Set(
+    arnEnrolment,
     Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "activated"),
     Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", testNino)), "activated"),
     Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", "1234567890")), "activated")
@@ -152,7 +153,7 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
 
   val arnEnrolment: Enrolment = Enrolment(
     "HMRC-AS-AGENT",
-    Seq(EnrolmentIdentifier("ARN", testArn)),
+    Seq(EnrolmentIdentifier("AgentReferenceNumber", testArn)),
     "Activated"
   )
 

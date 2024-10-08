@@ -16,47 +16,40 @@
 
 package controllers.claimToAdjustPoa
 
+import auth.authV2.AuthActions
 import cats.data.EitherT
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.CannotGoBackPage
-import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.claimToAdjustPoa.RecalculatePoaHelper
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.AuthenticatorPredicate
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.claimToAdjust.WithSessionAndPoa
 import views.html.claimToAdjustPoa.YouCannotGoBackView
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class YouCannotGoBackController @Inject()(val authorisedFunctions: AuthorisedFunctions,
+class YouCannotGoBackController @Inject()(val authActions: AuthActions,
                                           val claimToAdjustService: ClaimToAdjustService,
                                           val poaSessionService: PaymentOnAccountSessionService,
-                                          val view: YouCannotGoBackView,
-                                          implicit val itvcErrorHandler: ItvcErrorHandler,
-                                          auth: AuthenticatorPredicate,
-                                          implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                          val view: YouCannotGoBackView)
                                          (implicit val appConfig: FrontendAppConfig,
-                                          mcc: MessagesControllerComponents,
+                                          implicit val individualErrorHandler: ItvcErrorHandler,
+                                          implicit val agentErrorHandler: AgentItvcErrorHandler,
+                                          override implicit val controllerComponents: MessagesControllerComponents,
                                           val ec: ExecutionContext)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching with RecalculatePoaHelper with WithSessionAndPoa {
+  extends FrontendBaseController with I18nSupport with FeatureSwitching with RecalculatePoaHelper with WithSessionAndPoa {
 
-  def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def show(isAgent: Boolean): Action[AnyContent] = authActions.individualOrAgentWithClient async {
     implicit user =>
-      withSessionDataAndPoa(journeyState = CannotGoBackPage) {(x, poa) =>
+      withSessionDataAndPoa(journeyState = CannotGoBackPage) {(_, poa) =>
         EitherT.rightT(Ok(view(
-          isAgent = isAgent,
+          isAgent = user.isAgent(),
           poaTaxYear = poa.taxYear
         )))
-      } recover {
-        case ex: Exception =>
-          Logger("application").error(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
-          showInternalServerError(isAgent)
-      }
+      } recover logAndRedirect
   }
 }

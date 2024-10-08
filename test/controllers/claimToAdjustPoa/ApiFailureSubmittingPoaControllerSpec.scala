@@ -18,7 +18,7 @@ package controllers.claimToAdjustPoa
 
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import mocks.controllers.predicates.MockAuthenticationPredicate
+import mocks.auth.MockAuthActions
 import models.admin.AdjustPaymentsOnAccount
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -27,29 +27,27 @@ import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{HTML, OK, contentAsString, contentType, defaultAwaitTimeout, redirectLocation, status}
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testUtils.TestSupport
 import views.html.claimToAdjustPoa.ApiFailureSubmittingPoaView
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ApiFailureSubmittingPoaControllerSpec extends MockAuthenticationPredicate with TestSupport with FeatureSwitching {
+class ApiFailureSubmittingPoaControllerSpec extends TestSupport with FeatureSwitching with MockAuthActions {
 
   object TestApiFailureSubmittingPoaController extends ApiFailureSubmittingPoaController(
-    authorisedFunctions = mockAuthService,
-    auth = testAuthenticator,
+    authActions = mockAuthActions,
     view = app.injector.instanceOf[ApiFailureSubmittingPoaView],
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler]
   )(appConfig = app.injector.instanceOf[FrontendAppConfig],
-    mcc = app.injector.instanceOf[MessagesControllerComponents],
+    controllerComponents = app.injector.instanceOf[MessagesControllerComponents],
     ec = app.injector.instanceOf[ExecutionContext]
   )
 
   val firstParagraphView = "Your payments on account could not be updated."
 
   def setupTests(isAgent: Boolean): Unit = {
-    if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+    if (isAgent) setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
     else setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
     mockBusinessIncomeSource()
   }
@@ -79,6 +77,7 @@ class ApiFailureSubmittingPoaControllerSpec extends MockAuthenticationPredicate 
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
       }
       "called with an unauthenticated user" in {
+        setupTests(isAgent = false)
         setupMockAuthorisationException()
         val result: Future[Result] = TestApiFailureSubmittingPoaController.show(isAgent = false)(fakeRequestWithActiveSession)
         status(result) shouldBe Status.SEE_OTHER

@@ -45,8 +45,8 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
   val TestWithSessionAndPoa: WithSessionAndPoa = new WithSessionAndPoa {
     override val appConfig: FrontendAppConfig = mockAppConfig
     override val poaSessionService: PaymentOnAccountSessionService = mockPaymentOnAccountSessionService
-    override val itvcErrorHandler: ItvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler]
-    override val itvcErrorHandlerAgent: AgentItvcErrorHandler = app.injector.instanceOf[AgentItvcErrorHandler]
+    override val individualErrorHandler: ItvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler]
+    override val agentErrorHandler: AgentItvcErrorHandler = app.injector.instanceOf[AgentItvcErrorHandler]
     override implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
     override val claimToAdjustService: ClaimToAdjustService = mockClaimToAdjustService
   }
@@ -54,8 +54,8 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
   lazy val TestWithSessionAndPoaSpy: WithSessionAndPoa = spy(new WithSessionAndPoa {
     override val appConfig: FrontendAppConfig = mockAppConfig
     override val poaSessionService: PaymentOnAccountSessionService = mockPaymentOnAccountSessionService
-    override val itvcErrorHandler: ItvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler]
-    override val itvcErrorHandlerAgent: AgentItvcErrorHandler = app.injector.instanceOf[AgentItvcErrorHandler]
+    override val individualErrorHandler: ItvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler]
+    override val agentErrorHandler: AgentItvcErrorHandler = app.injector.instanceOf[AgentItvcErrorHandler]
     override implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
     override val claimToAdjustService: ClaimToAdjustService = mockClaimToAdjustService
   })

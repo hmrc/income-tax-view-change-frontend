@@ -16,7 +16,7 @@
 
 package mocks.controllers.predicates
 
-import config.ItvcErrorHandler
+import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.IncomeSourceDetailsPredicate
 import mocks.services._
 import play.api.mvc.MessagesControllerComponents
@@ -25,6 +25,9 @@ import testUtils.TestSupport
 trait MockIncomeSourceDetailsPredicate extends TestSupport with MockIncomeSourceDetailsService with MockAsyncCacheApi {
 
   object MockIncomeSourceDetailsPredicate extends IncomeSourceDetailsPredicate(
-    mockIncomeSourceDetailsService, app.injector.instanceOf[ItvcErrorHandler])(
-    ec, app.injector.instanceOf[MessagesControllerComponents])
+    mockIncomeSourceDetailsService)(
+    ec,
+    app.injector.instanceOf[ItvcErrorHandler],
+    app.injector.instanceOf[AgentItvcErrorHandler],
+    app.injector.instanceOf[MessagesControllerComponents])
 }
