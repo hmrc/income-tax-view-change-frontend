@@ -50,31 +50,7 @@ class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContex
       handleShow(isAgent = true)
   }
 
-  private def handleShow(isAgent: Boolean)(implicit hc: HeaderCarrier, ec: ExecutionContext, user: MtdItUser[_]): Future[Result] = {
-    user.saUtr match {
-      case Some(value) =>
-        val sessionDataModel: SessionDataModel = SessionDataModel(mtditid = user.mtditid, nino = user.nino, utr = value)
-        sessionDataService.postSessionData(sessionDataModel) flatMap {
-          case Left(errorModel: SessionDataPostFailure) =>
-            logErrorWithMessage(isAgent, s"POST user data to income-tax-session-data unsuccessful:" +
-              s" - status: ${errorModel.status} - message: ${errorModel.errorMessage} - ")
-            Future.successful(handleError(isAgent))
-          case Right(successModel: SessionDataPostSuccess) =>
-            Logger("application").debug(s"${if (isAgent) "Agent" else "Individual"} " +
-              s"- POST user data to income-tax-session-data successful! status: ${successModel.status}")
-            handlePostSuccess(isAgent, successModel.status)
-        }
-      case None =>
-        logErrorWithMessage(isAgent, "saUtr was None in the request")
-        Future.successful(handleError(isAgent))
-    }
-  }.recover {
-    case ex: Throwable =>
-      logErrorWithMessage(isAgent, s"Error on income-tax-session-data service test only page, status: - ${ex.getMessage} - ${ex.getCause} - ")
-      handleError(isAgent)
-  }
-
-  private def handlePostSuccess(isAgent: Boolean, status: Int)(implicit hc: HeaderCarrier): Future[Result] = {
+  private def handleShow(isAgent: Boolean)(implicit hc: HeaderCarrier): Future[Result] = {
     sessionDataService.getSessionData() map {
       case Left(ex: Throwable) =>
         Logger("application").error(s"${if (isAgent) "Agent" else "Individual"}" +
@@ -82,12 +58,7 @@ class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContex
         InternalServerError("Internal server error. There was an unexpected error fetching this data from income-tax-session-data service")
       case Right(model: SessionDataGetSuccess) =>
         Ok(
-          {
-            if (status.equals(CONFLICT))
-              "A complete duplicate of this record was found in the database. We have replaced the old record with the new one."
-            else ""
-          } +
-            s"Session Data Service POST and GET requests were successful with status: $status !\n" +
+            s"Session Data Service GET request was successful!\n" +
             s"User model:        ${model.toString}\n" +
             s"session id:        ${model.sessionId}\n" +
             s"internal id:       Not Implemented in FE Auth Predicate\n" +
