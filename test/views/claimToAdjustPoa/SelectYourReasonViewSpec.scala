@@ -31,9 +31,12 @@ class SelectYourReasonViewSpec extends TestSupport {
 
   val selectYourReasonView: SelectYourReasonView = app.injector.instanceOf[SelectYourReasonView]
   lazy val form: Form[SelectYourReason] = new SelectYourReasonFormProvider().apply()
-
   val view: Html = selectYourReasonView(form, TaxYear(fixedDate.getYear, fixedDate.getYear + 1), isAgent = false, NormalMode, useFallbackLink = true)
   val document: Document = Jsoup.parse(view.toString())
+
+  lazy val formError: Form[SelectYourReason] = new SelectYourReasonFormProvider().apply().withError("value", "claimToAdjustPoa.selectYourReason.error.required")
+  val viewWithErrors: Html = selectYourReasonView(formError, TaxYear(fixedDate.getYear, fixedDate.getYear + 1), isAgent = false, NormalMode, useFallbackLink = true)
+  val documentWithErrors: Document = Jsoup.parse(viewWithErrors.toString())
 
   val title = "Select Your Reason - Manage your Income Tax updates - GOV.UK"
   val caption = "2023 to 2024 tax year"
@@ -53,7 +56,9 @@ class SelectYourReasonViewSpec extends TestSupport {
   val bullet4Hint = "For example, under PAYE."
   val continue = "Continue"
   val continueLink = "/report-quarterly/income-and-expenses/view"
+  val errorSummaryHeading = "There is a problem"
   val errorSummary = "Select the main reason you’re reducing your payments on account"
+  val errorSummarySubheading = "Select the main reason you’re reducing your payments on account"
 
   "SelectYourReasonView" should {
 
@@ -136,8 +141,16 @@ class SelectYourReasonViewSpec extends TestSupport {
 
     "when there are errors on the page" should {
 
+      "render the correct error summary heading" in {
+        documentWithErrors.select("#error-summary-heading").text() shouldBe errorSummaryHeading
+      }
+
       "render the correct error summary content" in {
-        document.select("#error-summary-display") shouldBe errorSummary
+        documentWithErrors.select("#error-summary-display > div > ul > li > a").text() shouldBe errorSummary
+      }
+
+      "render the correct error summary subheading" in {
+        documentWithErrors.select("#value-error").first().ownText() shouldBe errorSummarySubheading
       }
     }
   }
