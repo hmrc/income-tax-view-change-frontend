@@ -105,13 +105,13 @@ class AuthoriseAndRetrieve @Inject()(val authorisedFunctions: FrontendAuthorised
 
     private def logAndRedirect[A]: PartialFunction[Throwable, Future[Either[Result, EnroledUser[A]]]] = {
       case insufficientEnrolments: InsufficientEnrolments =>
-        Logger("application").info(s"[AuthenticationPredicate][async] Insufficient enrolments: ${insufficientEnrolments.msg}" )
+        Logger(getClass).debug(s"Insufficient enrolments: ${insufficientEnrolments.msg}" )
         Future.successful(Left(Redirect(controllers.errors.routes.NotEnrolledController.show)))
       case _: BearerTokenExpired =>
-        Logger("application").info("[AuthenticationPredicate][async] Bearer Token Timed Out.")
+        Logger(getClass).debug("Bearer Token Timed Out.")
         Future.successful(Left(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout)))
       case authorisationException: AuthorisationException =>
-        Logger("application").info(s"[AuthenticationPredicate][async] Unauthorised request: ${authorisationException.reason}. Redirect to Sign In.")
+        Logger(getClass).debug(s"Unauthorised request: ${authorisationException.reason}. Redirect to Sign In.")
         Future.successful(Left(Redirect(controllers.routes.SignInController.signIn)))
       // No catch all block at end - bubble up to global error handler
       // See investigation: https://github.com/hmrc/income-tax-view-change-frontend/pull/2432

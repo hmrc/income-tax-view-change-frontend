@@ -53,7 +53,7 @@ class SelectYourReasonController @Inject()(val authActions: AuthActions,
       withSessionDataAndPoa() { (session, poa) =>
         session.newPoAAmount match {
           case Some(amount) if amount >= poa.totalAmount =>
-            saveValueAndRedirect(mode, user.isAgent(), Increase, poa)
+            saveValueAndRedirect(mode, Increase, poa)
           case _ =>
             val form = formProvider.apply()
             EitherT.rightT(Ok(view(
@@ -63,7 +63,7 @@ class SelectYourReasonController @Inject()(val authActions: AuthActions,
               mode = mode,
               useFallbackLink = true)))
         }
-      }
+      } recover logAndRedirect
   }
 
   def submit(isAgent: Boolean, mode: Mode): Action[AnyContent] = authActions.individualOrAgentWithClient async {
@@ -75,13 +75,12 @@ class SelectYourReasonController @Inject()(val authActions: AuthActions,
             formWithErrors =>
               EitherT.rightT(BadRequest(view(formWithErrors, poa.taxYear, user.isAgent(), mode, true)))
             ,
-            value => saveValueAndRedirect(mode, user.isAgent(), value, poa)
+            value => saveValueAndRedirect(mode, value, poa)
           )
-      }
+      } recover logAndRedirect
   }
 
-
-  private def saveValueAndRedirect(mode: Mode, isAgent: Boolean, value: SelectYourReason, poa: PaymentOnAccountViewModel)
+  private def saveValueAndRedirect(mode: Mode, value: SelectYourReason, poa: PaymentOnAccountViewModel)
                                   (implicit user: MtdItUser[_]): EitherT[Future, Throwable, Result] = {
     for {
       res <- EitherT(poaSessionService.setAdjustmentReason(value))
@@ -94,5 +93,4 @@ class SelectYourReasonController @Inject()(val authActions: AuthActions,
       }
     }
   }
-
 }

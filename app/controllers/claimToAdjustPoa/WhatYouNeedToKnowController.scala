@@ -45,7 +45,7 @@ class WhatYouNeedToKnowController @Inject()(val authActions: AuthActions,
                                             val ec: ExecutionContext)
   extends FrontendBaseController with I18nSupport with ClaimToAdjustUtils with WithSessionAndPoa with ErrorRecovery {
 
-  def getRedirect(isAgent: Boolean, poa: PaymentOnAccountViewModel)(implicit user: MtdItUser[_]): String = {
+  def getRedirect(poa: PaymentOnAccountViewModel)(implicit user: MtdItUser[_]): String = {
     (if (poa.totalAmountLessThanPoa) {
       controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(user.isAgent(), NormalMode)
     } else {
@@ -56,12 +56,9 @@ class WhatYouNeedToKnowController @Inject()(val authActions: AuthActions,
   def show(isAgent: Boolean): Action[AnyContent] = authActions.individualOrAgentWithClient async {
     implicit user =>
       withSessionDataAndPoa() { (_, poa) =>
-        val viewModel = WhatYouNeedToKnowViewModel(poa.taxYear, poa.partiallyPaidAndTotalAmountLessThanPoa, getRedirect(user.isAgent(), poa))
+        val viewModel = WhatYouNeedToKnowViewModel(poa.taxYear, poa.partiallyPaidAndTotalAmountLessThanPoa, getRedirect(poa))
         EitherT.rightT(Ok(view(user.isAgent(), viewModel)))
-      } recover {
-        case ex: Exception =>
-          logAndRedirect(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
-      }
+      } recover logAndRedirect
   }
 
 }

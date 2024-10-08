@@ -62,10 +62,7 @@ class EnterPoAAmountController @Inject()(val authActions: AuthActions,
                 logAndRedirect(s"Error while retrieving charge history details : ${ex.getMessage} - ${ex.getCause}")
             }
           }
-        } recover {
-          case ex: Exception =>
-            logAndRedirect(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
-        }
+        } recover logAndRedirect
     }
 
   def submit(isAgent: Boolean, mode: Mode): Action[AnyContent] = authActions.individualOrAgentWithClient async {
@@ -76,7 +73,7 @@ class EnterPoAAmountController @Inject()(val authActions: AuthActions,
             handleForm(viewModel, user.isAgent(), mode)
           case Left(ex) =>
             Future.successful(logAndRedirect(s"Error while retrieving charge history details : ${ex.getMessage} - ${ex.getCause}"))
-        }
+        } recover logAndRedirect
       }
   }
 
@@ -125,5 +122,4 @@ class EnterPoAAmountController @Inject()(val authActions: AuthActions,
       }
     }
   }
-
 }

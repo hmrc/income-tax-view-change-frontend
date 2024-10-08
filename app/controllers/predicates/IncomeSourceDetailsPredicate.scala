@@ -17,11 +17,13 @@
 package controllers.predicates
 
 import auth.{MtdItUser, MtdItUserOptionNino}
-import config.ItvcErrorHandler
+import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.BaseController
-import models.incomeSourceDetails.IncomeSourceDetailsModel
+import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
+import play.api.Logger
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
 import services.IncomeSourceDetailsService
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
@@ -29,9 +31,10 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IncomeSourceDetailsPredicate @Inject()(val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                             val itvcErrorHandler: ItvcErrorHandler)
+class IncomeSourceDetailsPredicate @Inject()(val incomeSourceDetailsService: IncomeSourceDetailsService)
                                             (implicit val executionContext: ExecutionContext,
+                                             val individualErrorHandler: ItvcErrorHandler,
+                                             val agentErrorHandler: AgentItvcErrorHandler,
                                              mcc: MessagesControllerComponents) extends BaseController with
   ActionRefiner[MtdItUserOptionNino, MtdItUser] {
 
@@ -44,7 +47,24 @@ class IncomeSourceDetailsPredicate @Inject()(val incomeSourceDetailsService: Inc
     incomeSourceDetailsService.getIncomeSourceDetails() map {
       case response: IncomeSourceDetailsModel =>
         Right(MtdItUser(request.mtditid, response.nino, request.userName, response, None, request.saUtr, request.credId, request.userType, request.arn))
-      case _ => Left(itvcErrorHandler.showInternalServerError())
+      case error: IncomeSourceDetailsError => Left(logWithUserType(s"[${error.status}] ${error.reason}"))
+    } recover logAndRedirect()
+
+  }
+
+  def logAndRedirect[A]()(implicit req: MtdItUserOptionNino[A]): PartialFunction[Throwable, Either[Result, MtdItUser[A]]] = {
+    case throwable: Throwable =>
+      Left(logWithUserType(s"[${throwable.getClass.getSimpleName}] ${throwable.getLocalizedMessage}"))
+  }
+
+  def logWithUserType[A](msg: String)(implicit req: MtdItUserOptionNino[A]): Result = {
+    req.userType match {
+      case Some(Agent) =>
+        Logger(this.getClass).error(s"[Agent] $msg")
+        agentErrorHandler.showInternalServerError()
+      case _ =>
+        Logger(this.getClass).error(msg)
+        individualErrorHandler.showInternalServerError()
     }
   }
 }

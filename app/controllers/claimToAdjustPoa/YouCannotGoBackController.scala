@@ -50,9 +50,6 @@ class YouCannotGoBackController @Inject()(val authActions: AuthActions,
           isAgent = user.isAgent(),
           poaTaxYear = poa.taxYear
         )))
-      } recover {
-        case ex: Exception =>
-          logAndRedirect(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
-      }
+      } recover logAndRedirect
   }
 }

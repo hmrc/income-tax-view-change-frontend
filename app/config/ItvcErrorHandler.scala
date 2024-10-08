@@ -35,7 +35,6 @@ class ItvcErrorHandler @Inject()(val errorTemplate: ErrorTemplate,
 
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit r: Request[_]): Html = {
     errorTemplate(pageTitle, heading, message, isAgent = false)
-//    errorTemplate(pageTitle, heading, message, isAgent = r.path.contains(config.agentBaseUrl))
   }
 
   def showInternalServerError()(implicit request: Request[_]): Result = InternalServerError(standardErrorTemplate(

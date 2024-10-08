@@ -19,7 +19,7 @@ package mocks.auth
 import audit.mocks.MockAuditingService
 import auth.authV2.AuthActions
 import auth.authV2.actions._
-import config.ItvcErrorHandler
+import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.IncomeSourceDetailsPredicate
 import mocks.services.MockIncomeSourceDetailsService
 import org.mockito.ArgumentMatchers.any
@@ -45,9 +45,11 @@ trait MockAuthActions extends TestSupport with MockIncomeSourceDetailsService wi
   )
 
   private val incomeSourceDetailsPredicate = new IncomeSourceDetailsPredicate(
-    mockIncomeSourceDetailsService,
-    app.injector.instanceOf[ItvcErrorHandler]
-  )(ec, stubMessagesControllerComponents())
+    mockIncomeSourceDetailsService
+  )(ec,
+    app.injector.instanceOf[ItvcErrorHandler],
+    app.injector.instanceOf[AgentItvcErrorHandler],
+    stubMessagesControllerComponents())
 
   val mockAuthActions = new AuthActions(
     app.injector.instanceOf[SessionTimeoutPredicateV2],

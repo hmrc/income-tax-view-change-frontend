@@ -52,21 +52,17 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
 
     val controller = new CreditAndRefundController(
       authActions = mockAuthActions,
-      retrieveBtaNavBar = MockNavBarPredicate,
-      checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
-      retrieveNinoWithIncomeSources = MockIncomeSourceDetailsPredicate,
-      individualErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
-      incomeSourceDetailsService = mockIncomeSourceDetailsService,
       creditService = mockCreditService,
       repaymentService = mockRepaymentService,
       auditingService = mockAuditingService,
+      view = app.injector.instanceOf[CreditAndRefunds],
       controllerComponents = app.injector.instanceOf[MessagesControllerComponents]
     )(
       appConfig = app.injector.instanceOf[FrontendAppConfig],
       languageUtils = languageUtils,
       ec = ec,
+      individualErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
       agentErrorHandler = app.injector.instanceOf[AgentItvcErrorHandler],
-      view = app.injector.instanceOf[CreditAndRefunds],
       customNotFoundErrorView = app.injector.instanceOf[CustomNotFoundError]
     )
   }

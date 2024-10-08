@@ -52,11 +52,8 @@ class PoaAdjustedController @Inject()(val authActions: AuthActions,
     implicit user =>
       withSessionDataAndPoa(journeyState = AfterSubmissionPage) { (session, poa) =>
         checkAndLogAPIDataSet(session, poa)
-        EitherT.liftF(handleView(user.isAgent(), poa, session))
-      } recover {
-        case ex: Exception =>
-          logAndRedirect(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
-      }
+        EitherT.liftF(handleView(poa, session))
+      } recover logAndRedirect
   }
 
   private def checkAndLogAPIDataSet(session: PoAAmendmentData, poa: PaymentOnAccountViewModel): Unit = {
@@ -68,7 +65,7 @@ class PoaAdjustedController @Inject()(val authActions: AuthActions,
     }
   }
 
-  private def handleView(isAgent: Boolean, poa: PaymentOnAccountViewModel, session: PoAAmendmentData)(implicit user: MtdItUser[_]): Future[Result] = {
+  private def handleView(poa: PaymentOnAccountViewModel, session: PoAAmendmentData)(implicit user: MtdItUser[_]): Future[Result] = {
     poaSessionService.setCompletedJourney(hc, ec).flatMap {
       case Right(_) => Future.successful(
         Ok(view(user.isAgent(), poa.taxYear, poa.totalAmountOne, showOverdueCharges(poa.taxYear, session.poaAdjustmentReason))))

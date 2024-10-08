@@ -34,16 +34,16 @@ trait ErrorRecovery {
 
   def logAndRedirect[A](implicit user: MtdItUser[A]): PartialFunction[Throwable, Result] = {
     case throwable: Throwable =>
-      logWithUserType(throwable.getLocalizedMessage)
+      logWithUserType(s"[${throwable.getClass.getSimpleName}] ${throwable.getLocalizedMessage}")
       redirectToErrorPage()
   }
 
   private def logWithUserType[A](msg: String)(implicit user: MtdItUser[A]): Unit = {
     user.userType match {
       case Some(Agent) =>
-        Logger("application").error(s"[Agent] $msg")
+        Logger(this.getClass).error(s"[Agent] $msg")
       case _ =>
-        Logger("application").error(msg)
+        Logger(this.getClass).error(msg)
     }
   }
 

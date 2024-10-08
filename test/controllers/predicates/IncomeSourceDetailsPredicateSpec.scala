@@ -16,14 +16,14 @@
 
 package controllers.predicates
 
-import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
-import auth.{MtdItUser, MtdItUserOptionNino, MtdItUserWithNino}
-import config.ItvcErrorHandler
+import auth.{MtdItUser, MtdItUserOptionNino}
+import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import mocks.services.{MockAsyncCacheApi, MockIncomeSourceDetailsService}
 import play.api.http.Status
-import play.api.test.Helpers._
 import play.api.mvc.MessagesControllerComponents
+import play.api.test.Helpers._
+import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
@@ -32,9 +32,11 @@ import scala.concurrent.Future
 
 class IncomeSourceDetailsPredicateSpec extends TestSupport with MockIncomeSourceDetailsService with MockAsyncCacheApi {
 
-  object IncomeSourceDetailsPredicate extends IncomeSourceDetailsPredicate(mockIncomeSourceDetailsService,
-    app.injector.instanceOf[ItvcErrorHandler])(
-    ec, app.injector.instanceOf[MessagesControllerComponents]
+  object IncomeSourceDetailsPredicate extends IncomeSourceDetailsPredicate(mockIncomeSourceDetailsService)(
+    ec,
+    app.injector.instanceOf[ItvcErrorHandler],
+    app.injector.instanceOf[AgentItvcErrorHandler],
+    app.injector.instanceOf[MessagesControllerComponents]
   )
 
   lazy val userOptionNino: MtdItUserOptionNino[Any] = MtdItUserOptionNino(testMtditid, Some(testNino), Some(testRetrievedUserName),

@@ -57,10 +57,7 @@ class ConfirmationForAdjustingPoaController @Inject()(val authActions: AuthActio
 
             EitherT.rightT(logAndRedirect(s"Error, New PoA Amount was not found in session"))
         }
-      } recover {
-        case ex: Exception =>
-          logAndRedirect(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
-      }
+      } recover logAndRedirect
   }
 
   def submit(isAgent: Boolean): Action[AnyContent] = authActions.individualOrAgentWithClient async {
@@ -69,7 +66,7 @@ class ConfirmationForAdjustingPoaController @Inject()(val authActions: AuthActio
         claimToAdjustService = claimToAdjustService,
         ctaCalculationService = ctaCalculationService,
         poaSessionService = poaSessionService
-      )
+      ) recover logAndRedirect
   }
 
 }
