@@ -50,23 +50,6 @@ class OptInCompletedController @Inject()(val view: OptInCompletedView,
         errorHandler(isAgent).showInternalServerError()
     }
   }
-
-  // Native version
-//  def show(isAgent: Boolean = false): Action[AnyContent] =
-//    auth.authenticatedAction(isAgent) {
-//      implicit user =>
-//        withRecover(isAgent) {
-//          for {
-//            optModel <- optInService.optinCompletedPageModel(isAgent)
-//          } yield {
-//            optModel
-//              .map(model => Ok(view(model)))
-//              .getOrElse(errorHandler(isAgent).showInternalServerError())
-//          }
-//        }
-//    }
-
-  // Cats version
     def show(isAgent: Boolean = false): Action[AnyContent] =
       auth.authenticatedAction(isAgent) {
         implicit user =>

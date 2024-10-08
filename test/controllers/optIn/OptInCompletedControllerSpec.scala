@@ -63,61 +63,6 @@ class OptInCompletedControllerSpec extends TestSupport
 
     ".show()" should {
 
-      //TODO: Uncomment for Native return type test
-
-      //      "show page for current year with OK 200 status" in {
-      //
-      //        val isAgent = false
-      //
-      //        setupMockAuthorisationSuccess(isAgent)
-      //        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-      //
-      //        val proposition = createOptInProposition(taxYear2023, ITSAStatus.Annual, ITSAStatus.Annual)
-      //
-      //        when(mockOptInService.optinCompletedPageModel(any())(any(), any(), any()))
-      //          .thenReturn(
-      //            Future(Some(
-      //              OptInCompletedViewModel(
-      //                isAgent = isAgent,
-      //                optInTaxYear = taxYear2023,
-      //                showAnnualReportingAdvice = proposition.showAnnualReportingAdvice(taxYear2023),
-      //                isCurrentYear = proposition.isCurrentTaxYear(taxYear2023),
-      //                optInIncludedNextYear = proposition.nextTaxYear.status == Voluntary
-      //              )
-      //            ))
-      //          )
-      //
-      //        val expectedView: HtmlFormat.Appendable =
-      //          view(
-      //            OptInCompletedViewModel(
-      //              isAgent = false,
-      //              optInTaxYear = taxYear2023,
-      //              showAnnualReportingAdvice = proposition.showAnnualReportingAdvice(taxYear2023),
-      //              isCurrentYear = proposition.isCurrentTaxYear(taxYear2023),
-      //              optInIncludedNextYear = proposition.nextTaxYear.status == Voluntary
-      //            )
-      //          )
-      //
-      //        val request = fakeRequestWithNinoAndOrigin("PTA")
-      //        val result =
-      //          controller
-      //            .show()
-      //            .apply(request)
-      //
-      //        // TODO: Delete/cleanup - This title extraction is just to demo the view being rendered when OK 200 status
-      //        val titlePattern = """<title>(.*?)</title>""".r
-      //
-      //        val title = titlePattern.findFirstMatchIn(contentAsString(result)).map(_.group(1))
-      //
-      //        println("********\n" + contentAsString(result) + "\n ********")
-      //
-      //        status(result) shouldBe Status.OK
-      //        contentAsString(result) shouldBe expectedView.toString()
-      //        title shouldBe Some("Opt in completed - Manage your Income Tax updates - GOV.UK")
-      //      }
-
-      //:TODO Cats Version
-
       "show page for current year with OK 200 status" in {
 
         val isAgent = false
@@ -130,7 +75,7 @@ class OptInCompletedControllerSpec extends TestSupport
 
         when(mockOptInService.optinCompletedPageModel(any())(any(), any(), any()))
           .thenReturn(
-            OptionT(
+            OptionT[Future, OptInCompletedViewModel](
               Future(Some(
                 OptInCompletedViewModel(
                   isAgent = false,
