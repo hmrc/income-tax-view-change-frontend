@@ -19,10 +19,9 @@ package helpers.servicemocks
 import controllers.agent.AuthUtils._
 import helpers.{ComponentSpecBase, WiremockHelper}
 import play.api.http.Status
-import play.api.libs.json.{JsString, JsValue, Json}
+import play.api.libs.json.{JsArray, JsString, JsValue, Json}
 import testConstants.BaseIntegrationTestConstants._
 import uk.gov.hmrc.auth.core.Enrolment
-import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
 
 object AuthStub extends ComponentSpecBase {
 
@@ -241,7 +240,6 @@ object AuthStub extends ComponentSpecBase {
 
   def stubAuthorisedNullPredicate(mtdItId: String = "mtdbsaId"): Unit = {
 
-
     val jsonRequest = getAuthRequest(None)
 
     WiremockHelper.stubPostWithRequest(
@@ -314,10 +312,10 @@ def failedSecondaryAgent(mtdItId : String = "MtdItId" ) : Unit = {
 
   def getAuthRequest(optEnrolment : Option[Enrolment] ): JsValue = {
 
-    val authorisedJson = optEnrolment.getOrElse(EmptyPredicate)
+    val authorisedJson: JsArray = optEnrolment.fold(Json.arr())(enrolment => Json.arr(enrolment))
 
     Json.obj(
-      "authorise" -> authorisedJson.toJson,
+      "authorise" -> authorisedJson,
       "retrieve" -> Json.arr(
         JsString("allEnrolments"),
         JsString("affinityGroup"),
