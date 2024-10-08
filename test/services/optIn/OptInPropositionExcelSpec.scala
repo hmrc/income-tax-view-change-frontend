@@ -28,6 +28,7 @@ import scala.io.Source
 class OptInPropositionExcelSpec extends UnitSpec {
 
   "Parse opt out scenarios from tsv file" ignore {
+
     /*  The programme has specified all required Opt Out scenarios in a large spreadsheet.
         This code can ingest the data and convert to parameters for table based test found below.
         This generator is currently ignored but can be reactivated to regenerate the test data if needed.
