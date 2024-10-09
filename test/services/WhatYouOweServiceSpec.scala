@@ -264,7 +264,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
             .thenReturn(Future.successful(List(financialDetailsWithOutstandingChargesAndLpi(outstandingAmount = List(1000, 400),
               amountCodedOut = List(Some(30), Some(70))))))
 
-          TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(MFACreditsAndDebits), isEnabled(ReviewAndReconcilePoa)).futureValue shouldBe WhatYouOweChargesList(
+          TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(ReviewAndReconcilePoa)).futureValue shouldBe WhatYouOweChargesList(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
             chargesList = List())
         }
