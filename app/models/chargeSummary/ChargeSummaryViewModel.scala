@@ -84,10 +84,6 @@ case class ChargeSummaryViewModel(
   val codingOutEnabledAndIsClass2NicWithNoIsPayeSelfAssessment: Boolean =
     codingOutEnabled && chargeItem.subTransactionType.contains(Nics2)
 
-  val remainingToPayWithNoCodingOutEnabledAndIsPayeSelfAssessment: Boolean = chargeItem.remainingToPay > 0 &&
-    !(codingOutEnabled && chargeItem.subTransactionType.contains(Accepted)) &&
-    !Seq(PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile).contains(chargeItem.transactionType)
-
   val chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZero: Boolean =
     (chargeHistoryEnabled || (paymentAllocationEnabled && paymentAllocations.nonEmpty)) && !isBalancingChargeZero
 

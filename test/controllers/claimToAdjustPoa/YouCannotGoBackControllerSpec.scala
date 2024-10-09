@@ -18,7 +18,7 @@ package controllers.claimToAdjustPoa
 
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import mocks.controllers.predicates.MockAuthenticationPredicate
+import mocks.auth.MockAuthActions
 import mocks.services.{MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.PoAAmendmentData
@@ -26,37 +26,33 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.claimToAdjustPOA.ClaimToAdjustPOATestConstants.testPoa1Maybe
 import testUtils.TestSupport
 import views.html.claimToAdjustPoa.YouCannotGoBackView
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class YouCannotGoBackControllerSpec extends MockAuthenticationPredicate
-  with TestSupport
+class YouCannotGoBackControllerSpec extends TestSupport
   with FeatureSwitching
   with MockClaimToAdjustService
-  with MockPaymentOnAccountSessionService {
+  with MockPaymentOnAccountSessionService
+  with MockAuthActions {
 
   object TestYouCannotGoBackController extends YouCannotGoBackController(
-    authorisedFunctions = mockAuthService,
+    authActions = mockAuthActions,
     claimToAdjustService = mockClaimToAdjustService,
     poaSessionService = mockPaymentOnAccountSessionService,
-    view = app.injector.instanceOf[YouCannotGoBackView],
-    itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
-    auth = testAuthenticator,
-    itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler]
+    view = app.injector.instanceOf[YouCannotGoBackView]
   )(
-    mcc = app.injector.instanceOf[MessagesControllerComponents],
+    controllerComponents = app.injector.instanceOf[MessagesControllerComponents],
+    individualErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
+    agentErrorHandler = app.injector.instanceOf[AgentItvcErrorHandler],
     appConfig = app.injector.instanceOf[FrontendAppConfig],
     ec = app.injector.instanceOf[ExecutionContext]
   )
 
   def setupTest(): Unit = {
     enable(AdjustPaymentsOnAccount)
-    setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-    setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
     mockSingleBISWithCurrentYearAsMigrationYear()
   }
 
@@ -68,81 +64,97 @@ class YouCannotGoBackControllerSpec extends MockAuthenticationPredicate
         setupMockGetPaymentsOnAccount(testPoa1Maybe)
         setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoAAmendmentData(None, None, journeyCompleted = true)))))
 
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestYouCannotGoBackController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestYouCannotGoBackController.show(isAgent = true)(fakeRequestConfirmedClient())
-
         status(result) shouldBe OK
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestYouCannotGoBackController.show(isAgent = true)(fakeRequestConfirmedClient())
         status(resultAgent) shouldBe OK
       }
+
       "AdjustPaymentsOnAccount FS is enabled and journeyComplete is false" in {
         setupTest()
 
         setupMockGetPaymentsOnAccount(testPoa1Maybe)
         setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoAAmendmentData()))))
 
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestYouCannotGoBackController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestYouCannotGoBackController.show(isAgent = true)(fakeRequestConfirmedClient())
-
         status(result) shouldBe OK
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestYouCannotGoBackController.show(isAgent = true)(fakeRequestConfirmedClient())
         status(resultAgent) shouldBe OK
       }
     }
+
     s"return status $SEE_OTHER" when {
+
       "AdjustPaymentsOnAccount FS is disabled" in {
         setupTest()
-
         disable(AdjustPaymentsOnAccount)
-
         setupMockGetPaymentsOnAccount(testPoa1Maybe)
         setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoAAmendmentData(None, None, journeyCompleted = true)))))
 
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestYouCannotGoBackController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestYouCannotGoBackController.show(isAgent = true)(fakeRequestConfirmedClient())
-
         status(result) shouldBe SEE_OTHER
-        status(resultAgent) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestYouCannotGoBackController.show(isAgent = true)(fakeRequestConfirmedClient())
+        status(resultAgent) shouldBe SEE_OTHER
         redirectLocation(resultAgent) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
     }
+
     s"return status $INTERNAL_SERVER_ERROR" when {
+
       "No POAs can be found" in {
         setupTest()
 
         setupMockGetPaymentsOnAccount(None)
         setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoAAmendmentData(None, None, journeyCompleted = true)))))
 
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestYouCannotGoBackController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestYouCannotGoBackController.show(isAgent = true)(fakeRequestConfirmedClient())
-
         status(result) shouldBe INTERNAL_SERVER_ERROR
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestYouCannotGoBackController.show(isAgent = true)(fakeRequestConfirmedClient())
         status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
       }
+
       "No active session can be found" in {
         setupTest()
 
         setupMockGetPaymentsOnAccount(testPoa1Maybe)
         setupMockPaymentOnAccountSessionService(Future.successful(Right(None)))
 
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestYouCannotGoBackController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestYouCannotGoBackController.show(isAgent = true)(fakeRequestConfirmedClient())
-
         status(result) shouldBe INTERNAL_SERVER_ERROR
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestYouCannotGoBackController.show(isAgent = true)(fakeRequestConfirmedClient())
         status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
       }
+
       "Call to mongo fails" in {
         setupTest()
 
         setupMockGetPaymentsOnAccount(testPoa1Maybe)
         setupMockPaymentOnAccountSessionService(Future.failed(new Error("")))
 
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestYouCannotGoBackController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestYouCannotGoBackController.show(isAgent = true)(fakeRequestConfirmedClient())
-
         status(result) shouldBe INTERNAL_SERVER_ERROR
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestYouCannotGoBackController.show(isAgent = true)(fakeRequestConfirmedClient())
         status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
       }
     }
   }
-
 }

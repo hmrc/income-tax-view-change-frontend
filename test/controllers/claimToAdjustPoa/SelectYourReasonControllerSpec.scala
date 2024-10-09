@@ -19,11 +19,11 @@ package controllers.claimToAdjustPoa
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import forms.adjustPoa.SelectYourReasonFormProvider
+import mocks.auth.MockAuthActions
 import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
-import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.admin.AdjustPaymentsOnAccount
-import models.claimToAdjustPoa.{AllowanceOrReliefHigher, Increase, MainIncomeLower, MoreTaxedAtSource, OtherIncomeLower, PaymentOnAccountViewModel, PoAAmendmentData}
+import models.claimToAdjustPoa._
 import models.core.{CheckMode, NormalMode}
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
@@ -32,33 +32,32 @@ import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{OK, POST, contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.claimToAdjustPOA.ClaimToAdjustPOATestConstants.testPoa1Maybe
 import testUtils.{TestSupport, ViewSpec}
 import views.html.claimToAdjustPoa.SelectYourReasonView
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class SelectYourReasonControllerSpec extends MockAuthenticationPredicate with TestSupport
+class SelectYourReasonControllerSpec extends TestSupport
   with FeatureSwitching
   with MockClaimToAdjustService
   with MockPaymentOnAccountSessionService
   with MockCalculationListService
   with MockCalculationListConnector
   with ViewSpec
-  with MockFinancialDetailsConnector {
+  with MockFinancialDetailsConnector
+  with MockAuthActions {
 
   object TestSelectYourReasonController extends SelectYourReasonController(
-    authorisedFunctions = mockAuthService,
+    authActions = mockAuthActions,
     claimToAdjustService = mockClaimToAdjustService,
-    auth = testAuthenticator,
     view = app.injector.instanceOf[SelectYourReasonView],
-    itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     formProvider = app.injector.instanceOf[SelectYourReasonFormProvider],
-    poaSessionService = mockPaymentOnAccountSessionService,
-    itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler]
+    poaSessionService = mockPaymentOnAccountSessionService
   )(
-    mcc = app.injector.instanceOf[MessagesControllerComponents],
+    controllerComponents = app.injector.instanceOf[MessagesControllerComponents],
+    individualErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
+    agentErrorHandler = app.injector.instanceOf[AgentItvcErrorHandler],
     appConfig = app.injector.instanceOf[FrontendAppConfig],
     ec = app.injector.instanceOf[ExecutionContext]
   )
@@ -83,8 +82,6 @@ class SelectYourReasonControllerSpec extends MockAuthenticationPredicate with Te
 
   def setupTest(sessionResponse: Either[Throwable, Option[PoAAmendmentData]], claimToAdjustResponse: Option[PaymentOnAccountViewModel]): Unit = {
     enable(AdjustPaymentsOnAccount)
-    setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-    setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
     mockSingleBISWithCurrentYearAsMigrationYear()
     setupMockGetPaymentsOnAccount(claimToAdjustResponse)
     setupMockTaxYearCrystallised()
@@ -100,6 +97,7 @@ class SelectYourReasonControllerSpec extends MockAuthenticationPredicate with Te
 
       setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(Increase)
 
+      setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
       val result = TestSelectYourReasonController.show(isAgent = false, mode = NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
       status(result) shouldBe SEE_OTHER
       redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/adjust-poa/check-your-answers")
@@ -115,11 +113,13 @@ class SelectYourReasonControllerSpec extends MockAuthenticationPredicate with Te
 
         setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(Increase)
 
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestSelectYourReasonController.show(isAgent = false, mode = NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestSelectYourReasonController.show(isAgent = true, mode = NormalMode)(fakeRequestConfirmedClient())
-
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestSelectYourReasonController.show(isAgent = true, mode = NormalMode)(fakeRequestConfirmedClient())
         status(resultAgent) shouldBe SEE_OTHER
         redirectLocation(resultAgent) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
@@ -130,11 +130,13 @@ class SelectYourReasonControllerSpec extends MockAuthenticationPredicate with Te
 
         setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(Increase)
 
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestSelectYourReasonController.show(isAgent = false, mode = NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestSelectYourReasonController.show(isAgent = true, mode = NormalMode)(fakeRequestConfirmedClient())
-
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(false).url)
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestSelectYourReasonController.show(isAgent = true, mode = NormalMode)(fakeRequestConfirmedClient())
         status(resultAgent) shouldBe SEE_OTHER
         redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(true).url)
       }
@@ -153,11 +155,14 @@ class SelectYourReasonControllerSpec extends MockAuthenticationPredicate with Te
 
           setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(AllowanceOrReliefHigher)
 
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           val result = TestSelectYourReasonController.show(isAgent = false, mode = CheckMode)(fakeRequestWithNinoAndOrigin("PTA"))
-          val resultAgent = TestSelectYourReasonController.show(isAgent = true, mode = CheckMode)(fakeRequestConfirmedClient())
           status(result) shouldBe OK
-          status(resultAgent) shouldBe OK
           Jsoup.parse(contentAsString(result)).select("#value-3[checked]").toArray should have length 1
+
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+          val resultAgent = TestSelectYourReasonController.show(isAgent = true, mode = CheckMode)(fakeRequestConfirmedClient())
+          status(resultAgent) shouldBe OK
           Jsoup.parse(contentAsString(resultAgent)).select("#value-3[checked]").toArray should have length 1
         }
       }
@@ -167,6 +172,8 @@ class SelectYourReasonControllerSpec extends MockAuthenticationPredicate with Te
           setupTest(
             sessionResponse = Right(Some(PoAAmendmentData())),
             claimToAdjustResponse = testPoa1Maybe)
+
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
           val result = TestSelectYourReasonController.show(isAgent = true, mode = NormalMode)(fakeRequestConfirmedClient())
 
           status(result) shouldBe OK
@@ -176,6 +183,8 @@ class SelectYourReasonControllerSpec extends MockAuthenticationPredicate with Te
           setupTest(
             sessionResponse = Right(Some(PoAAmendmentData())),
             claimToAdjustResponse = testPoa1Maybe)
+
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           val result = TestSelectYourReasonController.show(isAgent = false, mode = NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
 
           status(result) shouldBe OK
@@ -189,6 +198,7 @@ class SelectYourReasonControllerSpec extends MockAuthenticationPredicate with Te
             claimToAdjustResponse = testPoa1Maybe)
           val result = TestSelectYourReasonController.show(isAgent = true, mode = NormalMode)(fakeRequestConfirmedClient())
 
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
           status(result) shouldBe OK
           Jsoup.parse(contentAsString(result)).select("#value-4[checked]").toArray should have length 1
         }
@@ -197,8 +207,9 @@ class SelectYourReasonControllerSpec extends MockAuthenticationPredicate with Te
           setupTest(
             sessionResponse = Right(Some(PoAAmendmentData(poaAdjustmentReason = Some(OtherIncomeLower)))),
             claimToAdjustResponse = testPoa1Maybe)
-          val result = TestSelectYourReasonController.show(isAgent = false, mode = NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
 
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+          val result = TestSelectYourReasonController.show(isAgent = false, mode = NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
           status(result) shouldBe OK
           Jsoup.parse(contentAsString(result)).select("#value-2[checked]").toArray should have length 1
         }
@@ -211,6 +222,7 @@ class SelectYourReasonControllerSpec extends MockAuthenticationPredicate with Te
         setupTest(
           sessionResponse = Right(None),
           claimToAdjustResponse = testPoa1Maybe)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestSelectYourReasonController.show(isAgent = false, mode = NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
@@ -219,6 +231,7 @@ class SelectYourReasonControllerSpec extends MockAuthenticationPredicate with Te
         setupTest(
           sessionResponse = Right(Some(PoAAmendmentData())),
           claimToAdjustResponse = None)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestSelectYourReasonController.show(isAgent = false, mode = NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
@@ -228,6 +241,7 @@ class SelectYourReasonControllerSpec extends MockAuthenticationPredicate with Te
           sessionResponse = Left(new Exception("Something went wrong")),
           claimToAdjustResponse = testPoa1Maybe)
 
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestSelectYourReasonController.show(isAgent = false, mode = NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
@@ -248,6 +262,7 @@ class SelectYourReasonControllerSpec extends MockAuthenticationPredicate with Te
         val request = FakeRequest(POST, routes.SelectYourReasonController.submit(isAgent = false, mode = NormalMode).url)
           .withSession("nino" -> BaseTestConstants.testNino, "origin" -> "PTA")
 
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestSelectYourReasonController.submit(isAgent = false, mode = NormalMode)(request)
 
         status(result) shouldBe BAD_REQUEST
@@ -270,6 +285,7 @@ class SelectYourReasonControllerSpec extends MockAuthenticationPredicate with Te
             .withFormUrlEncodedBody("value" -> "MainIncomeLower")
             .withSession("nino" -> BaseTestConstants.testNino, "origin" -> "PTA")
 
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           val result = TestSelectYourReasonController.submit(isAgent = false, mode = NormalMode)(request)
 
           status(result) shouldBe SEE_OTHER
@@ -287,6 +303,7 @@ class SelectYourReasonControllerSpec extends MockAuthenticationPredicate with Te
             .withFormUrlEncodedBody("value" -> "MainIncomeLower")
             .withSession("nino" -> BaseTestConstants.testNino, "origin" -> "PTA")
 
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           val result = TestSelectYourReasonController.submit(isAgent = false, mode = NormalMode)(request)
 
           status(result) shouldBe SEE_OTHER
@@ -311,12 +328,15 @@ class SelectYourReasonControllerSpec extends MockAuthenticationPredicate with Te
             .withFormUrlEncodedBody("value" -> "MainIncomeLower")
             .withSession("nino" -> BaseTestConstants.testNino, "origin" -> "PTA")
 
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           val result = TestSelectYourReasonController.submit(isAgent = false, mode = CheckMode)(request)
-          val resultAgent = TestSelectYourReasonController.submit(isAgent = true, mode = CheckMode)(requestAgent)
-
           status(result) shouldBe SEE_OTHER
-          status(resultAgent) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/adjust-poa/check-your-answers")
+
+
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+          val resultAgent = TestSelectYourReasonController.submit(isAgent = true, mode = CheckMode)(requestAgent)
+          status(resultAgent) shouldBe SEE_OTHER
           redirectLocation(resultAgent) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/adjust-poa/check-your-answers")
         }
 
@@ -336,12 +356,14 @@ class SelectYourReasonControllerSpec extends MockAuthenticationPredicate with Te
             .withFormUrlEncodedBody("value" -> "MainIncomeLower")
             .withSession("nino" -> BaseTestConstants.testNino, "origin" -> "PTA")
 
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           val result = TestSelectYourReasonController.submit(isAgent = false, mode = CheckMode)(request)
-          val resultAgent = TestSelectYourReasonController.submit(isAgent = true, mode = CheckMode)(requestAgent)
-
           status(result) shouldBe SEE_OTHER
-          status(resultAgent) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/adjust-poa/check-your-answers")
+
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+          val resultAgent = TestSelectYourReasonController.submit(isAgent = true, mode = CheckMode)(requestAgent)
+          status(resultAgent) shouldBe SEE_OTHER
           redirectLocation(resultAgent) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/adjust-poa/check-your-answers")
         }
       }

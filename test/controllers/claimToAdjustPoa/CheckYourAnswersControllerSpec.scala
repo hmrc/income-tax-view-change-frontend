@@ -19,8 +19,8 @@ package controllers.claimToAdjustPoa
 import audit.AuditingService
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import mocks.auth.MockAuthActions
 import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
-import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockCalculationListService, MockClaimToAdjustPoaCalculationService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.{Increase, MainIncomeLower, PaymentOnAccountViewModel, PoAAmendmentData}
@@ -35,28 +35,28 @@ import views.html.claimToAdjustPoa.CheckYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class CheckYourAnswersControllerSpec extends MockAuthenticationPredicate with TestSupport
+class CheckYourAnswersControllerSpec extends TestSupport
   with FeatureSwitching
   with MockClaimToAdjustService
   with MockPaymentOnAccountSessionService
   with MockCalculationListService
   with MockCalculationListConnector
   with MockFinancialDetailsConnector
-  with MockClaimToAdjustPoaCalculationService {
+  with MockClaimToAdjustPoaCalculationService
+  with MockAuthActions {
 
   object TestCheckYourAnswersController extends CheckYourAnswersController(
-    authorisedFunctions = mockAuthService,
-    auth = testAuthenticator,
+    authActions = mockAuthActions,
     poaSessionService = mockPaymentOnAccountSessionService,
     checkYourAnswers = app.injector.instanceOf[CheckYourAnswers],
     claimToAdjustService = mockClaimToAdjustService,
-    itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
-    itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
     ctaCalculationService = mockClaimToAdjustPoaCalculationService,
     auditingService = app.injector.instanceOf[AuditingService]
   )(
     appConfig = app.injector.instanceOf[FrontendAppConfig],
-    mcc = app.injector.instanceOf[MessagesControllerComponents],
+    individualErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
+    agentErrorHandler = app.injector.instanceOf[AgentItvcErrorHandler],
+    controllerComponents = app.injector.instanceOf[MessagesControllerComponents],
     ec = app.injector.instanceOf[ExecutionContext]
   )
 
@@ -83,8 +83,6 @@ class CheckYourAnswersControllerSpec extends MockAuthenticationPredicate with Te
                 claimToAdjustResponse: Option[PaymentOnAccountViewModel]
                ): Unit = {
     if (enablePaymentsOnAccountFS) enable(AdjustPaymentsOnAccount) else disable(AdjustPaymentsOnAccount)
-    setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-    setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
     mockSingleBISWithCurrentYearAsMigrationYear()
     setupMockGetPaymentsOnAccount(claimToAdjustResponse)
     setupMockTaxYearCrystallised()
@@ -93,8 +91,6 @@ class CheckYourAnswersControllerSpec extends MockAuthenticationPredicate with Te
 
   def setUpFailedMongoTest(): Unit = {
      enable(AdjustPaymentsOnAccount)
-    setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-    setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
     mockSingleBISWithCurrentYearAsMigrationYear()
     setupMockGetPaymentsOnAccount(poa)
     setupMockTaxYearCrystallised()
@@ -111,11 +107,14 @@ class CheckYourAnswersControllerSpec extends MockAuthenticationPredicate with Te
           claimToAdjustResponse = poa
         )
 
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestCheckYourAnswersController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestCheckYourAnswersController.show(isAgent = true)(fakeRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
-        status(resultAgent) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestCheckYourAnswersController.show(isAgent = true)(fakeRequestConfirmedClient())
+        status(resultAgent) shouldBe SEE_OTHER
         redirectLocation(resultAgent) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
     }
@@ -125,11 +124,14 @@ class CheckYourAnswersControllerSpec extends MockAuthenticationPredicate with Te
           sessionResponse = Right(Some(PoAAmendmentData(None, None, journeyCompleted = true))),
           claimToAdjustResponse = poa
         )
-        val result = TestCheckYourAnswersController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestCheckYourAnswersController.show(isAgent = true)(fakeRequestConfirmedClient())
 
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        val result = TestCheckYourAnswersController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(false).url)
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestCheckYourAnswersController.show(isAgent = true)(fakeRequestConfirmedClient())
         status(resultAgent) shouldBe SEE_OTHER
         redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(true).url)
       }
@@ -141,24 +143,33 @@ class CheckYourAnswersControllerSpec extends MockAuthenticationPredicate with Te
           sessionResponse = Right(Some(validSession)),
           claimToAdjustResponse = poa
         )
+
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestCheckYourAnswersController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestCheckYourAnswersController.show(isAgent = true)(fakeRequestConfirmedClient())
         status(result) shouldBe OK
+        contentAsString(result).contains("Confirm and continue") shouldBe true
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestCheckYourAnswersController.show(isAgent = true)(fakeRequestConfirmedClient())
         status(resultAgent) shouldBe OK
 
-        contentAsString(result).contains("Confirm and continue") shouldBe true
       }
       "the session contains the new POA Amount and reason, but the reason is INCREASE" in {
         setupTest(
           sessionResponse = Right(Some(validSessionIncrease)),
           claimToAdjustResponse = poa
         )
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestCheckYourAnswersController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestCheckYourAnswersController.show(isAgent = true)(fakeRequestConfirmedClient())
         status(result) shouldBe OK
+        contentAsString(result).contains("Confirm and save") shouldBe true
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestCheckYourAnswersController.show(isAgent = true)(fakeRequestConfirmedClient())
         status(resultAgent) shouldBe OK
 
-        contentAsString(result).contains("Confirm and save") shouldBe true
       }
     }
 
@@ -168,19 +179,26 @@ class CheckYourAnswersControllerSpec extends MockAuthenticationPredicate with Te
           sessionResponse = Right(None),
           claimToAdjustResponse = poa
         )
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestCheckYourAnswersController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestCheckYourAnswersController.show(isAgent = true)(fakeRequestConfirmedClient())
         status(result) shouldBe INTERNAL_SERVER_ERROR
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestCheckYourAnswersController.show(isAgent = true)(fakeRequestConfirmedClient())
         status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
       }
+
       "Payment On Account data is missing from session" in {
         setupTest(
           sessionResponse = Right(Some(emptySession)),
           claimToAdjustResponse = poa
         )
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestCheckYourAnswersController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestCheckYourAnswersController.show(isAgent = true)(fakeRequestConfirmedClient())
         status(result) shouldBe INTERNAL_SERVER_ERROR
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestCheckYourAnswersController.show(isAgent = true)(fakeRequestConfirmedClient())
         status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
       }
       "POA data is missing" in {
@@ -188,9 +206,13 @@ class CheckYourAnswersControllerSpec extends MockAuthenticationPredicate with Te
           sessionResponse = Right(Some(validSession)),
           claimToAdjustResponse = None
         )
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestCheckYourAnswersController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestCheckYourAnswersController.show(isAgent = true)(fakeRequestConfirmedClient())
         status(result) shouldBe INTERNAL_SERVER_ERROR
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestCheckYourAnswersController.show(isAgent = true)(fakeRequestConfirmedClient())
         status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
       }
       "POA adjustment reason is missing from the session" in {
@@ -198,9 +220,13 @@ class CheckYourAnswersControllerSpec extends MockAuthenticationPredicate with Te
           sessionResponse = Right(Some(validSession.copy(poaAdjustmentReason = None))),
           claimToAdjustResponse = None
         )
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestCheckYourAnswersController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestCheckYourAnswersController.show(isAgent = true)(fakeRequestConfirmedClient())
         status(result) shouldBe INTERNAL_SERVER_ERROR
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestCheckYourAnswersController.show(isAgent = true)(fakeRequestConfirmedClient())
         status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
       }
       "the new POA amount is missing from the session" in {
@@ -208,9 +234,13 @@ class CheckYourAnswersControllerSpec extends MockAuthenticationPredicate with Te
           sessionResponse = Right(Some(validSession.copy(newPoAAmount = None))),
           claimToAdjustResponse = poa
         )
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestCheckYourAnswersController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestCheckYourAnswersController.show(isAgent = true)(fakeRequestConfirmedClient())
         status(result) shouldBe INTERNAL_SERVER_ERROR
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestCheckYourAnswersController.show(isAgent = true)(fakeRequestConfirmedClient())
         status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
       }
       "Something goes wrong in payment on account session Service" in {
@@ -219,19 +249,24 @@ class CheckYourAnswersControllerSpec extends MockAuthenticationPredicate with Te
           claimToAdjustResponse = poa
         )
 
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestCheckYourAnswersController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestCheckYourAnswersController.show(isAgent = true)(fakeRequestConfirmedClient())
-
         status(result) shouldBe INTERNAL_SERVER_ERROR
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestCheckYourAnswersController.show(isAgent = true)(fakeRequestConfirmedClient())
         status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
+
       }
       "Failed future returned when retrieving mongo data" in {
         setUpFailedMongoTest()
 
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestCheckYourAnswersController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestCheckYourAnswersController.show(isAgent = true)(fakeRequestConfirmedClient())
-
         status(result) shouldBe INTERNAL_SERVER_ERROR
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestCheckYourAnswersController.show(isAgent = true)(fakeRequestConfirmedClient())
         status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
       }
     }
@@ -245,11 +280,13 @@ class CheckYourAnswersControllerSpec extends MockAuthenticationPredicate with Te
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
 
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestCheckYourAnswersController.submit(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestCheckYourAnswersController.submit(isAgent = true)(fakeRequestConfirmedClient())
-
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestCheckYourAnswersController.submit(isAgent = true)(fakeRequestConfirmedClient())
         status(resultAgent) shouldBe SEE_OTHER
         redirectLocation(resultAgent) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
@@ -266,10 +303,12 @@ class CheckYourAnswersControllerSpec extends MockAuthenticationPredicate with Te
         setupMockRecalculateSuccess()
         setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(validSession))))
 
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestCheckYourAnswersController.submit(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestCheckYourAnswersController.submit(isAgent = true)(fakeRequestConfirmedClient())
-
         redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.PoaAdjustedController.show(isAgent = false).url)
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestCheckYourAnswersController.submit(isAgent = true)(fakeRequestConfirmedClient())
         redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.PoaAdjustedController.show(isAgent = true).url)
       }
     }
@@ -285,10 +324,12 @@ class CheckYourAnswersControllerSpec extends MockAuthenticationPredicate with Te
         setupMockRecalculateFailure()
         setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(validSession))))
 
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestCheckYourAnswersController.submit(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestCheckYourAnswersController.submit(isAgent = true)(fakeRequestConfirmedClient())
-
         redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.ApiFailureSubmittingPoaController.show(isAgent = false).url)
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestCheckYourAnswersController.submit(isAgent = true)(fakeRequestConfirmedClient())
         redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.ApiFailureSubmittingPoaController.show(isAgent = true).url)
       }
     }
@@ -302,10 +343,12 @@ class CheckYourAnswersControllerSpec extends MockAuthenticationPredicate with Te
         setupMockGetPaymentsOnAccount(None)
         setupMockTaxYearNotCrystallised()
 
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestCheckYourAnswersController.submit(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestCheckYourAnswersController.submit(isAgent = true)(fakeRequestConfirmedClient())
-
         status(result) shouldBe INTERNAL_SERVER_ERROR
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent = TestCheckYourAnswersController.submit(isAgent = true)(fakeRequestConfirmedClient())
         status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
       }
       "an Exception is returned from ClaimToAdjustService" in {
@@ -316,10 +359,12 @@ class CheckYourAnswersControllerSpec extends MockAuthenticationPredicate with Te
 
         setupMockGetPaymentsOnAccountBuildFailure()
 
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestCheckYourAnswersController.submit(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent: Future[Result] = TestCheckYourAnswersController.submit(isAgent = true)(fakeRequestConfirmedClient())
-
         result.futureValue.header.status shouldBe INTERNAL_SERVER_ERROR
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+        val resultAgent: Future[Result] = TestCheckYourAnswersController.submit(isAgent = true)(fakeRequestConfirmedClient())
         resultAgent.futureValue.header.status shouldBe INTERNAL_SERVER_ERROR
       }
     }

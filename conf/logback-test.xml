@@ -31,9 +31,17 @@
 
     <logger name="application" level="DEBUG"/>
 
+    <logger name="auth" level="DEBUG"/>
+
+
+    <logger name="controllers" level="DEBUG"/>
+
+
     <logger name="connector" level="ERROR">
         <appender-ref ref="STDOUT"/>
     </logger>
+
+
 
     <root level="ERROR">
         <appender-ref ref="FILE"/>

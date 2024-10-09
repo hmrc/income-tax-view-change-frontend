@@ -928,14 +928,6 @@ chargeSummary.whatYouOwe.linkText-agent							= yr hyn sydd ar eich cleient
 chargeSummary.overdue                                           = YN HWYR
 chargeSummary.na                                                = Amh
 
-chargeSummary.payment-days-note                                    = Ynglŷn ag unrhyw daliadau a wnaed gennych:
-chargeSummary.payments-bullet1-1                                   = gall gymryd hyd at 5 diwrnod gwaith i daliadau gael eu prosesu, yn dibynnu ar y
-chargeSummary.payments-bullet1-2                                   = dull talu rydych yn ei ddefnyddio
-chargeSummary.payments-bullet2                                     = mae’n rhaid i daliadau ein cyrraedd erbyn y dyddiad cau – os bydd y taliad yn hwyr, codir llog arnoch ac efallai y bydd yn rhaid i chi dalu cosb
-chargeSummary.payment-days-note-agent                              = O ran unrhyw daliadau a wneir gan eich cleient:
-chargeSummary.payments-bullet1-2-agent                             = dull talu mae’n ei ddefnyddio
-chargeSummary.payments-bullet2-agent                               = mae’n rhaid i daliadau ein cyrraedd erbyn y dyddiad cau – os bydd y taliad yn hwyr, codir llog ar eich cleient ac efallai y bydd yn rhaid iddo dalu cosb
-
 chargeSummary.paymentsOnAccount                                    = Mae taliadau ar gyfrif yn 2 daliad ymlaen llaw a wneir tuag at eich bil treth nesaf. Maent yn talu am:
 chargeSummary.paymentsOnAccount.bullet1                            = Treth Incwm
 chargeSummary.paymentsOnAccount.bullet2                            = Cyfraniadau Yswiriant Gwladol Dosbarth 4 (yn agor tab newydd)
@@ -2041,8 +2033,8 @@ claimToAdjustPoa.confirmation.cancel                                    =   Cans
 claimToAdjustPoa.selectYourReason.title                                 =   Dewiswch Eich Rheswm
 claimToAdjustPoa.selectYourReason.h1                                    =   Dewiswch eich rheswm
 claimToAdjustPoa.selectYourReason.p1                                    =   Mae’n rhaid i’ch rheswm dros ostwng eich taliadau ar gyfrif fod yn un o’r rhesymau isod. Os nad oes un o’r rhain yn berthnasol i chi, ni fyddwch yn gallu mynd yn eich blaen.
-claimToAdjustPoa.selectYourReason.p2.a                                  =   Os oes angen help arnoch i dalu’ch taliadau ar gyfrif,
-claimToAdjustPoa.selectYourReason.p2.link                               =   gallwch gysylltu â CThEF (yn agor tab newydd)
+claimToAdjustPoa.selectYourReason.p2.a                                  =   Os na allwch fforddio talu’ch bil treth yn llawn,
+claimToAdjustPoa.selectYourReason.p2.link                               =   gallwch gysylltu â CThEF i drefnu cynllun talu (yn agor tab newydd)
 claimToAdjustPoa.selectYourReason.p2.b                                  =   .
 claimToAdjustPoa.selectYourReason.h2                                    =   Pam ydych yn gostwng eich taliadau ar gyfrif?
 claimToAdjustPoa.selectYourReason.h2.caption.hidden                     =   Yr adran hon yw

@@ -16,17 +16,12 @@
 
 package controllers.claimToAdjustPoa
 
+import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
-import controllers.routes
-import implicits.ImplicitCurrencyFormatter
-import models.admin.AdjustPaymentsOnAccount
-import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.AuthenticatorPredicate
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.claimToAdjust.ClaimToAdjustUtils
 import views.html.claimToAdjustPoa.ApiFailureSubmittingPoaView
 
@@ -34,21 +29,20 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ApiFailureSubmittingPoaController @Inject()(val authorisedFunctions: AuthorisedFunctions,
-                                                  val auth: AuthenticatorPredicate,
+class ApiFailureSubmittingPoaController @Inject()(val authActions: AuthActions,
                                                   view: ApiFailureSubmittingPoaView,
                                                   implicit val itvcErrorHandler: ItvcErrorHandler,
                                                   implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                                  (implicit val appConfig: FrontendAppConfig,
-                                                  implicit override val mcc: MessagesControllerComponents,
+                                                  implicit override val controllerComponents: MessagesControllerComponents,
                                                   val ec: ExecutionContext)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching with ClaimToAdjustUtils {
+  extends FrontendBaseController with I18nSupport with FeatureSwitching with ClaimToAdjustUtils {
 
   def show(isAgent: Boolean): Action[AnyContent] = {
-    auth.authenticatedAction(isAgent) {
+    authActions.individualOrAgentWithClient async {
       implicit user =>
-        ifAdjustPoaIsEnabled(isAgent) {
-          Future.successful(Ok(view(isAgent)))
+        ifAdjustPoaIsEnabled(user.isAgent()) {
+          Future.successful(Ok(view(user.isAgent())))
         }
     }
   }

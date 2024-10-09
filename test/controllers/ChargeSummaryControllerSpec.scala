@@ -351,7 +351,6 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeadingForBCD
-        JsoupParse(result).toHtmlDocument.select("#payment-processing-bullets").text() shouldBe s"$paymentprocessingbullet1"
       }
 
       "hide payment processing info" in new Setup(financialDetailsReviewAndReconcile) {
@@ -465,7 +464,6 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeadingForPOA1
-        JsoupParse(result).toHtmlDocument.select("#payment-processing-bullets").text() shouldBe s"$paymentprocessingbullet1Agent"
       }
     }
 

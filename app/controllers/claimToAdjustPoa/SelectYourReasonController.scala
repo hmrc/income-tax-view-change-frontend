@@ -17,10 +17,10 @@
 package controllers.claimToAdjustPoa
 
 import auth.MtdItUser
+import auth.authV2.AuthActions
 import cats.data.EitherT
 import com.google.inject.Singleton
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
 import controllers.claimToAdjustPoa.routes._
 import forms.adjustPoa.SelectYourReasonFormProvider
 import models.claimToAdjustPoa.{Increase, PaymentOnAccountViewModel, SelectYourReason}
@@ -28,74 +28,69 @@ import models.core.{Mode, NormalMode}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.claimToAdjust.{ClaimToAdjustUtils, WithSessionAndPoa}
-import utils.AuthenticatorPredicate
 import views.html.claimToAdjustPoa.SelectYourReasonView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SelectYourReasonController @Inject()(
-                                            val view: SelectYourReasonView,
-                                            val formProvider: SelectYourReasonFormProvider,
-                                            val poaSessionService: PaymentOnAccountSessionService,
-                                            val claimToAdjustService: ClaimToAdjustService,
-                                            val authorisedFunctions: AuthorisedFunctions,
-                                            implicit val itvcErrorHandler: ItvcErrorHandler,
-                                            implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                            auth: AuthenticatorPredicate)
+class SelectYourReasonController @Inject()(val authActions: AuthActions,
+                                           val view: SelectYourReasonView,
+                                           val formProvider: SelectYourReasonFormProvider,
+                                           val poaSessionService: PaymentOnAccountSessionService,
+                                           val claimToAdjustService: ClaimToAdjustService)
                                           (implicit val appConfig: FrontendAppConfig,
-                                           implicit override val mcc: MessagesControllerComponents,
+                                           implicit val individualErrorHandler: ItvcErrorHandler,
+                                           implicit val agentErrorHandler: AgentItvcErrorHandler,
+                                           implicit override val controllerComponents: MessagesControllerComponents,
                                            val ec: ExecutionContext)
-  extends ClientConfirmedController with I18nSupport with ClaimToAdjustUtils with WithSessionAndPoa {
+  extends FrontendBaseController with I18nSupport with ClaimToAdjustUtils with WithSessionAndPoa {
 
-  def show(isAgent: Boolean, mode: Mode): Action[AnyContent] = auth.authenticatedAction(isAgent = isAgent) {
+  def show(isAgent: Boolean, mode: Mode): Action[AnyContent] = authActions.individualOrAgentWithClient async {
     implicit user =>
       withSessionDataAndPoa() { (session, poa) =>
         session.newPoAAmount match {
           case Some(amount) if amount >= poa.totalAmount =>
-            saveValueAndRedirect(mode, isAgent, Increase, poa)
+            saveValueAndRedirect(mode, Increase, poa)
           case _ =>
             val form = formProvider.apply()
             EitherT.rightT(Ok(view(
               selectYourReasonForm = session.poaAdjustmentReason.fold(form)(form.fill),
               taxYear = poa.taxYear,
-              isAgent = isAgent,
+              isAgent = user.isAgent(),
               mode = mode,
               useFallbackLink = true)))
         }
-      }
+      } recover logAndRedirect
   }
 
-  def submit(isAgent: Boolean, mode: Mode): Action[AnyContent] = auth.authenticatedAction(isAgent = isAgent) {
-    implicit request =>
+  def submit(isAgent: Boolean, mode: Mode): Action[AnyContent] = authActions.individualOrAgentWithClient async {
+    implicit user =>
       withSessionDataAndPoa() { (_, poa) =>
         formProvider.apply()
           .bindFromRequest()
           .fold(
             formWithErrors =>
-              EitherT.rightT(BadRequest(view(formWithErrors, poa.taxYear, isAgent, mode, true)))
+              EitherT.rightT(BadRequest(view(formWithErrors, poa.taxYear, user.isAgent(), mode, true)))
             ,
-            value => saveValueAndRedirect(mode, isAgent, value, poa)
+            value => saveValueAndRedirect(mode, value, poa)
           )
-      }
+      } recover logAndRedirect
   }
 
-
-  private def saveValueAndRedirect(mode: Mode, isAgent: Boolean, value: SelectYourReason, poa: PaymentOnAccountViewModel)
+  private def saveValueAndRedirect(mode: Mode, value: SelectYourReason, poa: PaymentOnAccountViewModel)
                                   (implicit user: MtdItUser[_]): EitherT[Future, Throwable, Result] = {
     for {
       res <- EitherT(poaSessionService.setAdjustmentReason(value))
     } yield {
       res match {
         case _ => (mode, poa.totalAmountLessThanPoa) match {
-          case (NormalMode, false) if value != Increase => Redirect(EnterPoAAmountController.show(isAgent, NormalMode))
-          case (_, _) => Redirect(CheckYourAnswersController.show(isAgent))
+          case (NormalMode, false) if value != Increase => Redirect(EnterPoAAmountController.show(user.isAgent(), NormalMode))
+          case (_, _) => Redirect(CheckYourAnswersController.show(user.isAgent()))
         }
       }
     }
   }
-
 }
