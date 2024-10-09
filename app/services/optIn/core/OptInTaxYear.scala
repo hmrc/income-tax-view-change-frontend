@@ -17,16 +17,42 @@
 package services.optIn.core
 
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, NoStatus}
+import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, NoStatus, Voluntary}
 
 trait OptInTaxYear {
   val taxYear: TaxYear
   def canOptIn: Boolean
 }
+
 case class CurrentOptInTaxYear(status: ITSAStatus, taxYear: TaxYear) extends OptInTaxYear {
+
   def canOptIn: Boolean = status == Annual
+
+  def expectedItsaStatusAfter(customerIntent: TaxYear): ITSAStatus =
+    if (customerIntent == taxYear && canOptIn)
+      Voluntary
+    else
+      status
 }
-case class NextOptInTaxYear(status: ITSAStatus, taxYear: TaxYear, currentOptInTaxYear: CurrentOptInTaxYear) extends OptInTaxYear {
-  def canOptIn: Boolean = (status == Annual) || (currentOptInTaxYear.status == Annual && status == NoStatus)
-  //todo check the no-status rule here?
+
+case class NextOptInTaxYear(status: ITSAStatus,
+                            taxYear: TaxYear,
+                            currentOptInTaxYear: CurrentOptInTaxYear) extends OptInTaxYear {
+
+  def canOptIn: Boolean = canOptInDirectly || canOptInDueToRollover
+
+  private def canOptInDirectly: Boolean = status == Annual
+  private def canOptInDueToRollover: Boolean = status == NoStatus && currentOptInTaxYear.status == Annual
+
+  def expectedItsaStatusAfter(customerIntent: TaxYear): ITSAStatus =
+    if (canOptInDirectly ||
+      (isNextYear(customerIntent) && canOptInDueToRollover))
+      Voluntary
+    else
+      status
+
+  private def isNextYear(customerIntent: TaxYear) = {
+    customerIntent == taxYear
+  }
+
 }
