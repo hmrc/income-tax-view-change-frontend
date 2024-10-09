@@ -3,7 +3,6 @@ import play.sbt.routes.RoutesKeys
 import sbt.*
 import sbt.Keys.libraryDependencySchemes
 import uk.gov.hmrc.DefaultBuildSettings.*
-import uk.gov.hmrc.versioning.SbtGitVersioning
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 import uk.gov.hmrc.DefaultBuildSettings
 

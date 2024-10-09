@@ -23,6 +23,7 @@ import java.time.LocalDate
 import scala.util.Try
 
 case class TaxYear(startYear: Int, endYear: Int) {
+
   override def toString: String = s"$startYear-$endYear"
 
   def addYears(delta: Int): TaxYear = {
@@ -40,7 +41,7 @@ case class TaxYear(startYear: Int, endYear: Int) {
 
   def previousYear: TaxYear = addYears(-1)
 
-  def nextYear: TaxYear = addYears( +1)
+  def nextYear: TaxYear = addYears(+1)
 
   def isSameAs(taxYear: TaxYear): Boolean = this.startYear == taxYear.startYear && this.endYear == taxYear.endYear
 
@@ -58,6 +59,10 @@ case class TaxYear(startYear: Int, endYear: Int) {
 
   def toFinancialYearEnd: LocalDate = {
     LocalDate.of(this.endYear, April, Fifth)
+  }
+
+  def shortenTaxYearEnd: String = {
+    s"$startYear-${endYear.toString.toSeq.drop(2)}"
   }
 
 }
@@ -99,10 +104,10 @@ object TaxYear {
   }
 
   def getTaxYear(localDate: LocalDate): TaxYear = {
-    if(localDate.isBefore(LocalDate.of(localDate.getYear, 4, 6))) {
+    if (localDate.isBefore(LocalDate.of(localDate.getYear, 4, 6))) {
       TaxYear.forYearEnd(localDate.getYear)
     } else {
-      TaxYear.forYearEnd(localDate.getYear  + 1)
+      TaxYear.forYearEnd(localDate.getYear + 1)
     }
   }
 

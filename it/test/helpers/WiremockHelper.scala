@@ -55,9 +55,9 @@ object WiremockHelper extends Eventually with IntegrationPatience {
   }
 
 
-  def verifyPut(uri: String, optBody: Option[String] = None): Unit = {
+  def verifyPut(uri: String, optRequestBody: Option[String] = None): Unit = {
     val uriMapping = putRequestedFor(urlEqualTo(uri))
-    val putRequest = optBody match {
+    val putRequest = optRequestBody match {
       case Some(body) => uriMapping.withRequestBody(equalTo(body))
       case None => uriMapping
     }
@@ -148,6 +148,17 @@ object WiremockHelper extends Eventually with IntegrationPatience {
       )
     )
 
+  // for now overload the stubPut because there are quite a lot of other tests which do not have the request body supplied
+  def stubPut(url: String, status: Integer, expectedRequestBody: String, responseBody: String): StubMapping =
+    stubFor(put(urlEqualTo(url))
+      .withRequestBody(equalToJson(expectedRequestBody)) // Ensure that the request body matches
+      .willReturn(
+        aResponse().
+          withStatus(status).
+          withBody(responseBody)
+      )
+    )
+
   def stubPutWithHeaders(url: String, status: Integer, responseBody: String, headers: Map[String, String] = Map()): StubMapping = {
     def toHttpHeaders(toConvert: Map[String, String]): HttpHeaders = {
       val headersList = toConvert.map { case (key, value) =>
@@ -192,7 +203,7 @@ trait WiremockHelper {
 
   lazy val ws = app.injector.instanceOf[WSClient]
 
-  lazy val wmConfig = wireMockConfig().port(wiremockPort).notifier(new ConsoleNotifier(true))
+  lazy val wmConfig = wireMockConfig().port(wiremockPort).notifier(new ConsoleNotifier(false)) // turn off verbose logging in the Integration tests
 
   lazy val wireMockServer = new WireMockServer(wmConfig)
 
