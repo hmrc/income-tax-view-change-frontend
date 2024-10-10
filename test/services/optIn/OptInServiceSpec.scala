@@ -24,7 +24,7 @@ import mocks.services.{MockCalculationListService, MockDateService, MockITSAStat
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Voluntary}
 import models.itsaStatus.StatusDetail
-import models.optin.{MultiYearCheckYourAnswersViewModel, OptInContextData, OptInSessionData}
+import models.optin.{MultiYearCheckYourAnswersViewModel, OptInCompletedViewModel, OptInContextData, OptInSessionData}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
@@ -64,6 +64,16 @@ class OptInServiceSpec extends UnitSpec
 
   val service: OptInService = new OptInService(optOutConnector, mockITSAStatusService, mockDateService, repository)
 
+  def executionContext()(implicit executionContext: ExecutionContext): ExecutionContext = executionContext
+
+  def mockRepository(optInContextData: Option[OptInContextData] = None, selectedOptInYear: Option[String] = None): Unit = {
+
+    val sessionData = UIJourneySessionData(hc.sessionId.get.value, OptInJourney.Name,
+      optInSessionData = Some(OptInSessionData(optInContextData, selectedOptInYear)))
+
+    when(repository.get(hc.sessionId.get.value, OptInJourney.Name)).thenReturn(Future.successful(Some(sessionData)))
+  }
+
   val forYearEnd = 2023
   val currentTaxYear = TaxYear.forYearEnd(forYearEnd)
   val nextTaxYear = currentTaxYear.nextYear
@@ -78,6 +88,7 @@ class OptInServiceSpec extends UnitSpec
   }
 
   "OptInService.saveIntent" should {
+
     "save selectedOptInYear in session data" in {
 
       val data = UIJourneySessionData(
@@ -98,6 +109,7 @@ class OptInServiceSpec extends UnitSpec
   }
 
   "OptInService.saveIntent and no session data" should {
+
     "save selectedOptInYear in session data" in {
 
       val jsd = UIJourneySessionData(hc.sessionId.get.value, OptInJourney.Name)
@@ -244,12 +256,13 @@ class OptInServiceSpec extends UnitSpec
 
       val result = service.getMultiYearCheckYourAnswersViewModel(isAgent)
 
-      result.futureValue.get shouldBe MultiYearCheckYourAnswersViewModel(
-        intentTaxYear = currentTaxYear,
-        isAgent = isAgent,
-        cancelURL = routes.ReportingFrequencyPageController.show(isAgent).url,
-        intentIsNextYear = false
-      )
+      result.futureValue.get shouldBe
+        MultiYearCheckYourAnswersViewModel(
+          intentTaxYear = currentTaxYear,
+          isAgent = isAgent,
+          cancelURL = routes.ReportingFrequencyPageController.show(isAgent).url,
+          intentIsNextYear = false
+        )
     }
 
     "return model when intent is next tax-year" in {
@@ -270,16 +283,70 @@ class OptInServiceSpec extends UnitSpec
         intentIsNextYear = true
       )
     }
-
   }
 
-  def executionContext()(implicit executionContext: ExecutionContext): ExecutionContext = executionContext
+  "OptInService.optInCompletedPageModel" should {
 
-  def mockRepository(optInContextData: Option[OptInContextData] = None, selectedOptInYear: Option[String] = None): Unit = {
+    "create a view model for the opt in completed view page" when {
 
-    val sessionData = UIJourneySessionData(hc.sessionId.get.value, OptInJourney.Name,
-      optInSessionData = Some(OptInSessionData(optInContextData, selectedOptInYear)))
+      "selected tax year intent is equal to the current year" should {
 
-    when(repository.get(hc.sessionId.get.value, OptInJourney.Name)).thenReturn(Future.successful(Some(sessionData)))
+        "return correctly configured OptInCompletedViewModel, isCurrentYear == true" in {
+
+          val isAgent = false
+
+          val taxYear2023 = TaxYear(2023, 2024)
+
+          val optInContext = Some(OptInContextData(taxYear2023.toString, statusToString(Annual), statusToString(Annual)))
+
+          mockRepository(optInContextData = optInContext, selectedOptInYear = Some(taxYear2023.toString))
+
+          when(mockDateService.getCurrentTaxYear).thenReturn(taxYear2023)
+
+          val result = service.optInCompletedPageModel(isAgent)
+
+          result.value.futureValue shouldBe
+            Some(
+              OptInCompletedViewModel(
+                isAgent = isAgent,
+                optInTaxYear = taxYear2023,
+                showAnnualReportingAdvice = false,
+                isCurrentYear = true,
+                optInIncludedNextYear = false
+              )
+            )
+        }
+      }
+
+      "both CY & CY+1 statuses are Annual and user selected tax year is the current year" should {
+
+        "return correctly configured OptInCompletedViewModel, both year statuses change to Voluntary, setting the showAnnualReportingAdvice == false" in {
+
+          val isAgent = false
+
+          val taxYear2023 = TaxYear(2023, 2024)
+
+          val optInContext = Some(OptInContextData(taxYear2023.toString, statusToString(Annual), statusToString(Annual)))
+
+          mockRepository(optInContextData = optInContext, selectedOptInYear = Some(taxYear2023.toString))
+
+          when(mockDateService.getCurrentTaxYear).thenReturn(taxYear2023)
+
+          val result = service.optInCompletedPageModel(isAgent)
+
+          result.value.futureValue shouldBe
+            Some(
+              OptInCompletedViewModel(
+                isAgent = isAgent,
+                optInTaxYear = taxYear2023,
+                showAnnualReportingAdvice = false,
+                isCurrentYear = true,
+                optInIncludedNextYear = false
+              )
+            )
+        }
+      }
+    }
   }
+
 }
