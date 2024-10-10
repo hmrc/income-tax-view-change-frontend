@@ -16,32 +16,22 @@
 
 package controllers.claimToAdjustPoa
 
-import audit.models.AdjustPaymentsOnAccountAuditModel
-import auth.MtdItUser
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import controllers.claimToAdjustPoa.routes.{ApiFailureSubmittingPoaController, PoaAdjustedController}
 import helpers.ComponentSpecBase
-import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.ClaimToAdjustPoaResponse.ClaimToAdjustPoaSuccess
 import models.claimToAdjustPoa.PoaAmendmentData
-import models.core.AccountingPeriodModel
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.WSResponse
-import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.PaymentOnAccountSessionService
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testDate, testIncomeSource, testMtditid, testNino, testUserTypeAgent, testUserTypeIndividual}
-import testConstants.BusinessDetailsIntegrationTestConstants.address
-import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.validSession
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testDate, testMtditid, testNino}
 import testConstants.FinancialDetailsTestConstants.testFinancialDetailsErrorModelJson
 import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
-import uk.gov.hmrc.auth.core.retrieve.Name
-
-import java.time.LocalDate
+import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.validSession
 
 class CheckYourAnswersControllerISpec extends ComponentSpecBase {
 
@@ -147,7 +137,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
         setupGetFinancialDetails()
 
         And("A session has been created with journeyCompleted flag set to true")
-        await(sessionService.setMongoData(Some(PoAAmendmentData(None, None, journeyCompleted = true))))
+        await(sessionService.setMongoData(Some(PoaAmendmentData(None, None, journeyCompleted = true))))
 
         When(s"I call GET")
         val res = get("/adjust-poa/check-your-answers")
@@ -196,7 +186,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
         setupGetFinancialDetails()
 
         And("A session exists which is missing the New Payment On Account amount")
-        await(sessionService.setMongoData(Some(validSession.copy(poaAdjustmentReason = None, newPoAAmount = None))))
+        await(sessionService.setMongoData(Some(validSession.copy(poaAdjustmentReason = None, newPoaAmount = None))))
 
         When(s"I call GET")
         val res = get("/adjust-poa/check-your-answers")
