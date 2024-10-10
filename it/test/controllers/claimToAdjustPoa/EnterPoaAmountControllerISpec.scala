@@ -31,17 +31,17 @@ import services.PaymentOnAccountSessionService
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testDate, testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testChargeHistoryJson, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
 
-class EnterPoAAmountControllerISpec extends ComponentSpecBase {
+class EnterPoaAmountControllerISpec extends ComponentSpecBase {
 
   val isAgent = false
 
-  def enterPoAAmountUrl = controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(isAgent, NormalMode).url
+  def enterPoAAmountUrl = controllers.claimToAdjustPoa.routes.EnterPoaAmountController.show(isAgent, NormalMode).url
 
   def checkYourAnswersUrl = controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent).url
 
   def selectReasonUrl = controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, NormalMode).url
 
-  def changePoAAmountUrl = controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(isAgent, CheckMode).url
+  def changePoAAmountUrl = controllers.claimToAdjustPoa.routes.EnterPoaAmountController.show(isAgent, CheckMode).url
 
   def changeReasonUrl = controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, CheckMode).url
 

@@ -60,7 +60,7 @@ class ApiFailureSubmittingPoaViewSpec extends TestSupport {
         document.getElementsByClass("govuk-!-margin-bottom-4").get(0).text() shouldBe
           messages("claimToAdjustPoa.apiFailure.bullet1Text") + " " + messages("claimToAdjustPoa.apiFailure.bullet1Link")
         document.getElementById("link-1").attr("href") shouldBe
-          controllers.claimToAdjustPoa.routes.AmendablePOAController.show(isAgent).url
+          controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent).url
       }
       "render the second bullet point with the correct link" in new Setup(isAgent) {
         document.getElementsByClass("govuk-!-margin-bottom-4").get(1).text() shouldBe

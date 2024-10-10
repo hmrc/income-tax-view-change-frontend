@@ -24,7 +24,7 @@ import play.test.Helpers.contentAsString
 import testUtils.TestSupport
 import views.html.claimToAdjustPoa.AmendablePaymentOnAccount
 
-class AmendablePOAControllerViewSpec extends TestSupport {
+class AmendablePoaControllerViewSpec extends TestSupport {
 
   class Setup(isAgent: Boolean, poAFullyPaid: Boolean = false, poasHaveBeenAdjustedPreviously: Option[Boolean] = None) {
 

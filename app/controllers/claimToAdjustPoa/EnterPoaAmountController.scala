@@ -30,15 +30,15 @@ import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.ErrorRecovery
 import utils.claimToAdjust.{ClaimToAdjustUtils, JourneyCheckerClaimToAdjust}
-import views.html.claimToAdjustPoa.EnterPoAAmountView
+import views.html.claimToAdjustPoa.EnterPoaAmountView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EnterPoAAmountController @Inject()(val authActions: AuthActions,
+class EnterPoaAmountController @Inject()(val authActions: AuthActions,
                                          val poaSessionService: PaymentOnAccountSessionService,
-                                         view: EnterPoAAmountView,
+                                         view: EnterPoaAmountView,
                                          val claimToAdjustService: ClaimToAdjustService)
                                         (implicit val appConfig: FrontendAppConfig,
                                          implicit val individualErrorHandler: ItvcErrorHandler,
@@ -57,7 +57,7 @@ class EnterPoAAmountController @Inject()(val authActions: AuthActions,
                 val filledForm = session.newPoAAmount.fold(EnterPoaAmountForm.form)(value =>
                   EnterPoaAmountForm.form.fill(EnterPoaAmountForm(value))
                 )
-                Ok(view(filledForm, viewModel, user.isAgent(), EnterPoAAmountController.submit(user.isAgent(), mode)))
+                Ok(view(filledForm, viewModel, user.isAgent(), EnterPoaAmountController.submit(user.isAgent(), mode)))
               case Left(ex) =>
                 logAndRedirect(s"Error while retrieving charge history details : ${ex.getMessage} - ${ex.getCause}")
             }
@@ -80,7 +80,7 @@ class EnterPoAAmountController @Inject()(val authActions: AuthActions,
   def handleForm(viewModel: PaymentOnAccountViewModel, isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_]): Future[Result] = {
     EnterPoaAmountForm.checkValueConstraints(EnterPoaAmountForm.form.bindFromRequest(), viewModel.totalAmountOne, viewModel.relevantAmountOne).fold(
       formWithErrors =>
-        Future.successful(BadRequest(view(formWithErrors, viewModel, user.isAgent(), EnterPoAAmountController.submit(user.isAgent(), mode)))),
+        Future.successful(BadRequest(view(formWithErrors, viewModel, user.isAgent(), EnterPoaAmountController.submit(user.isAgent(), mode)))),
       validForm =>
         poaSessionService.setNewPoAAmount(validForm.amount).flatMap {
           case Left(ex) =>

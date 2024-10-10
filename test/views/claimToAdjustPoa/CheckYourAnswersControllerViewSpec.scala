@@ -16,7 +16,7 @@
 
 package views.claimToAdjustPoa
 
-import controllers.claimToAdjustPoa.routes.{ConfirmationForAdjustingPoaController, EnterPoAAmountController, SelectYourReasonController}
+import controllers.claimToAdjustPoa.routes.{ConfirmationForAdjustingPoaController, EnterPoaAmountController, SelectYourReasonController}
 import models.claimToAdjustPoa.{Increase, MainIncomeLower, SelectYourReason}
 import models.core.CheckMode
 import models.incomeSourceDetails.TaxYear
@@ -43,7 +43,7 @@ class CheckYourAnswersControllerViewSpec extends TestSupport {
             poaReason = poaReason,
             redirectUrl = ConfirmationForAdjustingPoaController.show(isAgent).url,
             changePoaReasonUrl = SelectYourReasonController.show(isAgent, CheckMode).url,
-            changePoaAmountUrl = EnterPoAAmountController.show(isAgent, CheckMode).url
+            changePoaAmountUrl = EnterPoaAmountController.show(isAgent, CheckMode).url
           )
         )
       )
@@ -79,7 +79,7 @@ class CheckYourAnswersControllerViewSpec extends TestSupport {
       }
       "render the second change link" in new Setup(isAgent) {
         document.getElementById("change-2").text() shouldBe messages("claimToAdjustPoa.checkYourAnswers.summary-list.change")
-        document.getElementById("change-2").getElementsByTag("a").attr("href") shouldBe EnterPoAAmountController.show(isAgent, CheckMode).url
+        document.getElementById("change-2").getElementsByTag("a").attr("href") shouldBe EnterPoaAmountController.show(isAgent, CheckMode).url
       }
       "render the continue button" in new Setup(isAgent) {
         document.getElementById("confirm-button").text() shouldBe messages("base.confirm-and-continue")

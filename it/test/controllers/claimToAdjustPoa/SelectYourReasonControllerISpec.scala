@@ -33,7 +33,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
 
   val isAgent = false
 
-  def enterPOAAmountUrl: String = controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(isAgent, NormalMode).url
+  def enterPOAAmountUrl: String = controllers.claimToAdjustPoa.routes.EnterPoaAmountController.show(isAgent, NormalMode).url
 
   def poaCyaUrl: String = controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent).url
 

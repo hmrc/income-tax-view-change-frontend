@@ -35,11 +35,11 @@ import play.api.test.Helpers.{POST, contentAsString, defaultAwaitTimeout, redire
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testUtils.TestSupport
-import views.html.claimToAdjustPoa.EnterPoAAmountView
+import views.html.claimToAdjustPoa.EnterPoaAmountView
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class EnterPoAAmountControllerSpec extends TestSupport
+class EnterPoaAmountControllerSpec extends TestSupport
   with MockClaimToAdjustService
   with MockCalculationListService
   with MockCalculationListConnector
@@ -47,10 +47,10 @@ class EnterPoAAmountControllerSpec extends TestSupport
   with MockPaymentOnAccountSessionService
   with MockAuthActions {
 
-  object TestEnterPoAAmountController extends EnterPoAAmountController(
+  object TestEnterPoaAmountController$ extends EnterPoaAmountController(
     authActions = mockAuthActions,
     claimToAdjustService = mockClaimToAdjustService,
-    view = app.injector.instanceOf[EnterPoAAmountView],
+    view = app.injector.instanceOf[EnterPoaAmountView],
     poaSessionService = mockPaymentOnAccountSessionService
   )(
     controllerComponents = app.injector.instanceOf[MessagesControllerComponents],
@@ -88,7 +88,7 @@ class EnterPoAAmountControllerSpec extends TestSupport
 
   def getPostRequest(isAgent: Boolean, mode: Mode, poaAmount: String) = {
     if (isAgent) {
-      FakeRequest(POST, routes.EnterPoAAmountController.submit(false, mode).url)
+      FakeRequest(POST, routes.EnterPoaAmountController.submit(false, mode).url)
         .withFormUrlEncodedBody("poa-amount" -> poaAmount)
         .withSession(
           sessionUtils.SessionKeys.clientFirstName -> "Test",
@@ -100,7 +100,7 @@ class EnterPoAAmountControllerSpec extends TestSupport
         )
     }
     else {
-      FakeRequest(POST, routes.EnterPoAAmountController.submit(false, mode).url)
+      FakeRequest(POST, routes.EnterPoaAmountController.submit(false, mode).url)
         .withFormUrlEncodedBody("poa-amount" -> poaAmount)
         .withSession("nino" -> BaseTestConstants.testNino, "origin" -> "PTA")
     }
@@ -116,12 +116,12 @@ class EnterPoAAmountControllerSpec extends TestSupport
         setupMockTaxYearNotCrystallised()
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        val result = TestEnterPoAAmountController.show(isAgent = false, NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
+        val result = TestEnterPoaAmountController$.show(isAgent = false, NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
         status(result) shouldBe OK
         Jsoup.parse(contentAsString(result)).select("#poa-amount").attr("value") shouldBe ""
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
-        val resultAgent = TestEnterPoAAmountController.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
+        val resultAgent = TestEnterPoaAmountController$.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
         status(resultAgent) shouldBe OK
         Jsoup.parse(contentAsString(resultAgent)).select("#poa-amount").attr("value") shouldBe ""
       }
@@ -133,12 +133,12 @@ class EnterPoAAmountControllerSpec extends TestSupport
         setupMockTaxYearNotCrystallised()
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        val result = TestEnterPoAAmountController.show(isAgent = false, NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
+        val result = TestEnterPoaAmountController$.show(isAgent = false, NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
         status(result) shouldBe OK
         Jsoup.parse(contentAsString(result)).select("#poa-amount").attr("value") shouldBe "1111.22"
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
-        val resultAgent = TestEnterPoAAmountController.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
+        val resultAgent = TestEnterPoaAmountController$.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
         status(resultAgent) shouldBe OK
         Jsoup.parse(contentAsString(resultAgent)).select("#poa-amount").attr("value") shouldBe "1111.22"
       }
@@ -149,12 +149,12 @@ class EnterPoAAmountControllerSpec extends TestSupport
         mockSingleBISWithCurrentYearAsMigrationYear()
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        val result = TestEnterPoAAmountController.show(isAgent = false, NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
+        val result = TestEnterPoaAmountController$.show(isAgent = false, NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
-        val resultAgent = TestEnterPoAAmountController.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
+        val resultAgent = TestEnterPoaAmountController$.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
         status(resultAgent) shouldBe SEE_OTHER
         redirectLocation(resultAgent) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
@@ -168,12 +168,12 @@ class EnterPoAAmountControllerSpec extends TestSupport
         setupMockTaxYearNotCrystallised()
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        val result = TestEnterPoAAmountController.show(isAgent = false, NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
+        val result = TestEnterPoaAmountController$.show(isAgent = false, NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(false).url)
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
-        val resultAgent = TestEnterPoAAmountController.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
+        val resultAgent = TestEnterPoaAmountController$.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
         status(resultAgent) shouldBe SEE_OTHER
         redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(true).url)
       }
@@ -187,11 +187,11 @@ class EnterPoAAmountControllerSpec extends TestSupport
         setupMockTaxYearNotCrystallised()
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        val result = TestEnterPoAAmountController.show(isAgent = false, NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
+        val result = TestEnterPoaAmountController$.show(isAgent = false, NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
         status(result) shouldBe INTERNAL_SERVER_ERROR
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
-        val resultAgent = TestEnterPoAAmountController.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
+        val resultAgent = TestEnterPoaAmountController$.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
         status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
       }
       "Retrieving mongo session fails" in {
@@ -202,11 +202,11 @@ class EnterPoAAmountControllerSpec extends TestSupport
         setupMockTaxYearNotCrystallised()
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        val result = TestEnterPoAAmountController.show(isAgent = false, NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
+        val result = TestEnterPoaAmountController$.show(isAgent = false, NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
         status(result) shouldBe INTERNAL_SERVER_ERROR
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
-        val resultAgent = TestEnterPoAAmountController.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
+        val resultAgent = TestEnterPoaAmountController$.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
         status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
       }
       "User does not have an active mongo session" in {
@@ -217,11 +217,11 @@ class EnterPoAAmountControllerSpec extends TestSupport
         setupMockTaxYearNotCrystallised()
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        val result = TestEnterPoAAmountController.show(isAgent = false, NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
+        val result = TestEnterPoaAmountController$.show(isAgent = false, NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
         status(result) shouldBe INTERNAL_SERVER_ERROR
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
-        val resultAgent = TestEnterPoAAmountController.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
+        val resultAgent = TestEnterPoaAmountController$.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
         status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
       }
       "an Exception is returned from ClaimToAdjustService" in {
@@ -231,11 +231,11 @@ class EnterPoAAmountControllerSpec extends TestSupport
         setupMockGetPoaAmountViewModelFailure()
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        val result = TestEnterPoAAmountController.show(isAgent = false, NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
+        val result = TestEnterPoaAmountController$.show(isAgent = false, NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
         result.futureValue.header.status shouldBe INTERNAL_SERVER_ERROR
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
-        val resultAgent: Future[Result] = TestEnterPoAAmountController.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
+        val resultAgent: Future[Result] = TestEnterPoaAmountController$.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
         resultAgent.futureValue.header.status shouldBe INTERNAL_SERVER_ERROR
       }
     }
@@ -250,16 +250,16 @@ class EnterPoAAmountControllerSpec extends TestSupport
         when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "1234.56"))
+        val result = TestEnterPoaAmountController$.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "1234.56"))
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(false).url)
 
-        val resultChange = TestEnterPoAAmountController.submit(isAgent = false, CheckMode)(getPostRequest(isAgent = false, CheckMode, "1234.56"))
+        val resultChange = TestEnterPoaAmountController$.submit(isAgent = false, CheckMode)(getPostRequest(isAgent = false, CheckMode, "1234.56"))
         status(resultChange) shouldBe SEE_OTHER
         redirectLocation(resultChange) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(false).url)
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
-        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "1234.56"))
+        val resultAgent = TestEnterPoaAmountController$.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "1234.56"))
         status(resultAgent) shouldBe SEE_OTHER
         redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(true).url)
       }
@@ -273,12 +273,12 @@ class EnterPoAAmountControllerSpec extends TestSupport
         when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Right(())))
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "4500"))
+        val result = TestEnterPoaAmountController$.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "4500"))
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(false).url)
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
-        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "4500"))
+        val resultAgent = TestEnterPoaAmountController$.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "4500"))
         status(resultAgent) shouldBe SEE_OTHER
         redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(true).url)
       }
@@ -293,12 +293,12 @@ class EnterPoAAmountControllerSpec extends TestSupport
           when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Right(())))
 
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-          val result = TestEnterPoAAmountController.submit(isAgent = false, CheckMode)(getPostRequest(isAgent = false, CheckMode, "4500"))
+          val result = TestEnterPoaAmountController$.submit(isAgent = false, CheckMode)(getPostRequest(isAgent = false, CheckMode, "4500"))
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(false).url)
 
           setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
-          val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, CheckMode)(getPostRequest(isAgent = true, CheckMode, "4500"))
+          val resultAgent = TestEnterPoaAmountController$.submit(isAgent = true, CheckMode)(getPostRequest(isAgent = true, CheckMode, "4500"))
           status(resultAgent) shouldBe SEE_OTHER
           redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(true).url)
         }
@@ -317,12 +317,12 @@ class EnterPoAAmountControllerSpec extends TestSupport
           when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Right(())))
 
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-          val result = TestEnterPoAAmountController.submit(isAgent = false, CheckMode)(getPostRequest(isAgent = false, CheckMode, "1000"))
+          val result = TestEnterPoaAmountController$.submit(isAgent = false, CheckMode)(getPostRequest(isAgent = false, CheckMode, "1000"))
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(false).url)
 
           setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
-          val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, CheckMode)(getPostRequest(isAgent = true, CheckMode, "1000"))
+          val resultAgent = TestEnterPoaAmountController$.submit(isAgent = true, CheckMode)(getPostRequest(isAgent = true, CheckMode, "1000"))
           status(resultAgent) shouldBe SEE_OTHER
           redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(true).url)
         }
@@ -337,12 +337,12 @@ class EnterPoAAmountControllerSpec extends TestSupport
           when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Right(())))
 
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-          val result = TestEnterPoAAmountController.submit(isAgent = false, CheckMode)(getPostRequest(isAgent = false, CheckMode, "4500"))
+          val result = TestEnterPoaAmountController$.submit(isAgent = false, CheckMode)(getPostRequest(isAgent = false, CheckMode, "4500"))
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(false).url)
 
           setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
-          val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, CheckMode)(getPostRequest(isAgent = true, CheckMode, "4500"))
+          val resultAgent = TestEnterPoaAmountController$.submit(isAgent = true, CheckMode)(getPostRequest(isAgent = true, CheckMode, "4500"))
           status(resultAgent) shouldBe SEE_OTHER
           redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(true).url)
         }
@@ -356,12 +356,12 @@ class EnterPoAAmountControllerSpec extends TestSupport
         when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "1234.56"))
+        val result = TestEnterPoaAmountController$.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "1234.56"))
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(false, NormalMode).url)
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
-        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "1234.56"))
+        val resultAgent = TestEnterPoaAmountController$.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "1234.56"))
         status(resultAgent) shouldBe SEE_OTHER
         redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(true, NormalMode).url)
       }
@@ -376,12 +376,12 @@ class EnterPoAAmountControllerSpec extends TestSupport
           when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Right(())))
 
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-          val result = TestEnterPoAAmountController.submit(isAgent = false, CheckMode)(getPostRequest(isAgent = false, CheckMode, "500"))
+          val result = TestEnterPoaAmountController$.submit(isAgent = false, CheckMode)(getPostRequest(isAgent = false, CheckMode, "500"))
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(false, CheckMode).url)
 
           setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
-          val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, CheckMode)(getPostRequest(isAgent = true, CheckMode, "500"))
+          val resultAgent = TestEnterPoaAmountController$.submit(isAgent = true, CheckMode)(getPostRequest(isAgent = true, CheckMode, "500"))
           status(resultAgent) shouldBe SEE_OTHER
           redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(true, CheckMode).url)
         }
@@ -395,12 +395,12 @@ class EnterPoAAmountControllerSpec extends TestSupport
         when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, ""))
+        val result = TestEnterPoaAmountController$.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, ""))
         status(result) shouldBe BAD_REQUEST
         redirectLocation(result) shouldBe None
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
-        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, ""))
+        val resultAgent = TestEnterPoaAmountController$.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, ""))
         status(resultAgent) shouldBe BAD_REQUEST
         redirectLocation(resultAgent) shouldBe None
       }
@@ -411,12 +411,12 @@ class EnterPoAAmountControllerSpec extends TestSupport
         when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "test"))
+        val result = TestEnterPoaAmountController$.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "test"))
         status(result) shouldBe BAD_REQUEST
         redirectLocation(result) shouldBe None
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
-        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "invalid"))
+        val resultAgent = TestEnterPoaAmountController$.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "invalid"))
         status(resultAgent) shouldBe BAD_REQUEST
         redirectLocation(resultAgent) shouldBe None
       }
@@ -427,12 +427,12 @@ class EnterPoAAmountControllerSpec extends TestSupport
         when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "6000"))
+        val result = TestEnterPoaAmountController$.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "6000"))
         status(result) shouldBe BAD_REQUEST
         redirectLocation(result) shouldBe None
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
-        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "6000"))
+        val resultAgent = TestEnterPoaAmountController$.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "6000"))
         status(resultAgent) shouldBe BAD_REQUEST
         redirectLocation(resultAgent) shouldBe None
       }
@@ -443,12 +443,12 @@ class EnterPoAAmountControllerSpec extends TestSupport
         when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "4000"))
+        val result = TestEnterPoaAmountController$.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "4000"))
         status(result) shouldBe BAD_REQUEST
         redirectLocation(result) shouldBe None
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
-        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "4000"))
+        val resultAgent = TestEnterPoaAmountController$.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "4000"))
         status(resultAgent) shouldBe BAD_REQUEST
         redirectLocation(resultAgent) shouldBe None
       }
@@ -460,12 +460,12 @@ class EnterPoAAmountControllerSpec extends TestSupport
         when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Left(new Error("Error setting poa amount"))))
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "1234.56"))
+        val result = TestEnterPoaAmountController$.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "1234.56"))
         status(result) shouldBe INTERNAL_SERVER_ERROR
         redirectLocation(result) shouldBe None
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
-        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "1234.56"))
+        val resultAgent = TestEnterPoaAmountController$.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "1234.56"))
         status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
         redirectLocation(resultAgent) shouldBe None
       }
@@ -477,12 +477,12 @@ class EnterPoAAmountControllerSpec extends TestSupport
         when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Left(new Error("Error setting adjustment reason"))))
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "4500"))
+        val result = TestEnterPoaAmountController$.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "4500"))
         status(result) shouldBe INTERNAL_SERVER_ERROR
         redirectLocation(result) shouldBe None
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
-        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "4500"))
+        val resultAgent = TestEnterPoaAmountController$.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "4500"))
         status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
         redirectLocation(resultAgent) shouldBe None
       }
@@ -496,12 +496,12 @@ class EnterPoAAmountControllerSpec extends TestSupport
         when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Right(())))
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        val result = TestEnterPoAAmountController.submit(isAgent = false, CheckMode)(getPostRequest(isAgent = false, CheckMode, "1000"))
+        val result = TestEnterPoaAmountController$.submit(isAgent = false, CheckMode)(getPostRequest(isAgent = false, CheckMode, "1000"))
         status(result) shouldBe INTERNAL_SERVER_ERROR
         redirectLocation(result) shouldBe None
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
-        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, CheckMode)(getPostRequest(isAgent = true, CheckMode, "1000"))
+        val resultAgent = TestEnterPoaAmountController$.submit(isAgent = true, CheckMode)(getPostRequest(isAgent = true, CheckMode, "1000"))
         status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
         redirectLocation(resultAgent) shouldBe None
       }

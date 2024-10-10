@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package controllers.agent
+package controllers.agent.claimToAdjustPoa
 
-import models.admin.AdjustPaymentsOnAccount
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.admin.AdjustPaymentsOnAccount
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testDate, testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
 
-class AmendablePOAControllerISpec extends ComponentSpecBase {
+class AmendablePoaControllerISpec extends ComponentSpecBase {
 
-  private val amendPoaUrl = controllers.claimToAdjustPoa.routes.AmendablePOAController.show(isAgent = true).url
+  private val amendPoaUrl = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = true).url
   private val testTaxYear = 2024
 
   s"calling GET $amendPoaUrl" should {

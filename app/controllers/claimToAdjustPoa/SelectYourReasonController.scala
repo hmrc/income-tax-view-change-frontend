@@ -87,7 +87,7 @@ class SelectYourReasonController @Inject()(val authActions: AuthActions,
     } yield {
       res match {
         case _ => (mode, poa.totalAmountLessThanPoa) match {
-          case (NormalMode, false) if value != Increase => Redirect(EnterPoAAmountController.show(user.isAgent(), NormalMode))
+          case (NormalMode, false) if value != Increase => Redirect(EnterPoaAmountController.show(user.isAgent(), NormalMode))
           case (_, _) => Redirect(CheckYourAnswersController.show(user.isAgent()))
         }
       }

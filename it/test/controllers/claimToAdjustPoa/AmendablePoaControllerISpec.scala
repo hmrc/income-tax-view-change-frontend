@@ -26,9 +26,9 @@ import services.PaymentOnAccountSessionService
 import testConstants.BaseIntegrationTestConstants.{testDate, testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
 
-class AmendablePOAControllerISpec extends ComponentSpecBase {
+class AmendablePoaControllerISpec extends ComponentSpecBase {
 
-  private val amendPoaUrl = controllers.claimToAdjustPoa.routes.AmendablePOAController.show(isAgent = false).url
+  private val amendPoaUrl = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = false).url
   private val testTaxYear = 2024
   val sessionService: PaymentOnAccountSessionService = app.injector.instanceOf[PaymentOnAccountSessionService]
 

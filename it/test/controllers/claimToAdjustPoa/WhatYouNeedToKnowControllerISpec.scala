@@ -38,7 +38,7 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
 
   val testTaxYear = 2024
 
-  def enterPOAAmountUrl: String = controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(isAgent, NormalMode).url
+  def enterPOAAmountUrl: String = controllers.claimToAdjustPoa.routes.EnterPoaAmountController.show(isAgent, NormalMode).url
 
   def selectReasonUrl: String = controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, NormalMode).url
 

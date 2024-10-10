@@ -16,7 +16,7 @@
 
 package controllers.agent.claimToAdjustPoa
 
-class EnterPoAAmountControllerISpec extends controllers.claimToAdjustPoa.EnterPoAAmountControllerISpec {
+class EnterPoaAmountControllerISpec extends controllers.claimToAdjustPoa.EnterPoaAmountControllerISpec {
 
   override val isAgent = true
 
