@@ -66,7 +66,7 @@ class AuthoriseAndRetrieve @Inject()(val authorisedFunctions: FrontendAuthorised
 
       // Agent identified by ARN - previously parsed from enrolment here:
       // controllers.predicates.IncomeTaxAgentUser.agentReferenceNumber
-      def isAgent(): Predicate = AffinityGroup.Agent and Enrolment("HMRC-AS-AGENT")
+      def isAgent(): Predicate = Enrolment("HMRC-AS-AGENT") and AffinityGroup.Agent
 
       // previously authorised here:
       // auth.BaseFrontendController.AuthenticatedActions.asyncInternal
