@@ -17,12 +17,15 @@
 package services.claimToAdjustPoa
 
 import auth.MtdItUser
+import audit.AuditingService
+import audit.models.AdjustPaymentsOnAccountAuditModel
 import config.featureswitch.FeatureSwitching
 import controllers.routes.HomeController
 import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoAAmendmentData}
 import models.core.Nino
 import play.api.Logger
+import play.api.i18n.{Lang, Messages,LangImplicits}
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
@@ -31,8 +34,7 @@ import utils.ErrorRecovery
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait RecalculatePoaHelper extends FeatureSwitching with ErrorRecovery {
-
+trait RecalculatePoaHelper extends  FeatureSwitching with LangImplicits with ErrorRecovery {
   private def dataFromSession(poaSessionService: PaymentOnAccountSessionService)(implicit hc: HeaderCarrier, ec: ExecutionContext)
   : Future[PoAAmendmentData] = {
     poaSessionService.getMongo(hc, ec).flatMap {
@@ -44,15 +46,32 @@ trait RecalculatePoaHelper extends FeatureSwitching with ErrorRecovery {
   }
 
   private def handlePoaAndOtherData(poa: PaymentOnAccountViewModel,
-                                      otherData: PoAAmendmentData, nino: Nino, ctaCalculationService: ClaimToAdjustPoaCalculationService)
+                                    otherData: PoAAmendmentData, nino: Nino, ctaCalculationService: ClaimToAdjustPoaCalculationService, auditingService: AuditingService)
                                      (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
+    implicit val lang : Lang = Lang("en")
     otherData match {
       case PoAAmendmentData(Some(poaAdjustmentReason), Some(amount), _) =>
         ctaCalculationService.recalculate(nino, poa.taxYear, amount, poaAdjustmentReason) map {
           case Left(ex) =>
             Logger("application").error(s"POA recalculation request failed: ${ex.getMessage}")
+            auditingService.extendedAudit(AdjustPaymentsOnAccountAuditModel(
+              isSuccessful = false,
+              previousPaymentOnAccountAmount = poa.totalAmountOne,
+              requestedPaymentOnAccountAmount = amount,
+              adjustmentReasonCode = poaAdjustmentReason.code,
+              adjustmentReasonDescription = Messages(poaAdjustmentReason.messagesKey)(lang2Messages),
+              isDecreased = amount < poa.totalAmountOne
+            ))
             Redirect(controllers.claimToAdjustPoa.routes.ApiFailureSubmittingPoaController.show(user.isAgent()))
           case Right(_) =>
+            auditingService.extendedAudit(AdjustPaymentsOnAccountAuditModel(
+              isSuccessful = true,
+              previousPaymentOnAccountAmount = poa.totalAmountOne,
+              requestedPaymentOnAccountAmount = amount,
+              adjustmentReasonCode = poaAdjustmentReason.code,
+              adjustmentReasonDescription = Messages(poaAdjustmentReason.messagesKey,lang)(lang2Messages),
+              isDecreased = amount < poa.totalAmountOne
+            ))
             Redirect(controllers.claimToAdjustPoa.routes.PoaAdjustedController.show(user.isAgent()))
         }
       case PoAAmendmentData(_, _, _) =>
@@ -61,7 +80,7 @@ trait RecalculatePoaHelper extends FeatureSwitching with ErrorRecovery {
   }
 
   protected def handleSubmitPoaData(claimToAdjustService: ClaimToAdjustService, ctaCalculationService: ClaimToAdjustPoaCalculationService,
-                                    poaSessionService: PaymentOnAccountSessionService)
+                                    poaSessionService: PaymentOnAccountSessionService, auditingService: AuditingService)
                                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
     if (isEnabled(AdjustPaymentsOnAccount)) {
       {
@@ -70,7 +89,7 @@ trait RecalculatePoaHelper extends FeatureSwitching with ErrorRecovery {
         } yield poaMaybe match {
           case Right(Some(poa)) =>
             dataFromSession(poaSessionService).flatMap(otherData =>
-              handlePoaAndOtherData(poa, otherData, Nino(user.nino), ctaCalculationService)
+              handlePoaAndOtherData(poa, otherData, Nino(user.nino), ctaCalculationService, auditingService)
             )
           case Right(None) =>
             Future.successful(logAndRedirect("Failed to create PaymentOnAccount model"))

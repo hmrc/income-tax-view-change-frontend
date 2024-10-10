@@ -16,13 +16,14 @@
 
 package controllers.claimToAdjustPoa
 
+import audit.AuditingService
 import auth.authV2.AuthActions
 import cats.data.EitherT
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import models.claimToAdjustPoa.ConfirmationForAdjustingPoaViewModel
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.{MessagesControllerComponents, _}
 import services.claimToAdjustPoa.{ClaimToAdjustPoaCalculationService, RecalculatePoaHelper}
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -37,7 +38,8 @@ class ConfirmationForAdjustingPoaController @Inject()(val authActions: AuthActio
                                                       val claimToAdjustService: ClaimToAdjustService,
                                                       val poaSessionService: PaymentOnAccountSessionService,
                                                       val ctaCalculationService: ClaimToAdjustPoaCalculationService,
-                                                      val view: ConfirmationForAdjustingPoa)
+                                                      val view: ConfirmationForAdjustingPoa,
+                                                      val auditingService: AuditingService)
                                                      (implicit val appConfig: FrontendAppConfig,
                                                       implicit val individualErrorHandler: ItvcErrorHandler,
                                                       implicit val agentErrorHandler: AgentItvcErrorHandler,
@@ -65,7 +67,8 @@ class ConfirmationForAdjustingPoaController @Inject()(val authActions: AuthActio
       handleSubmitPoaData(
         claimToAdjustService = claimToAdjustService,
         ctaCalculationService = ctaCalculationService,
-        poaSessionService = poaSessionService
+        poaSessionService = poaSessionService,
+        auditingService = auditingService
       ) recover logAndRedirect
   }
 

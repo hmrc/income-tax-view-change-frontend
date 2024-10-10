@@ -137,3 +137,7 @@ case object EnterClientUTR extends TransactionName {
 case object ClientDetailsConfirmed extends TransactionName {
   val name = "client-details-confirmed"
 }
+
+case object AdjustPaymentsOnAccount extends TransactionName {
+  val name = "adjust-payments-on-account"
+}
