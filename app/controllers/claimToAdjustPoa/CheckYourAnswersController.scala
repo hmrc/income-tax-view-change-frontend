@@ -16,6 +16,7 @@
 
 package controllers.claimToAdjustPoa
 
+import audit.AuditingService
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import cats.data.EitherT
@@ -40,7 +41,8 @@ class CheckYourAnswersController @Inject()(val authActions: AuthActions,
                                            val claimToAdjustService: ClaimToAdjustService,
                                            val poaSessionService: PaymentOnAccountSessionService,
                                            val ctaCalculationService: ClaimToAdjustPoaCalculationService,
-                                           val checkYourAnswers: CheckYourAnswers)
+                                           val checkYourAnswers: CheckYourAnswers,
+                                           val auditingService: AuditingService)
                                           (implicit val appConfig: FrontendAppConfig,
                                            implicit val individualErrorHandler: ItvcErrorHandler,
                                            implicit val agentErrorHandler: AgentItvcErrorHandler,
@@ -76,7 +78,8 @@ class CheckYourAnswersController @Inject()(val authActions: AuthActions,
       handleSubmitPoaData(
         claimToAdjustService = claimToAdjustService,
         ctaCalculationService = ctaCalculationService,
-        poaSessionService = poaSessionService
+        poaSessionService = poaSessionService,
+        auditingService = auditingService
       ) recover logAndRedirect
   }
 

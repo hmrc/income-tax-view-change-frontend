@@ -124,6 +124,18 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
     arn = None
   )(request)
 
+  def getAgentUser(request: FakeRequest[AnyContentAsEmpty.type]): MtdItUser[_] = MtdItUser(
+    mtditid = testMtditid,
+    nino = testNino,
+    userName = Some(testRetrievedUserName),
+    incomeSources = businessAndPropertyAligned,
+    btaNavPartial = None,
+    saUtr = Some(testSaUtr),
+    credId = Some(testCredId),
+    userType = Some(testUserTypeAgent),
+    arn = Some(testArn)
+  )(request)
+
   def getIndividualUserIncomeSourcesConfigurable(request: FakeRequest[AnyContentAsEmpty.type], incomeSources: IncomeSourceDetailsModel)
   : MtdItUser[_] = MtdItUser(
     mtditid = testMtditid,

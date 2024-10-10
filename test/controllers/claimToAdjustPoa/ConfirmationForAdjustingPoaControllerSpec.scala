@@ -16,6 +16,7 @@
 
 package controllers.claimToAdjustPoa
 
+import audit.AuditingService
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import mocks.auth.MockAuthActions
@@ -57,7 +58,7 @@ class ConfirmationForAdjustingPoaControllerSpec extends TestSupport
     ctaCalculationService = mockClaimToAdjustPoaCalculationService,
     view = app.injector.instanceOf[ConfirmationForAdjustingPoa],
     poaSessionService = mockPaymentOnAccountSessionService,
-
+    auditingService = app.injector.instanceOf[AuditingService]
   )(
     appConfig = app.injector.instanceOf[FrontendAppConfig],
     individualErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
