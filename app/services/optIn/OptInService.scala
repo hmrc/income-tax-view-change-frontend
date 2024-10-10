@@ -193,7 +193,7 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
     result.value
   }
 
-  def optinCompletedPageModel(isAgent: Boolean)(implicit user: MtdItUser[_],
+  def optInCompletedPageModel(isAgent: Boolean)(implicit user: MtdItUser[_],
                                                 hc: HeaderCarrier,
                                                 ec: ExecutionContext): OptionT[Future, OptInCompletedViewModel] = {
     OptionT(for {

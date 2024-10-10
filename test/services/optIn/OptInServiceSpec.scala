@@ -285,7 +285,7 @@ class OptInServiceSpec extends UnitSpec
     }
   }
 
-  "OptInService.optinCompletedPageModel" should {
+  "OptInService.optInCompletedPageModel" should {
 
     "create a view model for the opt in completed view page" when {
 
@@ -303,7 +303,7 @@ class OptInServiceSpec extends UnitSpec
 
           when(mockDateService.getCurrentTaxYear).thenReturn(taxYear2023)
 
-          val result = service.optinCompletedPageModel(isAgent)
+          val result = service.optInCompletedPageModel(isAgent)
 
           result.value.futureValue shouldBe
             Some(
@@ -332,7 +332,7 @@ class OptInServiceSpec extends UnitSpec
 
           when(mockDateService.getCurrentTaxYear).thenReturn(taxYear2023)
 
-          val result = service.optinCompletedPageModel(isAgent)
+          val result = service.optInCompletedPageModel(isAgent)
 
           result.value.futureValue shouldBe
             Some(

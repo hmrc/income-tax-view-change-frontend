@@ -54,7 +54,7 @@ class OptInCompletedController @Inject()(val view: OptInCompletedView,
       auth.authenticatedAction(isAgent) {
         implicit user =>
           withRecover(isAgent) {
-            optInService.optinCompletedPageModel(isAgent)
+            optInService.optInCompletedPageModel(isAgent)
               .map(model => Ok(view(model)))
               .getOrElse(errorHandler(isAgent).showInternalServerError())
           }

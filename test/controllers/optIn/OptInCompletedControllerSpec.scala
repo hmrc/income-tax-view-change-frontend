@@ -76,7 +76,7 @@ class OptInCompletedControllerSpec extends TestSupport
 
           val proposition = createOptInProposition(taxYear2023, ITSAStatus.Annual, ITSAStatus.Annual)
 
-          when(mockOptInService.optinCompletedPageModel(any())(any(), any(), any()))
+          when(mockOptInService.optInCompletedPageModel(any())(any(), any(), any()))
             .thenReturn(
               OptionT[Future, OptInCompletedViewModel](
                 Future(Some(
@@ -110,7 +110,7 @@ class OptInCompletedControllerSpec extends TestSupport
           setupMockAuthorisationSuccess(isAgent)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-          when(mockOptInService.optinCompletedPageModel(any())(any(), any(), any()))
+          when(mockOptInService.optInCompletedPageModel(any())(any(), any(), any()))
             .thenReturn(
               OptionT[Future, OptInCompletedViewModel](Future(None))
             )
@@ -141,7 +141,7 @@ class OptInCompletedControllerSpec extends TestSupport
 
             val proposition = createOptInProposition(taxYear2023, ITSAStatus.Annual, ITSAStatus.Annual)
 
-            when(mockOptInService.optinCompletedPageModel(any())(any(), any(), any()))
+            when(mockOptInService.optInCompletedPageModel(any())(any(), any(), any()))
               .thenReturn(
                 OptionT[Future, OptInCompletedViewModel](
                   Future(Some(
@@ -175,7 +175,7 @@ class OptInCompletedControllerSpec extends TestSupport
             setupMockAuthorisationSuccess(isAgent)
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-            when(mockOptInService.optinCompletedPageModel(any())(any(), any(), any()))
+            when(mockOptInService.optInCompletedPageModel(any())(any(), any(), any()))
               .thenReturn(
                 OptionT[Future, OptInCompletedViewModel](Future(None))
               )
