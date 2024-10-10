@@ -274,13 +274,16 @@ object AuthStub extends ComponentSpecBase {
     )
   }
 
-  def failedPrimaryAgent(mtdItId : String = "MtdItId" ) : Unit = {
+  def failedPrimaryAgent(mtdItId: String = "MtdItId"): Unit = {
 
     val primaryEnrolment = Enrolment(primaryAgentEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
       .withDelegatedAuthRule(primaryAgentAuthRule)
     val jsonRequest = getAuthRequest(Some(primaryEnrolment))
 
-    WiremockHelper.stubPostWithRequest(postAuthoriseUrl, jsonRequest, Status.INTERNAL_SERVER_ERROR,
+    WiremockHelper.stubPostWithRequest(
+      postAuthoriseUrl,
+      jsonRequest,
+      Status.UNAUTHORIZED,
       Json.parse(
         s"""{
            |"allEnrolments":[{}],
@@ -291,26 +294,26 @@ object AuthStub extends ComponentSpecBase {
   }
 
 
-def failedSecondaryAgent(mtdItId : String = "MtdItId" ) : Unit = {
+  def failedSecondaryAgent(mtdItId: String = "MtdItId"): Unit = {
 
-  val secondaryEnrolment = Enrolment(secondaryAgentEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
-    .withDelegatedAuthRule(secondaryAgentAuthRule)
-  val jsonRequest = getAuthRequest(Some(secondaryEnrolment))
+    val secondaryEnrolment = Enrolment(secondaryAgentEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
+      .withDelegatedAuthRule(secondaryAgentAuthRule)
+    val jsonRequest = getAuthRequest(Some(secondaryEnrolment))
 
-  WiremockHelper.stubPostWithRequest(postAuthoriseUrl, jsonRequest, Status.INTERNAL_SERVER_ERROR,
-    Json.parse(
-      s"""{
-         |"allEnrolments":[{}],
-         |"userDetailsUri":"$testUserDetailsWiremockUrl"
-         |}
+    WiremockHelper.stubPostWithRequest(postAuthoriseUrl,
+      jsonRequest,
+      Status.UNAUTHORIZED,
+      Json.parse(
+        s"""{
+           |"allEnrolments":[{}],
+           |"userDetailsUri":"$testUserDetailsWiremockUrl"
+           |}
          """.stripMargin).toString()
-  )
-}
+    )
+  }
 
 
-
-
-  def getAuthRequest(optEnrolment : Option[Enrolment] ): JsValue = {
+  def getAuthRequest(optEnrolment: Option[Enrolment]): JsValue = {
 
     val authorisedJson: JsArray = optEnrolment.fold(Json.arr())(enrolment => Json.arr(enrolment))
 

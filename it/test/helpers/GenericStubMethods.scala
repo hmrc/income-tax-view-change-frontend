@@ -70,7 +70,9 @@ trait GenericStubMethods extends CustomMatchers {
         AuthStub.stubSecondaryAuthorisedAgent(clientMtdId)
       } else {
         Given("I stub the secondary agent is authorised without an agent reference number")
-        AuthStub.stubAuthorisedAgentNoARN()
+        AuthStub.stubAuthorisedNullPredicate(clientMtdId)
+        AuthStub.failedPrimaryAgent(clientMtdId)
+        AuthStub.failedSecondaryAgent(clientMtdId)
       }
     } else {
       Given("I stub the unauthorised agent")

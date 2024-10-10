@@ -206,7 +206,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
       }
 
-      "the utr is submitted by a secondary agent is valid and session data service post returns an OK response" in {
+      "the utr submitted by a secondary agent is valid and session data service post returns an OK response" in {
         val validUTR: String = "1234567890"
         stubSecondaryAuthorisedAgentUser(authorised = true, clientMtdId = testMtdItId)
         CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
@@ -235,7 +235,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
       }
 
-      "the utr submitted contains spaces and is valid and session data service post returns an OK response" in {
+      "the utr submitted by a primary agent contains spaces and is valid and session data service post returns an OK response" in {
         val validUTR: String = "1234567890"
         val utrWithSpaces: String = " 1 2 3 4 5 6 7 8 9 0 "
 
@@ -268,11 +268,77 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
       }
 
-      "the utr submitted contains spaces and is valid and session data service post returns a CONFLICT response" in {
+      "the utr submitted by a secondary agent contains spaces and is valid and session data service post returns an OK response" in {
+        val validUTR: String = "1234567890"
+        val utrWithSpaces: String = " 1 2 3 4 5 6 7 8 9 0 "
+
+        stubSecondaryAuthorisedAgentUser(authorised = true, clientMtdId = testMtdItId)
+
+        Then(s"I stub the session-data service call to return status $OK")
+        stubPostSessionDataResponseOkResponse()
+
+        CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
+          status = OK,
+          response = CitizenDetailsStub.validCitizenDetailsResponse(
+            firstName = "testFirstName",
+            lastName = "testLastName",
+            nino = testNino
+          )
+        )
+        IncomeTaxViewChangeStub.stubGetBusinessDetails(testNino)(
+          status = OK,
+          response = Json.toJson(singleBusinessResponse)
+        )
+
+        val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some(utrWithSpaces))
+
+        AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some("1"), saUtr = validUTR, credId = None))
+
+        Then("The enter clients utr page is returned with an error")
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.agent.routes.ConfirmClientUTRController.show.url)
+        )
+      }
+
+      "the utr submitted by a primary agent contains spaces and is valid and session data service post returns a CONFLICT response" in {
         val validUTR: String = "1234567890"
         val utrWithSpaces: String = " 1 2 3 4 5 6 7 8 9 0 "
 
         stubPrimaryAuthorisedAgentUser(authorised = true, clientMtdId = testMtdItId)
+
+        Then(s"I stub the session-data service call to return status $CONFLICT")
+        stubPostSessionDataResponseConflictResponse()
+
+        CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
+          status = OK,
+          response = CitizenDetailsStub.validCitizenDetailsResponse(
+            firstName = "testFirstName",
+            lastName = "testLastName",
+            nino = testNino
+          )
+        )
+        IncomeTaxViewChangeStub.stubGetBusinessDetails(testNino)(
+          status = OK,
+          response = Json.toJson(singleBusinessResponse)
+        )
+
+        val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some(utrWithSpaces))
+
+        AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some("1"), saUtr = validUTR, credId = None))
+
+        Then("The enter clients utr page is returned with an error")
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.agent.routes.ConfirmClientUTRController.show.url)
+        )
+      }
+
+      "the utr submitted by a secondary agent contains spaces and is valid and session data service post returns a CONFLICT response" in {
+        val validUTR: String = "1234567890"
+        val utrWithSpaces: String = " 1 2 3 4 5 6 7 8 9 0 "
+
+        stubSecondaryAuthorisedAgentUser(authorised = true, clientMtdId = testMtdItId)
 
         Then(s"I stub the session-data service call to return status $CONFLICT")
         stubPostSessionDataResponseConflictResponse()
