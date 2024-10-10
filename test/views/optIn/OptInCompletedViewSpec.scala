@@ -32,8 +32,17 @@ class OptInCompletedViewSpec extends TestSupport {
 
   val view: OptInCompletedView = app.injector.instanceOf[OptInCompletedView]
 
-  class SetupForCurrentYear(isAgent: Boolean = true, taxYear: TaxYear, followingYearVoluntary: Boolean) {
-    val model: OptInCompletedViewModel = OptInCompletedViewModel(isAgent = isAgent, optInTaxYear = taxYear, isCurrentYear = true, showAnnualReportingAdvice = false, optInIncludedNextYear = followingYearVoluntary)
+  class SetupForCurrentYear(isAgent: Boolean = true, taxYear: TaxYear,
+                            followingYearVoluntary: Boolean,
+                            annualWithFollowingYearMandated: Boolean = false) {
+    val model: OptInCompletedViewModel = OptInCompletedViewModel(
+      isAgent = isAgent,
+      optInTaxYear = taxYear,
+      isCurrentYear = true,
+      showAnnualReportingAdvice = false,
+      optInIncludedNextYear = followingYearVoluntary,
+      annualWithFollowingYearMandated = annualWithFollowingYearMandated
+    )
     val pageDocument: Document = Jsoup.parse(contentAsString(view(model = model)))
   }
 
@@ -87,14 +96,16 @@ class OptInCompletedViewSpec extends TestSupport {
       "(opens in new tab)."
   }
 
-  class SetupNextYear(isAgent: Boolean = true, taxYear: TaxYear) {
+  class SetupNextYear(isAgent: Boolean = true,
+                      taxYear: TaxYear) {
     val model: OptInCompletedViewModel =
       OptInCompletedViewModel(
         isAgent = isAgent,
         optInTaxYear = taxYear,
         isCurrentYear = false,
         showAnnualReportingAdvice = true,
-        optInIncludedNextYear = false
+        optInIncludedNextYear = false,
+        annualWithFollowingYearMandated = false
       )
     val pageDocument: Document = Jsoup.parse(contentAsString(view(model = model)))
   }
