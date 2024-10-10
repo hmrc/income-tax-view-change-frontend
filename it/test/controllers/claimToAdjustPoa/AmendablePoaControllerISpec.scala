@@ -19,7 +19,7 @@ package controllers.claimToAdjustPoa
 import models.admin.AdjustPaymentsOnAccount
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.claimToAdjustPoa.{OtherIncomeLower, PoAAmendmentData}
+import models.claimToAdjustPoa.{OtherIncomeLower, PoaAmendmentData}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.PaymentOnAccountSessionService
@@ -72,9 +72,9 @@ class AmendablePoaControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
           OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
         )
-        await(sessionService.setMongoData(Some(PoAAmendmentData(
+        await(sessionService.setMongoData(Some(PoaAmendmentData(
           poaAdjustmentReason = Some(OtherIncomeLower),
-          newPoAAmount = Some(BigDecimal(3333))
+          newPoaAmount = Some(BigDecimal(3333))
         ))))
 
         When(s"I call GET $amendPoaUrl")
@@ -83,7 +83,7 @@ class AmendablePoaControllerISpec extends ComponentSpecBase {
         res should have(
           httpStatus(OK)
         )
-        await(sessionService.getMongo) shouldBe Right(Some(PoAAmendmentData(poaAdjustmentReason = Some(OtherIncomeLower), newPoAAmount = Some(3333))))
+        await(sessionService.getMongo) shouldBe Right(Some(PoaAmendmentData(poaAdjustmentReason = Some(OtherIncomeLower), newPoaAmount = Some(3333))))
       }
 
       "User is authorised and there is an active session and journeyCompleted = true" in {
@@ -101,9 +101,9 @@ class AmendablePoaControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
           OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
         )
-        await(sessionService.setMongoData(Some(PoAAmendmentData(
+        await(sessionService.setMongoData(Some(PoaAmendmentData(
           poaAdjustmentReason = Some(OtherIncomeLower),
-          newPoAAmount = Some(BigDecimal(1111)),
+          newPoaAmount = Some(BigDecimal(1111)),
           journeyCompleted = true
         ))))
 
@@ -113,7 +113,7 @@ class AmendablePoaControllerISpec extends ComponentSpecBase {
         res should have(
           httpStatus(OK)
         )
-        await(sessionService.getMongo) shouldBe Right(Some(PoAAmendmentData(None, None)))
+        await(sessionService.getMongo) shouldBe Right(Some(PoaAmendmentData(None, None)))
       }
     }
     s"return status $SEE_OTHER and redirect to the home page" when {

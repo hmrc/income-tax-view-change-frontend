@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package testConstants.claimToAdjustPOA
+package testConstants.claimToAdjustPoa
 
 import models.claimToAdjustPoa.{PaymentOnAccountViewModel, WhatYouNeedToKnowViewModel}
 import models.core.NormalMode
@@ -26,7 +26,7 @@ import models.chargeHistory.ChargeHistoryModel
 
 import java.time.LocalDate
 
-object ClaimToAdjustPOATestConstants {
+object ClaimToAdjustPoaTestConstants {
 
   def genericFinancialDetailPOA1(taxYearEnd: Int, outstandingAmount: BigDecimal = 0.0) = FinancialDetail(
     taxYear = taxYearEnd.toString,

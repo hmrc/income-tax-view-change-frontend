@@ -22,7 +22,7 @@ import auth.authV2.AuthActions
 import cats.data.EitherT
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.claimToAdjustPoa.routes._
-import models.claimToAdjustPoa.{PoAAmendmentData, SelectYourReason}
+import models.claimToAdjustPoa.{PoaAmendmentData, SelectYourReason}
 import models.core.CheckMode
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -83,11 +83,11 @@ class CheckYourAnswersController @Inject()(val authActions: AuthActions,
       ) recover logAndRedirect
   }
 
-  private def withValidSession(session: PoAAmendmentData)
+  private def withValidSession(session: PoaAmendmentData)
                               (block: (SelectYourReason, BigDecimal) => EitherT[Future, Throwable, Result])
                               (implicit user: MtdItUser[_]): EitherT[Future, Throwable, Result] = {
 
-    (session.poaAdjustmentReason, session.newPoAAmount) match {
+    (session.poaAdjustmentReason, session.newPoaAmount) match {
       case (Some(reason), Some(amount)) =>
         block(reason, amount)
       case (None, _) =>

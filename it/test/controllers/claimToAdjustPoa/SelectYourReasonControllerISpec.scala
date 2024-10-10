@@ -20,7 +20,7 @@ import forms.adjustPoa.SelectYourReasonFormProvider
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.AdjustPaymentsOnAccount
-import models.claimToAdjustPoa.{Increase, MainIncomeLower, PoAAmendmentData, SelectYourReason}
+import models.claimToAdjustPoa.{Increase, MainIncomeLower, PoaAmendmentData, SelectYourReason}
 import models.core.NormalMode
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
@@ -106,7 +106,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created")
-        await(sessionService.setMongoData(Some(PoAAmendmentData())))
+        await(sessionService.setMongoData(Some(PoaAmendmentData())))
 
         When(s"I call GET")
         val res = get("/adjust-poa/select-your-reason")
@@ -134,7 +134,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created")
-        await(sessionService.setMongoData(Some(PoAAmendmentData(Some(MainIncomeLower)))))
+        await(sessionService.setMongoData(Some(PoaAmendmentData(Some(MainIncomeLower)))))
 
         When(s"I call GET")
         val res = get("/adjust-poa/select-your-reason")
@@ -165,7 +165,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created and an amount entered")
-        await(sessionService.setMongoData(Some(PoAAmendmentData(newPoAAmount = Some(1500.0)))))
+        await(sessionService.setMongoData(Some(PoaAmendmentData(newPoaAmount = Some(1500.0)))))
 
         When(s"I call GET")
         val res = get("/adjust-poa/select-your-reason")
@@ -176,8 +176,8 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
         )
 
         sessionService.getMongo.futureValue shouldBe Right(Some(
-          PoAAmendmentData(
-            newPoAAmount = Some(1500.0),
+          PoaAmendmentData(
+            newPoaAmount = Some(1500.0),
             poaAdjustmentReason = Some(Increase))))
       }
 
@@ -223,7 +223,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created with journeyCompleted flag set to true")
-        await(sessionService.setMongoData(Some(PoAAmendmentData(None, None, journeyCompleted = true))))
+        await(sessionService.setMongoData(Some(PoaAmendmentData(None, None, journeyCompleted = true))))
 
         When(s"I call GET")
         val res = get("/adjust-poa/select-your-reason")
@@ -249,7 +249,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created and an amount entered")
-        await(sessionService.setMongoData(Some(PoAAmendmentData())))
+        await(sessionService.setMongoData(Some(PoaAmendmentData())))
 
         When(s"I call GET")
         val res = get("/adjust-poa/select-your-reason")
@@ -303,7 +303,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created and an amount entered")
-        await(sessionService.setMongoData(Some(PoAAmendmentData())))
+        await(sessionService.setMongoData(Some(PoaAmendmentData())))
 
         When(s"I call POST")
 
@@ -314,7 +314,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
           redirectURI(enterPOAAmountUrl)
         )
 
-        sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData(Some(MainIncomeLower), None)))
+        sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData(Some(MainIncomeLower), None)))
       }
 
       "when originalAmount < relevantAmount redirect to Check Your Answers page" in {
@@ -334,7 +334,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created")
-        await(sessionService.setMongoData(Some(PoAAmendmentData())))
+        await(sessionService.setMongoData(Some(PoaAmendmentData())))
 
         When(s"I call POST")
         val res = postSelectYourReason(isAgent, Some(MainIncomeLower))(clientDetailsWithConfirmation)
@@ -344,7 +344,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
           redirectURI(poaCyaUrl)
         )
 
-        sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData(Some(MainIncomeLower), None)))
+        sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData(Some(MainIncomeLower), None)))
       }
 
       "AdjustPaymentsOnAccount FS is disabled and redirect to the home page" in {
@@ -365,7 +365,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created")
-        await(sessionService.setMongoData(Some(PoAAmendmentData())))
+        await(sessionService.setMongoData(Some(PoaAmendmentData())))
 
 
         When(s"I call POST")
@@ -392,7 +392,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created and an amount entered")
-        await(sessionService.setMongoData(Some(PoAAmendmentData())))
+        await(sessionService.setMongoData(Some(PoaAmendmentData())))
 
         When(s"I call POST")
         val res = postSelectYourReason(isAgent, Some(MainIncomeLower))(clientDetailsWithConfirmation)

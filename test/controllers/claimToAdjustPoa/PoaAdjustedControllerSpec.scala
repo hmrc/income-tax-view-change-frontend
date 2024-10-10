@@ -21,7 +21,7 @@ import mocks.auth.MockAuthActions
 import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService}
 import models.admin.AdjustPaymentsOnAccount
-import models.claimToAdjustPoa.PoAAmendmentData
+import models.claimToAdjustPoa.PoaAmendmentData
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
@@ -71,7 +71,7 @@ class PoaAdjustedControllerSpec extends TestSupport
 
         when(mockDateService.getCurrentDate).thenReturn(startOfTaxYear)
         when(mockPOASessionService.setCompletedJourney(any(), any())).thenReturn(Future(Right(())))
-        when(mockPOASessionService.getMongo(any(),any())).thenReturn(Future(Right(Some(PoAAmendmentData(newPoAAmount = Some(1200))))))
+        when(mockPOASessionService.getMongo(any(),any())).thenReturn(Future(Right(Some(PoaAmendmentData(newPoaAmount = Some(1200))))))
 
         setupMockGetPaymentsOnAccount()
         setupMockTaxYearNotCrystallised()
@@ -92,7 +92,7 @@ class PoaAdjustedControllerSpec extends TestSupport
 
         when(mockDateService.getCurrentDate).thenReturn(endOfTaxYear)
         when(mockPOASessionService.setCompletedJourney(any(), any())).thenReturn(Future(Right(())))
-        when(mockPOASessionService.getMongo(any(), any())).thenReturn(Future(Right(Some(PoAAmendmentData(None, newPoAAmount = Some(5000), journeyCompleted = true)))))
+        when(mockPOASessionService.getMongo(any(), any())).thenReturn(Future(Right(Some(PoaAmendmentData(None, newPoaAmount = Some(5000), journeyCompleted = true)))))
 
         setupMockGetPaymentsOnAccount()
         setupMockTaxYearNotCrystallised()
@@ -112,7 +112,7 @@ class PoaAdjustedControllerSpec extends TestSupport
         mockSingleBISWithCurrentYearAsMigrationYear()
 
         when(mockPOASessionService.setCompletedJourney(any(), any())).thenReturn(Future(Right(())))
-        when(mockPOASessionService.getMongo(any(), any())).thenReturn(Future(Right(Some(PoAAmendmentData(newPoAAmount = Some(1200))))))
+        when(mockPOASessionService.getMongo(any(), any())).thenReturn(Future(Right(Some(PoaAmendmentData(newPoaAmount = Some(1200))))))
 
         setupMockGetPaymentsOnAccount()
         setupMockTaxYearNotCrystallised()

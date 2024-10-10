@@ -21,7 +21,7 @@ import auth.MtdItUser
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.AdjustPaymentsOnAccount
-import models.claimToAdjustPoa.{MainIncomeLower, PoAAmendmentData}
+import models.claimToAdjustPoa.{MainIncomeLower, PoaAmendmentData}
 import play.api.http.Status.{BAD_REQUEST, CREATED, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.WSResponse
@@ -51,7 +51,7 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
 
   private val testTaxYear = 2024
   private val sessionService: PaymentOnAccountSessionService = app.injector.instanceOf[PaymentOnAccountSessionService]
-  private val validSession: PoAAmendmentData = PoAAmendmentData(Some(MainIncomeLower), Some(BigDecimal(1000.00)))
+  private val validSession: PoaAmendmentData = PoaAmendmentData(Some(MainIncomeLower), Some(BigDecimal(1000.00)))
   private val url: String = "/adjust-poa/confirmation"
   private val validFinancialDetailsResponseBody: JsValue =
     testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
@@ -163,7 +163,7 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
         stubFinancialDetailsResponse()
 
         And("A session has been created with journeyCompleted flag set to true")
-        await(sessionService.setMongoData(Some(PoAAmendmentData(None, None, journeyCompleted = true))))
+        await(sessionService.setMongoData(Some(PoaAmendmentData(None, None, journeyCompleted = true))))
 
         val res = get(url)
 

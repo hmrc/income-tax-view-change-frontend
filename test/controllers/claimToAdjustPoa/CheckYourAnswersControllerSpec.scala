@@ -23,7 +23,7 @@ import mocks.auth.MockAuthActions
 import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
 import mocks.services.{MockCalculationListService, MockClaimToAdjustPoaCalculationService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.admin.AdjustPaymentsOnAccount
-import models.claimToAdjustPoa.{Increase, MainIncomeLower, PaymentOnAccountViewModel, PoAAmendmentData}
+import models.claimToAdjustPoa.{Increase, MainIncomeLower, PaymentOnAccountViewModel, PoaAmendmentData}
 import models.incomeSourceDetails.TaxYear
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
@@ -74,12 +74,12 @@ class CheckYourAnswersControllerSpec extends TestSupport
       previouslyAdjusted = None
     ))
 
-  val emptySession: PoAAmendmentData = PoAAmendmentData(None, None)
-  val validSession: PoAAmendmentData = PoAAmendmentData(Some(MainIncomeLower), Some(BigDecimal(1000.00)))
-  val validSessionIncrease: PoAAmendmentData = PoAAmendmentData(Some(Increase), Some(BigDecimal(1000.00)))
+  val emptySession: PoaAmendmentData = PoaAmendmentData(None, None)
+  val validSession: PoaAmendmentData = PoaAmendmentData(Some(MainIncomeLower), Some(BigDecimal(1000.00)))
+  val validSessionIncrease: PoaAmendmentData = PoaAmendmentData(Some(Increase), Some(BigDecimal(1000.00)))
 
   def setupTest(enablePaymentsOnAccountFS: Boolean = true,
-                sessionResponse: Either[Throwable, Option[PoAAmendmentData]],
+                sessionResponse: Either[Throwable, Option[PoaAmendmentData]],
                 claimToAdjustResponse: Option[PaymentOnAccountViewModel]
                ): Unit = {
     if (enablePaymentsOnAccountFS) enable(AdjustPaymentsOnAccount) else disable(AdjustPaymentsOnAccount)
@@ -121,7 +121,7 @@ class CheckYourAnswersControllerSpec extends TestSupport
     s"return status $SEE_OTHER and redirect to the You Cannot Go Back page" when {
       "FS is enabled and the journeyCompleted flag is set to true in session" in {
         setupTest(
-          sessionResponse = Right(Some(PoAAmendmentData(None, None, journeyCompleted = true))),
+          sessionResponse = Right(Some(PoaAmendmentData(None, None, journeyCompleted = true))),
           claimToAdjustResponse = poa
         )
 
@@ -231,7 +231,7 @@ class CheckYourAnswersControllerSpec extends TestSupport
       }
       "the new POA amount is missing from the session" in {
         setupTest(
-          sessionResponse = Right(Some(validSession.copy(newPoAAmount = None))),
+          sessionResponse = Right(Some(validSession.copy(newPoaAmount = None))),
           claimToAdjustResponse = poa
         )
 

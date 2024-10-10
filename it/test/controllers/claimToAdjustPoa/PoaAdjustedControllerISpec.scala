@@ -19,7 +19,7 @@ package controllers.claimToAdjustPoa
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.AdjustPaymentsOnAccount
-import models.claimToAdjustPoa.PoAAmendmentData
+import models.claimToAdjustPoa.PoaAmendmentData
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -77,7 +77,7 @@ class PoaAdjustedControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created")
-        await(sessionService.setMongoData(Some(PoAAmendmentData())))
+        await(sessionService.setMongoData(Some(PoaAmendmentData())))
 
         When(s"I call GET")
         val res = get("/adjust-poa/success")
@@ -103,7 +103,7 @@ class PoaAdjustedControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created with journeyCompleted flag set to true")
-        await(sessionService.setMongoData(Some(PoAAmendmentData(None, None, journeyCompleted = true))))
+        await(sessionService.setMongoData(Some(PoaAmendmentData(None, None, journeyCompleted = true))))
 
         When(s"I call GET")
         val res = get("/adjust-poa/success")

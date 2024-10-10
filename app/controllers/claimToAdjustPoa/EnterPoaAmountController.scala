@@ -54,7 +54,7 @@ class EnterPoaAmountController @Inject()(val authActions: AuthActions,
           withSessionData() { session =>
             claimToAdjustService.getPoaViewModelWithAdjustmentReason(Nino(user.nino)).map {
               case Right(viewModel) =>
-                val filledForm = session.newPoAAmount.fold(EnterPoaAmountForm.form)(value =>
+                val filledForm = session.newPoaAmount.fold(EnterPoaAmountForm.form)(value =>
                   EnterPoaAmountForm.form.fill(EnterPoaAmountForm(value))
                 )
                 Ok(view(filledForm, viewModel, user.isAgent(), EnterPoaAmountController.submit(user.isAgent(), mode)))

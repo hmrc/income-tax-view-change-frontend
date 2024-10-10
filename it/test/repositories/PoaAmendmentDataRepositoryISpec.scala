@@ -17,21 +17,21 @@
 package repositories
 
 import helpers.ComponentSpecBase
-import models.claimToAdjustPoa.{MainIncomeLower, PoAAmendmentData, PoASessionData}
+import models.claimToAdjustPoa.{MainIncomeLower, PoaAmendmentData, PoaSessionData}
 import org.mongodb.scala.bson.BsonDocument
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
-class PoAAmendmentDataRepositoryISpec extends ComponentSpecBase{
+class PoaAmendmentDataRepositoryISpec extends ComponentSpecBase{
 
-  private val repository = app.injector.instanceOf[PoAAmendmentDataRepository]
+  private val repository = app.injector.instanceOf[PoaAmendmentDataRepository]
 
   override def beforeEach(): Unit = {
     await(repository.collection.deleteMany(BsonDocument()).toFuture())
   }
 
-  val ammendmentData: PoAAmendmentData = PoAAmendmentData(poaAdjustmentReason = Some(MainIncomeLower), newPoAAmount = None)
+  val ammendmentData: PoaAmendmentData = PoaAmendmentData(poaAdjustmentReason = Some(MainIncomeLower), newPoaAmount = None)
 
-  val sessionData: PoASessionData = PoASessionData(
+  val sessionData: PoaSessionData = PoaSessionData(
     sessionId = "session-123456",
     poaAmendmentData = Some(ammendmentData)
   )

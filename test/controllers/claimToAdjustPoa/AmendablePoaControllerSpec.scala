@@ -21,7 +21,7 @@ import mocks.auth.MockAuthActions
 import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.admin.AdjustPaymentsOnAccount
-import models.claimToAdjustPoa.PoAAmendmentData
+import models.claimToAdjustPoa.PoaAmendmentData
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import testConstants.BaseTestConstants
@@ -39,8 +39,8 @@ class AmendablePoaControllerSpec
     with MockPaymentOnAccountSessionService
     with MockAuthActions {
 
-  val getMongoResponseJourneyIncomplete: Option[PoAAmendmentData] = Some(PoAAmendmentData())
-  val getMongoResponseJourneyComplete: Option[PoAAmendmentData] = Some(PoAAmendmentData(None, None, journeyCompleted = true))
+  val getMongoResponseJourneyIncomplete: Option[PoaAmendmentData] = Some(PoaAmendmentData())
+  val getMongoResponseJourneyComplete: Option[PoaAmendmentData] = Some(PoaAmendmentData(None, None, journeyCompleted = true))
 
   object TestAmendablePoaController$ extends AmendablePoaController(
     authActions = mockAuthActions,
@@ -132,7 +132,7 @@ class AmendablePoaControllerSpec
       "an Exception is returned from ClaimToAdjustService" in {
         enable(AdjustPaymentsOnAccount)
         mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockPaymentOnAccountSessionService(Future(Right(Some(PoAAmendmentData()))))
+        setupMockPaymentOnAccountSessionService(Future(Right(Some(PoaAmendmentData()))))
         setupMockGetAmendablePoaViewModelFailure()
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
@@ -144,7 +144,7 @@ class AmendablePoaControllerSpec
         enable(AdjustPaymentsOnAccount)
 
         mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoAAmendmentData(None, None, journeyCompleted = true)))))
+        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true)))))
         setupMockPaymentOnAccountSessionServiceCreateSession(Future.successful(Left(new Error("Error"))))
         setupMockGetPaymentOnAccountViewModel()
         setupMockTaxYearNotCrystallised()

@@ -19,7 +19,7 @@ package controllers.claimToAdjustPoa
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.AdjustPaymentsOnAccount
-import models.claimToAdjustPoa.{Increase, MainIncomeLower, PoAAmendmentData}
+import models.claimToAdjustPoa.{Increase, MainIncomeLower, PoaAmendmentData}
 import models.core.{CheckMode, NormalMode}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -132,7 +132,7 @@ class EnterPoaAmountControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created")
-        await(sessionService.setMongoData(Some(PoAAmendmentData())))
+        await(sessionService.setMongoData(Some(PoaAmendmentData())))
 
         When(s"I call GET")
         val res = get("/adjust-poa/enter-poa-amount")
@@ -160,7 +160,7 @@ class EnterPoaAmountControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created")
-        await(sessionService.setMongoData(Some(PoAAmendmentData(None, Some(BigDecimal(3333.33))))))
+        await(sessionService.setMongoData(Some(PoaAmendmentData(None, Some(BigDecimal(3333.33))))))
 
         When(s"I call GET")
         val res = get("/adjust-poa/enter-poa-amount")
@@ -191,7 +191,7 @@ class EnterPoaAmountControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubChargeHistoryResponse(testNino, "ABCD1234")(OK, testChargeHistoryJson(testMtditid, "1040000124", 1500))
 
         And("A session has been created")
-        await(sessionService.setMongoData(Some(PoAAmendmentData())))
+        await(sessionService.setMongoData(Some(PoaAmendmentData())))
 
         When(s"I call GET")
         val res = get("/adjust-poa/enter-poa-amount")
@@ -250,7 +250,7 @@ class EnterPoaAmountControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created with journeyCompleted flag set to true")
-        await(sessionService.setMongoData(Some(PoAAmendmentData(None, None, journeyCompleted = true))))
+        await(sessionService.setMongoData(Some(PoaAmendmentData(None, None, journeyCompleted = true))))
 
         When(s"I call GET")
         val res = get("/adjust-poa/enter-poa-amount")
@@ -275,7 +275,7 @@ class EnterPoaAmountControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created and an amount entered")
-        await(sessionService.setMongoData(Some(PoAAmendmentData())))
+        await(sessionService.setMongoData(Some(PoaAmendmentData())))
 
         When(s"I call GET")
         val res = get("/adjust-poa/enter-poa-amount")
@@ -324,7 +324,7 @@ class EnterPoaAmountControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created and an amount entered")
-        await(sessionService.setMongoData(Some(PoAAmendmentData())))
+        await(sessionService.setMongoData(Some(PoaAmendmentData())))
 
         When(s"I call POST")
 
@@ -335,7 +335,7 @@ class EnterPoaAmountControllerISpec extends ComponentSpecBase {
           redirectURI(selectReasonUrl)
         )
 
-        sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData(None, Some(1234.56))))
+        sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData(None, Some(1234.56))))
       }
     }
     s"return status $SEE_OTHER and redirect to check details page" when {
@@ -356,7 +356,7 @@ class EnterPoaAmountControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created and an amount entered")
-        await(sessionService.setMongoData(Some(PoAAmendmentData())))
+        await(sessionService.setMongoData(Some(PoaAmendmentData())))
 
         When(s"I call POST")
 
@@ -367,7 +367,7 @@ class EnterPoaAmountControllerISpec extends ComponentSpecBase {
           redirectURI(checkYourAnswersUrl)
         )
 
-        sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData(Some(Increase), Some(2500.00))))
+        sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData(Some(Increase), Some(2500.00))))
       }
       "user was on decrease only journey" in {
         enable(AdjustPaymentsOnAccount)
@@ -386,7 +386,7 @@ class EnterPoaAmountControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created and an amount entered")
-        await(sessionService.setMongoData(Some(PoAAmendmentData(Some(MainIncomeLower)))))
+        await(sessionService.setMongoData(Some(PoaAmendmentData(Some(MainIncomeLower)))))
 
         When(s"I call POST")
 
@@ -397,7 +397,7 @@ class EnterPoaAmountControllerISpec extends ComponentSpecBase {
           redirectURI(checkYourAnswersUrl)
         )
 
-        sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData(Some(MainIncomeLower), Some(1.11))))
+        sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData(Some(MainIncomeLower), Some(1.11))))
       }
     }
     s"return $INTERNAL_SERVER_ERROR" when {
@@ -413,7 +413,7 @@ class EnterPoaAmountControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created and an amount entered")
-        await(sessionService.setMongoData(Some(PoAAmendmentData())))
+        await(sessionService.setMongoData(Some(PoaAmendmentData())))
 
         When(s"I call POST")
         val res = postEnterPoA(isAgent, 2000)(clientDetailsWithConfirmation)
@@ -464,7 +464,7 @@ class EnterPoaAmountControllerISpec extends ComponentSpecBase {
         )
 
         And("A session exists and has data")
-        await(sessionService.setMongoData(Some(PoAAmendmentData(Some(MainIncomeLower), Some(100)))))
+        await(sessionService.setMongoData(Some(PoaAmendmentData(Some(MainIncomeLower), Some(100)))))
 
         When(s"I call GET")
         val res = get("/adjust-poa/change-poa-amount")
@@ -497,7 +497,7 @@ class EnterPoaAmountControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created and an amount entered")
-        await(sessionService.setMongoData(Some(PoAAmendmentData(Some(MainIncomeLower), Some(1200)))))
+        await(sessionService.setMongoData(Some(PoaAmendmentData(Some(MainIncomeLower), Some(1200)))))
 
         When(s"I call POST")
 
@@ -508,7 +508,7 @@ class EnterPoaAmountControllerISpec extends ComponentSpecBase {
           redirectURI(checkYourAnswersUrl)
         )
 
-        sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData(Some(MainIncomeLower), Some(100))))
+        sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData(Some(MainIncomeLower), Some(100))))
       }
       "user is on increase/decrease journey, had previously increased, is still increasing" in {
         enable(AdjustPaymentsOnAccount)
@@ -527,7 +527,7 @@ class EnterPoaAmountControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created and an amount entered")
-        await(sessionService.setMongoData(Some(PoAAmendmentData(Some(MainIncomeLower), Some(2500)))))
+        await(sessionService.setMongoData(Some(PoaAmendmentData(Some(MainIncomeLower), Some(2500)))))
 
         When(s"I call POST")
 
@@ -538,7 +538,7 @@ class EnterPoaAmountControllerISpec extends ComponentSpecBase {
           redirectURI(checkYourAnswersUrl)
         )
 
-        sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData(Some(Increase), Some(2800))))
+        sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData(Some(Increase), Some(2800))))
       }
       "user is on increase/decrease journey, had previously decreased, is now increasing" in {
         enable(AdjustPaymentsOnAccount)
@@ -557,7 +557,7 @@ class EnterPoaAmountControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created and an amount entered")
-        await(sessionService.setMongoData(Some(PoAAmendmentData(Some(MainIncomeLower), Some(500)))))
+        await(sessionService.setMongoData(Some(PoaAmendmentData(Some(MainIncomeLower), Some(500)))))
 
         When(s"I call POST")
 
@@ -568,7 +568,7 @@ class EnterPoaAmountControllerISpec extends ComponentSpecBase {
           redirectURI(checkYourAnswersUrl)
         )
 
-        sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData(Some(Increase), Some(2800))))
+        sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData(Some(Increase), Some(2800))))
       }
       "user is on increase/decrease journey, had previously decreased, is still decreasing" in {
         enable(AdjustPaymentsOnAccount)
@@ -587,7 +587,7 @@ class EnterPoaAmountControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created and an amount entered")
-        await(sessionService.setMongoData(Some(PoAAmendmentData(Some(MainIncomeLower), Some(500)))))
+        await(sessionService.setMongoData(Some(PoaAmendmentData(Some(MainIncomeLower), Some(500)))))
 
         When(s"I call POST")
 
@@ -598,7 +598,7 @@ class EnterPoaAmountControllerISpec extends ComponentSpecBase {
           redirectURI(checkYourAnswersUrl)
         )
 
-        sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData(Some(MainIncomeLower), Some(1000))))
+        sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData(Some(MainIncomeLower), Some(1000))))
       }
     }
     s"return status $SEE_OTHER and redirect to select your reason page" when {
@@ -619,7 +619,7 @@ class EnterPoaAmountControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created and an amount entered")
-        await(sessionService.setMongoData(Some(PoAAmendmentData(Some(Increase), Some(2500)))))
+        await(sessionService.setMongoData(Some(PoaAmendmentData(Some(Increase), Some(2500)))))
 
         When(s"I call POST")
 
@@ -630,7 +630,7 @@ class EnterPoaAmountControllerISpec extends ComponentSpecBase {
           redirectURI(changeReasonUrl)
         )
 
-        sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData(Some(Increase), Some(500))))
+        sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData(Some(Increase), Some(500))))
       }
     }
   }

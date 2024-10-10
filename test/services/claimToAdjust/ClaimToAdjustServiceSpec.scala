@@ -27,7 +27,7 @@ import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import play.api.test.FakeRequest
 import services.{ClaimToAdjustService, DateService}
 import testConstants.BaseTestConstants.{testMtditid, testNino, testUserNino}
-import testConstants.claimToAdjustPOA.ClaimToAdjustPOATestConstants._
+import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 

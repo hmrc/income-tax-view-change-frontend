@@ -16,25 +16,25 @@
 
 package services
 
-import models.claimToAdjustPoa.{MainIncomeLower, PoAAmendmentData, PoASessionData}
+import models.claimToAdjustPoa.{MainIncomeLower, PoaAmendmentData, PoaSessionData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import org.scalactic.Fail
-import repositories.PoAAmendmentDataRepository
+import repositories.PoaAmendmentDataRepository
 import testUtils.TestSupport
 
 import scala.concurrent.Future
 
 class PaymentOnAccountViewModelSessionServiceSpec extends TestSupport {
 
-  val mockRepository: PoAAmendmentDataRepository = mock(classOf[PoAAmendmentDataRepository])
+  val mockRepository: PoaAmendmentDataRepository = mock(classOf[PoaAmendmentDataRepository])
 
   object TestPaymentOnAccountSessionService extends PaymentOnAccountSessionService(
     mockRepository)
 
-  val ammendmentData: PoAAmendmentData = PoAAmendmentData(poaAdjustmentReason = Some(MainIncomeLower), newPoAAmount = None)
+  val ammendmentData: PoaAmendmentData = PoaAmendmentData(poaAdjustmentReason = Some(MainIncomeLower), newPoaAmount = None)
 
-  val sessionData: PoASessionData = PoASessionData(
+  val sessionData: PoaSessionData = PoaSessionData(
     sessionId = "session-123456",
     poaAmendmentData = Some(ammendmentData)
   )

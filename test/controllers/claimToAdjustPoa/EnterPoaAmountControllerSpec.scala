@@ -22,7 +22,7 @@ import mocks.auth.MockAuthActions
 import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.admin.AdjustPaymentsOnAccount
-import models.claimToAdjustPoa.{Increase, MainIncomeLower, PaymentOnAccountViewModel, PoAAmendmentData}
+import models.claimToAdjustPoa.{Increase, MainIncomeLower, PaymentOnAccountViewModel, PoaAmendmentData}
 import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
@@ -111,7 +111,7 @@ class EnterPoaAmountControllerSpec extends TestSupport
       "PaymentOnAccount model is returned successfully with PoA tax year crystallized does not exist in session" in {
         enable(AdjustPaymentsOnAccount)
         mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockPaymentOnAccountSessionService(Future(Right(Some(PoAAmendmentData(Some(MainIncomeLower))))))
+        setupMockPaymentOnAccountSessionService(Future(Right(Some(PoaAmendmentData(Some(MainIncomeLower))))))
         setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
         setupMockTaxYearNotCrystallised()
 
@@ -128,7 +128,7 @@ class EnterPoaAmountControllerSpec extends TestSupport
       "PaymentOnAccount model is returned successfully with PoA tax year crystallized and newPoAAmount exists in session" in {
         enable(AdjustPaymentsOnAccount)
         mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockPaymentOnAccountSessionService(Future(Right(Some(PoAAmendmentData(Some(MainIncomeLower), Some(BigDecimal(1111.22)))))))
+        setupMockPaymentOnAccountSessionService(Future(Right(Some(PoaAmendmentData(Some(MainIncomeLower), Some(BigDecimal(1111.22)))))))
         setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
         setupMockTaxYearNotCrystallised()
 
@@ -163,7 +163,7 @@ class EnterPoaAmountControllerSpec extends TestSupport
       "FS is enabled and the journeyCompleted flag is set to true in session" in {
         enable(AdjustPaymentsOnAccount)
         mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockPaymentOnAccountSessionService(Future(Right(Some(PoAAmendmentData(Some(MainIncomeLower), None, journeyCompleted = true)))))
+        setupMockPaymentOnAccountSessionService(Future(Right(Some(PoaAmendmentData(Some(MainIncomeLower), None, journeyCompleted = true)))))
         setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
         setupMockTaxYearNotCrystallised()
 
@@ -227,7 +227,7 @@ class EnterPoaAmountControllerSpec extends TestSupport
       "an Exception is returned from ClaimToAdjustService" in {
         enable(AdjustPaymentsOnAccount)
         mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockPaymentOnAccountSessionService(Future(Right(Some(PoAAmendmentData()))))
+        setupMockPaymentOnAccountSessionService(Future(Right(Some(PoaAmendmentData()))))
         setupMockGetPoaAmountViewModelFailure()
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
@@ -288,7 +288,7 @@ class EnterPoaAmountControllerSpec extends TestSupport
           enable(AdjustPaymentsOnAccount)
           mockSingleBISWithCurrentYearAsMigrationYear()
           setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
-          when(mockPaymentOnAccountSessionService.getMongo(any(),any())).thenReturn(Future(Right(Some(PoAAmendmentData(Some(MainIncomeLower), Some(100))))))
+          when(mockPaymentOnAccountSessionService.getMongo(any(),any())).thenReturn(Future(Right(Some(PoaAmendmentData(Some(MainIncomeLower), Some(100))))))
           when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
           when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Right(())))
 
@@ -312,7 +312,7 @@ class EnterPoaAmountControllerSpec extends TestSupport
 
           setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
 
-          when(mockPaymentOnAccountSessionService.getMongo(any(),any())).thenReturn(Future(Right(Some(PoAAmendmentData(Some(MainIncomeLower), Some(100))))))
+          when(mockPaymentOnAccountSessionService.getMongo(any(),any())).thenReturn(Future(Right(Some(PoaAmendmentData(Some(MainIncomeLower), Some(100))))))
           when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
           when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Right(())))
 
@@ -332,7 +332,7 @@ class EnterPoaAmountControllerSpec extends TestSupport
           mockSingleBISWithCurrentYearAsMigrationYear()
           setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
 
-          when(mockPaymentOnAccountSessionService.getMongo(any(),any())).thenReturn(Future(Right(Some(PoAAmendmentData(Some(MainIncomeLower), Some(4600))))))
+          when(mockPaymentOnAccountSessionService.getMongo(any(),any())).thenReturn(Future(Right(Some(PoaAmendmentData(Some(MainIncomeLower), Some(4600))))))
           when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
           when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Right(())))
 
@@ -371,7 +371,7 @@ class EnterPoaAmountControllerSpec extends TestSupport
           enable(AdjustPaymentsOnAccount)
           mockSingleBISWithCurrentYearAsMigrationYear()
           setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
-          when(mockPaymentOnAccountSessionService.getMongo(any(),any())).thenReturn(Future(Right(Some(PoAAmendmentData(Some(Increase), Some(4500))))))
+          when(mockPaymentOnAccountSessionService.getMongo(any(),any())).thenReturn(Future(Right(Some(PoaAmendmentData(Some(Increase), Some(4500))))))
           when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
           when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Right(())))
 
