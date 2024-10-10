@@ -23,7 +23,7 @@ import enums.CodingOutType._
 import helpers.ComponentSpecBase
 import helpers.servicemocks.ChargeItemStub.{chargeItemWithInterestAndOverdue, docDetail}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
-import models.admin.{ChargeHistory, CodingOut, MFACreditsAndDebits, PaymentAllocation}
+import models.admin.{ChargeHistory, CodingOut, PaymentAllocation}
 import models.chargeHistory.ChargeHistoryModel
 import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails._
@@ -617,8 +617,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
     val chargeItemPaid = chargeItemUnpaid.copy(outstandingAmount = 0)
 
     "load the charge summary page with an UNPAID MFADebit" in {
-      Given("the MFADebitsAndCredits feature switch is enabled")
-      enable(MFACreditsAndDebits)
       enable(ChargeHistory)
       enable(PaymentAllocation)
 
@@ -668,8 +666,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
     }
 
     "load the charge summary page with a PAID MFADebit" in {
-      Given("the MFADebitsAndCredits feature switch is enabled")
-      enable(MFACreditsAndDebits)
       enable(ChargeHistory)
       enable(PaymentAllocation)
 

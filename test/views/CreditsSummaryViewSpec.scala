@@ -20,7 +20,6 @@ import _root_.implicits.ImplicitCurrencyFormatter._
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatter
-import models.admin.MFACreditsAndDebits
 import models.creditDetailModel.CreditDetailModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -101,7 +100,6 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
       creditDetailModelasBCC,
       creditDetailModelasSetInterest
     ), maybeAvailableCredit = testMaybeBalanceDetails) {
-      enable(MFACreditsAndDebits)
 
       document.title() shouldBe creditsSummaryTitle
       layoutContent.selectHead("h1").text shouldBe creditsSummaryHeading
@@ -147,7 +145,6 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
     }
 
     "a user has a credit and the Status is Fully allocated" in new TestSetup(creditCharges = creditAndRefundCreditDetailListFullyAllocatedMFA) {
-      enable(MFACreditsAndDebits)
 
       document.title() shouldBe creditsSummaryTitle
       layoutContent.selectHead("h1").text shouldBe creditsSummaryHeading
@@ -163,7 +160,6 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
     }
 
     "a user has a credit and the Status is Not yet allocated" in new TestSetup(creditCharges = creditAndRefundCreditDetailListNotYetAllocatedMFA) {
-      enable(MFACreditsAndDebits)
 
       document.title() shouldBe creditsSummaryTitle
       layoutContent.selectHead("h1").text shouldBe creditsSummaryHeading
@@ -179,7 +175,6 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
     }
 
     "a user has a credit and the Status is Partially allocated" in new TestSetup(creditCharges = creditAndRefundCreditDetailListPartiallyAllocatedMFA) {
-      enable(MFACreditsAndDebits)
 
       document.title() shouldBe creditsSummaryTitle
       layoutContent.selectHead("h1").text shouldBe creditsSummaryHeading
@@ -195,7 +190,6 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
     }
 
     "a user has no credit" in new TestSetup(creditCharges = List.empty) {
-      enable(MFACreditsAndDebits)
 
       document.title() shouldBe creditsSummaryTitle
       layoutContent.selectHead("h1").text shouldBe creditsSummaryHeading
@@ -210,7 +204,6 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
   "displaying agent credit and refund page" should {
     "display the page" when {
       "correct data is provided" in new TestSetup(creditCharges = creditAndRefundCreditDetailListMultipleChargesMFA, isAgent = true, maybeAvailableCredit = testMaybeBalanceDetails) {
-        enable(MFACreditsAndDebits)
 
         document.title() shouldBe creditsSummaryTitleAgent
         layoutContent.selectHead("h1").text shouldBe creditsSummaryHeading
@@ -242,7 +235,6 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
         document.selectById("money-in-your-account-claim-a-refund-link").attr("href") shouldBe moneyInYourAccountMoneyClaimARefundAgentLink
 
         document.getElementsByClass("govuk-link").last().text() shouldBe getPageHelpLinkTextBtn
-        enable(MFACreditsAndDebits)
       }
     }
   }

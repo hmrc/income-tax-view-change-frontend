@@ -20,7 +20,7 @@ import audit.models.ClaimARefundAuditModel
 import auth.MtdItUser
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
-import models.admin.{CreditsRefundsRepay, CutOverCredits, MFACreditsAndDebits}
+import models.admin.CreditsRefundsRepay
 import models.core.ErrorModel
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
 import play.api.libs.json.{JsValue, Json}
@@ -224,8 +224,6 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
         }
 
         enable(CreditsRefundsRepay)
-        enable(CutOverCredits)
-        enable(MFACreditsAndDebits)
 
         Given("I wiremock stub a successful Income Source Details response with multiple business and a property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse
@@ -270,8 +268,6 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
       if(enableCreditAndRefunds) {
         enable(CreditsRefundsRepay)
       }
-      enable(CutOverCredits)
-      enable(MFACreditsAndDebits)
 
 
 

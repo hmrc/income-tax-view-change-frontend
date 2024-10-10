@@ -20,9 +20,8 @@ import audit.models.ForecastTaxCalculationAuditModel
 import auth.MtdItUserWithNino
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxCalculationStub}
-import models.admin.ForecastCalculation
 import models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
-import play.api.http.Status.{NOT_FOUND, OK}
+import play.api.http.Status.OK
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testYear}
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
@@ -86,9 +85,6 @@ class ForecastTaxCalcSummaryControllerISpec extends ComponentSpecBase {
     "isAuthorisedUser with an active enrolment, valid nino and tax year, valid LiabilityCalculationModel response" should {
       "return the forecast tax calc summary page and audit event when the forecast calculation fs is enabled" in {
 
-        Given("I enable the forecast calculation fs")
-        enable(ForecastCalculation)
-
         And("I stub a successful calculation response")
         IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
           status = OK,
@@ -106,19 +102,6 @@ class ForecastTaxCalcSummaryControllerISpec extends ComponentSpecBase {
         res should have(
           httpStatus(OK),
           pageTitleIndividual("forecast_taxCalc.heading")
-        )
-      }
-
-      s"return $NOT_FOUND when the forecast calculation fs is disabled" in {
-        Given("I disable the forecast calculation fs")
-        disable(ForecastCalculation)
-
-        When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/tax-due/forecast")
-        val res = IncomeTaxViewChangeFrontend.getForecastTaxCalcSummary(testYear)
-
-        res should have(
-          httpStatus(NOT_FOUND),
-          pageTitleIndividual("Page not found - 404", isErrorPage = true)
         )
       }
     }

@@ -123,10 +123,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
                   currentTaxYear: Int = fixedDate.getYear,
                   hasLpiWithDunningLock: Boolean = false,
                   dunningLock: Boolean = false,
-                  whatYouOweCreditAmountEnabled: Boolean = false,
                   migrationYear: Int = fixedDate.getYear - 1,
                   codingOutEnabled: Boolean = true,
-                  MFADebitsEnabled: Boolean = false,
                   reviewAndReconcileEnabled: Boolean = false,
                   adjustPaymentsOnAccountFSEnabled: Boolean = false,
                   claimToAdjustViewModel: Option[WYOClaimToAdjustViewModel] = None
@@ -157,8 +155,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       dunningLock = dunningLock,
       codingOutEnabled = codingOutEnabled,
       reviewAndReconcileEnabled = reviewAndReconcileEnabled,
-      MFADebitsEnabled = MFADebitsEnabled,
-      whatYouOweCreditAmountEnabled = whatYouOweCreditAmountEnabled,
       creditAndRefundEnabled = true,
       claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel))(FakeRequest(), individualUser, implicitly, dateService)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
@@ -181,8 +177,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
                        migrationYear: Int = fixedDate.getYear - 1,
                        codingOutEnabled: Boolean = true,
                        reviewAndReconcileEnabled: Boolean = false,
-                       MFADebitsEnabled: Boolean = false,
-                       whatYouOweCreditAmountEnabled: Boolean = false,
                        dunningLock: Boolean = false,
                        hasLpiWithDunningLock: Boolean = false,
                        adjustPaymentsOnAccountFSEnabled: Boolean = false,
@@ -221,8 +215,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       dunningLock = dunningLock,
       codingOutEnabled = codingOutEnabled,
       reviewAndReconcileEnabled = reviewAndReconcileEnabled,
-      MFADebitsEnabled = MFADebitsEnabled,
-      whatYouOweCreditAmountEnabled = whatYouOweCreditAmountEnabled,
       creditAndRefundEnabled = true,
       isAgent = true,
       claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel)
@@ -1254,14 +1246,14 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   }
 
   "MFA Debits is enabled" should {
-    "have an HMRC adjustment payment due" in new TestSetup(charges = whatYouOweDataWithMFADebits, MFADebitsEnabled = true) {
+    "have an HMRC adjustment payment due" in new TestSetup(charges = whatYouOweDataWithMFADebits) {
       pageDocument.title() shouldBe whatYouOweTitle
       pageDocument.selectFirst("h1").text shouldBe whatYouOweHeading
       pageDocument.getElementById("due-0").text.contains(hmrcAdjustment)
       pageDocument.select("#due-0 a").get(0).text() shouldBe hmrcAdjustment + s" 1"
       pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
     }
-    "display the payment details content" in new TestSetup(charges = whatYouOweDataWithMFADebits, MFADebitsEnabled = true) {
+    "display the payment details content" in new TestSetup(charges = whatYouOweDataWithMFADebits) {
       pageDocument.getElementById("hmrc-adjustment-heading").text shouldBe hmrcAdjustmentHeading
       pageDocument.getElementById("hmrc-adjustment-line1").text shouldBe hmrcAdjustmentLine1
     }
@@ -1367,29 +1359,19 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     val unallocatedCreditMsg = "You have £100.00 in your account. We’ll use this to pay the amount due on the next due date."
     "show unallocated credits" when {
       "user is an individual with the feature switch on" in new TestSetup(creditCharges = creditDocumentDetailList,
-        charges = whatYouOweDataWithDataDueInMoreThan30Days(), whatYouOweCreditAmountEnabled = true) {
+        charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
         pageDocument.getElementById("unallocated-credit-note").text() shouldBe unallocatedCreditMsg
       }
 
       "user is an agent with the feature switch on" in new AgentTestSetup(creditCharges = creditDocumentDetailList,
-        charges = whatYouOweDataWithDataDueInMoreThan30Days(), whatYouOweCreditAmountEnabled = true) {
+        charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
         pageDocument.getElementById("unallocated-credit-note").text() shouldBe unallocatedCreditMsg
       }
     }
 
     "not show unallocated credits" when {
-      "user is an individual with the feature switch off" in new TestSetup(creditCharges = creditDocumentDetailList,
-        charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
-        findElementById("unallocated-credit-note") shouldBe None
-      }
-
-      "user is an agent with the feature switch on" in new AgentTestSetup(creditCharges = creditDocumentDetailList,
-        charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
-        findAgentElementById("unallocated-credit-note") shouldBe None
-      }
-
       "user has no money in his account" in new TestSetup(creditCharges = creditDocumentDetailList,
-        charges = whatYouOweDataWithZeroMoneyInAccount(), whatYouOweCreditAmountEnabled = true) {
+        charges = whatYouOweDataWithZeroMoneyInAccount()) {
         findElementById("unallocated-credit-note") shouldBe None
       }
     }

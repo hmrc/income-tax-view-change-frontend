@@ -24,7 +24,7 @@ import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEve
 import helpers.servicemocks.AuthStub.{titleInternalServer, titleProbWithService}
 import helpers.servicemocks.{CalculationListStub, IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import models.admin.{AdjustPaymentsOnAccount, MFACreditsAndDebits, ReviewAndReconcilePoa}
+import models.admin.{AdjustPaymentsOnAccount, ReviewAndReconcilePoa}
 import models.core.AccountingPeriodModel
 import models.financialDetails._
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
@@ -655,14 +655,13 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
       }
     }
     "MFA Debits" when {
-      def testMFADebits(MFADebitsEnabled: Boolean): Any = {
+      def testMFADebits(): Any = {
         disable(AdjustPaymentsOnAccount)
-        if (MFADebitsEnabled) enable(MFACreditsAndDebits) else disable(MFACreditsAndDebits)
         stubAuthorisedAgentUser(authorised = true)
         setupMFADebitsTests()
 
         And("The expected result is returned")
-        verifyMFADebitsResults(IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation), MFADebitsEnabled)
+        verifyMFADebitsResults(IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation))
       }
 
       def setupMFADebitsTests(): Unit = {
@@ -697,8 +696,8 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         )
       }
 
-      def verifyMFADebitsResults(result: WSResponse, mfaDebitsEnabled: Boolean): Any = {
-        val auditDD = if (mfaDebitsEnabled) financialDetailsMFADebits.getAllDocumentDetailsWithDueDates() else Nil
+      def verifyMFADebitsResults(result: WSResponse): Any = {
+        val auditDD = financialDetailsMFADebits.getAllDocumentDetailsWithDueDates()
 
         Then("I check all calls expected were made")
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -717,35 +716,22 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         allObligations.obligations.foreach {
           obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, obligation.identification, obligation.obligations).detail)
         }
-
-
-        if (mfaDebitsEnabled) {
-          result should have(
-            httpStatus(OK),
-            pageTitleAgent("tax-year-summary.heading"),
-            elementTextBySelector("#calculation-date")("15 February 2019"),
-            elementTextBySelectorList("#payments-table", "tbody", "tr:nth-of-type(1)", "th")(s"$hmrcAdjustment"),
-            elementTextBySelectorList("#payments-table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("22 Apr 2021"),
-            elementTextBySelectorList("#payments-table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("£2,234.00"),
-            elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "th")(s"$hmrcAdjustment"),
-            elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("23 Apr 2021"),
-            elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")("£1,234.00"),
-            elementCountBySelector("#payments-table", "tbody", "tr")(2)
-          )
-        } else {
-          result should have(
-            httpStatus(OK),
-            pageTitleAgent("tax-year-summary.heading"),
-            elementTextBySelector("#calculation-date")("15 February 2019"),
-            elementCountBySelector("#payments-table", "tbody", "tr")(0))
-        }
+        result should have(
+          httpStatus(OK),
+          pageTitleAgent("tax-year-summary.heading"),
+          elementTextBySelector("#calculation-date")("15 February 2019"),
+          elementTextBySelectorList("#payments-table", "tbody", "tr:nth-of-type(1)", "th")(s"$hmrcAdjustment"),
+          elementTextBySelectorList("#payments-table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("22 Apr 2021"),
+          elementTextBySelectorList("#payments-table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("£2,234.00"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "th")(s"$hmrcAdjustment"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("23 Apr 2021"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")("£1,234.00"),
+          elementCountBySelector("#payments-table", "tbody", "tr")(2)
+        )
       }
 
-      "should show Tax Year Summary page with MFA Debits on the Payment Tab with FS ENABLED" in {
-        testMFADebits(true)
-      }
-      "should show Tax Year Summary page with MFA Debits on the Payment Tab with FS DISABLED" in {
-        testMFADebits(false)
+      "should show Tax Year Summary page with MFA Debits on the Payment Tab" in {
+        testMFADebits()
       }
     }
 

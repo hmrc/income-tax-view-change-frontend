@@ -20,7 +20,6 @@ import audit.models.ForecastIncomeAuditModel
 import auth.MtdItUserWithNino
 import helpers.ComponentSpecBase
 import helpers.servicemocks._
-import models.admin.ForecastCalculation
 import models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
 import play.api.http.Status._
 import play.api.test.FakeRequest
@@ -73,9 +72,6 @@ class ForecastIncomeSummaryControllerISpec extends ComponentSpecBase {
     "isAuthorisedUser with an active enrolment, valid nino and tax year, valid CalcDisplayModel response, " should {
       "return the correct forecast income summary page and audit event" in {
 
-        Given("I enable forecast calculation display")
-        enable(ForecastCalculation)
-
         And("I stub a successful calculation response for 2017-18")
         IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018")(
           status = OK,
@@ -93,20 +89,6 @@ class ForecastIncomeSummaryControllerISpec extends ComponentSpecBase {
         res should have(
           httpStatus(OK),
           pageTitleIndividual("forecast_income.heading")
-        )
-      }
-
-      "return notfound when forecast calculation is disabled" in {
-
-        Given("I disable forecast calculation display")
-        disable(ForecastCalculation)
-
-        When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/income/forecast")
-        val res = IncomeTaxViewChangeFrontend.getForecastIncomeSummary(testYear)
-
-        res should have(
-          httpStatus(NOT_FOUND),
-          pageTitleIndividual("Page not found - 404", isErrorPage = true)
         )
       }
     }

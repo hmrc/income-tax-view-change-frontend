@@ -26,7 +26,7 @@ import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.{MockIncomeSourceDetailsService, MockPaymentAllocationsService}
 import mocks.views.agent.MockPaymentAllocationView
-import models.admin.{CutOverCredits, PaymentAllocation}
+import models.admin.PaymentAllocation
 import models.core.Nino
 import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsModel, PaymentAllocationError}
 import org.mockito.ArgumentMatchers.any
@@ -236,7 +236,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
 
         mockPaymentAllocationView(
           paymentAllocationViewModel,
-          controllers.routes.PaymentHistoryController.showAgent.url, saUtr = None, CutOverCreditsEnabled = false, isAgent = true
+          controllers.routes.PaymentHistoryController.showAgent.url, saUtr = None, isAgent = true
         )(HtmlFormat.empty)
 
         val result = controller.viewPaymentAllocationAgent(documentNumber = docNumber)(fakeRequestConfirmedClient(testNino))
@@ -252,7 +252,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
 
         mockPaymentAllocationView(
           paymentAllocationViewModelLpi,
-          controllers.routes.PaymentHistoryController.showAgent.url, saUtr = None, CutOverCreditsEnabled = false, isAgent = true
+          controllers.routes.PaymentHistoryController.showAgent.url, saUtr = None, isAgent = true
         )(HtmlFormat.empty)
 
         val result = controller.viewPaymentAllocationAgent(documentNumber = docNumber)(fakeRequestConfirmedClient(testNino))
@@ -271,25 +271,6 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
         val result = controller.viewPaymentAllocationAgent(documentNumber = docNumber)(fakeRequestConfirmedClient(testNino))
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
-      }
-
-      "PaymentAllocation FS enabled and CutOverCredit FS disabled" should {
-        "Successfully retrieve a user's payment allocation with credit and redirect to not found page" in new Setup {
-          enable(PaymentAllocation)
-          disable(CutOverCredits)
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-          mockSingleBusinessIncomeSource()
-          setupMockGetPaymentAllocationSuccess(testNino, docNumber)(paymentAllocationViewModelNoPayment)
-
-          mockPaymentAllocationView(
-            paymentAllocationViewModelNoPayment,
-            controllers.routes.PaymentHistoryController.showAgent.url, saUtr = None,
-            CutOverCreditsEnabled = false, isAgent = true
-          )(HtmlFormat.empty)
-
-          val result = controller.viewPaymentAllocationAgent(documentNumber = docNumber)(fakeRequestConfirmedClient(testNino))
-          status(result) shouldBe SEE_OTHER
-        }
       }
     }
   }

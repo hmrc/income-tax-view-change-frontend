@@ -39,13 +39,13 @@
 )
 
 @(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, backUrl: String, saUtr: Option[String],
-    CutOverCreditsEnabled: Boolean, isAgent: Boolean = false, btaNavPartial: Option[Html] = None,
+    isAgent: Boolean = false, btaNavPartial: Option[Html] = None,
     origin: Option[String] = None, gatewayPage: Option[GatewayPage] = None, creditsRefundsRepayEnabled: Boolean = true,
     dueDate: Option[LocalDate], outstandingAmount: Option[BigDecimal])(implicit request: Request[_], messages: Messages)
 @import implicitDateFormatter._
 
 @pageTitle = @{
-    messages(if (CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined))
+    messages(if (paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined))
         "paymentAllocation.earlyTaxYear.heading" else "paymentAllocation.heading")
 }
 
@@ -58,13 +58,13 @@
     gatewayPage = gatewayPage
 ) {
 
-    @if(CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
+    @if(paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
         @h1(msg = "paymentAllocation.earlyTaxYear.heading", id = Some("page-heading"))
     } else {
         @h1(msg = "paymentAllocation.heading", id = Some("page-heading"))
     }
 
-    @if(saUtr.isDefined && CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
+    @if(saUtr.isDefined && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
         @p(id=Some("sa-note-migrated")){
             @messages("paymentAllocation.sa.info")
             @link(link = appConfig.saViewLandPService(saUtr.get), messageKey = "taxYears.oldSa.content.link",
@@ -91,7 +91,7 @@
 
 @p(id=Some("paymentAllocation-outro")) {@messages("paymentAllocation.outro")}
 
-@if( paymentAllocations.showPaymentAllocationsTable(CutOverCreditsEnabled) ) {
+@if(paymentAllocations.showPaymentAllocationsTable()) {
 
     <h2 class="govuk-heading-m">@messages("paymentAllocation.tableSection.heading")</h2>
 

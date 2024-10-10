@@ -375,10 +375,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
   s"GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(testYearInt).url}" when {
     "ForecastCalculation feature" should {
-      def testForecast(featureSwitchEnabled: Boolean): Unit = {
-        Given("ForecastCalculation feature switch is set")
-        if (featureSwitchEnabled) enable(ForecastCalculation) else disable(ForecastCalculation)
-
+      def testForecast(): Unit = {
         And("Income Source Details is stubbed")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
 
@@ -418,13 +415,13 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         )
 
         And("The expected result is returned")
-        val tableText = if (featureSwitchEnabled) "Forecast Section Amount Income £12,500.00 Allowances and deductions £4,200.00 Total income on which tax is due £12,500.00 " +
-          "Forecast Self Assessment tax amount £5,000.99" else ""
-        val forecastTabHeader = if (featureSwitchEnabled) messagesAPI("tax-year-summary.forecast") else ""
-        val forecastTotal = if (featureSwitchEnabled) s"${
+        val tableText = "Forecast Section Amount Income £12,500.00 Allowances and deductions £4,200.00 Total income on which tax is due £12,500.00 " +
+          "Forecast Self Assessment tax amount £5,000.99"
+        val forecastTabHeader = messagesAPI("tax-year-summary.forecast")
+        val forecastTotal = s"${
           messagesAPI("tax-year-summary.forecast_total_title", (getCurrentTaxYearEnd.getYear - 1).toString,
             getCurrentTaxYearEnd.getYear.toString)
-        } £5,000.99" else ""
+        } £5,000.99"
         res should have(
           httpStatus(OK),
           pageTitleIndividual("tax-year-summary.heading"),
@@ -435,11 +432,8 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         )
       }
 
-      "should show the forecast calculation tab when feature switch is enabled" in {
-        testForecast(featureSwitchEnabled = true)
-      }
-      "should NOT show the forecast calculation tab when feature switch is disabled" in {
-        testForecast(featureSwitchEnabled = false)
+      "should show the forecast calculation tab" in {
+        testForecast()
       }
     }
 
@@ -1090,10 +1084,9 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
     }
 
     "MFA Debits" should {
-      def testMFADebits(MFADebitsEnabled: Boolean): Any = {
-        if (MFADebitsEnabled) enable(MFACreditsAndDebits) else disable(MFACreditsAndDebits)
+      def testMFADebits(): Any = {
         setupMFADebitsTests()
-        verifyMFADebitsResults(IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear.toString), MFADebitsEnabled)
+        verifyMFADebitsResults(IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear.toString))
       }
 
       def setupMFADebitsTests(): Unit = {
@@ -1125,8 +1118,8 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         )
       }
 
-      def verifyMFADebitsResults(result: WSResponse, mfaDebitsEnabled: Boolean): Any = {
-        val auditDD = if (mfaDebitsEnabled) financialDetailsMFADebits.getAllDocumentDetailsWithDueDates() else Nil
+      def verifyMFADebitsResults(result: WSResponse): Any = {
+        val auditDD = financialDetailsMFADebits.getAllDocumentDetailsWithDueDates()
 
         Then("I check all calls expected were made")
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -1150,8 +1143,6 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         allObligations.obligations.foreach {
           obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, obligation.identification, obligation.obligations).detail)
         }
-
-        if (mfaDebitsEnabled) {
           result should have(
             httpStatus(OK),
             pageTitleIndividual("tax-year-summary.heading"),
@@ -1164,20 +1155,10 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
             elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")("£1,234.00"),
             elementCountBySelector("#payments-table", "tbody", "tr")(2)
           )
-        } else {
-          result should have(
-            httpStatus(OK),
-            pageTitleIndividual("tax-year-summary.heading"),
-            elementTextBySelector("#calculation-date")("15 February 2019"),
-            elementCountBySelector("#payments-table", "tbody", "tr")(0))
-        }
       }
 
       "should show Tax Year Summary page with MFA Debits on the Payment Tab with FS ENABLED" in {
-        testMFADebits(true)
-      }
-      "should show Tax Year Summary page with MFA Debits on the Payment Tab with FS DISABLED" in {
-        testMFADebits(false)
+        testMFADebits()
       }
     }
 

@@ -30,9 +30,8 @@ case class PaymentAllocationViewModel(paymentAllocationChargeModel: FinancialDet
                                       latePaymentInterestPaymentAllocationDetails: Option[LatePaymentInterestPaymentAllocationDetails] = None,
                                       isLpiPayment: Boolean = false) {
 
-  def showPaymentAllocationsTable(cutOverCreditsEnabled: Boolean): Boolean =
-    !(cutOverCreditsEnabled &&
-      paymentAllocationChargeModel.documentDetails.exists(_.outstandingAmountZero) &&
+  def showPaymentAllocationsTable(): Boolean =
+    !(paymentAllocationChargeModel.documentDetails.exists(_.outstandingAmountZero) &&
       paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined))
 
 }

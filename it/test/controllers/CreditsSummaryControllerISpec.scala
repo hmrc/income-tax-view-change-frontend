@@ -16,12 +16,10 @@
 
 package controllers
 
-import audit.models.CreditSummaryAuditing.{CreditsSummaryModel, toCreditSummaryDetailsSeq}
 import audit.models.IncomeSourceDetailsResponseAuditModel
 import auth.MtdItUserOptionNino
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import helpers.{ComponentSpecBase, CreditsSummaryDataHelper}
-import models.admin.{CutOverCredits, MFACreditsAndDebits}
 import play.api.http.Status.OK
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
@@ -50,9 +48,6 @@ class CreditsSummaryControllerISpec extends ComponentSpecBase with CreditsSummar
     "display the credit summary page" when {
       "a valid response is received" in {
         import audit.models.CreditSummaryAuditing._
-
-        enable(MFACreditsAndDebits)
-        enable(CutOverCredits)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
           propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
@@ -102,60 +97,9 @@ class CreditsSummaryControllerISpec extends ComponentSpecBase with CreditsSummar
       }
     }
 
-    "display the credit summary page" when {
-      "MFACreditsAndDebits and CutOverCredits feature switches are off" in {
-        disable(MFACreditsAndDebits)
-        disable(CutOverCredits)
-
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          OK,
-          propertyOnlyResponseWithMigrationData(
-            testTaxYear - 1,
-            Some(testTaxYear.toString))
-        )
-
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
-          testNino,
-          s"${testTaxYear - 1}-04-06",
-          s"$testTaxYear-04-05")(
-          OK,
-          testValidFinancialDetailsModelCreditAndRefundsJson(
-            -1400,
-            -1400,
-            testTaxYear.toString,
-            fixedDate.plusYears(1).toString)
-        )
-
-        val res = IncomeTaxViewChangeFrontend.getCreditsSummary(calendarYear)
-
-        verifyIncomeSourceDetailsCall(testMtditid)
-        IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
-
-        res should have(
-          httpStatus(OK),
-          pageTitleIndividual(messages("credits.heading", s"$calendarYear"))
-        )
-
-        AuditStub.verifyAuditDoesNotContainsDetail(
-          CreditsSummaryModel(
-            saUTR = testSaUtr,
-            nino = testNino,
-            userType = testUserTypeIndividual.toString,
-            credId = credId,
-            mtdRef = testMtditid,
-            creditOnAccount = "5",
-            creditDetails = toCreditSummaryDetailsSeq(chargesList)(msgs)
-          ).detail
-        )
-      }
-    }
-
     "correctly audit a list of credits" when {
       "the list contains Balancing Charge Credits" in {
         import audit.models.CreditSummaryAuditing._
-
-        enable(MFACreditsAndDebits)
-        enable(CutOverCredits)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
           propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))

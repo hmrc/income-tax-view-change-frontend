@@ -19,12 +19,10 @@ package controllers
 import audit.AuditingService
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import controllers.predicates.{NavBarFromNinoPredicate, NinoPredicate, SessionTimeoutPredicate}
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockCalculationService
-import models.admin.{ForecastCalculation, NavBarFs}
-import org.mockito.Mockito.{mock, when}
+import models.admin.NavBarFs
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{charset, contentType, _}
@@ -34,8 +32,6 @@ import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testMtdit
 import testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessful
 import testUtils.TestSupport
 import views.html.ForecastIncomeSummary
-
-import scala.concurrent.Future
 
 class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculationService with MockFrontendAuthorisedFunctions
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with FeatureSwitching {
@@ -64,30 +60,7 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
   }
 
   "individual user" when {
-    "show method with forecast feature switch disabled" when {
-
-      lazy val result = TestIncomeSummaryController.show(testTaxYear)(fakeRequestWithActiveSession)
-      lazy val document = result.toHtmlDocument
-
-      "given a tax year which can be found in ETMP" should {
-
-        "return Status Not Found" in {
-          disable(ForecastCalculation)
-          mockCalculationSuccessfulNew(testMtditid)
-          status(result) shouldBe Status.NOT_FOUND
-        }
-
-        "return HTML" in {
-          contentType(result) shouldBe Some("text/html")
-          charset(result) shouldBe Some("utf-8")
-        }
-
-        "render the IncomeBreakdown page" in {
-          document.title() shouldBe messages("htmlTitle.errorPage", "Page not found - 404")
-        }
-      }
-    }
-    "show method with forecast feature switch enabled" when {
+    "show method" when {
 
       lazy val result = TestIncomeSummaryController.show(testTaxYear)(fakeRequestWithActiveSession)
       lazy val document = result.toHtmlDocument
@@ -104,7 +77,6 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
         ).toString
 
         "return Status OK (200)" in {
-          enable(ForecastCalculation)
           mockCalculationSuccessfulNew(testMtditid)
           status(result) shouldBe Status.OK
         }
@@ -124,7 +96,6 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
         lazy val result = TestIncomeSummaryController.show(testTaxYear)(fakeRequestWithActiveSession)
 
         "return Status Internal Server Error (500)" in {
-          enable(ForecastCalculation)
           mockCalculationNotFoundNew(testMtditid)
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
@@ -136,7 +107,6 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
         lazy val result = TestIncomeSummaryController.show(testTaxYear)(fakeRequestWithActiveSession)
 
         "return Status Internal Server Error (500)" in {
-          enable(ForecastCalculation)
           mockCalculationNotFoundNew(testMtditid)
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
@@ -147,7 +117,6 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
         lazy val result = TestIncomeSummaryController.show(testTaxYear)(fakeRequestWithActiveSession)
 
         "return Status Internal Server Error (500)" in {
-          enable(ForecastCalculation)
           mockCalculationErrorNew(testMtditid)
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
@@ -156,31 +125,7 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
   }
 
   "agent user" when {
-    "show method with forecast feature switch disabled" when {
-
-      lazy val result = TestIncomeSummaryController.showAgent(testTaxYear)(fakeRequestConfirmedClient("AB123456C"))
-      lazy val document = result.toHtmlDocument
-
-      "given a tax year which can be found in ETMP" should {
-
-        "return Status Not Found" in {
-          disable(ForecastCalculation)
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-          mockCalculationSuccessfulNew(testMtditidAgent)
-          status(result) shouldBe Status.NOT_FOUND
-        }
-
-        "return HTML" in {
-          contentType(result) shouldBe Some("text/html")
-          charset(result) shouldBe Some("utf-8")
-        }
-
-        "render the IncomeBreakdown page" in {
-          document.title() shouldBe messages("htmlTitle.errorPage", "Page not found - 404")
-        }
-      }
-    }
-    "show method with forecast feature switch enabled" when {
+    "show method" when {
 
       lazy val result = TestIncomeSummaryController.showAgent(testTaxYear)(fakeRequestConfirmedClient("AB123456C"))
       lazy val document = result.toHtmlDocument
@@ -197,7 +142,6 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
         ).toString
 
         "return Status OK (200)" in {
-          enable(ForecastCalculation)
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
           mockCalculationSuccessfulNew(testMtditidAgent)
           status(result) shouldBe Status.OK
@@ -219,7 +163,6 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
         lazy val result = TestIncomeSummaryController.showAgent(testTaxYear)(fakeRequestConfirmedClient("AB123456C"))
 
         "return Status Internal Server Error (500)" in {
-          enable(ForecastCalculation)
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
           mockCalculationNotFoundNew(testMtditidAgent)
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -232,7 +175,6 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
         lazy val result = TestIncomeSummaryController.showAgent(testTaxYear)(fakeRequestConfirmedClient("AB123456C"))
 
         "return Status Internal Server Error (500)" in {
-          enable(ForecastCalculation)
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
           mockCalculationNotFoundNew(testMtditidAgent)
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -244,7 +186,6 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
         lazy val result = TestIncomeSummaryController.showAgent(testTaxYear)(fakeRequestConfirmedClient("AB123456C"))
 
         "return Status Internal Server Error (500)" in {
-          enable(ForecastCalculation)
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
           mockCalculationErrorNew(testMtditidAgent)
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
