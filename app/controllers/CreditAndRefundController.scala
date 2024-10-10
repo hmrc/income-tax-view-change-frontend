@@ -59,7 +59,7 @@ class CreditAndRefundController @Inject()(val authActions: AuthActions,
       implicit user =>
         handleRequest(
           backUrl = controllers.routes.HomeController.show(origin).url,
-          isAgent = false
+          isAgent = user.isAgent()
         ) recover logAndRedirect
     }
 
@@ -83,7 +83,7 @@ class CreditAndRefundController @Inject()(val authActions: AuthActions,
       implicit mtdItUser =>
         handleRequest(
           backUrl = controllers.routes.HomeController.showAgent.url,
-          isAgent = true
+          isAgent = mtdItUser.isAgent()
         ) recover logAndRedirect
     }
   }
