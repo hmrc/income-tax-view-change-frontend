@@ -90,7 +90,7 @@ class CheckYourAnswersControllerSpec extends TestSupport
   }
 
   def setUpFailedMongoTest(): Unit = {
-     enable(AdjustPaymentsOnAccount)
+    enable(AdjustPaymentsOnAccount)
     mockSingleBISWithCurrentYearAsMigrationYear()
     setupMockGetPaymentsOnAccount(poa)
     setupMockTaxYearCrystallised()

@@ -16,7 +16,8 @@
 
 package connectors.optout
 
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel._
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess, optOutUpdateReason}
+import connectors.itsastatus.ITSAStatusUpdateRequest
 import models.incomeSourceDetails.TaxYear
 import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.{JsSuccess, Json}

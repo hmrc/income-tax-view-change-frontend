@@ -81,13 +81,63 @@ class OptInPropositionSpec extends UnitSpec {
           assertOptInPropositionType(offered.size - 1)() shouldBe true
 
           val yearCodes = proposition.availableOptInYears.map {
-            case _:CurrentOptInTaxYear => "CY"
+            case _: CurrentOptInTaxYear => "CY"
             case _ => "NY"
           }.sortBy(_.trim)
 
           yearCodes shouldBe offered.sortBy(_.trim)
           yearCodes.contains(intent) shouldBe true
 
+        }
+      }
+    }
+  }
+
+  "OptInProposition" should {
+
+    "show the annual reporting advice" when {
+
+      "at least 1 year remains Annual after opting in" when {
+
+        "multi-year and user opts in from next year" in {
+
+          val result =
+            createOptInProposition(
+              currentYear = currentTaxYear,
+              currentYearItsaStatus = Annual,
+              nextYearItsaStatus = Annual
+            ).showAnnualReportingAdvice(customerIntent = currentTaxYear.nextYear)
+
+          result shouldBe true
+        }
+      }
+    }
+
+    "NOT show the annual reporting advice" when {
+
+      "no statuses remains Annual after opting in" when {
+
+        "multi-year and user opts in from current tax year" in {
+          val result =
+            createOptInProposition(
+              currentYear = currentTaxYear,
+              currentYearItsaStatus = Annual,
+              nextYearItsaStatus = Annual
+            ).showAnnualReportingAdvice(customerIntent = currentTaxYear)
+
+          result shouldBe false
+        }
+
+        "any single year scenario" in {
+
+          val result =
+            createOptInProposition(
+              currentYear = currentTaxYear,
+              currentYearItsaStatus = Voluntary,
+              nextYearItsaStatus = Annual
+            ).showAnnualReportingAdvice(customerIntent = currentTaxYear.nextYear)
+
+          result shouldBe false
         }
       }
     }

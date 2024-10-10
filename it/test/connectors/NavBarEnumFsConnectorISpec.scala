@@ -52,9 +52,7 @@ class NavBarEnumFsConnectorISpec extends AnyWordSpec with ComponentSpecBase with
 
         await(result) shouldBe expectedNavlinks
 
-
         BtaNavBarPartialConnectorStub.verifyNavlinksContent(1)
-
       }
 
       "Return None with failed status" in {
