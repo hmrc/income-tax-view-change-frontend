@@ -16,8 +16,10 @@
 
 package auth
 
+import audit.models.Outcome
 import models.admin.FeatureSwitch
 import models.incomeSourceDetails.IncomeSourceDetailsModel
+import play.api.libs.json.{Json, OFormat}
 import play.api.mvc.{Request, WrappedRequest}
 import play.twirl.api.Html
 import uk.gov.hmrc.auth.core.AffinityGroup

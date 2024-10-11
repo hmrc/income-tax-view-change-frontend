@@ -28,7 +28,7 @@ import models.admin.{IncomeSources, IncomeSourcesNewJourney}
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.financialDetails._
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
-import models.obligations.{SingleObligationModel, GroupedObligationsModel, ObligationsModel, StatusFulfilled}
+import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
@@ -422,14 +422,16 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                 response = incomeSourceDetailsModel
               )
 
-              val currentObligations: ObligationsModel = ObligationsModel(Seq(
-                GroupedObligationsModel(
-                  identification = "testId",
-                  obligations = List(
-                    SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled),
-                    SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(2), "Quarterly", None, "testPeriodKey", StatusFulfilled)
+              val currentObligations: ObligationsModel =
+                ObligationsModel(
+                  Seq(
+                    GroupedObligationsModel(
+                      identification = "testId",
+                      obligations = List(
+                        SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled),
+                        SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(2), "Quarterly", None, "testPeriodKey", StatusFulfilled)
+                      ))
                   ))
-              ))
 
               IncomeTaxViewChangeStub.stubGetNextUpdates(
                 nino = testNino,

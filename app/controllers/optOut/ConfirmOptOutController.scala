@@ -65,13 +65,14 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
     case multiYear: MultiYearOptOutCheckpointViewModel => Ok(checkOptOutAnswers(multiYear, isAgent, cancelURL))
   }
 
-  def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = isAgent) {
-    implicit user =>
-      optOutService.makeOptOutUpdateRequest().map {
-        case ITSAStatusUpdateResponseSuccess(_) => Redirect(routes.ConfirmedOptOutController.show(isAgent))
-        case _ => Redirect(routes.OptOutErrorController.show(isAgent))
-      }
-  }
+  def submit(isAgent: Boolean): Action[AnyContent] =
+    auth.authenticatedAction(isAgent = isAgent) {
+      implicit user =>
+        optOutService.makeOptOutUpdateRequest().map {
+          case ITSAStatusUpdateResponseSuccess(_) => Redirect(routes.ConfirmedOptOutController.show(isAgent))
+          case _ => Redirect(routes.OptOutErrorController.show(isAgent))
+        }
+    }
 
   private def withRecover(isAgent: Boolean)(code: => Future[Result])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
     code.recover {
