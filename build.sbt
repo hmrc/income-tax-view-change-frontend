@@ -2,9 +2,9 @@
 import play.sbt.routes.RoutesKeys
 import sbt.*
 import sbt.Keys.libraryDependencySchemes
+import uk.gov.hmrc.DefaultBuildSettings
 import uk.gov.hmrc.DefaultBuildSettings.*
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
-import uk.gov.hmrc.DefaultBuildSettings
 
 val appName = "income-tax-view-change-frontend"
 
@@ -44,8 +44,8 @@ def test(scope: String = "test"): Seq[ModuleID] = Seq(
   "org.mockito" % "mockito-core" % mockitoVersion % scope,
   "uk.gov.hmrc.mongo" %% s"hmrc-mongo-test-$playVersion" % hmrcMongoVersion % scope,
   "org.scalacheck" %% "scalacheck" % "1.17.0" % scope,
-  "org.scalatestplus"      %% "scalacheck-1-15"         % "3.2.11.0" % scope,
-  "uk.gov.hmrc" %% s"bootstrap-test-$playVersion"  % bootstrapPlayVersion % "test",
+  "org.scalatestplus" %% "scalacheck-1-15" % "3.2.11.0" % scope,
+  "uk.gov.hmrc" %% s"bootstrap-test-$playVersion" % bootstrapPlayVersion % "test",
   caffeine,
   "uk.gov.hmrc" %% s"crypto-json-$playVersion" % "7.6.0"
 )
@@ -79,44 +79,48 @@ lazy val scoverageSettings = {
   )
 }
 
-lazy val microservice = Project(appName, file("."))
-  .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
-  .disablePlugins(JUnitXmlReportPlugin)
-  .settings(playSettings: _*)
-  .settings(scalaSettings: _*)
-  .settings(scalaVersion := currentScalaVersion)
-  .settings(scoverageSettings: _*)
-  .settings(defaultSettings(): _*)
-  .settings(majorVersion := 1)
-  .settings(scalacOptions += "-Wconf:cat=lint-multiarg-infix:silent")
-  .settings(scalacOptions += "-Xfatal-warnings")
-  .settings(
-    Test / Keys.fork := true,
-    Test / javaOptions += "-Dlogger.resource=logback-test.xml",
-    libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
-  )
-  .settings(
-    libraryDependencies ++= appDependencies,
-    retrieveManaged := true
-  )
-  .settings(
-    Test / Keys.fork := true,
-    scalaVersion := currentScalaVersion,
-    scalacOptions += "-Wconf:src=routes/.*:s",
-    Test / javaOptions += "-Dlogger.resource=logback-test.xml")
-  .settings(
-    Keys.fork := false,
-    TwirlKeys.templateImports ++= Seq(
-      "uk.gov.hmrc.govukfrontend.views.html.components.implicits._",
-      "uk.gov.hmrc.hmrcfrontend.views.html.helpers._",
-      "uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._"
-    ),
-    RoutesKeys.routesImport := Seq("enums.IncomeSourceJourney._", "models.admin._", "models.core._"),
-    scalacOptions += "-Wconf:cat=unused-imports:s,cat=unused-params:s"
-  )
-  .settings(resolvers ++= Seq(
-    Resolver.jcenterRepo
-  ))
+lazy val microservice =
+  Project(appName, file("."))
+    .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
+    .disablePlugins(JUnitXmlReportPlugin)
+    .settings(playSettings *)
+    .settings(scalaSettings *)
+    .settings(scalaVersion := currentScalaVersion)
+    .settings(scoverageSettings *)
+    .settings(defaultSettings() *)
+    .settings(majorVersion := 1)
+    .settings(scalacOptions += "-Wconf:cat=lint-multiarg-infix:silent")
+    .settings(scalacOptions += "-Xfatal-warnings")
+    .settings(
+      Test / Keys.fork := true,
+      Test / javaOptions += "-Dlogger.resource=logback-test.xml",
+      libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
+    )
+    .settings(
+      libraryDependencies ++= appDependencies,
+      retrieveManaged := true
+    )
+    .settings(
+      Test / Keys.fork := true,
+      scalaVersion := currentScalaVersion,
+      scalacOptions += "-Wconf:src=routes/.*:s",
+      Test / javaOptions += "-Dlogger.resource=logback-test.xml")
+    .settings(
+      Keys.fork := false,
+      TwirlKeys.templateImports ++= Seq(
+        "uk.gov.hmrc.govukfrontend.views.html.components.implicits._",
+        "uk.gov.hmrc.hmrcfrontend.views.html.helpers._",
+        "uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._"
+      ),
+      RoutesKeys.routesImport := Seq("enums.IncomeSourceJourney._", "models.admin._", "models.core._"),
+      scalacOptions ++= Seq(
+        "-Wunused:imports", // Disables warnings for unused imports
+        "-Wconf:cat=unused-imports:s,cat=unused-params:s"
+      )
+    )
+    .settings(resolvers ++= Seq(
+      Resolver.jcenterRepo
+    ))
 
 lazy val it = project
   .dependsOn(microservice % "test->test")
@@ -127,7 +131,13 @@ lazy val it = project
   )
   .settings(scalaVersion := currentScalaVersion)
   .settings(majorVersion := 1)
-  .settings(scalacOptions += "-Xfatal-warnings")
+  .settings(
+    scalacOptions ++= Seq(
+      "-Wunused:imports", // Disables warnings for unused imports
+      "-Wconf:cat=unused-imports:s,cat=unused-params:s",
+      "-Xfatal-warnings"
+    )
+  )
   .settings(
     testForkedParallel := true
   )

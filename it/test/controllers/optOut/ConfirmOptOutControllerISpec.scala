@@ -16,55 +16,44 @@
 
 package controllers.optOut
 
-import audit.OptOutAudit
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
-import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
+import audit.models.{OptOutAuditModel, Outcome}
+import auth.MtdItUser
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
+import controllers.constants.ConfirmOptOutControllerConstants._
+import helpers.servicemocks.AuditStub.verifyAuditEvent
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import helpers.{ComponentSpecBase, ITSAStatusUpdateConnectorStub, OptOutSessionRepositoryHelper}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus._
-import play.api.http.Status.OK
+import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.libs.json.Json
+import play.api.test.FakeRequest
 import play.mvc.Http.Status
-import play.mvc.Http.Status.{BAD_REQUEST, SEE_OTHER}
+import play.mvc.Http.Status.SEE_OTHER
 import repositories.UIJourneySessionDataRepository
-import services.optout.{OptOutProposition, OptOutTestSupport}
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
-import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSessionId}
+import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, propertyOnlyResponse}
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 class ConfirmOptOutControllerISpec extends ComponentSpecBase {
 
-  private val isAgent: Boolean = false
-  private val confirmOptOutPageUrl = controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url
-  private val submitConfirmOptOutPageUrl = controllers.optOut.routes.ConfirmOptOutController.submit(isAgent).url
-
-  private val confirmedPageUrl = controllers.optOut.routes.ConfirmedOptOutController.show(isAgent).url
-
-  private val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
-  private val previousYear = currentTaxYear.addYears(-1)
-
-  private val expectedTitle = s"Confirm and opt out for the ${previousYear.startYear} to ${previousYear.endYear} tax year"
-  private val summary = "If you opt out, you can submit your tax return through your HMRC online account or software."
-  private val infoMessage = s"In future, you could be required to report quarterly again if, for example, your income increases or the threshold for reporting quarterly changes. If this happens, we’ll write to you to let you know."
-  private val emptyBodyString = ""
-
   private val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
   private val helper = new OptOutSessionRepositoryHelper(repository)
-  private val optOutExpectedTitle = s"Check your answers"
+
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     repository.clearSession(testSessionId).futureValue shouldBe true
   }
 
-  s"calling GET $confirmOptOutPageUrl" should {
+  s"GET $confirmOptOutPageUrl" when {
 
-    s"render confirm single year opt out page $confirmOptOutPageUrl" when {
-      "User is authorised" in {
+    "user is authorised" should {
+      s"render confirm single year opt out page $confirmOptOutPageUrl" in {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        helper.stubOptOutInitialState(currentTaxYear,
+        helper.stubOptOutInitialState(currentTaxYear(dateService),
           previousYearCrystallised = false,
           previousYearStatus = Voluntary,
           currentYearStatus = Annual,
@@ -75,19 +64,19 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(OK),
-          elementTextByID("heading")(expectedTitle),
+          elementTextByID("heading")(expectedTitle(dateService)),
           elementTextByID("summary")(summary),
           elementTextByID("info-message")(infoMessage),
         )
       }
     }
 
-    s"render confirm multi-year opt out page $confirmOptOutPageUrl" when {
-      "User is authorised" in {
+    "user is authorised" should {
+      s"render confirm multi-year opt out page $confirmOptOutPageUrl" in {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        helper.stubOptOutInitialState(currentTaxYear,
+        helper.stubOptOutInitialState(currentTaxYear(dateService),
           previousYearCrystallised = false,
           previousYearStatus = Voluntary,
           currentYearStatus = Voluntary,
@@ -109,20 +98,28 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
     }
   }
 
-  s"calling POST $submitConfirmOptOutPageUrl" when {
-    s"user confirms opt-out for one-year scenario" should {
-      "show opt-out complete page" in {
+  s"POST $submitConfirmOptOutPageUrl" when {
+
+    "user confirms opt-out for one-year scenario" should {
+
+      "show opt-out complete page and send audit event" in {
+
+        val taxYear = TaxYear(2022, 2023)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        helper.stubOptOutInitialState(currentTaxYear,
+        helper.stubOptOutInitialState(
+          currentTaxYear(dateService),
           previousYearCrystallised = false,
           previousYearStatus = Voluntary,
           currentYearStatus = NoStatus,
-          nextYearStatus = NoStatus)
+          nextYearStatus = NoStatus
+        )
 
-        ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
-          Status.NO_CONTENT, emptyBodyString
+        ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(
+          taxableEntityId = propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
+          status = Status.NO_CONTENT,
+          responseBody = emptyBodyString
         )
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses.postConfirmOptOut()
@@ -132,21 +129,42 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
           redirectURI(confirmedPageUrl)
         )
 
-        val optOutProposition: OptOutProposition = OptOutTestSupport.buildThreeYearOptOutProposition()
-        val resolvedResponse: ITSAStatusUpdateResponse = ITSAStatusUpdateResponseSuccess(SEE_OTHER)
-        val audit = OptOutAudit.generateOptOutAudit(optOutProposition, currentTaxYear, resolvedResponse)
-
-        verifyAuditContainsDetail(audit.detail)
-
+        verifyAuditEvent(
+          OptOutAuditModel(
+            mtdItUser = MtdItUser(
+              mtditid = testMtditid,
+              nino = testNino,
+              userName = None,
+              incomeSources = multipleBusinessesAndPropertyResponse,
+              btaNavPartial = None,
+              saUtr = Some("1234567890"),
+              credId = Some("12345-credId"),
+              userType = Some(Individual),
+              arn = None
+            )(FakeRequest()),
+            nino = testNino,
+            outcome = Outcome(isSuccessful = true, None, None),
+            optOutRequestedFromTaxYear = taxYear.previousYear.formatTaxYearRange,
+            currentYear = taxYear,
+            beforeITSAStatusCurrentYearMinusOne = Voluntary,
+            beforeITSAStatusCurrentYear = NoStatus,
+            beforeITSAStatusCurrentYearPlusOne = NoStatus,
+            afterAssumedITSAStatusCurrentYearMinusOne = Annual,
+            afterAssumedITSAStatusCurrentYear = NoStatus,
+            afterAssumedITSAStatusCurrentYearPlusOne = Annual,
+            currentYearMinusOneCrystallised = false
+          )
+        )
       }
     }
 
-    s"user confirms opt-out for one-year scenario and missing header" should {
+    "user confirms opt-out for one-year scenario and missing header" should {
+
       "show opt-out complete page" in {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        helper.stubOptOutInitialState(currentTaxYear,
+        helper.stubOptOutInitialState(currentTaxYear(dateService),
           previousYearCrystallised = false,
           previousYearStatus = Voluntary,
           currentYearStatus = NoStatus,
@@ -167,54 +185,60 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
       }
     }
 
-    s"user confirms opt-out for one-year scenario and update fails" should {
-      "show Opt Out error page" in {
+    "Error scenario" when {
 
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+      "user confirms opt-out for one-year scenario and update fails" should {
 
-        helper.stubOptOutInitialState(currentTaxYear,
-          previousYearCrystallised = false,
-          previousYearStatus = Voluntary,
-          currentYearStatus = NoStatus,
-          nextYearStatus = NoStatus)
+        "show Opt Out error page" in {
 
-        ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
-          BAD_REQUEST, Json.toJson(ITSAStatusUpdateResponseFailure.defaultFailure()).toString()
-        )
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.postConfirmOptOut()
+          helper.stubOptOutInitialState(
+            currentTaxYear = currentTaxYear(dateService),
+            previousYearCrystallised = false,
+            previousYearStatus = Voluntary,
+            currentYearStatus = NoStatus,
+            nextYearStatus = NoStatus
+          )
 
-        result should have(
-          httpStatus(SEE_OTHER)
-        )
+          ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
+            BAD_REQUEST, Json.toJson(ITSAStatusUpdateResponseFailure.defaultFailure()).toString()
+          )
 
+          val result = IncomeTaxViewChangeFrontendManageBusinesses.postConfirmOptOut()
+
+          result should have(
+            httpStatus(SEE_OTHER)
+          )
+
+        }
       }
-    }
 
-    s"user confirms opt-out for multi-year scenario and update fails" should {
-      "show Opt Out error page" in {
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+      "user confirms opt-out for multi-year scenario and update fails" should {
 
-        helper.stubOptOutInitialState(currentTaxYear,
-          previousYearCrystallised = false,
-          previousYearStatus = Voluntary,
-          currentYearStatus = Voluntary,
-          nextYearStatus = Voluntary)
+        "show Opt Out error page" in {
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
-          BAD_REQUEST, Json.toJson(ITSAStatusUpdateResponseFailure.defaultFailure()).toString(),
-        )
+          helper.stubOptOutInitialState(currentTaxYear(dateService),
+            previousYearCrystallised = false,
+            previousYearStatus = Voluntary,
+            currentYearStatus = Voluntary,
+            nextYearStatus = Voluntary)
 
-        assert(optOutSessionDataRepository.saveIntent(TaxYear.getTaxYearModel("2023-2024").get).futureValue)
+          ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
+            BAD_REQUEST, Json.toJson(ITSAStatusUpdateResponseFailure.defaultFailure()).toString(),
+          )
+
+          assert(optOutSessionDataRepository.saveIntent(TaxYear.getTaxYearModel("2023-2024").get).futureValue)
 
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.postConfirmOptOut()
+          val result = IncomeTaxViewChangeFrontendManageBusinesses.postConfirmOptOut()
 
-        result should have(
-          httpStatus(SEE_OTHER)
-        )
+          result should have(
+            httpStatus(SEE_OTHER)
+          )
+        }
       }
     }
   }
-
 }

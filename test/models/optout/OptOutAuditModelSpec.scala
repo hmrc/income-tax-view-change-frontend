@@ -14,37 +14,35 @@
  * limitations under the License.
  */
 
-package services.optout
+package models.optout
 
-import audit.OptOutAudit
 import audit.models.{OptOutAuditModel, Outcome}
 import auth.MtdItUser
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import models.incomeSourceDetails.TaxYear
 import org.mockito.Mockito._
-import play.api.http.Status.{BAD_GATEWAY, OK}
+import play.api.http.Status.OK
+import services.optout.{OptOutProposition, OptOutTestSupport}
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
-class OptOutAuditSpec extends UnitSpec {
+class OptOutAuditModelSpec extends UnitSpec {
 
   val optOutProposition: OptOutProposition = OptOutTestSupport.buildThreeYearOptOutProposition()
   implicit val user: MtdItUser[_] = mock(classOf[MtdItUser[_]])
   implicit val hc: HeaderCarrier = mock(classOf[HeaderCarrier])
 
-  "OptOutAudit.generateOptOutAudit" when {
+  "OptOutAuditModelSpec.generateOptOutAudit" when {
     "user opt out of quarterly reporting is submitted" should {
       "generated OptOutAuditModel should contain all the correct data" in {
 
-        val intentTextYear: TaxYear = new TaxYear(22, 23)
+        val intentTextYear: TaxYear = TaxYear(22, 23)
         val resolvedResponse: ITSAStatusUpdateResponse = ITSAStatusUpdateResponseSuccess(OK)
-        val auditModel: OptOutAuditModel = OptOutAudit.generateOptOutAudit(optOutProposition, intentTextYear, resolvedResponse)
+        val auditModel: OptOutAuditModel = OptOutAuditModel.generateOptOutAudit(optOutProposition, intentTextYear, resolvedResponse)
         val expectedOutcome: Outcome = Outcome(isSuccessful = true, None, None)
 
         auditModel.nino shouldEqual user.nino
-        auditModel.currentYear shouldEqual "2023-2024"
+        auditModel.currentYear shouldEqual TaxYear(2023, 2024)
         auditModel.auditType shouldEqual "ClientDetailsConfirmed"
         auditModel.outcome shouldEqual expectedOutcome
 
@@ -52,9 +50,9 @@ class OptOutAuditSpec extends UnitSpec {
 
       "createOutcome builds an appropriate Outcome" in {
 
-        val intentTextYear: TaxYear = new TaxYear(22, 23)
+        val intentTextYear: TaxYear = TaxYear(22, 23)
         val resolvedResponse: ITSAStatusUpdateResponse = ITSAStatusUpdateResponseFailure.defaultFailure()
-        val auditModel: OptOutAuditModel = OptOutAudit.generateOptOutAudit(optOutProposition, intentTextYear, resolvedResponse)
+        val auditModel: OptOutAuditModel = OptOutAuditModel.generateOptOutAudit(optOutProposition, intentTextYear, resolvedResponse)
         val expectedOutcome: Outcome = Outcome(isSuccessful = false, Some("API_FAILURE"), Some("Failure reasons"))
 
         auditModel.outcome shouldEqual expectedOutcome

@@ -32,42 +32,106 @@
 
 package audit.models
 
-import audit.models.OptOutAuditModel.format
+import auth.MtdItUser
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
+import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus.ITSAStatus
 import play.api.libs.json.{JsObject, JsValue, Json, OFormat}
+import services.optout.OptOutProposition
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
-case class OptOutAuditModel(nino: String, outcome: Outcome, optOutRequestedFromTaxYear: String, currentYear: String,
-                            beforeITSAStatusCurrentYearMinusOne: String, beforeITSAStatusCurrentYear: String,
-                            beforeITSAStatusCurrentYearPlusOne: String, afterAssumedITSAStatusCurrentYearMinusOne: String,
-                            afterAssumedITSAStatusCurrentYear: String, afterAssumedITSAStatusCurrentYearPlusOne: String,
-                            currentYearMinusOneCrystallised: Boolean) extends ExtendedAuditModel {
+case class Outcome(
+                    isSuccessful: Boolean,
+                    failureCategory: Option[String],
+                    failureReason: Option[String]
+                  )
+
+
+object Outcome {
+  implicit val format: OFormat[Outcome] = Json.format[Outcome]
+}
+
+
+case class OptOutAuditModel(
+                             mtdItUser: MtdItUser[_],
+                             nino: String,
+                             outcome: Outcome,
+                             optOutRequestedFromTaxYear: String,
+                             currentYear: TaxYear,
+                             beforeITSAStatusCurrentYearMinusOne: ITSAStatus,
+                             beforeITSAStatusCurrentYear: ITSAStatus,
+                             beforeITSAStatusCurrentYearPlusOne: ITSAStatus,
+                             afterAssumedITSAStatusCurrentYearMinusOne: ITSAStatus,
+                             afterAssumedITSAStatusCurrentYear: ITSAStatus,
+                             afterAssumedITSAStatusCurrentYearPlusOne: ITSAStatus,
+                             currentYearMinusOneCrystallised: Boolean
+                           ) extends ExtendedAuditModel {
 
 
   override val transactionName: String = enums.TransactionName.ClientDetailsConfirmed
 
   override val auditType: String = enums.AuditType.ClientDetailsConfirmed
 
-  private val optOutDetailsJson: JsObject = Json.obj(
-    "nino" -> nino,
-    "outcome" -> outcome,
-    "optOutRequestedFromTaxYear" -> optOutRequestedFromTaxYear,
-    "currentYear" -> currentYear,
-    "beforeITSAStatusCurrentYearMinusOne" -> beforeITSAStatusCurrentYearMinusOne,
-    "beforeITSAStatusCurrentYear" -> beforeITSAStatusCurrentYear,
-    "beforeITSAStatusCurrentYearPlusOne" -> beforeITSAStatusCurrentYearPlusOne,
-    "afterAssumedITSAStatusCurrentYearMinusOne" -> afterAssumedITSAStatusCurrentYearMinusOne,
-    "afterAssumedITSAStatusCurrentYear" -> afterAssumedITSAStatusCurrentYear,
-    "afterAssumedITSAStatusCurrentYearPlusOne" -> afterAssumedITSAStatusCurrentYearMinusOne,
-    "currentYearMinusOneCrystallised" -> currentYearMinusOneCrystallised)
+  private val userType =
+    mtdItUser.userType match {
+      case Some(Agent) => "Agent"
+      case Some(_) => "Individual"
+      case None => ""
+    }
+
+  private val optOutDetailsJson: JsObject =
+    Json.obj(
+      "mtditid" -> mtdItUser.mtditid,
+      "userType" -> userType,
+      "agentReferenceNumber" -> mtdItUser.arn,
+      "saUtr" -> mtdItUser.saUtr,
+      "credId" -> mtdItUser.credId,
+      "nino" -> nino,
+      "outcome" -> outcome,
+      "optOutRequestedFromTaxYear" -> optOutRequestedFromTaxYear,
+      "currentYear" -> currentYear,
+      "beforeITSAStatusCurrentYearMinusOne" -> beforeITSAStatusCurrentYearMinusOne.toString,
+      "beforeITSAStatusCurrentYear" -> beforeITSAStatusCurrentYear.toString,
+      "beforeITSAStatusCurrentYearPlusOne" -> beforeITSAStatusCurrentYearPlusOne.toString,
+      "afterAssumedITSAStatusCurrentYearMinusOne" -> afterAssumedITSAStatusCurrentYearMinusOne.toString,
+      "afterAssumedITSAStatusCurrentYear" -> afterAssumedITSAStatusCurrentYear.toString,
+      "afterAssumedITSAStatusCurrentYearPlusOne" -> afterAssumedITSAStatusCurrentYearMinusOne.toString,
+      "currentYearMinusOneCrystallised" -> currentYearMinusOneCrystallised)
 
   override val detail: JsValue = optOutDetailsJson
 
 }
 
-case class Outcome(isSuccessful: Boolean,
-                   failureCategory: Option[String],
-                   failureReason: Option[String])
 
 object OptOutAuditModel {
 
-  implicit val format: OFormat[Outcome] = Json.format[Outcome]
+  def generateOptOutAudit(optOutProposition: OptOutProposition,
+                          intentTaxYear: TaxYear,
+                          resolvedOutcome: ITSAStatusUpdateResponse
+                         )(implicit user: MtdItUser[_]): OptOutAuditModel = {
+    OptOutAuditModel(
+      mtdItUser = user,
+      nino = user.nino,
+      optOutRequestedFromTaxYear = intentTaxYear.formatTaxYearRange,
+      currentYear = optOutProposition.currentTaxYear.taxYear,
+      beforeITSAStatusCurrentYearMinusOne = optOutProposition.previousTaxYear.status,
+      beforeITSAStatusCurrentYear = optOutProposition.currentTaxYear.status,
+      beforeITSAStatusCurrentYearPlusOne = optOutProposition.nextTaxYear.status,
+      outcome = createOutcome(resolvedOutcome),
+      afterAssumedITSAStatusCurrentYearMinusOne = optOutProposition.previousTaxYear.expectedItsaStatusAfter(intentTaxYear),
+      afterAssumedITSAStatusCurrentYear = optOutProposition.currentTaxYear.expectedItsaStatusAfter(intentTaxYear),
+      afterAssumedITSAStatusCurrentYearPlusOne = optOutProposition.nextTaxYear.expectedItsaStatusAfter(intentTaxYear),
+      currentYearMinusOneCrystallised = optOutProposition.previousTaxYear.crystallised
+    )
+  }
+
+  private def createOutcome(resolvedResponse: ITSAStatusUpdateResponse): Outcome = {
+    resolvedResponse match {
+      case _: ITSAStatusUpdateResponseFailure => Outcome(isSuccessful = false, failureCategory = Some("API_FAILURE"), failureReason = Some("Failure reasons"))
+      case _: ITSAStatusUpdateResponseSuccess => Outcome(isSuccessful = true, failureCategory = None, failureReason = None)
+      case _ => Outcome(isSuccessful = false, failureCategory = Some("Unknown failure reason"), failureReason = Some("Unknown failure category"))
+    }
+  }
+
+
 }
