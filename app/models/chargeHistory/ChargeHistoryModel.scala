@@ -19,7 +19,7 @@ package models.chargeHistory
 import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, CustomerRequestReason, ReversalReason, UnknownReversalReason}
 import play.api.libs.json.{Format, Json}
 import services.claimToAdjustPoa.ClaimToAdjustHelper
-import services.claimToAdjustPoa.ClaimToAdjustHelper.isPoADocumentDescription
+import services.claimToAdjustPoa.ClaimToAdjustHelper.isPoaDocumentDescription
 
 import java.time.LocalDate
 
@@ -44,7 +44,7 @@ case class ChargeHistoryModel(taxYear: String,
       }
   }
 
-  val isPoA: Boolean = isPoADocumentDescription(documentDescription)
+  val isPoa: Boolean = isPoaDocumentDescription(documentDescription)
 }
 
 object ChargeHistoryModel {

@@ -77,17 +77,17 @@ class PaymentOnAccountViewModelSessionServiceSpec extends TestSupport {
       }
     }
   }
-  "PaymentOnAccountSessionService.setNewPoAAmount" should {
+  "PaymentOnAccountSessionService.setNewPoaAmount" should {
     "update the PoA amount" in {
       when(mockRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
       when(mockRepository.set(any())).thenReturn(Future.successful(true))
-      val result = TestPaymentOnAccountSessionService.setNewPoAAmount(100.00)
+      val result = TestPaymentOnAccountSessionService.setNewPoaAmount(100.00)
       result.futureValue shouldBe Right(())
     }
     "return an error" when {
       "no mongo session can be found" in {
         when(mockRepository.get(any())).thenReturn(Future.successful(None))
-        val result = TestPaymentOnAccountSessionService.setNewPoAAmount(100.00)
+        val result = TestPaymentOnAccountSessionService.setNewPoaAmount(100.00)
         result.futureValue match {
           case Left(ex) => ex.getMessage shouldBe "No active mongo session found"
           case _ => Fail

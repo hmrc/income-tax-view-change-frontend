@@ -106,7 +106,7 @@ class EnterPoaAmountControllerSpec extends TestSupport
     }
   }
 
-  "EnterPoAAmountController.show" should {
+  "EnterPoaAmountController.show" should {
     "return Ok" when {
       "PaymentOnAccount model is returned successfully with PoA tax year crystallized does not exist in session" in {
         enable(AdjustPaymentsOnAccount)
@@ -125,7 +125,7 @@ class EnterPoaAmountControllerSpec extends TestSupport
         status(resultAgent) shouldBe OK
         Jsoup.parse(contentAsString(resultAgent)).select("#poa-amount").attr("value") shouldBe ""
       }
-      "PaymentOnAccount model is returned successfully with PoA tax year crystallized and newPoAAmount exists in session" in {
+      "PaymentOnAccount model is returned successfully with PoA tax year crystallized and newPoaAmount exists in session" in {
         enable(AdjustPaymentsOnAccount)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockPaymentOnAccountSessionService(Future(Right(Some(PoaAmendmentData(Some(MainIncomeLower), Some(BigDecimal(1111.22)))))))
@@ -241,13 +241,13 @@ class EnterPoaAmountControllerSpec extends TestSupport
     }
   }
 
-  "EnterPoAAmountController.submit" should {
+  "EnterPoaAmountController.submit" should {
     "redirect to the check your answers page" when {
       "The user is on the decrease only journey and form returned with no errors" in {
         enable(AdjustPaymentsOnAccount)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockGetPoaAmountViewModel(Right(poaViewModelDecreaseJourney))
-        when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
+        when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(),any())).thenReturn(Future(Right(())))
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestEnterPoaAmountController$.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "1234.56"))
@@ -269,7 +269,7 @@ class EnterPoaAmountControllerSpec extends TestSupport
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
 
-        when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
+        when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(),any())).thenReturn(Future(Right(())))
         when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Right(())))
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
@@ -289,7 +289,7 @@ class EnterPoaAmountControllerSpec extends TestSupport
           mockSingleBISWithCurrentYearAsMigrationYear()
           setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
           when(mockPaymentOnAccountSessionService.getMongo(any(),any())).thenReturn(Future(Right(Some(PoaAmendmentData(Some(MainIncomeLower), Some(100))))))
-          when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
+          when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(),any())).thenReturn(Future(Right(())))
           when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Right(())))
 
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
@@ -313,7 +313,7 @@ class EnterPoaAmountControllerSpec extends TestSupport
           setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
 
           when(mockPaymentOnAccountSessionService.getMongo(any(),any())).thenReturn(Future(Right(Some(PoaAmendmentData(Some(MainIncomeLower), Some(100))))))
-          when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
+          when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(),any())).thenReturn(Future(Right(())))
           when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Right(())))
 
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
@@ -333,7 +333,7 @@ class EnterPoaAmountControllerSpec extends TestSupport
           setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
 
           when(mockPaymentOnAccountSessionService.getMongo(any(),any())).thenReturn(Future(Right(Some(PoaAmendmentData(Some(MainIncomeLower), Some(4600))))))
-          when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
+          when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(),any())).thenReturn(Future(Right(())))
           when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Right(())))
 
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
@@ -353,7 +353,7 @@ class EnterPoaAmountControllerSpec extends TestSupport
         enable(AdjustPaymentsOnAccount)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
-        when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
+        when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(),any())).thenReturn(Future(Right(())))
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestEnterPoaAmountController$.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "1234.56"))
@@ -372,7 +372,7 @@ class EnterPoaAmountControllerSpec extends TestSupport
           mockSingleBISWithCurrentYearAsMigrationYear()
           setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
           when(mockPaymentOnAccountSessionService.getMongo(any(),any())).thenReturn(Future(Right(Some(PoaAmendmentData(Some(Increase), Some(4500))))))
-          when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
+          when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(),any())).thenReturn(Future(Right(())))
           when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Right(())))
 
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
@@ -392,7 +392,7 @@ class EnterPoaAmountControllerSpec extends TestSupport
         enable(AdjustPaymentsOnAccount)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
-        when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
+        when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(),any())).thenReturn(Future(Right(())))
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestEnterPoaAmountController$.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, ""))
@@ -408,7 +408,7 @@ class EnterPoaAmountControllerSpec extends TestSupport
         enable(AdjustPaymentsOnAccount)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
-        when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
+        when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(),any())).thenReturn(Future(Right(())))
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestEnterPoaAmountController$.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "test"))
@@ -424,7 +424,7 @@ class EnterPoaAmountControllerSpec extends TestSupport
         enable(AdjustPaymentsOnAccount)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
-        when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
+        when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(),any())).thenReturn(Future(Right(())))
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestEnterPoaAmountController$.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "6000"))
@@ -440,7 +440,7 @@ class EnterPoaAmountControllerSpec extends TestSupport
         enable(AdjustPaymentsOnAccount)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
-        when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
+        when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(),any())).thenReturn(Future(Right(())))
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestEnterPoaAmountController$.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "4000"))
@@ -457,7 +457,7 @@ class EnterPoaAmountControllerSpec extends TestSupport
         enable(AdjustPaymentsOnAccount)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockGetPoaAmountViewModel(Right(poaViewModelDecreaseJourney))
-        when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Left(new Error("Error setting poa amount"))))
+        when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(),any())).thenReturn(Future(Left(new Error("Error setting poa amount"))))
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestEnterPoaAmountController$.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "1234.56"))
@@ -473,7 +473,7 @@ class EnterPoaAmountControllerSpec extends TestSupport
         enable(AdjustPaymentsOnAccount)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
-        when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
+        when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(),any())).thenReturn(Future(Right(())))
         when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Left(new Error("Error setting adjustment reason"))))
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
@@ -492,7 +492,7 @@ class EnterPoaAmountControllerSpec extends TestSupport
         setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
 
         when(mockPaymentOnAccountSessionService.getMongo(any(),any())).thenReturn(Future(Left(new Error("Error getting mongo data"))))
-        when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
+        when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(),any())).thenReturn(Future(Right(())))
         when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Right(())))
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())

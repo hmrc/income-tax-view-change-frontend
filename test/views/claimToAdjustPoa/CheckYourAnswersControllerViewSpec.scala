@@ -92,7 +92,7 @@ class CheckYourAnswersControllerViewSpec extends TestSupport {
         document.getElementById("cancel-link").text() shouldBe messages("claimToAdjustPoa.checkYourAnswers.cancel")
         document.getElementById("cancel-link").getElementsByTag("a").attr("href") shouldBe getCancelLinkUrl(isAgent)
       }
-      "hide the Payment On Account reason row when the user has increased the PoA after a prior adjustment" in new Setup(isAgent, poaReason = Increase) {
+      "hide the Payment On Account reason row when the user has increased the Poa after a prior adjustment" in new Setup(isAgent, poaReason = Increase) {
           document.getElementsByClass("govuk-summary-list__key").size() shouldBe 1
           document.getElementsByClass("govuk-summary-list__key").get(0).text() shouldBe messages("claimToAdjustPoa.checkYourAnswers.summary-list-2.key")
           document.getElementsByClass("govuk-summary-list__value").size() shouldBe 1

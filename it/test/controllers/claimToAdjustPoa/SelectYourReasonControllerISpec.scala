@@ -33,7 +33,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
 
   val isAgent = false
 
-  def enterPOAAmountUrl: String = controllers.claimToAdjustPoa.routes.EnterPoaAmountController.show(isAgent, NormalMode).url
+  def enterPoaAmountUrl: String = controllers.claimToAdjustPoa.routes.EnterPoaAmountController.show(isAgent, NormalMode).url
 
   def poaCyaUrl: String = controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent).url
 
@@ -311,7 +311,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
 
         res should have(
           httpStatus(SEE_OTHER),
-          redirectURI(enterPOAAmountUrl)
+          redirectURI(enterPoaAmountUrl)
         )
 
         sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData(Some(MainIncomeLower), None)))

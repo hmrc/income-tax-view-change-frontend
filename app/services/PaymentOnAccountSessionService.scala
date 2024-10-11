@@ -68,7 +68,7 @@ class PaymentOnAccountSessionService @Inject()(poaAmendmentDataRepository: PoaAm
     }
   }
 
-  def setNewPoAAmount(newPoaAmount: BigDecimal)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Unit]] = {
+  def setNewPoaAmount(newPoaAmount: BigDecimal)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Unit]] = {
     poaAmendmentDataRepository.get(hc.sessionId.get.value).flatMap {
       case Some(data: PoaSessionData) =>
         val newData: PoaAmendmentData = data.poaAmendmentData match {

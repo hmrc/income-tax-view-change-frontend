@@ -82,7 +82,7 @@ class EnterPoaAmountController @Inject()(val authActions: AuthActions,
       formWithErrors =>
         Future.successful(BadRequest(view(formWithErrors, viewModel, user.isAgent(), EnterPoaAmountController.submit(user.isAgent(), mode)))),
       validForm =>
-        poaSessionService.setNewPoAAmount(validForm.amount).flatMap {
+        poaSessionService.setNewPoaAmount(validForm.amount).flatMap {
           case Left(ex) =>
             Future.successful(logAndRedirect(s"Error while setting mongo data : ${ex.getMessage} - ${ex.getCause}"))
           case Right(_) => getRedirect(viewModel, validForm.amount, user.isAgent(), mode)

@@ -38,7 +38,7 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
 
   val testTaxYear = 2024
 
-  def enterPOAAmountUrl: String = controllers.claimToAdjustPoa.routes.EnterPoaAmountController.show(isAgent, NormalMode).url
+  def enterPoaAmountUrl: String = controllers.claimToAdjustPoa.routes.EnterPoaAmountController.show(isAgent, NormalMode).url
 
   def selectReasonUrl: String = controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, NormalMode).url
 
@@ -125,7 +125,7 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
             httpStatus(OK)
           )
           sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData()))
-          continueButton.attr("href") shouldBe enterPOAAmountUrl
+          continueButton.attr("href") shouldBe enterPoaAmountUrl
 
           val increaseAfterPaymentContent = Option(document.getElementById("p6"))
           increaseAfterPaymentContent.isDefined shouldBe false
@@ -167,7 +167,7 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
             httpStatus(OK)
           )
           sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData()))
-          continueButton.attr("href") shouldBe enterPOAAmountUrl
+          continueButton.attr("href") shouldBe enterPoaAmountUrl
 
           val increaseAfterPaymentContent = Option(document.getElementById("p6"))
           increaseAfterPaymentContent.isDefined shouldBe true
@@ -210,7 +210,7 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
           httpStatus(OK)
         )
         sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData()))
-        continueButton.attr("href") shouldBe enterPOAAmountUrl
+        continueButton.attr("href") shouldBe enterPoaAmountUrl
 
         val increaseAfterPaymentContent = Option(document.getElementById("p6"))
         increaseAfterPaymentContent.isDefined shouldBe true

@@ -316,7 +316,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getRefundToTaxPayer(repaymentRequestNumber: String): WSResponse = get(s"/refund-to-taxpayer/$repaymentRequestNumber ")
 
-    def getPOAWhatYouNeedToKnow: WSResponse = get("/adjust-poa/what-you-need-to-know")
+    def getPoaWhatYouNeedToKnow: WSResponse = get("/adjust-poa/what-you-need-to-know")
 
     def getCeaseUKProperty: WSResponse = get("/income-sources/cease/uk-property-declare")
 

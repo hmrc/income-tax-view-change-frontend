@@ -43,7 +43,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
       for {
         fdMaybe <- EitherT(getNonCrystallisedFinancialDetails(nino))
         maybeTaxYear <- EitherT.right[Throwable](Future.successful {
-          fdMaybe.flatMap(x => arePoAPaymentsPresent(x.documentDetails))
+          fdMaybe.flatMap(x => arePoaPaymentsPresent(x.documentDetails))
         })
       } yield maybeTaxYear
     }.value
@@ -74,7 +74,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
       financialAndPoaModelMaybe <- getPoaModelAndFinancialDetailsForNonCrystallised(nino)
       adjustmentReasonMaybe <- getPoaAdjustmentReason(financialAndPoaModelMaybe)
     } yield (adjustmentReasonMaybe, financialAndPoaModelMaybe) match {
-      case (Right(reason), Right(FinancialDetailsAndPoAModel(_, Some(model)))) =>
+      case (Right(reason), Right(FinancialDetailsAndPoaModel(_, Some(model)))) =>
         Right(
           model.copy(previouslyAdjusted = Some(reason.isDefined))
         )
@@ -98,7 +98,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
   }
 
   // TODO: move private functions into Helper?
-  private def getPoaAdjustmentReason(financialPoaDetails: Either[Throwable, FinancialDetailsAndPoAModel])
+  private def getPoaAdjustmentReason(financialPoaDetails: Either[Throwable, FinancialDetailsAndPoaModel])
                                     (implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Option[String]]] = {
     {
       for {
@@ -123,22 +123,22 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
   }
 
   private def getPoaModelAndFinancialDetailsForNonCrystallised(nino: Nino)
-                                                              (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, FinancialDetailsAndPoAModel]] = {
+                                                              (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, FinancialDetailsAndPoaModel]] = {
     checkCrystallisation(nino, getPoaAdjustableTaxYears)(hc, dateService, calculationListConnector, ec).flatMap {
-      case None => Future.successful(Right(FinancialDetailsAndPoAModel(None, None)))
+      case None => Future.successful(Right(FinancialDetailsAndPoaModel(None, None)))
       case Some(taxYear: TaxYear) =>
         financialDetailsConnector.getFinancialDetails(taxYear.endYear, nino.value).map {
           case financialDetails: FinancialDetailsModel =>
             getPaymentOnAccountModel(sortByTaxYear(financialDetails.documentDetails)) match {
               case Right(x) =>
-                Right(FinancialDetailsAndPoAModel(Some(financialDetails), x))
+                Right(FinancialDetailsAndPoaModel(Some(financialDetails), x))
               case Left(ex) =>
                 Left(ex)
             }
           case error: FinancialDetailsErrorModel if error.code != NOT_FOUND =>
             Left(new Exception("There was an error whilst fetching financial details data"))
           case _ =>
-            Right(FinancialDetailsAndPoAModel(None, None))
+            Right(FinancialDetailsAndPoaModel(None, None))
         }
     }
   }

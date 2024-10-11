@@ -31,7 +31,7 @@ class ApiFailureSubmittingPoaControllerISpec extends ComponentSpecBase {
 
   def apiFailureSubmittingPoaUrl: String = controllers.claimToAdjustPoa.routes.ApiFailureSubmittingPoaController.show(isAgent).url
 
-  def amendablePOAUrl: String = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent).url
+  def amendablePoaUrl: String = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent).url
 
   def homeUrl: String = if (isAgent) {
     controllers.routes.HomeController.showAgent.url
