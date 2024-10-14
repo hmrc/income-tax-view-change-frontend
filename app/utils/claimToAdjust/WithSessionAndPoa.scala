@@ -19,7 +19,7 @@ package utils.claimToAdjust
 import auth.MtdItUser
 import cats.data.EitherT
 import enums.IncomeSourceJourney.{BeforeSubmissionPage, InitialPage, JourneyState}
-import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoAAmendmentData}
+import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoaAmendmentData}
 import models.core.Nino
 import play.api.Logger
 import play.api.mvc.Result
@@ -34,7 +34,7 @@ trait WithSessionAndPoa extends JourneyCheckerClaimToAdjust {
   val claimToAdjustService: ClaimToAdjustService
 
   def withSessionDataAndPoa(journeyState: JourneyState = BeforeSubmissionPage)
-                           (codeBlock: (PoAAmendmentData, PaymentOnAccountViewModel) => EitherT[Future, Throwable, Result])
+                           (codeBlock: (PoaAmendmentData, PaymentOnAccountViewModel) => EitherT[Future, Throwable, Result])
                            (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     ifAdjustPoaIsEnabled(user.isAgent()) {
       {
@@ -50,7 +50,7 @@ trait WithSessionAndPoa extends JourneyCheckerClaimToAdjust {
     }
   }
 
-  private def handleSessionAndPoaStartPage(codeBlock: (PoAAmendmentData, PaymentOnAccountViewModel) => EitherT[Future, Throwable, Result])
+  private def handleSessionAndPoaStartPage(codeBlock: (PoaAmendmentData, PaymentOnAccountViewModel) => EitherT[Future, Throwable, Result])
                               (implicit hc: HeaderCarrier, user: MtdItUser[_]): EitherT[Future, Throwable, Result] = {
     for {
       session <- EitherT(poaSessionService.getMongo)
@@ -74,11 +74,11 @@ trait WithSessionAndPoa extends JourneyCheckerClaimToAdjust {
   }
 
   private def createSessionCodeBlock(p: PaymentOnAccountViewModel)
-                                    (codeBlock: (PoAAmendmentData, PaymentOnAccountViewModel) => EitherT[Future, Throwable, Result])
+                                    (codeBlock: (PoaAmendmentData, PaymentOnAccountViewModel) => EitherT[Future, Throwable, Result])
                                     (implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): EitherT[Future, Throwable, Result] = {
     EitherT(poaSessionService.createSession.map {
       case Right(_) =>
-        codeBlock(PoAAmendmentData(), p).value
+        codeBlock(PoaAmendmentData(), p).value
       case Left(ex: Throwable) =>
         val x: EitherT[Future, Throwable, Result] = EitherT.rightT(
           logAndRedirect(s"There was an error while retrieving the mongo data. < Exception message: ${ex.getMessage}, Cause: ${ex.getCause} >"))
@@ -86,7 +86,7 @@ trait WithSessionAndPoa extends JourneyCheckerClaimToAdjust {
     }.flatten)
   }
 
-  private def handleSessionAndPoa(journeyState: JourneyState)(codeBlock: (PoAAmendmentData, PaymentOnAccountViewModel) => EitherT[Future, Throwable, Result])
+  private def handleSessionAndPoa(journeyState: JourneyState)(codeBlock: (PoaAmendmentData, PaymentOnAccountViewModel) => EitherT[Future, Throwable, Result])
                             (implicit hc: HeaderCarrier, user: MtdItUser[_]): EitherT[Future, Throwable, Result] = {
     for {
       session <- EitherT(poaSessionService.getMongo)

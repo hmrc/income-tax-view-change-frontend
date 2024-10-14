@@ -27,7 +27,7 @@ import testUtils.TestSupport
 import views.html.claimToAdjustPoa.WhatYouNeedToKnow
 import controllers.claimToAdjustPoa.routes._
 import models.claimToAdjustPoa.WhatYouNeedToKnowViewModel
-import testConstants.claimToAdjustPOA.ClaimToAdjustPOATestConstants.whatYouNeedToKnowViewModel
+import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.whatYouNeedToKnowViewModel
 
 class WhatYouNeedToKnowViewSpec extends TestSupport {
 

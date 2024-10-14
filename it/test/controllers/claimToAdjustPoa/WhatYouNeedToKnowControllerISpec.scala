@@ -19,7 +19,7 @@ package controllers.claimToAdjustPoa
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.AdjustPaymentsOnAccount
-import models.claimToAdjustPoa.PoAAmendmentData
+import models.claimToAdjustPoa.PoaAmendmentData
 import models.core.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -38,7 +38,7 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
 
   val testTaxYear = 2024
 
-  def enterPOAAmountUrl: String = controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(isAgent, NormalMode).url
+  def enterPoaAmountUrl: String = controllers.claimToAdjustPoa.routes.EnterPoaAmountController.show(isAgent, NormalMode).url
 
   def selectReasonUrl: String = controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, NormalMode).url
 
@@ -48,7 +48,7 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    await(sessionService.setMongoData(Some(PoAAmendmentData(poaAdjustmentReason = None, newPoAAmount = None))))
+    await(sessionService.setMongoData(Some(PoaAmendmentData(poaAdjustmentReason = None, newPoaAmount = None))))
     if (isAgent) {
       stubAuthorisedAgentUser(authorised = true, clientMtdId = testMtditid)
     }
@@ -90,7 +90,7 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
         res should have(
           httpStatus(OK)
         )
-        sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData()))
+        sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData()))
         continueButton.attr("href") shouldBe selectReasonUrl
 
         val increaseAfterPaymentContent = Option(document.getElementById("p6"))
@@ -124,8 +124,8 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
           res should have(
             httpStatus(OK)
           )
-          sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData()))
-          continueButton.attr("href") shouldBe enterPOAAmountUrl
+          sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData()))
+          continueButton.attr("href") shouldBe enterPoaAmountUrl
 
           val increaseAfterPaymentContent = Option(document.getElementById("p6"))
           increaseAfterPaymentContent.isDefined shouldBe false
@@ -166,8 +166,8 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
           res should have(
             httpStatus(OK)
           )
-          sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData()))
-          continueButton.attr("href") shouldBe enterPOAAmountUrl
+          sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData()))
+          continueButton.attr("href") shouldBe enterPoaAmountUrl
 
           val increaseAfterPaymentContent = Option(document.getElementById("p6"))
           increaseAfterPaymentContent.isDefined shouldBe true
@@ -209,8 +209,8 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
         res should have(
           httpStatus(OK)
         )
-        sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData()))
-        continueButton.attr("href") shouldBe enterPOAAmountUrl
+        sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData()))
+        continueButton.attr("href") shouldBe enterPoaAmountUrl
 
         val increaseAfterPaymentContent = Option(document.getElementById("p6"))
         increaseAfterPaymentContent.isDefined shouldBe true
@@ -262,7 +262,7 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
       )
 
       And("A session has been created with journeyCompleted flag set to true")
-      await(sessionService.setMongoData(Some(PoAAmendmentData(poaAdjustmentReason = None, newPoAAmount = None, journeyCompleted = true))))
+      await(sessionService.setMongoData(Some(PoaAmendmentData(poaAdjustmentReason = None, newPoaAmount = None, journeyCompleted = true))))
 
       When(s"I call GET $whatYouNeedToKnowUrl")
       val res = get("/adjust-poa/what-you-need-to-know")

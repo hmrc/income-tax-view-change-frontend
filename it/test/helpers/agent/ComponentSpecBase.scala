@@ -272,7 +272,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getTaxYears(additionalCookies: Map[String, String] = Map.empty): WSResponse =
       getWithClientDetailsInSession("/agents/tax-years", additionalCookies)
 
-    def getPOAWhatYouNeedToKnow(clientDetails: Map[String, String] = Map.empty): WSResponse = get("/adjust-poa/what-you-need-to-know", clientDetails)
+    def getPoaWhatYouNeedToKnow(clientDetails: Map[String, String] = Map.empty): WSResponse = get("/adjust-poa/what-you-need-to-know", clientDetails)
 
     def getCeaseUKProperty(additionalCookies: Map[String, String] = Map.empty): WSResponse =
       getWithClientDetailsInSession("/agents/manage-your-businesses/cease/uk-property-confirm-cease", additionalCookies)

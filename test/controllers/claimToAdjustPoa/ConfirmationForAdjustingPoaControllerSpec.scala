@@ -23,7 +23,7 @@ import mocks.auth.MockAuthActions
 import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
 import mocks.services._
 import models.admin.AdjustPaymentsOnAccount
-import models.claimToAdjustPoa.{MainIncomeLower, PoAAmendmentData}
+import models.claimToAdjustPoa.{MainIncomeLower, PoaAmendmentData}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
@@ -44,13 +44,13 @@ class ConfirmationForAdjustingPoaControllerSpec extends TestSupport
   with MockClaimToAdjustPoaCalculationService
   with MockAuthActions {
 
-  val poa: PoAAmendmentData = PoAAmendmentData(
+  val poa: PoaAmendmentData = PoaAmendmentData(
     None,
     Some(20.0)
   )
 
-  val validSession: PoAAmendmentData = PoAAmendmentData(Some(MainIncomeLower), Some(BigDecimal(1000.00)))
-  val emptySession: PoAAmendmentData = PoAAmendmentData(None, None)
+  val validSession: PoaAmendmentData = PoaAmendmentData(Some(MainIncomeLower), Some(BigDecimal(1000.00)))
+  val emptySession: PoaAmendmentData = PoaAmendmentData(None, None)
 
   object TestConfirmationForAdjustingPoaController extends ConfirmationForAdjustingPoaController(
     authActions = mockAuthActions,
@@ -88,7 +88,7 @@ class ConfirmationForAdjustingPoaControllerSpec extends TestSupport
       "FS is enabled and the journeyCompleted flag is set to true in session" in {
         enable(AdjustPaymentsOnAccount)
         mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoAAmendmentData(None, None, journeyCompleted = true)))))
+        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true)))))
         setupMockGetPaymentsOnAccount()
         setupMockTaxYearNotCrystallised()
 

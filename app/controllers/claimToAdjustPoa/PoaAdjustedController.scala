@@ -21,7 +21,7 @@ import auth.authV2.AuthActions
 import cats.data.EitherT
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.AfterSubmissionPage
-import models.claimToAdjustPoa.{Increase, PaymentOnAccountViewModel, PoAAmendmentData, SelectYourReason}
+import models.claimToAdjustPoa.{Increase, PaymentOnAccountViewModel, PoaAmendmentData, SelectYourReason}
 import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -56,16 +56,16 @@ class PoaAdjustedController @Inject()(val authActions: AuthActions,
       } recover logAndRedirect
   }
 
-  private def checkAndLogAPIDataSet(session: PoAAmendmentData, poa: PaymentOnAccountViewModel): Unit = {
-    if (session.newPoAAmount.contains(poa.totalAmountOne)) {
+  private def checkAndLogAPIDataSet(session: PoaAmendmentData, poa: PaymentOnAccountViewModel): Unit = {
+    if (session.newPoaAmount.contains(poa.totalAmountOne)) {
       Logger("application").info(s"Amount returned from API equals amount in mongo: ${poa.totalAmountOne}")
     }
     else {
-      Logger("application").error(s"Amount returned from API: ${poa.totalAmountOne} does not equal amount in mongo: ${session.newPoAAmount}")
+      Logger("application").error(s"Amount returned from API: ${poa.totalAmountOne} does not equal amount in mongo: ${session.newPoaAmount}")
     }
   }
 
-  private def handleView(poa: PaymentOnAccountViewModel, session: PoAAmendmentData)(implicit user: MtdItUser[_]): Future[Result] = {
+  private def handleView(poa: PaymentOnAccountViewModel, session: PoaAmendmentData)(implicit user: MtdItUser[_]): Future[Result] = {
     poaSessionService.setCompletedJourney(hc, ec).flatMap {
       case Right(_) => Future.successful(
         Ok(view(user.isAgent(), poa.taxYear, poa.totalAmountOne, showOverdueCharges(poa.taxYear, session.poaAdjustmentReason))))

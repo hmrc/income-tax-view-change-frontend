@@ -32,7 +32,7 @@ import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{OK, POST, contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import testConstants.BaseTestConstants
-import testConstants.claimToAdjustPOA.ClaimToAdjustPOATestConstants.testPoa1Maybe
+import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.testPoa1Maybe
 import testUtils.{TestSupport, ViewSpec}
 import views.html.claimToAdjustPoa.SelectYourReasonView
 
@@ -80,7 +80,7 @@ class SelectYourReasonControllerSpec extends TestSupport
     totalAmountOne = 1000.0,
     totalAmountTwo = 1000.0))
 
-  def setupTest(sessionResponse: Either[Throwable, Option[PoAAmendmentData]], claimToAdjustResponse: Option[PaymentOnAccountViewModel]): Unit = {
+  def setupTest(sessionResponse: Either[Throwable, Option[PoaAmendmentData]], claimToAdjustResponse: Option[PaymentOnAccountViewModel]): Unit = {
     enable(AdjustPaymentsOnAccount)
     mockSingleBISWithCurrentYearAsMigrationYear()
     setupMockGetPaymentsOnAccount(claimToAdjustResponse)
@@ -92,7 +92,7 @@ class SelectYourReasonControllerSpec extends TestSupport
 
     s"return status $SEE_OTHER and set Reason when new amount is greater than current amount" in {
       setupTest(
-        sessionResponse = Right(Some(PoAAmendmentData(newPoAAmount = Some(20000.0)))),
+        sessionResponse = Right(Some(PoaAmendmentData(newPoaAmount = Some(20000.0)))),
         claimToAdjustResponse = testPoa1Maybe)
 
       setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(Increase)
@@ -106,7 +106,7 @@ class SelectYourReasonControllerSpec extends TestSupport
     s"return status $SEE_OTHER" when {
       "Adjust Payments On Account FS is Disabled" in {
         setupTest(
-          sessionResponse = Right(Some(PoAAmendmentData(newPoAAmount = Some(20000.0)))),
+          sessionResponse = Right(Some(PoaAmendmentData(newPoaAmount = Some(20000.0)))),
           claimToAdjustResponse = testPoa1Maybe)
 
         disable(AdjustPaymentsOnAccount)
@@ -125,7 +125,7 @@ class SelectYourReasonControllerSpec extends TestSupport
       }
       "Adjust Payments On Account FS is Enabled but journeyCompleted flag is true" in {
         setupTest(
-          sessionResponse = Right(Some(PoAAmendmentData(None, newPoAAmount = Some(20000.0), journeyCompleted = true))),
+          sessionResponse = Right(Some(PoaAmendmentData(None, newPoaAmount = Some(20000.0), journeyCompleted = true))),
           claimToAdjustResponse = testPoa1Maybe)
 
         setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(Increase)
@@ -148,7 +148,7 @@ class SelectYourReasonControllerSpec extends TestSupport
         "the user previously selected the AllowanceOrReliefHigher checkbox" in {
           setupTest(
             sessionResponse = Right(Some(
-              PoAAmendmentData(newPoAAmount = Some(200.0), poaAdjustmentReason = Some(AllowanceOrReliefHigher))
+              PoaAmendmentData(newPoaAmount = Some(200.0), poaAdjustmentReason = Some(AllowanceOrReliefHigher))
             )),
             claimToAdjustResponse = testPoa1Maybe
           )
@@ -170,7 +170,7 @@ class SelectYourReasonControllerSpec extends TestSupport
       s"in normal mode and session data has no poaAdjustmentReason data" when {
         "user is agent" in {
           setupTest(
-            sessionResponse = Right(Some(PoAAmendmentData())),
+            sessionResponse = Right(Some(PoaAmendmentData())),
             claimToAdjustResponse = testPoa1Maybe)
 
           setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
@@ -181,7 +181,7 @@ class SelectYourReasonControllerSpec extends TestSupport
 
         "user is not agent" in {
           setupTest(
-            sessionResponse = Right(Some(PoAAmendmentData())),
+            sessionResponse = Right(Some(PoaAmendmentData())),
             claimToAdjustResponse = testPoa1Maybe)
 
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
@@ -194,7 +194,7 @@ class SelectYourReasonControllerSpec extends TestSupport
       s"in normal mode and session data has valid poaAdjustmentReason data" when {
         "user is agent" in {
           setupTest(
-            sessionResponse = Right(Some(PoAAmendmentData(poaAdjustmentReason = Some(MoreTaxedAtSource)))),
+            sessionResponse = Right(Some(PoaAmendmentData(poaAdjustmentReason = Some(MoreTaxedAtSource)))),
             claimToAdjustResponse = testPoa1Maybe)
           val result = TestSelectYourReasonController.show(isAgent = true, mode = NormalMode)(fakeRequestConfirmedClient())
 
@@ -205,7 +205,7 @@ class SelectYourReasonControllerSpec extends TestSupport
 
         "user is not agent" in {
           setupTest(
-            sessionResponse = Right(Some(PoAAmendmentData(poaAdjustmentReason = Some(OtherIncomeLower)))),
+            sessionResponse = Right(Some(PoaAmendmentData(poaAdjustmentReason = Some(OtherIncomeLower)))),
             claimToAdjustResponse = testPoa1Maybe)
 
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
@@ -229,7 +229,7 @@ class SelectYourReasonControllerSpec extends TestSupport
 
       "POA data is missing" in {
         setupTest(
-          sessionResponse = Right(Some(PoAAmendmentData())),
+          sessionResponse = Right(Some(PoaAmendmentData())),
           claimToAdjustResponse = None)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestSelectYourReasonController.show(isAgent = false, mode = NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
@@ -256,7 +256,7 @@ class SelectYourReasonControllerSpec extends TestSupport
       s"no option is selected" in {
 
         setupTest(
-          sessionResponse = Right(Some(PoAAmendmentData())),
+          sessionResponse = Right(Some(PoaAmendmentData())),
           claimToAdjustResponse = testPoa1Maybe)
 
         val request = FakeRequest(POST, routes.SelectYourReasonController.submit(isAgent = false, mode = NormalMode).url)
@@ -276,7 +276,7 @@ class SelectYourReasonControllerSpec extends TestSupport
         "if 'totalAmount' is equal to or greater than 'poaRelevantAmount'" in {
 
           setupTest(
-            sessionResponse = Right(Some(PoAAmendmentData())),
+            sessionResponse = Right(Some(PoaAmendmentData())),
             claimToAdjustResponse = testPoa1Maybe)
 
           setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(MainIncomeLower)
@@ -294,7 +294,7 @@ class SelectYourReasonControllerSpec extends TestSupport
 
         "if 'totalAmount' is less than 'poaRelevantAmount'" in {
           setupTest(
-            sessionResponse = Right(Some(PoAAmendmentData(newPoAAmount = Some(5000.0)))),
+            sessionResponse = Right(Some(PoaAmendmentData(newPoaAmount = Some(5000.0)))),
             claimToAdjustResponse = poaTotalLessThanRelevant)
 
           setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(MainIncomeLower)
@@ -314,7 +314,7 @@ class SelectYourReasonControllerSpec extends TestSupport
       "in check mode" when {
         "if 'totalAmount' is equal to or greater than 'poaRelevantAmount'" in {
           setupTest(
-            sessionResponse = Right(Some(PoAAmendmentData())),
+            sessionResponse = Right(Some(PoaAmendmentData())),
             claimToAdjustResponse = testPoa1Maybe
           )
 
@@ -342,7 +342,7 @@ class SelectYourReasonControllerSpec extends TestSupport
 
         "if 'totalAmount' is less than 'poaRelevantAmount'" in {
           setupTest(
-            sessionResponse = Right(Some(PoAAmendmentData(newPoAAmount = Some(5000.0)))),
+            sessionResponse = Right(Some(PoaAmendmentData(newPoaAmount = Some(5000.0)))),
             claimToAdjustResponse = poaTotalLessThanRelevant
           )
 

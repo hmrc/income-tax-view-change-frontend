@@ -16,25 +16,25 @@
 
 package services
 
-import models.claimToAdjustPoa.{MainIncomeLower, PoAAmendmentData, PoASessionData}
+import models.claimToAdjustPoa.{MainIncomeLower, PoaAmendmentData, PoaSessionData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import org.scalactic.Fail
-import repositories.PoAAmendmentDataRepository
+import repositories.PoaAmendmentDataRepository
 import testUtils.TestSupport
 
 import scala.concurrent.Future
 
 class PaymentOnAccountViewModelSessionServiceSpec extends TestSupport {
 
-  val mockRepository: PoAAmendmentDataRepository = mock(classOf[PoAAmendmentDataRepository])
+  val mockRepository: PoaAmendmentDataRepository = mock(classOf[PoaAmendmentDataRepository])
 
   object TestPaymentOnAccountSessionService extends PaymentOnAccountSessionService(
     mockRepository)
 
-  val ammendmentData: PoAAmendmentData = PoAAmendmentData(poaAdjustmentReason = Some(MainIncomeLower), newPoAAmount = None)
+  val ammendmentData: PoaAmendmentData = PoaAmendmentData(poaAdjustmentReason = Some(MainIncomeLower), newPoaAmount = None)
 
-  val sessionData: PoASessionData = PoASessionData(
+  val sessionData: PoaSessionData = PoaSessionData(
     sessionId = "session-123456",
     poaAmendmentData = Some(ammendmentData)
   )
@@ -77,17 +77,17 @@ class PaymentOnAccountViewModelSessionServiceSpec extends TestSupport {
       }
     }
   }
-  "PaymentOnAccountSessionService.setNewPoAAmount" should {
+  "PaymentOnAccountSessionService.setNewPoaAmount" should {
     "update the PoA amount" in {
       when(mockRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
       when(mockRepository.set(any())).thenReturn(Future.successful(true))
-      val result = TestPaymentOnAccountSessionService.setNewPoAAmount(100.00)
+      val result = TestPaymentOnAccountSessionService.setNewPoaAmount(100.00)
       result.futureValue shouldBe Right(())
     }
     "return an error" when {
       "no mongo session can be found" in {
         when(mockRepository.get(any())).thenReturn(Future.successful(None))
-        val result = TestPaymentOnAccountSessionService.setNewPoAAmount(100.00)
+        val result = TestPaymentOnAccountSessionService.setNewPoaAmount(100.00)
         result.futureValue match {
           case Left(ex) => ex.getMessage shouldBe "No active mongo session found"
           case _ => Fail

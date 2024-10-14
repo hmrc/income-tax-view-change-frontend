@@ -18,7 +18,7 @@ package utils.claimToAdjust
 
 import auth.MtdItUser
 import enums.IncomeSourceJourney._
-import models.claimToAdjustPoa.PoAAmendmentData
+import models.claimToAdjustPoa.PoaAmendmentData
 import play.api.Logger
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
@@ -34,7 +34,7 @@ trait JourneyCheckerClaimToAdjust extends ClaimToAdjustUtils with ErrorRecovery 
   val poaSessionService: PaymentOnAccountSessionService
   implicit val ec: ExecutionContext
 
-  def withSessionData(journeyState: JourneyState = BeforeSubmissionPage)(codeBlock: PoAAmendmentData => Future[Result])
+  def withSessionData(journeyState: JourneyState = BeforeSubmissionPage)(codeBlock: PoaAmendmentData => Future[Result])
                      (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     ifAdjustPoaIsEnabled(user.isAgent()) {
       if (journeyState == InitialPage) {
@@ -68,9 +68,9 @@ trait JourneyCheckerClaimToAdjust extends ClaimToAdjustUtils with ErrorRecovery 
     }
   }
 
-  private def handleSession(codeBlock: PoAAmendmentData => Future[Result])(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Result] = {
+  private def handleSession(codeBlock: PoaAmendmentData => Future[Result])(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Result] = {
     poaSessionService.getMongo flatMap {
-      case Right(Some(poaData: PoAAmendmentData)) =>
+      case Right(Some(poaData: PoaAmendmentData)) =>
         if (poaData.journeyCompleted) {
           Logger("application").info(s"The current active mongo Claim to Adjust POA session has been completed by the user, so a new session will be created")
           poaSessionService.createSession.flatMap {
@@ -86,7 +86,7 @@ trait JourneyCheckerClaimToAdjust extends ClaimToAdjustUtils with ErrorRecovery 
       case Right(None) =>
         Logger("application").info(s"There is no active mongo Claim to Adjust POA session, so a new one will be created")
         poaSessionService.createSession.flatMap(
-          _ => codeBlock(PoAAmendmentData())
+          _ => codeBlock(PoaAmendmentData())
         )
       case Left(ex) =>
         Future.successful(logAndRedirect(

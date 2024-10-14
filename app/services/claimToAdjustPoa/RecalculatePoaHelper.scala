@@ -22,7 +22,7 @@ import audit.models.AdjustPaymentsOnAccountAuditModel
 import config.featureswitch.FeatureSwitching
 import controllers.routes.HomeController
 import models.admin.AdjustPaymentsOnAccount
-import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoAAmendmentData}
+import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoaAmendmentData}
 import models.core.Nino
 import play.api.Logger
 import play.api.i18n.{Lang, Messages,LangImplicits}
@@ -36,9 +36,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait RecalculatePoaHelper extends  FeatureSwitching with LangImplicits with ErrorRecovery {
   private def dataFromSession(poaSessionService: PaymentOnAccountSessionService)(implicit hc: HeaderCarrier, ec: ExecutionContext)
-  : Future[PoAAmendmentData] = {
+  : Future[PoaAmendmentData] = {
     poaSessionService.getMongo(hc, ec).flatMap {
-      case Right(Some(newPoaData: PoAAmendmentData)) =>
+      case Right(Some(newPoaData: PoaAmendmentData)) =>
         Future.successful(newPoaData)
       case _ =>
         Future.failed(new Exception(s"Failed to retrieve session data"))
@@ -46,11 +46,11 @@ trait RecalculatePoaHelper extends  FeatureSwitching with LangImplicits with Err
   }
 
   private def handlePoaAndOtherData(poa: PaymentOnAccountViewModel,
-                                    otherData: PoAAmendmentData, nino: Nino, ctaCalculationService: ClaimToAdjustPoaCalculationService, auditingService: AuditingService)
+                                    otherData: PoaAmendmentData, nino: Nino, ctaCalculationService: ClaimToAdjustPoaCalculationService, auditingService: AuditingService)
                                      (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
     implicit val lang : Lang = Lang("en")
     otherData match {
-      case PoAAmendmentData(Some(poaAdjustmentReason), Some(amount), _) =>
+      case PoaAmendmentData(Some(poaAdjustmentReason), Some(amount), _) =>
         ctaCalculationService.recalculate(nino, poa.taxYear, amount, poaAdjustmentReason) map {
           case Left(ex) =>
             Logger("application").error(s"POA recalculation request failed: ${ex.getMessage}")
@@ -74,7 +74,7 @@ trait RecalculatePoaHelper extends  FeatureSwitching with LangImplicits with Err
             ))
             Redirect(controllers.claimToAdjustPoa.routes.PoaAdjustedController.show(user.isAgent()))
         }
-      case PoAAmendmentData(_, _, _) =>
+      case PoaAmendmentData(_, _, _) =>
         Future.successful(logAndRedirect("Missing poaAdjustmentReason and/or amount"))
     }
   }

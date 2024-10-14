@@ -28,7 +28,7 @@ import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
 import play.api.Logger
 import services.DateServiceInterface
-import services.claimToAdjustPoa.ClaimToAdjustHelper.{POA1, POA2, isPoAOne, isPoATwo, poaDocumentDescriptions}
+import services.claimToAdjustPoa.ClaimToAdjustHelper.{POA1, POA2, isPoaOne, isPoaTwo, poaDocumentDescriptions}
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
 import java.time.{LocalDate, Month}
@@ -46,7 +46,7 @@ trait ClaimToAdjustHelper {
   val sortByTaxYear: List[DocumentDetail] => List[DocumentDetail] =
     _.sortBy(_.taxYear).reverse
 
-  protected case class FinancialDetailsAndPoAModel(financialDetails: Option[FinancialDetailsModel],
+  protected case class FinancialDetailsAndPoaModel(financialDetails: Option[FinancialDetailsModel],
                                                    poaModel: Option[PaymentOnAccountViewModel])
 
   protected case class FinancialDetailAndChargeRefMaybe(documentDetails: List[DocumentDetail],
@@ -56,8 +56,8 @@ trait ClaimToAdjustHelper {
                                poaPreviouslyAdjusted: Option[Boolean] = None): Either[Throwable, Option[PaymentOnAccountViewModel]] = {
     {
       for {
-        poaOneDocDetail <- documentDetails.find(isPoAOne)
-        poaTwoDocDetail <- documentDetails.find(isPoATwo)
+        poaOneDocDetail <- documentDetails.find(isPoaOne)
+        poaTwoDocDetail <- documentDetails.find(isPoaTwo)
         latestDocumentDetail = poaTwoDocDetail
         poaTwoDueDate <- poaTwoDocDetail.documentDueDate
         taxReturnDeadline = getTaxReturnDeadline(poaTwoDueDate)
@@ -153,7 +153,7 @@ trait ClaimToAdjustHelper {
     }
   }
 
-  protected def arePoAPaymentsPresent(documentDetails: List[DocumentDetail]): Option[TaxYear] = {
+  protected def arePoaPaymentsPresent(documentDetails: List[DocumentDetail]): Option[TaxYear] = {
     documentDetails.filter(_.documentDescription.exists(description => poaDocumentDescriptions.contains(description)))
       .sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
   }
@@ -161,8 +161,8 @@ trait ClaimToAdjustHelper {
   def getAmendablePoaViewModel(documentDetails: List[DocumentDetail],
                                poasHaveBeenAdjustedPreviously: Boolean): Either[Throwable, PaymentOnAccountViewModel] = {
     val res  = for {
-      poaOneDocDetail <- documentDetails.find(isPoAOne)
-      poaTwoDocDetail <- documentDetails.find(isPoATwo)
+      poaOneDocDetail <- documentDetails.find(isPoaOne)
+      poaTwoDocDetail <- documentDetails.find(isPoaTwo)
       latestDocumentDetail = poaTwoDocDetail
       poaTwoDueDate <- poaTwoDocDetail.documentDueDate
       taxReturnDeadline = getTaxReturnDeadline(poaTwoDueDate)
@@ -201,7 +201,7 @@ trait ClaimToAdjustHelper {
   protected def isSubsequentAdjustment(chargeHistoryConnector: ChargeHistoryConnector, chargeReference: Option[String])
                                       (implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Boolean]] = {
     chargeHistoryConnector.getChargeHistory(user.nino, chargeReference) map {
-      case ChargesHistoryModel(_, _, _, Some(charges)) if charges.filter(_.isPoA).exists(_.poaAdjustmentReason.isDefined) => Right(true)
+      case ChargesHistoryModel(_, _, _, Some(charges)) if charges.filter(_.isPoa).exists(_.poaAdjustmentReason.isDefined) => Right(true)
       case ChargesHistoryModel(_, _, _, _) => Right(false)
       case ChargesHistoryErrorModel(code, message) =>
         Logger("application").error("getChargeHistory returned a non-valid response")
@@ -211,13 +211,13 @@ trait ClaimToAdjustHelper {
 
   private def extractPoaChargeHistory(chargeHistories: List[ChargeHistoryModel]): Option[ChargeHistoryModel] = {
     // We are not differentiating between POA 1 & 2 as records for both should match since they are always amended together
-    chargeHistories.find(chargeHistoryModel => chargeHistoryModel.isPoA)
+    chargeHistories.find(chargeHistoryModel => chargeHistoryModel.isPoa)
   }
 
   // TODO: re-write with the use of EitherT
-  protected def toFinancialDetail(financialPoaDetails: Either[Throwable, FinancialDetailsAndPoAModel]): Either[Throwable, Option[FinancialDetail]] = {
+  protected def toFinancialDetail(financialPoaDetails: Either[Throwable, FinancialDetailsAndPoaModel]): Either[Throwable, Option[FinancialDetail]] = {
     financialPoaDetails match {
-      case Right(FinancialDetailsAndPoAModel(Some(finDetails), _)) =>
+      case Right(FinancialDetailsAndPoaModel(Some(finDetails), _)) =>
         finDetails.financialDetails.headOption match {
           case Some(detail) => Right(Some(detail))
           case None => Left(new Exception("No financial details found for this charge"))
@@ -246,11 +246,11 @@ object ClaimToAdjustHelper {
 
   protected val poaDocumentDescriptions: List[String] = List(POA1, POA2)
 
-  val isPoAOne: DocumentDetail => Boolean = _.documentDescription.contains(POA1)
+  val isPoaOne: DocumentDetail => Boolean = _.documentDescription.contains(POA1)
 
-  val isPoATwo: DocumentDetail => Boolean = _.documentDescription.contains(POA2)
+  val isPoaTwo: DocumentDetail => Boolean = _.documentDescription.contains(POA2)
 
-  val isPoA: DocumentDetail => Boolean = documentDetail => isPoAOne(documentDetail) || isPoATwo(documentDetail)
+  val isPoa: DocumentDetail => Boolean = documentDetail => isPoaOne(documentDetail) || isPoaTwo(documentDetail)
 
-  val isPoADocumentDescription: String => Boolean = poaDocumentDescriptions.contains(_)
+  val isPoaDocumentDescription: String => Boolean = poaDocumentDescriptions.contains(_)
 }

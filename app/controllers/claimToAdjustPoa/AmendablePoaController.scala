@@ -35,7 +35,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AmendablePOAController @Inject()(val authActions: AuthActions,
+class AmendablePoaController @Inject()(val authActions: AuthActions,
                                        val claimToAdjustService: ClaimToAdjustService,
                                        val poaSessionService: PaymentOnAccountSessionService,
                                        view: AmendablePaymentOnAccount)

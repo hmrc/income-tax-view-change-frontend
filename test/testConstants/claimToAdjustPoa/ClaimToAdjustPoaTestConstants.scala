@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package testConstants.claimToAdjustPOA
+package testConstants.claimToAdjustPoa
 
 import models.claimToAdjustPoa.{PaymentOnAccountViewModel, WhatYouNeedToKnowViewModel}
 import models.core.NormalMode
@@ -26,7 +26,7 @@ import models.chargeHistory.ChargeHistoryModel
 
 import java.time.LocalDate
 
-object ClaimToAdjustPOATestConstants {
+object ClaimToAdjustPoaTestConstants {
 
   def genericFinancialDetailPOA1(taxYearEnd: Int, outstandingAmount: BigDecimal = 0.0) = FinancialDetail(
     taxYear = taxYearEnd.toString,
@@ -88,43 +88,43 @@ object ClaimToAdjustPOATestConstants {
     financialDetails = List.empty,
   )
 
-  def financialDetailsWithUnpaidPoAs(taxYearEnd: Int): FinancialDetailsModel = FinancialDetailsModel(
+  def financialDetailsWithUnpaidPoas(taxYearEnd: Int): FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     documentDetails = List(genericDocumentDetailPOA1(taxYearEnd), genericDocumentDetailPOA2(taxYearEnd)),
     financialDetails = List(genericFinancialDetailPOA1(taxYearEnd, 150.00), genericFinancialDetailPOA2(taxYearEnd, 250.00))
   )
 
-  def genericUserPOADetails(taxYearEnd: Int): FinancialDetailsModel = FinancialDetailsModel(
+  def genericUserPoaDetails(taxYearEnd: Int): FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     documentDetails = List(genericDocumentDetailPOA1(taxYearEnd), genericDocumentDetailPOA2(taxYearEnd)),
     financialDetails = List.empty,
   )
 
-  def genericUserPOADetailsPOA1Only(taxYearEnd: Int): FinancialDetailsModel = FinancialDetailsModel(
+  def genericUserPoaDetailsPOA1Only(taxYearEnd: Int): FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     documentDetails = List(genericDocumentDetailPOA1(taxYearEnd)),
     financialDetails = List.empty,
   )
 
-  def genericUserPOADetailsPOA2Only(taxYearEnd: Int): FinancialDetailsModel = FinancialDetailsModel(
+  def genericUserPoaDetailsPOA2Only(taxYearEnd: Int): FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     documentDetails = List(genericDocumentDetailPOA1(taxYearEnd)),
     financialDetails = List.empty,
   )
 
-  val userPOADetails2023OnlyPOA1: FinancialDetailsModel = FinancialDetailsModel(
+  val userPoaDetails2023OnlyPOA1: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     documentDetails = List(genericDocumentDetailPOA1(2023)),
     financialDetails = List.empty,
   )
 
-  val userPOADetails2023OnlyPOA2: FinancialDetailsModel = FinancialDetailsModel(
+  val userPoaDetails2023OnlyPOA2: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     documentDetails = List(genericDocumentDetailPOA2(2023)),
     financialDetails = List.empty,
   )
 
-  val userNoPOADetails: FinancialDetailsModel = FinancialDetailsModel(
+  val userNoPoaDetails: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     documentDetails = List.empty,
     financialDetails = List.empty,

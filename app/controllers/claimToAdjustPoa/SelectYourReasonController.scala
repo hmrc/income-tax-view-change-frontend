@@ -51,7 +51,7 @@ class SelectYourReasonController @Inject()(val authActions: AuthActions,
   def show(isAgent: Boolean, mode: Mode): Action[AnyContent] = authActions.individualOrAgentWithClient async {
     implicit user =>
       withSessionDataAndPoa() { (session, poa) =>
-        session.newPoAAmount match {
+        session.newPoaAmount match {
           case Some(amount) if amount >= poa.totalAmount =>
             saveValueAndRedirect(mode, Increase, poa)
           case _ =>
@@ -87,7 +87,7 @@ class SelectYourReasonController @Inject()(val authActions: AuthActions,
     } yield {
       res match {
         case _ => (mode, poa.totalAmountLessThanPoa) match {
-          case (NormalMode, false) if value != Increase => Redirect(EnterPoAAmountController.show(user.isAgent(), NormalMode))
+          case (NormalMode, false) if value != Increase => Redirect(EnterPoaAmountController.show(user.isAgent(), NormalMode))
           case (_, _) => Redirect(CheckYourAnswersController.show(user.isAgent()))
         }
       }
