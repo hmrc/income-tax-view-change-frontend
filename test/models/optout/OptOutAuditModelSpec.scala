@@ -20,8 +20,11 @@ import audit.models.{OptOutAuditModel, Outcome}
 import auth.MtdItUser
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus.{Annual, NoStatus, Voluntary}
 import play.api.http.Status.OK
+import play.api.libs.json.Json
 import services.optout.{OptOutProposition, OptOutTestSupport}
+import testConstants.BaseTestConstants.testNino
 import testUtils.TestSupport
 
 class OptOutAuditModelSpec extends TestSupport {
@@ -31,7 +34,9 @@ class OptOutAuditModelSpec extends TestSupport {
   implicit val user: MtdItUser[_] = tsTestUser
 
   "OptOutAuditModelSpec.generateOptOutAudit" when {
+
     "user opt out of quarterly reporting is submitted" should {
+
       "generated OptOutAuditModel should contain all the correct data" in {
 
         val intentTextYear: TaxYear = TaxYear(22, 23)
@@ -40,8 +45,9 @@ class OptOutAuditModelSpec extends TestSupport {
         val expectedOutcome: Outcome = Outcome(isSuccessful = true, None, None)
 
         auditModel.nino shouldEqual user.nino
-        auditModel.currentYear shouldEqual TaxYear(2023, 2024)
-        auditModel.auditType shouldEqual "ClientDetailsConfirmed"
+        auditModel.currentYear shouldEqual TaxYear(2023, 2024).formatTaxYearRange
+        auditModel.auditType shouldEqual "OptOutQuarterlyReportingRequest"
+        auditModel.transactionName shouldEqual "opt-out-quarterly-reporting-request"
         auditModel.outcome shouldEqual expectedOutcome
 
       }
@@ -54,9 +60,55 @@ class OptOutAuditModelSpec extends TestSupport {
         val expectedOutcome: Outcome = Outcome(isSuccessful = false, Some("API_FAILURE"), Some("Failure reasons"))
 
         auditModel.outcome shouldEqual expectedOutcome
-
       }
+    }
+  }
 
+  "OptOutAuditModelSpec.details" when {
+
+    "given a full model" should {
+
+      "create the correct output json" in {
+
+        val taxYear: TaxYear = TaxYear(22, 23)
+        val expectedOutcome: Outcome = Outcome(isSuccessful = true, None, None)
+
+        val auditModel: OptOutAuditModel =
+          OptOutAuditModel(
+            tsTestUser,
+            nino = testNino,
+            outcome = expectedOutcome,
+            optOutRequestedFromTaxYear = taxYear.previousYear.formatTaxYearRange,
+            currentYear = taxYear.formatTaxYearRange,
+            beforeITSAStatusCurrentYearMinusOne = Voluntary,
+            beforeITSAStatusCurrentYear = NoStatus,
+            beforeITSAStatusCurrentYearPlusOne = NoStatus,
+            afterAssumedITSAStatusCurrentYearMinusOne = Annual,
+            afterAssumedITSAStatusCurrentYear = NoStatus,
+            afterAssumedITSAStatusCurrentYearPlusOne = Annual,
+            currentYearMinusOneCrystallised = false
+          )
+
+        auditModel.detail shouldBe
+          Json.obj(
+            "saUtr" -> "1234567890",
+            "credId" -> "12345-credId",
+            "mtditid" -> "XAIT0000123456",
+            "userType" -> "Individual",
+            "agentReferenceNumber" -> null,
+            "nino" -> "AB123456C",
+            "outcome" -> Json.obj("isSuccessful" -> true),
+            "optOutRequestedFromTaxYear" -> "21-22",
+            "currentYear" -> "22-23",
+            "beforeITSAStatusCurrentYearMinusOne" -> "MTD Voluntary",
+            "beforeITSAStatusCurrentYear" -> "No Status",
+            "beforeITSAStatusCurrentYearPlusOne" -> "No Status",
+            "afterAssumedITSAStatusCurrentYearMinusOne" -> "Annual",
+            "afterAssumedITSAStatusCurrentYear" -> "No Status",
+            "afterAssumedITSAStatusCurrentYearPlusOne" -> "Annual",
+            "currentYearMinusOneCrystallised" -> false
+          )
+      }
     }
   }
 }
