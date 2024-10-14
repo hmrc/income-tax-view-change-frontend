@@ -32,14 +32,13 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.OptOutSessionDataRepository
 import services.NextUpdatesService
 import services.optout.OptOutProposition.createOptOutProposition
-import testUtils.UnitSpec
+import testUtils.{TestSupport, UnitSpec}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class OptOutServiceMakeOptOutUpdateRequestSpec
-  extends UnitSpec
+  extends TestSupport
     with BeforeAndAfter
     with MockITSAStatusService
     with MockCalculationListService
@@ -54,8 +53,7 @@ class OptOutServiceMakeOptOutUpdateRequestSpec
   val service: OptOutService = new OptOutService(optOutConnector, mockITSAStatusService, mockCalculationListService,
     nextUpdatesService, mockDateService, repository, auditingService)
 
-  implicit val user: MtdItUser[_] = mock(classOf[MtdItUser[_]])
-  implicit val hc: HeaderCarrier = mock(classOf[HeaderCarrier])
+  implicit val user: MtdItUser[_] = tsTestUser
 
   val sessionIdValue = "123"
 
@@ -64,15 +62,10 @@ class OptOutServiceMakeOptOutUpdateRequestSpec
     "one year available for opt-out; end-year 2023" should {
       "return successful response" in {
 
-        val taxableEntityId = "456"
         val currentYearNum = 2024
         val currentTaxYear: TaxYear = TaxYear.forYearEnd(currentYearNum)
 
-        when(user.nino).thenReturn(taxableEntityId)
-
         when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
-
-        when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
 
         when(repository.recallOptOutProposition()).thenReturn(
           Future(Some(
@@ -104,9 +97,6 @@ class OptOutServiceMakeOptOutUpdateRequestSpec
         val currentTaxYear: TaxYear = TaxYear.forYearEnd(currentYear)
         val previousTaxYear: TaxYear = currentTaxYear.previousYear
 
-        when(user.nino).thenReturn(taxableEntityId)
-
-        when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
         when(repository.recallOptOutProposition())
           .thenReturn(Future(Some(
             createOptOutProposition(currentTaxYear, false, ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus)))
@@ -127,16 +117,11 @@ class OptOutServiceMakeOptOutUpdateRequestSpec
 
       "return successful response" in {
 
-        val taxableEntityId = "456"
         val currentYearNum = 2024
         val currentTaxYear: TaxYear = TaxYear.forYearEnd(currentYearNum)
         val previousTaxYear: TaxYear = currentTaxYear.previousYear
 
-        when(user.nino).thenReturn(taxableEntityId)
-
         when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
-
-        when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
 
         when(repository.recallOptOutProposition()).thenReturn(
           Future(Some(
@@ -164,16 +149,12 @@ class OptOutServiceMakeOptOutUpdateRequestSpec
 
       "return fail response" in {
 
-        val taxableEntityId = "456"
         val currentYearNum = 2024
         val currentTaxYear: TaxYear = TaxYear.forYearEnd(currentYearNum)
         val previousTaxYear: TaxYear = currentTaxYear.previousYear
 
-        when(user.nino).thenReturn(taxableEntityId)
-
         when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
 
-        when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
         when(repository.fetchSavedIntent()).thenReturn(Future(Some(previousTaxYear)))
 
         when(repository.recallOptOutProposition()).thenReturn(
@@ -208,7 +189,6 @@ class OptOutServiceMakeOptOutUpdateRequestSpec
         val previousTaxYear: TaxYear = currentTaxYear.previousYear
         val nextTaxYear: TaxYear = currentTaxYear.nextYear
 
-        when(user.nino).thenReturn(taxableEntityId)
         when(optOutConnector.optOut(previousTaxYear, taxableEntityId)).thenReturn(Future.successful(
           ITSAStatusUpdateResponseFailure.defaultFailure()
         ))
@@ -219,7 +199,6 @@ class OptOutServiceMakeOptOutUpdateRequestSpec
           ITSAStatusUpdateResponseSuccess()
         ))
 
-        when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
         when(repository.recallOptOutProposition()).thenReturn(Future.successful(Some(
           createOptOutProposition(currentTaxYear, false, ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus))))
 
