@@ -17,8 +17,7 @@
 package services.optout
 
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated}
+import models.itsaStatus.ITSAStatus.ITSAStatus
 
 case class OptOutProposition(previousTaxYear: PreviousOptOutTaxYear,
                              currentTaxYear: CurrentOptOutTaxYear,
@@ -37,8 +36,8 @@ case class OptOutProposition(previousTaxYear: PreviousOptOutTaxYear,
   val isMultiYearOptOut: Boolean = availableOptOutYears.size > 1
   val isNoOptOutAvailable: Boolean = availableOptOutYears.isEmpty
 
-  def optOutYearsToUpdate(intent: TaxYear): Seq[TaxYear] = {
-    availableOptOutYears.filter(_.shouldBeUpdated(intent)).map(_.taxYear)
+  def optOutYearsToUpdate(intent: TaxYear): Option[TaxYear] = {
+    availableOptOutYears.find(_.shouldBeUpdated(intent)).map(_.taxYear)
   }
 
   def optOutPropositionType: Option[OptOutPropositionTypes] = {
@@ -60,10 +59,10 @@ case class OptOutProposition(previousTaxYear: PreviousOptOutTaxYear,
 object OptOutProposition {
 
   def createOptOutProposition(currentYear: TaxYear,
-                                      previousYearCrystallised: Boolean,
-                                      previousYearItsaStatus: ITSAStatus,
-                                      currentYearItsaStatus: ITSAStatus,
-                                      nextYearItsaStatus: ITSAStatus): OptOutProposition = {
+                              previousYearCrystallised: Boolean,
+                              previousYearItsaStatus: ITSAStatus,
+                              currentYearItsaStatus: ITSAStatus,
+                              nextYearItsaStatus: ITSAStatus): OptOutProposition = {
 
     val previousYearOptOut = PreviousOptOutTaxYear(
       status = previousYearItsaStatus,
@@ -85,9 +84,3 @@ object OptOutProposition {
     OptOutProposition(previousYearOptOut, currentYearOptOut, nextYearOptOut)
   }
 }
-
-case class OptOutYearParams(currentYear: TaxYear,
-                            previousYearCrystallised: Boolean,
-                            previousYearItsaStatus: ITSAStatus,
-                            currentYearItsaStatus: ITSAStatus,
-                            nextYearItsaStatus: ITSAStatus)

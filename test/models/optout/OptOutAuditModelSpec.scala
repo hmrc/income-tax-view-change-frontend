@@ -20,17 +20,15 @@ import audit.models.{OptOutAuditModel, Outcome}
 import auth.MtdItUser
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import models.incomeSourceDetails.TaxYear
-import org.mockito.Mockito._
 import play.api.http.Status.OK
 import services.optout.{OptOutProposition, OptOutTestSupport}
-import testUtils.UnitSpec
-import uk.gov.hmrc.http.HeaderCarrier
+import testUtils.TestSupport
 
-class OptOutAuditModelSpec extends UnitSpec {
+class OptOutAuditModelSpec extends TestSupport {
 
   val optOutProposition: OptOutProposition = OptOutTestSupport.buildThreeYearOptOutProposition()
-  implicit val user: MtdItUser[_] = mock(classOf[MtdItUser[_]])
-  implicit val hc: HeaderCarrier = mock(classOf[HeaderCarrier])
+
+  implicit val user: MtdItUser[_] = tsTestUser
 
   "OptOutAuditModelSpec.generateOptOutAudit" when {
     "user opt out of quarterly reporting is submitted" should {

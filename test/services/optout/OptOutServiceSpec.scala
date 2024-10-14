@@ -17,7 +17,6 @@
 package services.optout
 
 import audit.AuditingService
-import auth.MtdItUser
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ErrorItem, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import mocks.services._
@@ -35,14 +34,11 @@ import repositories.OptOutSessionDataRepository
 import services.NextUpdatesService
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import services.optout.OptOutProposition.createOptOutProposition
-import services.reportingfreq.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
-import services.optout.OptOutServiceSpec.TaxYearAndCountOfSubmissionsForIt
 import services.optout.OptOutTestSupport._
+import services.reportingfreq.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
 import testConstants.ITSAStatusTestConstants.yearToStatus
-import testUtils.UnitSpec
-import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
+import testUtils.TestSupport
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 /*
@@ -59,28 +55,24 @@ import scala.concurrent.Future
 *
 * */
 
-object OptOutServiceSpec {
-  case class TaxYearAndCountOfSubmissionsForIt(taxYear: TaxYear, submissions: Int)
-}
+case class TaxYearAndCountOfSubmissionsForIt(taxYear: TaxYear, submissions: Int)
 
-class OptOutServiceSpec extends UnitSpec
-  with BeforeAndAfter
-  with MockITSAStatusService
-  with MockCalculationListService
-  with MockDateService
-  with OneInstancePerTest
-  with MockITSAStatusUpdateConnector {
+class OptOutServiceSpec
+  extends TestSupport
+    with BeforeAndAfter
+    with MockITSAStatusService
+    with MockCalculationListService
+    with MockDateService
+    with OneInstancePerTest {
 
   implicit val defaultPatience: PatienceConfig =
     PatienceConfig(timeout = Span(10, Seconds), interval = Span(5, Millis))
 
-  val optOutConnector: ITSAStatusUpdateConnector = mock(classOf[ITSAStatusUpdateConnector])
-  val nextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
-  val repository: OptOutSessionDataRepository = mock(classOf[OptOutSessionDataRepository])
-  val auditingService: AuditingService = mock(classOf[AuditingService])
+  val mockITSAStatusUpdateConnector: ITSAStatusUpdateConnector = mock(classOf[ITSAStatusUpdateConnector])
+  val mockNextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
+  val mockRepository: OptOutSessionDataRepository = mock(classOf[OptOutSessionDataRepository])
 
-  implicit val user: MtdItUser[_] = mock(classOf[MtdItUser[_]])
-  implicit val hc: HeaderCarrier = mock(classOf[HeaderCarrier])
+  val mockAuditingService = mock(classOf[AuditingService])
 
   val taxYear2022_2023 = TaxYear.forYearEnd(2023)
   val taxYear2023_2024 = taxYear2022_2023.nextYear
@@ -93,10 +85,16 @@ class OptOutServiceSpec extends UnitSpec
   val sessionIdValue = "123"
   val error = new RuntimeException("Some Error")
 
-  val service: OptOutService = new OptOutService(optOutConnector, mockITSAStatusService,
-    mockCalculationListService, nextUpdatesService, mockDateService, repository, auditingService)
-
-  val noOptOutOptionAvailable: Option[Nothing] = None
+  val service: OptOutService =
+    new OptOutService(
+      itsaStatusUpdateConnector = mockITSAStatusUpdateConnector,
+      itsaStatusService = mockITSAStatusService,
+      calculationListService = mockCalculationListService,
+      nextUpdatesService = mockNextUpdatesService,
+      dateService = mockDateService,
+      repository = mockRepository,
+      auditingService = mockAuditingService
+    )
 
   val apiError: String = "some api error"
 
@@ -114,7 +112,7 @@ class OptOutServiceSpec extends UnitSpec
           )
 
           offeredTaxYearsAndCountsTestSetup map { year =>
-            when(nextUpdatesService.getQuarterlyUpdatesCounts(same(year.taxYear))(any(), any()))
+            when(mockNextUpdatesService.getQuarterlyUpdatesCounts(same(year.taxYear))(any(), any()))
               .thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(year.taxYear, year.submissions)))
           }
 
@@ -143,7 +141,7 @@ class OptOutServiceSpec extends UnitSpec
           )
 
           offeredTaxYearsAndCountsTestSetup map { year =>
-            when(nextUpdatesService.getQuarterlyUpdatesCounts(same(year.taxYear))(any(), any()))
+            when(mockNextUpdatesService.getQuarterlyUpdatesCounts(same(year.taxYear))(any(), any()))
               .thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(year.taxYear, year.submissions)))
           }
 
@@ -161,21 +159,18 @@ class OptOutServiceSpec extends UnitSpec
   }
 
   "OptOutService.makeOptOutUpdateRequestForYear" when {
+
     "make opt-out update request for previous tax-year" should {
 
       "opt-out update request made for correct year" in {
 
-        val taxableEntityId = "456"
         val currentYear = 2024
         val optOutTaxYear: TaxYear = TaxYear.forYearEnd(currentYear).previousYear
 
-        when(user.nino).thenReturn(taxableEntityId)
-        when(optOutConnector.optOut(optOutTaxYear, taxableEntityId)).thenReturn(Future.successful(
-          ITSAStatusUpdateResponseSuccess()
-        ))
+        when(mockITSAStatusUpdateConnector.optOut(any(), any())(any()))
+          .thenReturn(Future(ITSAStatusUpdateResponseSuccess()))
 
         val proposition = buildOneYearOptOutPropositionForPreviousYear(currentYear)
-        when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
         val intent = optOutTaxYear
 
         val result = service.makeOptOutUpdateRequest(proposition, intent)
@@ -187,20 +182,15 @@ class OptOutServiceSpec extends UnitSpec
 
       "opt-out update request made for correct year" in {
 
-        val taxableEntityId = "456"
         val currentYear = 2024
         val optOutTaxYear: TaxYear = TaxYear.forYearEnd(currentYear)
 
-        when(user.nino).thenReturn(taxableEntityId)
-        when(optOutConnector.optOut(optOutTaxYear, taxableEntityId)).thenReturn(Future.successful(
-          ITSAStatusUpdateResponseSuccess()
-        ))
+        when(mockITSAStatusUpdateConnector.optOut(any(), any())(any()))
+          .thenReturn(Future(ITSAStatusUpdateResponseSuccess()))
+
         val proposition = buildOneYearOptOutPropositionForCurrentYear(currentYear)
 
-        when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
-        val intent = optOutTaxYear
-
-        val result = service.makeOptOutUpdateRequest(proposition, intent)
+        val result = service.makeOptOutUpdateRequest(proposition, optOutTaxYear)
         result.futureValue shouldBe ITSAStatusUpdateResponseSuccess(NO_CONTENT)
       }
     }
@@ -209,17 +199,17 @@ class OptOutServiceSpec extends UnitSpec
 
       "opt-out update request made for correct year" in {
 
-        val taxableEntityId = "456"
         val currentYear = 2024
         val optOutTaxYear: TaxYear = TaxYear.forYearEnd(currentYear).nextYear
 
-        when(user.nino).thenReturn(taxableEntityId)
-        when(optOutConnector.optOut(optOutTaxYear, taxableEntityId)).thenReturn(Future.successful(
-          ITSAStatusUpdateResponseSuccess()
-        ))
         val proposition = buildOneYearOptOutPropositionForNextYear(currentYear)
 
-        when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
+        when(mockITSAStatusUpdateConnector.makeITSAStatusUpdate(any(), any(), any())(any()))
+          .thenReturn(Future(ITSAStatusUpdateResponseSuccess()))
+
+        when(mockITSAStatusUpdateConnector.optOut(any(), any())(any()))
+          .thenReturn(Future(ITSAStatusUpdateResponseSuccess()))
+
         val intent = optOutTaxYear
 
         service.makeOptOutUpdateRequest(proposition, intent)
@@ -230,18 +220,14 @@ class OptOutServiceSpec extends UnitSpec
 
       "successful update request was made" in {
 
-        val taxableEntityId = "456"
         val currentYear = 2024
         val currentTaxYear: TaxYear = TaxYear.forYearEnd(currentYear)
 
-        when(user.nino).thenReturn(taxableEntityId)
-        when(optOutConnector.optOut(currentTaxYear, taxableEntityId)).thenReturn(Future.successful(
-          ITSAStatusUpdateResponseSuccess()
-        ))
+        when(mockITSAStatusUpdateConnector.optOut(any(), any())(any()))
+          .thenReturn(Future(ITSAStatusUpdateResponseSuccess()))
+
         val proposition = OptOutTestSupport.buildOneYearOptOutPropositionForCurrentYear()
 
-
-        when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
         val intent = currentTaxYear
 
         val result = service.makeOptOutUpdateRequest(proposition, intent)
@@ -254,19 +240,16 @@ class OptOutServiceSpec extends UnitSpec
 
       "return failure response for made update request" in {
 
-        val taxableEntityId = "456"
         val currentYear = 2024
         val currentTaxYear: TaxYear = TaxYear.forYearEnd(currentYear)
         val errorItems = List(ErrorItem("INVALID_TAXABLE_ENTITY_ID",
           "Submission has not passed validation. Invalid parameter taxableEntityId."))
 
-        when(user.nino).thenReturn(taxableEntityId)
-        when(optOutConnector.optOut(currentTaxYear, taxableEntityId)).thenReturn(Future.successful(
-          ITSAStatusUpdateResponseFailure(errorItems)
-        ))
+        when(mockITSAStatusUpdateConnector.optOut(any(), any())(any()))
+          .thenReturn(Future(ITSAStatusUpdateResponseFailure(errorItems)))
+
         val proposition = OptOutTestSupport.buildOneYearOptOutPropositionForCurrentYear()
 
-        when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
         val intent = currentTaxYear
 
         val result = service.makeOptOutUpdateRequest(proposition, intent)
@@ -310,7 +293,7 @@ class OptOutServiceSpec extends UnitSpec
 
         val response = service.nextUpdatesPageOptOutViewModels()
 
-        response.futureValue._2 shouldBe noOptOutOptionAvailable
+        response.futureValue._2 shouldBe None
       }
     }
 
@@ -491,8 +474,11 @@ class OptOutServiceSpec extends UnitSpec
     val currentOptOutTaxYear = CurrentOptOutTaxYear(Voluntary, CY)
     val nextOptOutTaxYear = NextOptOutTaxYear(Voluntary, NY, CurrentOptOutTaxYear(Mandated, CY))
 
-    def testOptOutCheckPointPageViewModel(statusPY: ITSAStatus, statusCY: ITSAStatus, statusNY: ITSAStatus, crystallisedPY: Boolean)
-                                         (optOutTaxYear: OptOutTaxYear, state: OptOutState): Unit = {
+    def testOptOutCheckPointPageViewModel(statusPY: ITSAStatus,
+                                          statusCY: ITSAStatus,
+                                          statusNY: ITSAStatus,
+                                          crystallisedPY: Boolean
+                                         )(optOutTaxYear: OptOutTaxYear, state: OptOutState): Unit = {
 
       def getTaxYearText(taxYear: TaxYear): String = {
         if (taxYear == CY) "CY" else if (taxYear == PY) "PY" else if (taxYear == NY) "NY" else ""
@@ -503,14 +489,13 @@ class OptOutServiceSpec extends UnitSpec
 
           stubCurrentTaxYear(CY)
 
-          when(nextUpdatesService.getQuarterlyUpdatesCounts(ArgumentMatchers.eq(optOutTaxYear.taxYear))(any(), any()))
+          when(mockNextUpdatesService.getQuarterlyUpdatesCounts(ArgumentMatchers.eq(optOutTaxYear.taxYear))(any(), any()))
             .thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(optOutTaxYear.taxYear, 0)))
 
-          when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
-          when(repository.recallOptOutProposition()).thenReturn(
+          when(mockRepository.recallOptOutProposition()).thenReturn(
             Future.successful(Some(
               createOptOutProposition(CY, crystallisedPY, statusPY, statusCY, statusNY))))
-          when(repository.fetchSavedIntent()).thenReturn(Future.successful(Some(optOutTaxYear.taxYear)))
+          when(mockRepository.fetchSavedIntent()).thenReturn(Future.successful(Some(optOutTaxYear.taxYear)))
 
           val response = service.optOutCheckPointPageViewModel()
 
@@ -551,10 +536,9 @@ class OptOutServiceSpec extends UnitSpec
 
           stubCurrentTaxYear(CY)
 
-          when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
-          when(repository.recallOptOutProposition()).thenReturn(Future.successful(Some(
-              createOptOutProposition(CY, crystallisedPY, statusPY, statusCY, statusNY))))
-          when(repository.fetchSavedIntent()).thenReturn(Future.successful(Some(intent)))
+          when(mockRepository.recallOptOutProposition()).thenReturn(Future.successful(Some(
+            createOptOutProposition(CY, crystallisedPY, statusPY, statusCY, statusNY))))
+          when(mockRepository.fetchSavedIntent()).thenReturn(Future.successful(Some(intent)))
 
           val response = service.optOutCheckPointPageViewModel()
 
@@ -577,7 +561,6 @@ class OptOutServiceSpec extends UnitSpec
     }
 
   }
-
 
   "OptOutService.optOutConfirmedPageViewModel" when {
     val CY = TaxYear.forYearEnd(2024)
@@ -603,8 +586,7 @@ class OptOutServiceSpec extends UnitSpec
 
           stubCurrentTaxYear(CY)
 
-          when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
-          when(repository.recallOptOutProposition()).thenReturn(Future.successful(Some(
+          when(mockRepository.recallOptOutProposition()).thenReturn(Future.successful(Some(
             createOptOutProposition(CY, crystallisedPY, statusPY, statusCY, statusNY))))
 
           val response = service.optOutConfirmedPageViewModel()
@@ -663,8 +645,7 @@ class OptOutServiceSpec extends UnitSpec
   }
 
   private def allowWriteOfOptOutDataToMongoToSucceed(): Unit = {
-    when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
-    when(repository.initialiseOptOutJourney(any())(any())).thenReturn(Future.successful(true))
+    when(mockRepository.initialiseOptOutJourney(any())(any())).thenReturn(Future.successful(true))
   }
 
 }

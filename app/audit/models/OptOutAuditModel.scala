@@ -51,7 +51,6 @@ object Outcome {
   implicit val format: OFormat[Outcome] = Json.format[Outcome]
 }
 
-
 case class OptOutAuditModel(
                              mtdItUser: MtdItUser[_],
                              nino: String,
