@@ -55,9 +55,11 @@ case class ChargeSummaryViewModel(
     else currentDate.getYear + 1
   }
 
-  val whatYouOweUrl = {
-    if (isAgent) controllers.routes.WhatYouOweController.showAgent.url
-    else controllers.routes.WhatYouOweController.show(origin).url
+  private val baseUrl = "/report-quarterly/income-and-expenses/view"
+
+  val whatYouOweUrl: String = {
+    if (isAgent) s"$baseUrl/agents/what-your-client-owes"
+    else s"$baseUrl/what-you-owe"
   }
 
   val hasPaymentBreakdown = {
