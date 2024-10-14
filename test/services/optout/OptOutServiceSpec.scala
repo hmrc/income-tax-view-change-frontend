@@ -220,8 +220,7 @@ class OptOutServiceSpec
 
       "successful update request was made" in {
 
-        val currentYear = 2024
-        val currentTaxYear: TaxYear = TaxYear.forYearEnd(currentYear)
+        val currentTaxYear: TaxYear = TaxYear(2023, 2024)
 
         when(mockITSAStatusUpdateConnector.optOut(any(), any())(any()))
           .thenReturn(Future(ITSAStatusUpdateResponseSuccess()))
