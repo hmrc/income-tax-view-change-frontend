@@ -16,7 +16,7 @@
 
 package mocks.services
 
-import models.claimToAdjustPoa.{PoAAmendmentData, SelectYourReason}
+import models.claimToAdjustPoa.{PoaAmendmentData, SelectYourReason}
 import org.mockito.ArgumentMatchers.{any, same, eq => matches}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -34,7 +34,7 @@ trait MockPaymentOnAccountSessionService extends UnitSpec with BeforeAndAfterEac
     reset(mockPaymentOnAccountSessionService)
   }
 
-  def setupMockPaymentOnAccountSessionService(response: Future[Either[Throwable, Option[PoAAmendmentData]]]): Unit = {
+  def setupMockPaymentOnAccountSessionService(response: Future[Either[Throwable, Option[PoaAmendmentData]]]): Unit = {
       when(mockPaymentOnAccountSessionService.getMongo(any(), any())).thenReturn(response)
   }
 

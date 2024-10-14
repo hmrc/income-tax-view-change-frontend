@@ -28,11 +28,11 @@ import play.twirl.api.Html
 import _root_.implicits.ImplicitCurrencyFormatter._
 import models.core.NormalMode
 import testUtils.TestSupport
-import views.html.claimToAdjustPoa.EnterPoAAmountView
+import views.html.claimToAdjustPoa.EnterPoaAmountView
 
-class EnterPoAAmountViewSpec extends TestSupport{
+class EnterPoaAmountViewSpec extends TestSupport{
 
-  val enterAmountView: EnterPoAAmountView = app.injector.instanceOf[EnterPoAAmountView]
+  val enterAmountView: EnterPoaAmountView = app.injector.instanceOf[EnterPoaAmountView]
   lazy val msgs: MessagesApi = app.injector.instanceOf[MessagesApi]
   def msg(key: String) = msgs(s"claimToAdjustPoa.enterPoaAmount.$key")
   implicit val lang: Lang = Lang("GB")
@@ -65,7 +65,7 @@ class EnterPoAAmountViewSpec extends TestSupport{
     .fill(EnterPoaAmountForm(7000))
 
   class Setup(isAgent: Boolean = false, form: Form[EnterPoaAmountForm] = EnterPoaAmountForm.form, viewModel: PaymentOnAccountViewModel = poAAmountViewModel()) {
-    val view: Html = enterAmountView(form, viewModel, isAgent, controllers.claimToAdjustPoa.routes.EnterPoAAmountController.submit(isAgent, NormalMode))
+    val view: Html = enterAmountView(form, viewModel, isAgent, controllers.claimToAdjustPoa.routes.EnterPoaAmountController.submit(isAgent, NormalMode))
     val document: Document = Jsoup.parse(view.toString())
     val groupButton: Elements = document.select("div.govuk-button-group")
     val buttons = groupButton.first().children()

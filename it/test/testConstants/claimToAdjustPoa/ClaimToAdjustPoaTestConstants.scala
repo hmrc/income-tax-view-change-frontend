@@ -16,7 +16,7 @@
 
 package testConstants.claimToAdjustPoa
 
-import models.claimToAdjustPoa.{Increase, MainIncomeLower, PoAAmendmentData}
+import models.claimToAdjustPoa.{Increase, MainIncomeLower, PoaAmendmentData}
 import play.api.libs.json.JsValue
 import testConstants.BaseIntegrationTestConstants.testDate
 import testConstants.IncomeSourceIntegrationTestConstants.testValidFinancialDetailsModelJson
@@ -25,8 +25,8 @@ object ClaimToAdjustPoaTestConstants {
 
   val testTaxYearPoa = 2024
 
-  val validSession: PoAAmendmentData = PoAAmendmentData(Some(MainIncomeLower), Some(BigDecimal(1000.00)))
-  val validSessionIncreaseCase : PoAAmendmentData = PoAAmendmentData(Some(Increase), Some(BigDecimal(10000.00)))
+  val validSession: PoaAmendmentData = PoaAmendmentData(Some(MainIncomeLower), Some(BigDecimal(1000.00)))
+  val validSessionIncreaseCase : PoaAmendmentData = PoaAmendmentData(Some(Increase), Some(BigDecimal(10000.00)))
 
   def validFinancialDetailsResponseBody(taxYear: Int): JsValue =
     testValidFinancialDetailsModelJson(2000, 2000, (taxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))

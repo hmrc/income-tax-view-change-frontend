@@ -44,7 +44,7 @@ class ConfirmationForAdjustingPoaViewSpec extends TestSupport{
   }
 
   "The ConfirmationForAdjustingPoa page" when {
-    "a user loads the page and newPoAAmount is zero" should {
+    "a user loads the page and newPoaAmount is zero" should {
       "render the page heading" in new Setup(isAgent = false, isAmountZero = true) {
         document.title shouldBe msgs("htmlTitle", msgs("claimToAdjustPoa.confirmation.heading"))
       }
@@ -68,7 +68,7 @@ class ConfirmationForAdjustingPoaViewSpec extends TestSupport{
 
     }
 
-    "a user loads the page and newPoAAmount is greater than zero" should {
+    "a user loads the page and newPoaAmount is greater than zero" should {
       "render the page heading" in new Setup(isAgent = false, isAmountZero = false) {
         document.title shouldBe msgs("htmlTitle", msgs("claimToAdjustPoa.confirmation.heading"))
       }
@@ -92,7 +92,7 @@ class ConfirmationForAdjustingPoaViewSpec extends TestSupport{
 
     }
 
-    "an agent loads the page and newPoAAmount is greater than zero" should {
+    "an agent loads the page and newPoaAmount is greater than zero" should {
       "render the page heading" in new Setup(isAgent = true, isAmountZero = false) {
         document.title shouldBe msgs("htmlTitle.agent", msgs("claimToAdjustPoa.confirmation.heading"))
       }
@@ -116,7 +116,7 @@ class ConfirmationForAdjustingPoaViewSpec extends TestSupport{
 
     }
 
-    "an agent loads the page and newPoAAmount is zero" should {
+    "an agent loads the page and newPoaAmount is zero" should {
       "render the page heading" in new Setup(isAgent = true, isAmountZero = true) {
         document.title shouldBe msgs("htmlTitle.agent", msgs("claimToAdjustPoa.confirmation.heading"))
       }

@@ -50,7 +50,7 @@ class ConfirmationForAdjustingPoaController @Inject()(val authActions: AuthActio
   def show(isAgent: Boolean): Action[AnyContent] = authActions.individualOrAgentWithClient async {
     implicit user =>
       withSessionDataAndPoa() { (sessionData, poa) =>
-        sessionData.newPoAAmount match {
+        sessionData.newPoaAmount match {
           case Some(value) =>
             val isAmountZero: Boolean = value.equals(BigDecimal(0))
             val viewModel = ConfirmationForAdjustingPoaViewModel(poa.taxYear, isAmountZero)

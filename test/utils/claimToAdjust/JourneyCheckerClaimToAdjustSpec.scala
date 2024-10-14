@@ -20,7 +20,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{AfterSubmissionPage, BeforeSubmissionPage, CannotGoBackPage, InitialPage}
 import mocks.services.MockPaymentOnAccountSessionService
 import models.admin.AdjustPaymentsOnAccount
-import models.claimToAdjustPoa.PoAAmendmentData
+import models.claimToAdjustPoa.PoaAmendmentData
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers
@@ -30,7 +30,7 @@ import play.api.mvc.Result
 import play.api.mvc.Results.{Ok, Redirect}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.PaymentOnAccountSessionService
-import testConstants.claimToAdjustPOA.ClaimToAdjustPOATestConstants.whatYouNeedToKnowViewModel
+import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.whatYouNeedToKnowViewModel
 import testUtils.TestSupport
 import views.html.claimToAdjustPoa.WhatYouNeedToKnow
 
@@ -58,10 +58,10 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
 
   val whatYouNeedToKnowView: WhatYouNeedToKnow = app.injector.instanceOf[WhatYouNeedToKnow]
 
-  def successfulFutureOk: PoAAmendmentData => Future[Result] = _ => {
+  def successfulFutureOk: PoaAmendmentData => Future[Result] = _ => {
     Future.successful(Ok(whatYouNeedToKnowView(isAgent = false, whatYouNeedToKnowViewModel(false, false))))
 }
-  def successfulFutureOkAgent: PoAAmendmentData => Future[Result] = _ => {
+  def successfulFutureOkAgent: PoaAmendmentData => Future[Result] = _ => {
     Future.successful(Ok(whatYouNeedToKnowView(isAgent = true, whatYouNeedToKnowViewModel(true, true))))
   }
 
@@ -156,7 +156,7 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
   "JourneyCheckerClaimToAdjust.withSessionData when not on the initial page" should {
     "redirect to the You Cannot Go Back error page" when {
       "showCannotGoBackErrorPage returns true" in {
-        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoAAmendmentData(None, None, journeyCompleted = true)))))
+        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true)))))
 
         when(TestJourneyCheckerClaimToAdjustSpy.showCannotGoBackErrorPage(ArgumentMatchers.eq(true), ArgumentMatchers.eq(BeforeSubmissionPage))).thenReturn(true)
 
@@ -171,7 +171,7 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
     }
     "run the code block and go to the what you need to know page" when {
       "showCannotGoBackErrorPage returns false" in {
-        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoAAmendmentData()))))
+        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData()))))
 
         when(TestJourneyCheckerClaimToAdjustSpy.showCannotGoBackErrorPage(ArgumentMatchers.eq(false), ArgumentMatchers.eq(CannotGoBackPage))).thenReturn(false)
 
@@ -218,7 +218,7 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
   "JourneyCheckerClaimToAdjust.withSessionData when on the initial page" should {
     "run the code block and go to the what you need to know page" when {
       "getMongo returns a right containing PoA session data but the journeyComplete flag is set to false" in {
-        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoAAmendmentData()))))
+        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData()))))
 
         val res = TestJourneyCheckerClaimToAdjust.withSessionData(journeyState = InitialPage)(successfulFutureOk)(tsTestUser, headerCarrier)
         val resAgent = TestJourneyCheckerClaimToAdjust.withSessionData(journeyState = InitialPage)(successfulFutureOkAgent)(tsTestUserAgent, headerCarrier)
@@ -245,7 +245,7 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
         docAgent.title() shouldBe "What you need to know - Manage your client’s Income Tax updates - GOV.UK"
       }
       "getMongo returns a right containing PoA session data, the journeyComplete flag is set to true and createSession returns a Right containing a Unit" in {
-        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoAAmendmentData(None, None, journeyCompleted = true)))))
+        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true)))))
         setupMockPaymentOnAccountSessionServiceCreateSession(Future.successful(Right((): Unit)))
 
         val res = TestJourneyCheckerClaimToAdjust.withSessionData(journeyState = InitialPage)(successfulFutureOk)(tsTestUser, headerCarrier)
@@ -261,7 +261,7 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
     }
     "return an internal server error" when {
       "journeyComplete flag is set to true and createSession returns an exception" in {
-        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoAAmendmentData(None, None, journeyCompleted = true)))))
+        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true)))))
         setupMockPaymentOnAccountSessionServiceCreateSession(Future.successful(Left(new Exception("Error"))))
 
         val res = TestJourneyCheckerClaimToAdjust.withSessionData(journeyState = InitialPage)(successfulFutureOk)(tsTestUser, headerCarrier)

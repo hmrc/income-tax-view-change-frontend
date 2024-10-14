@@ -22,28 +22,28 @@ import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
 import java.time.Instant
 
-case class PoASessionData(
+case class PoaSessionData(
                            sessionId: String,
-                           poaAmendmentData: Option[PoAAmendmentData] = None,
+                           poaAmendmentData: Option[PoaAmendmentData] = None,
                            lastUpdated: Instant = Instant.now
                             )
 
-object PoASessionData {
-  implicit val format: OFormat[PoASessionData] = {
+object PoaSessionData {
+  implicit val format: OFormat[PoaSessionData] = {
     ((__ \ "sessionId").format[String]
-      ~ (__ \ "poaAmmendmentData").formatNullable[PoAAmendmentData]
+      ~ (__ \ "poaAmendmentData").formatNullable[PoaAmendmentData]
       ~ (__ \ "lastUpdated").format(MongoJavatimeFormats.instantFormat)
-      )(PoASessionData.apply, unlift(PoASessionData.unapply)
+      )(PoaSessionData.apply, unlift(PoaSessionData.unapply)
     )
   }
 }
 
-case class PoAAmendmentData(
+case class PoaAmendmentData(
                              poaAdjustmentReason: Option[SelectYourReason] = None,
-                             newPoAAmount: Option[BigDecimal] = None,
+                             newPoaAmount: Option[BigDecimal] = None,
                              journeyCompleted: Boolean = false
                             )
 
-object PoAAmendmentData {
-  implicit val formats: OFormat[PoAAmendmentData] = Json.format[PoAAmendmentData]
+object PoaAmendmentData {
+  implicit val formats: OFormat[PoaAmendmentData] = Json.format[PoaAmendmentData]
 }

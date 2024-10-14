@@ -16,17 +16,17 @@
 
 package services
 
-import models.claimToAdjustPoa.{PoAAmendmentData, PoASessionData, SelectYourReason}
-import repositories.PoAAmendmentDataRepository
+import models.claimToAdjustPoa.{PoaAmendmentData, PoaSessionData, SelectYourReason}
+import repositories.PoaAmendmentDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class PaymentOnAccountSessionService @Inject()(poAAmmendmentDataRepository: PoAAmendmentDataRepository) {
+class PaymentOnAccountSessionService @Inject()(poaAmendmentDataRepository: PoaAmendmentDataRepository) {
 
   def createSession(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Unit]] = {
-    setMongoData(Some(PoAAmendmentData())).flatMap{ res =>
+    setMongoData(Some(PoaAmendmentData())).flatMap{ res =>
       if (res)
         Future.successful(Right(()))
       else
@@ -34,26 +34,26 @@ class PaymentOnAccountSessionService @Inject()(poAAmmendmentDataRepository: PoAA
     }
   }
 
-  def getMongo(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[PoAAmendmentData]]] = {
-    poAAmmendmentDataRepository.get(hc.sessionId.get.value) map {
-      case Some(data: PoASessionData) =>
+  def getMongo(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[PoaAmendmentData]]] = {
+    poaAmendmentDataRepository.get(hc.sessionId.get.value) map {
+      case Some(data: PoaSessionData) =>
         Right(data.poaAmendmentData)
       case None => Right(None)
     }
   }
 
-  def setMongoData(poAAmmendmentData: Option[PoAAmendmentData])(implicit hc: HeaderCarrier): Future[Boolean] = {
-    poAAmmendmentDataRepository.set(PoASessionData(hc.sessionId.get.value, poAAmmendmentData))
+  def setMongoData(poaAmendmentData: Option[PoaAmendmentData])(implicit hc: HeaderCarrier): Future[Boolean] = {
+    poaAmendmentDataRepository.set(PoaSessionData(hc.sessionId.get.value, poaAmendmentData))
   }
 
   def setAdjustmentReason(poaAdjustmentReason: SelectYourReason)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Unit]] = {
-    poAAmmendmentDataRepository.get(hc.sessionId.get.value).flatMap {
-      case Some(data: PoASessionData) =>
-        val newData: PoAAmendmentData = data.poaAmendmentData match {
+    poaAmendmentDataRepository.get(hc.sessionId.get.value).flatMap {
+      case Some(data: PoaSessionData) =>
+        val newData: PoaAmendmentData = data.poaAmendmentData match {
           case Some(value) =>
             value.copy(poaAdjustmentReason = Some(poaAdjustmentReason))
           case None =>
-            PoAAmendmentData(poaAdjustmentReason = Some(poaAdjustmentReason))
+            PoaAmendmentData(poaAdjustmentReason = Some(poaAdjustmentReason))
         }
         setMongoData(Some(newData))
           .flatMap(v => {
@@ -68,14 +68,14 @@ class PaymentOnAccountSessionService @Inject()(poAAmmendmentDataRepository: PoAA
     }
   }
 
-  def setNewPoAAmount(newPoAAmount: BigDecimal)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Unit]] = {
-    poAAmmendmentDataRepository.get(hc.sessionId.get.value).flatMap {
-      case Some(data: PoASessionData) =>
-        val newData: PoAAmendmentData = data.poaAmendmentData match {
+  def setNewPoaAmount(newPoaAmount: BigDecimal)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Unit]] = {
+    poaAmendmentDataRepository.get(hc.sessionId.get.value).flatMap {
+      case Some(data: PoaSessionData) =>
+        val newData: PoaAmendmentData = data.poaAmendmentData match {
           case Some(value) =>
-            value.copy(newPoAAmount = Some(newPoAAmount))
+            value.copy(newPoaAmount = Some(newPoaAmount))
           case None =>
-            PoAAmendmentData(newPoAAmount = Some(newPoAAmount))
+            PoaAmendmentData(newPoaAmount = Some(newPoaAmount))
         }
         setMongoData(Some(newData))
           .flatMap(v => {
@@ -91,13 +91,13 @@ class PaymentOnAccountSessionService @Inject()(poAAmmendmentDataRepository: PoAA
   }
 
   def setCompletedJourney(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Unit]] = {
-    poAAmmendmentDataRepository.get(hc.sessionId.get.value).flatMap {
-      case Some(data: PoASessionData) =>
-        val newData: PoAAmendmentData = data.poaAmendmentData match {
+    poaAmendmentDataRepository.get(hc.sessionId.get.value).flatMap {
+      case Some(data: PoaSessionData) =>
+        val newData: PoaAmendmentData = data.poaAmendmentData match {
           case Some(value) =>
             value.copy(journeyCompleted = true)
           case None =>
-            PoAAmendmentData(journeyCompleted = true)
+            PoaAmendmentData(journeyCompleted = true)
         }
         setMongoData(Some(newData))
           .flatMap(v => {

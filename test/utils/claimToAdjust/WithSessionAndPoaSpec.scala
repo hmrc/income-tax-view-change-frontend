@@ -21,8 +21,8 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{BeforeSubmissionPage, CannotGoBackPage, InitialPage}
 import mocks.services.{MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.admin.AdjustPaymentsOnAccount
-import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoAAmendmentData, WhatYouNeedToKnowViewModel}
-import testConstants.claimToAdjustPOA.ClaimToAdjustPOATestConstants.whatYouNeedToKnowViewModel
+import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoaAmendmentData, WhatYouNeedToKnowViewModel}
+import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.whatYouNeedToKnowViewModel
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
@@ -62,11 +62,11 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
 
   val whatYouNeedToKnowView: WhatYouNeedToKnow = app.injector.instanceOf[WhatYouNeedToKnow]
 
-  def successfulFutureOk: (PoAAmendmentData, PaymentOnAccountViewModel) => EitherT[Future, Throwable, Result] = (_, _) => {
+  def successfulFutureOk: (PoaAmendmentData, PaymentOnAccountViewModel) => EitherT[Future, Throwable, Result] = (_, _) => {
     EitherT.rightT(Ok(whatYouNeedToKnowView(isAgent = false, whatYouNeedToKnowViewModel(false, false))))
   }
 
-  def successfulFutureOkAgent: (PoAAmendmentData, PaymentOnAccountViewModel) => EitherT[Future, Throwable, Result] = (_, _) => {
+  def successfulFutureOkAgent: (PoaAmendmentData, PaymentOnAccountViewModel) => EitherT[Future, Throwable, Result] = (_, _) => {
     EitherT.rightT(Ok(whatYouNeedToKnowView(isAgent = true, whatYouNeedToKnowViewModel(true, true))))
   }
 
@@ -80,7 +80,7 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
   "WithSessionAndPoa.withSessionDataAndPoa when not on the initial page" should {
     "redirect to the You Cannot Go Back error page" when {
       "showCannotGoBackErrorPage returns true and getPoaForNonCrystallisedTaxYear call is successful" in {
-        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoAAmendmentData(None, None, journeyCompleted = true)))))
+        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true)))))
         setupMockGetPaymentsOnAccount()
 
         when(TestWithSessionAndPoaSpy.showCannotGoBackErrorPage(ArgumentMatchers.eq(true), ArgumentMatchers.eq(BeforeSubmissionPage))).thenReturn(true)
@@ -97,7 +97,7 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
 
     "run the code block and go to the what you need to know page" when {
       "showCannotGoBackErrorPage returns false and getPoaForNonCrystallisedTaxYear call is successful" in {
-        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoAAmendmentData()))))
+        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData()))))
         setupMockGetPaymentsOnAccount()
 
         when(TestWithSessionAndPoaSpy.showCannotGoBackErrorPage(ArgumentMatchers.eq(false), ArgumentMatchers.eq(CannotGoBackPage))).thenReturn(false)
@@ -143,7 +143,7 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
         docAgent.title() shouldBe "Sorry, there is a problem with the service - GOV.UK"
       }
       "getMongo call is successful but getPoaForNonCrystallisedTaxYear returns a None" in {
-        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoAAmendmentData()))))
+        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData()))))
         setupMockGetPaymentsOnAccount(None)
 
         val res = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = CannotGoBackPage)(successfulFutureOk)(tsTestUser, headerCarrier)
@@ -157,7 +157,7 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
         docAgent.title() shouldBe "Sorry, there is a problem with the service - GOV.UK"
       }
       "getMongo call is successful but getPoaForNonCrystallisedTaxYear returns an exception" in {
-        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoAAmendmentData()))))
+        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData()))))
         setupMockGetPaymentsOnAccountBuildFailure()
 
         val res = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = CannotGoBackPage)(successfulFutureOk)(tsTestUser, headerCarrier)
@@ -175,7 +175,7 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
   "WithSessionAndPoa.withSessionDataAndPoa when on the initial page" should {
     "run the code block and go to the what you need to know page" when {
       "getMongo returns a right containing PoA session data but the journeyComplete flag is set to false and getPoaForNonCrystallisedTaxYear call is successful" in {
-        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoAAmendmentData()))))
+        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData()))))
         setupMockGetPaymentsOnAccount()
 
         val res = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOk)(tsTestUser, headerCarrier)
@@ -189,7 +189,7 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
         docAgent.title() shouldBe "What you need to know - Manage your client’s Income Tax updates - GOV.UK"
       }
       "getMongo returns a right containing PoA session data, getPoaForNonCrystallisedTaxYear call is successful, the journeyComplete flag is set to true and createSession returns a Right containing a Unit" in {
-        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoAAmendmentData(None, None, journeyCompleted = true)))))
+        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true)))))
         setupMockGetPaymentsOnAccount()
         setupMockPaymentOnAccountSessionServiceCreateSession(Future.successful(Right((): Unit)))
 
@@ -221,7 +221,7 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
     }
     "return an internal server error" when {
       "journeyComplete flag is set to true and createSession returns an exception and getPoaForNonCrystallisedTaxYear call is successful" in {
-        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoAAmendmentData(None, None, journeyCompleted = true)))))
+        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true)))))
         setupMockGetPaymentsOnAccount()
         setupMockPaymentOnAccountSessionServiceCreateSession(Future.successful(Left(new Exception("Error"))))
 
@@ -251,7 +251,7 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
         docAgent.title() shouldBe "Sorry, there is a problem with the service - GOV.UK"
       }
       "getMongo call is successful and getPoaForNonCrystallisedTaxYear returns an exception" in {
-        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoAAmendmentData()))))
+        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData()))))
         setupMockGetPaymentsOnAccountBuildFailure()
 
         val res = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOk)(tsTestUser, headerCarrier)
@@ -265,7 +265,7 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
         docAgent.title() shouldBe "Sorry, there is a problem with the service - GOV.UK"
       }
       "getMongo call is successful and getPoaForNonCrystallisedTaxYear returns a None" in {
-        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoAAmendmentData()))))
+        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData()))))
         setupMockGetPaymentsOnAccount(None)
 
         val res = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOk)(tsTestUser, headerCarrier)

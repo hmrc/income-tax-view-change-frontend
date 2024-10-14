@@ -21,7 +21,7 @@ import mocks.auth.MockAuthActions
 import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.admin.AdjustPaymentsOnAccount
-import models.claimToAdjustPoa.PoAAmendmentData
+import models.claimToAdjustPoa.PoaAmendmentData
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
@@ -59,7 +59,7 @@ class WhatYouNeedToKnowControllerSpec extends TestSupport
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockGetPaymentsOnAccount()
         setupMockTaxYearNotCrystallised()
-        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoAAmendmentData()))))
+        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData()))))
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestWhatYouNeedToKnowController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
@@ -74,7 +74,7 @@ class WhatYouNeedToKnowControllerSpec extends TestSupport
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockGetPaymentsOnAccount(Some(previouslyReducedPaymentOnAccountModel))
         setupMockTaxYearNotCrystallised()
-        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoAAmendmentData()))))
+        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData()))))
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestWhatYouNeedToKnowController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
@@ -108,7 +108,7 @@ class WhatYouNeedToKnowControllerSpec extends TestSupport
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockGetPaymentsOnAccount()
         setupMockTaxYearNotCrystallised()
-        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoAAmendmentData(None, None, journeyCompleted = true)))))
+        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true)))))
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result = TestWhatYouNeedToKnowController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
@@ -125,7 +125,7 @@ class WhatYouNeedToKnowControllerSpec extends TestSupport
       "PaymentOnAccount model is not built successfully" in {
         enable(AdjustPaymentsOnAccount)
         mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoAAmendmentData()))))
+        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData()))))
         setupMockGetPaymentsOnAccountBuildFailure()
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
@@ -141,7 +141,7 @@ class WhatYouNeedToKnowControllerSpec extends TestSupport
       "an Exception is returned from ClaimToAdjustService" in {
         enable(AdjustPaymentsOnAccount)
         mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoAAmendmentData()))))
+        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData()))))
         setupMockGetAmendablePoaViewModelFailure()
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
