@@ -145,7 +145,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
             nino = testNino,
             outcome = Outcome(isSuccessful = true, None, None),
             optOutRequestedFromTaxYear = taxYear.previousYear.formatTaxYearRange,
-            currentYear = taxYear,
+            currentYear = taxYear.formatTaxYearRange,
             beforeITSAStatusCurrentYearMinusOne = Voluntary,
             beforeITSAStatusCurrentYear = NoStatus,
             beforeITSAStatusCurrentYearPlusOne = NoStatus,

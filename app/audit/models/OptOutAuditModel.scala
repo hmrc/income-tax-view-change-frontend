@@ -56,7 +56,7 @@ case class OptOutAuditModel(
                              nino: String,
                              outcome: Outcome,
                              optOutRequestedFromTaxYear: String,
-                             currentYear: TaxYear,
+                             currentYear: String,
                              beforeITSAStatusCurrentYearMinusOne: ITSAStatus,
                              beforeITSAStatusCurrentYear: ITSAStatus,
                              beforeITSAStatusCurrentYearPlusOne: ITSAStatus,
@@ -67,9 +67,9 @@ case class OptOutAuditModel(
                            ) extends ExtendedAuditModel {
 
 
-  override val transactionName: String = enums.TransactionName.ClientDetailsConfirmed
+  override val transactionName: String = enums.TransactionName.OptOutQuarterlyReportingRequest
 
-  override val auditType: String = enums.AuditType.ClientDetailsConfirmed
+  override val auditType: String = enums.AuditType.OptOutQuarterlyReportingRequest
 
   private val userType =
     mtdItUser.userType match {
@@ -80,11 +80,11 @@ case class OptOutAuditModel(
 
   private val optOutDetailsJson: JsObject =
     Json.obj(
+      "saUtr" -> mtdItUser.saUtr,
+      "credId" -> mtdItUser.credId,
       "mtditid" -> mtdItUser.mtditid,
       "userType" -> userType,
       "agentReferenceNumber" -> mtdItUser.arn,
-      "saUtr" -> mtdItUser.saUtr,
-      "credId" -> mtdItUser.credId,
       "nino" -> nino,
       "outcome" -> outcome,
       "optOutRequestedFromTaxYear" -> optOutRequestedFromTaxYear,
@@ -95,7 +95,8 @@ case class OptOutAuditModel(
       "afterAssumedITSAStatusCurrentYearMinusOne" -> afterAssumedITSAStatusCurrentYearMinusOne.toString,
       "afterAssumedITSAStatusCurrentYear" -> afterAssumedITSAStatusCurrentYear.toString,
       "afterAssumedITSAStatusCurrentYearPlusOne" -> afterAssumedITSAStatusCurrentYearMinusOne.toString,
-      "currentYearMinusOneCrystallised" -> currentYearMinusOneCrystallised)
+      "currentYearMinusOneCrystallised" -> currentYearMinusOneCrystallised
+    )
 
   override val detail: JsValue = optOutDetailsJson
 
@@ -112,7 +113,7 @@ object OptOutAuditModel {
       mtdItUser = user,
       nino = user.nino,
       optOutRequestedFromTaxYear = intentTaxYear.formatTaxYearRange,
-      currentYear = optOutProposition.currentTaxYear.taxYear,
+      currentYear = optOutProposition.currentTaxYear.taxYear.formatTaxYearRange,
       beforeITSAStatusCurrentYearMinusOne = optOutProposition.previousTaxYear.status,
       beforeITSAStatusCurrentYear = optOutProposition.currentTaxYear.status,
       beforeITSAStatusCurrentYearPlusOne = optOutProposition.nextTaxYear.status,
