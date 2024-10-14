@@ -412,6 +412,36 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
           redirectURI(controllers.agent.routes.UTRErrorController.show.url)
         )
       }
+
+      "the primary or secondary agent enrolment is not present" in {
+        val validUTR: String = "1234567890"
+
+        stubSecondaryAuthorisedAgentUser(authorised = true, hasAgentEnrolment = false)
+        CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
+          status = OK,
+          response = CitizenDetailsStub.validCitizenDetailsResponse(
+            firstName = "testFirstName",
+            lastName = "testLastName",
+            nino = testNino
+          )
+        )
+
+        IncomeTaxViewChangeStub.stubGetBusinessDetails(testNino)(
+          status = OK,
+          response = Json.toJson(singleBusinessResponse)
+        )
+
+        Then(s"I stub the session-data service call to return status $OK")
+        stubPostSessionDataResponseOkResponse()
+
+        val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some(validUTR))
+
+        Then(s"Technical difficulties are shown with status $INTERNAL_SERVER_ERROR")
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.agent.routes.UTRErrorController.show.url)
+        )
+      }
     }
 
     s"return $INTERNAL_SERVER_ERROR ISE page" when {
