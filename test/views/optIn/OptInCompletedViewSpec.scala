@@ -96,6 +96,21 @@ class OptInCompletedViewSpec extends TestSupport {
       "(opens in new tab)."
   }
 
+  s"has the correct heading for year $taxYear22_23 which is the current year (Annual) and next year is Mandatory" in new SetupForCurrentYear(false, taxYear22_23, true, true) {
+    pageDocument.title() shouldBe "Opt in completed - Manage your Income Tax updates - GOV.UK"
+
+    pageDocument.getElementsByClass("govuk-panel__title").text() shouldBe "Opt in completed"
+    pageDocument.getElementsByClass("govuk-panel__body").text() shouldBe messages("optin.completedOptIn.followingVoluntary.heading.desc", "2022", "2023")
+
+    val expectedText: String = "From 6 April 2023, you’ll be required to send quarterly updates through compatible software."
+    pageDocument.getElementById("warning-inset").text() shouldBe expectedText
+
+    pageDocument.getElementById("optin-completed-view-p5").text() shouldBe "You have just chosen to voluntarily report quarterly from the 2022 to 2023 tax year onwards, but in the future it could be mandatory for you if:"
+    pageDocument.getElementById("optin-completed-view-p6").text() shouldBe "You can check the threshold for qualifying " +
+      "income in the criteria for people who will need to sign up for Making Tax Digital for Income Tax " +
+      "(opens in new tab)."
+  }
+
   class SetupNextYear(isAgent: Boolean = true,
                       taxYear: TaxYear) {
     val model: OptInCompletedViewModel =

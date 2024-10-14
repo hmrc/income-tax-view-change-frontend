@@ -18,6 +18,8 @@ package models.optin
 
 import models.incomeSourceDetails.TaxYear
 
+import java.time.format.DateTimeFormatter
+
 case class OptInCompletedViewModel(
                                     isAgent: Boolean,
                                     optInTaxYear: TaxYear,
@@ -29,6 +31,8 @@ case class OptInCompletedViewModel(
   val startYear: String = optInTaxYear.startYear.toString
   val endYear: String = optInTaxYear.endYear.toString
   val nextYear: String = optInTaxYear.nextYear.endYear.toString
+  private val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM uuuu")
+  val startDateNextYear: String = optInTaxYear.toFinancialYearEnd.plusDays(1).format(dateTimeFormatter)
 
   def headingMessageKey: String = {
     (isCurrentYear, optInIncludedNextYear, annualWithFollowingYearMandated) match {

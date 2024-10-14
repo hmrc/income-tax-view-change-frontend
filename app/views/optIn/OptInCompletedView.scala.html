@@ -96,28 +96,46 @@
 
 @futureReporitng = {
     <div id="optin-completed-view" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
-        <h2 class="govuk-heading-m" >@messages("optin.completedOptIn.futureReporting")</h2>
-        <p id="optin-completed-view-p5" class="govuk-body">
-           @if(model.isCurrentYear) {
-               @messages("optin.completedOptIn.cy.futureReporting.desc1", model.startYear, model.endYear)
-           } else {
-               @messages("optin.completedOptIn.ny.futureReporting.desc1", model.startYear, model.endYear)
-           }
-        </p>
-        <ul class="govuk-list govuk-list--bullet">
-            <li>@messages("optin.completedOptIn.futureReporting.p1")</li>
-            <li>@messages("optin.completedOptIn.futureReporting.p2")</li>
-        </ul>
+        @if(!model.annualWithFollowingYearMandated) {
+            <h2 class="govuk-heading-m" >@messages("optin.completedOptIn.futureReporting")</h2>
+            <p id="optin-completed-view-p5" class="govuk-body">
+            @if(model.isCurrentYear) {
+                @messages("optin.completedOptIn.cy.futureReporting.desc1", model.startYear, model.endYear)
+            } else {
+                @messages("optin.completedOptIn.ny.futureReporting.desc1", model.startYear, model.endYear)
+            }
+            </p>
+            <ul class="govuk-list govuk-list--bullet">
+                <li>@messages("optin.completedOptIn.futureReporting.p1")</li>
+                <li>@messages("optin.completedOptIn.futureReporting.p2")</li>
+            </ul>
+        } else {
+            <h2 class="govuk-heading-m" >@messages("optin.completedOptIn.nymandated.futureReporting")</h2>
+            <p id="optin-completed-view-p5" class="govuk-body">
+                @messages("optin.completedOptIn.cy.futureReporting.desc1", model.startYear, model.endYear)
+            </p>
+            @annualFollowingInset
+            <p class="govuk-body">@messages("optin.completedOptIn.nymandated.futureReporting.desc2")</p>
+            <ul class="govuk-list govuk-list--bullet">
+                <li>@messages("optin.completedOptIn.nymandated.futureReporting.bullet.p1")</li>
+                <li>@messages("optin.completedOptIn.nymandated.futureReporting.bullet.p2")</li>
+            </ul>
+        }
+
         @exampleScenarioInset
         <p class="govuk-body">@messages("optin.completedOptIn.futureReporting.desc2")</p>
 
         <p id="optin-completed-view-p6" class="govuk-body">
             @messages("optin.completedOptIn.incomeThreshold.desc.a")
             <a href="@incomeThresholdUrl" class="govuk-link govuk-body" target="_blank" rel="noopener noreferrer">
-                @messages("optin.completedOptIn.incomeThreshold.desc.b")
+            @messages("optin.completedOptIn.incomeThreshold.desc.b")
             </a>
         </p>
     </div>
+}
+
+@annualFollowingInset = @{
+    govukInsetText(InsetText(id=Some("warning-inset"), content = HtmlContent(messages("optin.completedOptIn.nymandated.inset", model.startDateNextYear))))
 }
 
 @exampleScenarioInset = @{
