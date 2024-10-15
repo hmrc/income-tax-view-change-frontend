@@ -45,16 +45,8 @@ object FeatureSwitchName {
       JsSuccess(CodingOut)
     case name if name == JsString(NavBarFs.name) =>
       JsSuccess(NavBarFs)
-    case name if name == JsString(ForecastCalculation.name) =>
-      JsSuccess(ForecastCalculation)
-    case name if name == JsString(CutOverCredits.name) =>
-      JsSuccess(CutOverCredits)
     case name if name == JsString(CreditsRefundsRepay.name) =>
       JsSuccess(CreditsRefundsRepay)
-    case name if name == JsString(WhatYouOweCreditAmount.name) =>
-      JsSuccess(WhatYouOweCreditAmount)
-    case name if name == JsString(MFACreditsAndDebits.name) =>
-      JsSuccess(MFACreditsAndDebits)
     case name if name == JsString(PaymentHistoryRefunds.name) =>
       JsSuccess(PaymentHistoryRefunds)
     case name if name == JsString(CalendarQuarterTypes.name) =>
@@ -91,8 +83,7 @@ object FeatureSwitchName {
   }
 
   val allFeatureSwitches: immutable.Set[FeatureSwitchName] =
-    Set(ITSASubmissionIntegration, ChargeHistory, PaymentAllocation, CodingOut, NavBarFs,
-      ForecastCalculation, CutOverCredits, CreditsRefundsRepay, WhatYouOweCreditAmount, MFACreditsAndDebits,
+    Set(ITSASubmissionIntegration, ChargeHistory, PaymentAllocation, CodingOut, NavBarFs, CreditsRefundsRepay,
       PaymentHistoryRefunds, CalendarQuarterTypes, IncomeSourcesNewJourney, IncomeSources, OptOut, AdjustPaymentsOnAccount, ReviewAndReconcilePoa)
 
   def get(str: String): Option[FeatureSwitchName] = allFeatureSwitches find (_.name == str)
@@ -123,29 +114,9 @@ case object NavBarFs extends FeatureSwitchName {
   override def toString: String = "Nav Bar"
 }
 
-case object ForecastCalculation extends FeatureSwitchName {
-  override val name = "forecast-calculation"
-  override def toString: String = "Forecast Calculation"
-}
-
-case object CutOverCredits extends FeatureSwitchName {
-  override val name = "cut-over-credit"
-  override def toString: String = "Cut-Over Credit (CESA to ETMP)"
-}
-
 case object CreditsRefundsRepay extends FeatureSwitchName {
   override val name = "credits-refunds-repay"
   override def toString: String = "Credits/Refunds Repayment"
-}
-
-case object WhatYouOweCreditAmount extends FeatureSwitchName {
-  override val name = "what-you-owe-credit-amount"
-  override def toString: String = "What You Owe Credit Amount"
-}
-
-case object MFACreditsAndDebits extends FeatureSwitchName {
-  override val name = "mfa-credits-and-debits"
-  override def toString: String = "MFA Credits and Debits"
 }
 
 case object PaymentHistoryRefunds extends FeatureSwitchName {

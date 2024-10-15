@@ -22,7 +22,7 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{CutOverCredits, MFACreditsAndDebits, PaymentHistoryRefunds}
+import models.admin.PaymentHistoryRefunds
 import models.core.AccountingPeriodModel
 import models.financialDetails.Payment
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
@@ -113,33 +113,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
   }
 
   s"return $OK with the enter client utr page" when {
-    s"return $OK" in {
-      disable(CutOverCredits)
-      disable(MFACreditsAndDebits)
-      stubAuthorisedAgentUser(authorised = true)
-      disable(PaymentHistoryRefunds)
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-        status = OK,
-        response = incomeSourceDetailsModel
-      )
-
-      IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK, payments)
-
-      val result = IncomeTaxViewChangeFrontend.getPaymentHistory(clientDetailsWithConfirmation)
-
-      Then("The Payment History page is returned to the user")
-      result should have(
-        httpStatus(OK),
-        pageTitleAgent("paymentHistory.heading")
-      )
-
-      verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, payments, cutOverCreditsEnabled = false,
-        mfaCreditsEnabled = false).detail)
-    }
-
-    s"return payment from earlier tax year description when CutOverCreditsEnabled and credit is defined $OK" in {
-      enable(CutOverCredits)
-      enable(MFACreditsAndDebits)
+    s"return payment from earlier tax year description" in {
       stubAuthorisedAgentUser(authorised = true)
       disable(PaymentHistoryRefunds)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -157,9 +131,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
         pageTitleAgent("paymentHistory.heading"),
         elementTextBySelector("#refundstatus")(""),
       )
-
-      verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, payments, cutOverCreditsEnabled = true,
-        mfaCreditsEnabled = true).detail)
+      verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, payments).detail)
     }
 
   }

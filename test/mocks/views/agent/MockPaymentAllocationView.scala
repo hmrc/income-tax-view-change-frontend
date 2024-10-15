@@ -35,12 +35,11 @@ trait MockPaymentAllocationView extends BeforeAndAfterEach {
     reset(paymentAllocationView)
   }
 
-  def mockPaymentAllocationView(viewModel: PaymentAllocationViewModel, backUrl: String, saUtr: Option[String], CutOverCreditsEnabled: Boolean, isAgent: Boolean)(response: Html): Unit = {
+  def mockPaymentAllocationView(viewModel: PaymentAllocationViewModel, backUrl: String, saUtr: Option[String], isAgent: Boolean)(response: Html): Unit = {
     when(paymentAllocationView.apply(
       matches(viewModel),
       matches(backUrl),
       matches(saUtr),
-      matches(CutOverCreditsEnabled),
       matches(isAgent),
       any(),
       any(),

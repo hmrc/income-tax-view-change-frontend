@@ -61,8 +61,6 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
                    creditAndRefundModel: CreditsModel,
                    isAgent: Boolean = false,
                    backUrl: String = "testString",
-                   isMFACreditsAndDebitsEnabled: Boolean = false,
-                   isCutOverCreditsEnabled: Boolean = false,
                    welshLang: Boolean  = false) {
 
     val testMessages: Messages = if(welshLang) {
@@ -75,9 +73,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
       creditAndRefundView(
         viewModel,
         isAgent = isAgent,
-        backUrl,
-        isMFACreditsAndDebitsEnabled = isMFACreditsAndDebitsEnabled,
-        isCutOverCreditsEnabled = isCutOverCreditsEnabled
+        backUrl
       )(FakeRequest(), implicitly, testMessages)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
     lazy val layoutContent: Element = document.selectHead("#main-content")
@@ -92,8 +88,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           .withAvailableCredit(2800.0)
           .withMfaCredit(LocalDate.of(2019, 5, 15), -1400.0)
           .withPayment(LocalDate.of(2019, 5, 15), -1400.0)
-          .get(),
-        isCutOverCreditsEnabled = true) {
+          .get()) {
         document.select("ul#credits-list").isDefined shouldBe true
       }
 
@@ -102,8 +97,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           .withAvailableCredit(700.0)
           .withFirstRefund(700.0)
           .withSecondRefund(700.0)
-          .get(),
-        isCutOverCreditsEnabled = true) {
+          .get()) {
         document.select("ul#credits-list").isDefined shouldBe true
       }
 
@@ -112,8 +106,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           .withAvailableCredit(700.0)
           .withPayment(LocalDate.of(2019, 5, 15), 1400.0)
           .withFirstRefund(700.0)
-          .get(),
-        isCutOverCreditsEnabled = true) {
+          .get()) {
         document.select("ul#credits-list").isDefined shouldBe true
       }
     }
@@ -124,8 +117,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
         creditAndRefundModel = ANewCreditAndRefundModel()
           .withAvailableCredit(2800.0)
           .withMfaCredit(LocalDate.of(2019, 5, 15), 1400.0)
-          .get(),
-        isCutOverCreditsEnabled = true) {
+          .get()) {
         document.select("ul#credits-list").isEmpty shouldBe true
       }
 
@@ -133,8 +125,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
         creditAndRefundModel = ANewCreditAndRefundModel()
           .withAvailableCredit(700.0)
           .withPayment(LocalDate.of(2019, 5, 15), 1400.0)
-          .get(),
-        isCutOverCreditsEnabled = true) {
+          .get()) {
         document.select("ul#credits-list").isEmpty shouldBe true
       }
 
@@ -142,8 +133,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
         creditAndRefundModel = ANewCreditAndRefundModel()
           .withAvailableCredit(700.0)
           .withFirstRefund(700.0)
-          .get(),
-        isCutOverCreditsEnabled = true) {
+          .get()) {
         document.select("ul#credits-list").isEmpty shouldBe true
       }
     }
@@ -156,8 +146,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
             .withFirstRefund(6.0)
             .withPayment(LocalDate.of(2019, 5, 15), 6.0)
             .withAvailableCredit(0.0)
-            .get(),
-          isCutOverCreditsEnabled = true
+            .get()
         ) {
 
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
@@ -248,8 +237,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
             .withMfaCredit(dueDate = LocalDate.of(2018, 1, 1), 1400.0)
             .withMfaCredit(dueDate = LocalDate.of(2018, 2, 1), 1000.0)
             .withAvailableCredit(0.0)
-            .get(),
-          isMFACreditsAndDebitsEnabled = true
+            .get()
         ) {
 
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
@@ -267,8 +255,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
             .withPayment(dueDate = LocalDate.of(2019, 5, 15), 1400.0)
             .withPayment(dueDate = LocalDate.of(2019, 5, 15), 1000.0)
             .withAvailableCredit(0.0)
-            .get(),
-          isCutOverCreditsEnabled = true
+            .get()
         ) {
 
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
@@ -295,9 +282,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
             .withBalancingChargeCredit(LocalDate.of(2022, 1, 1), 200.0)
             .withRepaymentInterest(LocalDate.of(2020, 1, 1), 400.0)
             .withMfaCredit(LocalDate.of(2019, 1, 1), 500.0)
-            .get(),
-          isMFACreditsAndDebitsEnabled = true,
-          isCutOverCreditsEnabled = true,
+            .get()
         ) {
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
@@ -322,8 +307,6 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
             .withRepaymentInterest(LocalDate.of(2020, 1, 1), 400.0)
             .withMfaCredit(LocalDate.of(2019, 1, 1), 500.0)
             .get(),
-          isMFACreditsAndDebitsEnabled = true,
-          isCutOverCreditsEnabled = true,
           welshLang = true
         ) {
           document.title() shouldBe "Hawlio ad-daliad - Rheoli’ch diweddariadau Treth Incwm - GOV.UK"
@@ -344,7 +327,6 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
     "display the page" when {
       "correct data is provided" in new TestSetup(
         isAgent = true,
-        isCutOverCreditsEnabled = true,
         creditAndRefundModel = ANewCreditAndRefundModel()
           .withAvailableCredit(500.0)
           .get()

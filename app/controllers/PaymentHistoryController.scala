@@ -26,7 +26,7 @@ import controllers.predicates._
 import enums.GatewayPage.PaymentHistoryPage
 import forms.utils.SessionKeys.gatewayPage
 import implicits.ImplicitDateFormatter
-import models.admin.{CreditsRefundsRepay, CutOverCredits, MFACreditsAndDebits, PaymentHistoryRefunds, ReviewAndReconcilePoa}
+import models.admin.{CreditsRefundsRepay, PaymentHistoryRefunds, ReviewAndReconcilePoa}
 import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
 import models.repaymentHistory.RepaymentHistoryUtils
 import play.api.i18n.{I18nSupport, Messages}
@@ -79,9 +79,7 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
 
         auditingService.extendedAudit(PaymentHistoryResponseAuditModel(
           mtdItUser = user,
-          payments = payments,
-          cutOverCreditsEnabled = isEnabled(CutOverCredits),
-          mfaCreditsEnabled = isEnabled(MFACreditsAndDebits)
+          payments = payments
         ))
 
         val paymentHistoryEntries = RepaymentHistoryUtils.getGroupedPaymentHistoryData(
@@ -89,8 +87,6 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
           payments = payments,
           repayments = repayments,
           languageUtils = languageUtils,
-          cutOverCreditsEnabled = isEnabled(CutOverCredits),
-          mfaCreditsEnabled = isEnabled(MFACreditsAndDebits),
           reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa)
         )
 
