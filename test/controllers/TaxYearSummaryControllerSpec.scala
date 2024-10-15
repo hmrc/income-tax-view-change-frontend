@@ -117,12 +117,9 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
   ))
 
   "The TaxYearSummary.renderTaxYearSummaryPage(year) action" when {
-    def runForecastTest(crystallised: Boolean, calcDataNotFound: Boolean = false, forecastCalcFeatureSwitchEnabled: Boolean, taxYear: Int = testTaxYear,
+    def runForecastTest(crystallised: Boolean, calcDataNotFound: Boolean = false, taxYear: Int = testTaxYear,
                         shouldShowForecastData: Boolean): Unit = {
       disableAllSwitches()
-      if (forecastCalcFeatureSwitchEnabled)
-        enable(ForecastCalculation)
-      else disable(ForecastCalculation)
       mockSingleBusinessIncomeSource()
       if (crystallised) {
         mockCalculationSuccessfulNew(testMtditid, taxYear = taxYear)
@@ -156,26 +153,18 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
       contentType(result) shouldBe Some("text/html")
     }
 
-    "ForecastCalculation feature switch is enabled" should {
-      "show the Forecast tab before crystallisation" in {
-        runForecastTest(crystallised = false, forecastCalcFeatureSwitchEnabled = true, shouldShowForecastData = true)
+    "TaxYearSummaryController" should {
+      "show the Forecast tab before crystallisation when crystallised is false and the show forecast data is true" in {
+        runForecastTest(crystallised = false, shouldShowForecastData = true)
       }
-      "NOT show the Forecast tab after crystallisation" in {
-        runForecastTest(crystallised = true, forecastCalcFeatureSwitchEnabled = true, shouldShowForecastData = false)
+      "NOT show the Forecast tab after crystallisation if crystallisation is true and show forecast data is false" in {
+        runForecastTest(crystallised = true, shouldShowForecastData = false)
       }
       "show the Forecast tab when no calc data is returned" in {
-        runForecastTest(crystallised = false, calcDataNotFound = true, forecastCalcFeatureSwitchEnabled = true, shouldShowForecastData = true)
+        runForecastTest(crystallised = false, calcDataNotFound = true, shouldShowForecastData = true)
       }
     }
 
-    "ForecastCalculation feature switch is disabled" should {
-      "NOT show the Forecast tab before crystallisation" in {
-        runForecastTest(crystallised = false, forecastCalcFeatureSwitchEnabled = false, shouldShowForecastData = false)
-      }
-      "NOT show the Forecast tab when no calc data is returned" in {
-        runForecastTest(crystallised = false, calcDataNotFound = true, forecastCalcFeatureSwitchEnabled = false, shouldShowForecastData = false)
-      }
-    }
     "all calls are returned correctly" should {
       "show the Tax Year Summary Page" in {
         mockSingleBusinessIncomeSource()
@@ -546,9 +535,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
 
 
 
-      def testMFADebits(MFAEnabled: Boolean): Assertion = {
-        if (MFAEnabled) enable(MFACreditsAndDebits) else disable(MFACreditsAndDebits)
-
+      def testMFADebits(): Assertion = {
         mockSingleBusinessIncomeSource()
         mockCalculationSuccessfulNew(testMtditid)
         mockFinancialDetailsSuccess(financialDetailsModelResponse = MFADebitsFinancialDetails)
@@ -564,7 +551,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         ).map(TaxYearSummaryChargeItem.fromChargeItem)
 
         val calcOverview: CalculationSummary = CalculationSummary(liabilityCalculationModelSuccessful)
-        val charges = if (MFAEnabled) mfaCharges else testEmptyChargesList
+        val charges = mfaCharges
         val expectedContent: String = taxYearSummaryView(
           testTaxYear,
           TaxYearSummaryViewModel(
@@ -583,11 +570,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         contentAsString(result) shouldBe expectedContent
       }
 
-      "display MFA Debits when FS is enabled" in {
-        testMFADebits(true)
-      }
-      "not display MFA Debits when FS is disabled" in {
-        testMFADebits(false)
+      "display MFA Debits" in {
+        testMFADebits()
       }
     }
 
@@ -675,7 +659,6 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
 
       "the calculation returned from the calculation service was not found" should {
         "show tax year summary page with expected content" in {
-          enable(ForecastCalculation)
           mockSingleBusinessIncomeSource()
           mockCalculationNotFoundNew(testMtditid)
           mockFinancialDetailsSuccess()

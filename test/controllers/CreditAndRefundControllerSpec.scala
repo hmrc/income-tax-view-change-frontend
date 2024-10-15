@@ -22,7 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.SessionTimeoutPredicate
 import mocks.auth.{MockAuthActions, MockFrontendAuthorisedFunctions}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
-import models.admin.{CreditsRefundsRepay, CutOverCredits, MFACreditsAndDebits}
+import models.admin.CreditsRefundsRepay
 import models.financialDetails.FinancialDetailsModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -94,10 +94,9 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
 
       }
 
-      "MFACreditsAndDebits enabled: credit charges are returned" in new Setup {
+      "credit charges are returned" in new Setup {
         disableAllSwitches()
         enable(CreditsRefundsRepay)
-        enable(MFACreditsAndDebits)
 
         mockSingleBISWithCurrentYearAsMigrationYear()
 
@@ -116,10 +115,8 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
 
       }
 
-      "MFACreditsAndDebits enabled: credit charges are returned in sorted order of credits" in new Setup {
+      "credit charges are returned in sorted order of credits" in new Setup {
         enable(CreditsRefundsRepay)
-        enable(MFACreditsAndDebits)
-        enable(CutOverCredits)
 
         mockSingleBISWithCurrentYearAsMigrationYear()
 
@@ -182,7 +179,6 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
 
       "redirect to the custom not found error page" in new Setup {
         disableAllSwitches()
-        enable(MFACreditsAndDebits)
 
         mockSingleBISWithCurrentYearAsMigrationYear()
 
