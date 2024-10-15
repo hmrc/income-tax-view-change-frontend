@@ -91,11 +91,6 @@ class OptOutAuditModelSpec extends TestSupport {
 
         auditModel.detail shouldBe
           Json.obj(
-            "saUtr" -> "1234567890",
-            "credId" -> "12345-credId",
-            "mtditid" -> "XAIT0000123456",
-            "userType" -> "Individual",
-            "agentReferenceNumber" -> null,
             "nino" -> "AB123456C",
             "outcome" -> Json.obj("isSuccessful" -> true),
             "optOutRequestedFromTaxYear" -> "21-22",
