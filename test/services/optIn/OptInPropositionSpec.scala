@@ -141,5 +141,51 @@ class OptInPropositionSpec extends UnitSpec {
         }
       }
     }
+
+    ".annualWithFollowingYearMandated()" when {
+
+      "current year ITSA status is Annual and next year itsa status is Mandated" should {
+        "return true" in {
+
+          val result =
+            createOptInProposition(
+              currentYear = currentTaxYear,
+              currentYearItsaStatus = Annual,
+              nextYearItsaStatus = Mandated
+            ).annualWithFollowingYearMandated()
+
+          result shouldBe true
+        }
+      }
+
+      "current year ITSA status is Annual and next year itsa status is any other status" should {
+        "return false" in {
+
+          val result =
+            createOptInProposition(
+              currentYear = currentTaxYear,
+              currentYearItsaStatus = Annual,
+              nextYearItsaStatus = Voluntary
+            ).annualWithFollowingYearMandated()
+
+          result shouldBe false
+        }
+      }
+
+      "current year ITSA status is any other status and next year itsa status is Mandated" should {
+        "return false" in {
+
+          val result =
+            createOptInProposition(
+              currentYear = currentTaxYear,
+              currentYearItsaStatus = Voluntary,
+              nextYearItsaStatus = Mandated
+            ).annualWithFollowingYearMandated()
+
+          result shouldBe false
+        }
+      }
+    }
+
   }
 }

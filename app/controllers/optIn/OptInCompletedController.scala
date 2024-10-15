@@ -70,7 +70,7 @@ class OptInCompletedController @Inject()(val view: OptInCompletedView,
                   showAnnualReportingAdvice = proposition.showAnnualReportingAdvice(optInTaxYear),
                   isCurrentYear = proposition.isCurrentTaxYear(optInTaxYear),
                   optInIncludedNextYear = proposition.nextTaxYear.status == Voluntary,
-                  annualWithFollowingYearMandated = proposition.currentTaxYear.status == Annual && proposition.nextTaxYear.status == Mandated
+                  annualWithFollowingYearMandated = proposition.annualWithFollowingYearMandated()
                 )
               Ok(view(model))
             }.getOrElse(errorHandler(isAgent).showInternalServerError())

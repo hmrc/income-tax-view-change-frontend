@@ -17,7 +17,7 @@
 package services.optIn.core
 
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus}
+import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated}
 import services.optIn.core.OptInProposition.OneItem
 
 object OptInProposition {
@@ -74,4 +74,6 @@ case class OptInProposition(currentTaxYear: CurrentOptInTaxYear, nextTaxYear: Ne
   def showAnnualReportingAdvice(customerIntent: TaxYear): Boolean = {
     expectedItsaStatusesAfter(customerIntent).contains(Annual)
   }
+
+  def annualWithFollowingYearMandated(): Boolean = currentTaxYear.status == Annual && nextTaxYear.status == Mandated
 }
