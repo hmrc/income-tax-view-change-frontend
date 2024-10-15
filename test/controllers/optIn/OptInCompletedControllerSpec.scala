@@ -16,11 +16,16 @@
 
 package controllers.optIn
 
+import cats.data.OptionT
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockOptInService, MockOptOutService}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
+import models.itsaStatus.ITSAStatus.Voluntary
+import models.optin.OptInCompletedViewModel
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
@@ -29,102 +34,164 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAn
 import testUtils.TestSupport
 import views.html.optIn.OptInCompletedView
 
+import scala.concurrent.Future
+
 class OptInCompletedControllerSpec extends TestSupport
   with MockAuthenticationPredicate with MockOptOutService with MockOptInService {
 
-  val controller = new OptInCompletedController(
-    view = app.injector.instanceOf[OptInCompletedView],
-    mockOptInService,
-    authorisedFunctions = mockAuthService,
-    auth = testAuthenticator,
-  )(
-    appConfig = appConfig,
-    mcc = app.injector.instanceOf[MessagesControllerComponents],
-    ec = ec,
-    itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
-    itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler]
-  )
+  val view: OptInCompletedView = app.injector.instanceOf[OptInCompletedView]
+  val messagesControllerComponents = app.injector.instanceOf[MessagesControllerComponents]
+  val itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler]
+  val agentItvcErrorHandler = app.injector.instanceOf[AgentItvcErrorHandler]
+
+  val controller =
+    new OptInCompletedController(
+      view = view,
+      mockOptInService,
+      authorisedFunctions = mockAuthService,
+      auth = testAuthenticator,
+    )(
+      appConfig = appConfig,
+      mcc = messagesControllerComponents,
+      ec = ec,
+      itvcErrorHandler = itvcErrorHandler,
+      itvcErrorHandlerAgent = agentItvcErrorHandler
+    )
 
   val endTaxYear = 2023
   val taxYear2023 = TaxYear.forYearEnd(endTaxYear)
 
-  def testShowSuccessCase(isAgent: Boolean): Unit = {
-
-    "show page for current year" should {
-      s"return result with $OK status" in {
-
-        setupMockAuthorisationSuccess(isAgent)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-
-        val proposition = createOptInProposition(taxYear2023, ITSAStatus.Annual, ITSAStatus.Annual)
-        mockFetchOptInProposition(Some(proposition))
-        mockFetchSavedChosenTaxYear(Some(taxYear2023))
-
-        val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
-        val result = controller.show(isAgent).apply(requestGET)
-        status(result) shouldBe Status.OK
-      }
-    }
-
-    "show page for next year" should {
-      s"return result with $OK status" in {
-
-        setupMockAuthorisationSuccess(isAgent)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-
-        val proposition = createOptInProposition(taxYear2023, ITSAStatus.Annual, ITSAStatus.Annual)
-        mockFetchOptInProposition(Some(proposition))
-        mockFetchSavedChosenTaxYear(Some(taxYear2023.nextYear))
-
-        val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
-        val result = controller.show(isAgent).apply(requestGET)
-        status(result) shouldBe Status.OK
-      }
-    }
-  }
-
-  def testShowFailCase(isAgent: Boolean): Unit = {
-
-    "show page in error for current year" should {
-      s"return result with $INTERNAL_SERVER_ERROR status" in {
-
-        setupMockAuthorisationSuccess(isAgent)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-
-        mockFetchOptInProposition(None)
-        mockFetchSavedChosenTaxYear(Some(taxYear2023))
-
-        val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
-        val result = controller.show(isAgent).apply(requestGET)
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-    }
-
-    "show page in error for next year" should {
-      s"return result with $INTERNAL_SERVER_ERROR status" in {
-
-        setupMockAuthorisationSuccess(isAgent)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-
-        val proposition = createOptInProposition(taxYear2023, ITSAStatus.Annual, ITSAStatus.Annual)
-        mockFetchOptInProposition(Some(proposition))
-        mockFetchSavedChosenTaxYear(None)
-
-        val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
-        val result = controller.show(isAgent).apply(requestGET)
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-    }
-  }
-
   "OptInCompletedController - Individual" when {
-    testShowSuccessCase(isAgent = false)
-    testShowFailCase(isAgent = false)
-  }
 
-  "OptInCompletedController - Agent" when {
-    testShowSuccessCase(isAgent = true)
-    testShowFailCase(isAgent = true)
-  }
+    ".show()" when {
 
+      "the user selected a tax year and OptInCompletedViewModel is defined" should {
+
+        "return OK 200 status" in {
+
+          val isAgent = false
+
+          setupMockAuthorisationSuccess(isAgent)
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+          val proposition = createOptInProposition(taxYear2023, ITSAStatus.Annual, ITSAStatus.Annual)
+
+          when(mockOptInService.optInCompletedPageModel(any())(any(), any(), any()))
+            .thenReturn(
+              OptionT[Future, OptInCompletedViewModel](
+                Future(Some(
+                  OptInCompletedViewModel(
+                    isAgent = isAgent,
+                    optInTaxYear = taxYear2023,
+                    showAnnualReportingAdvice = proposition.showAnnualReportingAdvice(taxYear2023),
+                    isCurrentYear = proposition.isCurrentTaxYear(taxYear2023),
+                    optInIncludedNextYear = proposition.nextTaxYear.status == Voluntary
+                  )
+                ))
+              )
+            )
+
+          val request = fakeRequestWithNinoAndOrigin("PTA")
+          val result =
+            controller
+              .show()
+              .apply(request)
+
+          status(result) shouldBe Status.OK
+        }
+      }
+
+      "the user has not selected a tax year and OptInCompletedViewModel is not defined" should {
+
+        "return INTERNAL_SERVER_ERROR 500 status" in {
+
+          val isAgent = false
+
+          setupMockAuthorisationSuccess(isAgent)
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+          when(mockOptInService.optInCompletedPageModel(any())(any(), any(), any()))
+            .thenReturn(
+              OptionT[Future, OptInCompletedViewModel](Future(None))
+            )
+
+          val request = fakeRequestWithNinoAndOrigin("PTA")
+          val result =
+            controller
+              .show()
+              .apply(request)
+
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        }
+      }
+    }
+
+    "OptInCompletedController - Agent" when {
+
+      ".show()" when {
+
+        "the user selected a tax year and OptInCompletedViewModel is defined" should {
+
+          "return OK 200 status" in {
+
+            val isAgent = true
+
+            setupMockAuthorisationSuccess(isAgent)
+            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+            val proposition = createOptInProposition(taxYear2023, ITSAStatus.Annual, ITSAStatus.Annual)
+
+            when(mockOptInService.optInCompletedPageModel(any())(any(), any(), any()))
+              .thenReturn(
+                OptionT[Future, OptInCompletedViewModel](
+                  Future(Some(
+                    OptInCompletedViewModel(
+                      isAgent = isAgent,
+                      optInTaxYear = taxYear2023,
+                      showAnnualReportingAdvice = proposition.showAnnualReportingAdvice(taxYear2023),
+                      isCurrentYear = proposition.isCurrentTaxYear(taxYear2023),
+                      optInIncludedNextYear = proposition.nextTaxYear.status == Voluntary
+                    )
+                  ))
+                )
+              )
+
+            val request = fakeRequestConfirmedClient()
+            val result =
+              controller
+                .show(isAgent)
+                .apply(request)
+
+            status(result) shouldBe Status.OK
+          }
+        }
+
+        "the user has not selected a tax year and OptInCompletedViewModel is not defined" should {
+
+          "return INTERNAL_SERVER_ERROR 500 status" in {
+
+            val isAgent = true
+
+            setupMockAuthorisationSuccess(isAgent)
+            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+            when(mockOptInService.optInCompletedPageModel(any())(any(), any(), any()))
+              .thenReturn(
+                OptionT[Future, OptInCompletedViewModel](Future(None))
+              )
+
+            val request = fakeRequestConfirmedClient()
+            val result =
+              controller
+                .show(isAgent)
+                .apply(request)
+
+            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          }
+        }
+      }
+    }
+  }
 }
+
+
