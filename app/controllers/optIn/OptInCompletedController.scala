@@ -20,7 +20,7 @@ import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import models.itsaStatus.ITSAStatus.{Annual, Voluntary}
+import models.itsaStatus.ITSAStatus.{Annual, Mandated, Voluntary}
 import models.optin.OptInCompletedViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -58,7 +58,6 @@ class OptInCompletedController @Inject()(val view: OptInCompletedView,
     auth.authenticatedAction(isAgent) {
       implicit user =>
         withRecover(isAgent) {
-
           for {
             proposition: OptInProposition <- optInService.fetchOptInProposition()
             intent <- optInService.fetchSavedChosenTaxYear()
@@ -70,7 +69,8 @@ class OptInCompletedController @Inject()(val view: OptInCompletedView,
                   optInTaxYear = optInTaxYear,
                   showAnnualReportingAdvice = proposition.showAnnualReportingAdvice(optInTaxYear),
                   isCurrentYear = proposition.isCurrentTaxYear(optInTaxYear),
-                  optInIncludedNextYear = proposition.nextTaxYear.status == Voluntary
+                  optInIncludedNextYear = proposition.nextTaxYear.status == Voluntary,
+                  annualWithFollowingYearMandated = proposition.annualWithFollowingYearMandated()
                 )
               Ok(view(model))
             }.getOrElse(errorHandler(isAgent).showInternalServerError())

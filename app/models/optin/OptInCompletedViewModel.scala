@@ -18,22 +18,28 @@ package models.optin
 
 import models.incomeSourceDetails.TaxYear
 
+import java.time.format.DateTimeFormatter
+
 case class OptInCompletedViewModel(
                                     isAgent: Boolean,
                                     optInTaxYear: TaxYear,
                                     isCurrentYear: Boolean,
                                     showAnnualReportingAdvice: Boolean,
-                                    optInIncludedNextYear: Boolean
-                                  ) {
+                                    optInIncludedNextYear: Boolean,
+                                    annualWithFollowingYearMandated: Boolean) {
+
   val startYear: String = optInTaxYear.startYear.toString
   val endYear: String = optInTaxYear.endYear.toString
   val nextYear: String = optInTaxYear.nextYear.endYear.toString
+  private val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM uuuu")
+  val startDateNextYear: String = optInTaxYear.toFinancialYearEnd.plusDays(1).format(dateTimeFormatter)
 
   def headingMessageKey: String = {
-    (isCurrentYear, optInIncludedNextYear) match {
-      case (true, true) => "optin.completedOptIn.followingVoluntary.heading.desc"
-      case (true, false) => "optin.completedOptIn.cy.heading.desc"
-      case _ => "optin.completedOptIn.ny.heading.desc"
+    (isCurrentYear, optInIncludedNextYear, annualWithFollowingYearMandated) match {
+      case (true, _, true)    => "optin.completedOptIn.followingVoluntary.heading.desc"
+      case (true, true, _)    => "optin.completedOptIn.followingVoluntary.heading.desc"
+      case (true, false, _)   => "optin.completedOptIn.cy.heading.desc"
+      case _                  => "optin.completedOptIn.ny.heading.desc"
     }
   }
 

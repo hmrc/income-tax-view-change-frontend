@@ -2315,8 +2315,14 @@ optin.completedOptIn.submitUpdates.desc1.b.url  = https://www.gov.uk/guidance/fi
 optin.completedOptIn.submitUpdates.annualReportingAdvice     = When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software.
 
 optin.completedOptIn.futureReporting            = Reporting in the future
+optin.completedOptIn.nymandated.futureReporting = Reporting quarterly from next tax year onwards
 optin.completedOptIn.cy.futureReporting.desc1   = You have just chosen to voluntarily report quarterly from the {0} to {1} tax year onwards, but in the future it could be mandatory for you if:
 optin.completedOptIn.ny.futureReporting.desc1   = You are voluntarily opted in to reporting quarterly from the next tax year onwards, but in the future it could be mandatory for you if:
+optin.completedOptIn.nymandated.futureReporting.desc1   = You have just chosen to voluntarily report quarterly from the {0} to {1} tax year.
+optin.completedOptIn.nymandated.futureReporting.desc2   = This could be because:
+optin.completedOptIn.nymandated.futureReporting.bullet.p1   = HMRC lowered the income threshold for Making Tax Digital for Income Tax
+optin.completedOptIn.nymandated.futureReporting.bullet.p2   = you reported an increase in your qualifying income in a tax return
+optin.completedOptIn.nymandated.inset   = From {0}, you’ll be required to send quarterly updates through compatible software.
 optin.completedOptIn.futureReporting.p1         = HMRC lowers the income threshold for Making Tax Digital for Income Tax
 optin.completedOptIn.futureReporting.p2         = you report an increase in your qualifying income in a tax return
 optin.completedOptIn.futureReporting.scenario   = For example, if your income from self-employment or property, or both, exceeds the threshold in the {0} to {1} tax year, you would have to report quarterly from 6 April {2}.
