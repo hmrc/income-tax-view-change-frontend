@@ -48,6 +48,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
                                           clientDetailsService: ClientDetailsService,
+                                          val authorisedFunctions: AuthorisedFunctions,
                                           val authActions: AuthActions,
                                           val auditingService: AuditingService,
                                           val sessionDataService: SessionDataService)
@@ -142,6 +143,4 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
       )
       )
     }
-
-  override val authorisedFunctions: AuthorisedFunctions = ???
 }

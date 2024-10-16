@@ -27,7 +27,7 @@ import mocks.services.{MockClientDetailsService, MockSessionDataService}
 import mocks.views.agent.MockEnterClientsUTR
 import models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostSuccess}
 import org.mockito.ArgumentMatchers
-import org.mockito.Mockito.{times, verify}
+import org.mockito.Mockito.{mock, times, verify}
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
@@ -35,7 +35,7 @@ import services.agent.ClientDetailsService._
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testArn, testCredId, testMtditid, testNino}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
-import uk.gov.hmrc.auth.core.{BearerTokenExpired, Enrolment, InsufficientEnrolments}
+import uk.gov.hmrc.auth.core.{AuthorisedFunctions, BearerTokenExpired, Enrolment, InsufficientEnrolments}
 
 class EnterClientsUTRControllerSpec extends TestSupport
   with MockAuthenticationPredicate
@@ -46,9 +46,12 @@ class EnterClientsUTRControllerSpec extends TestSupport
   with MockSessionDataService
   with MockAuthActions {
 
+  val mockFrontendAuthorisedFunctions = mock(classOf[AuthorisedFunctions])
+
   object TestEnterClientsUTRController extends EnterClientsUTRController(
     enterClientsUTR,
     mockClientDetailsService,
+    mockFrontendAuthorisedFunctions,
     authActions = mockAuthActions,
     mockAuditingService,
     mockSessionDataService

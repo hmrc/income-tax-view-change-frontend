@@ -54,9 +54,7 @@ class AuthoriseAndRetrieveAgent @Inject()(val authorisedFunctions: FrontendAutho
 
     implicit val req: Request[A] = request
 
-
     val isAgent: Predicate = Enrolment("HMRC-AS-AGENT") and AffinityGroup.Agent
-
 
     authorisedFunctions.authorised( isAgent )
       .retrieve(allEnrolments and credentials and affinityGroup and confidenceLevel) {
