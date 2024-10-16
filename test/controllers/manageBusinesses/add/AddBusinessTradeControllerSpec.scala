@@ -90,7 +90,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
           "redirect a user back to the custom error page" when {
             "the individual is not authenticated" should {
               "redirect them to sign in" in {
-                if (isAgent) setupMockAgentAuthorisationException() else setupMockAuthorisationException()
+                if (isAgent) setupMockEnroledAgentAuthorisationException() else setupMockAuthorisationException()
                 val result = TestAddBusinessTradeController.show(isAgent, isChange)(getRequest(isAgent))
                 status(result) shouldBe SEE_OTHER
                 redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)

@@ -206,19 +206,19 @@ class ManageObligationsControllerSpec extends TestSupport
       }
       "the agent is not authenticated" should {
         "redirect them to sign in SE" in {
-          setupMockAgentAuthorisationException()
+          setupMockEnroledAgentAuthorisationException()
           val result = TestManageObligationsController.show(isAgent = true, SelfEmployment)(fakeRequestConfirmedClient())
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
         }
         "redirect them to sign in UK property" in {
-          setupMockAgentAuthorisationException()
+          setupMockEnroledAgentAuthorisationException()
           val result = TestManageObligationsController.show(isAgent = true, UkProperty)(fakeRequestConfirmedClient())
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
         }
         "redirect them to sign in Foreign property" in {
-          setupMockAgentAuthorisationException()
+          setupMockEnroledAgentAuthorisationException()
           val result = TestManageObligationsController.show(isAgent = true, ForeignProperty)(fakeRequestConfirmedClient())
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)

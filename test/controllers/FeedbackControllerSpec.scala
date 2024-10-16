@@ -139,7 +139,7 @@ class FeedbackControllerSpec extends MockAuthenticationPredicate
   "show agent" when {
     "the user is not authenticated" should {
       "redirect them to sign in" in {
-        setupMockAgentAuthorisationException(withClientPredicate = false)
+        setupMockEnroledAgentAuthorisationException(withClientPredicate = false)
 
         val result: Future[Result] = TestFeedbackController.showAgent()(fakeRequestWithActiveSession)
 
@@ -149,7 +149,7 @@ class FeedbackControllerSpec extends MockAuthenticationPredicate
     }
     "the user has timed out" should {
       "redirect to the session timeout page" in {
-        setupMockAgentAuthorisationException(exception = BearerTokenExpired(), withClientPredicate = false)
+        setupMockEnroledAgentAuthorisationException(exception = BearerTokenExpired(), withClientPredicate = false)
 
         val result: Future[Result] = TestFeedbackController.showAgent()(fakeRequestWithClientDetails)
 

@@ -125,7 +125,7 @@ class IncomeSourceNotAddedControllerSpec extends TestSupport with MockAuthentica
 
         "return 303 and redirect to the sign in" when {
           "the user is not authenticated" in {
-            if (isAgent) setupMockAgentAuthorisationException() else setupMockAuthorisationException()
+            if (isAgent) setupMockEnroledAgentAuthorisationException() else setupMockAuthorisationException()
             val result = if (isAgent) TestIncomeSourceNotAddedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
             else TestIncomeSourceNotAddedController.show(incomeSourceType)(fakeRequestWithActiveSession)
             status(result) shouldBe SEE_OTHER

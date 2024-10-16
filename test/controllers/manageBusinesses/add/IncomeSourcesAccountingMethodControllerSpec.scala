@@ -206,7 +206,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
       }
       "called with an unauthenticated user for " + incomeSourceType in {
         if (isAgent)
-          setupMockAgentAuthorisationException()
+          setupMockEnroledAgentAuthorisationException()
         else
           setupMockAuthorisationException()
         val result: Future[Result] = showResult(incomeSourceType, isAgent)

@@ -87,7 +87,7 @@ class CalculationPollingControllerSpec extends TestSupport with MockCalculationP
   "The CalculationPollingController.calculationPollerAgent(year) action" when {
     "Called with an Unauthenticated User" should {
       "return redirect SEE_OTHER (303)" in {
-        setupMockAgentAuthorisationException()
+        setupMockEnroledAgentAuthorisationException()
         val result = TestCalculationPollingController.calculationPollerAgent(testTaxYear, isFinalCalc = false)(fakeRequestConfirmedClient("AB123456C"))
         status(result) shouldBe Status.SEE_OTHER
       }

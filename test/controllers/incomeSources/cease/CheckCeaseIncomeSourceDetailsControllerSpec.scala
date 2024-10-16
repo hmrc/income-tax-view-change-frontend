@@ -184,7 +184,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends TestSupport with MockA
           status(result) shouldBe Status.SEE_OTHER
         }
         "user is an Agent" in {
-          setupMockAgentAuthorisationException()
+          setupMockEnroledAgentAuthorisationException()
           val result: Future[Result] = TestCeaseCheckIncomeSourceDetailsController.showAgent(SelfEmployment)(fakeRequestConfirmedClient())
           status(result) shouldBe Status.SEE_OTHER
         }

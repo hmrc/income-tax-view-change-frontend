@@ -286,7 +286,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           "redirect a user back to the custom error page" when {
             "the user is not authenticated" should {
               "redirect them to sign in" in {
-                if (isAgent) setupMockAgentAuthorisationException() else setupMockAuthorisationException()
+                if (isAgent) setupMockEnroledAgentAuthorisationException() else setupMockAuthorisationException()
                 val result = if (isAgent) TestIncomeSourceAddedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
                 else TestIncomeSourceAddedController.show(incomeSourceType)(fakeRequestWithActiveSession)
                 status(result) shouldBe SEE_OTHER

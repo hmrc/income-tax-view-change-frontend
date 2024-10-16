@@ -118,7 +118,7 @@ class PaymentControllerSpec extends TestSupport with MockAuthenticationPredicate
     "redirect the user to the login page" when {
 
       "called with an unauthenticated user" in new SetupTestPaymentController(isAgent = true, Future.successful(PaymentJourneyModel("id", "redirect-url"))) {
-        setupMockAgentAuthorisationException()
+        setupMockEnroledAgentAuthorisationException()
         val result: Future[Result] = testController.agentPaymentHandoff(testAmountInPence)()(fakeRequestConfirmedClient())
         status(result) shouldBe Status.SEE_OTHER
       }

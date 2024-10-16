@@ -91,7 +91,7 @@ class ReportingMethodSetBackErrorControllerSpec extends TestSupport with MockAut
         "redirect a user back to the custom error page" when {
           "the user is not authenticated" should {
             "redirect them to sign in" in {
-              if (isAgent) setupMockAgentAuthorisationException() else setupMockAuthorisationException()
+              if (isAgent) setupMockEnroledAgentAuthorisationException() else setupMockAuthorisationException()
               val result = if (isAgent) TestReportingMethodSetBackController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
               else TestReportingMethodSetBackController.show(incomeSourceType)(fakeRequestWithActiveSession)
               status(result) shouldBe SEE_OTHER

@@ -231,7 +231,7 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
 
         "called with an unauthenticated user" when {
           def runUnauthorisedTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
-            if (isAgent) setupMockAgentAuthorisationException() else setupMockAuthorisationException()
+            if (isAgent) setupMockEnroledAgentAuthorisationException() else setupMockAuthorisationException()
             val result = if (isAgent) TestCheckDetailsController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
             else TestCheckDetailsController.show(incomeSourceType)(fakeRequestWithActiveSession)
             status(result) shouldBe SEE_OTHER

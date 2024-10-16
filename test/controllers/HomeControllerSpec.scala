@@ -565,7 +565,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
 //  "navigate to homepage as Agent" should {
 //    "the user is not authenticated" should {
 //      "redirect them to sign in" in new Setup {
-//        setupMockAgentAuthorisationException(withClientPredicate = false)
+//        setupMockEnroledAgentAuthorisationException(withClientPredicate = false)
 //
 //        val result: Future[Result] = TestHomeController.showAgent()(fakeRequestWithActiveSession)
 //
@@ -576,7 +576,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
 //
 //    "the user has timed out" should {
 //      "redirect to the session timeout page" in new Setup {
-//        setupMockAgentAuthorisationException(exception = BearerTokenExpired())
+//        setupMockEnroledAgentAuthorisationException(exception = BearerTokenExpired())
 //
 //        val result: Future[Result] = TestHomeController.showAgent()(fakeRequestWithClientDetails)
 //

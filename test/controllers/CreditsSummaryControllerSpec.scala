@@ -233,7 +233,7 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
 
     "the user is not authenticated" should {
       "redirect them to sign in" in {
-        setupMockAgentAuthorisationException(withClientPredicate = false)
+        setupMockEnroledAgentAuthorisationException(withClientPredicate = false)
 
         val result = TestCreditsSummaryController.showAgentCreditsSummary(calendarYear2018)(fakeRequestWithActiveSession)
 

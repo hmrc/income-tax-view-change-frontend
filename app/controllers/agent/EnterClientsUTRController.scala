@@ -19,6 +19,7 @@ package controllers.agent
 import AuthUtils._
 import audit.AuditingService
 import audit.models.EnterClientUTRAuditModel
+import auth.authV2.{AgentUser, AuthActions}
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.BaseAgentController
@@ -47,7 +48,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
                                           clientDetailsService: ClientDetailsService,
-                                          val authorisedFunctions: AuthorisedFunctions,
+                                          val authActions: AuthActions,
                                           val auditingService: AuditingService,
                                           val sessionDataService: SessionDataService)
                                          (implicit mcc: MessagesControllerComponents,
@@ -61,16 +62,14 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
     defaultAgentPredicates(onMissingARN = redirectNotAnAgent)
   }
 
-  def show: Action[AnyContent] = Authenticated.asyncWithoutClientAuth(notAnAgentPredicate) { implicit request =>
-    implicit user =>
+  def show: Action[AnyContent] = authActions.isAgent.async {implicit user =>
       Future.successful(Ok(enterClientsUTR(
         clientUTRForm = ClientsUTRForm.form,
         postAction = routes.EnterClientsUTRController.submit
       )))
   }
 
-  def showWithUtr(utr: String): Action[AnyContent] = Authenticated.asyncWithoutClientAuth(notAnAgentPredicate) { implicit request =>
-    implicit user =>
+  def showWithUtr(utr: String): Action[AnyContent] = authActions.isAgent.async {implicit user =>
       val utrSafe = utr.filter(_.isDigit).take(10)
       Future.successful(Ok(enterClientsUTR(
         clientUTRForm = ClientsUTRForm.form.fill(utrSafe),
@@ -79,8 +78,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
   }
 
 
-  def submit: Action[AnyContent] = Authenticated.asyncWithoutClientAuth() { implicit request =>
-    implicit user =>
+  def submit: Action[AnyContent] = authActions.isAgent.async { implicit user =>
       ClientsUTRForm.form.bindFromRequest().fold(
         hasErrors => Future.successful(BadRequest(enterClientsUTR(
           clientUTRForm = hasErrors,
@@ -133,7 +131,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
       }
   }
 
-    private def sendAudit(isSuccessful: Boolean, user: IncomeTaxAgentUser, validUTR: String, nino: String, mtdItId: String)(implicit request: Request[_]): Unit = {
+    private def sendAudit[A](isSuccessful: Boolean, user: AgentUser[A], validUTR: String, nino: String, mtdItId: String)(implicit request: Request[_]): Unit = {
       auditingService.extendedAudit(EnterClientUTRAuditModel(
         isSuccessful = isSuccessful,
         nino = nino,
@@ -144,4 +142,6 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
       )
       )
     }
+
+  override val authorisedFunctions: AuthorisedFunctions = ???
 }

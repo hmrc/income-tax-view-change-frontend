@@ -282,7 +282,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
 
     "User fails to be authorised" in new Test {
       enable(PaymentHistoryRefunds)
-      setupMockAgentAuthorisationException(withClientPredicate = false)
+      setupMockEnroledAgentAuthorisationException(withClientPredicate = false)
 
       val result: Future[Result] = controller.showAgent(repaymentRequestNumber)(fakeRequestWithActiveSession)
 

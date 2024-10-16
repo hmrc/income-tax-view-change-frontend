@@ -122,7 +122,7 @@ class IncomeSourceNotCeasedControllerSpec extends TestSupport with MockAuthentic
       }
       "unauthenticated agent navigates to page" in {
         disableAllSwitches()
-        setupMockAgentAuthorisationException()
+        setupMockEnroledAgentAuthorisationException()
         mockUKPropertyIncomeSource()
         val result = TestIncomeSourceNotCeasedController.show(isAgent = true, UkProperty)(fakeRequestConfirmedClient())
 

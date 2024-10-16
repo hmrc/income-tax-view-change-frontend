@@ -29,6 +29,7 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutPredicateV2,
                             val authoriseAndRetrieve: AuthoriseAndRetrieve,
+                            val authoriseAndRetrieveAgent: AuthoriseAndRetrieveAgent,
                             val agentHasClientDetails: AgentHasClientDetails,
                             val asMtdUser: AsMtdUser,
                             val retrieveBtaNavBar: NavBarPredicateV2,
@@ -58,6 +59,8 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutPredicateV2,
 
           retrieveBtaNavBar )
   }
+
+  def isAgent[A]: ActionBuilder[AgentUser, AnyContent] = checkSessionTimeout andThen authoriseAndRetrieveAgent
 
 }
 

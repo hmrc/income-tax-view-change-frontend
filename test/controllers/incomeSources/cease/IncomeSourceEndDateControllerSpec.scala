@@ -298,10 +298,10 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
           val id = Some(testSelfEmploymentId)
           val result: Future[Result] = (isAgent, isChange) match {
             case (true, true) =>
-              setupMockAgentAuthorisationException()
+              setupMockEnroledAgentAuthorisationException()
               TestIncomeSourceEndDateController.showChangeAgent(id = id, incomeSourceType)(fakeRequestConfirmedClient())
             case (true, false) =>
-              setupMockAgentAuthorisationException()
+              setupMockEnroledAgentAuthorisationException()
               TestIncomeSourceEndDateController.showAgent(id = id, incomeSourceType)(fakeRequestConfirmedClient())
             case (false, true) =>
               setupMockAuthorisationException()

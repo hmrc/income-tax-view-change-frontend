@@ -144,7 +144,7 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
 
         s"return 303 and redirect to the sign in for <incomeSourceType: $incomeSourceType>" when {
           "the user is not authenticated" in {
-            if (isAgent) setupMockAgentAuthorisationException() else setupMockAuthorisationException()
+            if (isAgent) setupMockEnroledAgentAuthorisationException() else setupMockAuthorisationException()
             val result = if (isAgent) TestIncomeSourceReportingMethodNotSavedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
             else TestIncomeSourceReportingMethodNotSavedController.show(incomeSourceType)(fakeRequestWithActiveSession)
 

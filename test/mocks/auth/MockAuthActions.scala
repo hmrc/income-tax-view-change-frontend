@@ -44,6 +44,15 @@ trait MockAuthActions extends TestSupport with MockIncomeSourceDetailsService wi
     auditingService = mockAuditingService
   )
 
+  private val authoriseAndRetrieveAgent = new AuthoriseAndRetrieveAgent(
+    authorisedFunctions = mockAuthService,
+    appConfig = appConfig,
+    config = conf,
+    env = environment,
+    mcc = stubMessagesControllerComponents(),
+    auditingService = mockAuditingService
+  )
+
   private val incomeSourceDetailsPredicate = new IncomeSourceDetailsPredicate(
     mockIncomeSourceDetailsService
   )(ec,
@@ -54,6 +63,7 @@ trait MockAuthActions extends TestSupport with MockIncomeSourceDetailsService wi
   val mockAuthActions = new AuthActions(
     app.injector.instanceOf[SessionTimeoutPredicateV2],
     authoriseAndRetrieve,
+    authoriseAndRetrieveAgent,
     app.injector.instanceOf[AgentHasClientDetails],
     app.injector.instanceOf[AsMtdUser],
     app.injector.instanceOf[NavBarPredicateV2],
@@ -71,7 +81,7 @@ trait MockAuthActions extends TestSupport with MockIncomeSourceDetailsService wi
         })
   }
 
-  override def setupMockAgentAuthorisationException(exception: AuthorisationException = new InvalidBearerToken, withClientPredicate: Boolean = true): Unit = {
+  override def setupMockEnroledAgentAuthorisationException(exception: AuthorisationException = new InvalidBearerToken, withClientPredicate: Boolean = true): Unit = {
 
       when(mockAuthService.authorised(any()))
       .thenReturn(

@@ -21,11 +21,11 @@ import config.AgentItvcErrorHandler
 import config.featureswitch.FeatureSwitching
 import controllers.agent.sessionUtils.SessionKeys
 import forms.agent.ClientsUTRForm
-import mocks.auth.MockFrontendAuthorisedFunctions
+import mocks.auth.{MockAuthActions, MockFrontendAuthorisedFunctions}
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockClientDetailsService, MockSessionDataService}
 import mocks.views.agent.MockEnterClientsUTR
-import models.sessionData.SessionDataPostResponse.{SessionDataPostSuccess, SessionDataPostFailure}
+import models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostSuccess}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{times, verify}
 import play.api.mvc.MessagesControllerComponents
@@ -43,12 +43,13 @@ class EnterClientsUTRControllerSpec extends TestSupport
   with MockFrontendAuthorisedFunctions
   with MockClientDetailsService
   with FeatureSwitching
-  with MockSessionDataService {
+  with MockSessionDataService
+  with MockAuthActions {
 
   object TestEnterClientsUTRController extends EnterClientsUTRController(
     enterClientsUTR,
     mockClientDetailsService,
-    mockAuthService,
+    authActions = mockAuthActions,
     mockAuditingService,
     mockSessionDataService
   )(
@@ -61,7 +62,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
   "show" when {
     "the user is not authenticated" should {
       "redirect them to sign in" in {
-        setupMockAgentAuthorisationException(withClientPredicate = false)
+        setupMockEnroledAgentAuthorisationException()
 
         val result = TestEnterClientsUTRController.show()(fakeRequestWithActiveSession)
 
@@ -71,7 +72,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
     }
     "the user has timed out" should {
       "redirect to the session timeout page" in {
-        setupMockAgentAuthorisationException(exception = BearerTokenExpired(), withClientPredicate = false)
+        setupMockEnroledAgentAuthorisationException(exception = BearerTokenExpired())
 
         val result = TestEnterClientsUTRController.show()(fakeRequestWithTimeoutSession)
 
@@ -107,7 +108,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
   "submit" when {
     "the user is not authenticated" should {
       "redirect them to sign in" in {
-        setupMockAgentAuthorisationException(withClientPredicate = false)
+        setupMockEnroledAgentAuthorisationException()
 
         val result = TestEnterClientsUTRController.submit()(fakeRequestWithActiveSession)
 
@@ -138,7 +139,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
       "redirect to the confirm client details page" when {
         "the utr entered is valid, there is a client/primary agent relationship and the POST request to session data service is successful" in {
           val validUTR: String = "1234567890"
-          setupMockEmptyPredicate(testAgentAuthRetrievalSuccess)
+          setupMockAgentPredicate(testAgentAuthRetrievalSuccess)
 
           setupMockPostSessionData(Right(SessionDataPostSuccess(OK)))
 
@@ -166,7 +167,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
 
         "the utr entered is valid, there is a client/secondary agent relationship and the POST request to session data service is successful" in {
           val validUTR: String = "1234567890"
-          setupMockEmptyPredicate(testAgentAuthRetrievalSuccess)
+          setupMockAgentPredicate(testAgentAuthRetrievalSuccess)
 
           setupMockPostSessionData(Right(SessionDataPostSuccess(OK)))
 
@@ -198,7 +199,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
           val validUTR: String = "1234567890"
           val utrWithSpaces: String = " 1 2 3 4 5 6 7 8 9 0 "
 
-          setupMockEmptyPredicate(testAgentAuthRetrievalSuccess)
+          setupMockAgentPredicate(testAgentAuthRetrievalSuccess)
           setupMockPostSessionData(Right(SessionDataPostSuccess(OK)))
 
           mockClientDetails(validUTR)(
@@ -228,7 +229,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
           val validUTR: String = "1234567890"
           val utrWithSpaces: String = " 1 2 3 4 5 6 7 8 9 0 "
 
-          setupMockEmptyPredicate(testAgentAuthRetrievalSuccess)
+          setupMockAgentPredicate(testAgentAuthRetrievalSuccess)
           setupMockPostSessionData(Right(SessionDataPostSuccess(OK)))
 
           mockClientDetails(validUTR)(

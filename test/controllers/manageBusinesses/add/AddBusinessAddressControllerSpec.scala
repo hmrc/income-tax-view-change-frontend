@@ -98,7 +98,7 @@ class AddBusinessAddressControllerSpec extends TestSupport
         "redirect a user back to the custom error page" when {
           "the individual is not authenticated" should {
             "redirect them to sign in" in {
-              if (isAgent) setupMockAgentAuthorisationException() else setupMockAuthorisationException()
+              if (isAgent) setupMockEnroledAgentAuthorisationException() else setupMockAuthorisationException()
               val result = if (isAgent) TestAddBusinessAddressController.showAgent(isChange)(fakeRequestConfirmedClient())
               else TestAddBusinessAddressController.show(isChange)(fakeRequestWithActiveSession)
               status(result) shouldBe SEE_OTHER

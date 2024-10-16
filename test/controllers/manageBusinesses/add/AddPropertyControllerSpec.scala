@@ -79,7 +79,7 @@ class AddPropertyControllerSpec extends TestSupport with MockAuthenticationPredi
           redirectLocation(result) shouldBe Some(redirectUrl)
         }
         "User is not authorised" in {
-          if (isAgent) setupMockAgentAuthorisationException() else setupMockAuthorisationException()
+          if (isAgent) setupMockEnroledAgentAuthorisationException() else setupMockAuthorisationException()
           val result = TestAddPropertyController.show(isAgent)(getRequest(isAgent))
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)

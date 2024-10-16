@@ -161,7 +161,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
 
     "the user is not authenticated" should {
       "redirect the user to authenticate" in new Setup {
-        setupMockAgentAuthorisationException()
+        setupMockEnroledAgentAuthorisationException()
 
         val result = controller.viewPaymentAllocationAgent(documentNumber = docNumber)(fakeRequestWithClientDetails)
 
@@ -172,7 +172,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
 
     "the user has timed out" should {
       "redirect to the session timeout page" in new Setup {
-        setupMockAgentAuthorisationException(exception = BearerTokenExpired(), withClientPredicate = false)
+        setupMockEnroledAgentAuthorisationException(exception = BearerTokenExpired(), withClientPredicate = false)
 
         val result = controller.viewPaymentAllocationAgent(documentNumber = docNumber)(fakeRequestWithTimeoutSession)
 

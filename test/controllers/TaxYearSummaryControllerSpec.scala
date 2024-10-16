@@ -808,7 +808,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
 
     "the user is not authenticated" should {
       "redirect them to sign in" in {
-        setupMockAgentAuthorisationException(withClientPredicate = false)
+        setupMockEnroledAgentAuthorisationException(withClientPredicate = false)
 
         val result: Future[Result] = TestTaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear = testYearPlusTwo)(fakeRequestWithActiveSession)
 

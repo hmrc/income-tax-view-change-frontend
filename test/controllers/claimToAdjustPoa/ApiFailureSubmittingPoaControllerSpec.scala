@@ -110,7 +110,7 @@ class ApiFailureSubmittingPoaControllerSpec extends TestSupport with FeatureSwit
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
       "called with an unauthenticated user" in {
-        setupMockAgentAuthorisationException()
+        setupMockEnroledAgentAuthorisationException()
         val result: Future[Result] = TestApiFailureSubmittingPoaController.show(isAgent = true)(fakeRequestConfirmedClient())
         status(result) shouldBe Status.SEE_OTHER
       }

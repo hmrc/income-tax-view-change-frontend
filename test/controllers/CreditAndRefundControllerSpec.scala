@@ -200,7 +200,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
       }
 
       "User fails to be authorised" in new Setup {
-        setupMockAgentAuthorisationException(withClientPredicate = false)
+        setupMockEnroledAgentAuthorisationException(withClientPredicate = false)
 
         val result: Future[Result] = controller.showAgent()(fakeRequestWithActiveSession)
 

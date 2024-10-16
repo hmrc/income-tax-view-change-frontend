@@ -48,6 +48,8 @@ class AuthoriseAndRetrieve @Inject()(val authorisedFunctions: FrontendAuthorised
                            val auditingService: AuditingService)
   extends  AuthRedirects with ActionRefiner[Request, EnroledUser] with FeatureSwitching {
 
+  lazy val logger: Logger = Logger(getClass)
+
   val requireClientSelected: Boolean = true
 
   implicit val executionContext: ExecutionContext = mcc.executionContext
@@ -103,20 +105,6 @@ class AuthoriseAndRetrieve @Inject()(val authorisedFunctions: FrontendAuthorised
   type AuthRetrievals =
     Enrolments ~ Option[Name] ~ Option[Credentials] ~ Option[AffinityGroup]  ~ ConfidenceLevel
 
-    private def logAndRedirect[A]: PartialFunction[Throwable, Future[Either[Result, EnroledUser[A]]]] = {
-      case insufficientEnrolments: InsufficientEnrolments =>
-        Logger(getClass).debug(s"Insufficient enrolments: ${insufficientEnrolments.msg}" )
-        Future.successful(Left(Redirect(controllers.errors.routes.NotEnrolledController.show)))
-      case _: BearerTokenExpired =>
-        Logger(getClass).debug("Bearer Token Timed Out.")
-        Future.successful(Left(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout)))
-      case authorisationException: AuthorisationException =>
-        Logger(getClass).debug(s"Unauthorised request: ${authorisationException.reason}. Redirect to Sign In.")
-        Future.successful(Left(Redirect(controllers.routes.SignInController.signIn)))
-      // No catch all block at end - bubble up to global error handler
-      // See investigation: https://github.com/hmrc/income-tax-view-change-frontend/pull/2432
-    }
-
   private def redirectIfInsufficientConfidence[A]()(
     implicit request: Request[A],
     hc: HeaderCarrier): PartialFunction[AuthRetrievals, Future[Either[Result, EnroledUser[A]]]] = {
@@ -132,6 +120,20 @@ class AuthoriseAndRetrieve @Inject()(val authorisedFunctions: FrontendAuthorised
       throw UnsupportedAuthProvider()
   }
 
+  def logAndRedirect[A]: PartialFunction[Throwable, Future[Either[Result, EnroledUser[A]]]] = {
+    case insufficientEnrolments: InsufficientEnrolments =>
+      logger.debug(s"Insufficient enrolments: ${insufficientEnrolments.msg}" )
+      Future.successful(Left(Redirect(controllers.errors.routes.NotEnrolledController.show)))
+    case _: BearerTokenExpired =>
+      logger.debug("Bearer Token Timed Out.")
+      Future.successful(Left(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout)))
+    case authorisationException: AuthorisationException =>
+      logger.debug(s"Unauthorised request: ${authorisationException.reason}. Redirect to Sign In.")
+      Future.successful(Left(Redirect(controllers.routes.SignInController.signIn)))
+    // No catch all block at end - bubble up to global error handler
+    // See investigation: https://github.com/hmrc/income-tax-view-change-frontend/pull/2432
+  }
+
   private def constructEnroledUser[A]()(
     implicit request: Request[A]): PartialFunction[AuthRetrievals, Future[Either[Result, EnroledUser[A]]]] = {
       case enrolments ~ userName ~ credentials ~ affinityGroup ~ confidenceLevel =>
@@ -143,4 +145,5 @@ class AuthoriseAndRetrieve @Inject()(val authorisedFunctions: FrontendAuthorised
             confidenceLevel =confidenceLevel,
             credentials = credentials)))
   }
+
 }

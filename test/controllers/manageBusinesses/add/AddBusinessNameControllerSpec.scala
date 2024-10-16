@@ -110,7 +110,7 @@ class AddBusinessNameControllerSpec extends TestSupport
 
         "return 303 and redirect to the sign in" when {
           "the user is not authenticated" in {
-            if (isAgent) setupMockAgentAuthorisationException() else setupMockAuthorisationException()
+            if (isAgent) setupMockEnroledAgentAuthorisationException() else setupMockAuthorisationException()
             val result = (isChange, isAgent) match {
               case (false, false) => TestAddBusinessNameController.show(isAgent = false, isChange = false)(fakeRequestWithActiveSession)
               case (false, true) => TestAddBusinessNameController.show(isAgent = true, isChange = false)(fakeRequestConfirmedClient())

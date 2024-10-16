@@ -361,7 +361,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
   "The NextUpdatesController.showAgent function" when {
     "the user is not authenticated" should {
       "redirect them to sign in" in new AgentTestsSetup {
-        setupMockAgentAuthorisationException(withClientPredicate = false)
+        setupMockEnroledAgentAuthorisationException(withClientPredicate = false)
 
         val result: Future[Result] = controller.showAgent()(fakeRequestWithActiveSession)
 

@@ -48,7 +48,7 @@ class RemoveClientDetailsSessionsControllerSpec extends TestSupport
   ".show" when {
     "the user is not authenticated" should {
       "redirect the user to authenticate" in {
-        setupMockAgentAuthorisationException()
+        setupMockEnroledAgentAuthorisationException()
 
         val result = TestRemoveClientDetailsSessionsController.show()(fakeRequestConfirmedClient())
 

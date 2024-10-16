@@ -176,7 +176,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
       }
 
       "User fails to be authorised" in new Setup {
-        setupMockAgentAuthorisationException(withClientPredicate = false)
+        setupMockEnroledAgentAuthorisationException(withClientPredicate = false)
 
         val result: Future[Result] = controller.showAgent()(fakeRequestWithActiveSession)
 

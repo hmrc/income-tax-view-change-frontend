@@ -50,7 +50,7 @@ class UTRErrorControllerSpec extends TestSupport
   "show" when {
     "the user is not authenticated" should {
       "redirect the user to authenticate" in {
-        setupMockAgentAuthorisationException(withClientPredicate = false)
+        setupMockEnroledAgentAuthorisationException(withClientPredicate = false)
 
         val result = TestUTRErrorController.show()(fakeRequestWithActiveSession)
 
@@ -61,7 +61,7 @@ class UTRErrorControllerSpec extends TestSupport
 
     "the user has timed out" should {
       "redirect to the session time out page" in {
-        setupMockAgentAuthorisationException(exception = BearerTokenExpired(), withClientPredicate = false)
+        setupMockEnroledAgentAuthorisationException(exception = BearerTokenExpired(), withClientPredicate = false)
 
         val result = TestUTRErrorController.show()(fakeRequestWithTimeoutSession)
 
@@ -98,7 +98,7 @@ class UTRErrorControllerSpec extends TestSupport
   "submit" when {
     "the user is not authenticated" should {
       "redirect the user to authenticate" in {
-        setupMockAgentAuthorisationException(withClientPredicate = false)
+        setupMockEnroledAgentAuthorisationException(withClientPredicate = false)
 
         val result = TestUTRErrorController.submit()(fakeRequestWithActiveSession)
 
@@ -109,7 +109,7 @@ class UTRErrorControllerSpec extends TestSupport
 
     "the user has timed out" should {
       "redirect to the session timeout page" in {
-        setupMockAgentAuthorisationException(exception = BearerTokenExpired(), withClientPredicate = false)
+        setupMockEnroledAgentAuthorisationException(exception = BearerTokenExpired(), withClientPredicate = false)
 
         val result = TestUTRErrorController.submit()(fakeRequestWithActiveSession)
 

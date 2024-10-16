@@ -222,7 +222,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
     }
 
     def showUnauthenticatedTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
-      if (isAgent) setupMockAgentAuthorisationException() else setupMockAuthorisationException()
+      if (isAgent) setupMockEnroledAgentAuthorisationException() else setupMockAuthorisationException()
       val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = false)(
         {
           if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithActiveSession
