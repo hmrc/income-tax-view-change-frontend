@@ -18,14 +18,17 @@ package services.optout
 
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.{ITSAStatus, NoStatus, Voluntary}
+import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Voluntary}
 
 trait OptOutTaxYear {
   val taxYear: TaxYear
+  val status: ITSAStatus
 
   def canOptOut: Boolean
 
   def shouldBeUpdated(intent: TaxYear): Boolean
+
+  def expectedItsaStatusAfter(customerIntent: TaxYear): ITSAStatus = if(shouldBeUpdated(customerIntent)) Annual else status
 }
 
 case class CurrentOptOutTaxYear(status: ITSAStatus, taxYear: TaxYear) extends OptOutTaxYear {

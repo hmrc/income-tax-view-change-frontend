@@ -50,11 +50,13 @@ object AuditStub extends WiremockMethods {
 
   def verifyAuditEvent(auditEvent: ExtendedAuditModel,
                        auditSource: String = "income-tax-view-change-frontend"): Unit = {
-    val expectedAuditJson = Json.obj(
-      "auditSource" -> auditSource,
-      "auditType" -> auditEvent.auditType,
-      "tags" -> Json.obj("transactionName" -> auditEvent.transactionName),
-      "detail" -> auditEvent.detail)
+    val expectedAuditJson =
+      Json.obj(
+        "auditSource" -> auditSource,
+        "auditType" -> auditEvent.auditType,
+        "tags" -> Json.obj("transactionName" -> auditEvent.transactionName),
+        "detail" -> auditEvent.detail
+      )
     verifyContainsJson(method = POST, uri = "/write/audit", expectedAuditJson)
   }
 }
