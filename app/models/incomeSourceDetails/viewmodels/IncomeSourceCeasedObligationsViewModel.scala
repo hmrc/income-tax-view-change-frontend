@@ -20,6 +20,7 @@ import enums.IncomeSourceJourney.IncomeSourceType
 import models.incomeSourceDetails.TaxYear
 import play.api.mvc.Call
 import services.DateServiceInterface
+import utils.UrlHelper
 
 import java.time.LocalDate
 
@@ -47,8 +48,8 @@ object IncomeSourceCeasedObligationsViewModel {
     val flattenQuarterlyObligations = obligationsViewModel.quarterlyObligationsDates.flatten
     val allObligations = flattenQuarterlyObligations ++ obligationsViewModel.finalDeclarationDates
     val numberOfOverdueObligationCount = allObligations.count(_.inboundCorrespondenceDue isBefore dateService.getCurrentDate)
-    val viewAllBusinessLink = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent)
-    val viewUpcomingUpdatesLink = if (isAgent) controllers.routes.NextUpdatesController.showAgent else controllers.routes.NextUpdatesController.show()
+    val viewAllBusinessLink = UrlHelper.getCall("viewAllBusiness", isAgent)
+    val viewUpcomingUpdatesLink = UrlHelper.getCall("viewUpcomingUpdates", isAgent)
 
     val viewFinalDeclarationDates = if (obligationsViewModel.quarterlyObligationsDates.flatten.isEmpty)
       obligationsViewModel.finalDeclarationDates.take(2)

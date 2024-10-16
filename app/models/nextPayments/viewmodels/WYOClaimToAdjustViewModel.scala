@@ -17,6 +17,7 @@
 package models.nextPayments.viewmodels
 
 import models.incomeSourceDetails.TaxYear
+import utils.UrlHelper
 
 case class WYOClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled: Boolean,
                                      poaTaxYear: Option[TaxYear]) {
@@ -34,7 +35,6 @@ case class WYOClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled: Boolean,
 object WYOClaimToAdjustViewModel {
 
   def ctaLink(isAgent: Boolean): String = {
-    controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = isAgent).url
+    UrlHelper.getUrl("adjustPoa", isAgent)
   }
-
 }

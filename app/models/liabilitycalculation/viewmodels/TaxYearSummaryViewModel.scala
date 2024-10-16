@@ -19,6 +19,7 @@ package models.liabilitycalculation.viewmodels
 import models.incomeSourceDetails.TaxYear
 import models.obligations.ObligationsModel
 import models.taxyearsummary.TaxYearSummaryChargeItem
+import utils.UrlHelper
 
 case class TaxYearSummaryViewModel(calculationSummary: Option[CalculationSummary],
                                    charges: List[TaxYearSummaryChargeItem],
@@ -54,11 +55,7 @@ case class TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled: Boolean,
 }
 
 object TYSClaimToAdjustViewModel {
-
-  private val baseUrl = "/report-quarterly/income-and-expenses/view"
-
   def ctaLink(isAgent: Boolean): String = {
-    if(isAgent) s"$baseUrl/adjust-poa/start" else s"$baseUrl/agents/adjust-poa/start"
+    UrlHelper.getUrl("adjustPoa", isAgent)
   }
-
 }

@@ -20,6 +20,7 @@ import enums.GatewayPage._
 import models.chargeHistory.AdjustmentHistoryModel
 import models.financialDetails._
 import play.twirl.api.Html
+import utils.UrlHelper
 
 import java.time.LocalDate
 
@@ -55,11 +56,8 @@ case class ChargeSummaryViewModel(
     else currentDate.getYear + 1
   }
 
-  private val baseUrl = "/report-quarterly/income-and-expenses/view"
-
   val whatYouOweUrl: String = {
-    if (isAgent) s"$baseUrl/agents/what-your-client-owes"
-    else s"$baseUrl/what-you-owe"
+    UrlHelper.getUrl("whatYouOwe", isAgent, origin)
   }
 
   val hasPaymentBreakdown = {
