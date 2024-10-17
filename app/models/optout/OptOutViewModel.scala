@@ -17,7 +17,6 @@
 package models.optout
 
 import models.incomeSourceDetails.TaxYear
-import play.api.mvc.Call
 import services.optout.{OneYearOptOutFollowedByMandated, OneYearOptOutState}
 
 sealed trait OptOutViewModel
@@ -28,18 +27,6 @@ case class OptOutOneYearViewModel(oneYearOptOutTaxYear: TaxYear, state: Option[O
   def endYear: String = oneYearOptOutTaxYear.endYear.toString
 
   val showWarning: Boolean = state.contains(OneYearOptOutFollowedByMandated)
-
-  def optOutConfirmationLink(isAgent: Boolean): Call = {
-    if (showWarning)
-      controllers.optOut.routes.SingleYearOptOutWarningController.show(isAgent)
-    else
-      controllers.optOut.routes.ConfirmOptOutController.show(isAgent)
-
-  }
 }
 
-case class OptOutMultiYearViewModel() extends OptOutViewModel {
-  def optOutLink(isAgent: Boolean): Call = {
-    controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent)
-  }
-}
+case class OptOutMultiYearViewModel() extends OptOutViewModel

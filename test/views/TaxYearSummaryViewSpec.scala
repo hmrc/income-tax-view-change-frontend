@@ -218,6 +218,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     TaxYearSummaryChargeItem.fromChargeItem(chargeItemModel(originalAmount = 1000.0)),
   )
 
+  val ctaLink: String = "/report-quarterly/income-and-expenses/view/adjust-poa/start"
+
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
 
   val emptyCTAModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled = false, poaTaxYear = None)
@@ -225,65 +227,67 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
   val testCTAModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled = true, poaTaxYear = Some(TaxYear(2023,2024)))
 
   def estimateView(chargeItems: List[TaxYearSummaryChargeItem] = testChargesList, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false, obligations: ObligationsModel = testObligationsModel): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), chargeItems, obligations, codingOutEnabled = false, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), chargeItems, obligations, codingOutEnabled = false, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
 
   def class2NicsView(codingOutEnabled: Boolean, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
     testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), class2NicsChargesList
-      , testObligationsModel, codingOutEnabled = codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
+      , testObligationsModel, codingOutEnabled = codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
 
   def estimateViewWithNoCalcData(reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(None, testChargesList, testObligationsModel, codingOutEnabled = false, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
+    testYear, TaxYearSummaryViewModel(None, testChargesList, testObligationsModel, codingOutEnabled = false, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
 
   def unattendedCalcView(reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false, unattendedCalc: Boolean): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false), unattendedCalc)), testChargesList, testObligationsModel, codingOutEnabled = false, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackUrl", isAgent)
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false), unattendedCalc)), testChargesList, testObligationsModel, codingOutEnabled = false, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackUrl", isAgent, ctaLink = ctaLink)
 
   def multipleDunningLockView(reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), testDunningLockChargesList, testObligationsModel, codingOutEnabled = false, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), testDunningLockChargesList, testObligationsModel, codingOutEnabled = false, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
 
   def crystallisedView(reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(true))), testChargesList, testObligationsModel, codingOutEnabled = false, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(true))), testChargesList, testObligationsModel, codingOutEnabled = false, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
 
   def payeView(codingOutEnabled: Boolean, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), payeChargeList, testObligationsModel, codingOutEnabled = codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), payeChargeList, testObligationsModel, codingOutEnabled = codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
 
   def testBalancingPaymentChargeWithZeroValueView(codingOutEnabled: Boolean, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), testBalancingPaymentChargeWithZeroValue, testObligationsModel, codingOutEnabled = codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), testBalancingPaymentChargeWithZeroValue, testObligationsModel, codingOutEnabled = codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
 
   def immediatelyRejectedByNpsView(codingOutEnabled: Boolean, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), immediatelyRejectedByNps, testObligationsModel, codingOutEnabled = codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), immediatelyRejectedByNps, testObligationsModel, codingOutEnabled = codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
 
   def rejectedByNpsPartWayView(codingOutEnabled: Boolean, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), rejectedByNpsPartWay, testObligationsModel, codingOutEnabled = codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), rejectedByNpsPartWay, testObligationsModel, codingOutEnabled = codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
 
   def codingOutPartiallyCollectedView(codingOutEnabled: Boolean, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), codingOutPartiallyCollected, testObligationsModel, codingOutEnabled = codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), codingOutPartiallyCollected, testObligationsModel, codingOutEnabled = codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
 
   def forecastCalcView(codingOutEnabled: Boolean = false, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), testChargesList, testObligationsModel, codingOutEnabled = codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, showForecastData = true, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), testChargesList, testObligationsModel, codingOutEnabled = codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, showForecastData = true, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
 
   def forecastCalcViewCrystalised(codingOutEnabled: Boolean = false, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(true))), testChargesList, testObligationsModel, codingOutEnabled = codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, showForecastData = true, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(true))), testChargesList, testObligationsModel, codingOutEnabled = codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, showForecastData = true, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
 
   def noForecastDataView(codingOutEnabled: Boolean = false, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), testChargesList, testObligationsModel, codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), testChargesList, testObligationsModel, codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
 
   def forecastWithNoCalcData(codingOutEnabled: Boolean = false, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(None, testChargesList, testObligationsModel, codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, showForecastData = true, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
+    testYear, TaxYearSummaryViewModel(None, testChargesList, testObligationsModel, codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, showForecastData = true, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
 
 
 
   def mfaDebitsView(codingOutEnabled: Boolean, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(true))), mfaCharges, testObligationsModel, codingOutEnabled, reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(true))), mfaCharges, testObligationsModel, codingOutEnabled, reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
 
   def calculationMultipleErrorView(reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelWithMultipleErrorMessages), testChargesList, testObligationsModel, codingOutEnabled = false, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
+    testYear, TaxYearSummaryViewModel(Some(modelWithMultipleErrorMessages), testChargesList, testObligationsModel, codingOutEnabled = false, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
 
   def calculationSingleErrorView(reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelWithErrorMessages), testChargesList, testObligationsModel, codingOutEnabled = false, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
+    testYear, TaxYearSummaryViewModel(Some(modelWithErrorMessages), testChargesList, testObligationsModel, codingOutEnabled = false, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
 
-  def poaView(reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelWithErrorMessages), testChargesList, testObligationsModel, codingOutEnabled = false, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = testCTAModel), "testBackURL", isAgent)
-
+  def poaView(reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = {
+    val ctaLink = if (isAgent) "/report-quarterly/income-and-expenses/view/agents/adjust-poa/start" else "/report-quarterly/income-and-expenses/view/adjust-poa/start"
+    taxYearSummaryView(
+      testYear, TaxYearSummaryViewModel(Some(modelWithErrorMessages), testChargesList, testObligationsModel, codingOutEnabled = false, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = testCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
+  }
   implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
 
   object TaxYearSummaryMessages {

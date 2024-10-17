@@ -59,6 +59,9 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
   val finalDeclarationDates: DatesModel = DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallised")
   val finalDeclarationDates2: DatesModel = DatesModel(day.plusYears(1), day.plusDays(1).plusYears(1), day.plusDays(2).plusYears(1), "C", isFinalDec = true, obligationType = "Crystallised")
 
+  val viewAllBusinessLink = "/report-quarterly/income-and-expenses/view/manage-your-businesses"
+  val viewUpcomingUpdatesLink = "/report-quarterly/income-and-expenses/view/next-updates"
+
   val viewModelWithAllData: ObligationsViewModel = ObligationsViewModel(
     quarterlyObligationDatesFull,
     Seq(finalDeclarationDates, finalDeclarationDates2),
@@ -74,25 +77,25 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
     cessationDate = cessationDate,
     businessName = None)
 
-  val validUKPropertyBusinessCall: Html = view(incomeSourceCeasedObligationsViewModel.copy(incomeSourceType = UkProperty))
-  val validForeignPropertyBusinessCall: Html = view(incomeSourceCeasedObligationsViewModel.copy(incomeSourceType = ForeignProperty))
-  val validSoleTreaderBusinessCall: Html = view(incomeSourceCeasedObligationsViewModel.copy(businessName = Some("Test Name")))
-  val validSoleTreaderBusinessWithNoBusinessNameCall: Html = view(incomeSourceCeasedObligationsViewModel)
-  val validCallWithData: Html = view(incomeSourceCeasedObligationsViewModel.copy(businessName = Some("Test Name")))
+  val validUKPropertyBusinessCall: Html = view(incomeSourceCeasedObligationsViewModel.copy(incomeSourceType = UkProperty), viewAllBusinessLink, viewUpcomingUpdatesLink)
+  val validForeignPropertyBusinessCall: Html = view(incomeSourceCeasedObligationsViewModel.copy(incomeSourceType = ForeignProperty), viewAllBusinessLink, viewUpcomingUpdatesLink)
+  val validSoleTreaderBusinessCall: Html = view(incomeSourceCeasedObligationsViewModel.copy(businessName = Some("Test Name")), viewAllBusinessLink, viewUpcomingUpdatesLink)
+  val validSoleTreaderBusinessWithNoBusinessNameCall: Html = view(incomeSourceCeasedObligationsViewModel, viewAllBusinessLink, viewUpcomingUpdatesLink)
+  val validCallWithData: Html = view(incomeSourceCeasedObligationsViewModel.copy(businessName = Some("Test Name")), viewAllBusinessLink, viewUpcomingUpdatesLink)
   val validCallWithNoQuarterlyDataOnlyOneFinalUpdate: Html = view(
     IncomeSourceCeasedObligationsViewModel(
       obligationsViewModel = viewModelAnnualObligation.copy(finalDeclarationDates = Seq(finalDeclarationDates)),
       isAgent = false,
       incomeSourceType = SelfEmployment,
       cessationDate = cessationDate,
-      businessName = Some("Test Name")))
+      businessName = Some("Test Name")), viewAllBusinessLink, viewUpcomingUpdatesLink)
   val validCallWithNoQuarterlyDataMultipleFinalUpdates: Html = view(
     IncomeSourceCeasedObligationsViewModel(
       obligationsViewModel = viewModelAnnualObligation,
       isAgent = false,
       incomeSourceType = SelfEmployment,
       cessationDate = cessationDate,
-      businessName = Some("Test Name")))
+      businessName = Some("Test Name")), viewAllBusinessLink, viewUpcomingUpdatesLink)
 
   val manageYourBusinessShowURL: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent = false).url
   val viewUpcomingUpdatesURL: String = controllers.routes.NextUpdatesController.show().url

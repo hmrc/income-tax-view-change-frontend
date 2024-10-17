@@ -85,7 +85,10 @@ class IncomeSourceCeasedObligationsController @Inject()(val authorisedFunctions:
                   endDate,
                   isAgent)(dateService)
 
-                Ok(obligationsView(incomeSourceCeasedObligationsViewModel))
+                lazy val viewAllBusinessLink = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url
+                lazy val viewUpcomingUpdatesLink = if (isAgent) controllers.routes.NextUpdatesController.showAgent.url else controllers.routes.NextUpdatesController.show().url
+
+                Ok(obligationsView(incomeSourceCeasedObligationsViewModel, viewAllBusinessLink, viewUpcomingUpdatesLink))
             }
           case (Some(_), None) => Future.failed(new Error(s"cease session data not found for $incomeSourceType"))
           case (None, Some(_)) => Future.failed(new Error(s"IncomeSourceId not found for $incomeSourceType"))

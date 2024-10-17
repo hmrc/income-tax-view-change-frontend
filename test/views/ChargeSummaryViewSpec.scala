@@ -61,7 +61,8 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
                   reviewAndReconcileEnabled: Boolean = false,
                   isAgent: Boolean = false,
                   adjustmentHistory: AdjustmentHistoryModel = defaultAdjustmentHistory,
-                  poaExtraChargeLink: Option[String] = None) {
+                  poaExtraChargeLink: Option[String] = None,
+                  whatYouOweUrl: String = "/report-quarterly/income-and-expenses/view/what-you-owe") {
 
     enable(ReviewAndReconcilePoa)
 
@@ -85,8 +86,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       adjustmentHistory = adjustmentHistory,
       poaExtraChargeLink = poaExtraChargeLink)
 
-
-    val view: Html = chargeSummary(viewModel)
+    val view: Html = chargeSummary(viewModel, whatYouOweUrl)
     val document: Document = Jsoup.parse(view.toString())
     def verifySummaryListRowNumeric(rowNumber: Int, expectedKeyText: String, expectedValueText: String): Assertion = {
       val summaryListRow = document.select(s".govuk-summary-list:nth-of-type(1) .govuk-summary-list__row:nth-of-type($rowNumber)")
@@ -1215,7 +1215,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         adjustmentHistory = defaultAdjustmentHistory)
       val thrownException = intercept[MissingFieldException] {
 
-        chargeSummary(exceptionViewModel)
+        chargeSummary(exceptionViewModel, "/report-quarterly/income-and-expenses/view/what-you-owe")
       }
       thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Due Date"
     }
@@ -1224,24 +1224,28 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
   "agent" when {
     "The charge summary view" should {
 
-      "have a interest lock payment link when the interest is accruing" in new TestSetup(chargeItem = chargeItemModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues, isAgent = true) {
+      "have a interest lock payment link when the interest is accruing" in new TestSetup(chargeItem = chargeItemModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues, isAgent = true,
+        whatYouOweUrl = "/report-quarterly/income-and-expenses/view/agents/what-your-client-owes") {
         document.select("#what-you-owe-interest-link-agent").text() shouldBe interestLinkTextAgent
         document.select("#what-you-owe-interest-link-agent").attr("href") shouldBe whatYouOweAgentUrl
         document.select("#p-interest-locks-msg").text() shouldBe s"${interestLinkFirstWordAgent} ${interestLinkTextAgent} ${interestLinkFullTextAgent}"
       }
 
-      "have a interest lock payment link when the interest has previously" in new TestSetup(chargeItem = chargeItemModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest, isAgent = true) {
+      "have a interest lock payment link when the interest has previously" in new TestSetup(chargeItem = chargeItemModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest, isAgent = true,
+        whatYouOweUrl = "/report-quarterly/income-and-expenses/view/agents/what-your-client-owes") {
         document.select("#what-you-owe-interest-link-agent").text() shouldBe interestLinkTextAgent
         document.select("#what-you-owe-interest-link-agent").attr("href") shouldBe whatYouOweAgentUrl
         document.select("#p-interest-locks-msg").text() shouldBe s"${interestLinkFirstWordAgent} ${interestLinkTextAgent} ${interestLinkFullTextAgent}"
       }
 
-      "have no interest lock payment link when there is no accrued interest" in new TestSetup(chargeItem = chargeItemModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest, isAgent = true) {
+      "have no interest lock payment link when there is no accrued interest" in new TestSetup(chargeItem = chargeItemModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest, isAgent = true,
+        whatYouOweUrl = "/report-quarterly/income-and-expenses/view/agents/what-your-client-owes") {
         document.select("#what-you-owe-link-agent").text() shouldBe interestLinkTextAgent
         document.select("#what-you-owe-link-agent").attr("href") shouldBe whatYouOweAgentUrl
       }
 
-      "have no interest lock payment link when there is an intererst lock but no accrued interest" in new TestSetup(chargeItem = chargeItemModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithOnlyInterestLock, isAgent = true) {
+      "have no interest lock payment link when there is an intererst lock but no accrued interest" in new TestSetup(chargeItem = chargeItemModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithOnlyInterestLock, isAgent = true,
+        whatYouOweUrl = "/report-quarterly/income-and-expenses/view/agents/what-your-client-owes") {
         document.select("#what-you-owe-link-agent").text() shouldBe interestLinkTextAgent
         document.select("#what-you-owe-link-agent").attr("href") shouldBe whatYouOweAgentUrl
       }

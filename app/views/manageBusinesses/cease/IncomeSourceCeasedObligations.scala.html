@@ -37,7 +37,7 @@
         govukInsetText: GovukInsetText
 )
 
-@(source: IncomeSourceCeasedObligationsViewModel)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(source: IncomeSourceCeasedObligationsViewModel, viewAllBusinessLink: String, viewUpcomingUpdatesLink: String)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter.longDate
 
@@ -152,12 +152,12 @@
                 </ul>
             }
 
-            <p>@link(id = Some("view-all-updates"),link = source.viewUpcomingUpdatesLink.url, messageKey = source.viewUpcomingUpdatesLinkMessageKey)</p>
+            <p>@link(id = Some("view-all-updates"),link = viewUpcomingUpdatesLink, messageKey = source.viewUpcomingUpdatesLinkMessageKey)</p>
         </div>
 
         @showCapitalGainBlock
 
-        <p>@link(id = Some("view-all-business-link"), link = source.viewAllBusinessLink.url, messageKey = "business-ceased.obligation.view-all-business-link.text")</p>
+        <p>@link(id = Some("view-all-business-link"), link = viewAllBusinessLink, messageKey = "business-ceased.obligation.view-all-business-link.text")</p>
         <br>
         <br>
 }

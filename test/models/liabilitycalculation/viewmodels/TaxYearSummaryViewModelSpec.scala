@@ -99,16 +99,4 @@ class TaxYearSummaryViewModelSpec extends UnitSpec with ChargeConstants with Moc
       }
     }
   }
-  "TYSClaimToAdjustViewModel object" when {
-    "ctaLink val is called for an individual" should {
-      "return the correct redirect link" in {
-        TYSClaimToAdjustViewModel.ctaLink(false) shouldBe "/report-quarterly/income-and-expenses/view/adjust-poa/start"
-      }
-    }
-    "ctaLink val is called for an agent" should {
-      "return the correct redirect link" in {
-        TYSClaimToAdjustViewModel.ctaLink(true) shouldBe "/report-quarterly/income-and-expenses/view/agents/adjust-poa/start"
-      }
-    }
-  }
 }

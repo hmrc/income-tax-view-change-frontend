@@ -40,7 +40,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
                                       nextUpdatesView: NextUpdates,
                                       nextUpdatesOptOutView: NextUpdatesOptOut,
-                                      incomeSourceDetailsService: IncomeSourceDetailsService,
                                       auditingService: AuditingService,
                                       nextUpdatesService: NextUpdatesService,
                                       itvcErrorHandler: ItvcErrorHandler,

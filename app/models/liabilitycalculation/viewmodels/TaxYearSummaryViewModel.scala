@@ -52,11 +52,3 @@ case class TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled: Boolean,
   }
 
 }
-
-object TYSClaimToAdjustViewModel {
-
-  def ctaLink(isAgent: Boolean): String = {
-    controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = isAgent).url
-  }
-
-}
