@@ -2217,11 +2217,11 @@ optin.checkAnswers.taxYears = flwyddyn dreth {0} i {1} ymlaen
 optin.checkAnswers.heading = Gwirio’ch atebion
 optin.checkAnswers.optin = Optio i mewn o
 optin.checkAnswers.change = Newid
-optin.checkAnswers.cy = Os byddwch yn optio i mewn, bydd angen i chi gyflwyno’ch diweddariad chwarterol drwy feddalwedd sy’n cydweddu.
+optin.checkAnswers.cy = Os byddwch yn optio i mewn, bydd angen i chi gyflwyno’ch diweddariadau chwarterol drwy feddalwedd sy’n cydweddu.
 optin.checkAnswers.ny = Os byddwch yn optio i mewn o’r flwyddyn dreth nesaf ymlaen, sef o 6 Ebrill {0} ymlaen, bydd angen i chi gyflwyno’ch adroddiadau chwarterol drwy ddefnyddio meddalwedd sy’n cydweddu.
 optin.checkAnswers.confirm = Cadarnhau a chadw
 optin.checkAnswers.cancel = Canslo
-optin.checkAnswers.submissionsMade = Bydd unrhyw incwm a threuliau a gyflwynwyd eisoes ar gyfer y flwyddyn dreth hon yn cael eu dileu. Bydd angen i chi gynnwys yr wybodaeth hon yn eich diweddariadau chwarterol.
+optin.checkAnswers.submissionsMade = Os ydych wedi cyflwyno unrhyw incwm a threuliau i CThEF ar gyfer y flwyddyn dreth hon, byddant yn cael eu dileu o’n cofnodion. Gwnewch yn siŵr eich bod yn cadw’r wybodaeth hon yn ddiogel oherwydd y bydd angen i chi ei chynnwys yn eich diweddariadau chwarterol.
 
 # opt in error page
 optin.optInError.heading                           = Mae’n ddrwg gennym, ond mae problem gyda’r gwasanaeth
