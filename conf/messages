@@ -1163,7 +1163,7 @@ paymentAllocation.condition-3                                   = Charges due wi
 paymentAllocation.outro                                         = You can see how this payment was allocated in the table below.
 
 
-paymentAllocation.paymentAllocations.poa1.incomeTax             = Income Tax for payment on account 1 of 2
+paymentAllocation.paymentAllocations.poa1.incomeTax             = Income Tax for first payment on account
 paymentAllocation.paymentAllocations.poa1.nic4                  = Class 4 National Insurance for payment on account 1 of 2
 paymentAllocation.paymentAllocations.poa2.incomeTax             = Income Tax for payment on account 2 of 2
 paymentAllocation.paymentAllocations.poa2.nic4                  = Class 4 National Insurance for payment on account 2 of 2
