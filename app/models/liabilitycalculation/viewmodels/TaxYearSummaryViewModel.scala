@@ -19,7 +19,6 @@ package models.liabilitycalculation.viewmodels
 import models.incomeSourceDetails.TaxYear
 import models.obligations.ObligationsModel
 import models.taxyearsummary.TaxYearSummaryChargeItem
-import utils.UrlHelper
 
 case class TaxYearSummaryViewModel(calculationSummary: Option[CalculationSummary],
                                    charges: List[TaxYearSummaryChargeItem],
@@ -52,10 +51,4 @@ case class TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled: Boolean,
     }
   }
 
-}
-
-object TYSClaimToAdjustViewModel {
-  def ctaLink(isAgent: Boolean): String = {
-    UrlHelper.getUrl("adjustPoa", isAgent)
-  }
 }

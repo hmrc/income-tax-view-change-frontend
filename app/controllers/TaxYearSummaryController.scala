@@ -102,6 +102,8 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
           ctaViewModel = claimToAdjustViewModel
         )
 
+        lazy val ctaLink = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = isAgent).url
+
         auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(
           mtdItUser, messagesApi, taxYearSummaryViewModel, liabilityCalc.messages))
 
@@ -113,9 +115,13 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
           viewModel = taxYearSummaryViewModel,
           backUrl = backUrl,
           origin = origin,
-          isAgent = isAgent
+          isAgent = isAgent,
+          ctaLink = ctaLink
         ))
       case error: LiabilityCalculationError if error.status == NO_CONTENT =>
+
+        lazy val ctaLink = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = isAgent).url
+
         val viewModel = TaxYearSummaryViewModel(
           None,
           chargeItems,
@@ -136,7 +142,8 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
           viewModel = viewModel,
           backUrl = backUrl,
           origin = origin,
-          isAgent = isAgent
+          isAgent = isAgent,
+          ctaLink = ctaLink
         ))
       case _: LiabilityCalculationError if isAgent =>
         Logger("application").error(

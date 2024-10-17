@@ -180,6 +180,11 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
                   routes.ChargeSummaryController.show(poaTwoTaxYearTo, poaTwoTransactionId).url)
               ).getOrElse(("", ""))
 
+            val whatYouOweUrl = {
+              if (isAgent) controllers.routes.WhatYouOweController.showAgent.url
+              else controllers.routes.WhatYouOweController.show(origin).url
+            }
+
             val viewModel: ChargeSummaryViewModel = ChargeSummaryViewModel(
               currentDate = dateService.getCurrentDate,
               chargeItem = chargeItem,
@@ -202,7 +207,7 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
             )
             mandatoryViewDataPresent(isInterestCharge, documentDetailWithDueDate) match {
               case Right(_) =>
-                Ok(chargeSummaryView(viewModel))
+                Ok(chargeSummaryView(viewModel, whatYouOweUrl))
               case Left(ec) => onError(s"Invalid response from charge history: ${ec.message}", isAgent, showInternalServerError = true)
             }
 

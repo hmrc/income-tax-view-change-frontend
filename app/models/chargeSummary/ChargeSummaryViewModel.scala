@@ -20,7 +20,6 @@ import enums.GatewayPage._
 import models.chargeHistory.AdjustmentHistoryModel
 import models.financialDetails._
 import play.twirl.api.Html
-import utils.UrlHelper
 
 import java.time.LocalDate
 
@@ -54,10 +53,6 @@ case class ChargeSummaryViewModel(
   val currentTaxYearEnd = {
     if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) currentDate.getYear
     else currentDate.getYear + 1
-  }
-
-  val whatYouOweUrl: String = {
-    UrlHelper.getUrl("whatYouOwe", isAgent, origin)
   }
 
   val hasPaymentBreakdown = {
