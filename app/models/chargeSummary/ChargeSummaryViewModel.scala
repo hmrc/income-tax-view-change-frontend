@@ -31,7 +31,6 @@ case class ChargeSummaryViewModel(
                                    paymentAllocations: List[PaymentHistoryAllocations],
                                    payments: FinancialDetailsModel,
                                    chargeHistoryEnabled: Boolean,
-                                   paymentAllocationEnabled: Boolean,
                                    latePaymentInterestCharge: Boolean,
                                    codingOutEnabled: Boolean,
                                    reviewAndReconcileEnabled: Boolean,
@@ -80,7 +79,7 @@ case class ChargeSummaryViewModel(
     codingOutEnabled && chargeItem.subTransactionType.contains(Nics2)
 
   val chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZero: Boolean =
-    (chargeHistoryEnabled || (paymentAllocationEnabled && paymentAllocations.nonEmpty)) && !isBalancingChargeZero
+    (chargeHistoryEnabled || paymentAllocations.nonEmpty) && !isBalancingChargeZero
 
   val noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment: Boolean = !latePaymentInterestCharge && !(codingOutEnabled && chargeItem.subTransactionType.contains(Accepted))
 

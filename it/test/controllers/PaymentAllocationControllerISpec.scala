@@ -22,9 +22,9 @@ import config.featureswitch.FeatureSwitching
 import helpers.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{NavBarFs, PaymentAllocation}
+import models.admin.NavBarFs
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
-import play.api.http.Status.{NOT_FOUND, OK, SEE_OTHER}
+import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
@@ -37,7 +37,6 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    enable(PaymentAllocation)
   }
 
   val singleTestPaymentAllocationCharge: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
@@ -72,51 +71,9 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
       }
     }
 
-
-    s"return $NOT_FOUND" when {
-      "the payment allocation feature switch is disabled" in {
-        disable(PaymentAllocation)
-        disable(NavBarFs)
-        isAuthorisedUser(authorised = true)
-        stubUserDetails()
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
-
-        IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, docNumber)(OK, validPaymentAllocationChargesJson)
-
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentAllocationCharges(docNumber)
-
-        Then(s"The custom not found page is returned to the user")
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.errors.routes.NotFoundDocumentIDLookupController.show.url)
-        )
-      }
-    }
-
     s"return $OK with the payment allocation page for non LPI" when {
-      "the payment allocation feature switch is enabled" in {
-        enable(PaymentAllocation)
-        disable(NavBarFs)
-        isAuthorisedUser(authorised = true)
-        stubUserDetails()
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
-
-        IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, docNumber)(OK, validPaymentAllocationChargesJson)
-        IncomeTaxViewChangeStub.stubGetPaymentAllocationResponse(testNino, "paymentLot", "paymentLotItem")(OK, Json.toJson(testValidPaymentAllocationsModel))
-
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentAllocationCharges(docNumber)
-
-        Then("The Payment allocation page is returned to the user")
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual("paymentAllocation.heading"),
-        )
-
-        verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser, paymentAllocationViewModel).detail)
-      }
 
       "payment allocation for HMRC adjustment is shown" in {
-        enable(PaymentAllocation)
         disable(NavBarFs)
         isAuthorisedUser(authorised = true)
         stubUserDetails()
@@ -138,9 +95,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
       }
     }
 
-    s"return $OK with the payment allocation page for LPI" when {
-      "the payment allocation feature switch is enabled" in {
-        enable(PaymentAllocation)
+    s"return $OK with the payment allocation page for LPI" in {
         disable(NavBarFs)
         isAuthorisedUser(authorised = true)
         stubUserDetails()
@@ -167,7 +122,6 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
         )
 
         verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser, lpiPaymentAllocationViewModel).detail)
-      }
     }
   }
 

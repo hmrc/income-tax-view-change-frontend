@@ -142,13 +142,12 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
       if (!isInterestCharge) {
         financialDetailsForCharge.filter(_.messageKeyByTypes.isDefined)
       } else Nil
-    val paymentAllocationEnabled: Boolean = isEnabled(PaymentAllocation)
-    val paymentAllocations: List[PaymentHistoryAllocations] =
-      if (paymentAllocationEnabled) {
+
+    val paymentAllocations: List[PaymentHistoryAllocations] = {
         financialDetailsForCharge
             .filter(_.messageKeyByTypes.isDefined)
           .flatMap(chargeFinancialDetail => paymentsForAllYears.getAllocationsToCharge(chargeFinancialDetail))
-      } else Nil
+      }
 
     chargeHistoryService.chargeHistoryResponse(isInterestCharge, documentDetailWithDueDate.documentDetail.isPayeSelfAssessment,
       chargeReference, isEnabled(ChargeHistory), isEnabled(CodingOut)).map {
@@ -192,7 +191,6 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
               paymentAllocations = paymentAllocations,
               payments = paymentsForAllYears,
               chargeHistoryEnabled = isEnabled(ChargeHistory),
-              paymentAllocationEnabled = paymentAllocationEnabled,
               latePaymentInterestCharge = isInterestCharge,
               codingOutEnabled = isEnabled(CodingOut),
               reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
