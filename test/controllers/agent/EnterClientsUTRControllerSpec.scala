@@ -21,34 +21,32 @@ import config.AgentItvcErrorHandler
 import config.featureswitch.FeatureSwitching
 import controllers.agent.sessionUtils.SessionKeys
 import forms.agent.ClientsUTRForm
-import mocks.auth.MockFrontendAuthorisedFunctions
-import mocks.controllers.predicates.MockAuthenticationPredicate
+import mocks.auth.MockAuthActions
 import mocks.services.{MockClientDetailsService, MockSessionDataService}
 import mocks.views.agent.MockEnterClientsUTR
-import models.sessionData.SessionDataPostResponse.{SessionDataPostSuccess, SessionDataPostFailure}
+import models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostSuccess}
 import org.mockito.ArgumentMatchers
-import org.mockito.Mockito.{times, verify}
+import org.mockito.Mockito.{mock, times, verify}
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import services.agent.ClientDetailsService._
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testArn, testCredId, testMtditid, testNino}
+import testConstants.BaseTestConstants.{agentAuthRetrievalSuccess, testArn, testCredId, testMtditid, testNino}
 import testUtils.TestSupport
-import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
-import uk.gov.hmrc.auth.core.{BearerTokenExpired, Enrolment, InsufficientEnrolments}
+import uk.gov.hmrc.auth.core.{AuthorisedFunctions, Enrolment, InsufficientEnrolments}
 
 class EnterClientsUTRControllerSpec extends TestSupport
-  with MockAuthenticationPredicate
   with MockEnterClientsUTR
-  with MockFrontendAuthorisedFunctions
   with MockClientDetailsService
   with FeatureSwitching
-  with MockSessionDataService {
+  with MockSessionDataService
+  with MockAuthActions {
 
   object TestEnterClientsUTRController extends EnterClientsUTRController(
     enterClientsUTR,
     mockClientDetailsService,
     mockAuthService,
+    authActions = mockAuthActions,
     mockAuditingService,
     mockSessionDataService
   )(
@@ -61,7 +59,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
   "show" when {
     "the user is not authenticated" should {
       "redirect them to sign in" in {
-        setupMockAgentAuthorisationException(withClientPredicate = false)
+        setupMockAgentAuthException()
 
         val result = TestEnterClientsUTRController.show()(fakeRequestWithActiveSession)
 
@@ -71,8 +69,6 @@ class EnterClientsUTRControllerSpec extends TestSupport
     }
     "the user has timed out" should {
       "redirect to the session timeout page" in {
-        setupMockAgentAuthorisationException(exception = BearerTokenExpired(), withClientPredicate = false)
-
         val result = TestEnterClientsUTRController.show()(fakeRequestWithTimeoutSession)
 
         status(result) shouldBe SEE_OTHER
@@ -81,7 +77,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
     }
     "the user does not have an agent reference number" should {
       "redirect them to the error page" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccessNoEnrolment, withClientPredicate = false)
+        setupMockAgentAuthException(InsufficientEnrolments())
         mockShowOkTechnicalDifficulties()
 
         val result = TestEnterClientsUTRController.show()(fakeRequestWithActiveSession)
@@ -90,16 +86,16 @@ class EnterClientsUTRControllerSpec extends TestSupport
         redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentErrorController.show.url)
       }
     }
+
     "return Ok and display the page to the user without checking client relationship information" in {
-      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+      setupMockAgentAuthSuccess(agentAuthRetrievalSuccess)
       mockEnterClientsUTR(HtmlFormat.empty)
 
       val result = TestEnterClientsUTRController.show()(fakeRequestWithActiveSession)
 
       status(result) shouldBe OK
       contentType(result) shouldBe Some(HTML)
-      verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(EmptyPredicate))
-      verify(mockAuthService, times(0)).authorised(ArgumentMatchers.any(Enrolment.apply("").getClass))
+      verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(isAgentPredicate))
     }
 
   }
@@ -107,7 +103,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
   "submit" when {
     "the user is not authenticated" should {
       "redirect them to sign in" in {
-        setupMockAgentAuthorisationException(withClientPredicate = false)
+        setupMockAgentAuthException()
 
         val result = TestEnterClientsUTRController.submit()(fakeRequestWithActiveSession)
 
@@ -116,8 +112,6 @@ class EnterClientsUTRControllerSpec extends TestSupport
       }
       "the user has timed out" should {
         "redirect to the session timeout page" in {
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-
           val result = TestEnterClientsUTRController.submit()(fakeRequestWithTimeoutSession)
 
           status(result) shouldBe SEE_OTHER
@@ -126,25 +120,26 @@ class EnterClientsUTRControllerSpec extends TestSupport
       }
       "the user does not have an agent reference number" should {
         "return Ok with technical difficulties" in {
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccessNoEnrolment, withClientPredicate = false)
-          mockShowOkTechnicalDifficulties()
+          setupMockAgentAuthException(InsufficientEnrolments())
 
           val result = TestEnterClientsUTRController.submit()(fakeRequestWithActiveSession)
 
-          status(result) shouldBe OK
-          contentType(result) shouldBe Some(HTML)
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentErrorController.show.url)
         }
       }
       "redirect to the confirm client details page" when {
-        "the utr entered is valid, there is a client/agent relationship and the POST request to session data service is successful" in {
+        "the utr entered is valid, there is a client/primary agent relationship and the POST request to session data service is successful" in {
           val validUTR: String = "1234567890"
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+          setupMockAgentAuthSuccess(agentAuthRetrievalSuccess)
 
           setupMockPostSessionData(Right(SessionDataPostSuccess(OK)))
 
           mockClientDetails(validUTR)(
             response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
           )
+
+          setupMockPrimaryAgentAuthRetrievalSuccess(agentAuthRetrievalSuccess, testMtditid)
 
           val result = TestEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> validUTR
@@ -158,19 +153,52 @@ class EnterClientsUTRControllerSpec extends TestSupport
           result.futureValue.session.get(SessionKeys.clientUTR) shouldBe Some(validUTR)
           result.futureValue.session.get(SessionKeys.clientNino) shouldBe Some(testNino)
           result.futureValue.session.get(SessionKeys.clientMTDID) shouldBe Some(testMtditid)
-          verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(EmptyPredicate))
+          verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(isAgentPredicate))
           verify(mockAuthService, times(1)).authorised(Enrolment("HMRC-MTD-IT").withIdentifier("MTDITID", testMtditid).withDelegatedAuthRule("mtd-it-auth"))
         }
-        "the utr entered contains spaces and is valid and the POST request to session data service is successful" in {
-          val validUTR: String = "1234567890"
-          val utrWithSpaces: String = " 1 2 3 4 5 6 7 8 9 0 "
 
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+        "the utr entered is valid, there is a client/secondary agent relationship and the POST request to session data service is successful" in {
+          val validUTR: String = "1234567890"
+          setupMockAgentAuthSuccess(agentAuthRetrievalSuccess)
+
           setupMockPostSessionData(Right(SessionDataPostSuccess(OK)))
 
           mockClientDetails(validUTR)(
             response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
           )
+
+          setupMockPrimaryAgentAuthorisationException(testMtditid)
+
+          setupMockSecondaryAgentAuthRetrievalSuccess(agentAuthRetrievalSuccess, testMtditid)
+
+          val result = TestEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+            ClientsUTRForm.utr -> validUTR
+          ))
+
+          status(result) shouldBe SEE_OTHER
+          verifyExtendedAudit(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtditid, arn = Some(testArn), saUtr = validUTR, credId = Some(testCredId)))
+          redirectLocation(result) shouldBe Some(routes.ConfirmClientUTRController.show.url)
+          result.futureValue.session.get(SessionKeys.clientFirstName) shouldBe Some("John")
+          result.futureValue.session.get(SessionKeys.clientLastName) shouldBe Some("Doe")
+          result.futureValue.session.get(SessionKeys.clientUTR) shouldBe Some(validUTR)
+          result.futureValue.session.get(SessionKeys.clientNino) shouldBe Some(testNino)
+          result.futureValue.session.get(SessionKeys.clientMTDID) shouldBe Some(testMtditid)
+          verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(isAgentPredicate))
+          verify(mockAuthService, times(1)).authorised(Enrolment("HMRC-MTD-IT").withIdentifier("MTDITID", testMtditid).withDelegatedAuthRule("mtd-it-auth"))
+          verify(mockAuthService, times(1)).authorised(Enrolment("HMRC-MTD-IT-SUPP").withIdentifier("MTDITID", testMtditid).withDelegatedAuthRule("mtd-it-auth-supp"))
+        }
+        "the utr contains has spaces, there is a client/primary agent relationship, is valid and  the POST request to session data service is successful" in {
+          val validUTR: String = "1234567890"
+          val utrWithSpaces: String = " 1 2 3 4 5 6 7 8 9 0 "
+
+          setupMockAgentAuthSuccess(agentAuthRetrievalSuccess)
+          setupMockPostSessionData(Right(SessionDataPostSuccess(OK)))
+
+          mockClientDetails(validUTR)(
+            response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
+          )
+
+          setupMockPrimaryAgentAuthRetrievalSuccess(agentAuthRetrievalSuccess, testMtditid)
 
           val result = TestEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> utrWithSpaces
@@ -186,14 +214,48 @@ class EnterClientsUTRControllerSpec extends TestSupport
           result.futureValue.session.get(SessionKeys.clientUTR) shouldBe Some(validUTR)
           result.futureValue.session.get(SessionKeys.clientNino) shouldBe Some(testNino)
           result.futureValue.session.get(SessionKeys.clientMTDID) shouldBe Some(testMtditid)
-          verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(EmptyPredicate))
+          verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(isAgentPredicate))
           verify(mockAuthService, times(1)).authorised(Enrolment("HMRC-MTD-IT").withIdentifier("MTDITID", testMtditid).withDelegatedAuthRule("mtd-it-auth"))
+        }
+        "the utr entered has spaces, there is a client/secondary agent relationship, is valid and the POST request to session data service is successful" in {
+          val validUTR: String = "1234567890"
+          val utrWithSpaces: String = " 1 2 3 4 5 6 7 8 9 0 "
+
+          setupMockAgentAuthSuccess(agentAuthRetrievalSuccess)
+          setupMockPostSessionData(Right(SessionDataPostSuccess(OK)))
+
+          mockClientDetails(validUTR)(
+            response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
+          )
+
+          setupMockPrimaryAgentAuthorisationException(testMtditid)
+
+          setupMockSecondaryAgentAuthRetrievalSuccess(agentAuthRetrievalSuccess, testMtditid)
+
+          val result = TestEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+            ClientsUTRForm.utr -> utrWithSpaces
+          ))
+
+
+          status(result) shouldBe SEE_OTHER
+          verifyExtendedAudit(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtditid, arn = Some(testArn), saUtr = validUTR, credId = Some(testCredId)))
+          redirectLocation(result) shouldBe Some(routes.ConfirmClientUTRController.show.url)
+
+          result.futureValue.session.get(SessionKeys.clientFirstName) shouldBe Some("John")
+          result.futureValue.session.get(SessionKeys.clientLastName) shouldBe Some("Doe")
+          result.futureValue.session.get(SessionKeys.clientUTR) shouldBe Some(validUTR)
+          result.futureValue.session.get(SessionKeys.clientNino) shouldBe Some(testNino)
+          result.futureValue.session.get(SessionKeys.clientMTDID) shouldBe Some(testMtditid)
+          verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(isAgentPredicate))
+          verify(mockAuthService, times(1)).authorised(Enrolment("HMRC-MTD-IT").withIdentifier("MTDITID", testMtditid).withDelegatedAuthRule("mtd-it-auth"))
+          verify(mockAuthService, times(1)).authorised(Enrolment("HMRC-MTD-IT-SUPP").withIdentifier("MTDITID", testMtditid).withDelegatedAuthRule("mtd-it-auth-supp"))
+
         }
       }
 
       "return a bad request" when {
         "the submitted utr is invalid" in {
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+          setupMockAgentAuthSuccess(agentAuthRetrievalSuccess)
           mockEnterClientsUTR(HtmlFormat.empty)
 
           val result = TestEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
@@ -209,7 +271,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
         "a client details not found error is returned from the client lookup" in {
           val validUTR: String = "1234567890"
 
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+          setupMockAgentAuthSuccess(agentAuthRetrievalSuccess)
           mockClientDetails(validUTR)(
             response = Left(CitizenDetailsNotFound)
           )
@@ -225,7 +287,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
         "a business details not found error is returned from the client lookup" in {
           val validUTR: String = "1234567890"
 
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+          setupMockAgentAuthSuccess(agentAuthRetrievalSuccess)
           mockClientDetails(validUTR)(
             response = Left(BusinessDetailsNotFound)
           )
@@ -241,13 +303,14 @@ class EnterClientsUTRControllerSpec extends TestSupport
         "client details exist but there is no agent/client relationship" in {
           val validUTR: String = "1234567890"
 
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+          setupMockAgentAuthSuccess(agentAuthRetrievalSuccess)
 
           mockClientDetails(validUTR)(
             response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
           )
 
-          setupMockAgentAuthorisationException(InsufficientEnrolments())
+          setupMockPrimaryAgentAuthorisationException(testMtditid)
+          setupMockSecondaryAgentAuthorisationException(testMtditid)
 
           val result = TestEnterClientsUTRController.submit(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> validUTR
@@ -263,7 +326,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
         "an unexpected response is returned from the client lookup" in {
           val validUTR: String = "1234567890"
 
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+          setupMockAgentAuthSuccess(agentAuthRetrievalSuccess)
           mockClientDetails(validUTR)(
             response = Left(APIError)
           )
@@ -273,15 +336,37 @@ class EnterClientsUTRControllerSpec extends TestSupport
           ))
           status(result) shouldBe INTERNAL_SERVER_ERROR
         }
-        "the utr entered is valid, there is a client/agent relationship but the POST request to session data service is unsuccessful" in {
+        "the utr entered is valid, there is a client/primary agent relationship but the POST request to session data service is unsuccessful" in {
           val validUTR: String = "1234567890"
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+          setupMockAgentAuthSuccess(agentAuthRetrievalSuccess)
 
           setupMockPostSessionData(Left(SessionDataPostFailure(INTERNAL_SERVER_ERROR, "POST to session data service was unsuccessful TEST")))
 
           mockClientDetails(validUTR)(
             response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
           )
+
+          setupMockPrimaryAgentAuthRetrievalSuccess(agentAuthRetrievalSuccess, testMtditid)
+
+          val result = TestEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+            ClientsUTRForm.utr -> validUTR
+          ))
+
+          status(result) shouldBe INTERNAL_SERVER_ERROR
+        }
+        "the utr entered is valid, there is a client/secondary agent relationship but the POST request to session data service is unsuccessful" in {
+          val validUTR: String = "1234567890"
+          setupMockAgentAuthSuccess(agentAuthRetrievalSuccess)
+
+          setupMockPostSessionData(Left(SessionDataPostFailure(INTERNAL_SERVER_ERROR, "POST to session data service was unsuccessful TEST")))
+
+          mockClientDetails(validUTR)(
+            response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
+          )
+
+          setupMockPrimaryAgentAuthorisationException(testMtditid)
+
+          setupMockSecondaryAgentAuthRetrievalSuccess(agentAuthRetrievalSuccess, testMtditid)
 
           val result = TestEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> validUTR
