@@ -32,7 +32,7 @@ import testConstants.ChargeConstants
 import testConstants.FinancialDetailsIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.OutstandingChargesIntegrationTestConstants._
-import testConstants.messages.WhatYouOweMessages.{hmrcAdjustment, hmrcAdjustmentHeading, hmrcAdjustmentLine1}
+import testConstants.messages.WhatYouOweMessages.hmrcAdjustment
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate
@@ -170,8 +170,6 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with ChargeConstants w
             pageTitleIndividual("whatYouOwe.heading"),
             isElementVisibleById("balancing-charge-type-0")(expectedValue = true),
             isElementVisibleById("balancing-charge-type-1")(expectedValue = true),
-            isElementVisibleById("payment-details-content-0")(expectedValue = true),
-            isElementVisibleById("payment-details-content-1")(expectedValue = true),
             isElementVisibleById("due-0")(expectedValue = true),
             isElementVisibleById("due-1")(expectedValue = true),
             isElementVisibleById("payment-button")(expectedValue = true),
@@ -226,8 +224,6 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with ChargeConstants w
             pageTitleIndividual("whatYouOwe.heading"),
             isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
             isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
-            isElementVisibleById("payment-details-content-0")(expectedValue = true),
-            isElementVisibleById("payment-details-content-1")(expectedValue = true),
             isElementVisibleById("due-0")(expectedValue = true),
             isElementVisibleById("charge-interest-0")(expectedValue = false),
             isElementVisibleById("due-1")(expectedValue = true),
@@ -282,8 +278,6 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with ChargeConstants w
             pageTitleIndividual("whatYouOwe.heading"),
             isElementVisibleById("balancing-charge-type-0")(expectedValue = true),
             isElementVisibleById("balancing-charge-type-1")(expectedValue = true),
-            isElementVisibleById("payment-details-content-0")(expectedValue = true),
-            isElementVisibleById("payment-details-content-1")(expectedValue = true),
             isElementVisibleById("due-0")(expectedValue = true),
             isElementVisibleById("due-1")(expectedValue = true),
             isElementVisibleById("due-2")(expectedValue = false),
@@ -531,8 +525,6 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with ChargeConstants w
             pageTitleIndividual("whatYouOwe.heading"),
             isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
             isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
-            isElementVisibleById("payment-details-content-0")(expectedValue = false),
-            isElementVisibleById("payment-details-content-1")(expectedValue = false),
             isElementVisibleById(s"payment-button")(expectedValue = false),
             isElementVisibleById("no-payments-due")(expectedValue = true),
             isElementVisibleById("sa-note-migrated")(expectedValue = true),
@@ -570,8 +562,6 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with ChargeConstants w
             pageTitleIndividual("whatYouOwe.heading"),
             isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
             isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
-            isElementVisibleById("payment-details-content-0")(expectedValue = false),
-            isElementVisibleById("payment-details-content-1")(expectedValue = false),
             isElementVisibleById(s"payment-button")(expectedValue = false),
             isElementVisibleById("no-payments-due")(expectedValue = true),
             isElementVisibleById("sa-note-migrated")(expectedValue = true),
@@ -621,8 +611,6 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with ChargeConstants w
             httpStatus(OK),
             pageTitleIndividual("whatYouOwe.heading"),
             isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
-            isElementVisibleById("payment-details-content-0")(expectedValue = false),
-            isElementVisibleById("payment-details-content-1")(expectedValue = false),
             isElementVisibleById(s"payment-button")(expectedValue = false),
             isElementVisibleById("no-payments-due")(expectedValue = true),
             isElementVisibleById("sa-note-migrated")(expectedValue = true),
@@ -676,8 +664,6 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with ChargeConstants w
             pageTitleIndividual("whatYouOwe.heading"),
             isElementVisibleById("balancing-charge-type-0")(expectedValue = true),
             isElementVisibleById("balancing-charge-type-1")(expectedValue = true),
-            isElementVisibleById("payment-details-content-0")(expectedValue = true),
-            isElementVisibleById("payment-details-content-1")(expectedValue = true),
             isElementVisibleById(s"payment-button")(expectedValue = true),
             isElementVisibleById(s"no-payments-due")(expectedValue = false),
             isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
@@ -720,8 +706,6 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with ChargeConstants w
             pageTitleIndividual("whatYouOwe.heading"),
             isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
             isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
-            isElementVisibleById("payment-details-content-0")(expectedValue = true),
-            isElementVisibleById("payment-details-content-1")(expectedValue = true),
             isElementVisibleById(s"payment-button")(expectedValue = true),
             isElementVisibleById(s"no-payments-due")(expectedValue = false),
             isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
@@ -766,8 +750,6 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with ChargeConstants w
             pageTitleIndividual("whatYouOwe.heading"),
             isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
             isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
-            isElementVisibleById("payment-details-content-0")(expectedValue = true),
-            isElementVisibleById("payment-details-content-1")(expectedValue = true),
             isElementVisibleById(s"payment-button")(expectedValue = true),
             isElementVisibleById(s"no-payments-due")(expectedValue = false),
             isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
@@ -806,8 +788,6 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with ChargeConstants w
             pageTitleIndividual("whatYouOwe.heading"),
             isElementVisibleById("balancing-charge-type-0")(expectedValue = true),
             isElementVisibleById("balancing-charge-type-1")(expectedValue = true),
-            isElementVisibleById("payment-details-content-0")(expectedValue = true),
-            isElementVisibleById("payment-details-content-1")(expectedValue = true),
             isElementVisibleById("due-0")(expectedValue = true),
             isElementVisibleById("due-1")(expectedValue = true),
             isElementVisibleById("payment-button")(expectedValue = true),
@@ -852,8 +832,6 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with ChargeConstants w
             pageTitleIndividual("whatYouOwe.heading"),
             isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
             isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
-            isElementVisibleById("payment-details-content-0")(expectedValue = true),
-            isElementVisibleById("payment-details-content-1")(expectedValue = true),
             isElementVisibleById(s"payment-button")(expectedValue = true),
             isElementVisibleById(s"no-payments-due")(expectedValue = false),
             isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
@@ -890,8 +868,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with ChargeConstants w
                 elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment 1"),
                 elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment 2"),
                 elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(3)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment 3"),
-                elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(4)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment 4"),
-                elementTextBySelectorList("#payment-details-content-5")(s"$hmrcAdjustmentHeading $hmrcAdjustmentLine1"))
+                elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(4)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment 4"))
           }
 
           "show What You Owe page with MFA Debits on the Payment Tab" in {

@@ -479,13 +479,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
           poa2ExtraTable.select("td").last().text() shouldBe "£40.00"
         }
-        "payment type drop down and content exists" in new TestSetup(charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
-          pageDocument.select(".govuk-details__summary-text").text shouldBe dropDownInfo
-          pageDocument.getElementById("payment-details-content-0").text shouldBe s"$remainingBalance $remainingBalanceLine1"
-          pageDocument.getElementById("payment-details-content-1").text shouldBe s"$poaHeading $poaLine1"
-          pageDocument.getElementById("payment-details-content-2").text shouldBe s"$lpiHeading $lpiLine1"
-
-        }
         "should have payment processing bullets when payment due in more than 30 days" in new TestSetup(charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
 
           pageDocument.getElementById("payments-made").text shouldBe paymentsMade
@@ -494,8 +487,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
           pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
           pageDocument.getElementById("sa-note-migrated").text shouldBe saNote
-
-
         }
 
         "display the paragraph about payments under review and bullet points when there is a dunningLock" in new TestSetup(
@@ -570,18 +561,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
           poa2Table.select("td").last().text() shouldBe "£75.00"
 
-        }
-
-        "have payment type drop down details" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
-          pageDocument.select(".govuk-details__summary-text").text shouldBe dropDownInfo
-          pageDocument.getElementById("payment-details-content-0").text shouldBe s"$remainingBalance $remainingBalanceLine1"
-          pageDocument.getElementById("payment-details-content-1").text shouldBe s"$poaHeading $poaLine1"
-          pageDocument.getElementById("payment-details-content-2").text shouldBe s"$lpiHeading $lpiLine1"
-          pageDocument.getElementById("payment-details-content-3").text shouldBe messages("whatYouOwe.class2-nic.heading") + " " + messages("whatYouOwe.class2-nic.line1")
-          pageDocument.getElementById("payment-details-content-4").text shouldBe messages("whatYouOwe.cancelled-paye-sa.heading") + " " + messages("whatYouOwe.cancelled-paye-sa.line1")
-
-
-          findElementById("balancing-charge-type-overdue") shouldBe None
         }
 
         "have Data for due within 30 days" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()(dateService)) {
@@ -713,17 +692,11 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementById("balancing-charge-type-overdue").text shouldBe overdueTag
         }
         "have payment type dropdown details and bullet point list" in new TestSetup(charges = whatYouOweDataWithOverdueDataAndInterest()) {
-          pageDocument.select(".govuk-details__summary-text").text shouldBe dropDownInfo
-          pageDocument.getElementById("payment-details-content-0").text shouldBe remainingBalance + " " + remainingBalanceLine1
-          pageDocument.getElementById("payment-details-content-1").text shouldBe poaHeading + " " + poaLine1
-          pageDocument.getElementById("payment-details-content-2").text shouldBe lpiHeading + " " + lpiLine1
-
           pageDocument.getElementById("payments-made").text shouldBe paymentsMade
           val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
           paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
           paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
           pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
-
         }
 
         "have overdue payments header and data with POA1 charge type and show Late payment interest on payment on account 1 of 2" in
@@ -1253,10 +1226,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       pageDocument.select("#due-0 a").get(0).text() shouldBe hmrcAdjustment + s" 1"
       pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
     }
-    "display the payment details content" in new TestSetup(charges = whatYouOweDataWithMFADebits) {
-      pageDocument.getElementById("hmrc-adjustment-heading").text shouldBe hmrcAdjustmentHeading
-      pageDocument.getElementById("hmrc-adjustment-line1").text shouldBe hmrcAdjustmentLine1
-    }
   }
 
   "agent" when {
@@ -1275,14 +1244,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
       "not have button Pay now with charges" in new AgentTestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
         findAgentElementById("payment-button") shouldBe None
-      }
-      "have payment type drop down details" in new AgentTestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
-        pageDocument.select(".govuk-details__summary-text").text shouldBe dropDownInfo
-        pageDocument.getElementById("payment-details-content-0").text shouldBe s"$remainingBalance $remainingBalanceLine1Agent"
-        pageDocument.getElementById("payment-details-content-1").text shouldBe s"$poaHeading $poaLine1Agent"
-        pageDocument.getElementById("payment-details-content-2").text shouldBe s"$lpiHeading $lpiLine1Agent"
-        pageDocument.getElementById("payment-details-content-3").text shouldBe messages("whatYouOwe.class2-nic.heading") + " " + messages("whatYouOwe.class2-nic.line1.agent")
-        pageDocument.getElementById("payment-details-content-4").text shouldBe messages("whatYouOwe.cancelled-paye-sa.heading") + " " + messages("whatYouOwe.cancelled-paye-sa.line1.agent")
       }
 
       "money in your account section with available credits" in new AgentTestSetup(charges = whatYouOweDataWithAvailableCredits()) {
