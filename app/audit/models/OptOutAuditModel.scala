@@ -98,7 +98,7 @@ object OptOutAuditModel {
 
   private def createOutcome(resolvedResponse: ITSAStatusUpdateResponse): Outcome = {
     resolvedResponse match {
-      case _: ITSAStatusUpdateResponseFailure => Outcome(isSuccessful = false, failureCategory = Some("API_FAILURE"), failureReason = Some("Failure reasons"))
+      case response: ITSAStatusUpdateResponseFailure => Outcome(isSuccessful = false, failureCategory = Some(response.failures.head.code), failureReason = Some(response.failures.head.reason))
       case _: ITSAStatusUpdateResponseSuccess => Outcome(isSuccessful = true, failureCategory = None, failureReason = None)
       case _ => Outcome(isSuccessful = false, failureCategory = Some("Unknown failure reason"), failureReason = Some("Unknown failure category"))
     }
