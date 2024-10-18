@@ -18,13 +18,12 @@ package helpers.servicemocks
 
 import controllers.agent.AuthUtils._
 import enums.{PrimaryAgent, SecondaryAgent, UserRole}
+import helpers.WiremockHelper._
 import play.api.http.Status
 import play.api.libs.json.{JsString, JsValue, Json}
 import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolment}
-import helpers.WiremockHelper._
-import helpers.agent.ComponentSpecBase
 
-object AgentAuthStub extends ComponentSpecBase {
+object AgentAuthStub {
 
   val postAuthoriseUrl = "/auth/authorise"
   val requiredConfidenceLevel = 200
