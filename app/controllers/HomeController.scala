@@ -82,7 +82,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
   private def buildHomePage(nextUpdatesDueDates: Seq[LocalDate], isAgent: Boolean, origin: Option[String])
                            (implicit user: MtdItUser[_]): Future[Result] =
     for {
-      unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
+      unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails(isCodingOutEnabled = true)
       paymentsDue = getDueDates(unpaidCharges)
       dunningLockExists = hasDunningLock(unpaidCharges)
       outstandingChargesModel <- getOutstandingChargesModel(unpaidCharges)
@@ -137,7 +137,7 @@ private def getOutstandingChargesModel(unpaidCharges: List[FinancialDetailsRespo
                                       (implicit user: MtdItUser[_]): Future[List[OutstandingChargeModel]] =
   whatYouOweService.getWhatYouOweChargesList(
     unpaidCharges,
-    isEnabled(CodingOut),
+    isCodingOutEnabled = true,
     isEnabled(ReviewAndReconcilePoa)
   ) map {
     case WhatYouOweChargesList(_, _, Some(OutstandingChargesModel(outstandingCharges)), _) =>

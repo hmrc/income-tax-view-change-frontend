@@ -68,7 +68,6 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
     "coding out is enabled" when {
 
-      val codingOutEnabled = true
       val reviewAndReconcileEnabled = false
 
       "from Payment on Account 1" in {
@@ -76,7 +75,6 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
           financialDetails = List(poa1FinancialDetails),
-          codingOut = codingOutEnabled,
           reviewAndReconcile = reviewAndReconcileEnabled)
 
         chargeItem.transactionType shouldBe PaymentOnAccountOne
@@ -89,7 +87,6 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
           financialDetails = List(poa2FinancialDetails),
-          codingOut = codingOutEnabled,
           reviewAndReconcile = reviewAndReconcileEnabled)
 
         chargeItem.transactionType shouldBe PaymentOnAccountTwo
@@ -101,7 +98,6 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = balancingNics2DocumentDetails,
           financialDetails = List(balancingNics2FinancialDetails),
-          codingOut = codingOutEnabled,
           reviewAndReconcile = reviewAndReconcileEnabled)
 
         chargeItem.transactionType shouldBe BalancingCharge
@@ -113,7 +109,6 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = balancingAcceptedDocumentDetails,
           financialDetails = List(balancingAcceptedFinancialDetails),
-          codingOut = codingOutEnabled,
           reviewAndReconcile = reviewAndReconcileEnabled)
 
         chargeItem.transactionType shouldBe BalancingCharge
@@ -125,7 +120,6 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = balancingCancelledDocumentDetails,
           financialDetails = List(balancingCancelledFinancialDetails),
-          codingOut = codingOutEnabled,
           reviewAndReconcile = reviewAndReconcileEnabled)
 
         chargeItem.transactionType shouldBe BalancingCharge
@@ -136,84 +130,6 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
           financialDetails = List(mfaFinancialDetails),
-          codingOut = codingOutEnabled,
-          reviewAndReconcile = reviewAndReconcileEnabled)
-
-        chargeItem.transactionType shouldBe MfaDebitCharge
-        chargeItem.subTransactionType shouldBe None
-      }
-    }
-
-    "coding out is disabled" when {
-
-      val codingOutEnabled = false
-      val reviewAndReconcileEnabled = false
-
-      "from Payment on Account 1" in {
-
-        val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = defaultDocDetails,
-          financialDetails = List(poa1FinancialDetails),
-          codingOut = codingOutEnabled,
-          reviewAndReconcile = reviewAndReconcileEnabled)
-
-        chargeItem.transactionType shouldBe PaymentOnAccountOne
-        chargeItem.subTransactionType shouldBe None
-      }
-
-      "from Payment on Account 2" in {
-
-        val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = defaultDocDetails,
-          financialDetails = List(poa2FinancialDetails),
-          codingOut = codingOutEnabled,
-          reviewAndReconcile = reviewAndReconcileEnabled)
-
-        chargeItem.transactionType shouldBe PaymentOnAccountTwo
-        chargeItem.subTransactionType shouldBe None
-      }
-
-      "from Balancing Payment Nics2" in {
-
-        val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = balancingNics2DocumentDetails,
-          financialDetails = List(balancingNics2FinancialDetails),
-          codingOut = codingOutEnabled,
-          reviewAndReconcile = reviewAndReconcileEnabled)
-
-        chargeItem.transactionType shouldBe BalancingCharge
-        chargeItem.subTransactionType shouldBe Some(Nics2)
-      }
-
-      "from Balancing Payment Accepted" in {
-
-        val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = balancingAcceptedDocumentDetails,
-          financialDetails = List(balancingAcceptedFinancialDetails),
-          codingOut = codingOutEnabled,
-          reviewAndReconcile = reviewAndReconcileEnabled)
-
-        chargeItem.transactionType shouldBe BalancingCharge
-        chargeItem.subTransactionType shouldBe Some(Accepted)
-      }
-
-      "from Balancing Payment Cancelled" in {
-
-        val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = balancingCancelledDocumentDetails,
-          financialDetails = List(balancingCancelledFinancialDetails),
-          codingOut = codingOutEnabled,
-          reviewAndReconcile = reviewAndReconcileEnabled)
-
-        chargeItem.transactionType shouldBe BalancingCharge
-        chargeItem.subTransactionType shouldBe Some(Cancelled)
-      }
-
-      "from MFA" in {
-        val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = defaultDocDetails,
-          financialDetails = List(mfaFinancialDetails),
-          codingOut = codingOutEnabled,
           reviewAndReconcile = reviewAndReconcileEnabled)
 
         chargeItem.transactionType shouldBe MfaDebitCharge
@@ -232,7 +148,6 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
           financialDetails = List(poa1FinancialDetails),
-          codingOut = true,
           reviewAndReconcile = reviewAndReconcileEnabled)
 
         chargeItem.isOverdue()(dateServiceBeforeDueDate) shouldBe false
@@ -245,7 +160,6 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
           financialDetails = List(poa1FinancialDetails),
-          codingOut = true,
           reviewAndReconcile = reviewAndReconcileEnabled)
 
         chargeItem.isOverdue()(dateServiceOnDueDate) shouldBe false
@@ -258,7 +172,6 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
           financialDetails = List(poa1FinancialDetails),
-          codingOut = true,
           reviewAndReconcile = reviewAndReconcileEnabled)
 
         chargeItem.isOverdue()(dateServiceAfterDueDate) shouldBe true

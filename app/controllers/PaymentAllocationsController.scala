@@ -25,7 +25,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import enums.GatewayPage.GatewayPage
 import forms.utils.SessionKeys.gatewayPage
 import implicits.ImplicitDateFormatterImpl
-import models.admin.{CreditsRefundsRepay, PaymentAllocation}
+import models.admin.CreditsRefundsRepay
 import models.core.Nino
 import models.paymentAllocationCharges.{PaymentAllocationError, PaymentAllocationViewModel}
 import play.api.Logger
@@ -61,8 +61,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
   private lazy val redirectUrlAgent: String = controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show.url
 
   def viewPaymentAllocation(documentNumber: String, origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-    implicit user =>
-      if (isEnabled(PaymentAllocation)) {
+    implicit user => {
         handleRequest(
           itvcErrorHandler = itvcErrorHandler,
           documentNumber = documentNumber,
@@ -70,7 +69,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
           isAgent = false,
           origin = origin
         )
-      } else Future.successful(Redirect(redirectUrlIndividual))
+      }
   }
 
   def handleRequest(itvcErrorHandler: ShowInternalServerError,
@@ -103,16 +102,14 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
 
   def viewPaymentAllocationAgent(documentNumber: String): Action[AnyContent] = {
     auth.authenticatedAction(isAgent = true) {
-      implicit mtdItUser =>
-        if (isEnabled(PaymentAllocation)(mtdItUser)) {
+      implicit mtdItUser => {
           handleRequest(
             itvcErrorHandler = itvcErrorHandlerAgent,
             documentNumber = documentNumber,
             redirectUrl = redirectUrlAgent,
             isAgent = true
           )
-        } else
-          Future.successful(Redirect(redirectUrlAgent))
+        }
     }
   }
 

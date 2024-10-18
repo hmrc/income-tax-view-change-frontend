@@ -163,7 +163,6 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
       case financialDetails@FinancialDetailsModel(_, documentDetails, _) =>
 
         val getChargeItem: DocumentDetail => Option[ChargeItem] = getChargeItemOpt(
-          codingOutEnabled = isEnabled(CodingOut),
           reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa)
         )(
           financialDetails = financialDetails.financialDetails
@@ -258,7 +257,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
 
     withTaxYearFinancials(taxYear, isAgent) { charges =>
       withObligationsModel(taxYear, isAgent) { obligationsModel =>
-        val codingOutEnabled: Boolean = isEnabled(CodingOut)
+        val codingOutEnabled: Boolean = true
         val mtdItId: String = if (isAgent) getClientMtditid else user.mtditid
         val nino: String = if (isAgent) getClientNino else user.nino
         for {

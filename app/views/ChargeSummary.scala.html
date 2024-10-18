@@ -417,7 +417,7 @@
                 }
             }
 
-            @if(viewModel.paymentAllocationEnabled && !viewModel.latePaymentInterestCharge) {
+            @if(!viewModel.latePaymentInterestCharge) {
                 @chargeSummaryPaymentAllocation(viewModel.paymentAllocations, viewModel.payments, viewModel.chargeItem, viewModel.isAgent, None, viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)
             }
             </tbody>

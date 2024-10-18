@@ -397,7 +397,6 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
 
     "the coding out feature switch is enabled" should {
       "include Class 2 Nics in the charges list when Class 2 Nics is present" in {
-        enable(CodingOut)
 
         mockSingleBusinessIncomeSource()
         mockCalculationSuccessfulNew(testMtditid)
@@ -432,7 +431,6 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
       }
 
       "include Paye in the charges list when Paye is present" in {
-        enable(CodingOut)
 
         mockSingleBusinessIncomeSource()
         mockCalculationSuccessfulNew(testMtditid)
@@ -458,78 +456,6 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             ctaViewModel = emptyCTAViewModel),
           taxYearsBackLink,
           ctaLink = ctaLink).toString
-
-        val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
-
-        status(result) shouldBe Status.OK
-        contentAsString(result) shouldBe expectedContent
-      }
-    }
-
-    "the coding out feature switch is disabled" should {
-      "not include Class 2 Nics in the charges list when Class 2 Nics is present" in {
-        disable(CodingOut)
-
-        mockSingleBusinessIncomeSource()
-        mockCalculationSuccessfulNew(testMtditid)
-        mockFinancialDetailsSuccess(
-          financialDetailsModelResponse = financialDetails(
-            documentDetails = documentDetailClass2Nic.documentDetail,
-            financialDetails = financialDetail(mainTransaction = "4910")
-          )
-        )
-        mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
-          toDate = LocalDate.of(testTaxYear, 4, 5))(
-          response = testObligtionsModel
-        )
-
-        val calcOverview: CalculationSummary = CalculationSummary(liabilityCalculationModelSuccessful)
-        val expectedContent: String = taxYearSummaryView(
-          testTaxYear, TaxYearSummaryViewModel(
-            Some(calcOverview),
-            testEmptyChargesList,
-            testObligtionsModel,
-            codingOutEnabled = true,
-            reviewAndReconcileEnabled = true,
-            ctaViewModel = emptyCTAViewModel),
-          taxYearsBackLink,
-          ctaLink = ctaLink
-        ).toString
-
-        val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
-
-        status(result) shouldBe Status.OK
-        contentAsString(result) shouldBe expectedContent
-      }
-
-      "not include Paye in the charges list when Paye is present" in {
-        disable(CodingOut)
-
-        mockSingleBusinessIncomeSource()
-        mockCalculationSuccessfulNew(testMtditid)
-        mockFinancialDetailsSuccess(
-          financialDetailsModelResponse = financialDetails(
-            documentDetails = documentDetailPaye.documentDetail,
-            financialDetails = financialDetail(mainTransaction = "4910")
-          )
-        )
-        mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
-          toDate = LocalDate.of(testTaxYear, 4, 5))(
-          response = testObligtionsModel
-        )
-
-        val calcOverview: CalculationSummary = CalculationSummary(liabilityCalculationModelSuccessful)
-        val expectedContent: String = taxYearSummaryView(
-          testTaxYear, TaxYearSummaryViewModel(
-            Some(calcOverview),
-            testEmptyChargesList,
-            testObligtionsModel,
-            codingOutEnabled = true,
-            reviewAndReconcileEnabled = true,
-            ctaViewModel = emptyCTAViewModel),
-          taxYearsBackLink,
-          ctaLink = ctaLink
-        ).toString
 
         val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
 
@@ -942,7 +868,6 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
 
     "all calls to retrieve data were successful and Referer was a Home page" should {
       "show the Tax Year Summary Page and back link should be to the Home page" in {
-        enable(CodingOut)
 
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockBothIncomeSources()
@@ -982,7 +907,6 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
 
     "calls to retrieve data were successful with No Obligations and Referer was a Home page" should {
       "show the Tax Year Summary Page and back link to the Home page" in {
-        enable(CodingOut)
 
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockBothIncomeSources()
