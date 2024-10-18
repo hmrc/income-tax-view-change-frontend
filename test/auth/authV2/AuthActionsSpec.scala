@@ -323,6 +323,14 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
       result.header.headers(Location) shouldBe "/report-quarterly/income-and-expenses/view/agents/agent-error"
     }
 
+    s"redirect to /sign-in when any other error is returned" in new AgentAuthThrowsExceptionFixture(
+      retrievals = agentRetrievalData,
+      authorisationException = MissingBearerToken("Bearer token not found")
+    ){
+      result.header.status shouldBe SEE_OTHER
+      result.header.headers(Location) shouldBe "/report-quarterly/income-and-expenses/view/sign-in"
+    }
+
   }
 
   lazy val mockAuthConnector = mock[FrontendAuthConnector]
