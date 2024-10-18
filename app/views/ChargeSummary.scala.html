@@ -49,7 +49,7 @@
     govukInsetText : GovukInsetText
 )
 
-@(viewModel: ChargeSummaryViewModel)(implicit request : Request[_], messages: Messages, appConfig: config.FrontendAppConfig, dateService: DateServiceInterface)
+@(viewModel: ChargeSummaryViewModel, whatYouOweUrl: String)(implicit request : Request[_], messages: Messages, appConfig: config.FrontendAppConfig, dateService: DateServiceInterface)
 
 @import implicitDateFormatter.{longDate, toTaxYearEndDate, toTaxYearStartDate}
 
@@ -334,11 +334,11 @@
         @p(id=Some("p-interest-locks-msg")){
             @if(viewModel.isAgent) {
                 @messages("chargeSummary.whatYouOwe.textOne-agent")
-                @link(id = Some("what-you-owe-interest-link-agent"), link = viewModel.whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
+                @link(id = Some("what-you-owe-interest-link-agent"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
                 @messages("chargeSummary.interestLocks.text-agent")
             } else {
                 @messages("chargeSummary.whatYouOwe.textOne")
-                @link(id = Some("what-you-owe-interest-link"), link = viewModel.whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
+                @link(id = Some("what-you-owe-interest-link"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
                 @messages("chargeSummary.interestLocks.text")
             }
 
@@ -347,11 +347,11 @@
         @p(){
             @if(viewModel.isAgent) {
                 @messages("chargeSummary.whatYouOwe.textOne-agent"),
-                @link(id = Some("what-you-owe-link-agent"), link = viewModel.whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
+                @link(id = Some("what-you-owe-link-agent"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
                 @messages("chargeSummary.whatYouOwe.textTwo-agent")
             } else {
                 @messages("chargeSummary.whatYouOwe.textOne")
-                @link(id = Some("what-you-owe-link"), link = viewModel.whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
+                @link(id = Some("what-you-owe-link"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
                 @messages("chargeSummary.whatYouOwe.textTwo")
             }
         }

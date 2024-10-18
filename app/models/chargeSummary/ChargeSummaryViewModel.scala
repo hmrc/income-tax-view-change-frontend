@@ -55,11 +55,6 @@ case class ChargeSummaryViewModel(
     else currentDate.getYear + 1
   }
 
-  val whatYouOweUrl = {
-    if (isAgent) controllers.routes.WhatYouOweController.showAgent.url
-    else controllers.routes.WhatYouOweController.show(origin).url
-  }
-
   val hasPaymentBreakdown = {
     chargeItem.hasLpiWithDunningLock || (paymentBreakdown.nonEmpty && hasDunningLocks) || (paymentBreakdown.nonEmpty && hasInterestLocks)
   }

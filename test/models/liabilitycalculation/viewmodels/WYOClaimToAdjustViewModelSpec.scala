@@ -38,17 +38,4 @@ class WYOClaimToAdjustViewModelSpec extends UnitSpec {
       }
     }
   }
-  "WYOClaimToAdjustViewModel object" when {
-    "ctaLink val is called for an individual" should {
-      "return the correct redirect link" in {
-        WYOClaimToAdjustViewModel.ctaLink(false) shouldBe "/report-quarterly/income-and-expenses/view/adjust-poa/start"
-      }
-    }
-    "ctaLink val is called for an agent" should {
-      "return the correct redirect link" in {
-        WYOClaimToAdjustViewModel.ctaLink(true) shouldBe "/report-quarterly/income-and-expenses/view/agents/adjust-poa/start"
-      }
-    }
-  }
-
 }

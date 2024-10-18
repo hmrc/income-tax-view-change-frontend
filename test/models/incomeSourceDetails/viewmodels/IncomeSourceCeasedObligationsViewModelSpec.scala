@@ -90,8 +90,6 @@ class IncomeSourceCeasedObligationsViewModelSpec extends UnitSpec {
 
 
   val taxYear: TaxYear = TaxYear(mockDateService().getCurrentTaxYearEnd - 1, mockDateService().getCurrentTaxYearEnd)
-  val viewAllBusinessLink: Call = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent = false)
-  val viewUpcomingUpdatesLink: Call = controllers.routes.NextUpdatesController.show()
   val viewUpcomingUpdatesLinkNoDueMessageKey: String = "business-ceased.obligation.view-updates.text"
   val viewUpcomingUpdatesLinkDueMessageKeyDue: String = "business-ceased.obligation.view-updates-overdue.text"
 
@@ -109,8 +107,6 @@ class IncomeSourceCeasedObligationsViewModelSpec extends UnitSpec {
           firstQuarterlyUpdate = quarterlyObligationDatesFull.flatten.headOption,
           finalDeclarationUpdate = finalDeclarationDatesSeq.take(1),
           numberOfOverdueObligationCount = 0,
-          viewAllBusinessLink = viewAllBusinessLink,
-          viewUpcomingUpdatesLink = viewUpcomingUpdatesLink,
           viewUpcomingUpdatesLinkMessageKey = viewUpcomingUpdatesLinkNoDueMessageKey,
           insetWarningMessageKey = None,
           currentTaxYear = taxYear,
@@ -137,8 +133,6 @@ class IncomeSourceCeasedObligationsViewModelSpec extends UnitSpec {
           firstQuarterlyUpdate = None,
           finalDeclarationUpdate = finalDeclarationDatesSeq.take(2),
           numberOfOverdueObligationCount = 0,
-          viewAllBusinessLink = viewAllBusinessLink,
-          viewUpcomingUpdatesLink = viewUpcomingUpdatesLink,
           viewUpcomingUpdatesLinkMessageKey = viewUpcomingUpdatesLinkNoDueMessageKey,
           insetWarningMessageKey = None,
           currentTaxYear = taxYear,
@@ -170,8 +164,6 @@ class IncomeSourceCeasedObligationsViewModelSpec extends UnitSpec {
           firstQuarterlyUpdate = quarterlyDatesYearOneSimple.headOption,
           finalDeclarationUpdate = finalDeclarationDatesSeq.take(1),
           numberOfOverdueObligationCount = 1,
-          viewAllBusinessLink = viewAllBusinessLink,
-          viewUpcomingUpdatesLink = viewUpcomingUpdatesLink,
           viewUpcomingUpdatesLinkMessageKey = viewUpcomingUpdatesLinkDueMessageKeyDue,
           insetWarningMessageKey = insetWarningMessages.singleObligationsDueQuarterly,
           currentTaxYear = taxYear,
@@ -203,8 +195,6 @@ class IncomeSourceCeasedObligationsViewModelSpec extends UnitSpec {
           firstQuarterlyUpdate = quarterlyDatesYearOneSimple.headOption,
           finalDeclarationUpdate = finalDeclarationDatesSeq.take(1),
           numberOfOverdueObligationCount = 4,
-          viewAllBusinessLink = viewAllBusinessLink,
-          viewUpcomingUpdatesLink = viewUpcomingUpdatesLink,
           viewUpcomingUpdatesLinkMessageKey = viewUpcomingUpdatesLinkDueMessageKeyDue,
           insetWarningMessageKey = insetWarningMessages.multipleObligationsDueQuarterly,
           currentTaxYear = taxYear,
@@ -235,8 +225,6 @@ class IncomeSourceCeasedObligationsViewModelSpec extends UnitSpec {
           firstQuarterlyUpdate = None,
           finalDeclarationUpdate = finalDeclarationDatesSeq.take(1),
           numberOfOverdueObligationCount = 1,
-          viewAllBusinessLink = viewAllBusinessLink,
-          viewUpcomingUpdatesLink = viewUpcomingUpdatesLink,
           viewUpcomingUpdatesLinkMessageKey = viewUpcomingUpdatesLinkDueMessageKeyDue,
           insetWarningMessageKey = insetWarningMessages.singleObligationsDueAnnually,
           currentTaxYear = taxYear,
@@ -267,8 +255,6 @@ class IncomeSourceCeasedObligationsViewModelSpec extends UnitSpec {
           firstQuarterlyUpdate = None,
           finalDeclarationUpdate = finalDeclarationDatesSeq.take(2),
           numberOfOverdueObligationCount = 4,
-          viewAllBusinessLink = viewAllBusinessLink,
-          viewUpcomingUpdatesLink = viewUpcomingUpdatesLink,
           viewUpcomingUpdatesLinkMessageKey = viewUpcomingUpdatesLinkDueMessageKeyDue,
           insetWarningMessageKey = insetWarningMessages.multipleObligationsDueAnnually,
           currentTaxYear = taxYear,
@@ -301,8 +287,6 @@ class IncomeSourceCeasedObligationsViewModelSpec extends UnitSpec {
           firstQuarterlyUpdate = None,
           finalDeclarationUpdate = finalDeclarationDatesSeq.take(1),
           numberOfOverdueObligationCount = 1,
-          viewAllBusinessLink = viewAllBusinessLink,
-          viewUpcomingUpdatesLink = viewUpcomingUpdatesLink,
           viewUpcomingUpdatesLinkMessageKey = viewUpcomingUpdatesLinkDueMessageKeyDue,
           insetWarningMessageKey = insetWarningMessages.singleObligationsDuePreviousYear,
           currentTaxYear = taxYear,
@@ -334,8 +318,6 @@ class IncomeSourceCeasedObligationsViewModelSpec extends UnitSpec {
           firstQuarterlyUpdate = None,
           finalDeclarationUpdate = finalDeclarationDatesSeq.take(2),
           numberOfOverdueObligationCount = 4,
-          viewAllBusinessLink = viewAllBusinessLink,
-          viewUpcomingUpdatesLink = viewUpcomingUpdatesLink,
           viewUpcomingUpdatesLinkMessageKey = viewUpcomingUpdatesLinkDueMessageKeyDue,
           insetWarningMessageKey = insetWarningMessages.multipleObligationsDuePreviousYear,
           currentTaxYear = taxYear,

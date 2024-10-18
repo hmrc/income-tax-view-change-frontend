@@ -98,6 +98,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
   val agentHomeBackLink: String = "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
   val emptyCTAViewModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled = false, None)
   val populatedCTAViewModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled = true, Some(TaxYear(2023, 2024)))
+  val ctaLink: String = "/report-quarterly/income-and-expenses/view/adjust-poa/start"
 
   val testObligtionsModel: ObligationsModel = ObligationsModel(Seq(
     GroupedObligationsModel(
@@ -145,6 +146,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
           ctaViewModel = emptyCTAViewModel
         ),
         taxYearsBackLink,
+        ctaLink = ctaLink
       ).toString
 
       val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(taxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
@@ -184,7 +186,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             codingOutEnabled = true,
             reviewAndReconcileEnabled = true,
             ctaViewModel = emptyCTAViewModel),
-          taxYearsBackLink).toString
+          taxYearsBackLink,
+          ctaLink = ctaLink).toString
 
         val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
 
@@ -379,7 +382,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             codingOutEnabled = true,
             reviewAndReconcileEnabled = true,
             ctaViewModel = emptyCTAViewModel),
-          homeBackLink).toString
+          homeBackLink,
+          ctaLink = ctaLink).toString
 
         val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveAndRefererToHomePage)
 
@@ -418,7 +422,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             codingOutEnabled = true,
             reviewAndReconcileEnabled = true,
             ctaViewModel = emptyCTAViewModel),
-          taxYearsBackLink).toString
+          taxYearsBackLink,
+          ctaLink = ctaLink).toString
 
         val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
 
@@ -451,7 +456,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             codingOutEnabled = true,
             reviewAndReconcileEnabled = true,
             ctaViewModel = emptyCTAViewModel),
-          taxYearsBackLink).toString
+          taxYearsBackLink,
+          ctaLink = ctaLink).toString
 
         val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
 
@@ -487,6 +493,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             reviewAndReconcileEnabled = true,
             ctaViewModel = emptyCTAViewModel),
           taxYearsBackLink,
+          ctaLink = ctaLink
         ).toString
 
         val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
@@ -521,7 +528,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             reviewAndReconcileEnabled = true,
             ctaViewModel = emptyCTAViewModel),
           taxYearsBackLink,
-
+          ctaLink = ctaLink
         ).toString
 
         val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
@@ -562,7 +569,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             reviewAndReconcileEnabled = true,
             ctaViewModel = emptyCTAViewModel
           ),
-          taxYearsBackLink
+          taxYearsBackLink,
+          ctaLink = ctaLink
         ).toString
         val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
 
@@ -595,7 +603,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             codingOutEnabled = true,
             reviewAndReconcileEnabled = true,
             ctaViewModel = emptyCTAViewModel),
-          taxYearsBackLink
+          taxYearsBackLink,
+          ctaLink = ctaLink
         ).toString
 
         val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
@@ -676,7 +685,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             reviewAndReconcileEnabled = true,
               showForecastData = true,
               ctaViewModel = emptyCTAViewModel),
-            taxYearsBackLink
+            taxYearsBackLink,
+            ctaLink = ctaLink
           ).toString()).text()
 
           val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
@@ -757,7 +767,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             codingOutEnabled = true,
             reviewAndReconcileEnabled = true,
             ctaViewModel = emptyCTAViewModel),
-          taxYearsBackLink).toString
+          taxYearsBackLink,
+          ctaLink = ctaLink).toString
 
         val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
 
@@ -788,7 +799,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             codingOutEnabled = true,
             reviewAndReconcileEnabled = true,
             ctaViewModel = emptyCTAViewModel),
-          taxYearsBackLink
+          taxYearsBackLink,
+          ctaLink = ctaLink
         ).toString
 
         val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
@@ -956,6 +968,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             ctaViewModel = emptyCTAViewModel),
           agentHomeBackLink,
           isAgent = true,
+          ctaLink = ctaLink
         ).toString
 
         val result: Future[Result] = TestTaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear = testYearPlusTwo)(
