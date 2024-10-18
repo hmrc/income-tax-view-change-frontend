@@ -39,7 +39,7 @@ import scala.concurrent.Future
 
 object CheckYourAnswersControllerISpec {
   val headingText = "Check your answers"
-  val optInSummary = "If you opt in, you will need to submit your quarterly update through compatible software."
+  val optInSummary = "Opting in will mean you need to submit your quarterly updates through compatible software."
   val optInSummaryNextYear = "If you opt in from the next tax year onwards, from 6 April 2023 you will need to submit " +
     "your quarterly updates through compatible software."
   val optin = "Opt in from"
