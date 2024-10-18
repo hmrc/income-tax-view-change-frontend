@@ -199,8 +199,6 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
                 Ok(chargeSummaryView(viewModel, whatYouOweUrl))
               case Left(ec) => onError(s"Invalid response from charge history: ${ec.message}", isAgent, showInternalServerError = true)
             }
-
-        }
       case _ =>
         onError("Invalid response from charge history", isAgent, showInternalServerError = true)
     }
@@ -230,7 +228,7 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
 
     val viewSection1 = isEnabled(ChargeHistory) && (!isLatePaymentCharge && !documentDetailWithDueDate.documentDetail.isPayeSelfAssessment)
     val viewSection2 = isEnabled(ChargeHistory) && isLatePaymentCharge
-    val viewSection3 = isEnabled(ChargeHistory) && documentDetailWithDueDate.documentDetail.isPayeSelfAssessment
+    val viewSection3 = isEnabled(ChargeHistory) && (documentDetailWithDueDate.documentDetail.isPayeSelfAssessment)
 
     val values = List(
       (viewSection1, true, "Original Amount"),
