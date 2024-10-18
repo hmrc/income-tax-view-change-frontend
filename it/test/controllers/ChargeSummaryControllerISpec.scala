@@ -23,7 +23,7 @@ import enums.CodingOutType._
 import helpers.ComponentSpecBase
 import helpers.servicemocks.ChargeItemStub.{chargeItemWithInterestAndOverdue, docDetail}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
-import models.admin.{ChargeHistory, CodingOut}
+import models.admin.ChargeHistory
 import models.chargeHistory.ChargeHistoryModel
 import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails._
@@ -85,7 +85,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       val res = IncomeTaxViewChangeFrontend.getChargeSummary("2018", "1040000124")
 
       verifyIncomeSourceDetailsCall(testMtditid)
-      enable(CodingOut)
 
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       res should have(
@@ -297,9 +296,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       )
     }
 
-    "load the page with coding out details when coding out is enable and a coded out documentDetail id is passed" in {
-      Given("the CodingOut feature switch is enabled")
-      enable(CodingOut)
+    "load the page with coding out details a coded out documentDetail id is passed" in {
       enable(ChargeHistory)
 
       Given("I wiremock stub a successful Income Source Details response with property only")

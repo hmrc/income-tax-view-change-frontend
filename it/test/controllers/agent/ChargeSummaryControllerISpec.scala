@@ -26,7 +26,7 @@ import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuthStub.titleInternalServer
 import helpers.servicemocks.ChargeItemStub.chargeItemWithInterest
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
-import models.admin.{ChargeHistory, CodingOut}
+import models.admin.ChargeHistory
 import models.chargeHistory.ChargeHistoryModel
 import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.claimToAdjustPoa.OtherIncomeLower
@@ -203,10 +203,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       )
     }
 
-    "load the page with coding out details when coding out is enable and a coded out documentDetail id is passed" in {
+    "load the page with coding out details when a coded out documentDetail id is passed" in {
 
-      Given("the CodingOut feature switch is enabled")
-      enable(CodingOut)
       stubAuthorisedAgentUser(authorised = true)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
       stubChargeHistorySuccess()
@@ -626,7 +624,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
     "load the charge summary page with a PAID MFADebit" in {
       enable(ChargeHistory)
-      disable(CodingOut)
       stubAuthorisedAgentUser(authorised = true)
 
       Given("I wiremock stub a successful Income Source Details response with property only")

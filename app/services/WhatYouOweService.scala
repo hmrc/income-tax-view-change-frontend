@@ -77,7 +77,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
           .map(_.balanceDetails).getOrElse(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None))
         val codedOutChargeItem = if (isCodingOutEnabled) {
 
-          def chargeItemf: DocumentDetail => Option[ChargeItem] = getChargeItemOpt(isCodingOutEnabled, isReviewAndReconciledEnabled)(financialDetailsModelList
+          def chargeItemf: DocumentDetail => Option[ChargeItem] = getChargeItemOpt(isReviewAndReconciledEnabled)(financialDetailsModelList
               .flatMap(_.financialDetails))(_)
 
           financialDetailsModelList.flatMap(_.documentDetails)
@@ -117,7 +117,6 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
 
     def getChargeItem(financialDetails: List[FinancialDetail]): DocumentDetail => Option[ChargeItem] =
       getChargeItemOpt(
-        codingOutEnabled = isCodingOutEnabled,
         reviewAndReconcileEnabled = isReviewAndReconciled
       )(financialDetails)
 

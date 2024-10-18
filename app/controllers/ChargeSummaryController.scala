@@ -131,7 +131,6 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
     val chargeItem = ChargeItem.fromDocumentPair(
       documentDetailWithDueDate.documentDetail,
       financialDetailsForCharge,
-      isEnabledFromConfig(CodingOut),
       isEnabledFromConfig(ReviewAndReconcilePoa))
 
     val chargeReference: Option[String] = financialDetailsForCharge.headOption match {
@@ -150,32 +149,26 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
       }
 
     chargeHistoryService.chargeHistoryResponse(isInterestCharge, documentDetailWithDueDate.documentDetail.isPayeSelfAssessment,
-      chargeReference, isEnabled(ChargeHistory), isEnabled(CodingOut)).map {
+      chargeReference, isEnabled(ChargeHistory)).map {
       case Right(chargeHistory) =>
-        if (!isEnabled(CodingOut) && (
-          documentDetailWithDueDate.documentDetail.isPayeSelfAssessment ||
-          documentDetailWithDueDate.documentDetail.isClass2Nic ||
-          documentDetailWithDueDate.documentDetail.isCancelledPayeSelfAssessment)) {
-          onError("Coding Out is disabled and redirected to not found page", isAgent, showInternalServerError = false)
-        } else {
-          auditChargeSummary(chargeItem, paymentBreakdown, chargeHistory, paymentAllocations,
-            isInterestCharge, isMFADebit, taxYear)
+        auditChargeSummary(chargeItem, paymentBreakdown, chargeHistory, paymentAllocations,
+          isInterestCharge, isMFADebit, taxYear)
 
 
-          val (poaOneChargeUrl, poaTwoChargeUrl) =
-            (for {
-              poaOneTaxYearTo     <- chargeDetailsforTaxYear.documentDetails.filter(isPoaOne).map(_.taxYear).headOption
-              poaOneTransactionId <- chargeDetailsforTaxYear.documentDetails.filter(isPoaOne).map(_.transactionId).headOption
-              poaTwoTaxYearTo     <- chargeDetailsforTaxYear.documentDetails.filter(isPoaTwo).map(_.taxYear).headOption
-              poaTwoTransactionId <- chargeDetailsforTaxYear.documentDetails.filter(isPoaTwo).map(_.transactionId).headOption
-            } yield
-              if (isAgent)
-                (routes.ChargeSummaryController.showAgent(poaOneTaxYearTo, poaOneTransactionId).url,
-                  routes.ChargeSummaryController.showAgent(poaTwoTaxYearTo, poaTwoTransactionId).url)
-              else
-                (routes.ChargeSummaryController.show(poaOneTaxYearTo, poaOneTransactionId).url,
-                  routes.ChargeSummaryController.show(poaTwoTaxYearTo, poaTwoTransactionId).url)
-              ).getOrElse(("", ""))
+        val (poaOneChargeUrl, poaTwoChargeUrl) =
+          (for {
+            poaOneTaxYearTo     <- chargeDetailsforTaxYear.documentDetails.filter(isPoaOne).map(_.taxYear).headOption
+            poaOneTransactionId <- chargeDetailsforTaxYear.documentDetails.filter(isPoaOne).map(_.transactionId).headOption
+            poaTwoTaxYearTo     <- chargeDetailsforTaxYear.documentDetails.filter(isPoaTwo).map(_.taxYear).headOption
+            poaTwoTransactionId <- chargeDetailsforTaxYear.documentDetails.filter(isPoaTwo).map(_.transactionId).headOption
+          } yield
+            if (isAgent)
+              (routes.ChargeSummaryController.showAgent(poaOneTaxYearTo, poaOneTransactionId).url,
+                routes.ChargeSummaryController.showAgent(poaTwoTaxYearTo, poaTwoTransactionId).url)
+            else
+              (routes.ChargeSummaryController.show(poaOneTaxYearTo, poaOneTransactionId).url,
+                routes.ChargeSummaryController.show(poaTwoTaxYearTo, poaTwoTransactionId).url)
+            ).getOrElse(("", ""))
 
             val whatYouOweUrl = {
               if (isAgent) controllers.routes.WhatYouOweController.showAgent.url
@@ -192,7 +185,7 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
               payments = paymentsForAllYears,
               chargeHistoryEnabled = isEnabled(ChargeHistory),
               latePaymentInterestCharge = isInterestCharge,
-              codingOutEnabled = isEnabled(CodingOut),
+              codingOutEnabled = true,
               reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
               btaNavPartial = user.btaNavPartial,
               isAgent = isAgent,
@@ -214,7 +207,7 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
   }
 
   private def checkForPoaExtraChargeLink(chargeDetailsForTaxYear: FinancialDetailsModel, documentDetailWithDueDate: DocumentDetailWithDueDate, isAgent: Boolean)(implicit user: MtdItUser[_]): Option[String] = {
-    val chargeItem: Option[ChargeItem] = getChargeItemOpt(isEnabled(CodingOut), isEnabled(ReviewAndReconcilePoa))(
+    val chargeItem: Option[ChargeItem] = getChargeItemOpt(isEnabled(ReviewAndReconcilePoa))(
       chargeDetailsForTaxYear.financialDetails)(documentDetailWithDueDate.documentDetail)
 
    chargeItem match {
@@ -235,9 +228,9 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
 
   def mandatoryViewDataPresent(isLatePaymentCharge: Boolean, documentDetailWithDueDate: DocumentDetailWithDueDate)(implicit user: MtdItUser[_]): Either[ErrorCode, Boolean] = {
 
-    val viewSection1 = isEnabled(ChargeHistory) && (!isLatePaymentCharge && !(isEnabled(CodingOut) && documentDetailWithDueDate.documentDetail.isPayeSelfAssessment))
+    val viewSection1 = isEnabled(ChargeHistory) && (!isLatePaymentCharge && !documentDetailWithDueDate.documentDetail.isPayeSelfAssessment)
     val viewSection2 = isEnabled(ChargeHistory) && isLatePaymentCharge
-    val viewSection3 = isEnabled(ChargeHistory) && (isEnabled(CodingOut) && documentDetailWithDueDate.documentDetail.isPayeSelfAssessment)
+    val viewSection3 = isEnabled(ChargeHistory) && documentDetailWithDueDate.documentDetail.isPayeSelfAssessment
 
     val values = List(
       (viewSection1, true, "Original Amount"),

@@ -21,7 +21,6 @@ import config.featureswitch.FeatureSwitching
 import enums.ChargeType.NIC4_WALES
 import enums.CodingOutType._
 import mocks.connectors.MockFinancialDetailsConnector
-import models.admin.CodingOut
 import models.core.AccountingPeriodModel
 import models.financialDetails._
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
@@ -382,7 +381,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate.minusYears(1)), testNino)(financialDetailLastYear)
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate), testNino)(financialDetail)
 
-        val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))(mtdUser(2), headerCarrier, ec)
+        val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(isCodingOutEnabled = true)(mtdUser(2), headerCarrier, ec)
 
         result.futureValue shouldBe expectedResult
       }
@@ -436,7 +435,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           )
         ))
 
-        val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))(mtdUser(2), headerCarrier, ec)
+        val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(isCodingOutEnabled = true)(mtdUser(2), headerCarrier, ec)
 
         result.futureValue shouldBe expectedResult
       }
@@ -465,7 +464,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           )
         ))
 
-        val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))(mtdUser(2), headerCarrier, ec)
+        val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(isCodingOutEnabled = true)(mtdUser(2), headerCarrier, ec)
 
         result.futureValue shouldBe List.empty[FinancialDetailsResponseModel]
       }
@@ -497,14 +496,13 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         ))
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate), testNino)(financialDetailError)
 
-        val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))(mtdUser(2), headerCarrier, ec)
+        val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(isCodingOutEnabled = true)(mtdUser(2), headerCarrier, ec)
 
         result.futureValue shouldBe expectedResult
       }
     }
     "return unpaid transactions and coding out document details" when {
       "coding out is enabled and coding out data exists" in {
-        enable(CodingOut)
         val financialDetailCodingOut = getFinancialDetailSuccess(
           taxYear = getTaxEndYear(fixedDate.minusYears(1)),
           documentDetails = List(
@@ -535,58 +533,12 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate.minusYears(1)), testNino)(financialDetailCodingOut)
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate), testNino)(financialDetail)
 
-        val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))(mtdUser(2), headerCarrier, ec)
+        val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(isCodingOutEnabled = true)(mtdUser(2), headerCarrier, ec)
 
         result.futureValue shouldBe List(
           financialDetailCodingOut,
           financialDetail
         )
-      }
-    }
-
-    "return unpaid transactions without coding out document details" should {
-      "coding out is disabled" when {
-        "class 2 nics exists" in {
-          disable(CodingOut)
-          val ddNics = documentDetailModel(
-            transactionId = "transid1", outstandingAmount = 200.00, latePaymentInterestAmount = None).copy(interestOutstandingAmount = Some(0), documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_CLASS2_NICS))
-          val ddCodedOut = documentDetailModel(
-            taxYear = getTaxEndYear(fixedDate.minusYears(1)), transactionId = "transid2", outstandingAmount = 2500.00,
-            latePaymentInterestAmount = None).copy(interestOutstandingAmount = Some(0), documentDescription = Some("TRM Amend Charge"),
-            documentText = Some(CODING_OUT_ACCEPTED))
-          val ddCancelledCodedOut = documentDetailModel(
-            transactionId = "transid3", outstandingAmount = 2500.00, latePaymentInterestAmount = None).copy(
-            interestOutstandingAmount = Some(0), documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_CANCELLED))
-          val financialDetailCodingOut = getFinancialDetailSuccess(
-            taxYear = getTaxEndYear(fixedDate.minusYears(1)),
-            documentDetails = List(ddNics, ddCodedOut, ddCancelledCodedOut),
-            financialDetails = List(
-              fullFinancialDetailModel,
-              fullFinancialDetailModel,
-              fullFinancialDetailModel
-            )
-          )
-          val financialDetail = getFinancialDetailSuccess(
-            taxYear = getTaxEndYear(fixedDate),
-            documentDetails = List(
-              fullDocumentDetailModel.copy(outstandingAmount = 300.00),
-              fullDocumentDetailModel.copy(outstandingAmount = 400.00)
-            ),
-            financialDetails = List(
-              fullFinancialDetailModel,
-              fullFinancialDetailModel
-            )
-          )
-
-          setupMockGetFinancialDetails(getTaxEndYear(fixedDate.minusYears(1)), testNino)(financialDetailCodingOut)
-          setupMockGetFinancialDetails(getTaxEndYear(fixedDate), testNino)(financialDetail)
-
-          val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))(mtdUser(2), headerCarrier, ec)
-
-          result.futureValue shouldBe List(
-            financialDetail
-          )
-        }
       }
     }
   }

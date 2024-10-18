@@ -32,7 +32,7 @@ case class ChargeSummaryViewModel(
                                    payments: FinancialDetailsModel,
                                    chargeHistoryEnabled: Boolean,
                                    latePaymentInterestCharge: Boolean,
-                                   codingOutEnabled: Boolean,
+                                   codingOutEnabled: Boolean = true,
                                    reviewAndReconcileEnabled: Boolean,
                                    isAgent: Boolean = false,
                                    btaNavPartial: Option[Html] = None,
