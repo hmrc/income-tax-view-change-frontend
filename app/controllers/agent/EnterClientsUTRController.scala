@@ -16,8 +16,11 @@
 
 package controllers.agent
 
+import AuthUtils._
 import audit.AuditingService
 import audit.models.EnterClientUTRAuditModel
+import auth.FrontendAuthorisedFunctions
+import auth.authV2.{AgentUser, AuthActions}
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.BaseAgentController
@@ -25,15 +28,16 @@ import controllers.agent.sessionUtils.SessionKeys
 import controllers.predicates.AuthPredicate.AuthPredicate
 import controllers.predicates.IncomeTaxAgentUser
 import controllers.predicates.agent.AgentAuthenticationPredicate.defaultAgentPredicates
+import enums.{PrimaryAgent, SecondaryAgent, UserRole}
 import forms.agent.ClientsUTRForm
 import models.sessionData.SessionCookieData
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
 import services.SessionDataService
 import services.agent.ClientDetailsService
 import services.agent.ClientDetailsService.{BusinessDetailsNotFound, CitizenDetailsNotFound, ClientDetails}
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.{affinityGroup, allEnrolments, confidenceLevel, credentials}
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.{affinityGroup, allEnrolments, authorisedEnrolments, confidenceLevel, credentials}
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.auth.core.{AuthorisedFunctions, Enrolment}
 import utils.SessionCookieUtil
@@ -45,7 +49,8 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
                                           clientDetailsService: ClientDetailsService,
-                                          val authorisedFunctions: AuthorisedFunctions,
+                                          val authorisedFunctions: FrontendAuthorisedFunctions,
+                                          val authActions: AuthActions,
                                           val auditingService: AuditingService,
                                           val sessionDataService: SessionDataService)
                                          (implicit mcc: MessagesControllerComponents,
@@ -54,69 +59,76 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
                                           val ec: ExecutionContext)
   extends BaseAgentController with I18nSupport with FeatureSwitching with SessionCookieUtil {
 
-  lazy val notAnAgentPredicate: AuthPredicate[IncomeTaxAgentUser] = {
-    val redirectNotAnAgent = Future.successful(Redirect(controllers.agent.errors.routes.AgentErrorController.show))
-    defaultAgentPredicates(onMissingARN = redirectNotAnAgent)
+  def show: Action[AnyContent] = authActions.isAgent.async {implicit user =>
+    Future.successful(Ok(enterClientsUTR(
+      clientUTRForm = ClientsUTRForm.form,
+      postAction = routes.EnterClientsUTRController.submit
+    )))
   }
 
-  def show: Action[AnyContent] = Authenticated.asyncWithoutClientAuth(notAnAgentPredicate) { implicit request =>
-    implicit user =>
-      Future.successful(Ok(enterClientsUTR(
-        clientUTRForm = ClientsUTRForm.form,
+  def showWithUtr(utr: String): Action[AnyContent] = authActions.isAgent.async {implicit user =>
+    val utrSafe = utr.filter(_.isDigit).take(10)
+    Future.successful(Ok(enterClientsUTR(
+      clientUTRForm = ClientsUTRForm.form.fill(utrSafe),
+      postAction = routes.EnterClientsUTRController.submit
+    )))
+  }
+
+
+  def submit: Action[AnyContent] = authActions.isAgent.async { implicit user =>
+    ClientsUTRForm.form.bindFromRequest().fold(
+      hasErrors => Future.successful(BadRequest(enterClientsUTR(
+        clientUTRForm = hasErrors,
         postAction = routes.EnterClientsUTRController.submit
-      )))
-  }
-
-  def showWithUtr(utr: String): Action[AnyContent] = Authenticated.asyncWithoutClientAuth(notAnAgentPredicate) { implicit request =>
-    implicit user =>
-      val utrSafe = utr.filter(_.isDigit).take(10)
-      Future.successful(Ok(enterClientsUTR(
-        clientUTRForm = ClientsUTRForm.form.fill(utrSafe),
-        postAction = routes.EnterClientsUTRController.submit
-      )))
-  }
-
-
-  def submit: Action[AnyContent] = Authenticated.asyncWithoutClientAuth() { implicit request =>
-    implicit user =>
-      ClientsUTRForm.form.bindFromRequest().fold(
-        hasErrors => Future.successful(BadRequest(enterClientsUTR(
-          clientUTRForm = hasErrors,
-          postAction = routes.EnterClientsUTRController.submit
-        ))),
-        validUTR => {
-          clientDetailsService.checkClientDetails(
-            utr = validUTR
-          ) flatMap {
-            case Right(ClientDetails(firstName, lastName, nino, mtdItId)) =>
-              authorisedFunctions.authorised(Enrolment("HMRC-MTD-IT").withIdentifier("MTDITID", mtdItId).withDelegatedAuthRule("mtd-it-auth")).retrieve(allEnrolments and affinityGroup and confidenceLevel and credentials) {
-                case _ ~ _ ~ _ ~ _ =>
-                  val sessionCookieData: SessionCookieData = SessionCookieData(mtdItId, nino, validUTR, firstName, lastName)
-                  handleSessionCookies(sessionCookieData) { sessionCookies =>
-                    sendAudit(true, user, sessionCookieData.utr, sessionCookieData.nino, sessionCookieData.mtditid)
-                    Future.successful(Redirect(routes.ConfirmClientUTRController.show).addingToSession(sessionCookies: _*))
-                  }
-              }.recover {
-                case ex =>
-                  Logger("application")
-                    .error(s"[EnterClientsUTRController] - ${ex.getMessage} - ${ex.getCause}")
-                  sendAudit(false, user, validUTR, nino, mtdItId)
-                  Redirect(controllers.agent.routes.UTRErrorController.show)
+      ))),
+      validUTR => {
+        clientDetailsService.checkClientDetails(
+          utr = validUTR
+        ) flatMap {
+          case Right(clientDetails) =>
+            checkAgentAuthorisedAndGetRole(clientDetails.mtdItId).flatMap{ userRole =>
+              val sessionCookieData: SessionCookieData = SessionCookieData(clientDetails, validUTR, userRole == SecondaryAgent)
+              handleSessionCookies(sessionCookieData) { sessionCookies =>
+                sendAudit(true, user, sessionCookieData.utr, sessionCookieData.nino, sessionCookieData.mtditid)
+                Future.successful(Redirect(routes.ConfirmClientUTRController.show).addingToSession(sessionCookies: _*))
               }
-            case Left(CitizenDetailsNotFound | BusinessDetailsNotFound)
-            =>
-              val sessionValue: Seq[(String, String)] = Seq(SessionKeys.clientUTR -> validUTR)
-              Future.successful(Redirect(routes.UTRErrorController.show).addingToSession(sessionValue: _*))
-            case Left(_)
-            =>
-              Logger("application").error(s"Error response received from API")
-              Future.successful(itvcErrorHandler.showInternalServerError())
-          }
+            }.recover{
+              case ex =>
+                Logger("application")
+                  .error(s"[EnterClientsUTRController] - ${ex.getMessage} - ${ex.getCause}")
+                sendAudit(false, user, validUTR, clientDetails.nino, clientDetails.mtdItId)
+                Redirect(controllers.agent.routes.UTRErrorController.show)
+            }
+
+          case Left(CitizenDetailsNotFound | BusinessDetailsNotFound)
+          =>
+            val sessionValue: Seq[(String, String)] = Seq(SessionKeys.clientUTR -> validUTR)
+            Future.successful(Redirect(routes.UTRErrorController.show).addingToSession(sessionValue: _*))
+          case Left(_)
+          =>
+            Logger("application").error(s"Error response received from API")
+            Future.successful(itvcErrorHandler.showInternalServerError())
         }
-      )
+      }
+    )
   }
 
-  private def sendAudit(isSuccessful: Boolean, user: IncomeTaxAgentUser, validUTR: String, nino: String, mtdItId: String)(implicit request: Request[_]): Unit = {
+
+  private def checkAgentAuthorisedAndGetRole(mtdItId: String)(implicit request: Request[_]): Future[UserRole] = {
+    authorisedFunctions
+      .authorised(Enrolment(primaryAgentEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
+        .withDelegatedAuthRule(primaryAgentAuthRule)).retrieve(allEnrolments and credentials and affinityGroup and confidenceLevel) {
+        case _ ~ _ ~ _ ~ _ => Future.successful(PrimaryAgent)
+      }.recoverWith { case e =>
+        authorisedFunctions
+          .authorised(Enrolment(secondaryAgentEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
+            .withDelegatedAuthRule(secondaryAgentAuthRule)).retrieve(allEnrolments and credentials and affinityGroup and confidenceLevel)
+          { case _ ~ _ ~ _ ~ _ => Future.successful(SecondaryAgent)
+          }
+      }
+  }
+
+  private def sendAudit[A](isSuccessful: Boolean, user: AgentUser[A], validUTR: String, nino: String, mtdItId: String)(implicit request: Request[_]): Unit = {
     auditingService.extendedAudit(EnterClientUTRAuditModel(
       isSuccessful = isSuccessful,
       nino = nino,

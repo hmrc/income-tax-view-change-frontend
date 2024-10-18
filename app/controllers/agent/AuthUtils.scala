@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package models.sessionData
+package controllers.agent
 
-import play.api.libs.json.{Json, OFormat}
+object AuthUtils {
 
-case class SessionDataModel(
-                             mtditid: String,
-                             nino: String,
-                             utr: String,
-                             isSupportingAgent: Boolean = false
-                           )
+  val agentIdentifier = "MTDITID"
 
-object SessionDataModel {
-  implicit val formats: OFormat[SessionDataModel] = Json.format[SessionDataModel]
+  val primaryAgentEnrolmentName = "HMRC-MTD-IT"
+  val primaryAgentAuthRule = "mtd-it-auth"
+
+  val secondaryAgentEnrolmentName = "HMRC-MTD-IT-SUPP"
+  val secondaryAgentAuthRule = "mtd-it-auth-supp"
+
+
 }
-

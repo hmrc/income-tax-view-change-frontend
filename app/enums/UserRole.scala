@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-package models.sessionData
+package enums
 
-import play.api.libs.json.{Json, OFormat}
+sealed trait UserRole
 
-case class SessionDataModel(
-                             mtditid: String,
-                             nino: String,
-                             utr: String,
-                             isSupportingAgent: Boolean = false
-                           )
+case object PrimaryAgent extends UserRole
 
-object SessionDataModel {
-  implicit val formats: OFormat[SessionDataModel] = Json.format[SessionDataModel]
-}
+case object SecondaryAgent extends UserRole
 
+case object Individual extends UserRole

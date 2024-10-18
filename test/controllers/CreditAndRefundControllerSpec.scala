@@ -20,7 +20,7 @@ import auth.authV2.actions._
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.SessionTimeoutPredicate
-import mocks.auth.{MockAuthActions, MockFrontendAuthorisedFunctions}
+import mocks.auth.{MockOldAuthActions, MockFrontendAuthorisedFunctions}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import models.admin.CreditsRefundsRepay
 import models.financialDetails.FinancialDetailsModel
@@ -42,7 +42,7 @@ import java.time.LocalDate
 import scala.concurrent.Future
 
 class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate
-  with MockFrontendAuthorisedFunctions with FeatureSwitching with MockAuthActions {
+  with MockFrontendAuthorisedFunctions with FeatureSwitching with MockOldAuthActions {
 
 
   trait Setup {

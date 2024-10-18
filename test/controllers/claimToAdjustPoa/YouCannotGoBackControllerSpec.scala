@@ -18,7 +18,7 @@ package controllers.claimToAdjustPoa
 
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import mocks.auth.MockAuthActions
+import mocks.auth.MockOldAuthActions
 import mocks.services.{MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.PoaAmendmentData
@@ -36,7 +36,7 @@ class YouCannotGoBackControllerSpec extends TestSupport
   with FeatureSwitching
   with MockClaimToAdjustService
   with MockPaymentOnAccountSessionService
-  with MockAuthActions {
+  with MockOldAuthActions {
 
   object TestYouCannotGoBackController extends YouCannotGoBackController(
     authActions = mockAuthActions,

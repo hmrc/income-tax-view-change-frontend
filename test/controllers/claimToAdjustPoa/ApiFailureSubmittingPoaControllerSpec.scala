@@ -18,7 +18,7 @@ package controllers.claimToAdjustPoa
 
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import mocks.auth.MockAuthActions
+import mocks.auth.MockOldAuthActions
 import models.admin.AdjustPaymentsOnAccount
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -32,7 +32,7 @@ import views.html.claimToAdjustPoa.ApiFailureSubmittingPoaView
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ApiFailureSubmittingPoaControllerSpec extends TestSupport with FeatureSwitching with MockAuthActions {
+class ApiFailureSubmittingPoaControllerSpec extends TestSupport with FeatureSwitching with MockOldAuthActions {
 
   object TestApiFailureSubmittingPoaController extends ApiFailureSubmittingPoaController(
     authActions = mockAuthActions,

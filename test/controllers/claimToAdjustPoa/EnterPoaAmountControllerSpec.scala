@@ -18,7 +18,7 @@ package controllers.claimToAdjustPoa
 
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.sessionUtils
-import mocks.auth.MockAuthActions
+import mocks.auth.MockOldAuthActions
 import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.admin.AdjustPaymentsOnAccount
@@ -45,7 +45,7 @@ class EnterPoaAmountControllerSpec extends TestSupport
   with MockCalculationListConnector
   with MockFinancialDetailsConnector
   with MockPaymentOnAccountSessionService
-  with MockAuthActions {
+  with MockOldAuthActions {
 
   object TestEnterPoaAmountController$ extends EnterPoaAmountController(
     authActions = mockAuthActions,

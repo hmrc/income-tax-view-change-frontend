@@ -21,8 +21,8 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.common.ConsoleNotifier
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
-import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import com.github.tomakehurst.wiremock.http.{HttpHeader, HttpHeaders}
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.scalatest.concurrent.{Eventually, IntegrationPatience}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.libs.json.JsValue
@@ -130,6 +130,26 @@ object WiremockHelper extends Eventually with IntegrationPatience {
       )
     )
 
+  def stubPostWithRequest(url: String, requestBody:JsValue, status: Integer, responseBody: String): StubMapping =
+    stubFor(post(urlEqualTo(url))
+      .withRequestBody(equalToJson(requestBody.toString()))
+      .willReturn(
+        aResponse().
+          withStatus(status).
+          withBody(responseBody)
+      )
+    )
+
+  def stubPostWithRequestAndResponseHeaders(url: String, requestBody:JsValue, status: Integer, responseHeaders: Map[String, String] = Map()): StubMapping =
+    stubFor(post(urlEqualTo(url))
+      .withRequestBody(equalToJson(requestBody.toString()))
+      .willReturn(
+        aResponse().
+          withStatus(status).
+          withHeaders(toHttpHeaders(responseHeaders))
+      )
+    )
+
   def stubPostWithHeader(url: String, status: Integer, key: String, header: String): StubMapping =
     stubFor(post(urlEqualTo(url))
       .willReturn(
@@ -160,12 +180,6 @@ object WiremockHelper extends Eventually with IntegrationPatience {
     )
 
   def stubPutWithHeaders(url: String, status: Integer, responseBody: String, headers: Map[String, String] = Map()): StubMapping = {
-    def toHttpHeaders(toConvert: Map[String, String]): HttpHeaders = {
-      val headersList = toConvert.map { case (key, value) =>
-        new HttpHeader(key, value)
-      }.toSeq
-      new HttpHeaders(headersList: _*)
-    }
 
     stubFor(put(urlEqualTo(url))
       .willReturn(
@@ -194,6 +208,13 @@ object WiremockHelper extends Eventually with IntegrationPatience {
           withBody(responseBody)
       )
     )
+
+  private def toHttpHeaders(toConvert: Map[String, String]): HttpHeaders = {
+    val headersList = toConvert.map { case (key, value) =>
+      new HttpHeader(key, value)
+    }.toSeq
+    new HttpHeaders(headersList: _*)
+  }
 }
 
 trait WiremockHelper {
