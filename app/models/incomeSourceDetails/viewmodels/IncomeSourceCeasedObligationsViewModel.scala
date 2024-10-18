@@ -27,8 +27,6 @@ case class IncomeSourceCeasedObligationsViewModel(incomeSourceType: IncomeSource
                                                   firstQuarterlyUpdate: Option[DatesModel],
                                                   finalDeclarationUpdate: Seq[DatesModel],
                                                   numberOfOverdueObligationCount: Int,
-                                                  viewAllBusinessLink: Call,
-                                                  viewUpcomingUpdatesLink: Call,
                                                   viewUpcomingUpdatesLinkMessageKey: String,
                                                   businessName: Option[String],
                                                   insetWarningMessageKey: Option[(String, String)],
@@ -47,8 +45,6 @@ object IncomeSourceCeasedObligationsViewModel {
     val flattenQuarterlyObligations = obligationsViewModel.quarterlyObligationsDates.flatten
     val allObligations = flattenQuarterlyObligations ++ obligationsViewModel.finalDeclarationDates
     val numberOfOverdueObligationCount = allObligations.count(_.inboundCorrespondenceDue isBefore dateService.getCurrentDate)
-    val viewAllBusinessLink = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent)
-    val viewUpcomingUpdatesLink = if (isAgent) controllers.routes.NextUpdatesController.showAgent else controllers.routes.NextUpdatesController.show()
 
     val viewFinalDeclarationDates = if (obligationsViewModel.quarterlyObligationsDates.flatten.isEmpty)
       obligationsViewModel.finalDeclarationDates.take(2)
@@ -73,8 +69,6 @@ object IncomeSourceCeasedObligationsViewModel {
       firstQuarterlyUpdate = obligationsViewModel.quarterlyObligationsDates.flatten.headOption,
       finalDeclarationUpdate = viewFinalDeclarationDates,
       numberOfOverdueObligationCount = numberOfOverdueObligationCount,
-      viewAllBusinessLink = viewAllBusinessLink,
-      viewUpcomingUpdatesLink = viewUpcomingUpdatesLink,
       viewUpcomingUpdatesLinkMessageKey = viewUpcomingUpdatesLinkMessageKey,
       businessName = businessName,
       insetWarningMessageKey = insetWarningMessageKey,

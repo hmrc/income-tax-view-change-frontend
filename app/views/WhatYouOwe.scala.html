@@ -290,7 +290,7 @@
             case Some(value) =>
                 p(id = Some("adjust-poa-content"))(
                     link(
-                        link = WYOClaimToAdjustViewModel.ctaLink(isAgent),
+                        link = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent).url,
                         messageKey = getMessage("adjust-poa", value.startYear.toString, value.endYear.toString),
                         id = Some("adjust-poa-link"))
                 )
@@ -302,7 +302,7 @@
                 p(id = Some("adjust-paid-poa-content"))(Html(s"""
                     ${getMessage("adjust-poa.paid-1", value.startYear.toString, value.endYear.toString)}
                     ${link(
-                        link = WYOClaimToAdjustViewModel.ctaLink(isAgent),
+                        link = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent).url,
                         messageKey = getMessage("adjust-poa.paid-2", value.startYear.toString, value.endYear.toString),
                         id = Some("adjust-poa-link"))}
                     ${getMessage("adjust-poa.paid-3", value.startYear.toString, value.endYear.toString)}

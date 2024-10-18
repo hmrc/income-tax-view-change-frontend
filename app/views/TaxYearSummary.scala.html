@@ -46,7 +46,7 @@
     taxYearSummaryTabsPartial: taxYearSummaryTabsPartial
 )
 
-@(taxYear: Int, viewModel: TaxYearSummaryViewModel, backUrl: String, isAgent: Boolean = false, origin: Option[String] = None
+@(taxYear: Int, viewModel: TaxYearSummaryViewModel, backUrl: String, isAgent: Boolean = false, origin: Option[String] = None, ctaLink: String
   )(implicit request: Request[_], dateService: DateServiceInterface, messages: Messages, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter._
@@ -394,7 +394,7 @@
                                 (
                                     Html(
                                         link(
-                                            link = TYSClaimToAdjustViewModel.ctaLink(isAgent),
+                                            link = ctaLink,
                                             messageKey = messages("tax-year-summary.adjust-poa", value.startYear.toString, value.endYear.toString),
                                             id = Some("adjust-poa-link")
                                         ).toString
