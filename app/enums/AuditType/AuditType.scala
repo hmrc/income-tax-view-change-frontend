@@ -141,3 +141,7 @@ case object ClientDetailsConfirmed extends AuditType {
 case object AdjustPaymentsOnAccount extends AuditType {
   override val name: String = "AdjustPaymentsOnAccount"
 }
+
+case object OptOutQuarterlyReportingRequest extends AuditType {
+  override val name: String = "OptOutQuarterlyReportingRequest"
+}

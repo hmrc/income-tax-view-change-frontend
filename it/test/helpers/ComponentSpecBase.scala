@@ -700,7 +700,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def postConfirmOptOut(): WSResponse = post(s"/optout/review-confirm-taxyear")(Map.empty)
 
-
     def getConfirmedOptOut(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       get("/optout/confirmed", additionalCookies)
     }
