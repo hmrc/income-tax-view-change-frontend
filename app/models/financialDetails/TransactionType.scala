@@ -48,6 +48,14 @@ case object PaymentOnAccountTwoReviewAndReconcile extends ChargeType {
   override val key = "POA2RR"
 }
 
+case object PaymentOnAccountOneReviewAndReconcileCredit extends CreditType {
+  override val key = "POA1RR-credit"
+}
+
+case object PaymentOnAccountTwoReviewAndReconcileCredit extends CreditType {
+  override val key = "POA2RR-credit"
+}
+
 case object BalancingCharge extends ChargeType {
   override val key = "BCD"
 }
@@ -82,12 +90,70 @@ case object Repayment extends CreditType {
   override val key = "refund"
 }
 
-case object PaymentOnAccountOneReviewAndReconcileCredit extends CreditType {
-  override val key = "POA1RR-credit"
-}
+object TransactionType {
+  implicit val write: Writes[TransactionType] = new Writes[TransactionType] {
+    def writes(transactionType: TransactionType): JsValue = {
+      JsString(transactionType.key)
+    }
+  }
 
-case object PaymentOnAccountTwoReviewAndReconcileCredit extends CreditType {
-  override val key = "POA2RR-credit"
+  val read: Reads[TransactionType] = (JsPath).read[String].collect(JsonValidationError("Could not parse transactionType")) {
+    case MfaCreditType.key => MfaCreditType
+    case CutOverCreditType.key => CutOverCreditType
+    case BalancingChargeCreditType.key => BalancingChargeCreditType
+    case RepaymentInterest.key => RepaymentInterest
+    case PaymentOnAccountOneReviewAndReconcileCredit.key => PaymentOnAccountOneReviewAndReconcileCredit
+    case PaymentOnAccountTwoReviewAndReconcileCredit.key => PaymentOnAccountTwoReviewAndReconcileCredit
+    case PaymentType.key => PaymentType
+    case Repayment.key => Repayment
+    case PaymentOnAccountOne.key => PaymentOnAccountOne
+    case PaymentOnAccountTwo.key => PaymentOnAccountTwo
+    case PaymentOnAccountOneReviewAndReconcile.key => PaymentOnAccountOneReviewAndReconcile
+    case PaymentOnAccountTwoReviewAndReconcile.key => PaymentOnAccountTwoReviewAndReconcile
+    case BalancingCharge.key => BalancingCharge
+    case MfaDebitCharge.key => MfaDebitCharge
+  }
+
+  implicit val format: Format[TransactionType] = Format( read, write)
+
+
+  //  implicit val format: Format[TransactionType] = {
+//    def reads(json: JsValue): JsResult[TransactionType] = {
+//      // Attempt to read as ChargeType first
+//      ChargeType.read(json) match {
+//        case JsSuccess(chargeType, _) => JsSuccess(chargeType)
+//        case JsError(_) =>
+//          // If reading ChargeType fails, attempt to read as CreditType
+//          CreditType.read(json)
+//      }
+//
+//      def writes(transactionType: TransactionType): JsValue = {
+//        JsString(transactionType.key)
+//      }
+
+//    case ChargeType => Format(ChargeType.read, write)
+//    case _ => Format(CreditType.read, write)
+//  }
+
+//  implicit val format: Format[TransactionType] = new Format[TransactionType] {
+//    def reads(json: JsValue): JsResult[TransactionType] = {
+//      // Attempt to read as ChargeType first
+//      ChargeType.read match {
+//        case JsSuccess(chargeType: ChargeType, _) => JsSuccess(chargeType)
+//        case JsError(_) =>
+//          // If reading ChargeType fails, attempt to read as CreditType
+//          CreditType.read match {
+//            case JsSuccess(creditType: CreditType, _) => JsSuccess(creditType)
+//            case JsError(a) => JsError(a)
+//          }
+//      }
+//    }
+//
+//    def writes(transactionType: TransactionType): JsValue = transactionType match {
+//      case charge: ChargeType => ChargeType.write.writes(charge)
+//      case credit: CreditType => CreditType.write.writes(credit)
+//    }
+//  }
 }
 
 object ChargeType {
@@ -98,13 +164,16 @@ object ChargeType {
   lazy val paymentOnAccountOneReviewAndReconcileDebit = "4911"
   lazy val paymentOnAccountTwoReviewAndReconcileDebit = "4913"
 
+  lazy val paymentOnAccountOneReviewAndReconcileCredit = "4912"
+  lazy val paymentOnAccountTwoReviewAndReconcileCredit = "4914"
+
   private val paymentOnAccountOne = "4920"
   private val paymentOnAccountTwo = "4930"
 
   private val mfaDebit = Range.inclusive(4000, 4003)
     .map(_.toString).toList
 
-  def fromCode(mainTransaction: String, reviewAndReconcileEnabled: Boolean): Option[ChargeType] = {
+  def fromCode(mainTransaction: String, reviewAndReconcileEnabled: Boolean): Option[TransactionType] = {
 
     (mainTransaction, reviewAndReconcileEnabled) match {
       case (ChargeType.paymentOnAccountOne, _) =>
@@ -117,6 +186,10 @@ object ChargeType {
         Some(PaymentOnAccountOneReviewAndReconcile)
       case (ChargeType.paymentOnAccountTwoReviewAndReconcileDebit, true) =>
         Some(PaymentOnAccountTwoReviewAndReconcile)
+      case (ChargeType.paymentOnAccountOneReviewAndReconcileCredit, true) =>
+        Some(PaymentOnAccountOneReviewAndReconcileCredit)
+      case (ChargeType.paymentOnAccountTwoReviewAndReconcileCredit, true) =>
+        Some(PaymentOnAccountTwoReviewAndReconcileCredit)
       case (x, _) if ChargeType.mfaDebit.contains(x) =>
         Some(MfaDebitCharge)
       case _ => {
@@ -189,6 +262,8 @@ object CreditType {
     case CutOverCreditType.key => CutOverCreditType
     case BalancingChargeCreditType.key => BalancingChargeCreditType
     case RepaymentInterest.key => RepaymentInterest
+    case PaymentOnAccountOneReviewAndReconcileCredit.key => PaymentOnAccountOneReviewAndReconcileCredit
+    case PaymentOnAccountTwoReviewAndReconcileCredit.key => PaymentOnAccountTwoReviewAndReconcileCredit
     case PaymentType.key => PaymentType
     case Repayment.key => Repayment
   }

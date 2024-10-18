@@ -20,13 +20,15 @@ import exceptions.CouldNotCreateChargeItemException
 import models.incomeSourceDetails.TaxYear
 import play.api.libs.json.{Format, Json}
 import services.DateServiceInterface
+import models.financialDetails.TransactionItem
+import models.financialDetails.TransactionType.format
 
 import java.time.LocalDate
 
 case class ChargeItem (
                         transactionId: String,
                         taxYear: TaxYear,
-                        transactionType: ChargeType,
+                        transactionType: TransactionType,
                         subTransactionType: Option[SubTransactionType],
                         documentDate: LocalDate,
                         dueDate: Option[LocalDate],
