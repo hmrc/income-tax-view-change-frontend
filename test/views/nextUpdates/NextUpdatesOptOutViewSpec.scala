@@ -23,7 +23,7 @@ import models.optout.{NextUpdatesQuarterlyReportingContentChecks, OptOutMultiYea
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
-import services.optout.OneYearOptOutFollowedByAnnual
+import services.optout.{OneYearOptOutFollowedByAnnual, OneYearOptOutFollowedByMandated}
 import testConstants.BusinessDetailsTestConstants.{business1, testTradeName}
 import testConstants.NextUpdatesTestConstants.twoObligationsSuccessModel
 import testUtils.TestSupport
@@ -54,6 +54,9 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
     val optOutMultiYearViewModel: OptOutMultiYearViewModel = OptOutMultiYearViewModel()
     val pageDocumentMultiYearOptOut: Document = Jsoup.parse(contentAsString(nextUpdatesView(currentObligations,
       Some(optOutMultiYearViewModel), checks, "testBackURL")))
+
+    val optOutOneYearViewModelWithMandated = optOutOneYearViewModel.copy(state = Some(OneYearOptOutFollowedByMandated))
+    val pageDocumentWithWarning: Document = Jsoup.parse(contentAsString(nextUpdatesView(currentObligations, Some(optOutOneYearViewModelWithMandated), checks, "testBackURL")))
   }
 
   object obligationsMessages {
@@ -71,6 +74,10 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
     val oneYearOptOutMessage: String = s"${messages("nextUpdates.optOutOneYear-1", "2023", "2024")} ${messages("nextUpdates.optOutOneYear-2")}"
     val multiYearOptOutMessage: String = s"${messages("nextUpdates.optOutMultiYear-1")} ${messages("nextUpdates.optOutMultiYear-2")}"
   }
+
+  val confirmOptOutLink = "/report-quarterly/income-and-expenses/view/optout/review-confirm-taxyear"
+  val singleYearOptOutWarningLink = "/report-quarterly/income-and-expenses/view/optout/single-taxyear-warning"
+  val multiYearOptOutLink = "/report-quarterly/income-and-expenses/view/optout/choose-taxyear"
 
   lazy val obligationsModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(GroupedObligationsModel(
     business1.incomeSourceId,
@@ -148,8 +155,20 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
       pageDocument.getElementById("one-year-opt-out-message").text() shouldBe obligationsMessages.oneYearOptOutMessage
     }
 
+    "have the confirm opt out link" in new Setup(obligationsModel) {
+      pageDocument.getElementById("confirm-opt-out-link").attr("href") shouldBe confirmOptOutLink
+    }
+
+    "have the single year opt out warning link" in new Setup(obligationsModel) {
+      pageDocumentWithWarning.getElementById("single-year-opt-out-warning-link").attr("href") shouldBe singleYearOptOutWarningLink
+    }
+
     "have the multi year opt out message" in new Setup(obligationsModel) {
       pageDocumentMultiYearOptOut.getElementById("multi-year-opt-out-message").text() shouldBe obligationsMessages.multiYearOptOutMessage
+    }
+
+    "have the multi year opt out message link" in new Setup(obligationsModel) {
+      pageDocumentMultiYearOptOut.getElementById("opt-out-link").attr("href") shouldBe multiYearOptOutLink
     }
   }
 }
