@@ -51,7 +51,6 @@ class SessionDataServiceSpec extends TestSupport with MockSessionDataConnector {
       }
 
       "the cookie does not contain utr" in {
-        val response: SessionGetResponse = Left(new Exception("Cookie does not contain agent data"))
         val request = fakeRequestWithActiveSession.withSession(
           sessionUtils.SessionKeys.clientMTDID -> "one",
           sessionUtils.SessionKeys.clientNino -> "two"
@@ -64,7 +63,6 @@ class SessionDataServiceSpec extends TestSupport with MockSessionDataConnector {
       }
 
       "the cookie does not contain nino" in {
-        val response: SessionGetResponse = Left(new Exception("Cookie does not contain agent data"))
         val request = fakeRequestWithActiveSession.withSession(
           sessionUtils.SessionKeys.clientMTDID -> "one",
           sessionUtils.SessionKeys.clientUTR -> "two"
@@ -76,7 +74,6 @@ class SessionDataServiceSpec extends TestSupport with MockSessionDataConnector {
       }
 
       "the cookie does not contain session data" in {
-        val response: SessionGetResponse = Left(new Exception("Cookie does not contain agent data"))
         val request = fakeRequestWithActiveSession
 
         val res = TestSessionDataService.getSessionData(true)(request, headerCarrier).futureValue
