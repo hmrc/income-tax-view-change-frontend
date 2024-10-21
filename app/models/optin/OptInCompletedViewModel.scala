@@ -27,7 +27,8 @@ case class OptInCompletedViewModel(
                                     showAnnualReportingAdvice: Boolean,
                                     optInIncludedNextYear: Boolean,
                                     annualWithFollowingYearMandated: Boolean,
-                                    reportingFrequencyLink:String
+                                    nextUpdatesLink: String,
+                                    reportingFrequencyLink: String
                                   ) {
 
   val startYear: String = optInTaxYear.startYear.toString
@@ -38,10 +39,10 @@ case class OptInCompletedViewModel(
 
   def headingMessageKey: String = {
     (isCurrentYear, optInIncludedNextYear, annualWithFollowingYearMandated) match {
-      case (true, _, true)    => "optin.completedOptIn.followingVoluntary.heading.desc"
-      case (true, true, _)    => "optin.completedOptIn.followingVoluntary.heading.desc"
-      case (true, false, _)   => "optin.completedOptIn.cy.heading.desc"
-      case _                  => "optin.completedOptIn.ny.heading.desc"
+      case (true, _, true) => "optin.completedOptIn.followingVoluntary.heading.desc"
+      case (true, true, _) => "optin.completedOptIn.followingVoluntary.heading.desc"
+      case (true, false, _) => "optin.completedOptIn.cy.heading.desc"
+      case _ => "optin.completedOptIn.ny.heading.desc"
     }
   }
 
