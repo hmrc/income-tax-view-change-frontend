@@ -25,6 +25,7 @@
         govukButton: GovukButton,
         govukSelect: GovukSelect,
         govukCheckboxes: GovukCheckboxes,
+        govukRadios: GovukRadios,
         form: FormWithCSRF
 )
 
@@ -63,16 +64,24 @@
         </div>
 
 
-        @govukCheckboxes(Checkboxes(
+        @govukRadios(Radios(
             fieldset = Some(Fieldset(
                 legend = None
             )),
-            hint = None,
-            name = "Agent",
+            name = "AgentType",
             items = Seq(
-                CheckboxItem(
-                    content = Text("Agent"),
-                    value = "true"
+                RadioItem(
+                    content = Text("Individual"),
+                    value = Some("individual"),
+                    checked = true
+                ),
+                RadioItem(
+                    content = Text("Primary Agent"),
+                    value = Some("primaryAgent")
+                ),
+                RadioItem(
+                    content = Text("Supporting Agent"),
+                    value = Some("supportingAgent")
                 )
             )
         ))

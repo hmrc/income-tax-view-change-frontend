@@ -67,9 +67,13 @@ object LoginUtil {
     Json.toJson[Seq[Enrolment]](es)
   }
 
-  def getDelegatedEnrolmentData(isAgent: Boolean, enrolment: EnrolmentValues): JsValue = {
+  def getDelegatedEnrolmentData(isAgent: Boolean, isSupporting: Boolean, enrolment: EnrolmentValues): JsValue = {
     val es = if (isAgent) {
-      Seq(
+      if(isSupporting) Seq(
+        DelegatedEnrolment(key = "HMRC-MTD-IT-SUPP", identifiers =
+          Seq(KVPair(key = "MTDITID", value = enrolment.mtditid)), delegatedAuthRule = "mtd-it-auth-supp")
+      )
+      else Seq(
         DelegatedEnrolment(key = "HMRC-MTD-IT", identifiers =
           Seq(KVPair(key = "MTDITID", value = enrolment.mtditid)), delegatedAuthRule = "mtd-it-auth")
 
