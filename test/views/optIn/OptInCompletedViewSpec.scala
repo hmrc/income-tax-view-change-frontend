@@ -35,6 +35,8 @@ class OptInCompletedViewSpec extends TestSupport {
 
   def bullet(i: Int) = s"#optin-completed-view > ul > li:nth-child($i)"
 
+  def nextUpdatesLink(origin: Option[String] = None) = controllers.routes.NextUpdatesController.show(origin).url
+
   def reportingFrequencyLinkUrl(isAgent: Boolean) = controllers.optIn.routes.OptInCompletedController.show(isAgent).url //TODO: Needs fixing/updating
 
   class SetupForCurrentYear(isAgent: Boolean = true, taxYear: TaxYear,
@@ -48,6 +50,7 @@ class OptInCompletedViewSpec extends TestSupport {
         showAnnualReportingAdvice = false,
         optInIncludedNextYear = followingYearVoluntary,
         annualWithFollowingYearMandated = annualWithFollowingYearMandated,
+        nextUpdatesLink = controllers.routes.NextUpdatesController.show().url,
         reportingFrequencyLink = reportingFrequencyLinkUrl(isAgent)
       )
     val pageDocument: Document = Jsoup.parse(contentAsString(view(model = model)))
@@ -132,6 +135,7 @@ class OptInCompletedViewSpec extends TestSupport {
         showAnnualReportingAdvice = true,
         optInIncludedNextYear = false,
         annualWithFollowingYearMandated = false,
+        nextUpdatesLink = controllers.routes.NextUpdatesController.show().url,
         reportingFrequencyLink = reportingFrequencyLinkUrl(isAgent)
       )
 
@@ -152,7 +156,7 @@ class OptInCompletedViewSpec extends TestSupport {
 
     pageDocument.getElementById("your-account-has-been-updated").text() shouldBe yourRevisedDeadlineContentP1
 
-    pageDocument.select("#your-account-has-been-updated > a").attr("href") shouldBe reportingFrequencyLinkUrl(false)
+    pageDocument.select("#your-account-has-been-updated > a").attr("href") shouldBe nextUpdatesLink()
 
     pageDocument.getElementById("opt-out-reporting-quarterly").text() shouldBe yourRevisedDeadlineContentP2
 
