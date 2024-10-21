@@ -19,7 +19,9 @@ package views.messages
 object OptInCompletedViewMessages {
 
   val titleContent = "Opt in completed - Manage your Income Tax updates - GOV.UK"
+
   val panelTitleContent = "Opt in completed"
+
   val panelBodyContent = "You opted in to quarterly reporting from 2022 to 2023 tax year onwards"
 
   val yourRevisedDeadlineH2 = "Your revised deadlines"
