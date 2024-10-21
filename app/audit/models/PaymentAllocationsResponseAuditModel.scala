@@ -52,9 +52,9 @@ case class PaymentAllocationsResponseAuditModel(mtdItUser: MtdItUserBase[_],
 
   private def getAllocationDescriptionFromKey(key: String): String = key match {
     case "paymentAllocation.paymentAllocations.poa1.incomeTax" => "Income Tax for first payment on account"
-    case "paymentAllocation.paymentAllocations.poa1.nic4" => "Class 4 National Insurance for payment on account 1 of 2"
-    case "paymentAllocation.paymentAllocations.poa2.incomeTax" => "Income Tax for payment on account 2 of 2"
-    case "paymentAllocation.paymentAllocations.poa2.nic4" => "Class 4 National Insurance for payment on account 2 of 2"
+    case "paymentAllocation.paymentAllocations.poa1.nic4" => "Class 4 National Insurance contributions for first payment on account"
+    case "paymentAllocation.paymentAllocations.poa2.incomeTax" => "Income Tax for second payment on account"
+    case "paymentAllocation.paymentAllocations.poa2.nic4" => "Class 4 National Insurance contributions for second payment on account"
     case "paymentAllocation.paymentAllocations.bcd.incomeTax" => "Income Tax for remaining balance"
     case "paymentAllocation.paymentAllocations.bcd.nic2" => "Class 2 National Insurance for remaining balance"
     case "paymentAllocation.paymentAllocations.bcd.vcnic2" => "Voluntary Class 2 National Insurance for remaining balance"
