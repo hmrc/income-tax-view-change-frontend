@@ -28,8 +28,7 @@ import views.messages.OptInCompletedViewMessages._
 
 class OptInCompletedViewSpec extends TestSupport {
 
-  val forYearEnd = 2023
-  val taxYear22_23: TaxYear = TaxYear.forYearEnd(forYearEnd)
+  val taxYear22_23: TaxYear = TaxYear(2022, 2023)
 
   val view: OptInCompletedView = app.injector.instanceOf[OptInCompletedView]
 
@@ -39,9 +38,12 @@ class OptInCompletedViewSpec extends TestSupport {
 
   def reportingFrequencyLinkUrl(isAgent: Boolean) = controllers.optIn.routes.OptInCompletedController.show(isAgent).url //TODO: Needs fixing/updating
 
-  class SetupForCurrentYear(isAgent: Boolean = true, taxYear: TaxYear,
-                            followingYearVoluntary: Boolean,
-                            annualWithFollowingYearMandated: Boolean = false) {
+  class SetupForCurrentYear(
+                             isAgent: Boolean = true,
+                             taxYear: TaxYear,
+                             followingYearVoluntary: Boolean,
+                             annualWithFollowingYearMandated: Boolean = false
+                           ) {
     val model: OptInCompletedViewModel =
       OptInCompletedViewModel(
         isAgent = isAgent,
@@ -165,8 +167,8 @@ class OptInCompletedViewSpec extends TestSupport {
     val pageDocument: Document = Jsoup.parse(contentAsString(view(model = model)))
   }
 
-  s"has the correct content for year $taxYear22_23 which is the next year" in
-    new SetupNextYear(false, taxYear22_23) {
+  "has the correct content for tax year 2022-2023 which is the next tax year" in
+    new SetupNextYear(isAgent = false, taxYear = taxYear22_23) {
 
       def testContentByIds(idsAndContent: Seq[(String, String)]): Unit =
         idsAndContent.foreach {
@@ -174,7 +176,7 @@ class OptInCompletedViewSpec extends TestSupport {
             pageDocument.getElementById(selectors).text() shouldBe content
         }
 
-      val expectedContent =
+      val expectedContent: Seq[(String, String)] =
         Seq(
           Selectors.yourRevisedDeadlineH2 -> yourRevisedDeadlineH2,
           Selectors.yourRevisedDeadlineInset -> yourRevisedDeadlineInset,
