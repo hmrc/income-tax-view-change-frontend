@@ -32,17 +32,21 @@ class OptInCompletedViewSpec extends TestSupport {
 
   val view: OptInCompletedView = app.injector.instanceOf[OptInCompletedView]
 
+  def reportingFrequencyLinkUrl(isAgent:Boolean) = controllers.optIn.routes.OptInCompletedController.show(isAgent).url //TODO: Needs fixing/updating
+
   class SetupForCurrentYear(isAgent: Boolean = true, taxYear: TaxYear,
                             followingYearVoluntary: Boolean,
                             annualWithFollowingYearMandated: Boolean = false) {
-    val model: OptInCompletedViewModel = OptInCompletedViewModel(
-      isAgent = isAgent,
-      optInTaxYear = taxYear,
-      isCurrentYear = true,
-      showAnnualReportingAdvice = false,
-      optInIncludedNextYear = followingYearVoluntary,
-      annualWithFollowingYearMandated = annualWithFollowingYearMandated
-    )
+    val model: OptInCompletedViewModel =
+      OptInCompletedViewModel(
+        isAgent = isAgent,
+        optInTaxYear = taxYear,
+        isCurrentYear = true,
+        showAnnualReportingAdvice = false,
+        optInIncludedNextYear = followingYearVoluntary,
+        annualWithFollowingYearMandated = annualWithFollowingYearMandated,
+        reportingFrequencyLink = reportingFrequencyLinkUrl(isAgent)
+      )
     val pageDocument: Document = Jsoup.parse(contentAsString(view(model = model)))
   }
 
@@ -117,8 +121,10 @@ class OptInCompletedViewSpec extends TestSupport {
       "(opens in new tab)."
   }
 
-  class SetupNextYear(isAgent: Boolean = true,
-                      taxYear: TaxYear) {
+  class SetupNextYear(
+                       isAgent: Boolean = true,
+                       taxYear: TaxYear
+                     ) {
     val model: OptInCompletedViewModel =
       OptInCompletedViewModel(
         isAgent = isAgent,
@@ -126,8 +132,10 @@ class OptInCompletedViewSpec extends TestSupport {
         isCurrentYear = false,
         showAnnualReportingAdvice = true,
         optInIncludedNextYear = false,
-        annualWithFollowingYearMandated = false
+        annualWithFollowingYearMandated = false,
+        reportingFrequencyLink = reportingFrequencyLinkUrl(isAgent)
       )
+
     val pageDocument: Document = Jsoup.parse(contentAsString(view(model = model)))
   }
 
@@ -137,11 +145,15 @@ class OptInCompletedViewSpec extends TestSupport {
     pageDocument.getElementsByClass("govuk-panel__title").text() shouldBe "Opt in completed"
     pageDocument.getElementsByClass("govuk-panel__body").text() shouldBe "You opted in to quarterly reporting from 2022 to 2023 tax year onwards"
 
-    pageDocument.getElementById("optin-completed-view-p1").text() shouldBe "Check the updates and deadlines page for " +
-      "the current tax year’s deadlines. Deadlines for future years will not be visible until they become the current " +
-      "year."
-    pageDocument.getElementById("optin-completed-view-p2").text() shouldBe "You can decide at any time to opt out of " +
-      "reporting quarterly for all your businesses on your reporting frequency page."
+    pageDocument.getElementById("your-account-has-been-updated").text() shouldBe
+      "Even if they are not displayed right away on the updates and deadlines page, your account has been updated."
+
+    pageDocument.select("#your-account-has-been-updated > a").attr("href") shouldBe reportingFrequencyLinkUrl(false)
+
+    pageDocument.getElementById("opt-out-reporting-quarterly").text() shouldBe
+      "You can decide at any time to opt out of reporting quarterly for all your businesses on your reporting frequency page."
+
+    pageDocument.select("#opt-out-reporting-quarterly > a").attr("href") shouldBe reportingFrequencyLinkUrl(false)
 
     pageDocument.getElementById("optin-completed-view-p3").text() shouldBe "For any tax year you are reporting " +
       "quarterly, you will need software compatible with Making Tax Digital for Income Tax (opens in new tab)."

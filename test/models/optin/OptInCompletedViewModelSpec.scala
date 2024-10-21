@@ -29,14 +29,17 @@ class OptInCompletedViewModelSpec extends UnitSpec {
     val optInTaxYear = currentTaxYear
 
     s"Individual" in {
-      val model = OptInCompletedViewModel(
-        isAgent = false,
-        optInTaxYear = optInTaxYear,
-        isCurrentYear = false,
-        showAnnualReportingAdvice = false,
-        optInIncludedNextYear = false,
-        annualWithFollowingYearMandated = false
-      )
+
+      val model =
+        OptInCompletedViewModel(
+          isAgent = false,
+          optInTaxYear = optInTaxYear,
+          isCurrentYear = false,
+          showAnnualReportingAdvice = false,
+          optInIncludedNextYear = false,
+          annualWithFollowingYearMandated = false,
+          reportingFrequencyLink = "some link"
+        )
 
       model.startYear shouldBe "2022"
       model.endYear shouldBe "2023"
@@ -44,6 +47,7 @@ class OptInCompletedViewModelSpec extends UnitSpec {
       model.showAnnualReportingAdvice shouldBe false
       model.nextYear shouldBe "2024"
       model.annualWithFollowingYearMandated shouldBe false
+      model.reportingFrequencyLink shouldBe "some link"
     }
 
     s"Individual with following year Voluntary" in {
@@ -53,7 +57,8 @@ class OptInCompletedViewModelSpec extends UnitSpec {
         isCurrentYear = false,
         showAnnualReportingAdvice = false,
         optInIncludedNextYear = true,
-        annualWithFollowingYearMandated = false
+        annualWithFollowingYearMandated = false,
+        reportingFrequencyLink = "some link"
       )
 
       model.startYear shouldBe "2022"
@@ -63,6 +68,7 @@ class OptInCompletedViewModelSpec extends UnitSpec {
       model.nextYear shouldBe "2024"
       model.optInIncludedNextYear shouldBe true
       model.annualWithFollowingYearMandated shouldBe false
+      model.reportingFrequencyLink shouldBe "some link"
     }
 
     s"Individual with this year Annual and following year Mandatory" in {
@@ -72,7 +78,8 @@ class OptInCompletedViewModelSpec extends UnitSpec {
         isCurrentYear = false,
         showAnnualReportingAdvice = false,
         optInIncludedNextYear = false,
-        annualWithFollowingYearMandated = true
+        annualWithFollowingYearMandated = true,
+        reportingFrequencyLink = "some link"
       )
 
       model.startYear shouldBe "2022"
@@ -82,6 +89,7 @@ class OptInCompletedViewModelSpec extends UnitSpec {
       model.nextYear shouldBe "2024"
       model.optInIncludedNextYear shouldBe false
       model.annualWithFollowingYearMandated shouldBe true
+      model.reportingFrequencyLink shouldBe "some link"
     }
 
     s"Agent" in {
@@ -91,7 +99,8 @@ class OptInCompletedViewModelSpec extends UnitSpec {
         isCurrentYear = true,
         showAnnualReportingAdvice = false,
         optInIncludedNextYear = false,
-        annualWithFollowingYearMandated = false
+        annualWithFollowingYearMandated = false,
+        reportingFrequencyLink = "some link"
       )
 
       model.startYear shouldBe "2022"
@@ -100,6 +109,7 @@ class OptInCompletedViewModelSpec extends UnitSpec {
       model.showAnnualReportingAdvice shouldBe false
       model.nextYear shouldBe "2024"
       model.annualWithFollowingYearMandated shouldBe false
+      model.reportingFrequencyLink shouldBe "some link"
     }
   }
 
@@ -114,7 +124,8 @@ class OptInCompletedViewModelSpec extends UnitSpec {
         isCurrentYear = true,
         showAnnualReportingAdvice = false,
         optInIncludedNextYear = false,
-        annualWithFollowingYearMandated = false
+        annualWithFollowingYearMandated = false,
+        reportingFrequencyLink = "some link"
       )
 
       model.startYear shouldBe "2023"
@@ -122,6 +133,7 @@ class OptInCompletedViewModelSpec extends UnitSpec {
       model.isAgent shouldBe false
       model.showAnnualReportingAdvice shouldBe false
       model.nextYear shouldBe "2025"
+      model.reportingFrequencyLink shouldBe "some link"
     }
 
     s"Agent" in {
@@ -131,7 +143,8 @@ class OptInCompletedViewModelSpec extends UnitSpec {
         isCurrentYear = true,
         showAnnualReportingAdvice = false,
         optInIncludedNextYear = false,
-        annualWithFollowingYearMandated = false
+        annualWithFollowingYearMandated = false,
+        reportingFrequencyLink = "some link"
       )
 
       model.startYear shouldBe "2023"
@@ -139,7 +152,106 @@ class OptInCompletedViewModelSpec extends UnitSpec {
       model.isAgent shouldBe true
       model.showAnnualReportingAdvice shouldBe false
       model.nextYear shouldBe "2025"
+      model.reportingFrequencyLink shouldBe "some link"
     }
   }
 
+  "OptInCompletedViewModel" when {
+
+    val optInTaxYear = currentTaxYear.nextYear
+
+    ".startDateNextYear()" should {
+
+      "return the correctly formatted date" in {
+        val model =
+          OptInCompletedViewModel(
+            isAgent = false,
+            optInTaxYear = optInTaxYear,
+            isCurrentYear = true,
+            showAnnualReportingAdvice = false,
+            optInIncludedNextYear = false,
+            annualWithFollowingYearMandated = false,
+            reportingFrequencyLink = "some link"
+          )
+
+        model.startDateNextYear shouldBe "6 April 2024"
+      }
+    }
+
+
+    ".headingMessageKey()" when {
+
+      "both isCurrentYear & annualWithFollowingYearMandated are true" should {
+
+        "return the correct message key" in {
+          val model =
+            OptInCompletedViewModel(
+              isAgent = false,
+              optInTaxYear = optInTaxYear,
+              isCurrentYear = true,
+              showAnnualReportingAdvice = false,
+              optInIncludedNextYear = false,
+              annualWithFollowingYearMandated = true,
+              reportingFrequencyLink = "some link"
+            )
+
+          model.headingMessageKey shouldBe "optin.completedOptIn.followingVoluntary.heading.desc"
+        }
+      }
+
+      "both isCurrentYear & optInIncludedNextYear are true" should {
+
+        "return the correct message key" in {
+          val model =
+            OptInCompletedViewModel(
+              isAgent = false,
+              optInTaxYear = optInTaxYear,
+              isCurrentYear = true,
+              showAnnualReportingAdvice = false,
+              optInIncludedNextYear = true,
+              annualWithFollowingYearMandated = false,
+              reportingFrequencyLink = "some link"
+            )
+
+          model.headingMessageKey shouldBe "optin.completedOptIn.followingVoluntary.heading.desc"
+        }
+      }
+
+      "isCurrentYear is true & showAnnualReportingAdvice is false" should {
+
+        "return the correct message key" in {
+          val model =
+            OptInCompletedViewModel(
+              isAgent = false,
+              optInTaxYear = optInTaxYear,
+              isCurrentYear = true,
+              showAnnualReportingAdvice = false,
+              optInIncludedNextYear = false,
+              annualWithFollowingYearMandated = false,
+              reportingFrequencyLink = "some link"
+            )
+
+          model.headingMessageKey shouldBe "optin.completedOptIn.cy.heading.desc"
+        }
+      }
+
+      "all (isCurrentYear, showAnnualReportingAdvice, annualWithFollowingYearMandated) three content flags are false" should {
+
+        "return the correct message key" in {
+          val model =
+            OptInCompletedViewModel(
+              isAgent = false,
+              optInTaxYear = optInTaxYear,
+              isCurrentYear = false,
+              showAnnualReportingAdvice = false,
+              optInIncludedNextYear = false,
+              annualWithFollowingYearMandated = false,
+              reportingFrequencyLink = "some link"
+            )
+
+          model.headingMessageKey shouldBe "optin.completedOptIn.ny.heading.desc"
+        }
+      }
+    }
+  }
 }
