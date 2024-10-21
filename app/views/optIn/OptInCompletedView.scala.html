@@ -106,21 +106,18 @@
     </div>
 }
 
-@yourRevisedDeadlineInset = @{
-    govukInsetText(
+
+@yourRevisedDeadlineContent = {
+
+    <div class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
+    @h2(msg = "optin.completedOptIn.yourRevisedDeadline.h2", optId = Some("your-revised-deadline-heading"))
+
+    @govukInsetText(
         InsetText(
             id=Some("your-revised-deadline-inset"),
             content = HtmlContent(messages("optin.completedOptIn.yourRevisedDeadline.inset"))
         )
     )
-}
-
-@yourRevisedDeadlineContent = {
-
-    <div class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
-    @h2(msg = "optin.completedOptIn.yourRevisedDeadline.h2")
-
-    @yourRevisedDeadlineInset
 
     @p(id=Some("your-account-has-been-updated")){
         @messages("optin.completedOptIn.yourRevisedDeadline.p1.a")
