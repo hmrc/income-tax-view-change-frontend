@@ -55,8 +55,8 @@ class CustomAuthConnector @Inject()(servicesConfig: ServicesConfig,
                                     implicit val ec: ExecutionContext) extends PlayAuthConnector {
   override val serviceUrl: String = servicesConfig.baseUrl("auth-login")
 
-  def login(nino: Nino, isAgent: Boolean)(implicit hc: HeaderCarrier): Future[(AuthExchange, GovernmentGatewayToken)] = {
-    createPayload(nino, isAgent) flatMap {
+  def login(nino: Nino, isAgent: Boolean, isSupporting: Boolean)(implicit hc: HeaderCarrier): Future[(AuthExchange, GovernmentGatewayToken)] = {
+    createPayload(nino, isAgent, isSupporting) flatMap {
       payload => loginRequest(payload)
     }
   }
@@ -90,10 +90,11 @@ class CustomAuthConnector @Inject()(servicesConfig: ServicesConfig,
     }
   }
 
-  private def createPayload(nino: Nino, isAgent: Boolean): Future[JsValue] = {
+  private def createPayload(nino: Nino, isAgent: Boolean, isSupporting: Boolean): Future[JsValue] = {
     getUserCredentials(nino.nino, userRepository) map {
       userCredentials =>
-        val delegateEnrolments = getDelegatedEnrolmentData(isAgent = isAgent, userCredentials.enrolmentData)
+        val delegateEnrolments = getDelegatedEnrolmentData(isAgent = isAgent, isSupporting = isSupporting, userCredentials.enrolmentData)
+        println(Console.CYAN + delegateEnrolments + Console.RESET)
         Json.obj(
           "credId" -> userCredentials.credId,
           "affinityGroup" -> {
