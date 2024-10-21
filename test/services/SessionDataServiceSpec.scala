@@ -41,44 +41,41 @@ class SessionDataServiceSpec extends TestSupport with MockSessionDataConnector {
 
     "return a SessionGetSuccessResponse" when {
       "the cookie does not contain mtditid" in {
+        val response: SessionGetResponse = Left(new Exception("Cookie does not contain agent data"))
         val request = fakeRequestWithActiveSession.withSession(
           sessionUtils.SessionKeys.clientUTR -> "three",
           sessionUtils.SessionKeys.clientNino -> "two"
         )
-        val res = TestSessionDataService.getSessionData(true)(request, headerCarrier).futureValue
-        res.isLeft shouldBe true
-        res.swap.map(_.getMessage) shouldBe Right("Cookie does not contain agent data")
+
+        TestSessionDataService.getSessionData(true)(request, headerCarrier).futureValue shouldBe response
       }
 
       "the cookie does not contain utr" in {
+        val response: SessionGetResponse = Left(new Exception("Cookie does not contain agent data"))
         val request = fakeRequestWithActiveSession.withSession(
           sessionUtils.SessionKeys.clientMTDID -> "one",
           sessionUtils.SessionKeys.clientNino -> "two"
         )
 
-        val res = TestSessionDataService.getSessionData(true)(request, headerCarrier).futureValue
-        res.isLeft shouldBe true
-        res.swap.map(_.getMessage) shouldBe Right("Cookie does not contain agent data")
+        TestSessionDataService.getSessionData(true)(request, headerCarrier).futureValue shouldBe response
 
       }
 
       "the cookie does not contain nino" in {
+        val response: SessionGetResponse = Left(new Exception("Cookie does not contain agent data"))
         val request = fakeRequestWithActiveSession.withSession(
           sessionUtils.SessionKeys.clientMTDID -> "one",
           sessionUtils.SessionKeys.clientUTR -> "two"
         )
 
-        val res = TestSessionDataService.getSessionData(true)(request, headerCarrier).futureValue
-        res.isLeft shouldBe true
-        res.swap.map(_.getMessage) shouldBe Right("Cookie does not contain agent data")
+        TestSessionDataService.getSessionData(true)(request, headerCarrier).futureValue shouldBe response
       }
 
       "the cookie does not contain session data" in {
+        val response: SessionGetResponse = Left(new Exception("Cookie does not contain agent data"))
         val request = fakeRequestWithActiveSession
 
-        val res = TestSessionDataService.getSessionData(true)(request, headerCarrier).futureValue
-        res.isLeft shouldBe true
-        res.swap.map(_.getMessage) shouldBe Right("Cookie does not contain agent data")
+        TestSessionDataService.getSessionData(true)(request, headerCarrier).futureValue shouldBe response
       }
     }
   }
