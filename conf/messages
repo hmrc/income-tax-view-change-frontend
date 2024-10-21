@@ -908,8 +908,8 @@ chargeSummary.lpi.reviewAndReconcilePoa1.text                      = Interest fo
 chargeSummary.lpi.reviewAndReconcilePoa2.text                      = Interest for second payment on account: extra amount
 chargeSummary.reviewAndReconcilePoa1.text				           = First payment on account: extra amount from your tax return
 chargeSummary.reviewAndReconcilePoa2.text				           = Second payment on account: extra amount from your tax return
-chargeSummary.reviewAndReconcilePoa1Credit.text				       = POA1 Credit
-chargeSummary.reviewAndReconcilePoa2Credit.text				       = POA2 Credit
+chargeSummary.reviewAndReconcilePoa1Credit.text				       = First payment on account: credit from your tax return
+chargeSummary.reviewAndReconcilePoa2Credit.text				       = Second payment on account: credit from your tax return
 chargeSummary.balancingCharge.text  							   = Balancing payment
 chargeSummary.class2Nic.text                                       = Class 2 National Insurance
 chargeSummary.codingOut.text                                       = Balancing payment collected through PAYE tax code
@@ -955,6 +955,14 @@ chargeSummary.poa2ExtraAmountInterest.p2                            = HMRC appli
 chargeSummary.poa2ExtraAmountInterest.p3                            = Interest is charged from the date your second payment on account was due and calculated at the
 chargeSummary.poa2ExtraAmountInterest.p3LinkText                    = Bank of England base rate (opens in new tab)
 chargeSummary.poa2ExtraAmountInterest.p3AfterLink                   = plus 2.5%.
+
+chargeSummary.poa1Credit.p1                                         = HMRC has added a credit to your account because your tax return shows that your adjusted
+chargeSummary.poa1Credit.link                                       = first payment on account
+chargeSummary.poa1Credit.afterLink                                  = was too high.
+
+chargeSummary.poa2Credit.p1                                         = HMRC has added a credit to your account because your tax return shows that your adjusted
+chargeSummary.poa2Credit.link                                       = second payment on account
+chargeSummary.poa2Credit.afterLink                                  = was too high.
 
 chargeSummary.definition.balancingcharge.p1                        = A balancing payment is the tax you still need to pay for a tax year. This happens if you:
 chargeSummary.definition.balancingcharge.bullet1                   = did not have any tax to pay during the year (for example, if your last Self Assessment tax bill was under £1,000)

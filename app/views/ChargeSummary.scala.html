@@ -27,6 +27,8 @@
 @import models.financialDetails.PaymentOnAccountOneReviewAndReconcile
 @import models.financialDetails.PaymentOnAccountTwo
 @import models.financialDetails.PaymentOnAccountTwoReviewAndReconcile
+@import models.financialDetails.PaymentOnAccountOneReviewAndReconcileCredit
+@import models.financialDetails.PaymentOnAccountTwoReviewAndReconcileCredit
 @import models.financialDetails.BalancingCharge
 @import models.financialDetails.MfaDebitCharge
 @import java.time.LocalDate
@@ -173,6 +175,19 @@
     }
 }
 
+@reviewAndReconcilePoaCreditExplanation(oneOrTwo: String) = {
+    @p(id = Some("rar-credit-explanation")) {
+        @messages(s"chargeSummary.poa${oneOrTwo}Credit.p1")
+        @link(id = Some("poa-link"), link = {
+            oneOrTwo match {
+                case "1" => viewModel.poaOneChargeUrl
+                case _ => viewModel.poaTwoChargeUrl
+            }
+        }, messageKey = s"chargeSummary.poa${oneOrTwo}Credit.link")
+        @messages("chargeSummary.reviewAndReconcilePoa.p2")
+    }
+}
+
 @getExplanationContent = @{(viewModel.chargeItem.transactionType, viewModel.chargeItem.subTransactionType) match {
     case (MfaDebitCharge, _)                                                                     => hmrcAdjustmentExplanation
     case (PaymentOnAccountOneReviewAndReconcile, _)  if !viewModel.latePaymentInterestCharge           => reviewAndReconcilePoaOneDebitExplanation
@@ -181,6 +196,8 @@
     case (PaymentOnAccountTwoReviewAndReconcile, _)                                              => getPoa2ExtraChargeInterestExplanationContent
     case (PaymentOnAccountOne | PaymentOnAccountTwo, _) if !viewModel.latePaymentInterestCharge  => paymentOnAccountExplanation
     case (PaymentOnAccountOne | PaymentOnAccountTwo, _)                                          => getLpiPoaExplanationContent
+    case (PaymentOnAccountOneReviewAndReconcileCredit, _)                                        => reviewAndReconcilePoaCreditExplanation("1")
+    case (PaymentOnAccountTwoReviewAndReconcileCredit, _)                                        => reviewAndReconcilePoaCreditExplanation("2")
     case (BalancingCharge, None) if !viewModel.latePaymentInterestCharge                         => balancingChargeExplanation
     case (BalancingCharge, None)                                                                 => getBalancingPaymentsExplanationContent
     case _                                                                                       =>
