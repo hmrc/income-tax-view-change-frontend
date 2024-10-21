@@ -26,7 +26,9 @@ case class OptInCompletedViewModel(
                                     isCurrentYear: Boolean,
                                     showAnnualReportingAdvice: Boolean,
                                     optInIncludedNextYear: Boolean,
-                                    annualWithFollowingYearMandated: Boolean) {
+                                    annualWithFollowingYearMandated: Boolean,
+                                    reportingFrequencyLink:String
+                                  ) {
 
   val startYear: String = optInTaxYear.startYear.toString
   val endYear: String = optInTaxYear.endYear.toString

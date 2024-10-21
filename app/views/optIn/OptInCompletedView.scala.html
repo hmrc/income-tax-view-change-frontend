@@ -68,7 +68,7 @@
 }
 
 @reportingFrequencyUrl = {
-    @controllers.routes.ReportingFrequencyPageController.show(model.isAgent)
+    @controllers.routes.ReportingFrequencyPageController.show(model.isAgent).url
 }
 
 @makingTaxDigitalUrl = {
@@ -94,7 +94,7 @@
     </div>
 }
 
-@futureReporitng = {
+@futureReporting = {
     <div id="optin-completed-view" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
         @if(!model.annualWithFollowingYearMandated) {
             <h2 class="govuk-heading-m" >@messages("optin.completedOptIn.futureReporting")</h2>
@@ -134,6 +134,36 @@
     </div>
 }
 
+@yourRevisedDeadlineInset = @{
+    govukInsetText(
+        InsetText(
+            id=Some("your-revised-deadline-inset"),
+            content = HtmlContent(messages("optin.completedOptIn.yourRevisedDeadline.inset"))
+        )
+    )
+}
+
+@yourRevisedDeadlineContent = {
+
+    <div class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
+    @h2(msg = "optin.completedOptIn.yourRevisedDeadline.h2")
+
+    @yourRevisedDeadlineInset
+
+    @p(){
+        @messages("optin.completedOptIn.yourRevisedDeadline.p1.a")
+        @link(model.reportingFrequencyLink, messageKey = "optin.completedOptIn.yourRevisedDeadline.p1.link")
+        @messages("optin.completedOptIn.yourRevisedDeadline.p1.b")
+    }
+
+    @p(){
+        @messages("optin.completedOptIn.yourRevisedDeadline.p2.a")
+        @link(model.reportingFrequencyLink, messageKey = "optin.completedOptIn.yourRevisedDeadline.p2.link")
+        @messages("optin.completedOptIn.yourRevisedDeadline.p2.b")
+    }
+    </div>
+}
+
 @annualFollowingInset = @{
     govukInsetText(InsetText(id=Some("warning-inset"), content = HtmlContent(messages("optin.completedOptIn.nymandated.inset", model.startDateNextYear))))
 }
@@ -149,7 +179,7 @@
 ) {
 
     @panel
-    @yourNextUpdatesDue
+    @yourRevisedDeadlineContent
     @submitUpdatesInSoftware
-    @futureReporitng
+    @futureReporting
 }
