@@ -57,7 +57,7 @@ class OptOutAuditModelSpec extends TestSupport {
         val intentTextYear: TaxYear = TaxYear(22, 23)
         val resolvedResponse: ITSAStatusUpdateResponse = ITSAStatusUpdateResponseFailure.defaultFailure()
         val auditModel: OptOutAuditModel = OptOutAuditModel.generateOptOutAudit(optOutProposition, intentTextYear, resolvedResponse)
-        val expectedOutcome: Outcome = Outcome(isSuccessful = false, Some("API_FAILURE"), Some("Failure reasons"))
+        val expectedOutcome: Outcome = Outcome(isSuccessful = false, Some("INTERNAL_SERVER_ERROR"), Some("Request failed due to unknown reason"))
 
         auditModel.outcome shouldEqual expectedOutcome
       }
