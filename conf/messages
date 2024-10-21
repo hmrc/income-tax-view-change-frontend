@@ -2297,6 +2297,17 @@ optin.completedOptIn.cy.heading.desc                     = You are now reporting
 optin.completedOptIn.ny.heading.desc                     = You opted in to quarterly reporting from {0} to {1} tax year onwards
 optin.completedOptIn.followingVoluntary.heading.desc     = You are now reporting quarterly for {0} to {1} tax year
 
+optin.completedOptIn.yourRevisedDeadline.inset = Your revised deadlines will be available in the next few minutes.
+
+optin.completedOptIn.yourRevisedDeadline.h2 = Your revised deadlines
+optin.completedOptIn.yourRevisedDeadline.p1.a = Even if they are not displayed right away on the
+optin.completedOptIn.yourRevisedDeadline.p1.b = page, your account has been updated.
+optin.completedOptIn.yourRevisedDeadline.p1.link = updates and deadlines
+
+optin.completedOptIn.yourRevisedDeadline.p2.a = You can decide at any time to opt out of reporting quarterly for all your businesses on
+optin.completedOptIn.yourRevisedDeadline.p2.b =  page.
+optin.completedOptIn.yourRevisedDeadline.p2.link = your reporting frequency
+
 optin.completedOptIn.nextUpdates                = Your next updates due
 optin.completedOptIn.nextUpdate.desc1.a         = Check the
 optin.completedOptIn.nextUpdate.desc1.b         = updates and deadlines

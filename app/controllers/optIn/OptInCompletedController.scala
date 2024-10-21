@@ -20,7 +20,7 @@ import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import models.itsaStatus.ITSAStatus.{Annual, Mandated, Voluntary}
+import models.itsaStatus.ITSAStatus.Voluntary
 import models.optin.OptInCompletedViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -70,7 +70,8 @@ class OptInCompletedController @Inject()(val view: OptInCompletedView,
                   showAnnualReportingAdvice = proposition.showAnnualReportingAdvice(optInTaxYear),
                   isCurrentYear = proposition.isCurrentTaxYear(optInTaxYear),
                   optInIncludedNextYear = proposition.nextTaxYear.status == Voluntary,
-                  annualWithFollowingYearMandated = proposition.annualWithFollowingYearMandated()
+                  annualWithFollowingYearMandated = proposition.annualWithFollowingYearMandated(),
+                  reportingFrequencyLink = controllers.optIn.routes.OptInCompletedController.show(isAgent).url // TODO: Fix the navigation in future stories
                 )
               Ok(view(model))
             }.getOrElse(errorHandler(isAgent).showInternalServerError())
