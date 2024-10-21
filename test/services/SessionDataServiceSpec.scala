@@ -18,8 +18,6 @@ package services
 
 import controllers.agent.sessionUtils
 import mocks.connectors.MockSessionDataConnector
-import play.api.mvc.Request
-import testConstants.UpdateIncomeSourceTestConstants.request
 import testOnly.models.SessionDataGetResponse.{SessionDataGetSuccess, SessionGetResponse}
 import testUtils.TestSupport
 
@@ -30,7 +28,7 @@ class SessionDataServiceSpec extends TestSupport with MockSessionDataConnector {
   "SessionDataService.getSessionData(useCookie = true)" should {
     "return a SessionGetSuccessResponse" when {
       "the cookie contains the mtdId, utr and nino" in {
-        val response: SessionGetResponse = Right(SessionDataGetSuccess(mtditid = "one", nino = "two", utr = "three", sessionId = "four"))
+        val response: SessionGetResponse = Right(SessionDataGetSuccess(mtditid = "one", nino = "two", utr = "three", sessionId = "not required"))
         val request = fakeRequestWithActiveSession.withSession(
           sessionUtils.SessionKeys.clientUTR -> "three",
           sessionUtils.SessionKeys.clientMTDID -> "one",
@@ -60,6 +58,7 @@ class SessionDataServiceSpec extends TestSupport with MockSessionDataConnector {
         )
 
         TestSessionDataService.getSessionData(true)(request, headerCarrier).futureValue shouldBe response
+
       }
 
       "the cookie does not contain nino" in {
