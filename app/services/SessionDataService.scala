@@ -26,17 +26,16 @@ import testOnly.models.SessionDataGetResponse.{SessionDataGetSuccess, SessionGet
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class SessionDataService @Inject()(sessionDataConnector: SessionDataConnector) {
+class SessionDataService @Inject()(sessionDataConnector: SessionDataConnector)
+                                  (implicit ec: ExecutionContext){
 
   def getSessionData(useCookie: Boolean = false)
                     (implicit request: Request[_],
                      hc: HeaderCarrier): Future[SessionGetResponse] = {
     if(useCookie) {
-      Future.successful(
         getSessionResponseFromCookie
-      )
     } else {
       sessionDataConnector.getSessionData()
     }
@@ -46,20 +45,23 @@ class SessionDataService @Inject()(sessionDataConnector: SessionDataConnector) {
     sessionDataConnector.postSessionData(sessionDataModel)
   }
 
-  private def getSessionResponseFromCookie(implicit request: Request[_]): SessionGetResponse = {
+  private def getSessionResponseFromCookie(implicit request: Request[_]): Future[SessionGetResponse] = {
     val optMtdid = request.session.get(SessionKeys.clientMTDID)
     val optUtr = request.session.get(SessionKeys.clientUTR)
     val optNino = request.session.get(SessionKeys.clientNino)
 
     (optMtdid, optUtr, optNino) match {
-      case (Some(mtdItId), Some(utr), Some(nino)) => Right(
-        SessionDataGetSuccess(
-        mtditid = mtdItId,
-        nino = nino,
-        utr = utr,
-        sessionId = "not required"
-    ))
-      case _ => Left(throw new Exception("Cookie does not contain agent data"))
+      case (Some(mtdItId), Some(utr), Some(nino)) => Future(
+        Right(
+          SessionDataGetSuccess(
+            mtditid = mtdItId,
+            nino = nino,
+            utr = utr,
+            sessionId = "not required"
+          )
+        )
+      )
+      case _ => Future(Left(new Exception("Cookie does not contain agent data")))
     }
   }
 
