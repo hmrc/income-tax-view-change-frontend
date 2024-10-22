@@ -66,21 +66,21 @@ trait ClientConfirmedController extends BaseAgentController {
   def getMtdItUserWithNino()(
     implicit user: IncomeTaxAgentUser, request: Request[AnyContent]): MtdItUserWithNino[AnyContent] = {
     MtdItUserWithNino(
-      mtditid = getClientMtditid, nino = getClientNino, userName = getClientName,
-      saUtr = getClientUtr, credId = user.credId, userType = Some(Agent), arn = user.agentReferenceNumber
+      mtditid = getClientMtditid, nino = getClientNino, userName = None,
+      saUtr = getClientUtr, credId = user.credId, userType = Some(Agent), arn = user.agentReferenceNumber, optClientName = getClientName
     )
   }
 
   def getMtdItUserWithIncomeSources(incomeSourceDetailsService: IncomeSourceDetailsService)(
     implicit user: IncomeTaxAgentUser, request: Request[AnyContent], hc: HeaderCarrier): Future[MtdItUser[AnyContent]] = {
     val userOptionNino: MtdItUserOptionNino[_] = MtdItUserOptionNino(
-      getClientMtditid, Some(getClientNino), getClientName, None, getClientUtr, user.credId, Some(Agent), user.agentReferenceNumber
+      getClientMtditid, Some(getClientNino), None, None, getClientUtr, user.credId, Some(Agent), user.agentReferenceNumber, getClientName
     )
 
     incomeSourceDetailsService.getIncomeSourceDetails()(hc = hc, mtdUser = userOptionNino) map {
       case model@IncomeSourceDetailsModel(nino, _, _, _, _) => MtdItUser(
         userOptionNino.mtditid, nino, userOptionNino.userName, model, None, userOptionNino.saUtr,
-        userOptionNino.credId, userOptionNino.userType, userOptionNino.arn)
+        userOptionNino.credId, userOptionNino.userType, userOptionNino.arn, userOptionNino.optClientName)
       case _ =>
         Logger("application").error("Failed to retrieve income sources for agent")
         throw new InternalServerException("IncomeSourceDetailsModel not created")
