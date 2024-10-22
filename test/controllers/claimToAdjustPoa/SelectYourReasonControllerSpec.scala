@@ -19,7 +19,7 @@ package controllers.claimToAdjustPoa
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import forms.adjustPoa.SelectYourReasonFormProvider
-import mocks.auth.MockAuthActions
+import mocks.auth.MockOldAuthActions
 import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.admin.AdjustPaymentsOnAccount
@@ -46,7 +46,7 @@ class SelectYourReasonControllerSpec extends TestSupport
   with MockCalculationListConnector
   with ViewSpec
   with MockFinancialDetailsConnector
-  with MockAuthActions {
+  with MockOldAuthActions {
 
   object TestSelectYourReasonController extends SelectYourReasonController(
     authActions = mockAuthActions,

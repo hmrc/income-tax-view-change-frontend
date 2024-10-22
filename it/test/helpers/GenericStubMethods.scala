@@ -45,6 +45,41 @@ trait GenericStubMethods extends CustomMatchers {
     }
   }
 
+  def stubAgentAuthorisedUser(authorised: Boolean, hasAgentEnrolment: Boolean = true, clientMtdId: String = "mtdbsaId", isSupportingAgent: Boolean = false): Unit = {
+    if (authorised) {
+      if (hasAgentEnrolment) {
+        Given("I stub the agent is authorised with an agent reference number")
+        AgentAuthStub.stubAuthAgent(clientMtdId, isSupportingAgent)
+      } else {
+        Given("I stub the agent is authorised without an agent reference number")
+        AgentAuthStub.stubNoAgentEnrolment(clientMtdId)
+      }
+    } else {
+      Given("I stub the unauthorised agent")
+      AgentAuthStub.stubNotAnAgent(clientMtdId)
+    }
+  }
+
+  def stubPrimaryAuthorisedAgentUser(clientMtdId: String = "mtdbsaId", hasDelegatedEnrolment: Boolean): Unit = {
+    if (hasDelegatedEnrolment) {
+      Given("I stub the primary agent has a delegated MTDITID enrolment")
+      AgentAuthStub.stubPrimaryAuthorisedAgent(clientMtdId)
+    } else {
+      Given("I stub the primary agent does not have the delegated MTDITID enrolment")
+      AgentAuthStub.failedPrimaryAgent(clientMtdId)
+    }
+  }
+
+  def stubSecondaryAuthorisedAgentUser(clientMtdId: String = "mtdbsaId", hasDelegatedEnrolment: Boolean): Unit = {
+    if (hasDelegatedEnrolment) {
+      Given("I stub the primary agent has a delegated MTDITID supporting enrolment")
+      AgentAuthStub.stubSecondaryAuthorisedAgent(clientMtdId)
+    } else {
+      Given("I stub the primary agent does not have the delegated MTDITID supporting enrolment")
+      AgentAuthStub.failedSecondaryAgent(clientMtdId)
+    }
+  }
+
   def stubUserDetails(): Unit = {
     And("I wiremock stub a response from the User Details service")
     UserDetailsStub.stubGetUserDetails()
