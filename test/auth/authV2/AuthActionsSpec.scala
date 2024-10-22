@@ -281,6 +281,58 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
     }
   }
 
+  "isAgent" should {
+
+    "execute block when timestamp and auth token, origin, HMRC-MTD-ID enrolment and successful income sources response" in new AgentResultFixture(
+      retrievals = agentRetrievalData,
+      request = fakeRequestWithActiveSession,
+      block = {
+        (user: AgentUser[_]) =>  {
+          user.enrolments shouldBe Enrolments(Set(agentEnrolment, mtdIdAgentPredicate(mtdId), saEnrolment))
+          user.affinityGroup shouldBe Some(AffinityGroup.Agent)
+          user.confidenceLevel shouldBe ConfidenceLevel.L250
+          user.credId shouldBe Some(credentials.providerId)
+          Future.successful(Ok("!"))
+        }
+      }
+    ) {
+      result.header.status shouldBe OK
+    }
+
+    s"redirect to /session-timeout when BearerToken has expired" in new AgentAuthThrowsExceptionFixture(
+      retrievals = agentRetrievalData,
+      authorisationException = BearerTokenExpired("Bearer token expired")
+    ) {
+      result.header.status shouldBe SEE_OTHER
+      result.header.headers(Location) shouldBe "/report-quarterly/income-and-expenses/view/session-timeout"
+    }
+
+    "redirect to /session-timeout with a timestamp and no auth token" in new AgentResultFixture(
+      retrievals = agentRetrievalData,
+      request = fakeRequestWithTimeoutSession.withSession()
+    ) {
+      result.header.status shouldBe SEE_OTHER
+      result.header.headers(Location).contains("/report-quarterly/income-and-expenses/view/session-timeout") shouldBe true
+    }
+
+    s"redirect to /agents/agent-error when required enrolments not found" in new AgentAuthThrowsExceptionFixture(
+      retrievals = agentRetrievalData,
+      authorisationException = InsufficientEnrolments("Enrolment not found")
+    ) {
+      result.header.status shouldBe SEE_OTHER
+      result.header.headers(Location) shouldBe "/report-quarterly/income-and-expenses/view/agents/agent-error"
+    }
+
+    s"redirect to /sign-in when any other error is returned" in new AgentAuthThrowsExceptionFixture(
+      retrievals = agentRetrievalData,
+      authorisationException = MissingBearerToken("Bearer token not found")
+    ){
+      result.header.status shouldBe SEE_OTHER
+      result.header.headers(Location) shouldBe "/report-quarterly/income-and-expenses/view/sign-in"
+    }
+
+  }
+
   lazy val mockAuthConnector = mock[FrontendAuthConnector]
   lazy val mockIncomeSourceDetailsService = mock[IncomeSourceDetailsService]
 
@@ -311,6 +363,9 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
   type AuthRetrievals =
     Enrolments ~ Option[Name] ~ Option[Credentials] ~ Option[AffinityGroup]  ~ ConfidenceLevel
 
+  private type AuthAgentRetrievals =
+    Enrolments ~ Option[Credentials] ~ Option[AffinityGroup] ~ ConfidenceLevel
+
   case class RetrievalData(enrolments: Enrolments,
                            name: Option[Name],
                            credentials: Option[Credentials],
@@ -320,6 +375,7 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
   val authActions = new AuthActions(
     app.injector.instanceOf[SessionTimeoutPredicateV2],
     app.injector.instanceOf[AuthoriseAndRetrieve],
+    app.injector.instanceOf[AuthoriseAndRetrieveAgent],
     app.injector.instanceOf[AgentHasClientDetails],
     app.injector.instanceOf[AsMtdUser],
     app.injector.instanceOf[NavBarPredicateV2],
@@ -377,4 +433,42 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
 
     failedException.getCause.getClass shouldBe expectedError.getClass
   }
+
+
+
+  class AgentAuthThrowsExceptionFixture(retrievals: RetrievalData,
+                                        request: FakeRequest[AnyContent] = FakeRequest(),
+                                        block: AgentUser[_] => Future[Result] = (_) => Future.successful(Ok("OK!")),
+                                        authorisationException: AuthorisationException) {
+
+    when(mockAuthConnector.authorise[AuthAgentRetrievals](any(), any())(any(), any())).thenReturn(Future.failed( authorisationException ))
+
+    val result = authActions.isAgent.async(block)(request).futureValue
+  }
+
+  class AgentResultFixture(retrievals: RetrievalData,
+                           request: FakeRequest[AnyContent] = FakeRequest(),
+                           block: AgentUser[_] => Future[Result] = (_) => Future.successful(Ok("OK!"))) {
+
+    when(mockAuthConnector.authorise[AuthAgentRetrievals](any(), any())(any(), any())).thenReturn(
+      Future.successful[AuthAgentRetrievals](
+        retrievals.enrolments ~ retrievals.credentials ~ retrievals.affinityGroup ~ retrievals.confidenceLevel
+      )
+    )
+
+    val result = authActions.isAgent.async(block)(request).futureValue
+  }
+
+  class AgentExceptionFixture(retrievals: RetrievalData,
+                              request: FakeRequest[AnyContent] = FakeRequest(),
+                              block: AgentUser[_] => Future[Result] = (_) => Future.successful(Ok("OK!")),
+                              expectedError: Throwable) {
+
+    val failedException: TestFailedException = intercept[TestFailedException] {
+      authActions.isAgent.async(block)(request).futureValue
+    }
+
+    failedException.getCause.getClass shouldBe expectedError.getClass
+  }
+
 }
