@@ -923,6 +923,10 @@ chargeSummary.remainingDue   									   = Still to pay
 chargeSummary.overdue                                              = OVERDUE
 chargeSummary.na                                                   = N/A
 
+chargeSummary.allocation                                           = Allocation
+chargeSummary.whereMoneyWent                                       = Where your money went
+chargeSummary.date                                                 = Date
+
 chargeSummary.dunning.locks.banner.title						   = Important
 chargeSummary.dunning.locks.banner.linkText						   = This tax decision is being reviewed
 chargeSummary.dunning.locks.banner.note							   = You still need to pay the total of {0} as you may be charged interest if not paid by {1}.

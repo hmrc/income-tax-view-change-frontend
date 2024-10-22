@@ -902,6 +902,10 @@ chargeSummary.hmrcAdjustment.text                               = Addasiad CThEF
 chargeSummary.paymentAmount                                     = Swm
 chargeSummary.paymentAmountCodingOut                            = Swm y taliad
 
+chargeSummary.allocation                                           = Dyraniad
+chargeSummary.whereMoneyWent                                       = Ble aeth eich arian
+chargeSummary.date                                                 = Dyddiad
+
 chargeSummary.paidToDate                                        = wedi’i dalu hyd yma
 chargeSummary.remainingDue                                      = I’w dalu o hyd
 chargeSummary.whatYouOwe.textOne                                = Bwrw golwg dros

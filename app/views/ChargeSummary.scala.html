@@ -40,6 +40,7 @@
     chargeSummaryCodingOut: ChargeSummaryCodingOut,
     chargeSummaryHasDunningLocksOrLpiWithDunningLock: ChargeSummaryHasDunningLocksOrLpiWithDunningLock,
     chargeSummaryNotCodingOutAndNotPayeSelfAssessment: ChargeSummaryNotCodingOutAndNotPayeSelfAssessment,
+        chargeSummaryPaymentAllocationTable: ChargeSummaryPaymentAllocationTable,
     govukInsetText : GovukInsetText
 )
 
@@ -436,6 +437,16 @@
     }
 
     @if(viewModel.chargeItem.isPoaReconciliationCredit) {
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        @chargeSummaryPaymentAllocationTable(
+            viewModel.chargeItem,
+            {
+                if (viewModel.chargeItem.transactionType == PaymentOnAccountOneReviewAndReconcileCredit) viewModel.poaOneChargeUrl
+                else viewModel.poaTwoChargeUrl
+            },
+            {
+                if (viewModel.chargeItem.transactionType == PaymentOnAccountOneReviewAndReconcileCredit) messages("chargeSummary.paymentOnAccount1.text")
+                else messages("chargeSummary.paymentOnAccount2.text")
+            }
+        )
     }
 }
