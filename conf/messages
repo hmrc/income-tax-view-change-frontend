@@ -1137,7 +1137,6 @@ paymentAllocation.tableHead.amount                              = Amount
 paymentAllocation.taxYear										= Tax year {0} to {1}
 paymentAllocation.creditOnAccount                               = Credit on account
 paymentAllocation.moneyOnAccount                                = Remaining amount (added to available credit)
-paymentAllocation.moneyOnAccount.agent                          = Remaining amount (added to available credit)
 paymentAllocation.na                                            = N/A
 paymentAllocation.intro                                         = When you make a payment, HMRC assigns the money to the different charges in your account in the following order.
 paymentAllocation.condition-1                                   = Overdue charges and any other charges accruing interest.

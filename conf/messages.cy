@@ -1158,7 +1158,6 @@ paymentAllocation.taxYear										= Blwyddyn dreth {0} i {1}
 paymentAllocation.creditOnAccount                               = Credyd ar gyfrif
 paymentAllocation.na                                            = Amh
 paymentAllocation.moneyOnAccount                                = Y swm sy’n weddill (wedi’i ychwanegu at y credyd sydd ar gael)
-paymentAllocation.moneyOnAccount.agent                          = Y swm sy’n weddill (wedi’i ychwanegu at y credyd sydd ar gael)
 paymentAllocation.paymentAllocations.poa1.incomeTax             = Treth Incwm ar gyfer taliad cyntaf ar gyfrif
 paymentAllocation.paymentAllocations.poa1.nic4                  = Cyfraniadau Yswiriant Gwladol Dosbarth 4 ar gyfer y taliad cyntaf ar gyfrif
 paymentAllocation.paymentAllocations.poa2.incomeTax             = Treth Incwm ar gyfer ail daliad ar gyfrif
