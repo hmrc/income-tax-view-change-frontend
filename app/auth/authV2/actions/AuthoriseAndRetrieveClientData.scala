@@ -1,24 +1,37 @@
 
 package auth.authV2.actions
 
+import auth.FrontendAuthorisedFunctions
 import auth.authV2.AuthExceptions.MissingAgentReferenceNumber
 import auth.authV2.EnroledUser
+import config.FrontendAppConfig
+import config.featureswitch.FeatureSwitching
 import controllers.agent.routes
 import controllers.agent.sessionUtils.SessionKeys
-import play.api.mvc.{ActionRefiner, Result}
+import play.api.{Configuration, Environment}
+import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
 import play.api.mvc.Results.Redirect
+import services.SessionDataService
 import testOnly.models.SessionDataGetResponse.SessionGetResponse
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
+import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ClientDataAction @Inject()(implicit val executionContext: ExecutionContext) extends ActionRefiner[ClientDataModel, ClientDataModel] {
+class AuthoriseAndRetrieveClientData @Inject()(authorisedFunctions: FrontendAuthorisedFunctions,
+                                               appConfig: FrontendAppConfig,
+                                               override val config: Configuration,
+                                               override val env: Environment,
+                                               sessionDataService: SessionDataService,
+                                               mcc: MessagesControllerComponents
+                                )(implicit val executionContext: ExecutionContext) extends  AuthRedirects with ActionRefiner[ClientDataRequest, ClientDataModel]
+                                with FeatureSwitching {
 
 
   lazy val noClientDetailsRoute: Result = Redirect(routes.EnterClientsUTRController.show)
 
-  override protected def refine[A](request: ClientDataModel[A]): Future[Either[Result, ClientDataModel[A]]] = {
+  override protected def refine[A](request: ClientDataRequest[A]): Future[Either[ClientDataRequest[A], ClientDataModel[A]]] = {
 
     val hasConfirmedClient: Boolean = request.session.get(SessionKeys.confirmedClient).nonEmpty
 
@@ -42,4 +55,7 @@ class ClientDataAction @Inject()(implicit val executionContext: ExecutionContext
       Future.successful(Left(noClientDetailsRoute))
     }
   }
+
+  override val appConfig: FrontendAppConfig = ???
+
 }
