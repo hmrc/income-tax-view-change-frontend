@@ -18,7 +18,7 @@ package controllers.agent.optOut
 
 import forms.optOut.ConfirmOptOutSingleTaxYearForm
 import helpers.OptOutSessionRepositoryHelper
-import helpers.agent.ComponentSpecBase
+import helpers.agent.AgentComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus._
@@ -27,7 +27,7 @@ import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
-class SingleYearOptOutWarningControllerISpec extends ComponentSpecBase {
+class SingleYearOptOutWarningControllerISpec extends AgentComponentSpecBase {
   private val isAgent: Boolean = true
   private val singleYearOptOutWarningPageGETUrl = controllers.optOut.routes.SingleYearOptOutWarningController.show(isAgent).url
   private val singleYearOptOutWarningPagePOSTUrl = controllers.optOut.routes.SingleYearOptOutWarningController.submit(isAgent).url

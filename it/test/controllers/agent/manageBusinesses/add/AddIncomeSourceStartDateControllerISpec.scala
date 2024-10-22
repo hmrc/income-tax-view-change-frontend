@@ -19,7 +19,7 @@ package controllers.agent.manageBusinesses.add
 import models.admin.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
-import helpers.agent.ComponentSpecBase
+import helpers.agent.AgentComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
@@ -31,7 +31,7 @@ import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse,
 
 import java.time.LocalDate
 
-class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
+class AddIncomeSourceStartDateControllerISpec extends AgentComponentSpecBase {
 
   val addBusinessStartDateChangeShowUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = true).url
   val addBusinessStartDateShowUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = false).url

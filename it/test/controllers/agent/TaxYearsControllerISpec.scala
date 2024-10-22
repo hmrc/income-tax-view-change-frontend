@@ -17,7 +17,7 @@
 package controllers.agent
 
 import config.featureswitch._
-import helpers.agent.ComponentSpecBase
+import helpers.agent.AgentComponentSpecBase
 import helpers.servicemocks.AuthStub.{titleInternalServer, titleProbWithService}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.ITSASubmissionIntegration
@@ -33,7 +33,7 @@ import testConstants.messages.TaxYearsMessages.{taxYearMessage, updateReturn, vi
 
 import java.time.LocalDate
 
-class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
+class TaxYearsControllerISpec extends AgentComponentSpecBase with FeatureSwitching {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -205,13 +205,6 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
           httpStatus(INTERNAL_SERVER_ERROR)
         )
       }
-    }
-  }
-
-  "API#1171 IncomeSourceDetails Caching" when {
-    "caching should be ENABLED" in {
-      testIncomeSourceDetailsCaching(false, 1,
-        () => IncomeTaxViewChangeFrontend.getTaxYears(clientDetailsWithConfirmation))
     }
   }
 }

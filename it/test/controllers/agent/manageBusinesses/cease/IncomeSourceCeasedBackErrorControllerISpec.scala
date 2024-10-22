@@ -19,7 +19,7 @@ package controllers.agent.manageBusinesses.cease
 import models.admin.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
-import helpers.agent.ComponentSpecBase
+import helpers.agent.AgentComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import org.scalatest.Assertion
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -29,7 +29,7 @@ import services.SessionService
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, completedUIJourneySessionData}
 
-class IncomeSourceCeasedBackErrorControllerISpec extends ComponentSpecBase {
+class IncomeSourceCeasedBackErrorControllerISpec extends AgentComponentSpecBase {
 
   val title = messagesAPI("cannotGoBack.heading")
   val headingSE = messagesAPI("cannotGoBack.sole-trader-ceased")

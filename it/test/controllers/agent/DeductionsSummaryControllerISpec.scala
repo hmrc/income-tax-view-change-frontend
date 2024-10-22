@@ -19,7 +19,7 @@ package controllers.agent
 import audit.models.AllowanceAndDeductionsResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
-import helpers.agent.ComponentSpecBase
+import helpers.agent.AgentComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks._
 import models.core.AccountingPeriodModel
@@ -34,7 +34,7 @@ import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
 
-class DeductionsSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
+class DeductionsSummaryControllerISpec extends AgentComponentSpecBase with FeatureSwitching {
 
 
   val testUser: MtdItUser[_] = MtdItUser(

@@ -58,7 +58,7 @@ class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: Au
   def extendedAudit(auditModel: ExtendedAuditModel, path: Option[String] = None)(implicit hc: HeaderCarrier,
                                                                                  request: Request[_],
                                                                                  ec: ExecutionContext): Unit = {
-    val extendedDataEvent = toExtendedDataEvent(appConfig.appName, auditModel, path.fold(request.path)(x => x))
+    val extendedDataEvent = toExtendedDataEvent(appConfig.appName, auditModel, path.fold(request.path)(identity))
     Logger("application").debug(s"Splunk Audit Event:\n\n$extendedDataEvent")
     auditConnector.sendExtendedEvent(extendedDataEvent).map {
       case Success =>

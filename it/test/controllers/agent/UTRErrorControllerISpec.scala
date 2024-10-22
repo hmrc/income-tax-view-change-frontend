@@ -17,12 +17,12 @@
 package controllers.agent
 
 import config.featureswitch.FeatureSwitching
-import helpers.agent.ComponentSpecBase
+import helpers.agent.AgentComponentSpecBase
 import helpers.servicemocks.AuthStub.titleInternalServer
 import play.api.http.Status._
 import play.api.libs.ws.WSResponse
 
-class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
+class UTRErrorControllerISpec extends AgentComponentSpecBase with FeatureSwitching {
 
   override def beforeEach(): Unit = {
     super.beforeEach()

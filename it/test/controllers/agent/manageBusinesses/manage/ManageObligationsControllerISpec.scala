@@ -19,7 +19,7 @@ package controllers.agent.manageBusinesses.manage
 import models.admin.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.JourneyType.Manage
-import helpers.agent.ComponentSpecBase
+import helpers.agent.AgentComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.viewmodels.ObligationsViewModel
 import models.incomeSourceDetails.{ManageIncomeSourceData, UIJourneySessionData}
@@ -32,7 +32,7 @@ import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.IncomeSourcesObligationsIntegrationTestConstants.{testObligationsModel, testQuarterlyObligationDates}
 
 
-class ManageObligationsControllerISpec extends ComponentSpecBase {
+class ManageObligationsControllerISpec extends AgentComponentSpecBase {
 
   val annual = "annual"
   val quarterly = "quarterly"

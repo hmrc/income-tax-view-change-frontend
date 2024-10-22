@@ -16,10 +16,10 @@
 
 package controllers.errors
 
-import helpers.agent.ComponentSpecBase
+import helpers.agent.AgentComponentSpecBase
 import play.api.http.Status._
 
-class AgentErrorControllerISpec extends ComponentSpecBase {
+class AgentErrorControllerISpec extends AgentComponentSpecBase {
 
   val agentErrorUri: String = "/agent-error"
 

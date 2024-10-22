@@ -20,7 +20,7 @@ import audit.models.ForecastIncomeAuditModel
 import auth.MtdItUserWithNino
 import config.featureswitch.FeatureSwitching
 import controllers.agent.sessionUtils.SessionKeys
-import helpers.agent.ComponentSpecBase
+import helpers.agent.AgentComponentSpecBase
 import helpers.servicemocks.AuthStub.titleInternalServer
 import helpers.servicemocks._
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
@@ -76,7 +76,7 @@ object ForecastIncomeSummaryControllerTestConstants {
   )
 }
 
-class ForecastIncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
+class ForecastIncomeSummaryControllerISpec extends AgentComponentSpecBase with FeatureSwitching {
 
   val clientDetailsWithoutConfirmation: Map[String, String] = Map(
     SessionKeys.clientFirstName -> "Test",

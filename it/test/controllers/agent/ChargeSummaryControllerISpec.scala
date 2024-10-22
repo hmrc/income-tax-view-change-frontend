@@ -22,7 +22,7 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import config.featureswitch._
 import enums.ChargeType.{ITSA_ENGLAND_AND_NI, ITSA_NI, NIC4_SCOTLAND}
 import enums.CodingOutType._
-import helpers.agent.ComponentSpecBase
+import helpers.agent.AgentComponentSpecBase
 import helpers.servicemocks.AuthStub.titleInternalServer
 import helpers.servicemocks.ChargeItemStub.chargeItemWithInterest
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
@@ -42,7 +42,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import java.time.LocalDate
 
-class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
+class ChargeSummaryControllerISpec extends AgentComponentSpecBase with FeatureSwitching {
 
   override def beforeEach(): Unit = {
     WireMock.reset()
@@ -699,16 +699,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         elementTextBySelector("#payment-history-table tr:nth-child(2)")(paymentHistoryText2)
       )
 
-    }
-  }
-
-
-  "API#1171 IncomeSourceDetails Caching" when {
-    "caching should be ENABLED" in {
-      testIncomeSourceDetailsCaching(false, 1,
-        () => IncomeTaxViewChangeFrontend.getChargeSummary(
-          getCurrentTaxYearEnd.getYear.toString, "CHARGEID01", clientDetailsWithConfirmation
-        ))
     }
   }
 }

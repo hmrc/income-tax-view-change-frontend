@@ -17,7 +17,7 @@
 package controllers.agent.optIn
 
 import controllers.optIn.BeforeYouStartControllerISpec._
-import helpers.agent.ComponentSpecBase
+import helpers.agent.AgentComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
@@ -29,7 +29,7 @@ import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 import utils.OptInJourney
 
-class BeforeYouStartControllerISpec extends ComponentSpecBase {
+class BeforeYouStartControllerISpec extends AgentComponentSpecBase {
   val isAgent: Boolean = true
   val beforeYouStartControllerPageUrl: String = controllers.optIn.routes.BeforeYouStartController.show(isAgent).url
   val chooseTaxYearPageUrl: String = controllers.optIn.routes.ChooseYearController.show(isAgent).url

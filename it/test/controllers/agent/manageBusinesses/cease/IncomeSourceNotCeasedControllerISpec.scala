@@ -17,13 +17,13 @@
 package controllers.agent.manageBusinesses.cease
 
 
-import helpers.agent.ComponentSpecBase
+import helpers.agent.AgentComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.OK
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid}
 import testConstants.IncomeSourceIntegrationTestConstants.ukPropertyOnlyResponse
 
-class IncomeSourceNotCeasedControllerISpec extends ComponentSpecBase {
+class IncomeSourceNotCeasedControllerISpec extends AgentComponentSpecBase {
 
   "The IncomeSourceNotCeasedController.show - Agent" should {
     "200 OK" when {

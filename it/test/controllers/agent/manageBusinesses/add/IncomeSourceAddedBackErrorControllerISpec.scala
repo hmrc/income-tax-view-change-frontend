@@ -19,7 +19,7 @@ package controllers.agent.manageBusinesses.add
 import models.admin.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
-import helpers.agent.ComponentSpecBase
+import helpers.agent.AgentComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -29,7 +29,7 @@ import services.SessionService
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
 
-class IncomeSourceAddedBackErrorControllerISpec extends ComponentSpecBase{
+class IncomeSourceAddedBackErrorControllerISpec extends AgentComponentSpecBase{
 
   private lazy val backErrorController = controllers.manageBusinesses.add.routes.IncomeSourceAddedBackErrorController
 

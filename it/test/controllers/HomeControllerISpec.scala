@@ -169,11 +169,4 @@ class HomeControllerISpec extends ComponentSpecBase {
 //    }
     unauthorisedTest("")
   }
-
-  "API#1171 IncomeSourceDetails Caching" when {
-    "caching should be ENABLED" in {
-      testIncomeSourceDetailsCaching(false, 1,
-        () => IncomeTaxViewChangeFrontend.getHome)
-    }
-  }
 }

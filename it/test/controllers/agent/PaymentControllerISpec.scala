@@ -16,7 +16,7 @@
 
 package controllers.agent
 
-import helpers.agent.ComponentSpecBase
+import helpers.agent.AgentComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.core.{AccountingPeriodModel, PaymentJourneyModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
@@ -27,7 +27,7 @@ import testConstants.BusinessDetailsIntegrationTestConstants.address
 
 import java.time.LocalDate
 
-class PaymentControllerISpec extends ComponentSpecBase {
+class PaymentControllerISpec extends AgentComponentSpecBase {
 
   val url: String = "/pay-api/mtd-income-tax/sa/journey/start"
   lazy val fixedDate : LocalDate = LocalDate.of(2023, 12, 15)

@@ -19,7 +19,7 @@ package controllers.agent
 import audit.models.PaymentAllocationsResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
-import helpers.agent.ComponentSpecBase
+import helpers.agent.AgentComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.AuthStub.titleInternalServer
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -39,7 +39,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import java.time.LocalDate
 
-class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSwitching {
+class PaymentAllocationsControllerISpec extends AgentComponentSpecBase with FeatureSwitching {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -214,13 +214,4 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
     }
   }
 
-  "API#1171 IncomeSourceDetails Caching" when {
-    "caching should be ENABLED" in {
-      testIncomeSourceDetailsCaching(false, 1,
-        () => {
-          enable(PaymentAllocation)
-          IncomeTaxViewChangeFrontend.getPaymentAllocation(docNumber, clientDetailsWithConfirmation)
-        })
-    }
-  }
 }

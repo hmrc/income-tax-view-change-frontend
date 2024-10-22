@@ -16,12 +16,12 @@
 
 package controllers.agent
 
-import helpers.agent.ComponentSpecBase
+import helpers.agent.AgentComponentSpecBase
 import play.api.libs.ws.WSResponse
 import play.api.http.Status.SEE_OTHER
 
 
-class AgentLanguageControllerISpec extends ComponentSpecBase {
+class AgentLanguageControllerISpec extends AgentComponentSpecBase {
 
   val testRefererRoute: String = "/test/referer/route"
 

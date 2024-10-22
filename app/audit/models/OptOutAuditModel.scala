@@ -35,7 +35,7 @@ object Outcome {
 }
 
 case class OptOutAuditModel(
-                             mtdItUser: MtdItUser[_],
+                             //                             mtdItUser: MtdItUser[_],
                              nino: String,
                              outcome: Outcome,
                              optOutRequestedFromTaxYear: String,
@@ -76,12 +76,14 @@ case class OptOutAuditModel(
 
 object OptOutAuditModel {
 
+    implicit val format: OFormat[OptOutAuditModel] = Json.format[OptOutAuditModel]
+
   def generateOptOutAudit(optOutProposition: OptOutProposition,
                           intentTaxYear: TaxYear,
                           resolvedOutcome: ITSAStatusUpdateResponse
                          )(implicit user: MtdItUser[_]): OptOutAuditModel = {
     OptOutAuditModel(
-      mtdItUser = user,
+      //      mtdItUser = user,
       nino = user.nino,
       optOutRequestedFromTaxYear = intentTaxYear.formatTaxYearRange,
       currentYear = optOutProposition.currentTaxYear.taxYear.formatTaxYearRange,
@@ -98,9 +100,12 @@ object OptOutAuditModel {
 
   private def createOutcome(resolvedResponse: ITSAStatusUpdateResponse): Outcome = {
     resolvedResponse match {
-      case response: ITSAStatusUpdateResponseFailure => Outcome(isSuccessful = false, failureCategory = Some(response.failures.head.code), failureReason = Some(response.failures.head.reason))
-      case _: ITSAStatusUpdateResponseSuccess => Outcome(isSuccessful = true, failureCategory = None, failureReason = None)
-      case _ => Outcome(isSuccessful = false, failureCategory = Some("Unknown failure reason"), failureReason = Some("Unknown failure category"))
+      case response: ITSAStatusUpdateResponseFailure =>
+        Outcome(isSuccessful = false, failureCategory = Some(response.failures.head.code), failureReason = Some(response.failures.head.reason))
+      case _: ITSAStatusUpdateResponseSuccess =>
+        Outcome(isSuccessful = true, failureCategory = None, failureReason = None)
+      case _ =>
+        Outcome(isSuccessful = false, failureCategory = Some("Unknown failure reason"), failureReason = Some("Unknown failure category"))
     }
   }
 

@@ -17,12 +17,12 @@
 package controllers.agent
 
 import config.featureswitch.FeatureSwitching
-import helpers.agent.ComponentSpecBase
+import helpers.agent.AgentComponentSpecBase
 import helpers.servicemocks.AuthStub.{titleInternalServer, titleClientRelationshipFailure}
 import play.api.http.Status._
 import play.api.libs.ws.WSResponse
 
-class ClientDetailsFailureControllerISpec extends ComponentSpecBase with FeatureSwitching {
+class ClientDetailsFailureControllerISpec extends AgentComponentSpecBase with FeatureSwitching {
 
   s"GET ${controllers.agent.routes.ClientRelationshipFailureController.show.url}" should {
     s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" when {

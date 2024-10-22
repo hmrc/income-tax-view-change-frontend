@@ -19,7 +19,7 @@ package controllers.agent
 import audit.models.{NextUpdatesResponseAuditModel, TaxYearSummaryResponseAuditModel}
 import auth.MtdItUser
 import config.featureswitch._
-import helpers.agent.ComponentSpecBase
+import helpers.agent.AgentComponentSpecBase
 import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEvent}
 import helpers.servicemocks.AuthStub.{titleInternalServer, titleProbWithService}
 import helpers.servicemocks.{CalculationListStub, IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
@@ -49,7 +49,7 @@ import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
 
-class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
+class TaxYearSummaryControllerISpec extends AgentComponentSpecBase with FeatureSwitching {
 
   lazy val fixedDate: LocalDate = LocalDate.of(2023, 11, 29)
 
@@ -851,10 +851,4 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
     }
   }
 
-  "API#1171 IncomeSourceDetails Caching" when {
-    "caching should be DISABLED" in {
-      testIncomeSourceDetailsCaching(false, 2,
-        () => IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation))
-    }
-  }
 }

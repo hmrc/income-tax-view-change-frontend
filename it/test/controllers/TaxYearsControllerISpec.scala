@@ -74,11 +74,4 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
   }
 
   unauthorisedTest("/tax-years")
-
-  "API#1171 IncomeSourceDetails Caching" when {
-    "caching should be ENABLED" in {
-      testIncomeSourceDetailsCaching(false, 1,
-        () => IncomeTaxViewChangeFrontend.getTaxYears)
-    }
-  }
 }

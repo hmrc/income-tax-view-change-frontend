@@ -52,7 +52,7 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
 
         val resultToReturn = for {
           viewModel <- OptionT(optOutService.optOutCheckPointPageViewModel())
-          result <- OptionT(Future.successful(Option(toPropositionView(isAgent, viewModel, cancelURL))))
+          result <- OptionT(Future(Option(toPropositionView(isAgent, viewModel, cancelURL))))
         } yield result
 
         resultToReturn.getOrElse(handleError("No qualified tax year available for opt out", isAgent))
@@ -60,7 +60,8 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
       }
   }
 
-  private def toPropositionView(isAgent: Boolean, viewModel: OptOutCheckpointViewModel, cancelURL: String)(implicit mtdItUser: MtdItUser[_]) = viewModel match {
+  private def toPropositionView(isAgent: Boolean, viewModel: OptOutCheckpointViewModel, cancelURL: String)(implicit mtdItUser: MtdItUser[_]) =
+    viewModel match {
     case oneYear: OneYearOptOutCheckpointViewModel => Ok(view(oneYear, isAgent = isAgent, cancelURL))
     case multiYear: MultiYearOptOutCheckpointViewModel => Ok(checkOptOutAnswers(multiYear, isAgent, cancelURL))
   }

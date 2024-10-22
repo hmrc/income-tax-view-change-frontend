@@ -20,7 +20,7 @@ import audit.models.IncomeSourceReportingMethodAuditModel
 import auth.MtdItUser
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
-import helpers.agent.ComponentSpecBase
+import helpers.agent.AgentComponentSpecBase
 import helpers.servicemocks.ITSAStatusDetailsStub.stubGetITSAStatusDetailsError
 import helpers.servicemocks.{AuditStub, CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.admin.IncomeSources
@@ -73,7 +73,7 @@ case object API1878 extends APIErrorScenario
 case object API1896 extends APIErrorScenario
 
 
-class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
+class IncomeSourceReportingMethodControllerISpec extends AgentComponentSpecBase {
   override val dateService: DateService = app.injector.instanceOf[DateService] //overridden for TYS as implemented with 2023 elsewhere
 
   lazy val showUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>

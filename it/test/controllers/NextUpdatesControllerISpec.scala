@@ -426,11 +426,4 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
     }
 
   }
-
-  "API#1171 IncomeSourceDetails Caching" when {
-    "caching should be DISABLED" in {
-      testIncomeSourceDetailsCaching(resetCacheAfterFirstCall = false, 2,
-        () => IncomeTaxViewChangeFrontend.getNextUpdates)
-    }
-  }
 }

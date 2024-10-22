@@ -17,29 +17,28 @@
 package controllers.optOut
 
 import audit.models.{OptOutAuditModel, Outcome}
-import auth.MtdItUser
+import com.github.tomakehurst.wiremock.client.WireMock._
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
 import controllers.constants.ConfirmOptOutControllerConstants._
 import helpers.servicemocks.AuditStub.verifyAuditEvent
+import helpers.servicemocks.AuthStub.{postAuthoriseUrl, requiredConfidenceLevel}
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import helpers.servicemocks.UserDetailsStub.getUserDetailsUrl
 import helpers.{ComponentSpecBase, ITSAStatusUpdateConnectorStub, OptOutSessionRepositoryHelper}
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
+import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus._
+import play.api.http.Status
 import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.libs.json.Json
-import play.api.test.FakeRequest
-import play.mvc.Http.Status
-import play.mvc.Http.Status.SEE_OTHER
+import play.mvc.Http.Status.{NO_CONTENT, SEE_OTHER}
 import repositories.UIJourneySessionDataRepository
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSessionId}
-import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, propertyOnlyResponse}
-import uk.gov.hmrc.auth.core.AffinityGroup.Individual
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
 class ConfirmOptOutControllerISpec extends ComponentSpecBase {
 
   private val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
   private val helper = new OptOutSessionRepositoryHelper(repository)
-
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -117,7 +116,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
         )
 
         ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(
-          taxableEntityId = propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
+          taxableEntityId = propertyOnlyResponse.nino,
           status = Status.NO_CONTENT,
           responseBody = emptyBodyString
         )
@@ -131,17 +130,6 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
 
         verifyAuditEvent(
           OptOutAuditModel(
-            mtdItUser = MtdItUser(
-              mtditid = testMtditid,
-              nino = testNino,
-              userName = None,
-              incomeSources = multipleBusinessesAndPropertyResponse,
-              btaNavPartial = None,
-              saUtr = Some("1234567890"),
-              credId = Some("12345-credId"),
-              userType = Some(Individual),
-              arn = None
-            )(FakeRequest()),
             nino = testNino,
             outcome = Outcome(isSuccessful = true, None, None),
             optOutRequestedFromTaxYear = taxYear.previousYear.formatTaxYearRange,
@@ -170,7 +158,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
           currentYearStatus = NoStatus,
           nextYearStatus = NoStatus)
 
-        ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
+        ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.nino,
           Status.NO_CONTENT, emptyBodyString,
           Map("missing-header-name" -> "missing-header-value")
         )
@@ -201,7 +189,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
             nextYearStatus = NoStatus
           )
 
-          ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
+          ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.nino,
             BAD_REQUEST, Json.toJson(ITSAStatusUpdateResponseFailure.defaultFailure()).toString()
           )
 
@@ -217,26 +205,136 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
       "user confirms opt-out for multi-year scenario and update fails" should {
 
         "show Opt Out error page" in {
+
+//          val userDetailsBody =
+//            s"""{
+//               |"name":"$testUserName",
+//               |"email":"test@test.com",
+//               |"affinityGroup" : "affinityGroup",
+//               |"credentialRole": "n/a",
+//               |"description" : "description",
+//               |"lastName":"test",
+//               |"dateOfBirth":"1980-06-30",
+//               |"postCode":"NW94HD",
+//               |"authProviderId": "12345-credId",
+//               |"authProviderType": "GovernmentGateway"
+//               |}""".stripMargin
+//
+//          stubFor(get(urlEqualTo(getUserDetailsUrl))
+//            .willReturn(
+//              aResponse().
+//                withStatus(Status.OK).
+//                withBody(Json.parse(userDetailsBody).toString())
+//            )
+//          )
+//
+//          val authJson =
+//            Json.parse(
+//              s"""{
+//                 | "allEnrolments": [{
+//                 | "key":"$testMtditidEnrolmentKey",
+//                 | "identifiers": [{"key":"$testMtditidEnrolmentIdentifier", "value":"$testMtditid"}]
+//                 | },
+//                 | {
+//                 | "key":"$testNinoEnrolmentKey",
+//                 | "identifiers": [{"key":"$testNinoEnrolmentIdentifier", "value":"$testNino"}]
+//                 | },
+//                 | {
+//                 | "key":"$testSaUtrEnrolmentKey",
+//                 | "identifiers": [{"key":"$testSaUtrEnrolmentIdentifier", "value":"$testSaUtr"}]
+//                 | }
+//                 | ],
+//                 | "userDetailsUri":"$testUserDetailsWiremockUrl",
+//                 | "affinityGroup" : "Individual",
+//                 | "optionalCredentials": {
+//                 |  "providerId": "12345-credId",
+//                 |  "providerType": "GovernmentGateway"
+//                 | },
+//                 | "confidenceLevel": $requiredConfidenceLevel
+//                 |}""".stripMargin
+//            ).toString()
+//
+//          stubFor(post(urlEqualTo(postAuthoriseUrl))
+//            .willReturn(
+//              aResponse()
+//                .withStatus(Status.OK)
+//                .withBody(authJson)
+//            )
+//          )
+
+          val taxYear: TaxYear = TaxYear(2023, 2024)
+
+          val auditModel =
+            OptOutAuditModel(
+              nino = testNino,
+              outcome = Outcome(isSuccessful = false, Some("INTERNAL_SERVER_ERROR"), Some("Request failed due to unknown reason")),
+              optOutRequestedFromTaxYear = taxYear.previousYear.formatTaxYearRange,
+              currentYear = taxYear.formatTaxYearRange,
+              beforeITSAStatusCurrentYearMinusOne = Voluntary,
+              beforeITSAStatusCurrentYear = Voluntary,
+              beforeITSAStatusCurrentYearPlusOne = Voluntary,
+              afterAssumedITSAStatusCurrentYearMinusOne = Voluntary,
+              afterAssumedITSAStatusCurrentYear = Voluntary,
+              afterAssumedITSAStatusCurrentYearPlusOne = Voluntary,
+              currentYearMinusOneCrystallised = false
+            )
+
+          stubFor(
+            post(urlEqualTo("/write/audit"))
+              .withRequestBody(equalToJson(Json.toJson(auditModel).toString(), true, true))
+              .willReturn(aResponse().withStatus(NO_CONTENT))
+          )
+
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-          helper.stubOptOutInitialState(currentTaxYear(dateService),
+          helper.stubOptOutInitialState(
+            currentTaxYear(dateService),
             previousYearCrystallised = false,
             previousYearStatus = Voluntary,
             currentYearStatus = Voluntary,
-            nextYearStatus = Voluntary)
-
-          ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
-            BAD_REQUEST, Json.toJson(ITSAStatusUpdateResponseFailure.defaultFailure()).toString(),
+            nextYearStatus = Voluntary
           )
 
-          assert(optOutSessionDataRepository.saveIntent(TaxYear.getTaxYearModel("2023-2024").get).futureValue)
+          ITSAStatusUpdateConnectorStub
+            .stubItsaStatusUpdate(
+              taxableEntityId = propertyOnlyResponse.nino,
+              status = BAD_REQUEST,
+              responseBody = Json.toJson(ITSAStatusUpdateResponseFailure.defaultFailure()).toString(),
+            )
 
+          optOutSessionDataRepository.saveIntent(TaxYear.getTaxYearModel("2023-2024").get).futureValue shouldBe true
 
           val result = IncomeTaxViewChangeFrontendManageBusinesses.postConfirmOptOut()
 
           result should have(
-            httpStatus(SEE_OTHER)
+            httpStatus(SEE_OTHER),
+            redirectURI(optOutErrorPageUrl)
           )
+
+          def verifyAuditEvent(optOutAuditModel: OptOutAuditModel): Unit = {
+            verify(
+              postRequestedFor(urlEqualTo("/write/audit"))
+
+                .withRequestBody(matchingJsonPath("$.auditSource", equalTo("income-tax-view-change-frontend")))
+                .withRequestBody(matchingJsonPath("$.auditType", equalTo(optOutAuditModel.auditType)))
+                .withRequestBody(matchingJsonPath("$.tags.transactionName", equalTo(optOutAuditModel.transactionName)))
+
+                .withRequestBody(matchingJsonPath("$.detail.nino", equalTo(optOutAuditModel.nino)))
+                .withRequestBody(matchingJsonPath("$.detail.outcome.isSuccessful", equalTo(optOutAuditModel.outcome.isSuccessful.toString)))
+                .withRequestBody(matchingJsonPath("$.detail.outcome.failureCategory", equalTo(optOutAuditModel.outcome.failureCategory.getOrElse(""))))
+                .withRequestBody(matchingJsonPath("$.detail.outcome.failureReason", equalTo(optOutAuditModel.outcome.failureReason.getOrElse(""))))
+
+                .withRequestBody(matchingJsonPath("$.detail.beforeITSAStatusCurrentYearMinusOne", equalTo(optOutAuditModel.beforeITSAStatusCurrentYearMinusOne.toString)))
+                .withRequestBody(matchingJsonPath("$.detail.beforeITSAStatusCurrentYear", equalTo(optOutAuditModel.beforeITSAStatusCurrentYear.toString)))
+                .withRequestBody(matchingJsonPath("$.detail.beforeITSAStatusCurrentYearPlusOne", equalTo(optOutAuditModel.beforeITSAStatusCurrentYearPlusOne.toString)))
+                .withRequestBody(matchingJsonPath("$.detail.afterAssumedITSAStatusCurrentYearMinusOne", equalTo(optOutAuditModel.afterAssumedITSAStatusCurrentYearMinusOne.toString)))
+                .withRequestBody(matchingJsonPath("$.detail.afterAssumedITSAStatusCurrentYear", equalTo(optOutAuditModel.afterAssumedITSAStatusCurrentYear.toString)))
+                .withRequestBody(matchingJsonPath("$.detail.afterAssumedITSAStatusCurrentYearPlusOne", equalTo(optOutAuditModel.afterAssumedITSAStatusCurrentYearPlusOne.toString)))
+                .withRequestBody(matchingJsonPath("$.detail.currentYearMinusOneCrystallised", equalTo(optOutAuditModel.currentYearMinusOneCrystallised.toString)))
+            )
+
+            verifyAuditEvent(auditModel)
+          }
         }
       }
     }

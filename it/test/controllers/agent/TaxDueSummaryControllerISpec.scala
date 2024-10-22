@@ -19,7 +19,7 @@ package controllers.agent
 import audit.models.TaxDueResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
-import helpers.agent.ComponentSpecBase
+import helpers.agent.AgentComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditEvent
 import helpers.servicemocks.AuthStub.titleInternalServer
 import helpers.servicemocks._
@@ -40,7 +40,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import java.time.LocalDate
 
-class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
+class TaxDueSummaryControllerISpec extends AgentComponentSpecBase with FeatureSwitching {
 
   val testUser: MtdItUser[_] = MtdItUser(
     testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,

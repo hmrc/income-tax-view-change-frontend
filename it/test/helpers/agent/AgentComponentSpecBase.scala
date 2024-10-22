@@ -47,7 +47,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait ComponentSpecBase extends TestSuite with CustomMatchers
+trait AgentComponentSpecBase extends TestSuite with CustomMatchers
   with GuiceOneServerPerSuite with ScalaFutures with IntegrationPatience with Matchers
   with WiremockHelper with BeforeAndAfterEach with BeforeAndAfterAll with Eventually
   with GenericStubMethods with SessionCookieBaker with FeatureSwitching {
@@ -122,7 +122,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   override def beforeEach(): Unit = {
     super.beforeEach()
     WireMock.reset()
-    AuditStub.stubAuditing()
+//    AuditStub.stubAuditing()
     cache.removeAll()
     FeatureSwitchName.allFeatureSwitches foreach disable
   }
@@ -624,10 +624,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
         )
       }
     }
-  }
-
-  def testIncomeSourceDetailsCaching(resetCacheAfterFirstCall: Boolean, noOfCalls: Int, callback: () => Unit): Unit = {
-    // tests to be reimplemented after hmrc-mongo caching
   }
 }
 

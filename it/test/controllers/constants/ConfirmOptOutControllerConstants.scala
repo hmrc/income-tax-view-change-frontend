@@ -16,6 +16,7 @@
 
 package controllers.constants
 
+import controllers.optOut.routes
 import models.incomeSourceDetails.TaxYear
 import services.DateService
 
@@ -26,6 +27,7 @@ object ConfirmOptOutControllerConstants {
   val submitConfirmOptOutPageUrl = controllers.optOut.routes.ConfirmOptOutController.submit(isAgent).url
 
   val confirmedPageUrl = controllers.optOut.routes.ConfirmedOptOutController.show(isAgent).url
+  val optOutErrorPageUrl = controllers.optOut.routes.OptOutErrorController.show(isAgent).url
 
   def currentTaxYear(dateService: DateService) = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
 

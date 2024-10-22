@@ -18,7 +18,7 @@ package controllers.agent.manageBusinesses.manage
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{JourneyType, Manage}
-import helpers.agent.ComponentSpecBase
+import helpers.agent.AgentComponentSpecBase
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.admin.IncomeSources
 import models.core.IncomeSourceId.mkIncomeSourceId
@@ -34,7 +34,7 @@ import testConstants.IncomeSourceIntegrationTestConstants._
 import java.time.LocalDate
 import java.time.Month.APRIL
 
-class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
+class ManageIncomeSourceDetailsControllerISpec extends AgentComponentSpecBase {
 
   val manageSelfEmploymentShowAgentUrl: String = controllers.manageBusinesses.manage.routes.ManageIncomeSourceDetailsController.show(isAgent = true, SelfEmployment, Some(testSelfEmploymentId)).url
   val manageUKPropertyShowAgentUrl: String = controllers.manageBusinesses.manage.routes.ManageIncomeSourceDetailsController.show(isAgent = true, UkProperty, None).url

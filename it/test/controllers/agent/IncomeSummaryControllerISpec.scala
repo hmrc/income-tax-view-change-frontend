@@ -17,7 +17,7 @@
 package controllers.agent
 
 import config.featureswitch.FeatureSwitching
-import helpers.agent.ComponentSpecBase
+import helpers.agent.AgentComponentSpecBase
 import helpers.servicemocks.AuthStub.titleInternalServer
 import helpers.servicemocks._
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
@@ -35,7 +35,7 @@ import testConstants.PropertyDetailsIntegrationTestConstants.{propertyIncomeType
 
 import java.time.LocalDate
 
-class IncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
+class IncomeSummaryControllerISpec extends AgentComponentSpecBase with FeatureSwitching {
 
   val implicitDateFormatter: ImplicitDateFormatter = app.injector.instanceOf[ImplicitDateFormatterImpl]
   implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
@@ -143,10 +143,4 @@ class IncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     }
   }
 
-  "API#1171 IncomeSourceDetails Caching" when {
-    "caching should be ENABLED" in {
-      testIncomeSourceDetailsCaching(false, 1,
-        () => IncomeTaxViewChangeFrontend.getIncomeSummaryAgent(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation))
-    }
-  }
 }

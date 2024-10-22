@@ -18,14 +18,14 @@ package controllers.agent
 
 import controllers.agent.sessionUtils.SessionKeys
 import helpers.FeedbackConnectorStub
-import helpers.agent.ComponentSpecBase
+import helpers.agent.AgentComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
 
-class FeedbackControllerISpec extends ComponentSpecBase {
+class FeedbackControllerISpec extends AgentComponentSpecBase {
 
   val clientDetailsWithConfirmation: Map[String, String] = Map(
     SessionKeys.clientFirstName -> "Test",

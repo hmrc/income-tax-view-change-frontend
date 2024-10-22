@@ -17,13 +17,13 @@
 package controllers.agent.manageBusinesses.add
 
 import models.admin.IncomeSources
-import helpers.agent.ComponentSpecBase
+import helpers.agent.AgentComponentSpecBase
 import helpers.servicemocks.{AddressLookupStub, IncomeTaxViewChangeStub}
 import play.api.http.Status.{OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
 
-class AddBusinessAddressControllerISpec extends ComponentSpecBase {
+class AddBusinessAddressControllerISpec extends AgentComponentSpecBase {
 
   val changeBusinessAddressShowAgentUrl: String = controllers.manageBusinesses.add.routes.AddBusinessAddressController.showAgent(isChange = true).url
   val businessAddressShowAgentUrl: String = controllers.manageBusinesses.add.routes.AddBusinessAddressController.showAgent(isChange = false).url

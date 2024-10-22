@@ -19,7 +19,7 @@ package controllers.agent.manageBusinesses.cease
 import models.admin.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
-import helpers.agent.ComponentSpecBase
+import helpers.agent.AgentComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.CeaseIncomeSourceData.{dateCeasedField, incomeSourceIdField}
 import models.incomeSourceDetails.{CeaseIncomeSourceData, UIJourneySessionData}
@@ -32,10 +32,10 @@ import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse,
 
 import java.time.LocalDate
 
-class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
+class IncomeSourceEndDateControllerISpec extends AgentComponentSpecBase {
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
-  val repository = app.injector.instanceOf[UIJourneySessionDataRepository]
+  val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
   val isAgent: Boolean = true
 
   val manageBusinessesUrl: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url
