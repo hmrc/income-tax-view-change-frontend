@@ -79,7 +79,7 @@ class NavBarFromNinoPredicate @Inject()(val btaNavBarController: BtaNavBarContro
 
   private def returnMtdItUserWithNinoAndNavbar[A](request: MtdItUserWithNino[A], partial: Html): MtdItUserWithNino[A] = {
     MtdItUserWithNino[A](mtditid = request.mtditid, nino = request.nino, userName = request.userName, btaNavPartial = Some(partial),
-      saUtr = request.saUtr, credId = request.credId, userType = request.userType, arn = request.arn)(request)
+      saUtr = request.saUtr, credId = request.credId, userType = request.userType, arn = request.arn, optClientName = request.optClientName)(request)
   }
 
   private def handleBtaNavBar[A](request: MtdItUserWithNino[A])(implicit hc: HeaderCarrier): Future[Either[Result, MtdItUserWithNino[A]]] = {
