@@ -926,6 +926,8 @@ chargeSummary.na                                                   = N/A
 chargeSummary.allocation                                           = Allocation
 chargeSummary.whereMoneyWent                                       = Where your money went
 chargeSummary.date                                                 = Date
+chargeSummary.taxYear                                          = {0} to {1} tax year
+
 
 chargeSummary.dunning.locks.banner.title						   = Important
 chargeSummary.dunning.locks.banner.linkText						   = This tax decision is being reviewed

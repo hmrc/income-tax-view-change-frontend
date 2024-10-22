@@ -39,7 +39,11 @@
 
 <dl class="govuk-summary-list">
     <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">@messages("chargeSummary.dueDate")</dt>
+        <dt class="govuk-summary-list__key">
+        @if(chargeItem.isCredit){
+            @messages("chargeSummary.date")
+        }else{@messages("chargeSummary.dueDate")}
+        </dt>
         <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
             @if(chargeItem.isOverdue() && !chargeItem.checkIsPaid(interestCharge)) {
                 <span class="govuk-tag govuk-tag--red">@messages("chargeSummary.overdue")</span>
@@ -49,6 +53,8 @@
                     chargeItem.interestEndDate.getOrElse(throw MissingFieldException("Interest End Date")).toLongDate
                 } else if(chargeItem.transactionType == models.financialDetails.BalancingCharge && chargeItem.subTransactionType == None) {
                     chargeItem.getDueDateForNonZeroBalancingCharge(codingOutEnabled).map(_.toLongDate).getOrElse(messages("tax-year-summary.na"))
+                } else if (chargeItem.isCredit) {
+                    chargeItem.dueDate.map(_.toLongDateShort).getOrElse(messages("chargeSummary.na"))
                 } else {
                     chargeItem.dueDate.map(_.toLongDate).getOrElse(messages("chargeSummary.na"))
                 }

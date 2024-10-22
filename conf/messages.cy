@@ -905,6 +905,7 @@ chargeSummary.paymentAmountCodingOut                            = Swm y taliad
 chargeSummary.allocation                                           = Dyraniad
 chargeSummary.whereMoneyWent                                       = Ble aeth eich arian
 chargeSummary.date                                                 = Dyddiad
+chargeSummary.taxYear                                              = Blwyddyn dreth {0} i {1}
 
 chargeSummary.paidToDate                                        = wedi’i dalu hyd yma
 chargeSummary.remainingDue                                      = I’w dalu o hyd
