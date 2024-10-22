@@ -46,6 +46,8 @@ case class ChargeItem (
   def isOverdue()(implicit dateService: DateServiceInterface): Boolean =
     dueDate.exists(_ isBefore dateService.getCurrentDate)
 
+  val isCredit = originalAmount < 0
+
   val hasLpiWithDunningLock: Boolean =
     lpiWithDunningLock.isDefined && lpiWithDunningLock.getOrElse[BigDecimal](0) > 0
 
@@ -100,6 +102,9 @@ case class ChargeItem (
   val isPartPaid: Boolean = outstandingAmount != originalAmount
 
   val interestIsPartPaid: Boolean = interestOutstandingAmount.getOrElse[BigDecimal](0) != latePaymentInterestAmount.getOrElse[BigDecimal](0)
+
+  val isPoaReconciliationCredit: Boolean = transactionType == PaymentOnAccountOneReviewAndReconcileCredit||
+    transactionType == PaymentOnAccountTwoReviewAndReconcileCredit
 
   def getInterestPaidStatus: String = {
     if (interestIsPaid) "paid"

@@ -50,6 +50,8 @@ case class ChargeSummaryViewModel(
   val hasInterestLocks = paymentBreakdown.exists(_.interestLockExists)
   val hasAccruedInterest = paymentBreakdown.exists(_.hasAccruedInterest)
 
+  val isCredit = chargeItem.originalAmount < 0
+
   val currentTaxYearEnd = {
     if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) currentDate.getYear
     else currentDate.getYear + 1

@@ -16,24 +16,16 @@
 
 @import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import _root_.implicits.ImplicitDateFormatterImpl
-@import views.html.layouts.unifiedLayout
-@import views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import views.html.partials.chargeSummary._
-@import services.DateServiceInterface
-@import models.financialDetails.Accepted
-@import models.financialDetails.Cancelled
-@import models.financialDetails.PaymentOnAccountOne
-@import models.financialDetails.PaymentOnAccountOneReviewAndReconcile
-@import models.financialDetails.PaymentOnAccountTwo
-@import models.financialDetails.PaymentOnAccountTwoReviewAndReconcile
-@import models.financialDetails.PaymentOnAccountOneReviewAndReconcileCredit
-@import models.financialDetails.PaymentOnAccountTwoReviewAndReconcileCredit
-@import models.financialDetails.BalancingCharge
-@import models.financialDetails.MfaDebitCharge
-@import java.time.LocalDate
 @import models.chargeSummary.ChargeSummaryViewModel
+@import models.financialDetails.{Accepted, BalancingCharge, Cancelled, MfaDebitCharge, PaymentOnAccountOne, PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountOneReviewAndReconcileCredit, PaymentOnAccountTwo, PaymentOnAccountTwoReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcileCredit, TransactionType}
+@import services.DateServiceInterface
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
+@import views.html.components._
+@import views.html.layouts.unifiedLayout
+@import views.html.partials.chargeSummary._
+
+@import java.time.LocalDate
 
 @this(
     mainTemplate: unifiedLayout,
@@ -53,7 +45,7 @@
 
 @(viewModel: ChargeSummaryViewModel, whatYouOweUrl: String)(implicit request : Request[_], messages: Messages, appConfig: config.FrontendAppConfig, dateService: DateServiceInterface)
 
-@import implicitDateFormatter.{longDate, toTaxYearEndDate, toTaxYearStartDate}
+@import implicitDateFormatter.longDate
 
 @paymentOnAccountExplanation = {
     <div id="charge-explanation">
@@ -315,7 +307,7 @@
             appConfig)
     }
 
-    @if(viewModel.codingOutEnabled && viewModel.chargeItem.subTransactionType == Some(Accepted)) {
+    @if(viewModel.codingOutEnabled && viewModel.chargeItem.subTransactionType.contains(Accepted)) {
         @chargeSummaryCodingOut(
             viewModel.chargeItem,
             viewModel.codingOutEnabled,
@@ -347,35 +339,37 @@
         getInterestRatesLink
     }
 
-    @if(viewModel.hasInterestLocks && viewModel.hasAccruedInterest) {
-        @p(id=Some("p-interest-locks-msg")){
-            @if(viewModel.isAgent) {
-                @messages("chargeSummary.whatYouOwe.textOne-agent")
-                @link(id = Some("what-you-owe-interest-link-agent"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
-                @messages("chargeSummary.interestLocks.text-agent")
-            } else {
-                @messages("chargeSummary.whatYouOwe.textOne")
-                @link(id = Some("what-you-owe-interest-link"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
-                @messages("chargeSummary.interestLocks.text")
-            }
+    @if(!viewModel.isCredit) {
+        @if(viewModel.hasInterestLocks && viewModel.hasAccruedInterest) {
+            @p(id = Some("p-interest-locks-msg")) {
+                @if(viewModel.isAgent) {
+                    @messages("chargeSummary.whatYouOwe.textOne-agent")
+                    @link(id = Some("what-you-owe-interest-link-agent"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
+                    @messages("chargeSummary.interestLocks.text-agent")
+                } else {
+                    @messages("chargeSummary.whatYouOwe.textOne")
+                    @link(id = Some("what-you-owe-interest-link"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
+                    @messages("chargeSummary.interestLocks.text")
+                }
 
-        }
-    } else {
-        @p(){
-            @if(viewModel.isAgent) {
-                @messages("chargeSummary.whatYouOwe.textOne-agent"),
-                @link(id = Some("what-you-owe-link-agent"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
-                @messages("chargeSummary.whatYouOwe.textTwo-agent")
-            } else {
-                @messages("chargeSummary.whatYouOwe.textOne")
-                @link(id = Some("what-you-owe-link"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
-                @messages("chargeSummary.whatYouOwe.textTwo")
+            }
+        } else {
+            @p() {
+                @if(viewModel.isAgent) {
+                    @messages("chargeSummary.whatYouOwe.textOne-agent"),
+                    @link(id = Some("what-you-owe-link-agent"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
+                    @messages("chargeSummary.whatYouOwe.textTwo-agent")
+                } else {
+                    @messages("chargeSummary.whatYouOwe.textOne")
+                    @link(id = Some("what-you-owe-link"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
+                    @messages("chargeSummary.whatYouOwe.textTwo")
+                }
             }
         }
     }
 
 
-    @if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZero){
+    @if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZero && !viewModel.isCredit){
         @if(viewModel.hasPaymentBreakdown && viewModel.chargeItem.subTransactionType == None) {
             <h3 id="charge-history-h3" class="govuk-heading-m">@chargeHistoryHeading</h3>
         } else {
@@ -439,5 +433,9 @@
             }
             </tbody>
         </table>
+    }
+
+    @if(viewModel.chargeItem.isPoaReconciliationCredit) {
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
     }
 }

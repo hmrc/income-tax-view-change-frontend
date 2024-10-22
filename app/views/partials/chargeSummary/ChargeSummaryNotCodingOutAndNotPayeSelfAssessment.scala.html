@@ -77,20 +77,22 @@
             <span>
             @{
                 if (interestCharge) chargeItem.latePaymentInterestAmount.getOrElse(throw MissingFieldException("Late Payment Interest Amount")).toCurrency
-                else chargeItem.originalAmount.toCurrency
+                else chargeItem.originalAmount.abs.toCurrency
             }
             </span>
         </dd>
     </div>
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">@messages("chargeSummary.remainingDue")</dt>
-        <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
-        @{
-            if (codingOutEnabled && chargeItem.subTransactionType == Some(models.financialDetails.Accepted)) {
-                messages("chargeSummary.codingOutRemainingToPay", taxYearFromCodingOut, taxYearToCodingOut)
-            } else if (interestCharge) chargeItem.interestRemainingToPay.toCurrency
-            else chargeItem.remainingToPay.toCurrency
-        }
-        </dd>
-    </div>
+    @if(!chargeItem.isCredit) {
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">@messages("chargeSummary.remainingDue")</dt>
+            <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
+            @{
+                if(codingOutEnabled && chargeItem.subTransactionType == Some(models.financialDetails.Accepted)) {
+                    messages("chargeSummary.codingOutRemainingToPay", taxYearFromCodingOut, taxYearToCodingOut)
+                } else if(interestCharge) chargeItem.interestRemainingToPay.toCurrency
+                else chargeItem.remainingToPay.toCurrency
+            }
+            </dd>
+        </div>
+    }
 </dl>
