@@ -45,17 +45,17 @@ class ChargeHistoryServiceSpec extends TestSupport with MockChargeHistoryConnect
   val chargesHistoryWithHistory: ChargesHistoryModel = ChargesHistoryModel("NINO", "AB123456C", "ITSA", Some(testChargeHistory))
 
   val chargeHistoryList: List[ChargeHistoryModel] = List(
-    ChargeHistoryModel("A", "12345", LocalDate.of(2021, 1, 1), "A", 2500, LocalDate.of(2024, 2, 10), "Reversal", Some(MainIncomeLower.code)),
-    ChargeHistoryModel("A", "34556", LocalDate.of(2021, 1, 1), "A", 2000, LocalDate.of(2024, 3, 15), "Reversal", Some(Increase.code))
+    ChargeHistoryModel("A", "12345", LocalDate.of(2024, 2, 10), "A", 2500, LocalDate.of(2024, 2, 10), "Reversal", Some(MainIncomeLower.code)),
+    ChargeHistoryModel("A", "34556", LocalDate.of(2024, 3, 15), "A", 2000, LocalDate.of(2024, 3, 15), "Reversal", Some(Increase.code))
   )
   val jumbledChargeHistoryList: List[ChargeHistoryModel] = List(
-    ChargeHistoryModel("A", "12345", LocalDate.of(2021, 1, 1), "A", 2500, LocalDate.of(2024, 2, 10), "Reversal", Some(MainIncomeLower.code)),
-    ChargeHistoryModel("A", "34556", LocalDate.of(2021, 1, 1), "A", 2300, LocalDate.of(2024, 10, 20), "Reversal", Some(MainIncomeLower.code)),
-      ChargeHistoryModel("A", "77777", LocalDate.of(2021, 1, 1), "A", 2000, LocalDate.of(2024, 7, 15), "Reversal", Some(Increase.code)))
+    ChargeHistoryModel("A", "12345", LocalDate.of(2024, 2, 10), "A", 2500, LocalDate.of(2024, 2, 10), "Reversal", Some(MainIncomeLower.code)),
+    ChargeHistoryModel("A", "34556", LocalDate.of(2024, 10, 20), "A", 2300, LocalDate.of(2024, 10, 20), "Reversal", Some(MainIncomeLower.code)),
+      ChargeHistoryModel("A", "77777", LocalDate.of(2024, 7, 15), "A", 2000, LocalDate.of(2024, 7, 15), "Reversal", Some(Increase.code)))
   val chargeHistoryWithAmended: List[ChargeHistoryModel] = List(
-    ChargeHistoryModel("A", "77777", LocalDate.of(2021, 1, 1), "TRM Amend Charge", 2500, LocalDate.of(2024, 1, 15), "amended return", None),
-    ChargeHistoryModel("A", "12345", LocalDate.of(2021, 1, 1), "A", 2000, LocalDate.of(2024, 2, 10), "Reversal", Some(MainIncomeLower.code)),
-    ChargeHistoryModel("A", "34556", LocalDate.of(2021, 1, 1), "A", 2300, LocalDate.of(2024, 3, 15), "Reversal", Some(Increase.code))
+    ChargeHistoryModel("A", "77777", LocalDate.of(2024, 1, 15), "TRM Amend Charge", 2500, LocalDate.of(2024, 1, 15), "amended return", None),
+    ChargeHistoryModel("A", "12345", LocalDate.of(2024, 2, 10), "A", 2000, LocalDate.of(2024, 2, 10), "Reversal", Some(MainIncomeLower.code)),
+    ChargeHistoryModel("A", "34556", LocalDate.of(2024, 3, 15), "A", 2300, LocalDate.of(2024, 3, 15), "Reversal", Some(Increase.code))
   )
   val unchangedDocumentDetail: DocumentDetail = DocumentDetail(
     1, "A", Some("PoA1"), None, 2500, 2500, LocalDate.of(2024, 1, 10)
@@ -114,7 +114,7 @@ class ChargeHistoryServiceSpec extends TestSupport with MockChargeHistoryConnect
       }
       "there is a charge history" in {
         val desiredAdjustments = AdjustmentHistoryModel(
-          creationEvent = AdjustmentModel(2500, None, CreateReversalReason),
+          creationEvent = AdjustmentModel(2500, Some(LocalDate.of(2024, 2, 10)), CreateReversalReason),
           adjustments = List(
             AdjustmentModel(2000, Some(LocalDate.of(2024, 2, 10)), AdjustmentReversalReason),
             AdjustmentModel(2300, Some(LocalDate.of(2024, 7, 15)), AdjustmentReversalReason),
@@ -127,7 +127,7 @@ class ChargeHistoryServiceSpec extends TestSupport with MockChargeHistoryConnect
       }
       "there is a charge history and charge history entries are not in chronological order" in {
         val desiredAdjustments = AdjustmentHistoryModel(
-          creationEvent = AdjustmentModel(2500, None, CreateReversalReason),
+          creationEvent = AdjustmentModel(2500, Some(LocalDate.of(2024, 2, 10)), CreateReversalReason),
           adjustments = List(
             AdjustmentModel(2000, Some(LocalDate.of(2024, 2, 10)), AdjustmentReversalReason),
             AdjustmentModel(2200, Some(LocalDate.of(2024, 3, 15)), AdjustmentReversalReason)
@@ -168,8 +168,8 @@ class ChargeHistoryServiceSpec extends TestSupport with MockChargeHistoryConnect
             res.creationEvent.amount shouldBe 1879.93
           }
 
-          "creation date should be unknown" in {
-            res.creationEvent.adjustmentDate shouldBe None
+          "creation date should be the earliest document date" in {
+            res.creationEvent.adjustmentDate shouldBe Some(LocalDate.of(2024, 7, 19))
           }
 
           "1st adjustment date should match the 1st ChargeHistoryModel date" in {
@@ -205,8 +205,8 @@ class ChargeHistoryServiceSpec extends TestSupport with MockChargeHistoryConnect
             res.creationEvent.amount shouldBe 1879.93
           }
 
-          "creation date should be unknown" in {
-            res.creationEvent.adjustmentDate shouldBe None
+          "creation date should be the earliest document date" in {
+            res.creationEvent.adjustmentDate shouldBe Some(LocalDate.of(2024, 7, 19))
           }
 
           "1st adjustment date should match the 1sts ChargeHistoryModel date" in {
@@ -236,7 +236,7 @@ class ChargeHistoryServiceSpec extends TestSupport with MockChargeHistoryConnect
       }
       "there is a charge history including adjustments for tax return amendments" in {
         val desiredAdjustments = AdjustmentHistoryModel(
-          creationEvent = AdjustmentModel(2500, None, CreateReversalReason),
+          creationEvent = AdjustmentModel(2500, Some(LocalDate.of(2024, 1, 15)), CreateReversalReason),
           adjustments = List(
             AdjustmentModel(2000, Some(LocalDate.of(2024, 1, 15)), AmendedReturnReversalReason),
             AdjustmentModel(2300, Some(LocalDate.of(2024, 2, 10)), AdjustmentReversalReason),
