@@ -19,11 +19,12 @@ package auth.authV2.actions
 import play.api.mvc.{Request, WrappedRequest}
 import uk.gov.hmrc.auth.core.retrieve.Name
 
-case class ClientDataModel[A] (clientMTDID: String,
-                            clientFirstName: Option[String],
-                            clientLastName: Option[String],
-                            clientNino: String,
-                            clientUTR: String)(implicit request: Request[A]) extends WrappedRequest[A](request) {
+case class ClientDataRequest[A](clientMTDID: String,
+                                clientFirstName: Option[String],
+                                clientLastName: Option[String],
+                                clientNino: String,
+                                clientUTR: String,
+                                isSupportingAgent: Boolean)(implicit request: Request[A]) extends WrappedRequest[A](request) {
 
   val clientName: Option[Name] = {
     if (clientFirstName.isDefined && clientLastName.isDefined) {
