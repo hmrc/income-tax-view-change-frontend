@@ -115,45 +115,6 @@ object TransactionType {
   }
 
   implicit val format: Format[TransactionType] = Format( read, write)
-
-
-  //  implicit val format: Format[TransactionType] = {
-//    def reads(json: JsValue): JsResult[TransactionType] = {
-//      // Attempt to read as ChargeType first
-//      ChargeType.read(json) match {
-//        case JsSuccess(chargeType, _) => JsSuccess(chargeType)
-//        case JsError(_) =>
-//          // If reading ChargeType fails, attempt to read as CreditType
-//          CreditType.read(json)
-//      }
-//
-//      def writes(transactionType: TransactionType): JsValue = {
-//        JsString(transactionType.key)
-//      }
-
-//    case ChargeType => Format(ChargeType.read, write)
-//    case _ => Format(CreditType.read, write)
-//  }
-
-//  implicit val format: Format[TransactionType] = new Format[TransactionType] {
-//    def reads(json: JsValue): JsResult[TransactionType] = {
-//      // Attempt to read as ChargeType first
-//      ChargeType.read match {
-//        case JsSuccess(chargeType: ChargeType, _) => JsSuccess(chargeType)
-//        case JsError(_) =>
-//          // If reading ChargeType fails, attempt to read as CreditType
-//          CreditType.read match {
-//            case JsSuccess(creditType: CreditType, _) => JsSuccess(creditType)
-//            case JsError(a) => JsError(a)
-//          }
-//      }
-//    }
-//
-//    def writes(transactionType: TransactionType): JsValue = transactionType match {
-//      case charge: ChargeType => ChargeType.write.writes(charge)
-//      case credit: CreditType => CreditType.write.writes(credit)
-//    }
-//  }
 }
 
 object ChargeType {
@@ -192,9 +153,7 @@ object ChargeType {
         Some(PaymentOnAccountTwoReviewAndReconcileCredit)
       case (x, _) if ChargeType.mfaDebit.contains(x) =>
         Some(MfaDebitCharge)
-      case _ => {
-        None
-      }
+      case _ => None
     }
   }
 

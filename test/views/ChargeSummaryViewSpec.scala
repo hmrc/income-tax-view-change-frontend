@@ -81,8 +81,8 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       codingOutEnabled = codingOutEnabled,
       reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       isAgent = isAgent,
-      poaOneChargeUrl = "",
-      poaTwoChargeUrl = "",
+      poaOneChargeUrl = "testUrl1",
+      poaTwoChargeUrl = "testUrl2",
       adjustmentHistory = adjustmentHistory,
       poaExtraChargeLink = poaExtraChargeLink)
 
