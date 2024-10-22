@@ -91,16 +91,13 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
         .optOutPropositionType
         .map {
           case _: OneYearOptOutProposition =>
-            println("Mikey")
             makeOptOutUpdateRequest(proposition, proposition.availableTaxYearsForOptOut.head)
           case _: MultiYearOptOutProposition =>
-            println("booo")
             OptionT(repository.fetchSavedIntent())
               .map(intentTaxYear => makeOptOutUpdateRequest(proposition, intentTaxYear))
               .flatMap(responsesFuture => OptionT.liftF(responsesFuture))
               .getOrElse(ITSAStatusUpdateResponseFailure.defaultFailure())
         }.getOrElse {
-          println("Heya")
           Future(ITSAStatusUpdateResponseFailure.defaultFailure())
         }
     }
