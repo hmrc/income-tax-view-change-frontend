@@ -17,7 +17,7 @@
 package controllers.claimToAdjustPoa
 
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import mocks.auth.MockAuthActions
+import mocks.auth.MockOldAuthActions
 import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService}
 import models.admin.AdjustPaymentsOnAccount
@@ -40,7 +40,7 @@ class PoaAdjustedControllerSpec extends TestSupport
   with MockCalculationListService
   with MockCalculationListConnector
   with MockFinancialDetailsConnector
-  with MockAuthActions {
+  with MockOldAuthActions {
 
   val mockPoaSessionService = mock(classOf[PaymentOnAccountSessionService])
   val mockDateService: DateService = mock(classOf[DateService])

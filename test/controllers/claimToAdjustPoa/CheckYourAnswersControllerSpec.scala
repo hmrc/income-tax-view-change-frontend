@@ -19,7 +19,7 @@ package controllers.claimToAdjustPoa
 import audit.AuditingService
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import mocks.auth.MockAuthActions
+import mocks.auth.MockOldAuthActions
 import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
 import mocks.services.{MockCalculationListService, MockClaimToAdjustPoaCalculationService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.admin.AdjustPaymentsOnAccount
@@ -43,7 +43,7 @@ class CheckYourAnswersControllerSpec extends TestSupport
   with MockCalculationListConnector
   with MockFinancialDetailsConnector
   with MockClaimToAdjustPoaCalculationService
-  with MockAuthActions {
+  with MockOldAuthActions {
 
   object TestCheckYourAnswersController extends CheckYourAnswersController(
     authActions = mockAuthActions,

@@ -17,15 +17,17 @@
 package models.sessionData
 
 import controllers.agent.sessionUtils.SessionKeys
+import services.agent.ClientDetailsService.ClientDetails
 
 case class SessionCookieData(mtditid: String,
                              nino: String,
                              utr: String,
                              clientFirstName: Option[String],
-                             clientLastName: Option[String]
+                             clientLastName: Option[String],
+                             isSupportingAgent: Boolean = false
                             ) {
   val toSessionDataModel: SessionDataModel = {
-    SessionDataModel(mtditid = mtditid, nino = nino, utr = utr)
+    SessionDataModel(mtditid = mtditid, nino = nino, utr = utr, isSupportingAgent)
   }
 
   val toSessionCookieSeq: Seq[(String, String)] = {
@@ -34,5 +36,19 @@ case class SessionCookieData(mtditid: String,
       SessionKeys.clientNino -> nino,
       SessionKeys.clientUTR -> utr
     ) ++ clientFirstName.map(SessionKeys.clientFirstName -> _) ++ clientLastName.map(SessionKeys.clientLastName -> _)
+  }
+}
+
+object SessionCookieData {
+
+  def apply(cd: ClientDetails, utr: String, isSupportingAgent: Boolean): SessionCookieData = {
+    SessionCookieData(
+      cd.mtdItId,
+      cd.nino,
+      utr,
+      cd.firstName,
+      cd.lastName,
+      isSupportingAgent
+    )
   }
 }

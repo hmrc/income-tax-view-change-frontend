@@ -22,8 +22,6 @@ import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuthStub.titleInternalServer
 import helpers.servicemocks.SessionDataStub.{stubPostSessionDataResponseConflictResponse, stubPostSessionDataResponseFailure, stubPostSessionDataResponseOkResponse}
 import helpers.servicemocks.{AuditStub, CitizenDetailsStub, IncomeTaxViewChangeStub}
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
@@ -36,7 +34,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
   s"GET ${controllers.agent.routes.EnterClientsUTRController.show.url}" should {
     s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" when {
       "the user is not authenticated" in {
-        stubAuthorisedAgentUser(authorised = false)
+        stubAgentAuthorisedUser(authorised = false)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getEnterClientsUTR
 
@@ -49,7 +47,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
     }
     s"redirect ($SEE_OTHER) to ${controllers.agent.errors.routes.AgentErrorController.show.url}" when {
       "the user is authenticated but doesn't have the agent enrolment" in {
-        stubAuthorisedAgentUser(authorised = true, hasAgentEnrolment = false)
+        stubAgentAuthorisedUser(authorised = true, hasAgentEnrolment = false)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getEnterClientsUTR
 
@@ -61,7 +59,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
       }
     }
     s"return $OK with the enter client utr page" in {
-      stubAuthorisedAgentUser(authorised = true)
+      stubAgentAuthorisedUser(authorised = true)
 
       val result: WSResponse = IncomeTaxViewChangeFrontend.getEnterClientsUTR
 
@@ -76,11 +74,9 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
   s"POST ${controllers.agent.routes.EnterClientsUTRController.submit.url}" should {
     s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" when {
       "the user is not authenticated" in {
-        stubAuthorisedAgentUser(authorised = false)
+        stubAgentAuthorisedUser(authorised = false)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(None)
-
-        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn.url}")
         result should have(
           httpStatus(SEE_OTHER),
           redirectURI(controllers.routes.SignInController.signIn.url)
@@ -90,37 +86,20 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
 
     s"return $OK with technical difficulties" when {
       "the user is authenticated but doesn't have the agent enrolment" in {
-        stubAuthorisedAgentUser(authorised = true, hasAgentEnrolment = false)
+        stubAgentAuthorisedUser(authorised = true, hasAgentEnrolment = false)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(None)
 
-        Then(s"Technical difficulties are shown with status OK")
         result should have(
-          httpStatus(OK),
-          pageTitleAgent(titleInternalServer, isErrorPage = true)
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.agent.errors.routes.AgentErrorController.show.url)
         )
       }
     }
 
-    s"return $OK with empty black banner on the enter client utr page" in {
-      stubAuthorisedAgentUser(authorised = true)
-
-      val result: WSResponse = IncomeTaxViewChangeFrontend.getConfirmClientUTR(clientDetailsWithoutConfirmation)
-
-      val document: Document = Jsoup.parse(result.toString)
-      document.select(".govuk-header__content")
-        .select(".hmrc-header__service-name hmrc-header__service-name--linked")
-        .text() shouldBe ""
-
-      result should have(
-        httpStatus(OK),
-        pageTitleAgentLogin("agent.confirmClient.heading")
-      )
-    }
-
     s"return $BAD_REQUEST" when {
       "no utr is submitted" in {
-        stubAuthorisedAgentUser(authorised = true)
+        stubAgentAuthorisedUser(authorised = true)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(None)
 
@@ -131,7 +110,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
       }
       "an empty utr string is submitted" in {
-        stubAuthorisedAgentUser(authorised = true)
+        stubAgentAuthorisedUser(authorised = true)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some(""))
 
@@ -142,7 +121,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
       }
       "a utr containing non-digits is submitted" in {
-        stubAuthorisedAgentUser(authorised = true)
+        stubAgentAuthorisedUser(authorised = true)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some("abc"))
 
@@ -153,7 +132,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
       }
       "a utr which has less than 10 digits is submitted" in {
-        stubAuthorisedAgentUser(authorised = true)
+        stubAgentAuthorisedUser(authorised = true)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some("123456789"))
 
@@ -164,7 +143,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
       }
       "a utr which has more than 10 digits is submitted" in {
-        stubAuthorisedAgentUser(authorised = true)
+        stubAgentAuthorisedUser(authorised = true)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some("12345678901"))
 
@@ -177,9 +156,10 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
     }
 
     s"redirect ($SEE_OTHER) to the next page" when {
-      "the utr submitted is valid and session data service post returns an OK response" in {
+      "the utr is submitted by a primary agent is valid and session data service post returns an OK response" in {
         val validUTR: String = "1234567890"
-        stubAuthorisedAgentUser(authorised = true, clientMtdId = testMtdItId)
+        stubAgentAuthorisedUser(true, true, testMtdItId, isSupportingAgent = false)
+        stubPrimaryAuthorisedAgentUser(testMtdItId, true)
         CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
           status = OK,
           response = CitizenDetailsStub.validCitizenDetailsResponse(
@@ -192,6 +172,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
           status = OK,
           response = Json.toJson(singleBusinessResponse)
         )
+
         Then(s"I stub the session-data service call to return status $OK")
         stubPostSessionDataResponseOkResponse()
 
@@ -206,11 +187,43 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
       }
 
-      "the utr submitted contains spaces and is valid and session data service post returns an OK response" in {
+      "the utr submitted by a secondary agent is valid and session data service post returns an OK response" in {
+        val validUTR: String = "1234567890"
+        stubAgentAuthorisedUser(true, true, testMtdItId, isSupportingAgent = true)
+        CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
+          status = OK,
+          response = CitizenDetailsStub.validCitizenDetailsResponse(
+            firstName = "testFirstName",
+            lastName = "testLastName",
+            nino = testNino
+          )
+        )
+        IncomeTaxViewChangeStub.stubGetBusinessDetails(testNino)(
+          status = OK,
+          response = Json.toJson(singleBusinessResponse)
+        )
+        stubPrimaryAuthorisedAgentUser(testMtdItId, false)
+        stubSecondaryAuthorisedAgentUser(testMtdItId, true)
+
+        Then(s"I stub the session-data service call to return status $OK")
+        stubPostSessionDataResponseOkResponse()
+
+        val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some(validUTR))
+
+        AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some("1"), saUtr = validUTR, credId = None))
+
+        Then("The enter clients utr page is returned with an error")
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.agent.routes.ConfirmClientUTRController.show.url)
+        )
+      }
+
+      "the utr submitted by a primary agent contains spaces and is valid and session data service post returns an OK response" in {
         val validUTR: String = "1234567890"
         val utrWithSpaces: String = " 1 2 3 4 5 6 7 8 9 0 "
 
-        stubAuthorisedAgentUser(authorised = true, clientMtdId = testMtdItId)
+        stubAgentAuthorisedUser(true, true, testMtdItId, isSupportingAgent = false)
 
         Then(s"I stub the session-data service call to return status $OK")
         stubPostSessionDataResponseOkResponse()
@@ -227,6 +240,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
           status = OK,
           response = Json.toJson(singleBusinessResponse)
         )
+        stubPrimaryAuthorisedAgentUser(testMtdItId, true)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some(utrWithSpaces))
 
@@ -239,11 +253,46 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
       }
 
-      "the utr submitted contains spaces and is valid and session data service post returns a CONFLICT response" in {
+      "the utr submitted by a secondary agent contains spaces and is valid and session data service post returns an OK response" in {
         val validUTR: String = "1234567890"
         val utrWithSpaces: String = " 1 2 3 4 5 6 7 8 9 0 "
 
-        stubAuthorisedAgentUser(authorised = true, clientMtdId = testMtdItId)
+        stubAgentAuthorisedUser(true, true, testMtdItId, isSupportingAgent = true)
+
+        Then(s"I stub the session-data service call to return status $OK")
+        stubPostSessionDataResponseOkResponse()
+
+        CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
+          status = OK,
+          response = CitizenDetailsStub.validCitizenDetailsResponse(
+            firstName = "testFirstName",
+            lastName = "testLastName",
+            nino = testNino
+          )
+        )
+        IncomeTaxViewChangeStub.stubGetBusinessDetails(testNino)(
+          status = OK,
+          response = Json.toJson(singleBusinessResponse)
+        )
+        stubPrimaryAuthorisedAgentUser(testMtdItId, false)
+        stubSecondaryAuthorisedAgentUser(testMtdItId, true)
+
+        val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some(utrWithSpaces))
+
+        AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some("1"), saUtr = validUTR, credId = None))
+
+        Then("The enter clients utr page is returned with an error")
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.agent.routes.ConfirmClientUTRController.show.url)
+        )
+      }
+
+      "the utr submitted by a primary agent contains spaces and is valid and session data service post returns a CONFLICT response" in {
+        val validUTR: String = "1234567890"
+        val utrWithSpaces: String = " 1 2 3 4 5 6 7 8 9 0 "
+
+        stubAgentAuthorisedUser(true, true, testMtdItId, isSupportingAgent = false)
 
         Then(s"I stub the session-data service call to return status $CONFLICT")
         stubPostSessionDataResponseConflictResponse()
@@ -260,6 +309,42 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
           status = OK,
           response = Json.toJson(singleBusinessResponse)
         )
+        stubPrimaryAuthorisedAgentUser(testMtdItId, true)
+
+        val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some(utrWithSpaces))
+
+        AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some("1"), saUtr = validUTR, credId = None))
+
+        Then("The enter clients utr page is returned with an error")
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.agent.routes.ConfirmClientUTRController.show.url)
+        )
+      }
+
+      "the utr submitted by a secondary agent contains spaces and is valid and session data service post returns a CONFLICT response" in {
+        val validUTR: String = "1234567890"
+        val utrWithSpaces: String = " 1 2 3 4 5 6 7 8 9 0 "
+
+        stubAgentAuthorisedUser(true, true, testMtdItId, isSupportingAgent = true)
+
+        Then(s"I stub the session-data service call to return status $CONFLICT")
+        stubPostSessionDataResponseConflictResponse()
+
+        CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
+          status = OK,
+          response = CitizenDetailsStub.validCitizenDetailsResponse(
+            firstName = "testFirstName",
+            lastName = "testLastName",
+            nino = testNino
+          )
+        )
+        IncomeTaxViewChangeStub.stubGetBusinessDetails(testNino)(
+          status = OK,
+          response = Json.toJson(singleBusinessResponse)
+        )
+        stubPrimaryAuthorisedAgentUser(testMtdItId, false)
+        stubSecondaryAuthorisedAgentUser(testMtdItId, true)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some(utrWithSpaces))
 
@@ -277,7 +362,8 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
       "the client details could not be found" in {
         val validUTR: String = "1234567890"
 
-        stubAuthorisedAgentUser(authorised = true)
+        stubAgentAuthorisedUser(true)
+
         CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
           status = NOT_FOUND,
           response = Json.obj()
@@ -295,7 +381,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
       "the business details could not be found" in {
         val validUTR: String = "1234567890"
 
-        stubAuthorisedAgentUser(authorised = true)
+        stubAgentAuthorisedUser(true)
         CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
           status = OK,
           response = CitizenDetailsStub.validCitizenDetailsResponse(
@@ -317,13 +403,46 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
           redirectURI(controllers.agent.routes.UTRErrorController.show.url)
         )
       }
+
+      "the primary or secondary agent enrolment is not present" in {
+        val validUTR: String = "1234567890"
+
+        stubAgentAuthorisedUser(true)
+        CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
+          status = OK,
+          response = CitizenDetailsStub.validCitizenDetailsResponse(
+            firstName = "testFirstName",
+            lastName = "testLastName",
+            nino = testNino
+          )
+        )
+
+        IncomeTaxViewChangeStub.stubGetBusinessDetails(testNino)(
+          status = OK,
+          response = Json.toJson(singleBusinessResponse)
+        )
+
+        stubPrimaryAuthorisedAgentUser(testMtdItId, false)
+        stubSecondaryAuthorisedAgentUser(testMtdItId, false)
+
+        Then(s"I stub the session-data service call to return status $OK")
+        stubPostSessionDataResponseOkResponse()
+
+        val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some(validUTR))
+
+        Then(s"Technical difficulties are shown with status $INTERNAL_SERVER_ERROR")
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.agent.routes.UTRErrorController.show.url)
+        )
+      }
     }
 
     s"return $INTERNAL_SERVER_ERROR ISE page" when {
       "there was an unexpected response retrieving the client details" in {
         val validUTR: String = "1234567890"
 
-        stubAuthorisedAgentUser(authorised = true)
+        stubAgentAuthorisedUser(true)
         CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
           status = INTERNAL_SERVER_ERROR,
           response = Json.obj()
@@ -340,7 +459,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
       "there was an unexpected response retrieving the business details" in {
         val validUTR: String = "1234567890"
 
-        stubAuthorisedAgentUser(authorised = true)
+        stubAgentAuthorisedUser(true)
         CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
           status = OK,
           response = CitizenDetailsStub.validCitizenDetailsResponse(
@@ -364,7 +483,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
       }
       "the income tax session data post call returned an error" in {
         val validUTR: String = "1234567890"
-        stubAuthorisedAgentUser(authorised = true, clientMtdId = testMtdItId)
+        stubAgentAuthorisedUser(true)
         CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
           status = OK,
           response = CitizenDetailsStub.validCitizenDetailsResponse(
@@ -377,6 +496,8 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
           status = OK,
           response = Json.toJson(singleBusinessResponse)
         )
+
+        stubPrimaryAuthorisedAgentUser(testMtdItId, true)
 
         Then(s"I stub the session-data service call to return status $INTERNAL_SERVER_ERROR")
         stubPostSessionDataResponseFailure()
@@ -391,7 +512,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
       }
       "there was a failed future when posting data to the income tax session data service" in {
         val validUTR: String = "1234567890"
-        stubAuthorisedAgentUser(authorised = true, clientMtdId = testMtdItId)
+        stubAgentAuthorisedUser(true)
         CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
           status = OK,
           response = CitizenDetailsStub.validCitizenDetailsResponse(
@@ -404,6 +525,8 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
           status = OK,
           response = Json.toJson(singleBusinessResponse)
         )
+
+        stubPrimaryAuthorisedAgentUser(testMtdItId, true)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some(validUTR))
 
