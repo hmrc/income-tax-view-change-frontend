@@ -62,6 +62,14 @@ trait MockAuthActions extends
     mcc = stubMessagesControllerComponents()
   )
 
+  private val authoriseAndRetrieveMtdAgent = new AuthoriseAndRetrieveMtdAgent(
+    authorisedFunctions = mockAuthService,
+    appConfig = appConfig,
+    config = conf,
+    env = environment,
+    mcc = stubMessagesControllerComponents()
+  )
+
   private val incomeSourceDetailsPredicate = new IncomeSourceDetailsPredicate(
     mockIncomeSourceDetailsService
   )(ec,
@@ -73,6 +81,7 @@ trait MockAuthActions extends
     app.injector.instanceOf[SessionTimeoutPredicateV2],
     authoriseAndRetrieve,
     authoriseAndRetrieveAgent,
+    authoriseAndRetrieveMtdAgent,
     app.injector.instanceOf[AgentHasClientDetails],
     app.injector.instanceOf[AsMtdUser],
     app.injector.instanceOf[NavBarPredicateV2],
