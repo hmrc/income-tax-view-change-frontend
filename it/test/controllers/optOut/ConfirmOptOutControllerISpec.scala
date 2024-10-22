@@ -21,9 +21,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
 import controllers.constants.ConfirmOptOutControllerConstants._
 import helpers.servicemocks.AuditStub.verifyAuditEvent
-import helpers.servicemocks.AuthStub.{postAuthoriseUrl, requiredConfidenceLevel}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import helpers.servicemocks.UserDetailsStub.getUserDetailsUrl
 import helpers.{ComponentSpecBase, ITSAStatusUpdateConnectorStub, OptOutSessionRepositoryHelper}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus._
@@ -206,61 +204,61 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
 
         "show Opt Out error page" in {
 
-//          val userDetailsBody =
-//            s"""{
-//               |"name":"$testUserName",
-//               |"email":"test@test.com",
-//               |"affinityGroup" : "affinityGroup",
-//               |"credentialRole": "n/a",
-//               |"description" : "description",
-//               |"lastName":"test",
-//               |"dateOfBirth":"1980-06-30",
-//               |"postCode":"NW94HD",
-//               |"authProviderId": "12345-credId",
-//               |"authProviderType": "GovernmentGateway"
-//               |}""".stripMargin
-//
-//          stubFor(get(urlEqualTo(getUserDetailsUrl))
-//            .willReturn(
-//              aResponse().
-//                withStatus(Status.OK).
-//                withBody(Json.parse(userDetailsBody).toString())
-//            )
-//          )
-//
-//          val authJson =
-//            Json.parse(
-//              s"""{
-//                 | "allEnrolments": [{
-//                 | "key":"$testMtditidEnrolmentKey",
-//                 | "identifiers": [{"key":"$testMtditidEnrolmentIdentifier", "value":"$testMtditid"}]
-//                 | },
-//                 | {
-//                 | "key":"$testNinoEnrolmentKey",
-//                 | "identifiers": [{"key":"$testNinoEnrolmentIdentifier", "value":"$testNino"}]
-//                 | },
-//                 | {
-//                 | "key":"$testSaUtrEnrolmentKey",
-//                 | "identifiers": [{"key":"$testSaUtrEnrolmentIdentifier", "value":"$testSaUtr"}]
-//                 | }
-//                 | ],
-//                 | "userDetailsUri":"$testUserDetailsWiremockUrl",
-//                 | "affinityGroup" : "Individual",
-//                 | "optionalCredentials": {
-//                 |  "providerId": "12345-credId",
-//                 |  "providerType": "GovernmentGateway"
-//                 | },
-//                 | "confidenceLevel": $requiredConfidenceLevel
-//                 |}""".stripMargin
-//            ).toString()
-//
-//          stubFor(post(urlEqualTo(postAuthoriseUrl))
-//            .willReturn(
-//              aResponse()
-//                .withStatus(Status.OK)
-//                .withBody(authJson)
-//            )
-//          )
+          //          val userDetailsBody =
+          //            s"""{
+          //               |"name":"$testUserName",
+          //               |"email":"test@test.com",
+          //               |"affinityGroup" : "affinityGroup",
+          //               |"credentialRole": "n/a",
+          //               |"description" : "description",
+          //               |"lastName":"test",
+          //               |"dateOfBirth":"1980-06-30",
+          //               |"postCode":"NW94HD",
+          //               |"authProviderId": "12345-credId",
+          //               |"authProviderType": "GovernmentGateway"
+          //               |}""".stripMargin
+          //
+          //          stubFor(get(urlEqualTo(getUserDetailsUrl))
+          //            .willReturn(
+          //              aResponse().
+          //                withStatus(Status.OK).
+          //                withBody(Json.parse(userDetailsBody).toString())
+          //            )
+          //          )
+          //
+          //          val authJson =
+          //            Json.parse(
+          //              s"""{
+          //                 | "allEnrolments": [{
+          //                 | "key":"$testMtditidEnrolmentKey",
+          //                 | "identifiers": [{"key":"$testMtditidEnrolmentIdentifier", "value":"$testMtditid"}]
+          //                 | },
+          //                 | {
+          //                 | "key":"$testNinoEnrolmentKey",
+          //                 | "identifiers": [{"key":"$testNinoEnrolmentIdentifier", "value":"$testNino"}]
+          //                 | },
+          //                 | {
+          //                 | "key":"$testSaUtrEnrolmentKey",
+          //                 | "identifiers": [{"key":"$testSaUtrEnrolmentIdentifier", "value":"$testSaUtr"}]
+          //                 | }
+          //                 | ],
+          //                 | "userDetailsUri":"$testUserDetailsWiremockUrl",
+          //                 | "affinityGroup" : "Individual",
+          //                 | "optionalCredentials": {
+          //                 |  "providerId": "12345-credId",
+          //                 |  "providerType": "GovernmentGateway"
+          //                 | },
+          //                 | "confidenceLevel": $requiredConfidenceLevel
+          //                 |}""".stripMargin
+          //            ).toString()
+          //
+          //          stubFor(post(urlEqualTo(postAuthoriseUrl))
+          //            .willReturn(
+          //              aResponse()
+          //                .withStatus(Status.OK)
+          //                .withBody(authJson)
+          //            )
+          //          )
 
           val taxYear: TaxYear = TaxYear(2023, 2024)
 
@@ -332,9 +330,9 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
                 .withRequestBody(matchingJsonPath("$.detail.afterAssumedITSAStatusCurrentYearPlusOne", equalTo(optOutAuditModel.afterAssumedITSAStatusCurrentYearPlusOne.toString)))
                 .withRequestBody(matchingJsonPath("$.detail.currentYearMinusOneCrystallised", equalTo(optOutAuditModel.currentYearMinusOneCrystallised.toString)))
             )
-
-            verifyAuditEvent(auditModel)
           }
+
+          verifyAuditEvent(auditModel)
         }
       }
     }
