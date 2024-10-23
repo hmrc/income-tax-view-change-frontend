@@ -16,10 +16,22 @@
 
 package enums
 
-sealed trait UserRole
+sealed trait MTDUserRole {
+  val isAgent: Boolean
+  val isSupportingAgent: Boolean
+}
 
-case object PrimaryAgent extends UserRole
+case object MTDPrimaryAgent extends MTDUserRole {
+  lazy val isAgent: Boolean = true
+  lazy val isSupportingAgent: Boolean = false
+}
 
-case object SecondaryAgent extends UserRole
+case object MTDSupportingAgent extends MTDUserRole {
+  lazy val isAgent: Boolean = true
+  lazy val isSupportingAgent: Boolean = true
+}
 
-case object Individual extends UserRole
+case object MTDIndividual extends MTDUserRole {
+  lazy val isAgent: Boolean = false
+  lazy val isSupportingAgent: Boolean = false
+}
