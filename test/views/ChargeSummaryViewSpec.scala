@@ -179,17 +179,21 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       }
     }
 
-    def poa1InterestHeading(year: Int, number: Int) = s"${year - 1} to $year tax year Late payment interest on first payment on account"
+    def poa1InterestHeading(year: Int) = s"${year - 1} to $year tax year Late payment interest on first payment on account"
 
-    def poa2InterestHeading(year: Int, number: Int) = s"${year - 1} to $year tax year Late payment interest on second payment on account"
+    def poa2InterestHeading(year: Int) = s"${year - 1} to $year tax year Late payment interest on second payment on account"
 
-    def poa1ReconcileHeading(year: Int, number: Int) = s"${year - 1} to $year tax year First payment on account: extra amount from your tax return"
+    def poa1ReconcileHeading(year: Int) = s"${year - 1} to $year tax year First payment on account: extra amount from your tax return"
 
-    def poa2ReconcileHeading(year: Int, number: Int) = s"${year - 1} to $year tax year Second payment on account: extra amount from your tax return"
+    def poa2ReconcileHeading(year: Int) = s"${year - 1} to $year tax year Second payment on account: extra amount from your tax return"
 
-    def poa1ReconcileInterestHeading(year: Int, number: Int) = s"${year - 1} to $year tax year Interest for first payment on account: extra amount"
+    def poa1ReconcileInterestHeading(year: Int) = s"${year - 1} to $year tax year Interest for first payment on account: extra amount"
 
-    def poa2ReconcileInterestHeading(year: Int, number: Int) = s"${year - 1} to $year tax year Interest for second payment on account: extra amount"
+    def poa2ReconcileInterestHeading(year: Int) = s"${year - 1} to $year tax year Interest for second payment on account: extra amount"
+
+    def poa1ReconciliationCreditHeading(year: Int) = s"${year - 1} to $year tax year First payment on account: credit from your tax return"
+
+    def poa2ReconciliationCreditHeading(year: Int) = s"${year - 1} to $year tax year Second payment on account: credit from your tax return"
 
     def balancingChargeHeading(year: Int) = s"${year - 1} to $year tax year $balancingCharge"
 
@@ -359,8 +363,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
   "when user is an individual" when {
 
-
-
     "charge is a POA1" when {
 
       val basePaymentOnAccountOne = chargeItemModel(transactionType = PaymentOnAccountOne)
@@ -418,7 +420,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
           chargeItem = basePaymentOnAccountOne,
           latePaymentInterestCharge = true
         ) {
-          document.select("h1").text() shouldBe poa1InterestHeading(2018, 1)
+          document.select("h1").text() shouldBe poa1InterestHeading(2018)
         }
 
         "have content explaining the definition of a late payment interest charge on account when charge is a POA1" in new TestSetup(
@@ -491,7 +493,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
           chargeItem = basePaymentOnAccountTwo,
           latePaymentInterestCharge = true
         ) {
-          document.select("h1").text() shouldBe poa2InterestHeading(2018, 2)
+          document.select("h1").text() shouldBe poa2InterestHeading(2018)
         }
 
         "have content explaining the definition of a late payment interest charge on account when charge is a POA2" in new TestSetup(
@@ -523,13 +525,13 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     }
 
     "charge is a POA 1 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PaymentOnAccountOneReviewAndReconcile), reviewAndReconcileEnabled = true) {
-      document.select("h1").text() shouldBe poa1ReconcileHeading(2018, 2)
+      document.select("h1").text() shouldBe poa1ReconcileHeading(2018)
     }
     "charge is a POA 2 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PaymentOnAccountTwoReviewAndReconcile), reviewAndReconcileEnabled = true) {
-      document.select("h1").text() shouldBe poa2ReconcileHeading(2018, 2)
+      document.select("h1").text() shouldBe poa2ReconcileHeading(2018)
     }
     "charge is interest for a POA 1 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PaymentOnAccountOneReviewAndReconcile), reviewAndReconcileEnabled = true, latePaymentInterestCharge = true) {
-      document.select("h1").text() shouldBe poa1ReconcileInterestHeading(2018, 2)
+      document.select("h1").text() shouldBe poa1ReconcileInterestHeading(2018)
 
       document.selectById("poa1-extra-charge-p1").text() shouldBe poa1ReconciliationInterestP1
       document.selectById("poa1-extra-charge-p2").text() shouldBe poa1ReconciliationInterestP2
@@ -546,7 +548,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       document.select("tbody tr td:nth-child(3)").text() shouldBe "£100.00"
     }
     "charge is interest for a POA 2 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PaymentOnAccountTwoReviewAndReconcile), reviewAndReconcileEnabled = true, latePaymentInterestCharge = true) {
-      document.select("h1").text() shouldBe poa2ReconcileInterestHeading(2018, 2)
+      document.select("h1").text() shouldBe poa2ReconcileInterestHeading(2018)
 
       document.selectById("poa2-extra-charge-p1").text() shouldBe poa2ReconciliationInterestP1
       document.selectById("poa2-extra-charge-p2").text() shouldBe poa2ReconciliationInterestP2
@@ -561,6 +563,31 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       document.select("tbody tr td:nth-child(1)").text() shouldBe "15 Jun 2018"
       document.select("tbody tr td:nth-child(2)").text() shouldBe hmrcCreated
       document.select("tbody tr td:nth-child(3)").text() shouldBe "£100.00"
+    }
+
+    "charge is a POA 1 reconciliation credit" in new TestSetup(chargeItem = chargeItemModel(transactionType = PaymentOnAccountOneReviewAndReconcileCredit, originalAmount = -100), reviewAndReconcileEnabled = true) {
+      document.select("h1").text() shouldBe poa1ReconciliationCreditHeading(2018)
+
+      document.selectById("rar-credit-explanation").text shouldBe "HMRC has added a credit to your account because your tax return shows that your adjusted first payment on account was too high."
+
+      document.selectById("allocation").text() shouldBe "Allocation"
+
+      document.selectById("heading-row").text() shouldBe "Where your money went Date Amount"
+      document.selectById("table-row-1").text() shouldBe "First payment on account 2017 to 2018 tax year 15 May 2019 £100.00"
+
+      document.selectById("poa-allocation-link").attr("href") shouldBe "testUrl1"
+    }
+    "charge is a POA 2 reconciliation credit" in new TestSetup(chargeItem = chargeItemModel(transactionType = PaymentOnAccountTwoReviewAndReconcileCredit, originalAmount = -100), reviewAndReconcileEnabled = true) {
+      document.select("h1").text() shouldBe poa2ReconciliationCreditHeading(2018)
+
+      document.selectById("rar-credit-explanation").text shouldBe "HMRC has added a credit to your account because your tax return shows that your adjusted second payment on account was too high."
+
+      document.selectById("allocation").text() shouldBe "Allocation"
+
+      document.selectById("heading-row").text() shouldBe "Where your money went Date Amount"
+      document.selectById("table-row-1").text() shouldBe "Second payment on account 2017 to 2018 tax year 15 May 2019 £100.00"
+
+      document.selectById("poa-allocation-link").attr("href") shouldBe "testUrl2"
     }
 
     "charge is a balancing payment" when {

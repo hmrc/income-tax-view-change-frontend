@@ -26,18 +26,18 @@
 
 @import implicitDateFormatter.longDate
 
-<h2 class="govuk-heading-l"> @messages("chargeSummary.allocation")</h2>
+<h2 class="govuk-heading-l" id="allocation"> @messages("chargeSummary.allocation")</h2>
 
-<table class="govuk-table">
+<table class="govuk-table" id="allocation-table">
     <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
+        <tr class="govuk-table__row" id="heading-row">
             <th scope="col" class="govuk-table__header">@messages("chargeSummary.whereMoneyWent")</th>
             <th scope="col" class="govuk-table__header">@messages("chargeSummary.date")</th>
             <th scope="col" class="govuk-table__header govuk-table__header--numeric">@messages("chargeSummary.paymentAmount")</th>
         </tr>
     </thead>
     <tbody class="govuk-table__body">
-        <tr class="govuk-table__row">
+        <tr class="govuk-table__row" id="table-row-1">
             <td class="govuk-table__cell">
                 <a class="govuk-link" id="poa-allocation-link" href="@link">
                     @linkText
