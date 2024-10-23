@@ -22,7 +22,7 @@ import auth.authV2.EnroledUser
 import controllers.agent.routes
 import controllers.agent.sessionUtils.SessionKeys
 import play.api.mvc.Results.Redirect
-import play.api.mvc.{ActionRefiner, Request, Result}
+import play.api.mvc.{ActionRefiner, Result}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.Name
 
