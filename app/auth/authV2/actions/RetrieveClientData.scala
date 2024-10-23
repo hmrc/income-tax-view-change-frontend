@@ -19,6 +19,7 @@ package auth.authV2.actions
 import config.ItvcErrorHandler
 import controllers.agent.routes
 import controllers.agent.sessionUtils.SessionKeys
+import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Request, Result}
 import services.SessionDataService
@@ -32,11 +33,13 @@ import scala.concurrent.{ExecutionContext, Future}
 class RetrieveClientData @Inject()(sessionDataService: SessionDataService,
                                    errorHandler: ItvcErrorHandler)(implicit val executionContext: ExecutionContext) extends ActionRefiner[Request, ClientDataRequest] {
 
+  lazy val logger: Logger = Logger(getClass)
+
   lazy val noClientDetailsRoute: Result = Redirect(routes.EnterClientsUTRController.show)
 
   override protected def refine[A](request: Request[A]): Future[Either[Result, ClientDataRequest[A]]] = {
 
-    implicit val r: Request[_] = request
+    implicit val r: Request[A] = request
     implicit val hc: HeaderCarrier = HeaderCarrierConverter
       .fromRequestAndSession(request, request.session)
 
@@ -47,4 +50,6 @@ class RetrieveClientData @Inject()(sessionDataService: SessionDataService,
       case Left(_) => Left(errorHandler.showInternalServerError())
     }
   }
+
+
 }

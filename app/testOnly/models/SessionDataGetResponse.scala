@@ -36,11 +36,11 @@ object SessionDataGetResponse {
 
   sealed trait SessionDataGetFailure
 
-    case class SessionDataNotFound(msg: String) extends Exception {
+    case class SessionDataNotFound(msg: String) extends Exception with SessionDataGetFailure {
       override def getMessage: String = msg
     }
 
-    case class SessionDataUnexpectedResponse(msg: String) extends Exception {
+    case class SessionDataUnexpectedResponse(msg: String) extends Exception with SessionDataGetFailure {
       override def getMessage: String = msg
     }
 
