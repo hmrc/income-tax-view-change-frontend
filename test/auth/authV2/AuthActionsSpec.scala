@@ -375,6 +375,7 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
   val authActions = new AuthActions(
     app.injector.instanceOf[SessionTimeoutPredicateV2],
     app.injector.instanceOf[AuthoriseAndRetrieve],
+    app.injector.instanceOf[AuthoriseAndRetrieveIndividual],
     app.injector.instanceOf[AuthoriseAndRetrieveAgent],
     app.injector.instanceOf[AgentHasClientDetails],
     app.injector.instanceOf[AsMtdUser],
