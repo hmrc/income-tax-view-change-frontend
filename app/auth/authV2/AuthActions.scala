@@ -63,7 +63,7 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutPredicateV2,
           retrieveBtaNavBar )
   }
 
-  def isIndividual[A]: ActionBuilder[MtdItUser, AnyContent] = {
+  def isMTDIndividual[A]: ActionBuilder[MtdItUser, AnyContent] = {
     checkSessionTimeout andThen
       authoriseAndRetrieveIndividual andThen
       retrieveNinoWithIncomeSources andThen

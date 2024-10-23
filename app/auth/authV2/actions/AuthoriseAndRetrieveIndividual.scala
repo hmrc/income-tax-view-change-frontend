@@ -49,10 +49,8 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
                                                val auditingService: AuditingService)
   extends AuthRedirects with ActionRefiner[Request, MtdItUserOptionNino] with FeatureSwitching {
 
-  val requireClientSelected: Boolean = true
-
   implicit val executionContext: ExecutionContext = mcc.executionContext
-  val requiredConfidenceLevel: Int = appConfig.requiredConfidenceLevel
+  lazy val requiredConfidenceLevel: Int = appConfig.requiredConfidenceLevel
 
   override protected def refine[A](request: Request[A]): Future[Either[Result, MtdItUserOptionNino[A]]] = {
 
@@ -61,10 +59,10 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
 
     implicit val req: Request[A] = request
 
-
-    // if user is not agent, authorise on HMRC-MTD-IT enrolment and Individual /
-    // Organisation affinity group
-    val predicate: Predicate = Enrolment(appConfig.mtdItEnrolmentKey) and (AffinityGroup.Organisation or AffinityGroup.Individual)
+    // authorise on HMRC-MTD-IT enrolment and Individual / Organisation affinity group
+    val predicate: Predicate =
+      Enrolment(appConfig.mtdItEnrolmentKey) and
+        (AffinityGroup.Organisation or AffinityGroup.Individual)
 
     authorisedFunctions.authorised(predicate)
       .retrieve(allEnrolments and name and credentials and affinityGroup and confidenceLevel) {
@@ -73,7 +71,7 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
   }
 
   // this URL is incorrect in live - the completion and failure URLs must be URL encoded
-  val ivUpliftRedirectUrl: String = {
+  lazy val ivUpliftRedirectUrl: String = {
     val host = if (appConfig.relativeIVUpliftParams) "" else appConfig.itvcFrontendEnvironment
     val completionUrl: String = s"$host${controllers.routes.UpliftSuccessController.success(OriginEnum.PTA.toString).url}"
     val failureUrl: String = s"$host${controllers.errors.routes.UpliftFailedController.show.url}"
@@ -101,15 +99,10 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
     implicit request: Request[A],
     hc: HeaderCarrier): PartialFunction[AuthRetrievals, Future[Either[Result, MtdItUserOptionNino[A]]]] = {
 
-    case _ ~ _ ~ _ ~ Some(ag@(Organisation | Individual)) ~ confidenceLevel
+    case _ ~ _ ~ _ ~ ag ~ confidenceLevel
       if confidenceLevel.level < requiredConfidenceLevel =>
       auditingService.audit(IvUpliftRequiredAuditModel(ag.toString, confidenceLevel.level, requiredConfidenceLevel), Some(request.path))
       Future.successful(Left(Redirect(ivUpliftRedirectUrl)))
-
-    // No support in original code for agent to uplift confidence?
-    case _ ~ _ ~ _ ~ _ ~ confidenceLevel
-      if confidenceLevel.level < requiredConfidenceLevel =>
-      throw UnsupportedAuthProvider()
   }
 
   private def constructMtdItUserOptionNino[A]()(

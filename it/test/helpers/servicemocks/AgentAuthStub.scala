@@ -123,7 +123,7 @@ object AgentAuthStub {
       case _ => (Enrolment("HMRC-AS-AGENT") and AffinityGroup.Agent).toJson
     }
 
-    val json = Json.obj(
+    Json.obj(
       "authorise" -> predicateJson,
       "retrieve" -> Json.arr(
         JsString("allEnrolments"),
@@ -132,9 +132,6 @@ object AgentAuthStub {
         JsString("confidenceLevel")
       )
     )
-
-    println(json)
-    json
   }
 
   def agentSuccessResponse(mtdItId: String, isSupportingAgent: Boolean): String = {
