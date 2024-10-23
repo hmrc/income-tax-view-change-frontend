@@ -75,7 +75,6 @@ class OptOutAuditModelSpec extends TestSupport {
 
         val auditModel: OptOutAuditModel =
           OptOutAuditModel(
-//            tsTestUser,
             nino = testNino,
             outcome = expectedOutcome,
             optOutRequestedFromTaxYear = taxYear.previousYear.formatTaxYearRange,
