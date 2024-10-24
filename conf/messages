@@ -1054,6 +1054,8 @@ chargeSummary.paymentAllocations.bcd.cgt                           = Payment all
 chargeSummary.paymentAllocations.mfaDebit                          = Payment put towards HMRC adjustment
 chargeSummary.paymentAllocations.bcd.cancelled                     = Cancelled PAYE Self Assessment (through your PAYE tax code)
 chargeSummary.paymentAllocations.bcd.accepted                      = Amount collected through your PAYE tax code for {0} to {1} tax year
+chargeSummary.chargeHistory.reviewAndReconcileCredit-poa1.text     = First payment on account: credit from your tax return
+chargeSummary.chargeHistory.reviewAndReconcileCredit-poa2.text     = Second payment on account: credit from your tax return
 
 chargeSummary.codingOutHeader                                      = Self Assessment payment (through your PAYE tax code)
 chargeSummary.codingOutMessage                                     = This is the remaining tax you owe for the {0} to {1} tax year.

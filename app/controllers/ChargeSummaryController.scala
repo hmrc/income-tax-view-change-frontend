@@ -128,6 +128,8 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
     val documentDetailWithDueDate: DocumentDetailWithDueDate = chargeDetailsforTaxYear.findDocumentDetailByIdWithDueDate(id).get
     val financialDetailsForCharge = chargeDetailsforTaxYear.financialDetails.filter(_.transactionId.contains(id))
 
+    println(s"\n financialDetailsForCharge: $financialDetailsForCharge \n")
+
     val chargeItem = ChargeItem.fromDocumentPair(
       documentDetailWithDueDate.documentDetail,
       financialDetailsForCharge,

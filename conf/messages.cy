@@ -1034,6 +1034,8 @@ chargeSummary.paymentAllocations.poa2.incomeTax                 = Taliad wedi’
 chargeSummary.paymentAllocations.poa1.nic4                      = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 4 ar gyfer y taliad ar gyfrif cyntaf
 chargeSummary.paymentAllocations.poa2.nic4                      = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 4 ar gyfer yr ail daliad ar gyfrif
 chargeSummary.paymentAllocations.mfaDebit                       = Taliad wedi’i roi tuag at addasiad CThEF
+chargeSummary.chargeHistory.reviewAndReconcileCredit-poa1.text  = Taliad cyntaf ar gyfrif: credyd o’ch Ffurflen Dreth
+chargeSummary.chargeHistory.reviewAndReconcileCredit-poa2.text  = Ail daliad ar gyfrif: credyd o’ch Ffurflen Dreth
 
 chargeSummary.codingOutHeader                                      = Self Assessment payment (through your PAYE tax code)
 chargeSummary.codingOutMessage                                     = This is the remaining tax you owe for the {0} to {1} tax year.

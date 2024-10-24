@@ -377,7 +377,7 @@
 
             <tbody class = "govuk-table__body">
             @if(viewModel.chargeHistoryEnabled){
-                @if(viewModel.noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment) {
+                @if(viewModel.noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessmentAndNotRarCredit) {
                     <tr>
                         <td class="govuk-table__cell govuk-!-width-one-quarter">@{
                             getCreationDate(viewModel.adjustmentHistory.creationEvent.adjustmentDate)
@@ -389,6 +389,22 @@
                         <td class="govuk-table__cell numeric govuk-!-text-align-right">@{
                             viewModel.adjustmentHistory.creationEvent.amount.toCurrency
                         }</td>
+                    </tr>
+                }
+
+                @if(viewModel.reviewAndReconcileEnabled && viewModel.reviewAndReconcileEnabled) {
+                    <tr>
+                        <td class="govuk-table__cell govuk-!-width-one-quarter">
+                            @{ viewModel.chargeItem.dueDate.get.toLongDateShort }
+                        </td>
+                        <td class="govuk-table__cell">
+                            <a class="govuk-link" href="">
+                                @{ messages(s"chargeSummary.chargeHistory.${viewModel.chargeItem.getChargeTypeKey(viewModel.codingOutEnabled, viewModel.reviewAndReconcileEnabled)}") }
+                            </a>
+                        </td>
+                        <td class="govuk-table__cell numeric govuk-!-text-align-right">
+                            @{ viewModel.chargeItem.originalAmount.toCurrency }
+                        </td>
                     </tr>
                 }
 

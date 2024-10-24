@@ -191,6 +191,8 @@ object CreditType {
     case RepaymentInterest.key => RepaymentInterest
     case PaymentType.key => PaymentType
     case Repayment.key => Repayment
+    case PaymentOnAccountOneReviewAndReconcileCredit.key => PaymentOnAccountOneReviewAndReconcileCredit
+    case PaymentOnAccountTwoReviewAndReconcileCredit.key => PaymentOnAccountTwoReviewAndReconcileCredit
   }
 
   implicit val format: Format[CreditType] = Format( read, write)

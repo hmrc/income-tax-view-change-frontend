@@ -82,7 +82,14 @@ case class ChargeSummaryViewModel(
   val chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZero: Boolean =
     (chargeHistoryEnabled || (paymentAllocationEnabled && paymentAllocations.nonEmpty)) && !isBalancingChargeZero
 
-  val noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment: Boolean = !latePaymentInterestCharge && !(codingOutEnabled && chargeItem.subTransactionType.contains(Accepted))
+  private val isReviewAndReconcileCredit: Boolean =
+    chargeItem.transactionType == PaymentOnAccountOneReviewAndReconcileCredit ||
+      chargeItem.transactionType == PaymentOnAccountTwoReviewAndReconcileCredit
+
+  val noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessmentAndNotRarCredit: Boolean =
+    !latePaymentInterestCharge &&
+      !(codingOutEnabled && chargeItem.subTransactionType.contains(Accepted)) &&
+      !isReviewAndReconcileCredit
 
 }
 

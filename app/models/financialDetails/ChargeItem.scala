@@ -26,7 +26,7 @@ import java.time.LocalDate
 case class ChargeItem (
                         transactionId: String,
                         taxYear: TaxYear,
-                        transactionType: ChargeType,
+                        transactionType: TransactionType,
                         subTransactionType: Option[SubTransactionType],
                         documentDate: LocalDate,
                         dueDate: Option[LocalDate],
@@ -129,8 +129,6 @@ case class ChargeItem (
 
 object ChargeItem {
 
-  implicit val format: Format[ChargeItem] = Json.format[ChargeItem]
-
   def filterChargeWithOutstandingAmount(isChargeTypeEnabled:Boolean, chargeType: ChargeType*)
                   (chargeItem: TransactionItem): Boolean = {
     (isChargeTypeEnabled, chargeItem.transactionType) match {
@@ -153,8 +151,9 @@ object ChargeItem {
       case _ => throw CouldNotCreateChargeItemException(s"Main transaction is not defined for charge ${documentDetail.transactionId}")
     }
 
-    val chargeType = ChargeType.fromCode(mainTransaction, reviewAndReconcile) match {
-      case Some(ct) => ct
+    val transactionType = (ChargeType.fromCode(mainTransaction, reviewAndReconcile), CreditType.fromCode(mainTransaction)) match {
+      case (Some(charge), None) => charge
+      case (None, Some(credit)) => credit
       case _ => throw CouldNotCreateChargeItemException(s"Could not identify charge type from $mainTransaction for charge ${documentDetail.transactionId}")
     }
 
@@ -164,7 +163,7 @@ object ChargeItem {
     ChargeItem(
       transactionId = documentDetail.transactionId,
       taxYear = TaxYear.forYearEnd(documentDetail.taxYear),
-      transactionType = chargeType,
+      transactionType = transactionType,
       subTransactionType = documentDetail.documentText
         .flatMap(SubTransactionType.fromDocumentText),
       documentDate = documentDetail.documentDate,
