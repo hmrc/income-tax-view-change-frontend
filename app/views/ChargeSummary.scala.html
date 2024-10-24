@@ -392,7 +392,7 @@
                     </tr>
                 }
 
-                @if(viewModel.reviewAndReconcileEnabled && viewModel.reviewAndReconcileEnabled) {
+                @if(viewModel.reviewAndReconcileEnabled && viewModel.chargeItem.isReviewAndReconcileCredit) {
                     <tr>
                         <td class="govuk-table__cell govuk-!-width-one-quarter">
                             @{ viewModel.chargeItem.dueDate.get.toLongDateShort }

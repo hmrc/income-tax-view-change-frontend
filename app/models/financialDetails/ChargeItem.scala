@@ -125,6 +125,10 @@ case class ChargeItem (
     case PaymentOnAccountTwo => "4913"
     case _ => "no valid case"
   }
+
+  def isReviewAndReconcileCredit: Boolean =
+    transactionType == PaymentOnAccountOneReviewAndReconcileCredit ||
+      transactionType == PaymentOnAccountTwoReviewAndReconcileCredit
 }
 
 object ChargeItem {
