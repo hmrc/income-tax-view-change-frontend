@@ -72,7 +72,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
 
         userRepository.findUser(postedUser.nino).flatMap(
           user =>
-            customAuthConnector.login(Nino(user.nino), postedUser.isAgent).flatMap {
+            customAuthConnector.login(Nino(user.nino), postedUser.isAgent, postedUser.isSupporting).flatMap {
               case (authExchange, _) =>
                 val (bearer, auth) = (authExchange.bearerToken, authExchange.sessionAuthorityUri)
                 val redirectURL = if (postedUser.isAgent)
