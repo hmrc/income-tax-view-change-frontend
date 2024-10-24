@@ -46,14 +46,14 @@ trait TransactionItem {
   }
 
   // TODO: duplicate logic, in scope of => https://jira.tools.tax.service.gov.uk/browse/MISUV-8557
-  def getChargeTypeKey(codedOutEnabled: Boolean = false, reviewAndReconcileEnabled: Boolean = false): String =
+  def getChargeTypeKey(reviewAndReconcileEnabled: Boolean = false): String =
     (transactionType, subTransactionType) match {
       case (PaymentOnAccountOne, _) => "paymentOnAccount1.text"
       case (PaymentOnAccountTwo, _) => "paymentOnAccount2.text"
       case (MfaDebitCharge, _) => "hmrcAdjustment.text"
-      case (BalancingCharge, Some(Nics2)) if codedOutEnabled => "class2Nic.text"
-      case (BalancingCharge, Some(Accepted)) if codedOutEnabled => "codingOut.text"
-      case (BalancingCharge, Some(Cancelled)) if codedOutEnabled => "cancelledPayeSelfAssessment.text"
+      case (BalancingCharge, Some(Nics2)) => "class2Nic.text"
+      case (BalancingCharge, Some(Accepted)) => "codingOut.text"
+      case (BalancingCharge, Some(Cancelled)) => "cancelledPayeSelfAssessment.text"
       case (BalancingCharge, _) => "balancingCharge.text"
       case (PaymentOnAccountOneReviewAndReconcile, _) if reviewAndReconcileEnabled => "reviewAndReconcilePoa1.text"
       case (PaymentOnAccountTwoReviewAndReconcile, _) if reviewAndReconcileEnabled => "reviewAndReconcilePoa2.text"

@@ -24,20 +24,15 @@ import mocks.connectors.MockFinancialDetailsConnector
 import models.core.AccountingPeriodModel
 import models.financialDetails._
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{verify, when}
 import play.api.http.Status
 import play.api.test.FakeRequest
 import testConstants.BaseTestConstants._
 import testConstants.BusinessDetailsTestConstants.{address, getCurrentTaxYearEnd, testIncomeSource}
-import testConstants.ChargeHistoryTestConstants.{testChargeHistoryErrorModel, testValidChargeHistoryModel}
 import testConstants.FinancialDetailsTestConstants.{documentDetailModel, _}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
-import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
 import java.time.LocalDate
-import scala.concurrent.Future
 
 class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsConnector with FeatureSwitching {
 
@@ -381,7 +376,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate.minusYears(1)), testNino)(financialDetailLastYear)
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate), testNino)(financialDetail)
 
-        val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(isCodingOutEnabled = true)(mtdUser(2), headerCarrier, ec)
+        val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails()(mtdUser(2), headerCarrier, ec)
 
         result.futureValue shouldBe expectedResult
       }
@@ -435,7 +430,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           )
         ))
 
-        val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(isCodingOutEnabled = true)(mtdUser(2), headerCarrier, ec)
+        val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails()(mtdUser(2), headerCarrier, ec)
 
         result.futureValue shouldBe expectedResult
       }
@@ -464,11 +459,11 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           )
         ))
 
-        val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(isCodingOutEnabled = true)(mtdUser(2), headerCarrier, ec)
+        val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails()(mtdUser(2), headerCarrier, ec)
 
         result.futureValue shouldBe List.empty[FinancialDetailsResponseModel]
       }
-      "errored financial transactions exist" in {
+      "errors in financial transactions exist" in {
 
         val financialDetailError = FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "internal server error")
         val expectedResult: List[FinancialDetailsResponseModel] = List(
@@ -496,13 +491,13 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         ))
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate), testNino)(financialDetailError)
 
-        val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(isCodingOutEnabled = true)(mtdUser(2), headerCarrier, ec)
+        val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails()(mtdUser(2), headerCarrier, ec)
 
         result.futureValue shouldBe expectedResult
       }
     }
     "return unpaid transactions and coding out document details" when {
-      "coding out is enabled and coding out data exists" in {
+      "coding out data exists" in {
         val financialDetailCodingOut = getFinancialDetailSuccess(
           taxYear = getTaxEndYear(fixedDate.minusYears(1)),
           documentDetails = List(
@@ -533,7 +528,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate.minusYears(1)), testNino)(financialDetailCodingOut)
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate), testNino)(financialDetail)
 
-        val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(isCodingOutEnabled = true)(mtdUser(2), headerCarrier, ec)
+        val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails()(mtdUser(2), headerCarrier, ec)
 
         result.futureValue shouldBe List(
           financialDetailCodingOut,

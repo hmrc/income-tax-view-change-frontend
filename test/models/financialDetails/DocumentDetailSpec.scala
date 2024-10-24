@@ -26,8 +26,6 @@ import java.time.LocalDate
 class DocumentDetailSpec extends UnitSpec {
 
   "DocumentDetail" when {
-    
-    
 
     "calling predicate hasAccruingInterest" should {
 
@@ -126,90 +124,62 @@ class DocumentDetailSpec extends UnitSpec {
 
     "getChargeTypeKey" should {
 
-
       "return POA1" when {
         "when document description is ITSA- POA 1" in {
-          fullDocumentDetailModel.copy(documentDescription = Some("ITSA- POA 1")).getChargeTypeKey(false) shouldBe "paymentOnAccount1.text"
+          fullDocumentDetailModel.copy(documentDescription = Some("ITSA- POA 1")).getChargeTypeKey() shouldBe "paymentOnAccount1.text"
 
         }
       }
       "return POA2" when {
         "when document description is ITSA - POA 2" in {
-          fullDocumentDetailModel.copy(documentDescription = Some("ITSA - POA 2")).getChargeTypeKey(false) shouldBe "paymentOnAccount2.text"
+          fullDocumentDetailModel.copy(documentDescription = Some("ITSA - POA 2")).getChargeTypeKey() shouldBe "paymentOnAccount2.text"
 
         }
       }
       "return unknown charge" when {
         "when document description is ITSA- XYZ" in {
-          fullDocumentDetailModel.copy(documentDescription = Some("ITSA- XYZ")).getChargeTypeKey(false) shouldBe "unknownCharge"
+          fullDocumentDetailModel.copy(documentDescription = Some("ITSA- XYZ")).getChargeTypeKey() shouldBe "unknownCharge"
         }
       }
       "return BCD" when {
-        "when document description is TRM New Charge, coding out is disabled and is not coding out" in {
-          fullDocumentDetailModel.copy(documentDescription = Some("TRM New Charge")).getChargeTypeKey(false) shouldBe "balancingCharge.text"
+
+        "when document description is TRM New Charge and is not coding out" in {
+          fullDocumentDetailModel.copy(documentDescription = Some("TRM New Charge")).getChargeTypeKey() shouldBe "balancingCharge.text"
         }
-        "when document description is TRM Amend Charge, coding out is disabled and is not coding out" in {
-          fullDocumentDetailModel.copy(documentDescription = Some("TRM Amend Charge")).getChargeTypeKey(false) shouldBe "balancingCharge.text"
-        }
-        "when document description is TRM New Charge, coding out is enabled and is not coding out" in {
-          fullDocumentDetailModel.copy(documentDescription = Some("TRM New Charge")).getChargeTypeKey(true) shouldBe "balancingCharge.text"
-        }
-        "when document description is TRM Amend Charge, coding out is enabled and is not coding out" in {
-          fullDocumentDetailModel.copy(documentDescription = Some("TRM Amend Charge")).getChargeTypeKey(true) shouldBe "balancingCharge.text"
+        "when document description is TRM Amend Charge and is not coding out" in {
+          fullDocumentDetailModel.copy(documentDescription = Some("TRM Amend Charge")).getChargeTypeKey() shouldBe "balancingCharge.text"
         }
       }
       "return class 2 nics or BCD charge" when {
-        "when document description is TRM New Charge, coding out is enabled and is class 2 nics" in {
+        "when document description is TRM New Charge and is class 2 nics" in {
           fullDocumentDetailModel.copy(documentDescription = Some("TRM New Charge"),
-            documentText = Some(CODING_OUT_CLASS2_NICS)).getChargeTypeKey(true) shouldBe "class2Nic.text"
+            documentText = Some(CODING_OUT_CLASS2_NICS)).getChargeTypeKey() shouldBe "class2Nic.text"
         }
-        "when document description is TRM Amend Charge, coding out is enabled and is class 2 nics" in {
+        "when document description is TRM Amend Charge and is class 2 nics" in {
           fullDocumentDetailModel.copy(documentDescription = Some("TRM Amend Charge"),
-            documentText = Some(CODING_OUT_CLASS2_NICS)).getChargeTypeKey(true) shouldBe "class2Nic.text"
-        }
-        "when document description is TRM New Charge, coding out is disabled and is class 2 nics" in {
-          fullDocumentDetailModel.copy(documentDescription = Some("TRM New Charge"),
-            documentText = Some(CODING_OUT_CLASS2_NICS)).getChargeTypeKey(false) shouldBe "balancingCharge.text"
-        }
-        "when document description is TRM Amend Charge, coding out is disabled and is class 2 nics" in {
-          fullDocumentDetailModel.copy(documentDescription = Some("TRM Amend Charge"),
-            documentText = Some(CODING_OUT_CLASS2_NICS)).getChargeTypeKey(false) shouldBe "balancingCharge.text"
+            documentText = Some(CODING_OUT_CLASS2_NICS)).getChargeTypeKey() shouldBe "class2Nic.text"
         }
       }
+
       "return coding out text or BCD charge" when {
-        "when document description is TRM New Charge, coding out is enabled and is paye self assessment" in {
+        "when document description is TRM New Charge and is paye self assessment" in {
           fullDocumentDetailModel.copy(documentDescription = Some("TRM New Charge"),
-            documentText = Some(CODING_OUT_ACCEPTED)).getChargeTypeKey(true) shouldBe "codingOut.text"
+            documentText = Some(CODING_OUT_ACCEPTED)).getChargeTypeKey() shouldBe "codingOut.text"
         }
-        "when document description is TRM Amend Charge, coding out is enabled and is paye self assessment" in {
+        "when document description is TRM Amend Charge and is paye self assessment" in {
           fullDocumentDetailModel.copy(documentDescription = Some("TRM Amend Charge"),
-            documentText = Some(CODING_OUT_ACCEPTED)).getChargeTypeKey(true) shouldBe "codingOut.text"
-        }
-        "when document description is TRM New Charge, coding out is disabled and is paye self assessment" in {
-          fullDocumentDetailModel.copy(documentDescription = Some("TRM New Charge"),
-            documentText = Some(CODING_OUT_ACCEPTED)).getChargeTypeKey(false) shouldBe "balancingCharge.text"
-        }
-        "when document description is TRM Amend Charge, coding out is disabled and is paye self assessment" in {
-          fullDocumentDetailModel.copy(documentDescription = Some("TRM Amend Charge"),
-            documentText = Some(CODING_OUT_ACCEPTED)).getChargeTypeKey(false) shouldBe "balancingCharge.text"
+            documentText = Some(CODING_OUT_ACCEPTED)).getChargeTypeKey() shouldBe "codingOut.text"
         }
       }
+
       "return cancelled paye self assessment text or BCD charge" when {
-        "when document description is TRM New Charge, coding out is enabled and is cancelled paye self assessment" in {
+        "when document description is TRM New Charge and is cancelled paye self assessment" in {
           fullDocumentDetailModel.copy(documentDescription = Some("TRM New Charge"),
-            documentText = Some(CODING_OUT_CANCELLED)).getChargeTypeKey(true) shouldBe "cancelledPayeSelfAssessment.text"
+            documentText = Some(CODING_OUT_CANCELLED)).getChargeTypeKey() shouldBe "cancelledPayeSelfAssessment.text"
         }
-        "when document description is TRM Amend Charge, coding out is enabled and is cancelled paye self assessment" in {
+        "when document description is TRM Amend Charge and is cancelled paye self assessment" in {
           fullDocumentDetailModel.copy(documentDescription = Some("TRM Amend Charge"),
-            documentText = Some(CODING_OUT_CANCELLED)).getChargeTypeKey(true) shouldBe "cancelledPayeSelfAssessment.text"
-        }
-        "when document description is TRM New Charge, coding out is disabled and is cancelled paye self assessment" in {
-          fullDocumentDetailModel.copy(documentDescription = Some("TRM New Charge"),
-            documentText = Some(CODING_OUT_CANCELLED)).getChargeTypeKey(false) shouldBe "balancingCharge.text"
-        }
-        "when document description is TRM Amend Charge, coding out is disabled and is cancelled paye self assessment" in {
-          fullDocumentDetailModel.copy(documentDescription = Some("TRM Amend Charge"),
-            documentText = Some(CODING_OUT_CANCELLED)).getChargeTypeKey(false) shouldBe "balancingCharge.text"
+            documentText = Some(CODING_OUT_CANCELLED)).getChargeTypeKey() shouldBe "cancelledPayeSelfAssessment.text"
         }
       }
     }
@@ -266,19 +236,16 @@ class DocumentDetailSpec extends UnitSpec {
 
     "isBalancingCharge" should {
       "return true" when {
-        "the charge is balancing charge" in {
+        "the charge is balancing charge for class 2 Nic" in {
           documentDetailClass2Nic.documentDetail.isBalancingCharge() shouldBe true
         }
-        "the charge is balancing charge and coding out is enabled" in {
-          documentDetailBalancingCharge.documentDetail.isBalancingCharge(codedOutEnabled = true) shouldBe true
+        "the charge is balancing charge" in {
+          documentDetailBalancingCharge.documentDetail.isBalancingCharge() shouldBe true
         }
       }
       "return false" when {
         "the charge is other than balancing charge" in {
           documentDetailPOA2.documentDetail.isBalancingCharge() shouldBe false
-        }
-        "coding out charge" in {
-          documentDetailPaye.documentDetail.isBalancingCharge(codedOutEnabled = true) shouldBe false
         }
       }
     }
@@ -288,18 +255,14 @@ class DocumentDetailSpec extends UnitSpec {
         "the charge is balancing charge and the original amount is zero" in {
           documentDetailBalancingCharge.documentDetail.copy(originalAmount = BigDecimal(0)).isBalancingChargeZero() shouldBe true
         }
-        "the charge is balancing charge and the original amount is zero and coding out is enabled" in {
-          documentDetailBalancingCharge.documentDetail
-            .copy(originalAmount = BigDecimal(0)).isBalancingChargeZero(codedOutEnabled = true) shouldBe true
-        }
       }
 
       "return false" when {
         "the charge is not balancing charge" in {
           documentDetailPOA2.documentDetail.isBalancingChargeZero() shouldBe false
         }
-        "coding out is enabled with coding out type charge" in {
-          documentDetailClass2Nic.documentDetail.isBalancingChargeZero(codedOutEnabled = true) shouldBe false
+        "with coding out type charge" in {
+          documentDetailClass2Nic.documentDetail.isBalancingChargeZero() shouldBe false
         }
       }
     }

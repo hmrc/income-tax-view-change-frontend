@@ -140,7 +140,6 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
           calcOverview,
           testChargesList,
           testObligtionsModel,
-          codingOutEnabled = true,
           reviewAndReconcileEnabled = true,
           showForecastData = shouldShowForecastData,
           ctaViewModel = emptyCTAViewModel
@@ -183,7 +182,6 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             Some(calcOverview),
             testChargesList,
             testObligtionsModel,
-            codingOutEnabled = true,
             reviewAndReconcileEnabled = true,
             ctaViewModel = emptyCTAViewModel),
           taxYearsBackLink,
@@ -379,7 +377,6 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             Some(calcOverview),
             testChargesList,
             testObligtionsModel,
-            codingOutEnabled = true,
             reviewAndReconcileEnabled = true,
             ctaViewModel = emptyCTAViewModel),
           homeBackLink,
@@ -395,7 +392,6 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
       }
     }
 
-    "the coding out feature switch is enabled" should {
       "include Class 2 Nics in the charges list when Class 2 Nics is present" in {
 
         mockSingleBusinessIncomeSource()
@@ -418,7 +414,6 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             Some(calcOverview),
             class2NicsChargesList,
             testObligtionsModel,
-            codingOutEnabled = true,
             reviewAndReconcileEnabled = true,
             ctaViewModel = emptyCTAViewModel),
           taxYearsBackLink,
@@ -451,7 +446,6 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             Some(calcOverview),
             payeChargesList,
             testObligtionsModel,
-            codingOutEnabled = true,
             reviewAndReconcileEnabled = true,
             ctaViewModel = emptyCTAViewModel),
           taxYearsBackLink,
@@ -462,11 +456,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
       }
-    }
 
     "MFA Debits" should {
-
-
 
       def testMFADebits(): Assertion = {
         mockSingleBusinessIncomeSource()
@@ -491,7 +482,6 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             Some(calcOverview),
             charges,
             testObligtionsModel,
-            codingOutEnabled = true,
             reviewAndReconcileEnabled = true,
             ctaViewModel = emptyCTAViewModel
           ),
@@ -526,7 +516,6 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             Some(calcOverview),
             testEmptyChargesList,
             testObligtionsModel,
-            codingOutEnabled = true,
             reviewAndReconcileEnabled = true,
             ctaViewModel = emptyCTAViewModel),
           taxYearsBackLink,
@@ -607,7 +596,6 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
               None,
               testChargesList,
               testObligtionsModel,
-              codingOutEnabled = true,
             reviewAndReconcileEnabled = true,
               showForecastData = true,
               ctaViewModel = emptyCTAViewModel),
@@ -690,7 +678,6 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             Some(calcOverview),
             testChargesList,
             testObligtionsModel,
-            codingOutEnabled = true,
             reviewAndReconcileEnabled = true,
             ctaViewModel = emptyCTAViewModel),
           taxYearsBackLink,
@@ -722,7 +709,6 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             Some(calcOverview),
             testChargesList,
             testObligtionsModel,
-            codingOutEnabled = true,
             reviewAndReconcileEnabled = true,
             ctaViewModel = emptyCTAViewModel),
           taxYearsBackLink,
@@ -888,7 +874,6 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             Some(calcOverview),
             class2NicsChargesList,
             testObligtionsModel,
-            codingOutEnabled = true,
             reviewAndReconcileEnabled = true,
             ctaViewModel = emptyCTAViewModel),
           agentHomeBackLink,
