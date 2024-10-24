@@ -29,6 +29,7 @@ import play.api.libs.json.JsValue
 import play.api.libs.ws.WSClient
 
 object WiremockHelper extends Eventually with IntegrationPatience {
+
   val wiremockPort = 11111
   val wiremockHost = "localhost"
   val url = s"http://$wiremockHost:$wiremockPort"
@@ -53,7 +54,6 @@ object WiremockHelper extends Eventually with IntegrationPatience {
       (request, header) => request.withHeader(header._1, equalTo(header._2)))
     verify(postRequestWithHeaders)
   }
-
 
   def verifyPut(uri: String, optRequestBody: Option[String] = None): Unit = {
     val uriMapping = putRequestedFor(urlEqualTo(uri))
@@ -88,7 +88,8 @@ object WiremockHelper extends Eventually with IntegrationPatience {
       case Some(js) =>
         val ignoreArrayOrder, ignoreExtraElements = true
         uriMapping.withRequestBody(equalToJson(js.toString, ignoreArrayOrder, ignoreExtraElements))
-      case None => uriMapping
+      case None =>
+        uriMapping
     }
     verify(postRequest)
   }

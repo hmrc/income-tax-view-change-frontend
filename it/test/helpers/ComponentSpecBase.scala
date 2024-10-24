@@ -182,12 +182,13 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   }
 
 
-  override implicit lazy val app: Application = new GuiceApplicationBuilder()
-    .in(Environment.simple(mode = Mode.Dev))
-    .overrides(bind[HeaderExtractor].to[TestHeaderExtractor])
-    .overrides(bind[DateServiceInterface].to[TestDateService])
-    .configure(config)
-    .build()
+  override implicit lazy val app: Application =
+    new GuiceApplicationBuilder()
+      .in(Environment.simple(mode = Mode.Dev))
+      .overrides(bind[HeaderExtractor].to[TestHeaderExtractor])
+      .overrides(bind[DateServiceInterface].to[TestDateService])
+      .configure(config)
+      .build()
 
   override def beforeAll(): Unit = {
     super.beforeAll()
@@ -229,11 +230,13 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   }
 
   object IncomeTaxViewChangeFrontend {
+
     def get(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       When(s"I call GET /report-quarterly/income-and-expenses/view" + uri)
       buildClient(uri)
         .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies), "X-Session-ID" -> testSessionId)
-        .get().futureValue
+        .get()
+        .futureValue
     }
 
     def getWithHeaders(uri: String, headers: (String, String)*): WSResponse = {
@@ -700,7 +703,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def postConfirmOptOut(): WSResponse = post(s"/optout/review-confirm-taxyear")(Map.empty)
 
-
     def getConfirmedOptOut(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       get("/optout/confirmed", additionalCookies)
     }
@@ -1067,10 +1069,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
         )
       }
     }
-  }
-
-  def testIncomeSourceDetailsCaching(resetCacheAfterFirstCall: Boolean, noOfCalls: Int, callback: () => Unit): Unit = {
-    // tests to be reimplemented after hmrc-mongo caching
   }
 }
 

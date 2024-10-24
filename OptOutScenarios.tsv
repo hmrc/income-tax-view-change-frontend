@@ -1,0 +1,294 @@
+CY-1	ITSA Status								Expected Outcome			dethrfs
+Finalised	CY-1	CY	CY+1	Options presented to customer for opt out within V and C	Customer intent	Valid?		Which years will be sent from V & C to ITSD	CY-1	CY	CY+1	dethrfs
+N	M	M	M	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	M	M	M	dethrfs
+Y	M	M	M	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	M	M	M	dethrfs
+N	M	M	M	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	M	M	M	dethrfs
+Y	M	M	M	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	M	M	M	dethrfs
+N	M	M	M	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	M	M	M	dethrfs
+Y	M	M	M	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	M	M	M	dethrfs
+N	M	M		Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	M	M		dethrfs
+Y	M	M		Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	M	M		dethrfs
+N	M	M		Nothing displayed	Customer wants to opt out from CY	N/A		N/A	M	M		dethrfs
+Y	M	M		Nothing displayed	Customer wants to opt out from CY	N/A		N/A	M	M		dethrfs
+N	M	M		Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	M	M		dethrfs
+Y	M	M		Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	M	M		dethrfs
+N	M	M	V	CY+1	Customer wants to opt out from CY-1	N/A		N/A	M	M	V	dethrfs
+Y	M	M	V	CY+1	Customer wants to opt out from CY-1	N/A		N/A	M	M	V	dethrfs
+N	M	M	V	CY+1	Customer wants to opt out from CY	N/A		N/A	M	M	V	dethrfs
+Y	M	M	V	CY+1	Customer wants to opt out from CY	N/A		N/A	M	M	V	dethrfs
+N	M	M	V	CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	M	M	A	dethrfs
+Y	M	M	V	CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	M	M	A	dethrfs
+N	M	M	A	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	M	M	A	dethrfs
+Y	M	M	A	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	M	M	A	dethrfs
+N	M	M	A	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	M	M	A	dethrfs
+Y	M	M	A	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	M	M	A	dethrfs
+N	M	M	A	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	M	M	A	dethrfs
+Y	M	M	A	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	M	M	A	dethrfs
+N	M	V	M	CY	Customer wants to opt out from CY-1	N/A		N/A	M	V	M	dethrfs
+Y	M	V	M	CY	Customer wants to opt out from CY-1	N/A		N/A	M	V	M	dethrfs
+N	M	V	M	CY	Customer wants to opt out from CY	Allowed		CY 	M	A	M	dethrfs
+Y	M	V	M	CY	Customer wants to opt out from CY	Allowed		CY 	M	A	M	dethrfs
+N	M	V	M	CY	Customer wants to opt out from CY+1	N/A		N/A	M	V	M	dethrfs
+Y	M	V	M	CY	Customer wants to opt out from CY+1	N/A		N/A	M	V	M	dethrfs
+N	M	V		CY and CY+1	Customer wants to opt out from CY-1	N/A		N/A	M	V		dethrfs
+Y	M	V		CY and CY+1	Customer wants to opt out from CY-1	N/A		N/A	M	V		dethrfs
+N	M	V		CY and CY+1	Customer wants to opt out from CY	Allowed		CY	M	A		dethrfs
+Y	M	V		CY and CY+1	Customer wants to opt out from CY	Allowed		CY	M	A		dethrfs
+N	M	V		CY and CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	M	V	A	dethrfs
+Y	M	V		CY and CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	M	V	A	dethrfs
+N	M	V	V	CY and CY+1	Customer wants to opt out from CY-1	N/A		N/A	M	V	V	dethrfs
+Y	M	V	V	CY and CY+1	Customer wants to opt out from CY-1	N/A		N/A	M	V	V	dethrfs
+N	M	V	V	CY and CY+1	Customer wants to opt out from CY	Allowed		CY and CY+1	M	A	A	dethrfs
+Y	M	V	V	CY and CY+1	Customer wants to opt out from CY	Allowed		CY and CY+1	M	A	A	dethrfs
+N	M	V	V	CY and CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	M	V	A	dethrfs
+Y	M	V	V	CY and CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	M	V	A	dethrfs
+N	M	V	A	CY	Customer wants to opt out from CY-1	N/A		N/A	M	V	A	dethrfs
+Y	M	V	A	CY	Customer wants to opt out from CY-1	N/A		N/A	M	V	A	dethrfs
+N	M	V	A	CY	Customer wants to opt out from CY	Allowed		CY	M	A	A	dethrfs
+Y	M	V	A	CY	Customer wants to opt out from CY	Allowed		CY	M	A	A	dethrfs
+N	M	V	A	CY	Customer wants to opt out from CY+1	N/A		N/A	M	V	A	dethrfs
+Y	M	V	A	CY	Customer wants to opt out from CY+1	N/A		N/A	M	V	A	dethrfs
+N	M	A	M	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	M	A	M	dethrfs
+Y	M	A	M	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	M	A	M	dethrfs
+N	M	A	M	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	M	A	M	dethrfs
+Y	M	A	M	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	M	A	M	dethrfs
+N	M	A	M	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	M	A	M	dethrfs
+Y	M	A	M	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	M	A	M	dethrfs
+N	M	A		Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	M	A		dethrfs
+Y	M	A		Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	M	A		dethrfs
+N	M	A		Nothing displayed	Customer wants to opt out from CY	N/A		N/A	M	A		dethrfs
+Y	M	A		Nothing displayed	Customer wants to opt out from CY	N/A		N/A	M	A		dethrfs
+N	M	A		Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	M	A		dethrfs
+Y	M	A		Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	M	A		dethrfs
+N	M	A	V	CY+1	Customer wants to opt out from CY-1	N/A		N/A	M	A	V	dethrfs
+Y	M	A	V	CY+1	Customer wants to opt out from CY-1	N/A		N/A	M	A	V	dethrfs
+N	M	A	V	CY+1	Customer wants to opt out from CY	N/A		N/A	M	A	V	dethrfs
+Y	M	A	V	CY+1	Customer wants to opt out from CY	N/A		N/A	M	A	V	dethrfs
+N	M	A	V	CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	M	A	A	dethrfs
+Y	M	A	V	CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	M	A	A	dethrfs
+N	M	A	A	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	M	A	A	dethrfs
+Y	M	A	A	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	M	A	A	dethrfs
+N	M	A	A	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	M	A	A	dethrfs
+Y	M	A	A	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	M	A	A	dethrfs
+N	M	A	A	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	M	A	A	dethrfs
+Y	M	A	A	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	M	A	A	dethrfs
+N	V	M	M	CY-1	Customer wants to opt out from CY-1	Allowed		CY-1	A	M	M	dethrfs
+Y	V	M	M	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	A	M	M	dethrfs
+N	V	M	M	CY-1	Customer wants to opt out from CY	N/A		N/A	V	M	M	dethrfs
+Y	V	M	M	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	V	M	M	dethrfs
+N	V	M	M	CY-1	Customer wants to opt out from CY+1	N/A		N/A	V	M	M	dethrfs
+Y	V	M	M	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	V	M	M	dethrfs
+N	V	M		CY-1	Customer wants to opt out from CY-1	Allowed		CY-1	A	M		dethrfs
+Y	V	M		Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	A	M		dethrfs
+N	V	M		CY-1	Customer wants to opt out from CY	N/A		N/A	V	M		dethrfs
+Y	V	M		Nothing displayed	Customer wants to opt out from CY	N/A		N/A	V	M		dethrfs
+N	V	M		CY-1	Customer wants to opt out from CY+1	N/A		N/A	V	M		dethrfs
+Y	V	M		Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	V	M		dethrfs
+N	V	M	V	CY-1 and CY+1	Customer wants to opt out from CY-1	Allowed		CY-1 and CY+1	A	M	A	dethrfs
+Y	V	M	V	CY+1	Customer wants to opt out from CY-1	N/A		N/A	A	M	V	dethrfs
+N	V	M	V	CY-1 and CY+1	Customer wants to opt out from CY	N/A		N/A	V	M	V	dethrfs
+Y	V	M	V	CY+1	Customer wants to opt out from CY	N/A		N/A	V	M	V	dethrfs
+N	V	M	V	CY-1 and CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	V	M	A	dethrfs
+Y	V	M	V	CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	V	M	A	dethrfs
+N	V	M	A	CY-1	Customer wants to opt out from CY-1	Allowed		CY-1	A	M	A	dethrfs
+Y	V	M	A	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	A	M	A	dethrfs
+N	V	M	A	CY-1	Customer wants to opt out from CY	N/A		N/A	V	M	A	dethrfs
+Y	V	M	A	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	V	M	A	dethrfs
+N	V	M	A	CY-1	Customer wants to opt out from CY+1	N/A		N/A	V	M	A	dethrfs
+Y	V	M	A	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	V	M	A	dethrfs
+N	V	V	M	CY-1 and CY	Customer wants to opt out from CY-1	Allowed		CY-1 and CY	A	A	M	dethrfs
+Y	V	V	M	CY	Customer wants to opt out from CY-1	N/A		N/A	A	A	M	dethrfs
+N	V	V	M	CY-1 and CY	Customer wants to opt out from CY	Allowed		CY	V	A	M	dethrfs
+Y	V	V	M	CY	Customer wants to opt out from CY	Allowed		CY	V	A	M	dethrfs
+N	V	V	M	CY-1 and CY	Customer wants to opt out from CY+1	N/A		N/A	V	V	M	dethrfs
+Y	V	V	M	CY	Customer wants to opt out from CY+1	N/A		N/A	V	V	M	dethrfs
+N	V	V		CY-1, CY and CY+1	Customer wants to opt out from CY-1	Allowed		CY-1, CY	A	A		dethrfs
+Y	V	V		CY and CY+1	Customer wants to opt out from CY-1	N/A		N/A	A	A		dethrfs
+N	V	V		CY-1, CY and CY+1	Customer wants to opt out from CY	Allowed		CY	V	A		dethrfs
+Y	V	V		CY and CY+1	Customer wants to opt out from CY	Allowed		CY	V	A		dethrfs
+N	V	V		CY-1, CY and CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	V	V	A	dethrfs
+Y	V	V		CY and CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	V	V	A	dethrfs
+N	V	V	V	CY-1, CY and CY+1	Customer wants to opt out from CY-1	Allowed		CY-1, CY and CY+1	A	A	A	dethrfs
+Y	V	V	V	CY and CY+1	Customer wants to opt out from CY-1	N/A		N/A	A	A	A	dethrfs
+N	V	V	V	CY-1, CY and CY+1	Customer wants to opt out from CY	Allowed		CY and CY+1	V	A	A	dethrfs
+Y	V	V	V	CY and CY+1	Customer wants to opt out from CY	Allowed		CY and CY+1	V	A	A	dethrfs
+N	V	V	V	CY-1, CY and CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	V	V	A	dethrfs
+Y	V	V	V	CY and CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	V	V	A	dethrfs
+N	V	V	A	CY-1 and CY	Customer wants to opt out from CY-1	Allowed		CY-1 And CY	A	A	A	dethrfs
+Y	V	V	A	CY	Customer wants to opt out from CY-1	N/A		N/A	A	A	A	dethrfs
+N	V	V	A	CY-1 and CY	Customer wants to opt out from CY	Allowed		CY	V	A	A	dethrfs
+Y	V	V	A	CY	Customer wants to opt out from CY	Allowed		CY	V	A	A	dethrfs
+N	V	V	A	CY-1 and CY	Customer wants to opt out from CY+1	N/A		N/A	V	V	A	dethrfs
+Y	V	V	A	CY	Customer wants to opt out from CY+1	N/A		N/A	V	V	A	dethrfs
+N	V	A	M	CY-1	Customer wants to opt out from CY-1	Allowed		CY-1	A	A	M	dethrfs
+Y	V	A	M	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	A	A	M	dethrfs
+N	V	A	M	CY-1	Customer wants to opt out from CY	N/A		N/A	V	A	M	dethrfs
+Y	V	A	M	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	V	A	M	dethrfs
+N	V	A	M	CY-1	Customer wants to opt out from CY+1	N/A		N/A	V	A	M	dethrfs
+Y	V	A	M	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	V	A	M	dethrfs
+N	V	A		CY-1	Customer wants to opt out from CY-1	Allowed		CY-1	A	A		dethrfs
+Y	V	A		Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	A	A		dethrfs
+N	V	A		CY-1	Customer wants to opt out from CY	N/A		N/A	V	A		dethrfs
+Y	V	A		Nothing displayed	Customer wants to opt out from CY	N/A		N/A	V	A		dethrfs
+N	V	A		CY-1	Customer wants to opt out from CY+1	N/A		N/A	V	A		dethrfs
+Y	V	A		Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	V	A		dethrfs
+N	V	A	V	CY-1 and CY+1	Customer wants to opt out from CY-1	Allowed		CY-1 and CY+1	A	A	A	dethrfs
+Y	V	A	V	CY+1	Customer wants to opt out from CY-1	N/A		N/A	A	A	V	dethrfs
+N	V	A	V	CY-1 and CY+1	Customer wants to opt out from CY	N/A		N/A	V	A	V	dethrfs
+Y	V	A	V	CY+1	Customer wants to opt out from CY	N/A		N/A	V	A	V	dethrfs
+N	V	A	V	CY-1 and CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	V	A	A	dethrfs
+Y	V	A	V	CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	V	A	A	dethrfs
+N	V	A	A	CY-1	Customer wants to opt out from CY-1	Allowed		CY-1	A	A	A	dethrfs
+Y	V	A	A	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	A	A	A	dethrfs
+N	V	A	A	CY-1	Customer wants to opt out from CY	N/A		N/A	V	A	A	dethrfs
+Y	V	A	A	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	V	A	A	dethrfs
+N	V	A	A	CY-1	Customer wants to opt out from CY+1	N/A		N/A	V	A	A	dethrfs
+Y	V	A	A	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	V	A	A	dethrfs
+N	A	M	M	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	A	M	M	dethrfs
+Y	A	M	M	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	A	M	M	dethrfs
+N	A	M	M	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	A	M	M	dethrfs
+Y	A	M	M	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	A	M	M	dethrfs
+N	A	M	M	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	A	M	M	dethrfs
+Y	A	M	M	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	A	M	M	dethrfs
+N	A	M		Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	A	M		dethrfs
+Y	A	M		Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	A	M		dethrfs
+N	A	M		Nothing displayed	Customer wants to opt out from CY	N/A		N/A	A	M		dethrfs
+Y	A	M		Nothing displayed	Customer wants to opt out from CY	N/A		N/A	A	M		dethrfs
+N	A	M		Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	A	M		dethrfs
+Y	A	M		Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	A	M		dethrfs
+N	A	M	V	CY+1	Customer wants to opt out from CY-1	N/A		N/A	A	M	V	dethrfs
+Y	A	M	V	CY+1	Customer wants to opt out from CY-1	N/A		N/A	A	M	V	dethrfs
+N	A	M	V	CY+1	Customer wants to opt out from CY	N/A		N/A	A	M	V	dethrfs
+Y	A	M	V	CY+1	Customer wants to opt out from CY	N/A		N/A	A	M	V	dethrfs
+N	A	M	V	CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	A	M	A	dethrfs
+Y	A	M	V	CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	A	M	A	dethrfs
+N	A	M	A	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	A	M	A	dethrfs
+Y	A	M	A	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	A	M	A	dethrfs
+N	A	M	A	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	A	M	A	dethrfs
+Y	A	M	A	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	A	M	A	dethrfs
+N	A	M	A	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	A	M	A	dethrfs
+Y	A	M	A	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	A	M	A	dethrfs
+N	A	V	M	CY	Customer wants to opt out from CY-1	N/A		N/A	A	V	M	dethrfs
+Y	A	V	M	CY	Customer wants to opt out from CY-1	N/A		N/A	A	V	M	dethrfs
+N	A	V	M	CY	Customer wants to opt out from CY	Allowed		CY	A	A	M	dethrfs
+Y	A	V	M	CY	Customer wants to opt out from CY	Allowed		CY	A	A	M	dethrfs
+N	A	V	M	CY	Customer wants to opt out from CY+1	N/A		N/A	A	V	M	dethrfs
+Y	A	V	M	CY	Customer wants to opt out from CY+1	N/A		N/A	A	V	M	dethrfs
+N	A	V		CY and CY+1	Customer wants to opt out from CY-1	N/A		N/A	A	V		dethrfs
+Y	A	V		CY and CY+1	Customer wants to opt out from CY-1	N/A		N/A	A	V		dethrfs
+N	A	V		CY and CY+1	Customer wants to opt out from CY	Allowed		CY	A	A		dethrfs
+Y	A	V		CY and CY+1	Customer wants to opt out from CY	Allowed		CY	A	A		dethrfs
+N	A	V		CY and CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	A	V	A	dethrfs
+Y	A	V		CY and CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	A	V	A	dethrfs
+N	A	V	V	CY and CY+1	Customer wants to opt out from CY-1	N/A		N/A	A	V	V	dethrfs
+Y	A	V	V	CY and CY+1	Customer wants to opt out from CY-1	N/A		N/A	A	V	V	dethrfs
+N	A	V	V	CY and CY+1	Customer wants to opt out from CY	Allowed		CY and CY+1	A	A	A	dethrfs
+Y	A	V	V	CY and CY+1	Customer wants to opt out from CY	Allowed		CY and CY+1	A	A	A	dethrfs
+N	A	V	V	CY and CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	A	V	A	dethrfs
+Y	A	V	V	CY and CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	A	V	A	dethrfs
+N	A	V	A	CY	Customer wants to opt out from CY-1	N/A		N/A	A	V	A	dethrfs
+Y	A	V	A	CY	Customer wants to opt out from CY-1	N/A		N/A	A	V	A	dethrfs
+N	A	V	A	CY	Customer wants to opt out from CY	Allowed		CY	A	A	A	dethrfs
+Y	A	V	A	CY	Customer wants to opt out from CY	Allowed		CY	A	A	A	dethrfs
+N	A	V	A	CY	Customer wants to opt out from CY+1	N/A		N/A	A	V	A	dethrfs
+Y	A	V	A	CY	Customer wants to opt out from CY+1	N/A		N/A	A	V	A	dethrfs
+N	A	A	M	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	A	A	M	dethrfs
+Y	A	A	M	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	A	A	M	dethrfs
+N	A	A	M	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	A	A	M	dethrfs
+Y	A	A	M	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	A	A	M	dethrfs
+N	A	A	M	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	A	A	M	dethrfs
+Y	A	A	M	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	A	A	M	dethrfs
+N	A	A		Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	A	A		dethrfs
+Y	A	A		Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	A	A		dethrfs
+N	A	A		Nothing displayed	Customer wants to opt out from CY	N/A		N/A	A	A		dethrfs
+Y	A	A		Nothing displayed	Customer wants to opt out from CY	N/A		N/A	A	A		dethrfs
+N	A	A		Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	A	A		dethrfs
+Y	A	A		Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	A	A		dethrfs
+N	A	A	V	CY+1	Customer wants to opt out from CY-1	N/A		N/A	A	A	V	dethrfs
+Y	A	A	V	CY+1	Customer wants to opt out from CY-1	N/A		N/A	A	A	V	dethrfs
+N	A	A	V	CY+1	Customer wants to opt out from CY	N/A		N/A	A	A	V	dethrfs
+Y	A	A	V	CY+1	Customer wants to opt out from CY	N/A		N/A	A	A	V	dethrfs
+N	A	A	V	CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	A	A	A	dethrfs
+Y	A	A	V	CY+1	Customer wants to opt out from CY+1	Allowed		CY+1	A	A	A	dethrfs
+N	A	A	A	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	A	A	A	dethrfs
+Y	A	A	A	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A	A	A	A	dethrfs
+N	A	A	A	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	A	A	A	dethrfs
+Y	A	A	A	Nothing displayed	Customer wants to opt out from CY	N/A		N/A	A	A	A	dethrfs
+N	A	A	A	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	A	A	A	dethrfs
+Y	A	A	A	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A	A	A	A	dethrfs
+N		M	M	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A		M	M	dethrfs
+Y		M	M	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A		M	M	dethrfs
+N		M	M	Nothing displayed	Customer wants to opt out from CY	N/A		N/A		M	M	dethrfs
+Y		M	M	Nothing displayed	Customer wants to opt out from CY	N/A		N/A		M	M	dethrfs
+N		M	M	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A		M	M	dethrfs
+Y		M	M	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A		M	M	dethrfs
+N		M		Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A		M		dethrfs
+Y		M		Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A		M		dethrfs
+N		M		Nothing displayed	Customer wants to opt out from CY	N/A		N/A		M		dethrfs
+Y		M		Nothing displayed	Customer wants to opt out from CY	N/A		N/A		M		dethrfs
+N		M		Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A		M		dethrfs
+Y		M		Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A		M		dethrfs
+N		M	V	CY+1	Customer wants to opt out from CY-1	N/A		N/A		M	V	dethrfs
+Y		M	V	CY+1	Customer wants to opt out from CY-1	N/A		N/A		M	V	dethrfs
+N		M	V	CY+1	Customer wants to opt out from CY	N/A		N/A		M	V	dethrfs
+Y		M	V	CY+1	Customer wants to opt out from CY	N/A		N/A		M	V	dethrfs
+N		M	V	CY+1	Customer wants to opt out from CY+1	Allowed		CY+1		M	A	dethrfs
+Y		M	V	CY+1	Customer wants to opt out from CY+1	Allowed		CY+1		M	A	dethrfs
+N		M	A	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A		M	A	dethrfs
+Y		M	A	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A		M	A	dethrfs
+N		M	A	Nothing displayed	Customer wants to opt out from CY	N/A		N/A		M	A	dethrfs
+Y		M	A	Nothing displayed	Customer wants to opt out from CY	N/A		N/A		M	A	dethrfs
+N		M	A	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A		M	A	dethrfs
+Y		M	A	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A		M	A	dethrfs
+N		V	M	CY	Customer wants to opt out from CY-1	N/A		N/A		V	M	dethrfs
+Y		V	M	CY	Customer wants to opt out from CY-1	N/A		N/A		V	M	dethrfs
+N		V	M	CY	Customer wants to opt out from CY	Allowed		CY		A	M	dethrfs
+Y		V	M	CY	Customer wants to opt out from CY	Allowed		CY		A	M	dethrfs
+N		V	M	CY	Customer wants to opt out from CY+1	N/A		N/A		V	M	dethrfs
+Y		V	M	CY	Customer wants to opt out from CY+1	N/A		N/A		V	M	dethrfs
+N		V		CY and CY+1	Customer wants to opt out from CY-1	N/A		N/A		V		dethrfs
+Y		V		CY and CY+1	Customer wants to opt out from CY-1	N/A		N/A		V		dethrfs
+N		V		CY and CY+1	Customer wants to opt out from CY	Allowed		CY		A		dethrfs
+Y		V		CY and CY+1	Customer wants to opt out from CY	Allowed		CY		A		dethrfs
+N		V		CY and CY+1	Customer wants to opt out from CY+1	Allowed		CY+1		V	A	dethrfs
+Y		V		CY and CY+1	Customer wants to opt out from CY+1	Allowed		CY+1		V	A	dethrfs
+N		V	V	CY and CY+1	Customer wants to opt out from CY-1	N/A		N/A		V	V	dethrfs
+Y		V	V	CY and CY+1	Customer wants to opt out from CY-1	N/A		N/A		V	V	dethrfs
+N		V	V	CY and CY+1	Customer wants to opt out from CY	Allowed		CY And CY+1		A	A	dethrfs
+Y		V	V	CY and CY+1	Customer wants to opt out from CY	Allowed		CY And CY+1		A	A	dethrfs
+N		V	V	CY and CY+1	Customer wants to opt out from CY+1	Allowed		CY+1		V	A	dethrfs
+Y		V	V	CY and CY+1	Customer wants to opt out from CY+1	Allowed		CY+1		V	A	dethrfs
+N		V	A	CY	Customer wants to opt out from CY-1	N/A		N/A		V	A	dethrfs
+Y		V	A	CY	Customer wants to opt out from CY-1	N/A		N/A		V	A	dethrfs
+N		V	A	CY	Customer wants to opt out from CY	Allowed		CY		A	A	dethrfs
+Y		V	A	CY	Customer wants to opt out from CY	Allowed		CY		A	A	dethrfs
+N		V	A	CY	Customer wants to opt out from CY+1	N/A		N/A		V	A	dethrfs
+Y		V	A	CY	Customer wants to opt out from CY+1	N/A		N/A		V	A	dethrfs
+N		A	M	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A		A	M	dethrfs
+Y		A	M	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A		A	M	dethrfs
+N		A	M	Nothing displayed	Customer wants to opt out from CY	N/A		N/A		A	M	dethrfs
+Y		A	M	Nothing displayed	Customer wants to opt out from CY	N/A		N/A		A	M	dethrfs
+N		A	M	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A		A	M	dethrfs
+Y		A	M	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A		A	M	dethrfs
+N		A		Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A		A		dethrfs
+Y		A		Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A		A		dethrfs
+N		A		Nothing displayed	Customer wants to opt out from CY	N/A		N/A		A		dethrfs
+Y		A		Nothing displayed	Customer wants to opt out from CY	N/A		N/A		A		dethrfs
+N		A		Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A		A		dethrfs
+Y		A		Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A		A		dethrfs
+N		A	V	CY+1	Customer wants to opt out from CY-1	N/A		N/A		A	V	dethrfs
+Y		A	V	CY+1	Customer wants to opt out from CY-1	N/A		N/A		A	V	dethrfs
+N		A	V	CY+1	Customer wants to opt out from CY	N/A		N/A		A	V	dethrfs
+Y		A	V	CY+1	Customer wants to opt out from CY	N/A		N/A		A	V	dethrfs
+N		A	V	CY+1	Customer wants to opt out from CY+1	Allowed		CY+1		A	A	dethrfs
+Y		A	V	CY+1	Customer wants to opt out from CY+1	Allowed		CY+1		A	A	dethrfs
+N		A	A	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A		A	A	dethrfs
+Y		A	A	Nothing displayed	Customer wants to opt out from CY-1	N/A		N/A		A	A	dethrfs
+N		A	A	Nothing displayed	Customer wants to opt out from CY	N/A		N/A		A	A	dethrfs
+Y		A	A	Nothing displayed	Customer wants to opt out from CY	N/A		N/A		A	A	dethrfs
+N		A	A	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A		A	A	dethrfs
+Y		A	A	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A		A	A	dethrfs
+N			V	CY+1	Customer wants to opt out from CY+1	Allowed		CY+1			A	dethrfs
+Y			V	CY+1	Customer wants to opt out from CY+1	Allowed		CY+1			A	dethrfs
+N			M	Nothing displayed	Customer wants to opt out from CY+1	N/A		N/A			M	dethrfs
+Y			M	Nothing displayed	Customer wants to opt out from CY+1	N/A	N/A	N/A			M	dethrfs

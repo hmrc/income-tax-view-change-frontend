@@ -25,6 +25,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 abstract class MtdItUserBase[A](implicit request: Request[A]) extends WrappedRequest[A](request) {
+
   def mtditid: String
 
   def nino: String
@@ -69,7 +70,7 @@ case class MtdItUser[A](mtditid: String,
                         arn: Option[String],
                         featureSwitches: List[FeatureSwitch] = List.empty // TODO: remove default
                        )(implicit request: Request[A]) extends MtdItUserBase[A] {
-  
+
   def isAgent(): Boolean = userType.contains(Agent)
 
 }

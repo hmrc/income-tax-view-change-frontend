@@ -373,7 +373,8 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser, messagesAPI,
           TaxYearSummaryViewModel(
             Some(CalculationSummary(liabilityCalculationModelSuccessful)),
-            financialDetailsSuccess.documentDetails.map(dd => ChargeItem.fromDocumentPair(dd, financialDetailsSuccess.financialDetails, true, true)).map(TaxYearSummaryChargeItem.fromChargeItem),
+            financialDetailsSuccess.documentDetails.map(dd => ChargeItem.fromDocumentPair(dd, financialDetailsSuccess.financialDetails, true, true))
+              .map(TaxYearSummaryChargeItem.fromChargeItem),
             allObligations, codingOutEnabled = true, reviewAndReconcileEnabled = true, showForecastData = true, ctaViewModel = emptyCTAModel)))
         allObligations.obligations.foreach {
           obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, obligation.identification, obligation.obligations).detail)
@@ -850,10 +851,4 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
     }
   }
 
-  "API#1171 IncomeSourceDetails Caching" when {
-    "caching should be DISABLED" in {
-      testIncomeSourceDetailsCaching(false, 2,
-        () => IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation))
-    }
-  }
 }

@@ -143,10 +143,4 @@ class IncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     }
   }
 
-  "API#1171 IncomeSourceDetails Caching" when {
-    "caching should be ENABLED" in {
-      testIncomeSourceDetailsCaching(false, 1,
-        () => IncomeTaxViewChangeFrontend.getIncomeSummaryAgent(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation))
-    }
-  }
 }
