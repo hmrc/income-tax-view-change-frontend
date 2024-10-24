@@ -142,7 +142,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
             beforeITSAStatusCurrentYearPlusOne = NoStatus,
             afterAssumedITSAStatusCurrentYearMinusOne = Annual,
             afterAssumedITSAStatusCurrentYear = NoStatus,
-            afterAssumedITSAStatusCurrentYearPlusOne = Annual,
+            afterAssumedITSAStatusCurrentYearPlusOne = NoStatus,
             currentYearMinusOneCrystallised = false
           )
         )
@@ -227,7 +227,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
               beforeITSAStatusCurrentYearPlusOne = Voluntary,
               afterAssumedITSAStatusCurrentYearMinusOne = Voluntary,
               afterAssumedITSAStatusCurrentYear = Voluntary,
-              afterAssumedITSAStatusCurrentYearPlusOne = Voluntary,
+              afterAssumedITSAStatusCurrentYearPlusOne = Annual,
               currentYearMinusOneCrystallised = false
             )
 
