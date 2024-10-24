@@ -31,7 +31,7 @@ trait ChargeConstants {
 
   def chargeItemModel(taxYear: TaxYear = TaxYear.forYearEnd(2018),
                       transactionId: String = id1040000123,
-                      transactionType: ChargeType = PaymentOnAccountOne,
+                      transactionType: TransactionType = PaymentOnAccountOne,
                       subTransactionType: Option[SubTransactionType] = None,
                       documentDate: LocalDate = LocalDate.of(2018, 3, 29),
                       dueDate: Option[LocalDate] =  Some(LocalDate.of(2019, 5, 15)),

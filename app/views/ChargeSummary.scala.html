@@ -16,22 +16,17 @@
 
 @import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import _root_.implicits.ImplicitDateFormatterImpl
-@import views.html.layouts.unifiedLayout
-@import views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import views.html.partials.chargeSummary._
-@import services.DateServiceInterface
-@import models.financialDetails.Accepted
-@import models.financialDetails.Cancelled
-@import models.financialDetails.PaymentOnAccountOne
-@import models.financialDetails.PaymentOnAccountOneReviewAndReconcile
-@import models.financialDetails.PaymentOnAccountTwo
-@import models.financialDetails.PaymentOnAccountTwoReviewAndReconcile
-@import models.financialDetails.BalancingCharge
-@import models.financialDetails.MfaDebitCharge
-@import java.time.LocalDate
+@import models.financialDetails.ChargeType
 @import models.chargeSummary.ChargeSummaryViewModel
+@import models.financialDetails.{Accepted, BalancingCharge, Cancelled, MfaDebitCharge, PaymentOnAccountOne, PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountOneReviewAndReconcileCredit, PaymentOnAccountTwo, PaymentOnAccountTwoReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcileCredit, TransactionType}
+@import services.DateServiceInterface
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
+@import views.html.components._
+@import views.html.layouts.unifiedLayout
+@import views.html.partials.chargeSummary._
+
+@import java.time.LocalDate
 
 @this(
     mainTemplate: unifiedLayout,
@@ -46,12 +41,13 @@
     chargeSummaryCodingOut: ChargeSummaryCodingOut,
     chargeSummaryHasDunningLocksOrLpiWithDunningLock: ChargeSummaryHasDunningLocksOrLpiWithDunningLock,
     chargeSummaryNotCodingOutAndNotPayeSelfAssessment: ChargeSummaryNotCodingOutAndNotPayeSelfAssessment,
+        chargeSummaryPaymentAllocationTable: ChargeSummaryPaymentAllocationTable,
     govukInsetText : GovukInsetText
 )
 
 @(viewModel: ChargeSummaryViewModel, whatYouOweUrl: String)(implicit request : Request[_], messages: Messages, appConfig: config.FrontendAppConfig, dateService: DateServiceInterface)
 
-@import implicitDateFormatter.{longDate, toTaxYearEndDate, toTaxYearStartDate}
+@import implicitDateFormatter.longDate
 
 @paymentOnAccountExplanation = {
     <div id="charge-explanation">
@@ -173,6 +169,19 @@
     }
 }
 
+@reviewAndReconcilePoaCreditExplanation(oneOrTwo: ChargeType) = {
+    @p(id = Some("rar-credit-explanation")) {
+        @messages(s"chargeSummary.poa${oneOrTwo}Credit.p1")
+        @link(id = Some("poa-link"), link = {
+            oneOrTwo match {
+                case PaymentOnAccountOne => viewModel.poaOneChargeUrl
+                case _ => viewModel.poaTwoChargeUrl
+            }
+        }, messageKey = s"chargeSummary.poa${oneOrTwo}Credit.link")
+        @messages(s"chargeSummary.poa${oneOrTwo}Credit.afterLink")
+    }
+}
+
 @getExplanationContent = @{(viewModel.chargeItem.transactionType, viewModel.chargeItem.subTransactionType) match {
     case (MfaDebitCharge, _)                                                                     => hmrcAdjustmentExplanation
     case (PaymentOnAccountOneReviewAndReconcile, _)  if !viewModel.latePaymentInterestCharge           => reviewAndReconcilePoaOneDebitExplanation
@@ -181,6 +190,8 @@
     case (PaymentOnAccountTwoReviewAndReconcile, _)                                              => getPoa2ExtraChargeInterestExplanationContent
     case (PaymentOnAccountOne | PaymentOnAccountTwo, _) if !viewModel.latePaymentInterestCharge  => paymentOnAccountExplanation
     case (PaymentOnAccountOne | PaymentOnAccountTwo, _)                                          => getLpiPoaExplanationContent
+    case (PaymentOnAccountOneReviewAndReconcileCredit, _)                                        => reviewAndReconcilePoaCreditExplanation(PaymentOnAccountOne)
+    case (PaymentOnAccountTwoReviewAndReconcileCredit, _)                                        => reviewAndReconcilePoaCreditExplanation(PaymentOnAccountTwo)
     case (BalancingCharge, None) if !viewModel.latePaymentInterestCharge                         => balancingChargeExplanation
     case (BalancingCharge, None)                                                                 => getBalancingPaymentsExplanationContent
     case _                                                                                       =>
@@ -298,7 +309,7 @@
             appConfig)
     }
 
-    @if(viewModel.codingOutEnabled && viewModel.chargeItem.subTransactionType == Some(Accepted)) {
+    @if(viewModel.codingOutEnabled && viewModel.chargeItem.subTransactionType.contains(Accepted)) {
         @chargeSummaryCodingOut(
             viewModel.chargeItem,
             viewModel.codingOutEnabled,
@@ -330,35 +341,37 @@
         getInterestRatesLink
     }
 
-    @if(viewModel.hasInterestLocks && viewModel.hasAccruedInterest) {
-        @p(id=Some("p-interest-locks-msg")){
-            @if(viewModel.isAgent) {
-                @messages("chargeSummary.whatYouOwe.textOne-agent")
-                @link(id = Some("what-you-owe-interest-link-agent"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
-                @messages("chargeSummary.interestLocks.text-agent")
-            } else {
-                @messages("chargeSummary.whatYouOwe.textOne")
-                @link(id = Some("what-you-owe-interest-link"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
-                @messages("chargeSummary.interestLocks.text")
-            }
+    @if(!viewModel.isCredit) {
+        @if(viewModel.hasInterestLocks && viewModel.hasAccruedInterest) {
+            @p(id = Some("p-interest-locks-msg")) {
+                @if(viewModel.isAgent) {
+                    @messages("chargeSummary.whatYouOwe.textOne-agent")
+                    @link(id = Some("what-you-owe-interest-link-agent"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
+                    @messages("chargeSummary.interestLocks.text-agent")
+                } else {
+                    @messages("chargeSummary.whatYouOwe.textOne")
+                    @link(id = Some("what-you-owe-interest-link"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
+                    @messages("chargeSummary.interestLocks.text")
+                }
 
-        }
-    } else {
-        @p(){
-            @if(viewModel.isAgent) {
-                @messages("chargeSummary.whatYouOwe.textOne-agent"),
-                @link(id = Some("what-you-owe-link-agent"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
-                @messages("chargeSummary.whatYouOwe.textTwo-agent")
-            } else {
-                @messages("chargeSummary.whatYouOwe.textOne")
-                @link(id = Some("what-you-owe-link"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
-                @messages("chargeSummary.whatYouOwe.textTwo")
+            }
+        } else {
+            @p() {
+                @if(viewModel.isAgent) {
+                    @messages("chargeSummary.whatYouOwe.textOne-agent"),
+                    @link(id = Some("what-you-owe-link-agent"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
+                    @messages("chargeSummary.whatYouOwe.textTwo-agent")
+                } else {
+                    @messages("chargeSummary.whatYouOwe.textOne")
+                    @link(id = Some("what-you-owe-link"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
+                    @messages("chargeSummary.whatYouOwe.textTwo")
+                }
             }
         }
     }
 
 
-    @if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZero){
+    @if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZeroAndIsNotCredit){
         @if(viewModel.hasPaymentBreakdown && viewModel.chargeItem.subTransactionType == None) {
             <h3 id="charge-history-h3" class="govuk-heading-m">@chargeHistoryHeading</h3>
         } else {
@@ -422,5 +435,19 @@
             }
             </tbody>
         </table>
+    }
+
+    @if(viewModel.chargeItem.isPoaReconciliationCredit) {
+        @chargeSummaryPaymentAllocationTable(
+            viewModel.chargeItem,
+            {
+                if (viewModel.chargeItem.transactionType == PaymentOnAccountOneReviewAndReconcileCredit) viewModel.poaOneChargeUrl
+                else viewModel.poaTwoChargeUrl
+            },
+            {
+                if (viewModel.chargeItem.transactionType == PaymentOnAccountOneReviewAndReconcileCredit) messages("chargeSummary.paymentOnAccount1.text")
+                else messages("chargeSummary.paymentOnAccount2.text")
+            }
+        )
     }
 }

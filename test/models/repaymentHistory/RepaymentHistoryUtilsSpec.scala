@@ -139,9 +139,9 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
       s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}credits-from-hmrc/2019", "AY777777202202")) else Nil
     val reviewAndReconcileCredits = if (reviewAndReconcileEnabled) List(
       PaymentHistoryEntry(LocalDate.parse("2019-12-23"), PaymentOnAccountOneReviewAndReconcileCredit, Some(-11000.0), None,
-      s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}credits-from-hmrc/2019", "AY777777202298"),
+      s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}tax-years/2019/charge?id=AY777777202298", "AY777777202298"),
       PaymentHistoryEntry(LocalDate.parse("2019-12-23"), PaymentOnAccountTwoReviewAndReconcileCredit, Some(-11000.0), None,
-        s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}credits-from-hmrc/2019", "AY777777202299"),
+        s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}tax-years/2019/charge?id=AY777777202299", "AY777777202299"),
     ) else Nil
     val standardPayments = List(
       PaymentHistoryEntry(LocalDate.parse("2019-12-25"), PaymentType, Some(10000), Some("DOCID02"), s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}payment-made-to-hmrc?documentNumber=DOCID02", "2019-12-25 &pound;10,000.00"),

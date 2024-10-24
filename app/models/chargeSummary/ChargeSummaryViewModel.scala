@@ -50,6 +50,8 @@ case class ChargeSummaryViewModel(
   val hasInterestLocks = paymentBreakdown.exists(_.interestLockExists)
   val hasAccruedInterest = paymentBreakdown.exists(_.hasAccruedInterest)
 
+  val isCredit = chargeItem.originalAmount < 0
+
   val currentTaxYearEnd = {
     if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) currentDate.getYear
     else currentDate.getYear + 1
@@ -79,8 +81,8 @@ case class ChargeSummaryViewModel(
   val codingOutEnabledAndIsClass2NicWithNoIsPayeSelfAssessment: Boolean =
     codingOutEnabled && chargeItem.subTransactionType.contains(Nics2)
 
-  val chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZero: Boolean =
-    (chargeHistoryEnabled || (paymentAllocationEnabled && paymentAllocations.nonEmpty)) && !isBalancingChargeZero
+  val chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZeroAndIsNotCredit: Boolean =
+    (chargeHistoryEnabled || (paymentAllocationEnabled && paymentAllocations.nonEmpty)) && !isBalancingChargeZero && !isCredit
 
   val noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment: Boolean = !latePaymentInterestCharge && !(codingOutEnabled && chargeItem.subTransactionType.contains(Accepted))
 

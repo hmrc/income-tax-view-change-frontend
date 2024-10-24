@@ -57,6 +57,8 @@ trait TransactionItem {
       case (BalancingCharge, _) => "balancingCharge.text"
       case (PaymentOnAccountOneReviewAndReconcile, _) if reviewAndReconcileEnabled => "reviewAndReconcilePoa1.text"
       case (PaymentOnAccountTwoReviewAndReconcile, _) if reviewAndReconcileEnabled => "reviewAndReconcilePoa2.text"
+      case (PaymentOnAccountOneReviewAndReconcileCredit, _) if reviewAndReconcileEnabled => "reviewAndReconcilePoa1Credit.text"
+      case (PaymentOnAccountTwoReviewAndReconcileCredit, _) if reviewAndReconcileEnabled => "reviewAndReconcilePoa2Credit.text"
       case error =>
         Logger("application").error(s"Missing or non-matching charge type: $error found")
         "unknownCharge"
