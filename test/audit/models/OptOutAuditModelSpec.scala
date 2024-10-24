@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package models.optout
+package audit.models
 
-import audit.models.{OptOutAuditModel, Outcome}
 import auth.MtdItUser
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import models.incomeSourceDetails.TaxYear
@@ -64,17 +63,25 @@ class OptOutAuditModelSpec extends TestSupport {
     }
   }
 
-  "OptOutAuditModelSpec.details" when {
+  "OptOutAuditModelSpec" when {
 
-    "given a full model" should {
+    "given OptOutAuditModel" should {
 
-      "create the correct output json" in {
+      "write correctly to json" in {
 
         val taxYear: TaxYear = TaxYear(22, 23)
+
         val expectedOutcome: Outcome = Outcome(isSuccessful = true, None, None)
+
+        val user = tsTestUser
 
         val auditModel: OptOutAuditModel =
           OptOutAuditModel(
+            saUtr = user.saUtr,
+            credId = user.credId,
+            userType = user.userType,
+            agentReferenceNumber = user.arn,
+            mtditid = user.mtditid,
             nino = testNino,
             outcome = expectedOutcome,
             optOutRequestedFromTaxYear = taxYear.previousYear.formatTaxYearRange,
@@ -88,8 +95,14 @@ class OptOutAuditModelSpec extends TestSupport {
             currentYearMinusOneCrystallised = false
           )
 
-        auditModel.detail shouldBe
+        val actual = Json.toJson(auditModel)
+
+        val expectedJson =
           Json.obj(
+            "saUtr" -> "1234567890",
+            "credId" -> "12345-credId",
+            "userType" -> "Individual",
+            "mtditid" -> "XAIT0000123456",
             "nino" -> "AB123456C",
             "outcome" -> Json.obj("isSuccessful" -> true),
             "optOutRequestedFromTaxYear" -> "21-22",
@@ -102,6 +115,56 @@ class OptOutAuditModelSpec extends TestSupport {
             "afterAssumedITSAStatusCurrentYearPlusOne" -> "Annual",
             "currentYearMinusOneCrystallised" -> false
           )
+
+        actual shouldBe expectedJson
+      }
+
+      "read correctly from json" in {
+
+        val taxYear: TaxYear = TaxYear(22, 23)
+
+        val expectedOutcome: Outcome = Outcome(isSuccessful = true, None, None)
+
+        val actual =
+          Json.obj(
+            "saUtr" -> "1234567890",
+            "credId" -> "12345-credId",
+            "userType" -> "Individual",
+            "mtditid" -> "XAIT0000123456",
+            "nino" -> "AB123456C",
+            "outcome" -> Json.obj("isSuccessful" -> true),
+            "optOutRequestedFromTaxYear" -> "21-22",
+            "currentYear" -> "22-23",
+            "beforeITSAStatusCurrentYearMinusOne" -> "MTD Voluntary",
+            "beforeITSAStatusCurrentYear" -> "No Status",
+            "beforeITSAStatusCurrentYearPlusOne" -> "No Status",
+            "afterAssumedITSAStatusCurrentYearMinusOne" -> "Annual",
+            "afterAssumedITSAStatusCurrentYear" -> "No Status",
+            "afterAssumedITSAStatusCurrentYearPlusOne" -> "Annual",
+            "currentYearMinusOneCrystallised" -> false
+          ).as[OptOutAuditModel]
+
+        val expectedModel =
+          OptOutAuditModel(
+            saUtr = user.saUtr,
+            credId = user.credId,
+            userType = user.userType,
+            agentReferenceNumber = user.arn,
+            mtditid = user.mtditid,
+            nino = testNino,
+            outcome = expectedOutcome,
+            optOutRequestedFromTaxYear = taxYear.previousYear.formatTaxYearRange,
+            currentYear = taxYear.formatTaxYearRange,
+            beforeITSAStatusCurrentYearMinusOne = Voluntary,
+            beforeITSAStatusCurrentYear = NoStatus,
+            beforeITSAStatusCurrentYearPlusOne = NoStatus,
+            afterAssumedITSAStatusCurrentYearMinusOne = Annual,
+            afterAssumedITSAStatusCurrentYear = NoStatus,
+            afterAssumedITSAStatusCurrentYearPlusOne = Annual,
+            currentYearMinusOneCrystallised = false
+          )
+
+        actual shouldBe expectedModel
       }
     }
   }

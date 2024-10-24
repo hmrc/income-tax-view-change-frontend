@@ -20,8 +20,9 @@ import auth.MtdItUser
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.ITSAStatus
-import play.api.libs.json.{JsObject, JsValue, Json, OFormat}
+import play.api.libs.json._
 import services.optout.OptOutProposition
+import uk.gov.hmrc.auth.core.AffinityGroup
 
 case class Outcome(
                     isSuccessful: Boolean,
@@ -35,7 +36,11 @@ object Outcome {
 }
 
 case class OptOutAuditModel(
-                             //                             mtdItUser: MtdItUser[_],
+                             saUtr: Option[String],
+                             credId: Option[String],
+                             userType: Option[AffinityGroup],
+                             agentReferenceNumber: Option[String],
+                             mtditid: String,
                              nino: String,
                              outcome: Outcome,
                              optOutRequestedFromTaxYear: String,
@@ -49,41 +54,44 @@ case class OptOutAuditModel(
                              currentYearMinusOneCrystallised: Boolean
                            ) extends ExtendedAuditModel {
 
-
   override val transactionName: String = enums.TransactionName.OptOutQuarterlyReportingRequest
 
   override val auditType: String = enums.AuditType.OptOutQuarterlyReportingRequest
 
-  private val optOutDetailsJson: JsObject =
-    Json.obj(
-      "nino" -> nino,
-      "outcome" -> outcome,
-      "optOutRequestedFromTaxYear" -> optOutRequestedFromTaxYear,
-      "currentYear" -> currentYear,
-      "beforeITSAStatusCurrentYearMinusOne" -> beforeITSAStatusCurrentYearMinusOne.toString,
-      "beforeITSAStatusCurrentYear" -> beforeITSAStatusCurrentYear.toString,
-      "beforeITSAStatusCurrentYearPlusOne" -> beforeITSAStatusCurrentYearPlusOne.toString,
-      "afterAssumedITSAStatusCurrentYearMinusOne" -> afterAssumedITSAStatusCurrentYearMinusOne.toString,
-      "afterAssumedITSAStatusCurrentYear" -> afterAssumedITSAStatusCurrentYear.toString,
-      "afterAssumedITSAStatusCurrentYearPlusOne" -> afterAssumedITSAStatusCurrentYearMinusOne.toString,
-      "currentYearMinusOneCrystallised" -> currentYearMinusOneCrystallised
-    )
+//  private val optOutDetailsJson: JsObject =
+//    Json.obj(
+//      "nino" -> nino,
+//      "outcome" -> outcome,
+//      "optOutRequestedFromTaxYear" -> optOutRequestedFromTaxYear,
+//      "currentYear" -> currentYear,
+//      "beforeITSAStatusCurrentYearMinusOne" -> beforeITSAStatusCurrentYearMinusOne.toString,
+//      "beforeITSAStatusCurrentYear" -> beforeITSAStatusCurrentYear.toString,
+//      "beforeITSAStatusCurrentYearPlusOne" -> beforeITSAStatusCurrentYearPlusOne.toString,
+//      "afterAssumedITSAStatusCurrentYearMinusOne" -> afterAssumedITSAStatusCurrentYearMinusOne.toString,
+//      "afterAssumedITSAStatusCurrentYear" -> afterAssumedITSAStatusCurrentYear.toString,
+//      "afterAssumedITSAStatusCurrentYearPlusOne" -> afterAssumedITSAStatusCurrentYearMinusOne.toString,
+//      "currentYearMinusOneCrystallised" -> currentYearMinusOneCrystallised
+//    )
 
-  override val detail: JsValue = optOutDetailsJson
+  override val detail: JsValue = Json.toJson(this)
 
 }
 
 
 object OptOutAuditModel {
 
-    implicit val format: OFormat[OptOutAuditModel] = Json.format[OptOutAuditModel]
+  implicit val format: OFormat[OptOutAuditModel] = Json.format[OptOutAuditModel]
 
   def generateOptOutAudit(optOutProposition: OptOutProposition,
                           intentTaxYear: TaxYear,
                           resolvedOutcome: ITSAStatusUpdateResponse
                          )(implicit user: MtdItUser[_]): OptOutAuditModel = {
     OptOutAuditModel(
-      //      mtdItUser = user,
+      saUtr = user.saUtr,
+      credId = user.credId,
+      userType = user.userType,
+      agentReferenceNumber = user.arn,
+      mtditid = user.mtditid,
       nino = user.nino,
       optOutRequestedFromTaxYear = intentTaxYear.formatTaxYearRange,
       currentYear = optOutProposition.currentTaxYear.taxYear.formatTaxYearRange,

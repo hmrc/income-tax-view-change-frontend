@@ -128,6 +128,11 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
 
         verifyAuditEvent(
           OptOutAuditModel(
+            saUtr = csbTestUser.saUtr,
+            credId = csbTestUser.credId,
+            userType = csbTestUser.userType,
+            agentReferenceNumber = csbTestUser.arn,
+            mtditid = csbTestUser.mtditid,
             nino = testNino,
             outcome = Outcome(isSuccessful = true, None, None),
             optOutRequestedFromTaxYear = taxYear.previousYear.formatTaxYearRange,
@@ -204,66 +209,15 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
 
         "show Opt Out error page" in {
 
-          //          val userDetailsBody =
-          //            s"""{
-          //               |"name":"$testUserName",
-          //               |"email":"test@test.com",
-          //               |"affinityGroup" : "affinityGroup",
-          //               |"credentialRole": "n/a",
-          //               |"description" : "description",
-          //               |"lastName":"test",
-          //               |"dateOfBirth":"1980-06-30",
-          //               |"postCode":"NW94HD",
-          //               |"authProviderId": "12345-credId",
-          //               |"authProviderType": "GovernmentGateway"
-          //               |}""".stripMargin
-          //
-          //          stubFor(get(urlEqualTo(getUserDetailsUrl))
-          //            .willReturn(
-          //              aResponse().
-          //                withStatus(Status.OK).
-          //                withBody(Json.parse(userDetailsBody).toString())
-          //            )
-          //          )
-          //
-          //          val authJson =
-          //            Json.parse(
-          //              s"""{
-          //                 | "allEnrolments": [{
-          //                 | "key":"$testMtditidEnrolmentKey",
-          //                 | "identifiers": [{"key":"$testMtditidEnrolmentIdentifier", "value":"$testMtditid"}]
-          //                 | },
-          //                 | {
-          //                 | "key":"$testNinoEnrolmentKey",
-          //                 | "identifiers": [{"key":"$testNinoEnrolmentIdentifier", "value":"$testNino"}]
-          //                 | },
-          //                 | {
-          //                 | "key":"$testSaUtrEnrolmentKey",
-          //                 | "identifiers": [{"key":"$testSaUtrEnrolmentIdentifier", "value":"$testSaUtr"}]
-          //                 | }
-          //                 | ],
-          //                 | "userDetailsUri":"$testUserDetailsWiremockUrl",
-          //                 | "affinityGroup" : "Individual",
-          //                 | "optionalCredentials": {
-          //                 |  "providerId": "12345-credId",
-          //                 |  "providerType": "GovernmentGateway"
-          //                 | },
-          //                 | "confidenceLevel": $requiredConfidenceLevel
-          //                 |}""".stripMargin
-          //            ).toString()
-          //
-          //          stubFor(post(urlEqualTo(postAuthoriseUrl))
-          //            .willReturn(
-          //              aResponse()
-          //                .withStatus(Status.OK)
-          //                .withBody(authJson)
-          //            )
-          //          )
-
           val taxYear: TaxYear = TaxYear(2023, 2024)
 
           val auditModel =
             OptOutAuditModel(
+              saUtr = csbTestUser.saUtr,
+              credId = csbTestUser.credId,
+              userType = csbTestUser.userType,
+              agentReferenceNumber = csbTestUser.arn,
+              mtditid = csbTestUser.mtditid,
               nino = testNino,
               outcome = Outcome(isSuccessful = false, Some("INTERNAL_SERVER_ERROR"), Some("Request failed due to unknown reason")),
               optOutRequestedFromTaxYear = taxYear.previousYear.formatTaxYearRange,

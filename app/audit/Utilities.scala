@@ -25,7 +25,6 @@ import utils.Utilities.JsonUtil
 
 object Utilities {
 
-
   private def getBaseDetails(user: MtdItUserBase[_]): JsObject = Json.obj(
     "mtditid" -> user.mtditid) ++
     ("agentReferenceNumber", user.arn) ++
