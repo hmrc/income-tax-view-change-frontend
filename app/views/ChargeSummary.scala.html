@@ -370,7 +370,7 @@
     }
 
 
-    @if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZero && !viewModel.isCredit){
+    @if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZeroAndIsNotCredit){
         @if(viewModel.hasPaymentBreakdown && viewModel.chargeItem.subTransactionType == None) {
             <h3 id="charge-history-h3" class="govuk-heading-m">@chargeHistoryHeading</h3>
         } else {

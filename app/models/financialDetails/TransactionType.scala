@@ -119,6 +119,7 @@ object TransactionType {
 
 object ChargeType {
 
+  //The following are mainTransaction values:
   // values come from EPID #1138
   private val balancingCharge = "4910"
 
