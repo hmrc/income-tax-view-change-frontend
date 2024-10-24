@@ -73,7 +73,7 @@ object TaxYearSummaryChargeItem {
 case class TaxYearSummaryChargeItem(
                                      transactionId: String,
                                      taxYear: TaxYear,
-                                     transactionType: ChargeType,
+                                     transactionType: TransactionType,
                                      subTransactionType: Option[SubTransactionType],
                                      documentDate: LocalDate,
                                      dueDate: Option[LocalDate],

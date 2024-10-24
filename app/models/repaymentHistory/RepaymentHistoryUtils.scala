@@ -19,6 +19,7 @@ package models.repaymentHistory
 import exceptions.MissingFieldException
 import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import models.financialDetails._
+import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.api.i18n.Messages
 import play.api.libs.json.Json
@@ -46,6 +47,14 @@ object RepaymentHistoryUtils {
     }
   }
 
+  private def getPoaChargeLinkUrl(isAgent: Boolean, taxYear: Int, chargeId: String): String = {
+    if (isAgent) {
+      controllers.routes.ChargeSummaryController.showAgent(taxYear, chargeId).url
+    } else {
+      controllers.routes.ChargeSummaryController.show(taxYear, chargeId).url
+    }
+  }
+
   private def groupedPayments(payments: List[PaymentHistoryEntry]): List[(Int, List[PaymentHistoryEntry])] = {
     def sortPayments(payments: List[PaymentHistoryEntry]) = {
       payments
@@ -63,9 +72,9 @@ object RepaymentHistoryUtils {
 
   def getGroupedPaymentHistoryData(payments: List[Payment], repayments: List[RepaymentHistory], isAgent: Boolean, reviewAndReconcileEnabled: Boolean, languageUtils: LanguageUtils
                                   )(implicit messages: Messages, dateServiceInterface: DateServiceInterface): List[(Int, List[PaymentHistoryEntry])] = {
-    val combinedPayments = combinePaymentHistoryData(payments, repayments, isAgent, reviewAndReconcileEnabled, languageUtils
 
-    )
+    val combinedPayments = combinePaymentHistoryData(payments, repayments, isAgent, reviewAndReconcileEnabled, languageUtils)
+
     groupedPayments(combinedPayments)
   }
 
@@ -94,8 +103,8 @@ object RepaymentHistoryUtils {
     (hasCredit,  reviewAndReconcileEnabled, hasLot, payment.creditType) match {
       case (true, _, _, Some(MfaCreditType))                                   => Some(mfaCreditEntry(payment, isAgent))
       case (true, _, _, Some(CutOverCreditType))                               => Some(creditEntry(payment, isAgent))
-      case (true, true, _, Some(PaymentOnAccountOneReviewAndReconcileCredit))  => Some(creditEntry(payment, isAgent))
-      case (true, true, _, Some(PaymentOnAccountTwoReviewAndReconcileCredit))  => Some(creditEntry(payment, isAgent))
+      case (true, true, _, Some(PaymentOnAccountOneReviewAndReconcileCredit))  => Some(creditEntry(payment, isAgent, true))
+      case (true, true, _, Some(PaymentOnAccountTwoReviewAndReconcileCredit))  => Some(creditEntry(payment, isAgent, true))
       case (true, _, _, Some(BalancingChargeCreditType))                       => Some(creditEntry(payment, isAgent))
       case (true, _, _, Some(RepaymentInterest))                               => Some(creditEntry(payment, isAgent))
       case (false, _, true, Some(PaymentType))                                 => Some(paymentToHMRCEntry(payment, isAgent))
@@ -125,13 +134,13 @@ object RepaymentHistoryUtils {
     )
   }
 
-  private def creditEntry(payment: Payment, isAgent: Boolean)(implicit messages: Messages, dateServiceInterface: DateServiceInterface): PaymentHistoryEntry = {
+  private def creditEntry(payment: Payment, isAgent: Boolean, isPoaReconciliationCredit: Boolean = false)(implicit messages: Messages, dateServiceInterface: DateServiceInterface): PaymentHistoryEntry = {
     val creditType = payment.creditType.getOrElse(throw MissingFieldException("Credit type"))
     PaymentHistoryEntry(
       date = payment.dueDate.getOrElse(throw MissingFieldException(s"Payment Due Date - ${creditType.getClass.getSimpleName}")),
       creditType = creditType,
       amount = payment.amount,
-      linkUrl = getCreditsLinkUrl(payment.dueDate.get, isAgent),
+      linkUrl = if (isPoaReconciliationCredit) getPoaChargeLinkUrl(isAgent, payment.documentDate.getYear, payment.transactionId.getOrElse(throw MissingFieldException("Transaction ID"))) else getCreditsLinkUrl(payment.dueDate.get, isAgent),
       visuallyHiddenText = s"${payment.transactionId.getOrElse(throw MissingFieldException("Document ID"))}"
     )
   }
