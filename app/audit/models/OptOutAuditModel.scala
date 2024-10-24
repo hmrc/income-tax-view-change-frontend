@@ -58,21 +58,6 @@ case class OptOutAuditModel(
 
   override val auditType: String = enums.AuditType.OptOutQuarterlyReportingRequest
 
-//  private val optOutDetailsJson: JsObject =
-//    Json.obj(
-//      "nino" -> nino,
-//      "outcome" -> outcome,
-//      "optOutRequestedFromTaxYear" -> optOutRequestedFromTaxYear,
-//      "currentYear" -> currentYear,
-//      "beforeITSAStatusCurrentYearMinusOne" -> beforeITSAStatusCurrentYearMinusOne.toString,
-//      "beforeITSAStatusCurrentYear" -> beforeITSAStatusCurrentYear.toString,
-//      "beforeITSAStatusCurrentYearPlusOne" -> beforeITSAStatusCurrentYearPlusOne.toString,
-//      "afterAssumedITSAStatusCurrentYearMinusOne" -> afterAssumedITSAStatusCurrentYearMinusOne.toString,
-//      "afterAssumedITSAStatusCurrentYear" -> afterAssumedITSAStatusCurrentYear.toString,
-//      "afterAssumedITSAStatusCurrentYearPlusOne" -> afterAssumedITSAStatusCurrentYearMinusOne.toString,
-//      "currentYearMinusOneCrystallised" -> currentYearMinusOneCrystallised
-//    )
-
   override val detail: JsValue = Json.toJson(this)
 
 }
