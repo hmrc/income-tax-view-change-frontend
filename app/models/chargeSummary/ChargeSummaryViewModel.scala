@@ -31,9 +31,7 @@ case class ChargeSummaryViewModel(
                                    paymentAllocations: List[PaymentHistoryAllocations],
                                    payments: FinancialDetailsModel,
                                    chargeHistoryEnabled: Boolean,
-                                   paymentAllocationEnabled: Boolean,
                                    latePaymentInterestCharge: Boolean,
-                                   codingOutEnabled: Boolean,
                                    reviewAndReconcileEnabled: Boolean,
                                    isAgent: Boolean = false,
                                    btaNavPartial: Option[Html] = None,
@@ -68,21 +66,21 @@ case class ChargeSummaryViewModel(
   val messagePrefix = if(latePaymentInterestCharge)"lpi."
   else ""
   val pageTitle: String =
-    s"chargeSummary.$messagePrefix${chargeItem.getChargeTypeKey(codingOutEnabled, reviewAndReconcileEnabled)}"
+    s"chargeSummary.$messagePrefix${chargeItem.getChargeTypeKey(reviewAndReconcileEnabled)}"
 
   val isBalancingChargeZero: Boolean = chargeItem.transactionType match {
-    case _ if codingOutEnabled && chargeItem.subTransactionType.isDefined => false
+    case _ if chargeItem.subTransactionType.isDefined => false
     case BalancingCharge if chargeItem.originalAmount == 0 => true
     case _ => false
   }
 
-  val codingOutEnabledAndIsClass2NicWithNoIsPayeSelfAssessment: Boolean =
-    codingOutEnabled && chargeItem.subTransactionType.contains(Nics2)
+  val isClass2NicWithNoIsPayeSelfAssessment: Boolean =
+    chargeItem.subTransactionType.contains(Nics2)
 
   val chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZero: Boolean =
-    (chargeHistoryEnabled || (paymentAllocationEnabled && paymentAllocations.nonEmpty)) && !isBalancingChargeZero
+    (chargeHistoryEnabled || paymentAllocations.nonEmpty) && !isBalancingChargeZero
 
-  val noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment: Boolean = !latePaymentInterestCharge && !(codingOutEnabled && chargeItem.subTransactionType.contains(Accepted))
+  val noInterestChargeAndIsPayeSelfAssessment: Boolean = !latePaymentInterestCharge && !chargeItem.subTransactionType.contains(Accepted)
 
 }
 

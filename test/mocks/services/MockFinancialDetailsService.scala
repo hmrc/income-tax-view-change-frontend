@@ -64,7 +64,7 @@ trait MockFinancialDetailsService extends UnitSpec with BeforeAndAfterEach {
   }
 
   def mockGetAllUnpaidFinancialDetails(response: FinancialDetailsModel = financialDetailsDueInMoreThan30Days()): Unit = {
-    when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
+    when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
       .thenReturn(Future.successful(List(response)))
   }
 }

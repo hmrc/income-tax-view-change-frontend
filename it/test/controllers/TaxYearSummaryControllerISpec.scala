@@ -582,13 +582,12 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
             None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
           )(FakeRequest()),
           messagesAPI, TaxYearSummaryViewModel(Some(CalculationSummary(liabilityCalculationModelSuccessfulExpected)),
-            financialDetailsDunningLockSuccess.documentDetails.map(dd => ChargeItem.fromDocumentPair(dd, financialDetailsDunningLockSuccess.financialDetails, true, true)).map(TaxYearSummaryChargeItem.fromChargeItem),
-            allObligations, codingOutEnabled = true, reviewAndReconcileEnabled = true, showForecastData = true, ctaViewModel = emptyCTAModel)))
+            financialDetailsDunningLockSuccess.documentDetails.map(dd => ChargeItem.fromDocumentPair(dd, financialDetailsDunningLockSuccess.financialDetails, reviewAndReconcile = true)).map(TaxYearSummaryChargeItem.fromChargeItem),
+            allObligations, reviewAndReconcileEnabled = true, showForecastData = true, ctaViewModel = emptyCTAModel)))
       }
 
 
       "should show user has Coding out that is requested and immediately rejected by NPS" in {
-        enable(CodingOut)
         Given("Business details returns a successful response back")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
 
@@ -640,7 +639,6 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
       }
 
       "should show user has Coding out that has been accepted and rejected by NPS part way through the year" in {
-        enable(CodingOut)
 
         Given("Business details returns a successful response back")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
@@ -693,7 +691,6 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
       }
 
       "should show at crystallization, the user has the coding out requested amount has not been fully collected (partially collected)" in {
-        enable(CodingOut)
 
         Given("Business details returns a successful response back")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
@@ -805,7 +802,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
             Some(CalculationSummary(liabilityCalculationModelSuccessful)),
             emptyPaymentsList,
             allObligations,
-            codingOutEnabled = true, reviewAndReconcileEnabled = true, showForecastData = true, ctaViewModel = emptyCTAModel
+            reviewAndReconcileEnabled = true, showForecastData = true, ctaViewModel = emptyCTAModel
           )))
       }
 
@@ -1135,8 +1132,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           messagesAPI, TaxYearSummaryViewModel(
             Some(CalculationSummary(liabilityCalculationModelSuccessful)),
 
-            auditDD.map(dd => ChargeItem.fromDocumentPair(dd.documentDetail, financialDetailsMFADebits.financialDetails, true, true)).map(TaxYearSummaryChargeItem.fromChargeItem), allObligations,
-            codingOutEnabled = true,
+            auditDD.map(dd => ChargeItem.fromDocumentPair(dd.documentDetail, financialDetailsMFADebits.financialDetails, reviewAndReconcile = true)).map(TaxYearSummaryChargeItem.fromChargeItem), allObligations,
             reviewAndReconcileEnabled = true,
             showForecastData = true, ctaViewModel = emptyCTAModel)))
 

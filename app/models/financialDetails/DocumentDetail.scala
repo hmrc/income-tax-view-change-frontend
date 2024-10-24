@@ -49,13 +49,13 @@ case class DocumentDetail(taxYear: Int,
                          ) {
 
   def credit: Option[BigDecimal] = originalAmount match {
-    case _ if (paymentLotItem.isDefined && paymentLot.isDefined) => None
-    case _ if (originalAmount >= 0) => None
+    case _ if paymentLotItem.isDefined && paymentLot.isDefined => None
+    case _ if originalAmount >= 0 => None
     case credit => Some(credit * -1)
   }
 
   def paymentOrChargeCredit: Option[BigDecimal] = outstandingAmount match {
-    case _ if (outstandingAmount >= 0) => None
+    case _ if outstandingAmount >= 0 => None
     case credit => Some(credit * -1)
   }
 
@@ -132,12 +132,11 @@ case class DocumentDetail(taxYear: Int,
     else "unpaid"
   }
 
-  def isCodingOutDocumentDetail(codingOutEnabled: Boolean = false): Boolean =
-    (codingOutEnabled, isPayeSelfAssessment, isCancelledPayeSelfAssessment, isClass2Nic) match {
-      case (false, _, _, _) => false
-      case (true, true, _, _) => true
-      case (true, _, true, _) => true
-      case (true, _, _, true) => true
+  def isCodingOutDocumentDetail: Boolean =
+    (isPayeSelfAssessment, isCancelledPayeSelfAssessment, isClass2Nic) match {
+      case (true, _, _) => true
+      case (_, true, _) => true
+      case (_, _, true) => true
       case _ => false
     }
 
@@ -158,33 +157,34 @@ case class DocumentDetail(taxYear: Int,
     case _ => false
   }
 
-  def isBalancingCharge(codedOutEnabled: Boolean = false): Boolean = getChargeTypeKey(codedOutEnabled) == "balancingCharge.text"
+  def isBalancingCharge(): Boolean = getChargeTypeKey() == "balancingCharge.text"
 
-  def isBalancingChargeZero(codedOutEnabled: Boolean = false): Boolean = {
-    (isBalancingCharge(codedOutEnabled), this.originalAmount) match {
+  def isBalancingChargeZero(): Boolean = {
+    (isBalancingCharge(), this.originalAmount) match {
       case (true, value) => value == BigDecimal(0.0)
       case _ => false
     }
   }
 
-  def getBalancingChargeDueDate(codedOutEnabled: Boolean = false): Option[LocalDate] = {
-    isBalancingChargeZero(codedOutEnabled) match {
-      case true => None
-      case _ => documentDueDate
+  def getBalancingChargeDueDate(): Option[LocalDate] = {
+    if (isBalancingChargeZero()) {
+      None
+    } else {
+      documentDueDate
     }
   }
 
   // TODO: duplicate logic, in scope of => https://jira.tools.tax.service.gov.uk/browse/MISUV-8557
-  def getChargeTypeKey(codedOutEnabled: Boolean = false): String = documentDescription match {
+  def getChargeTypeKey(): String = documentDescription match {
     case Some(Poa1Charge.key) => "paymentOnAccount1.text"
     case Some(Poa2Charge.key) => "paymentOnAccount2.text"
     case Some(Poa1ReconciliationDebit.key) => "poa1ExtraCharge.text"
     case Some(Poa2ReconciliationDebit.key) => "poa2ExtraCharge.text"
     case Some(BalancingCharge.key) => "balancingCharge.text"
-    case Some(TRMNewCharge.key) | Some(TRMAmendCharge.key) => (codedOutEnabled, isClass2Nic, isPayeSelfAssessment, isCancelledPayeSelfAssessment) match {
-      case (true, true, false, false) => "class2Nic.text"
-      case (true, false, true, false) => "codingOut.text"
-      case (true, false, false, true) => "cancelledPayeSelfAssessment.text"
+    case Some(TRMNewCharge.key) | Some(TRMAmendCharge.key) => (isClass2Nic, isPayeSelfAssessment, isCancelledPayeSelfAssessment) match {
+      case (true, false, false) => "class2Nic.text"
+      case (false, true, false) => "codingOut.text"
+      case (false, false, true) => "cancelledPayeSelfAssessment.text"
       case _ => "balancingCharge.text"
     }
     case error =>
@@ -218,7 +218,7 @@ case class DocumentDetail(taxYear: Int,
 
 case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Option[LocalDate],
                                      isLatePaymentInterest: Boolean = false, dunningLock: Boolean = false,
-                                     codingOutEnabled: Boolean = false, isMFADebit: Boolean = false,
+                                     isMFADebit: Boolean = false,
                                      isReviewAndReconcilePoaOneDebit: Boolean = false,
                                      isReviewAndReconcilePoaTwoDebit: Boolean = false
                                     )(implicit val dateService: DateServiceInterface) {

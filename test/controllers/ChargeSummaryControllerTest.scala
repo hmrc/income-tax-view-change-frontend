@@ -22,7 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.{ChargeHistoryConnector, FinancialDetailsConnector}
 import controllers.predicates.{AuthenticationPredicate, FeatureSwitchPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, SessionTimeoutPredicate}
 import forms.IncomeSourcesFormsSpec.tsTestUser
-import models.admin.{ChargeHistory, CodingOut}
+import models.admin.ChargeHistory
 import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate}
 import org.mockito.Mockito
 import org.mockito.Mockito.{mock, spy, when}
@@ -75,7 +75,6 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
         val documentDetailWithDueDate: DocumentDetailWithDueDate = mock(classOf[DocumentDetailWithDueDate])
 
         controller.enable(ChargeHistory)
-        controller.disable(CodingOut)
 
         val documentDetail: DocumentDetail = mock(classOf[DocumentDetail])
         when(documentDetailWithDueDate.documentDetail).thenReturn(documentDetail)
@@ -103,7 +102,6 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
         val documentDetailWithDueDate: DocumentDetailWithDueDate = mock(classOf[DocumentDetailWithDueDate])
 
         controller.enable(ChargeHistory)
-        controller.disable(CodingOut)
 
         val documentDetail: DocumentDetail = mock(classOf[DocumentDetail])
         when(documentDetailWithDueDate.documentDetail).thenReturn(documentDetail)
@@ -128,7 +126,6 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
         val documentDetailWithDueDate: DocumentDetailWithDueDate = mock(classOf[DocumentDetailWithDueDate])
 
         controller.enable(ChargeHistory)
-        controller.disable(CodingOut)
 
         val documentDetail: DocumentDetail = mock(classOf[DocumentDetail])
         when(documentDetailWithDueDate.documentDetail).thenReturn(documentDetail)
@@ -152,7 +149,6 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
         val documentDetailWithDueDate: DocumentDetailWithDueDate = mock(classOf[DocumentDetailWithDueDate])
 
         controller.enable(ChargeHistory)
-        controller.disable(CodingOut)
 
         val documentDetail: DocumentDetail = mock(classOf[DocumentDetail])
         when(documentDetailWithDueDate.documentDetail).thenReturn(documentDetail)
@@ -177,7 +173,6 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
         val documentDetailWithDueDate: DocumentDetailWithDueDate = mock(classOf[DocumentDetailWithDueDate])
 
         controller.enable(ChargeHistory)
-        controller.disable(CodingOut)
 
         val documentDetail: DocumentDetail = mock(classOf[DocumentDetail])
         when(documentDetailWithDueDate.documentDetail).thenReturn(documentDetail)
@@ -207,7 +202,6 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
         val documentDetailWithDueDate: DocumentDetailWithDueDate = mock(classOf[DocumentDetailWithDueDate])
 
         controller.enable(ChargeHistory)
-        controller.enable(CodingOut)
 
         val documentDetail: DocumentDetail = mock(classOf[DocumentDetail])
         when(documentDetailWithDueDate.documentDetail).thenReturn(documentDetail)
