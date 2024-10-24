@@ -19,7 +19,7 @@ package controllers.agent
 import audit.models.{NextUpdatesResponseAuditModel, TaxYearSummaryResponseAuditModel}
 import auth.MtdItUser
 import config.featureswitch._
-import helpers.agent.AgentComponentSpecBase
+import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEvent}
 import helpers.servicemocks.AuthStub.{titleInternalServer, titleProbWithService}
 import helpers.servicemocks.{CalculationListStub, IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
@@ -49,7 +49,7 @@ import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
 
-class TaxYearSummaryControllerISpec extends AgentComponentSpecBase with FeatureSwitching {
+class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
   lazy val fixedDate: LocalDate = LocalDate.of(2023, 11, 29)
 

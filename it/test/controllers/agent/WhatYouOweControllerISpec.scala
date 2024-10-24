@@ -18,7 +18,7 @@ package controllers.agent
 
 import audit.models.WhatYouOweResponseAuditModel
 import auth.MtdItUser
-import helpers.agent.AgentComponentSpecBase
+import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.admin.{AdjustPaymentsOnAccount, CodingOut, CreditsRefundsRepay, ReviewAndReconcilePoa}
 import models.core.AccountingPeriodModel
@@ -40,7 +40,7 @@ import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
 
-class WhatYouOweControllerISpec extends AgentComponentSpecBase  with ChargeConstants with TransactionUtils {
+class WhatYouOweControllerISpec extends ComponentSpecBase  with ChargeConstants with TransactionUtils {
 
 
   val testArn: String = "1"

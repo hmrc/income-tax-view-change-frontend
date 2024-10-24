@@ -19,7 +19,7 @@ package controllers.agent.manageBusinesses.manage
 import models.admin.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{JourneyType, Manage}
-import helpers.agent.AgentComponentSpecBase
+import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import org.scalatest.Assertion
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -29,7 +29,7 @@ import services.SessionService
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, completedUIJourneySessionData}
 
-class CannotGoBackErrorControllerISpec extends AgentComponentSpecBase {
+class CannotGoBackErrorControllerISpec extends ComponentSpecBase {
   val title: String = messagesAPI("cannotGoBack.heading")
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
   val url: IncomeSourceType => String = (incomeSourceType: IncomeSourceType) =>

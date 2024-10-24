@@ -18,7 +18,7 @@ package controllers.agent
 
 import audit.models.ForecastTaxCalculationAuditModel
 import auth.MtdItUserWithNino
-import helpers.agent.AgentComponentSpecBase
+import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuthStub.titleInternalServer
 import helpers.servicemocks.{AuditStub, IncomeTaxCalculationStub}
 import models.core.AccountingPeriodModel
@@ -87,7 +87,7 @@ object ForecastTaxSummaryAgentControllerTestConstants {
   )
 }
 
-class ForecastTaxCalcSummaryControllerISpec extends AgentComponentSpecBase {
+class ForecastTaxCalcSummaryControllerISpec extends ComponentSpecBase {
 
   lazy val fixedDate : LocalDate = LocalDate.of(2023, 12, 15)
   val incomeSourceDetailsSuccess: IncomeSourceDetailsModel = IncomeSourceDetailsModel(

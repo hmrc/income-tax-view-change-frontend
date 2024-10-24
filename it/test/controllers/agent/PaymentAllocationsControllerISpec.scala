@@ -19,7 +19,7 @@ package controllers.agent
 import audit.models.PaymentAllocationsResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
-import helpers.agent.AgentComponentSpecBase
+import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.AuthStub.titleInternalServer
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -39,7 +39,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import java.time.LocalDate
 
-class PaymentAllocationsControllerISpec extends AgentComponentSpecBase with FeatureSwitching {
+class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
   override def beforeEach(): Unit = {
     super.beforeEach()

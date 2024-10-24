@@ -18,7 +18,7 @@ package controllers.agent
 
 import audit.models.EnterClientUTRAuditModel
 import config.featureswitch.FeatureSwitching
-import helpers.agent.AgentComponentSpecBase
+import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuthStub.titleInternalServer
 import helpers.servicemocks.SessionDataStub.{stubPostSessionDataResponseConflictResponse, stubPostSessionDataResponseFailure, stubPostSessionDataResponseOkResponse}
 import helpers.servicemocks.{AuditStub, CitizenDetailsStub, IncomeTaxViewChangeStub}
@@ -29,7 +29,7 @@ import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.testMtdItId
 import testConstants.IncomeSourceIntegrationTestConstants._
 
-class EnterClientsUTRControllerISpec extends AgentComponentSpecBase with FeatureSwitching {
+class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
   s"GET ${controllers.agent.routes.EnterClientsUTRController.show.url}" should {
     s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" when {

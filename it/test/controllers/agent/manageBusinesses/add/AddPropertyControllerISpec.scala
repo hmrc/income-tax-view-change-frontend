@@ -19,13 +19,13 @@ package controllers.agent.manageBusinesses.add
 import models.admin.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import forms.manageBusinesses.add.AddProprertyForm
-import helpers.agent.AgentComponentSpecBase
+import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid}
 import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
 
-class AddPropertyControllerISpec extends AgentComponentSpecBase {
+class AddPropertyControllerISpec extends ComponentSpecBase {
 
   val addPropertyShowUrl = controllers.manageBusinesses.add.routes.AddPropertyController.show(isAgent = true).url
   val addPropertySubmitUrl = controllers.manageBusinesses.add.routes.AddPropertyController.submit(isAgent = true).url

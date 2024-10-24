@@ -17,13 +17,13 @@
 package controllers.agent.manageBusinesses.cease
 
 import models.admin.IncomeSources
-import helpers.agent.AgentComponentSpecBase
+import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.OK
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyAndCeasedBusiness, multipleBusinessesWithBothPropertiesAndCeasedBusiness}
 
-class ViewAllCeasedBusinessesControllerISpec extends AgentComponentSpecBase {
+class ViewAllCeasedBusinessesControllerISpec extends ComponentSpecBase {
 
   val ViewAllCeasedBusinessesControllerUrl: String = controllers.manageBusinesses.cease.routes.ViewAllCeasedBusinessesController.show(true).url
   val pageTitleMsgKey = "manageBusinesses.ceased.heading"

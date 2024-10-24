@@ -17,7 +17,7 @@
 package controllers.agent
 
 import config.featureswitch._
-import helpers.agent.AgentComponentSpecBase
+import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuthStub.{titleInternalServer, titleProbWithService}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.ITSASubmissionIntegration
@@ -33,7 +33,7 @@ import testConstants.messages.TaxYearsMessages.{taxYearMessage, updateReturn, vi
 
 import java.time.LocalDate
 
-class TaxYearsControllerISpec extends AgentComponentSpecBase with FeatureSwitching {
+class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
   override def beforeEach(): Unit = {
     super.beforeEach()

@@ -18,7 +18,7 @@ package controllers.agent.manageBusinesses.manage
 
 import models.admin.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import helpers.agent.AgentComponentSpecBase
+import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.{ManageIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status
@@ -29,7 +29,7 @@ import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, noPropertyOrBusinessResponse, ukPropertyOnlyResponse}
 
 
-class ReportingMethodErrorControllerISpec extends AgentComponentSpecBase {
+class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
 
   private lazy val reportingMethodChangeErrorController = controllers.manageBusinesses.manage.routes.ReportingMethodChangeErrorController
 

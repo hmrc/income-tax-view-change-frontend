@@ -16,7 +16,6 @@
 
 package controllers.constants
 
-import controllers.optOut.routes
 import models.incomeSourceDetails.TaxYear
 import services.DateService
 

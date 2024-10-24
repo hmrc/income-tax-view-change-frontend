@@ -17,14 +17,14 @@
 package controllers.agent.manageBusinesses.add
 
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import helpers.agent.AgentComponentSpecBase
+import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.IncomeSources
 import play.api.http.Status.OK
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid}
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
 
-class IncomeSourceReportingMethodNotSavedControllerISpec extends AgentComponentSpecBase {
+class IncomeSourceReportingMethodNotSavedControllerISpec extends ComponentSpecBase {
 
   val selfEmploymentReportingMethodNotSavedShowAgentUrl: String = controllers.manageBusinesses.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(SelfEmployment).url
   val ukPropertyReportingMethodNotSavedShowAgentUrl: String = controllers.manageBusinesses.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(UkProperty).url

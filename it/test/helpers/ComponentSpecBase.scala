@@ -198,9 +198,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   override def beforeEach(): Unit = {
     super.beforeEach()
     WireMock.reset()
-        isAuthorisedUser(true)
-        stubUserDetails()
-        AuditStub.stubAuditing()
+    isAuthorisedUser(true)
+    stubUserDetails()
+    AuditStub.stubAuditing()
     cache.removeAll()
     FeatureSwitchName.allFeatureSwitches foreach disable
   }

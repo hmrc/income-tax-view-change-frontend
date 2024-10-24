@@ -16,7 +16,7 @@
 
 package controllers.agent
 
-import helpers.agent.{AgentComponentSpecBase, SessionCookieBaker}
+import helpers.agent.{ComponentSpecBase, SessionCookieBaker}
 import helpers.servicemocks.{IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
@@ -35,7 +35,7 @@ import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSu
 import java.time.LocalDate
 import java.util.Locale
 
-class FinalTaxCalculationControllerISpec extends AgentComponentSpecBase with SessionCookieBaker {
+class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionCookieBaker {
 
   val (taxYear, month, dayOfMonth) = (2018, 5, 6)
   val (hour, minute) = (12, 0)

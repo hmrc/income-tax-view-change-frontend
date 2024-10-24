@@ -17,7 +17,7 @@
 package controllers.agent
 
 import config.featureswitch.FeatureSwitching
-import helpers.agent.AgentComponentSpecBase
+import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuthStub.titleInternalServer
 import helpers.servicemocks._
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
@@ -35,7 +35,7 @@ import testConstants.PropertyDetailsIntegrationTestConstants.{propertyIncomeType
 
 import java.time.LocalDate
 
-class IncomeSummaryControllerISpec extends AgentComponentSpecBase with FeatureSwitching {
+class IncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
   val implicitDateFormatter: ImplicitDateFormatter = app.injector.instanceOf[ImplicitDateFormatterImpl]
   implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())

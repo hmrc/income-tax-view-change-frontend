@@ -19,7 +19,7 @@ package controllers.agent.manageBusinesses.cease
 import models.admin.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
-import helpers.agent.AgentComponentSpecBase
+import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.CeaseIncomeSourceData.ceaseIncomeSourceDeclare
 import models.incomeSourceDetails.UIJourneySessionData
@@ -32,7 +32,7 @@ import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndP
 import controllers.manageBusinesses.cease.routes._
 import play.api.http.Status
 
-class DeclareIncomeSourceCeasedControllerISpec extends AgentComponentSpecBase {
+class DeclareIncomeSourceCeasedControllerISpec extends ComponentSpecBase {
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
   val repository = app.injector.instanceOf[UIJourneySessionDataRepository]

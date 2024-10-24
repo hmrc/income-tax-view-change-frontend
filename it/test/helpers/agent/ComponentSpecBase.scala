@@ -24,7 +24,6 @@ import forms.agent.ClientsUTRForm
 import forms.incomeSources.add.{AddIncomeSourceStartDateCheckForm, IncomeSourceReportingMethodForm}
 import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
 import forms.optOut.ConfirmOptOutSingleTaxYearForm
-import helpers.servicemocks.AuditStub
 import helpers.{CustomMatchers, GenericStubMethods, TestDateService, WiremockHelper}
 import models.admin.FeatureSwitchName
 import org.scalatest._
@@ -47,7 +46,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait AgentComponentSpecBase extends TestSuite with CustomMatchers
+trait ComponentSpecBase extends TestSuite with CustomMatchers
   with GuiceOneServerPerSuite with ScalaFutures with IntegrationPatience with Matchers
   with WiremockHelper with BeforeAndAfterEach with BeforeAndAfterAll with Eventually
   with GenericStubMethods with SessionCookieBaker with FeatureSwitching {

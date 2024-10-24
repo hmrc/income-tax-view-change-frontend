@@ -16,14 +16,14 @@
 
 package controllers.agent.claimToAdjustPoa
 
-import helpers.agent.AgentComponentSpecBase
+import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.AdjustPaymentsOnAccount
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testDate, testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
 
-class AmendablePoaControllerISpec extends AgentComponentSpecBase {
+class AmendablePoaControllerISpec extends ComponentSpecBase {
 
   private val amendPoaUrl = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = true).url
   private val testTaxYear = 2024

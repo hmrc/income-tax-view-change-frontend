@@ -21,7 +21,7 @@ import auth.MtdItUser
 import models.admin.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{JourneyType, Manage}
-import helpers.agent.AgentComponentSpecBase
+import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.incomeSourceDetails.{LatencyDetails, ManageIncomeSourceData, UIJourneySessionData}
 import models.updateIncomeSource.UpdateIncomeSourceResponseModel
@@ -37,7 +37,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import java.time.LocalDate
 import java.time.Month.APRIL
 
-class CheckYourAnswersControllerISpec extends AgentComponentSpecBase {
+class CheckYourAnswersControllerISpec extends ComponentSpecBase {
 
   val annual = "annual"
   val quarterly = "quarterly"

@@ -21,7 +21,7 @@ import auth.MtdItUser
 import models.admin.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
-import helpers.agent.AgentComponentSpecBase
+import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
@@ -36,7 +36,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import java.time.LocalDate
 
-class IncomeSourceCheckDetailsControllerISpec extends AgentComponentSpecBase {
+class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
   def checkBusinessDetailsShowUrl(incomeSourceType: IncomeSourceType): String = controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType).url
 
   def checkBusinessDetailsSubmitUrl(incomeSourceType: IncomeSourceType): String = controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.submitAgent(incomeSourceType).url

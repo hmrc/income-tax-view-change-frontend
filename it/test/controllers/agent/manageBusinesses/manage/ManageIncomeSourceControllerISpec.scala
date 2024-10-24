@@ -17,13 +17,13 @@
 package controllers.agent.manageBusinesses.manage
 
 import models.admin.IncomeSources
-import helpers.agent.AgentComponentSpecBase
+import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.OK
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithStartDate, testMtditid}
 import testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyAndCeasedBusiness, multipleBusinessesAndUkProperty}
 
-class ManageIncomeSourceControllerISpec extends AgentComponentSpecBase {
+class ManageIncomeSourceControllerISpec extends ComponentSpecBase {
 
   val showIndividualViewIncomeSourceControllerUrl: String = controllers.manageBusinesses.manage.routes.ManageIncomeSourceController.show(true).url
   val pageTitleMsgKey = "view-income-sources.heading"

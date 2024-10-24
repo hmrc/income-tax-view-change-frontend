@@ -22,7 +22,7 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import config.featureswitch._
 import enums.ChargeType.{ITSA_ENGLAND_AND_NI, ITSA_NI, NIC4_SCOTLAND}
 import enums.CodingOutType._
-import helpers.agent.AgentComponentSpecBase
+import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuthStub.titleInternalServer
 import helpers.servicemocks.ChargeItemStub.chargeItemWithInterest
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
@@ -42,7 +42,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import java.time.LocalDate
 
-class ChargeSummaryControllerISpec extends AgentComponentSpecBase with FeatureSwitching {
+class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
   override def beforeEach(): Unit = {
     WireMock.reset()

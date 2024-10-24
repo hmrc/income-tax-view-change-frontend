@@ -17,7 +17,7 @@
 package controllers.agent.optOut
 
 import helpers.OptOutSessionRepositoryHelper
-import helpers.agent.AgentComponentSpecBase
+import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus._
@@ -26,7 +26,7 @@ import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
-class ConfirmedOptOutControllerISpec extends AgentComponentSpecBase {
+class ConfirmedOptOutControllerISpec extends ComponentSpecBase {
   private val isAgent: Boolean = true
   private val confirmedOptOutPageUrl = controllers.optOut.routes.ConfirmedOptOutController.show(isAgent).url
   private val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]

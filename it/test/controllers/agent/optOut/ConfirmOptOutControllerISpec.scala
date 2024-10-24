@@ -17,7 +17,7 @@
 package controllers.agent.optOut
 
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
-import helpers.agent.AgentComponentSpecBase
+import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import helpers.{ITSAStatusUpdateConnectorStub, OptOutSessionRepositoryHelper}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
@@ -31,7 +31,7 @@ import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
-class ConfirmOptOutControllerISpec extends AgentComponentSpecBase {
+class ConfirmOptOutControllerISpec extends ComponentSpecBase {
 
   implicit val defaultPatience: PatienceConfig =
     PatienceConfig(timeout = Span(10, Seconds), interval = Span(5, Millis))

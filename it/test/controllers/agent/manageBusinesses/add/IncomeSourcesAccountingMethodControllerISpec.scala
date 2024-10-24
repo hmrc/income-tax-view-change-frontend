@@ -19,7 +19,7 @@ package controllers.agent.manageBusinesses.add
 import models.admin.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
-import helpers.agent.AgentComponentSpecBase
+import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -31,7 +31,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 import scala.concurrent.ExecutionContext
 
-class IncomeSourcesAccountingMethodControllerISpec extends AgentComponentSpecBase {
+class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
 
   val addIncomeSourcesAccountingMethodShowUrlSoleTrader: String = controllers.manageBusinesses.add.routes.IncomeSourcesAccountingMethodController.show(SelfEmployment, isAgent = true).url
   val addIncomeSourcesAccountingMethodShowUrlUK: String = controllers.manageBusinesses.add.routes.IncomeSourcesAccountingMethodController.show(UkProperty, isAgent = true).url

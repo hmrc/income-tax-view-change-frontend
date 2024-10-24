@@ -20,7 +20,7 @@ import models.admin.IncomeSources
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessNameForm
-import helpers.agent.AgentComponentSpecBase
+import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.AddIncomeSourceData.businessNameField
 import org.jsoup.Jsoup
@@ -32,7 +32,7 @@ import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessRe
 
 import scala.concurrent.ExecutionContext
 
-class AddBusinessNameControllerISpec extends AgentComponentSpecBase {
+class AddBusinessNameControllerISpec extends ComponentSpecBase {
 
   val addBusinessNameShowUrl: String = controllers.manageBusinesses.add.routes.AddBusinessNameController.show(isAgent = true,isChange = false).url
   val addBusinessNameSubmitUrl: String = controllers.manageBusinesses.add.routes.AddBusinessNameController.submit(isAgent = true,isChange = false).url

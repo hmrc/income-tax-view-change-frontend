@@ -20,7 +20,7 @@ import models.admin.IncomeSources
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessTradeForm
-import helpers.agent.AgentComponentSpecBase
+import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.AddIncomeSourceData.businessTradeField
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
@@ -30,7 +30,7 @@ import services.SessionService
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesResponse, noPropertyOrBusinessResponse}
 
-class AddBusinessTradeControllerISpec extends AgentComponentSpecBase {
+class AddBusinessTradeControllerISpec extends ComponentSpecBase {
 
   val addBusinessTradeControllerShowUrl: String = controllers.manageBusinesses.add.routes.AddBusinessTradeController.show(isAgent = true, isChange = false).url
   val addBusinessTradeSubmitUrl = controllers.manageBusinesses.add.routes.AddBusinessTradeController.submit(isAgent = true, isChange = false).url
