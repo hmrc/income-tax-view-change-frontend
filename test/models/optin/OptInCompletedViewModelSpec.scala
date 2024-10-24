@@ -39,9 +39,7 @@ class OptInCompletedViewModelSpec extends UnitSpec {
             isCurrentYear = true,
             showAnnualReportingAdvice = false,
             optInIncludedNextYear = false,
-            annualWithFollowingYearMandated = false,
-            nextUpdatesLink = controllers.routes.NextUpdatesController.show().url,
-            reportingFrequencyLink = controllers.routes.ReportingFrequencyPageController.show(false).url
+            annualWithFollowingYearMandated = false
           )
 
         model.startDateNextYear shouldBe "6 April 2024"
@@ -60,9 +58,7 @@ class OptInCompletedViewModelSpec extends UnitSpec {
               isCurrentYear = true,
               showAnnualReportingAdvice = false,
               optInIncludedNextYear = false,
-              annualWithFollowingYearMandated = true,
-              nextUpdatesLink = controllers.routes.NextUpdatesController.show().url,
-              reportingFrequencyLink = controllers.routes.ReportingFrequencyPageController.show(false).url
+              annualWithFollowingYearMandated = true
             )
 
           model.headingMessageKey shouldBe "optin.completedOptIn.followingVoluntary.heading.desc"
@@ -79,9 +75,7 @@ class OptInCompletedViewModelSpec extends UnitSpec {
               isCurrentYear = true,
               showAnnualReportingAdvice = false,
               optInIncludedNextYear = true,
-              annualWithFollowingYearMandated = false,
-              nextUpdatesLink = controllers.routes.NextUpdatesController.show().url,
-              reportingFrequencyLink = controllers.routes.ReportingFrequencyPageController.show(false).url
+              annualWithFollowingYearMandated = false
             )
 
           model.headingMessageKey shouldBe "optin.completedOptIn.followingVoluntary.heading.desc"
@@ -98,9 +92,7 @@ class OptInCompletedViewModelSpec extends UnitSpec {
               isCurrentYear = true,
               showAnnualReportingAdvice = false,
               optInIncludedNextYear = false,
-              annualWithFollowingYearMandated = false,
-              nextUpdatesLink = controllers.routes.NextUpdatesController.show().url,
-              reportingFrequencyLink = controllers.routes.ReportingFrequencyPageController.show(false).url
+              annualWithFollowingYearMandated = false
             )
 
           model.headingMessageKey shouldBe "optin.completedOptIn.cy.heading.desc"
@@ -117,14 +109,42 @@ class OptInCompletedViewModelSpec extends UnitSpec {
               isCurrentYear = false,
               showAnnualReportingAdvice = false,
               optInIncludedNextYear = false,
-              annualWithFollowingYearMandated = false,
-              nextUpdatesLink = controllers.routes.NextUpdatesController.show().url,
-              reportingFrequencyLink = controllers.routes.ReportingFrequencyPageController.show(false).url
+              annualWithFollowingYearMandated = false
             )
 
           model.headingMessageKey shouldBe "optin.completedOptIn.ny.heading.desc"
         }
       }
+    }
+
+    "the isAgent flag is true, the NextUpdate Agent url is set" in {
+
+      val model =
+        OptInCompletedViewModel(
+          isAgent = true,
+          optInTaxYear = optInTaxYear,
+          isCurrentYear = true,
+          showAnnualReportingAdvice = false,
+          optInIncludedNextYear = false,
+          annualWithFollowingYearMandated = true,
+        )
+
+      model.nextUpdatesLink shouldBe controllers.routes.NextUpdatesController.showAgent.url
+    }
+
+    "the isAgent flag is false, the non agent user NextUpdate url is set" in {
+
+      val model =
+        OptInCompletedViewModel(
+          isAgent = false,
+          optInTaxYear = optInTaxYear,
+          isCurrentYear = true,
+          showAnnualReportingAdvice = false,
+          optInIncludedNextYear = false,
+          annualWithFollowingYearMandated = true,
+        )
+
+      model.nextUpdatesLink shouldBe controllers.routes.NextUpdatesController.show().url
     }
   }
 }

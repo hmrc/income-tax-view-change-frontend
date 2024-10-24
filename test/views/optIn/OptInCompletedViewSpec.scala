@@ -51,10 +51,9 @@ class OptInCompletedViewSpec extends TestSupport {
         isCurrentYear = true,
         showAnnualReportingAdvice = false,
         optInIncludedNextYear = followingYearVoluntary,
-        annualWithFollowingYearMandated = annualWithFollowingYearMandated,
-        nextUpdatesLink = controllers.routes.NextUpdatesController.show().url,
-        reportingFrequencyLink = reportingFrequencyLinkUrl(isAgent)
+        annualWithFollowingYearMandated = annualWithFollowingYearMandated
       )
+
     val pageDocument: Document = Jsoup.parse(contentAsString(view(model = model)))
   }
 
@@ -159,9 +158,7 @@ class OptInCompletedViewSpec extends TestSupport {
         isCurrentYear = false,
         showAnnualReportingAdvice = true,
         optInIncludedNextYear = false,
-        annualWithFollowingYearMandated = false,
-        nextUpdatesLink = controllers.routes.NextUpdatesController.show().url,
-        reportingFrequencyLink = reportingFrequencyLinkUrl(isAgent)
+        annualWithFollowingYearMandated = false
       )
 
     val pageDocument: Document = Jsoup.parse(contentAsString(view(model = model)))
