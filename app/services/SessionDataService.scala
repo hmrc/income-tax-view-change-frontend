@@ -16,13 +16,12 @@
 
 package services
 
-import config.FrontendAppConfig
 import connectors.SessionDataConnector
 import controllers.agent.sessionUtils.SessionKeys
 import models.sessionData.SessionDataModel
 import models.sessionData.SessionDataPostResponse.SessionDataPostResponse
 import play.api.mvc.Request
-import testOnly.models.SessionDataGetResponse.{SessionDataGetSuccess, SessionGetResponse}
+import testOnly.models.SessionDataGetResponse.{SessionDataGetSuccess, SessionDataNotFound, SessionGetResponse}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -35,7 +34,7 @@ class SessionDataService @Inject()(sessionDataConnector: SessionDataConnector)
                     (implicit request: Request[_],
                      hc: HeaderCarrier): Future[SessionGetResponse] = {
     if(useCookie) {
-        getSessionResponseFromCookie
+      getSessionResponseFromCookie
     } else {
       sessionDataConnector.getSessionData()
     }
@@ -61,7 +60,7 @@ class SessionDataService @Inject()(sessionDataConnector: SessionDataConnector)
           )
         )
       )
-      case _ => Future(Left(new Exception("Cookie does not contain agent data")))
+      case _ => Future(Left(SessionDataNotFound("Cookie does not contain agent data")))
     }
   }
 
