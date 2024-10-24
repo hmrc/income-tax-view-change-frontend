@@ -70,11 +70,7 @@ class OptInCompletedController @Inject()(val view: OptInCompletedView,
                   showAnnualReportingAdvice = proposition.showAnnualReportingAdvice(optInTaxYear),
                   isCurrentYear = proposition.isCurrentTaxYear(optInTaxYear),
                   optInIncludedNextYear = proposition.nextTaxYear.status == Voluntary,
-                  annualWithFollowingYearMandated = proposition.annualWithFollowingYearMandated(),
-                  nextUpdatesLink =
-                    if (isAgent) controllers.routes.NextUpdatesController.showAgent.url
-                    else controllers.routes.NextUpdatesController.show().url,
-                  reportingFrequencyLink = controllers.optIn.routes.OptInCompletedController.show(isAgent).url // TODO: Fix the navigation in future stories
+                  annualWithFollowingYearMandated = proposition.annualWithFollowingYearMandated()
                 )
               Ok(view(model))
             }.getOrElse(errorHandler(isAgent).showInternalServerError())
