@@ -17,26 +17,21 @@
 package auth.authV2
 
 import audit.AuditingService
-import auth.{FrontendAuthorisedFunctions, MtdItUserOptionNino}
+import auth.FrontendAuthorisedFunctions
 import auth.authV2.actions._
 import config.{FrontendAppConfig, FrontendAuthConnector}
 import controllers.predicates.IncomeSourceDetailsPredicate
-import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.mockito.Mockito
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar.mock
-import play.api.{Application, Play}
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
+import play.api.{Application, Play}
 import services.IncomeSourceDetailsService
 import testUtils.TestSupport
-import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
 
 trait AuthActionsSpecHelper extends TestSupport with ScalaFutures {
-
-  def bindingMocks: List[GuiceableModule]
-
 
   lazy val mockAuthConnector = mock[FrontendAuthConnector]
   lazy val mockIncomeSourceDetailsService = mock[IncomeSourceDetailsService]
@@ -47,22 +42,6 @@ trait AuthActionsSpecHelper extends TestSupport with ScalaFutures {
     super.beforeEach()
     Mockito.reset(mockAuthConnector)
     Mockito.reset(mockIncomeSourceDetailsService)
-  }
-
-  override def afterEach(): Unit = {
-    Play.stop(fakeApplication())
-    super.afterEach()
-  }
-
-  val frontendAuthFunctions = new FrontendAuthorisedFunctions(mockAuthConnector)
-
-  override def fakeApplication(): Application = {
-
-    new GuiceApplicationBuilder()
-      .overrides(
-        bindingMocks:_*
-      )
-      .build()
   }
 
   implicit class Ops[A](a: A) {

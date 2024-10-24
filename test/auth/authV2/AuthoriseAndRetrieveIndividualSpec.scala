@@ -25,40 +25,64 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.Assertion
 import play.api
-import play.api.inject.guice.GuiceableModule
-import play.api.mvc.{Result, Results}
+import play.api.http.HeaderNames
+import play.api.{Application, Play}
+import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
+import play.api.mvc.{Request, Result, Results}
+import play.api.test.FakeRequest
+import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
+import uk.gov.hmrc.auth.core.AuthConnector
+import uk.gov.hmrc.http.SessionKeys
 
 import scala.concurrent.Future
 
 class AuthoriseAndRetrieveIndividualSpec extends AuthActionsSpecHelper {
 
-  override def bindingMocks: List[GuiceableModule] = List(
-    api.inject.bind[FrontendAuthorisedFunctions].toInstance(frontendAuthFunctions),
-    api.inject.bind[FrontendAppConfig].toInstance(mockAppConfig),
-    api.inject.bind[AuditingService].toInstance(mockAuditingService),
-  )
+  override def afterEach(): Unit = {
+    Play.stop(fakeApplication())
+    super.afterEach()
+  }
+
+  override def fakeApplication(): Application = {
+    val frontendAuthFunctions = new FrontendAuthorisedFunctions(mockAuthConnector)
+
+    new GuiceApplicationBuilder()
+      .overrides(
+        api.inject.bind[FrontendAuthorisedFunctions].toInstance(frontendAuthFunctions),
+        api.inject.bind[AuditingService].toInstance(mockAuditingService)
+      )
+      .build()
+  }
 
   def defaultAsyncBody(
                         requestTestCase: MtdItUserOptionNino[_] => Assertion
-                      ): MtdItUserOptionNino[_] => Result = testRequest => {
+                      ): MtdItUserOptionNino[_] => Future[Result] = testRequest => {
     requestTestCase(testRequest)
-    Results.Ok("Successful")
+    Future.successful(Results.Ok("Successful"))
   }
 
-  lazy val authAction = app.injector.instanceOf[AuthoriseAndRetrieveIndividual]
+  lazy val authAction = fakeApplication().injector.instanceOf[AuthoriseAndRetrieveIndividual]
 
   "refine" should {
     "return the expected MtdItUserOptionNino response" when {
       "the user is an Individual enrolled into HMRC-MTD-IT with the required confidence level" that {
         "also has a name, nino and sa enrolment" in {
-          when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
-            Future.successful[AuthRetrievals](
-              getAllEnrolmentsIndividual(true, true) ~ Some(userName) ~ Some(credentials) ~ Some(Individual) ~ confidenceLevel
-            )
-          )
 
-        }
+            when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
+              Future.successful[AuthRetrievals](
+                getAllEnrolmentsIndividual(true, true) ~ Some(userName) ~ Some(credentials) ~ Some(Individual) ~ confidenceLevel
+              )
+            )
+
+            val result = authAction.invokeBlock(
+              fakeRequestWithActiveSession,
+              defaultAsyncBody(_ shouldBe getMtdItUserOptionNinoForAuthorise(true)(fakeRequestWithActiveSession)))
+
+            result.map{res => println(res)}
+            status(result) shouldBe OK
+            contentAsString(result) shouldBe "Successful"
+          }
       }
     }
   }

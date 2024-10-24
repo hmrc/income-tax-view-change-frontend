@@ -23,12 +23,10 @@ import auth.authV2.AuthExceptions.MissingMtdId
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import controllers.predicates.agent.Constants
-import enums.MTDIndividual
 import models.OriginEnum
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import play.api.{Configuration, Environment, Logger}
-import uk.gov.hmrc.auth.core.AffinityGroup.{Individual, Organisation}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
