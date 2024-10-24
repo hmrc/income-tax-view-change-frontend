@@ -1,25 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-    <!-- Console appender for test logging -->
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>logs/income-tax-view-change-frontend.log</file>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>[%.-4level] [%thread] %date{ISO8601} %class{0}#%M:%line - %message %replace(exception=[%xException]){'^exception=\[\]$',''}%n</pattern>
+            <pattern>[%.-4level]  %date{ISO8601} %class{0}#%M:%line %message %replace(exception=[%xException]){'^exception=\[\]$',''}%n</pattern>
         </encoder>
     </appender>
 
-    <!-- Set log levels to INFO for critical loggers, DEBUG for root -->
-    <logger name="application" level="INFO"/>
-    <logger name="auth" level="INFO"/>
-    <logger name="controllers" level="INFO"/>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>[%.-4level]  %date{ISO8601} %class{0}#%M:%line %message %replace(exception=[%xException]){'^exception=\[\]$',''}%n</pattern>
+        </encoder>
+    </appender>
 
-    <!-- Root logger set to DEBUG for detailed test logs -->
-<!--    <root level="DEBUG">-->
-<!--        <appender-ref ref="STDOUT"/>-->
-<!--    </root>-->
+    <appender name="CONNECTOR_LOG_FILE" class="ch.qos.logback.core.FileAppender">
+        <file>logs/connector.log</file>
+        <encoder>
+            <pattern>%message%n</pattern>
+        </encoder>
+    </appender>
 
-    <root level="INFO">
+    <logger name="com.google.inject" level="OFF"/>
+
+    <logger name="org.asynchttpclient.netty" level="OFF"/>
+    <logger name="io.netty.buffer" level="OFF"/>
+    <logger name="play.core.netty" level="OFF"/>
+
+    <logger name="uk.gov" level="OFF"/>
+
+    <logger name="application" level="DEBUG"/>
+
+    <logger name="auth" level="DEBUG"/>
+
+
+    <logger name="controllers" level="DEBUG"/>
+
+
+    <logger name="connector" level="ERROR">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+
+
+    <root level="ERROR">
+        <appender-ref ref="FILE"/>
         <appender-ref ref="STDOUT"/>
     </root>
-
 </configuration>
