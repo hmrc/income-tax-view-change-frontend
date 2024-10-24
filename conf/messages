@@ -1136,8 +1136,7 @@ paymentAllocation.tableHead.allocated-date                      = Date
 paymentAllocation.tableHead.amount                              = Amount
 paymentAllocation.taxYear										= Tax year {0} to {1}
 paymentAllocation.creditOnAccount                               = Credit on account
-paymentAllocation.moneyOnAccount                                = Money in your account
-paymentAllocation.moneyOnAccount.agent                          = Money in your client’s account
+paymentAllocation.moneyOnAccount                                = Remaining amount (added to available credit)
 paymentAllocation.na                                            = N/A
 paymentAllocation.intro                                         = When you make a payment, HMRC assigns the money to the different charges in your account in the following order.
 paymentAllocation.condition-1                                   = Overdue charges and any other charges accruing interest.
@@ -1146,10 +1145,10 @@ paymentAllocation.condition-3                                   = Charges due wi
 paymentAllocation.outro                                         = You can see how this payment was allocated in the table below.
 
 
-paymentAllocation.paymentAllocations.poa1.incomeTax             = Income Tax for payment on account 1 of 2
-paymentAllocation.paymentAllocations.poa1.nic4                  = Class 4 National Insurance for payment on account 1 of 2
-paymentAllocation.paymentAllocations.poa2.incomeTax             = Income Tax for payment on account 2 of 2
-paymentAllocation.paymentAllocations.poa2.nic4                  = Class 4 National Insurance for payment on account 2 of 2
+paymentAllocation.paymentAllocations.poa1.incomeTax             = Income Tax for first payment on account
+paymentAllocation.paymentAllocations.poa1.nic4                  = Class 4 National Insurance contributions for first payment on account
+paymentAllocation.paymentAllocations.poa2.incomeTax             = Income Tax for second payment on account
+paymentAllocation.paymentAllocations.poa2.nic4                  = Class 4 National Insurance contributions for second payment on account
 paymentAllocation.paymentAllocations.bcd.incomeTax              = Income Tax for Balancing payment
 paymentAllocation.paymentAllocations.bcd.nic2                   = Class 2 National Insurance for Balancing payment
 paymentAllocation.paymentAllocations.bcd.vcnic2                 = Voluntary Class 2 National Insurance for Balancing payment

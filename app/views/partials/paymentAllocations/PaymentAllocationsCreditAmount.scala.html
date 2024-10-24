@@ -35,21 +35,11 @@
 
 @getLink = @{
     if (creditsRefundsRepayEnabled) {
-        if(isAgent) {
-            link(id = Some("money-on-account-link"), link = creditAndRefundUrl, messageKey = "paymentAllocation.moneyOnAccount.agent")
-        }
-        else {
-            link(id = Some("money-on-account-link"), link = creditAndRefundUrl, messageKey = "paymentAllocation.moneyOnAccount")
-        }
+        link(id = Some("money-on-account-link"), link = creditAndRefundUrl, messageKey = "paymentAllocation.moneyOnAccount")
 
     } else {
-        if(isAgent) {
-            messages("paymentAllocation.moneyOnAccount.agent")
+messages("paymentAllocation.moneyOnAccount")
         }
-        else {
-            messages("paymentAllocation.moneyOnAccount")
-        }
-    }
 }
 
 
