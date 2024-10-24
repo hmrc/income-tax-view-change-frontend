@@ -26,7 +26,8 @@ case class OptInCompletedViewModel(
                                     isCurrentYear: Boolean,
                                     showAnnualReportingAdvice: Boolean,
                                     optInIncludedNextYear: Boolean,
-                                    annualWithFollowingYearMandated: Boolean) {
+                                    annualWithFollowingYearMandated: Boolean
+                                  ) {
 
   val startYear: String = optInTaxYear.startYear.toString
   val endYear: String = optInTaxYear.endYear.toString
@@ -36,11 +37,18 @@ case class OptInCompletedViewModel(
 
   def headingMessageKey: String = {
     (isCurrentYear, optInIncludedNextYear, annualWithFollowingYearMandated) match {
-      case (true, _, true)    => "optin.completedOptIn.followingVoluntary.heading.desc"
-      case (true, true, _)    => "optin.completedOptIn.followingVoluntary.heading.desc"
-      case (true, false, _)   => "optin.completedOptIn.cy.heading.desc"
-      case _                  => "optin.completedOptIn.ny.heading.desc"
+      case (true, _, true) => "optin.completedOptIn.followingVoluntary.heading.desc"
+      case (true, true, _) => "optin.completedOptIn.followingVoluntary.heading.desc"
+      case (true, false, _) => "optin.completedOptIn.cy.heading.desc"
+      case _ => "optin.completedOptIn.ny.heading.desc"
     }
   }
+
+  val nextUpdatesLink = {
+    if (isAgent) controllers.routes.NextUpdatesController.showAgent.url
+    else controllers.routes.NextUpdatesController.show().url
+  }
+
+  val reportingFrequencyLink: String = controllers.optIn.routes.OptInCompletedController.show(isAgent).url // TODO: Fix the navigation in future stories
 
 }

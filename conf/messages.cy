@@ -2237,13 +2237,16 @@ optin.completedOptIn.cy.heading.desc                     = Rydych bellach yn cyf
 optin.completedOptIn.ny.heading.desc                     = Gwnaethoch optio i mewn i adrodd yn chwarterol o flwyddyn dreth {0} i {1} ymlaen
 optin.completedOptIn.followingVoluntary.heading.des      = Rydych bellach yn cyflwyno adroddiadau’n chwarterol o flwyddyn dreth {0} i {1} ymlaen
 
-optin.completedOptIn.nextUpdates                = Eich diweddariadau nesaf sy’n ddyledus
-optin.completedOptIn.nextUpdate.desc1.a         = Gwiriwch y dudalen ynghylch
-optin.completedOptIn.nextUpdate.desc1.b         = diweddariadau a dyddiadau cau
-optin.completedOptIn.nextUpdate.desc1.c         = er mwyn gweld dyddiadau cau’r flwyddyn dreth bresennol. Ni fydd dyddiadau cau ar gyfer blynyddoedd yn y dyfodol i’w gweld hyd nes eu bod yn dod yn rhan o’r flwyddyn sydd ohoni.
-optin.completedOptIn.nextUpdate.desc2.a         = Gallwch, ar unrhyw adeg, optio allan o adrodd yn chwarterol ar gyfer pob un o’ch busnesau. Gallwch wneud hyn drwy fynd i’r dudalen ynghylch
-optin.completedOptIn.nextUpdate.desc2.b         = amlder eich adroddiadau.
-optin.completedOptIn.nextUpdate.desc2.c         =
+optin.completedOptIn.yourRevisedDeadline.inset = Bydd eich dyddiadau cau diwygiedig ar gael yn y munudau nesaf.
+
+optin.completedOptIn.yourRevisedDeadline.h2 = Eich dyddiadau cau sydd wedi’u haddasu
+optin.completedOptIn.yourRevisedDeadline.p1.a = Hyd yn oed os nad ydynt yn cael eu harddangos ar unwaith ar y dudalen
+optin.completedOptIn.yourRevisedDeadline.p1.b = mae’ch cyfrif wedi’i ddiweddaru.
+optin.completedOptIn.yourRevisedDeadline.p1.link = diweddariadau a dyddiadau cau,
+
+optin.completedOptIn.yourRevisedDeadline.p2.a = Gallwch, ar unrhyw adeg, optio allan o adrodd yn chwarterol ar gyfer pob un o’ch busnesau. Gallwch wneud hyn drwy fynd i’r dudalen ynghylch
+optin.completedOptIn.yourRevisedDeadline.p2.b =  .
+optin.completedOptIn.yourRevisedDeadline.p2.link = amlder eich adroddiadau
 
 optin.completedOptIn.submitUpdates              = Cyflwyno diweddariadau drwy ddefnyddio meddalwedd
 optin.completedOptIn.submitUpdates.desc1.a      = Os ydych yn adrodd am flwyddyn dreth yn chwarterol, bydd angen i chi ddefnyddio
