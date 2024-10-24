@@ -171,14 +171,14 @@
 
 @reviewAndReconcilePoaCreditExplanation(oneOrTwo: ChargeType) = {
     @p(id = Some("rar-credit-explanation")) {
-        @messages(s"chargeSummary.poa${oneOrTwo}Credit.p1")
+        @messages(s"chargeSummary.poa${oneOrTwo.key.lastOption.getOrElse("1")}Credit.p1")
         @link(id = Some("poa-link"), link = {
             oneOrTwo match {
                 case PaymentOnAccountOne => viewModel.poaOneChargeUrl
                 case _ => viewModel.poaTwoChargeUrl
             }
-        }, messageKey = s"chargeSummary.poa${oneOrTwo}Credit.link")
-        @messages(s"chargeSummary.poa${oneOrTwo}Credit.afterLink")
+        }, messageKey = s"chargeSummary.poa${oneOrTwo.key.lastOption.getOrElse("1")}Credit.link")
+        @messages(s"chargeSummary.poa${oneOrTwo.key.lastOption.getOrElse("1")}Credit.afterLink")
     }
 }
 
