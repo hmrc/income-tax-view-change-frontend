@@ -227,7 +227,7 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
 
     val viewSection1 = isEnabled(ChargeHistory) && (!isLatePaymentCharge && !documentDetailWithDueDate.documentDetail.isPayeSelfAssessment)
     val viewSection2 = isEnabled(ChargeHistory) && isLatePaymentCharge
-    val viewSection3 = isEnabled(ChargeHistory) && (documentDetailWithDueDate.documentDetail.isPayeSelfAssessment)
+    val viewSection3 = isEnabled(ChargeHistory) && documentDetailWithDueDate.documentDetail.isPayeSelfAssessment
 
     val values = List(
       (viewSection1, true, "Original Amount"),
