@@ -41,10 +41,10 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], chargeItem: ChargeItem,
   private def getAllocationDescriptionFromKey(key: Option[String]): String = {
     key match {
       case Some("chargeSummary.paymentAllocations.mfaDebit") => "Payment put towards HMRC adjustment"
-      case Some("chargeSummary.paymentAllocations.poa1.incomeTax") => "Income Tax for payment on account 1 of 2"
-      case Some("chargeSummary.paymentAllocations.poa1.nic4") => "Class 4 National Insurance for payment on account 1 of 2"
-      case Some("chargeSummary.paymentAllocations.poa2.incomeTax") => "Income Tax for payment on account 2 of 2"
-      case Some("chargeSummary.paymentAllocations.poa2.nic4") => "Class 4 National Insurance for payment on account 2 of 2"
+      case Some("chargeSummary.paymentAllocations.poa1.incomeTax") => "Income Tax for first payment on account"
+      case Some("chargeSummary.paymentAllocations.poa1.nic4") => "Class 4 National Insurance contributions for first payment on account"
+      case Some("chargeSummary.paymentAllocations.poa2.incomeTax") => "Income Tax for second payment on account"
+      case Some("chargeSummary.paymentAllocations.poa2.nic4") => "Class 4 National Insurance contributions for second payment on account"
       case Some("chargeSummary.paymentAllocations.bcd.incomeTax") => "Income Tax for remaining balance"
       case Some("chargeSummary.paymentAllocations.bcd.nic2") => "Class 2 National Insurance for remaining balance"
       case Some("chargeSummary.paymentAllocations.bcd.vcnic2") => "Voluntary Class 2 National Insurance for remaining balance"
