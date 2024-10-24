@@ -86,13 +86,13 @@ class OptOutAuditModelSpec extends TestSupport {
             outcome = expectedOutcome,
             optOutRequestedFromTaxYear = taxYear.previousYear.formatTaxYearRange,
             currentYear = taxYear.formatTaxYearRange,
-            beforeITSAStatusCurrentYearMinusOne = Voluntary,
+            `beforeITSAStatusCurrentYear-1` = Voluntary,
             beforeITSAStatusCurrentYear = NoStatus,
-            beforeITSAStatusCurrentYearPlusOne = NoStatus,
-            afterAssumedITSAStatusCurrentYearMinusOne = Annual,
+            `beforeITSAStatusCurrentYear+1` = NoStatus,
+            `afterAssumedITSAStatusCurrentYear-1` = Annual,
             afterAssumedITSAStatusCurrentYear = NoStatus,
-            afterAssumedITSAStatusCurrentYearPlusOne = Annual,
-            currentYearMinusOneCrystallised = false
+            `afterAssumedITSAStatusCurrentYear+1` = Annual,
+            `currentYear-1Crystallised` = false
           )
 
         val actual = Json.toJson(auditModel)
@@ -107,13 +107,13 @@ class OptOutAuditModelSpec extends TestSupport {
             "outcome" -> Json.obj("isSuccessful" -> true),
             "optOutRequestedFromTaxYear" -> "21-22",
             "currentYear" -> "22-23",
-            "beforeITSAStatusCurrentYearMinusOne" -> "MTD Voluntary",
+            "beforeITSAStatusCurrentYear-1" -> "MTD Voluntary",
             "beforeITSAStatusCurrentYear" -> "No Status",
-            "beforeITSAStatusCurrentYearPlusOne" -> "No Status",
-            "afterAssumedITSAStatusCurrentYearMinusOne" -> "Annual",
+            "beforeITSAStatusCurrentYear+1" -> "No Status",
+            "afterAssumedITSAStatusCurrentYear-1" -> "Annual",
             "afterAssumedITSAStatusCurrentYear" -> "No Status",
-            "afterAssumedITSAStatusCurrentYearPlusOne" -> "Annual",
-            "currentYearMinusOneCrystallised" -> false
+            "afterAssumedITSAStatusCurrentYear+1" -> "Annual",
+            "currentYear-1Crystallised" -> false
           )
 
         actual shouldBe expectedJson
@@ -135,13 +135,13 @@ class OptOutAuditModelSpec extends TestSupport {
             "outcome" -> Json.obj("isSuccessful" -> true),
             "optOutRequestedFromTaxYear" -> "21-22",
             "currentYear" -> "22-23",
-            "beforeITSAStatusCurrentYearMinusOne" -> "MTD Voluntary",
+            "beforeITSAStatusCurrentYear-1" -> "MTD Voluntary",
             "beforeITSAStatusCurrentYear" -> "No Status",
-            "beforeITSAStatusCurrentYearPlusOne" -> "No Status",
-            "afterAssumedITSAStatusCurrentYearMinusOne" -> "Annual",
+            "beforeITSAStatusCurrentYear+1" -> "No Status",
+            "afterAssumedITSAStatusCurrentYear-1" -> "Annual",
             "afterAssumedITSAStatusCurrentYear" -> "No Status",
-            "afterAssumedITSAStatusCurrentYearPlusOne" -> "Annual",
-            "currentYearMinusOneCrystallised" -> false
+            "afterAssumedITSAStatusCurrentYear+1" -> "Annual",
+            "currentYear-1Crystallised" -> false
           ).as[OptOutAuditModel]
 
         val expectedModel =
@@ -155,13 +155,13 @@ class OptOutAuditModelSpec extends TestSupport {
             outcome = expectedOutcome,
             optOutRequestedFromTaxYear = taxYear.previousYear.formatTaxYearRange,
             currentYear = taxYear.formatTaxYearRange,
-            beforeITSAStatusCurrentYearMinusOne = Voluntary,
+            `beforeITSAStatusCurrentYear-1` = Voluntary,
             beforeITSAStatusCurrentYear = NoStatus,
-            beforeITSAStatusCurrentYearPlusOne = NoStatus,
-            afterAssumedITSAStatusCurrentYearMinusOne = Annual,
+            `beforeITSAStatusCurrentYear+1` = NoStatus,
+            `afterAssumedITSAStatusCurrentYear-1` = Annual,
             afterAssumedITSAStatusCurrentYear = NoStatus,
-            afterAssumedITSAStatusCurrentYearPlusOne = Annual,
-            currentYearMinusOneCrystallised = false
+            `afterAssumedITSAStatusCurrentYear+1` = Annual,
+            `currentYear-1Crystallised` = false
           )
 
         actual shouldBe expectedModel

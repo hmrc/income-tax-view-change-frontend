@@ -20,6 +20,7 @@ import auth.MtdItUser
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.ITSAStatus
+import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import services.optout.OptOutProposition
 import uk.gov.hmrc.auth.core.AffinityGroup
@@ -45,13 +46,13 @@ case class OptOutAuditModel(
                              outcome: Outcome,
                              optOutRequestedFromTaxYear: String,
                              currentYear: String,
-                             beforeITSAStatusCurrentYearMinusOne: ITSAStatus,
+                             `beforeITSAStatusCurrentYear-1`: ITSAStatus,
                              beforeITSAStatusCurrentYear: ITSAStatus,
-                             beforeITSAStatusCurrentYearPlusOne: ITSAStatus,
-                             afterAssumedITSAStatusCurrentYearMinusOne: ITSAStatus,
+                             `beforeITSAStatusCurrentYear+1`: ITSAStatus,
+                             `afterAssumedITSAStatusCurrentYear-1`: ITSAStatus,
                              afterAssumedITSAStatusCurrentYear: ITSAStatus,
-                             afterAssumedITSAStatusCurrentYearPlusOne: ITSAStatus,
-                             currentYearMinusOneCrystallised: Boolean
+                             `afterAssumedITSAStatusCurrentYear+1`: ITSAStatus,
+                             `currentYear-1Crystallised`: Boolean
                            ) extends ExtendedAuditModel {
 
   override val transactionName: String = enums.TransactionName.OptOutQuarterlyReportingRequest
@@ -59,13 +60,12 @@ case class OptOutAuditModel(
   override val auditType: String = enums.AuditType.OptOutQuarterlyReportingRequest
 
   override val detail: JsValue = Json.toJson(this)
-
 }
 
 
 object OptOutAuditModel {
 
-  implicit val format: OFormat[OptOutAuditModel] = Json.format[OptOutAuditModel]
+    implicit val format: OFormat[OptOutAuditModel] = Json.format[OptOutAuditModel]
 
   def generateOptOutAudit(optOutProposition: OptOutProposition,
                           intentTaxYear: TaxYear,
@@ -80,14 +80,14 @@ object OptOutAuditModel {
       nino = user.nino,
       optOutRequestedFromTaxYear = intentTaxYear.formatTaxYearRange,
       currentYear = optOutProposition.currentTaxYear.taxYear.formatTaxYearRange,
-      beforeITSAStatusCurrentYearMinusOne = optOutProposition.previousTaxYear.status,
+      `beforeITSAStatusCurrentYear-1` = optOutProposition.previousTaxYear.status,
       beforeITSAStatusCurrentYear = optOutProposition.currentTaxYear.status,
-      beforeITSAStatusCurrentYearPlusOne = optOutProposition.nextTaxYear.status,
+      `beforeITSAStatusCurrentYear+1` = optOutProposition.nextTaxYear.status,
       outcome = createOutcome(resolvedOutcome),
-      afterAssumedITSAStatusCurrentYearMinusOne = optOutProposition.previousTaxYear.expectedItsaStatusAfter(intentTaxYear),
+      `afterAssumedITSAStatusCurrentYear-1` = optOutProposition.previousTaxYear.expectedItsaStatusAfter(intentTaxYear),
       afterAssumedITSAStatusCurrentYear = optOutProposition.currentTaxYear.expectedItsaStatusAfter(intentTaxYear),
-      afterAssumedITSAStatusCurrentYearPlusOne = optOutProposition.nextTaxYear.expectedItsaStatusAfter(intentTaxYear),
-      currentYearMinusOneCrystallised = optOutProposition.previousTaxYear.crystallised
+      `afterAssumedITSAStatusCurrentYear+1` = optOutProposition.nextTaxYear.expectedItsaStatusAfter(intentTaxYear),
+      `currentYear-1Crystallised` = optOutProposition.previousTaxYear.crystallised
     )
   }
 
