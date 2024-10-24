@@ -276,13 +276,13 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
                 .withRequestBody(matchingJsonPath("$.detail.outcome.failureCategory", equalTo(optOutAuditModel.outcome.failureCategory.getOrElse(""))))
                 .withRequestBody(matchingJsonPath("$.detail.outcome.failureReason", equalTo(optOutAuditModel.outcome.failureReason.getOrElse(""))))
 
-                .withRequestBody(matchingJsonPath("$.detail.`beforeITSAStatusCurrentYear-1`", equalTo(optOutAuditModel.`beforeITSAStatusCurrentYear-1`.toString)))
+                .withRequestBody(matchingJsonPath("$.detail.beforeITSAStatusCurrentYear-1", equalTo(optOutAuditModel.`beforeITSAStatusCurrentYear-1`.toString)))
                 .withRequestBody(matchingJsonPath("$.detail.beforeITSAStatusCurrentYear", equalTo(optOutAuditModel.beforeITSAStatusCurrentYear.toString)))
-                .withRequestBody(matchingJsonPath("$.detail.`beforeITSAStatusCurrentYear+1`", equalTo(optOutAuditModel.`beforeITSAStatusCurrentYear+1`.toString)))
-                .withRequestBody(matchingJsonPath("$.detail.`afterAssumedITSAStatusCurrentYear-1`", equalTo(optOutAuditModel.`afterAssumedITSAStatusCurrentYear-1`.toString)))
+                .withRequestBody(matchingJsonPath("$.detail.beforeITSAStatusCurrentYear+1", equalTo(optOutAuditModel.`beforeITSAStatusCurrentYear+1`.toString)))
+                .withRequestBody(matchingJsonPath("$.detail.afterAssumedITSAStatusCurrentYear-1", equalTo(optOutAuditModel.`afterAssumedITSAStatusCurrentYear-1`.toString)))
                 .withRequestBody(matchingJsonPath("$.detail.afterAssumedITSAStatusCurrentYear", equalTo(optOutAuditModel.afterAssumedITSAStatusCurrentYear.toString)))
-                .withRequestBody(matchingJsonPath("$.detail.`afterAssumedITSAStatusCurrentYear+1`", equalTo(optOutAuditModel.`afterAssumedITSAStatusCurrentYear+1`.toString)))
-                .withRequestBody(matchingJsonPath("$.detail.`currentYear-1Crystallised`", equalTo(optOutAuditModel.`currentYear-1Crystallised`.toString)))
+                .withRequestBody(matchingJsonPath("$.detail.afterAssumedITSAStatusCurrentYear+1", equalTo(optOutAuditModel.`afterAssumedITSAStatusCurrentYear+1`.toString)))
+                .withRequestBody(matchingJsonPath("$.detail.currentYear-1Crystallised", equalTo(optOutAuditModel.`currentYear-1Crystallised`.toString)))
             )
           }
 
