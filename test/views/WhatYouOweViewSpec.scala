@@ -118,8 +118,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
   def preMtdPayments(from: String, to: String) = s"${messages("whatYouOwe.pre-mtd-year", from, to)}"
 
-  class TestSetup(creditCharges: List[DocumentDetail] = List(),
-                  charges: WhatYouOweChargesList,
+  class TestSetup(charges: WhatYouOweChargesList,
                   currentTaxYear: Int = fixedDate.getYear,
                   hasLpiWithDunningLock: Boolean = false,
                   dunningLock: Boolean = false,
@@ -1316,8 +1315,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
     val unallocatedCreditMsg = "You have £100.00 in your account. We’ll use this to pay the amount due on the next due date."
     "show unallocated credits" when {
-      "user is an individual with the feature switch on" in new TestSetup(creditCharges = creditDocumentDetailList,
-        charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
+      "user is an individual with the feature switch on" in new TestSetup(charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
         pageDocument.getElementById("unallocated-credit-note").text() shouldBe unallocatedCreditMsg
       }
 
@@ -1327,8 +1325,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     }
 
     "not show unallocated credits" when {
-      "user has no money in his account" in new TestSetup(creditCharges = creditDocumentDetailList,
-        charges = whatYouOweDataWithZeroMoneyInAccount()) {
+      "user has no money in his account" in new TestSetup(charges = whatYouOweDataWithZeroMoneyInAccount()) {
         findElementById("unallocated-credit-note") shouldBe None
       }
     }
