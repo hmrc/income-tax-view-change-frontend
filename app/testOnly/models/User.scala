@@ -16,7 +16,7 @@
 
 package testOnly.models
 
-import play.api.data.Forms.{boolean, mapping, optional, text}
+import play.api.data.Forms.{boolean, default, mapping, optional, text}
 import play.api.data.{Form, Mapping}
 import play.api.libs.json.{Json, OFormat}
 
@@ -47,12 +47,16 @@ object UserRecord {
 }
 
 case class PostedUser(nino: String,
-                      isAgent: Boolean,
+                      agentType: Option[String],
                       cyMinusOneCrystallisationStatus: Option[String],
                       cyMinusOneItsaStatus: Option[String],
                       cyItsaStatus: Option[String],
                       cyPlusOneItsaStatus: Option[String]
                      ) {
+
+  def isAgent: Boolean = AgentTypeEnums.apply(this.agentType).isDefined
+
+  def isSupporting: Boolean = AgentTypeEnums.apply(this.agentType).contains(AgentTypeEnums.SUPPORTINGAGENT)
 
   def isOptOutWhitelisted(optOutUserPrefixes: Seq[String]): Boolean = {
     optOutUserPrefixes.contains(nino.take(2))
@@ -64,7 +68,7 @@ object PostedUser {
       Form(
         mapping(
           "nino" -> text,
-          "Agent" -> boolean,
+          "AgentType" -> optional(text),
           "cyMinusOneCrystallisationStatus" -> optional(text),
           "cyMinusOneItsaStatus" -> optional(text),
           "cyItsaStatus" -> optional(text),
