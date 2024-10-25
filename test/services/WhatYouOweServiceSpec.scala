@@ -356,38 +356,6 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
     }
   }
 
-  "WhatYouOweService.getCreditCharges method" should {
-    "return a list of credit charges" when {
-      "a successful response is received in all tax year calls" in {
-        when(mockFinancialDetailsService.getAllCreditFinancialDetails(any(), any(), any()))
-          .thenReturn(Future.successful(List(FinancialDetailsModel(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-            documentDetails = creditDocumentDetailList,
-            financialDetails = List(
-              FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000124), None, Some("ABCD1234"), Some("type"), Some(100), Some(100),
-                Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-24")))))),
-              FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000125), None, Some("ABCD1234"), Some("type"), Some(100), Some(100),
-                Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
-              FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000126), None, Some("ABCD1234"), Some("type"), Some(100), Some(100),
-                Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
-            )
-          ))))
-
-        TestWhatYouOweService.getCreditCharges().futureValue shouldBe creditDocumentDetailList
-      }
-    }
-    "handle an error" when {
-      "the financial service has returned an error in all tax year calls" in {
-        when(mockFinancialDetailsService.getAllCreditFinancialDetails(any(), any(), any()))
-          .thenReturn(Future.successful(List(FinancialDetailsErrorModel(500, "INTERNAL_SERVER ERROR"))))
-
-        val result = TestWhatYouOweService.getCreditCharges().failed.futureValue
-
-        result shouldBe an[Exception]
-        result.getMessage shouldBe "Error response while getting Unpaid financial details"
-      }
-    }
-  }
   "WhatYouOweService.validChargeType val" should {
 
     def testValidChargeType(chargeItems: List[ChargeItem], expectedResult: Boolean): Unit = {

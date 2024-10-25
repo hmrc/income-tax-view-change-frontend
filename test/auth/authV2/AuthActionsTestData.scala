@@ -17,8 +17,12 @@
 package auth.authV2
 
 import auth.MtdItUserOptionNino
+import auth.authV2.actions.ClientDataRequest
+import controllers.agent.sessionUtils.SessionKeys
 import models.incomeSourceDetails.IncomeSourceDetailsModel
+import models.sessionData.SessionCookieData
 import play.api.mvc.Request
+import testOnly.models.SessionDataGetResponse.SessionDataGetSuccess
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name}
 import uk.gov.hmrc.auth.core._
 
@@ -28,7 +32,9 @@ object AuthActionsTestData {
   val saUtr             = "123456789"
   val mtdId             = "abcde"
   val arn               = "12345"
-  val userName = Name(Some("Issac Newton"), None)
+  val firstName = "Issac"
+  val lastName = "Newton"
+  val userName = Name(Some("Issac"), Some("Newton"))
 
   val mtdEnrolment             = Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", mtdId)), "Activated", None)
   val agentEnrolment             = Enrolment("HMRC-AS-AGENT", Seq(EnrolmentIdentifier("AgentReferenceNumber", "1")), "Activated", None)
@@ -82,5 +88,16 @@ object AuthActionsTestData {
     acceptedConfidenceLevel,
     Some(credentials)
   )(request)
+
+  def getSessionCookieData(isSupportingAgent: Boolean, confirmed: Boolean) = {
+    val cookieData = SessionCookieData(
+      mtdId, nino, saUtr, Some(firstName), Some(lastName), isSupportingAgent
+    ).toSessionCookieSeq
+    if(confirmed) cookieData ++ Seq(SessionKeys.confirmedClient -> "true") else cookieData
+  }
+
+  val sessionGetSuccessResponse = SessionDataGetSuccess(
+    mtdId, nino, saUtr, "sessionId"
+  )
 
 }

@@ -45,10 +45,14 @@ class RetrieveClientData @Inject()(sessionDataService: SessionDataService,
 
     sessionDataService.getSessionData(useCookie = true).map {
       case Right(sessionData) => Right(ClientDataRequest(sessionData.mtditid,None, None, sessionData.nino, sessionData.utr,
-        request.session.get(SessionKeys.isSupportingAgent).fold(false)(_.toBoolean)))
-      case Left(e: SessionDataNotFound) => Left(Redirect(routes.EnterClientsUTRController.show))
+        getBooleanFromSession(SessionKeys.isSupportingAgent), getBooleanFromSession(SessionKeys.confirmedClient)))
+      case Left(_: SessionDataNotFound) => Left(Redirect(routes.EnterClientsUTRController.show))
       case Left(_) => Left(errorHandler.showInternalServerError())
     }
+  }
+
+  private def getBooleanFromSession(key: String)(implicit r: Request[_]): Boolean = {
+    r.session.get(key).fold(false)(_.toBoolean)
   }
 
 

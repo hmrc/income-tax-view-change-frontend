@@ -24,7 +24,8 @@ case class ClientDataRequest[A](clientMTDID: String,
                                 clientLastName: Option[String],
                                 clientNino: String,
                                 clientUTR: String,
-                                isSupportingAgent: Boolean)(implicit request: Request[A]) extends WrappedRequest[A](request) {
+                                isSupportingAgent: Boolean,
+                                confirmed: Boolean)(implicit request: Request[A]) extends WrappedRequest[A](request) {
 
   val clientName: Option[Name] = {
     if (clientFirstName.isDefined && clientLastName.isDefined) {
