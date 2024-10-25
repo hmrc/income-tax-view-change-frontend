@@ -26,7 +26,6 @@ import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.{MockIncomeSourceDetailsService, MockPaymentAllocationsService}
 import mocks.views.agent.MockPaymentAllocationView
-import models.admin.PaymentAllocation
 import models.core.Nino
 import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsModel, PaymentAllocationError}
 import org.mockito.ArgumentMatchers.any
@@ -78,10 +77,8 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
   "The PaymentAllocationsControllerSpec.viewPaymentAllocation function" should {
     val successfulResponse = Right(paymentAllocationViewModel)
 
-    "behave appropriately when the feature switch is on" when {
       "Successfully retrieving a user's payment allocation" in new Setup {
         disableAllSwitches()
-        enable(PaymentAllocation)
         mockSingleBusinessIncomeSource()
         when(mockPaymentAllocationsService.getPaymentAllocation(Nino(any()), any())(any(), any()))
           .thenReturn(Future.successful(successfulResponse))
@@ -92,7 +89,6 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
       }
 
       "Successfully retrieving a user's lpi payment allocation" in new Setup {
-        enable(PaymentAllocation)
         mockSingleBusinessIncomeSource()
         when(mockPaymentAllocationsService.getPaymentAllocation(Nino(any()), any())(any(), any()))
           .thenReturn(Future.successful(Right(paymentAllocationViewModelLpi)))
@@ -103,7 +99,6 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
       }
 
       "Successfully retrieving a user's non lpi payment allocation (HMRC adjustment)" in new Setup {
-        enable(PaymentAllocation)
         mockSingleBusinessIncomeSource()
         when(mockPaymentAllocationsService.getPaymentAllocation(Nino(any()), any())(any(), any()))
           .thenReturn(Future.successful(Right(paymentAllocationViewModelHmrcAdjustment)))
@@ -112,7 +107,6 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
       }
 
       "Failing to retrieve a user's payment allocation" in new Setup {
-        enable(PaymentAllocation)
         mockSingleBusinessIncomeSource()
         when(mockPaymentAllocationsService.getPaymentAllocation(Nino(any()), any())(any(), any()))
           .thenReturn(Future.successful(Left(PaymentAllocationError())))
@@ -121,20 +115,6 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
-    }
-
-    "behave appropriately when the feature switch is off" when {
-      "trying to access payments allocation" in new Setup {
-        disable(PaymentAllocation)
-        mockSingleBusinessIncomeSource()
-        when(mockPaymentAllocationsService.getPaymentAllocation(Nino(any()), any())(any(), any()))
-          .thenReturn(Future.successful(successfulResponse))
-
-        val result = controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession)
-
-        status(result) shouldBe Status.SEE_OTHER
-      }
-    }
 
     "Failing to retrieve income sources" should {
       "send the user to internal server error page" in new Setup {
@@ -215,21 +195,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
       }
     }
 
-    "the PaymentAllocation feature switch is disabled" should {
-      "return Not Found" in new Setup {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockSingleBusinessIncomeSource()
-        mockNotFound()
-
-        val result = controller.viewPaymentAllocationAgent(documentNumber = docNumber)(fakeRequestConfirmedClient())
-
-        status(result) shouldBe SEE_OTHER
-      }
-    }
-
-    "the PaymentAllocation feature switch is enabled" should {
       "Successfully retrieve a user's payment allocation and display the page" in new Setup {
-        enable(PaymentAllocation)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockSingleBusinessIncomeSource()
         setupMockGetPaymentAllocationSuccess(testNino, docNumber)(paymentAllocationViewModel)
@@ -245,7 +211,6 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
       }
 
       "Successfully retrieving a user's lpi payment allocation" in new Setup {
-        enable(PaymentAllocation)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockSingleBusinessIncomeSource()
         setupMockGetPaymentAllocationSuccess(testNino, docNumber)(paymentAllocationViewModelLpi)
@@ -261,7 +226,6 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
       }
 
       "Fail to retrieve a user's payment allocation and return a 500" in new Setup {
-        enable(PaymentAllocation)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
         mockSingleBusinessIncomeSource()
@@ -272,6 +236,5 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
-    }
   }
 }

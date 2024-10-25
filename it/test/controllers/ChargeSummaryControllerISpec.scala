@@ -23,7 +23,7 @@ import enums.CodingOutType._
 import helpers.ComponentSpecBase
 import helpers.servicemocks.ChargeItemStub.{chargeItemWithInterestAndOverdue, docDetail}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
-import models.admin.{ChargeHistory, CodingOut, PaymentAllocation}
+import models.admin.{ChargeHistory, CodingOut}
 import models.chargeHistory.ChargeHistoryModel
 import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails._
@@ -107,9 +107,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       )(dateService))
     }
 
-    "load the page with right audit events when PaymentAllocations FS on and ChargeHistory FS off" in {
-      Given("the PaymentAllocations feature switch is on and ChargeHistory is off")
-      enable(PaymentAllocation)
+    "load the page with right audit events when ChargeHistory FS off" in {
+      Given("the ChargeHistory feature switch is off")
       disable(ChargeHistory)
 
       Given("I wiremock stub a successful Income Source Details response with property only")
@@ -150,7 +149,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       )
     }
 
-    "load the page with right audit events when PaymentAllocations and ChargeHistory FS enabled" in {
+    "load the page with right audit events when the ChargeHistory FS enabled" in {
       Given("I wiremock stub a successful Income Source Details response with property only")
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -163,8 +162,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       And("I wiremock stub a charge history response")
       IncomeTaxViewChangeStub.stubChargeHistoryResponse(testNino, "ABCD1234")(OK, testChargeHistoryJson(testNino, "ABCD1234", 2500))
 
-      Given("the PaymentAllocations and ChargeHistory feature switch is on")
-      enable(PaymentAllocation)
+      Given("the ChargeHistory feature switch is on")
       enable(ChargeHistory)
 
       val res = IncomeTaxViewChangeFrontend.getChargeSummary("2018", "1040000123")
@@ -197,7 +195,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       )
     }
 
-    "load the page when the late payment interest flag is true and chargeHistory and paymentAllocation FS is enabled" in {
+    "load the page when the late payment interest flag is true and chargeHistory FS is enabled" in {
       Given("I wiremock stub a successful Income Source Details response with property only")
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -205,9 +203,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJsonAccruingInterest(
         123.45, 1.2, latePaymentInterestAmount = Some(54.32)))
 
-      Given("the PaymentAllocations and ChargeHistory feature switches are on")
+      Given("the ChargeHistory feature switch is on")
       enable(ChargeHistory)
-      enable(PaymentAllocation)
 
       val res = IncomeTaxViewChangeFrontend.getChargeSummaryLatePayment("2018", "1040000123")
 
@@ -237,7 +234,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       )
     }
 
-    "load the page when the late payment interest flag is true and paymentAllocation FS is enabled but chargeHistory FS is disabled" in {
+    "load the page when the late payment interest flag is true and chargeHistory FS is disabled" in {
       Given("I wiremock stub a successful Income Source Details response with property only")
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -245,7 +242,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelWithPaymentAllocationJson(10.34, 1.2))
 
       disable(ChargeHistory)
-      enable(PaymentAllocation)
 
       val res = IncomeTaxViewChangeFrontend.getChargeSummaryLatePayment("2018", "1040000123")
 
@@ -258,28 +254,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         elementTextBySelector("main h2")(lpiHistory),
         elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")("")
 
-      )
-    }
-
-    "load the page when the late payment interest flag is true and both paymentAllocation and chargeHistory FS are disabled" in {
-      Given("I wiremock stub a successful Income Source Details response with property only")
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-
-      And("I wiremock stub a single financial transaction response")
-      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
-
-      disable(ChargeHistory)
-      disable(PaymentAllocation)
-
-      val res = IncomeTaxViewChangeFrontend.getChargeSummaryLatePayment("2018", "1040000123")
-
-      verifyIncomeSourceDetailsCall(testMtditid)
-
-      Then("the result should have a HTTP status of OK (200) and load the correct page")
-      res should have(
-        httpStatus(OK),
-        pageTitleIndividual("chargeSummary.lpi.balancingCharge.text"),
-        elementTextBySelector("main h2")("")
       )
     }
 
@@ -311,7 +285,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         )))
 
       disable(ChargeHistory)
-      enable(PaymentAllocation)
 
       val res = IncomeTaxViewChangeFrontend.getChargeSummaryLatePayment("2018", "1040001234")
 
@@ -325,11 +298,10 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       )
     }
 
-    "load the page with coding out details when coding out is enable and a coded out documentDetail id is passed" in {
+    "load the page with coding out details when coding out is enabled and a coded out documentDetail id is passed" in {
       Given("the CodingOut feature switch is enabled")
       enable(CodingOut)
       enable(ChargeHistory)
-      enable(PaymentAllocation)
 
       Given("I wiremock stub a successful Income Source Details response with property only")
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
@@ -396,7 +368,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
 
   s"return $OK with correct page title and ChargeHistory FS is enabled and the charge history details API responds with a $NOT_FOUND" in {
     enable(ChargeHistory)
-    enable(PaymentAllocation)
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
     IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
 
@@ -418,7 +389,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
 
   s"return $OK with correct page title and ChargeHistory FS is enabled and the charge history details API responds with a $FORBIDDEN" in {
     enable(ChargeHistory)
-    enable(PaymentAllocation)
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
     IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
 
@@ -441,7 +411,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
   "return a technical difficulties page to the user" when {
     "ChargeHistory FS is enabled and the charge history details API responded with an error" in {
       enable(ChargeHistory)
-      enable(PaymentAllocation)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
 
@@ -464,7 +433,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
     "When Original Amount value is missing from financial details / document details" in {
 
       enable(ChargeHistory)
-      enable(PaymentAllocation)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testFinancialDetailsModelWithMissingOriginalAmountJson())
 
@@ -619,7 +587,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
 
     "load the charge summary page with an UNPAID MFADebit" in {
       enable(ChargeHistory)
-      enable(PaymentAllocation)
 
       Given("I wiremock stub a successful Income Source Details response with property only")
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
@@ -668,7 +635,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
 
     "load the charge summary page with a PAID MFADebit" in {
       enable(ChargeHistory)
-      enable(PaymentAllocation)
 
       Given("I wiremock stub a successful Income Source Details response with property only")
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)

@@ -39,8 +39,6 @@ object FeatureSwitchName {
       JsSuccess(ITSASubmissionIntegration)
     case name if name == JsString(ChargeHistory.name) =>
       JsSuccess(ChargeHistory)
-    case name if name == JsString(PaymentAllocation.name) =>
-      JsSuccess(PaymentAllocation)
     case name if name == JsString(CodingOut.name) =>
       JsSuccess(CodingOut)
     case name if name == JsString(NavBarFs.name) =>
@@ -83,7 +81,7 @@ object FeatureSwitchName {
   }
 
   val allFeatureSwitches: immutable.Set[FeatureSwitchName] =
-    Set(ITSASubmissionIntegration, ChargeHistory, PaymentAllocation, CodingOut, NavBarFs, CreditsRefundsRepay,
+    Set(ITSASubmissionIntegration, ChargeHistory, CodingOut, NavBarFs, CreditsRefundsRepay,
       PaymentHistoryRefunds, CalendarQuarterTypes, IncomeSourcesNewJourney, IncomeSources, OptOut, AdjustPaymentsOnAccount, ReviewAndReconcilePoa)
 
   def get(str: String): Option[FeatureSwitchName] = allFeatureSwitches find (_.name == str)
@@ -97,11 +95,6 @@ case object ITSASubmissionIntegration extends FeatureSwitchName {
 case object ChargeHistory extends FeatureSwitchName {
   override val name: String = "charge-history"
   override def toString: String = "Charge History"
-}
-
-case object PaymentAllocation extends FeatureSwitchName {
-  override val name: String = "payment-allocation"
-  override def toString: String = "Payment Allocation"
 }
 
 case object CodingOut extends FeatureSwitchName {
