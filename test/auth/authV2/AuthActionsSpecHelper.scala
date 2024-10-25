@@ -17,15 +17,12 @@
 package auth.authV2
 
 import audit.AuditingService
-import auth.FrontendAuthorisedFunctions
 import auth.authV2.actions._
 import config.{FrontendAppConfig, FrontendAuthConnector}
 import controllers.predicates.IncomeSourceDetailsPredicate
 import org.mockito.Mockito
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar.mock
-import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
-import play.api.{Application, Play}
 import services.IncomeSourceDetailsService
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core._
@@ -42,6 +39,7 @@ trait AuthActionsSpecHelper extends TestSupport with ScalaFutures {
     super.beforeEach()
     Mockito.reset(mockAuthConnector)
     Mockito.reset(mockIncomeSourceDetailsService)
+    Mockito.reset(mockAuditingService)
   }
 
   implicit class Ops[A](a: A) {

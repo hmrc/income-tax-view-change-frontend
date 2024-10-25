@@ -471,5 +471,4 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
 
     failedException.getCause.getClass shouldBe expectedError.getClass
   }
-
 }

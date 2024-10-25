@@ -27,6 +27,7 @@ import models.OriginEnum
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import play.api.{Configuration, Environment, Logger}
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
@@ -62,8 +63,9 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
       Enrolment(appConfig.mtdItEnrolmentKey) and
         (AffinityGroup.Organisation or AffinityGroup.Individual)
 
-    authorisedFunctions.authorised(predicate)
+    authorisedFunctions.authorised(predicate or AffinityGroup.Agent)
       .retrieve(allEnrolments and name and credentials and affinityGroup and confidenceLevel) {
+        redirectIfAgent() orElse
         redirectIfInsufficientConfidence() orElse constructMtdItUserOptionNino()
       }(hc, executionContext) recoverWith logAndRedirect
   }
@@ -91,6 +93,15 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
       Future.successful(Left(Redirect(controllers.routes.SignInController.signIn)))
     // No catch all block at end - bubble up to global error handler
     // See investigation: https://github.com/hmrc/income-tax-view-change-frontend/pull/2432
+  }
+
+  private def redirectIfAgent[A]()(
+    implicit request: Request[A],
+    hc: HeaderCarrier): PartialFunction[AuthRetrievals, Future[Either[Result, MtdItUserOptionNino[A]]]] = {
+
+    case _ ~ _ ~ _ ~ Some(Agent) ~ _ =>
+      Logger(getClass).debug(s"Agent on endpoint for individuals")
+    Future.successful(Left(Redirect(controllers.agent.routes.EnterClientsUTRController.show)))
   }
 
   private def redirectIfInsufficientConfidence[A]()(

@@ -21,7 +21,7 @@ import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.mvc.Request
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name}
-import uk.gov.hmrc.auth.core.{ConfidenceLevel, Enrolment, EnrolmentIdentifier, Enrolments}
+import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, Enrolment, EnrolmentIdentifier, Enrolments}
 
 object AuthActionsTestData {
 
@@ -36,7 +36,9 @@ object AuthActionsTestData {
   val saEnrolment               = Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", saUtr)), "Activated", None)
   val credentials               = Credentials("foo", "bar")
   val defaultIncomeSourcesData  = IncomeSourceDetailsModel(nino, saUtr, Some("2012"), Nil, Nil)
-  val confidenceLevel: ConfidenceLevel = ConfidenceLevel.L250
+  val acceptedConfidenceLevel: ConfidenceLevel = ConfidenceLevel.L250
+  val notAcceptedConfidenceLevel: ConfidenceLevel = ConfidenceLevel.L50
+
 
   def mtdIdAgentPredicate(mtdId: String) = Enrolment("HMRC-MTD-IT").withIdentifier("MTDITID", mtdId).withDelegatedAuthRule("mtd-it-auth")
   def mtdIdIndividualPredicate(mtdId: String) = Enrolment("HMRC-MTD-IT").withIdentifier("MTDITID", mtdId)
@@ -50,15 +52,18 @@ object AuthActionsTestData {
       enrolmentList.toSet,
     )
   }
-  def getMtdItUserOptionNinoForAuthorise(hasAllRelevantFields: Boolean)
+  def getMtdItUserOptionNinoForAuthorise(affinityGroup: Option[AffinityGroup],
+                                         hasNino: Boolean = false,
+                                         hasSA: Boolean = false,
+                                         hasUserName: Boolean = false)
                                         (implicit request: Request[_]) = MtdItUserOptionNino(
     mtdId,
-    if(hasAllRelevantFields) Some(nino) else None,
-    if(hasAllRelevantFields) Some(userName) else None,
+    if(hasNino) Some(nino) else None,
+    if(hasUserName) Some(userName) else None,
     None,
-    if(hasAllRelevantFields) Some(saUtr) else None,
+    if(hasSA) Some(saUtr) else None,
     Some(credentials.providerId),
-    Some(Individual)
+    affinityGroup
   )
 
 }
