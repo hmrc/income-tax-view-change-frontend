@@ -33,6 +33,7 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutPredicateV2,
                             val authoriseAndRetrieve: AuthoriseAndRetrieve,
                             val authoriseAndRetrieveIndividual: AuthoriseAndRetrieveIndividual,
                             val authoriseAndRetrieveAgent: AuthoriseAndRetrieveAgent,
+                            val authoriseAndRetrieveMtdAgent: AuthoriseAndRetrieveMtdAgent,
                             val agentHasClientDetails: AgentHasClientDetails,
                             val asMtdUser: AsMtdUser,
                             val retrieveBtaNavBar: NavBarPredicateV2,
@@ -72,6 +73,8 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutPredicateV2,
   }
 
   def isAgent[A]: ActionBuilder[AgentUser, AnyContent] = checkSessionTimeout andThen authoriseAndRetrieveAgent
+
+//  def isAgentWithClient[A]: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authoriseAndRetrieveMtdAgent
 
 
   //  private def hasRequiredRole(supportedRoles: List[MTDUserRole]): ActionRefiner[MtdItUserOptionNino, MtdItUserOptionNino] = {

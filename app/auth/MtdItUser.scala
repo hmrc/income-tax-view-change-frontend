@@ -39,6 +39,8 @@ abstract class MtdItUserBase[A](implicit request: Request[A]) extends WrappedReq
   def userType: Option[AffinityGroup]
 
   def arn: Option[String]
+
+  def isSupportingAgent: Boolean
 }
 
 case class MtdItUserOptionNino[A](mtditid: String,
@@ -49,7 +51,8 @@ case class MtdItUserOptionNino[A](mtditid: String,
                                   credId: Option[String],
                                   userType: Option[AffinityGroup],
                                   arn: Option[String],
-                                  optClientName: Option[Name] = None)(implicit request: Request[A]) extends WrappedRequest[A](request)
+                                  optClientName: Option[Name] = None,
+                                  isSupportingAgent: Boolean = false)(implicit request: Request[A]) extends WrappedRequest[A](request)
 
 case class MtdItUserWithNino[A](mtditid: String,
                                 nino: String,
@@ -59,7 +62,8 @@ case class MtdItUserWithNino[A](mtditid: String,
                                 credId: Option[String],
                                 userType: Option[AffinityGroup],
                                 arn: Option[String],
-                                optClientName: Option[Name] = None)(implicit request: Request[A]) extends MtdItUserBase[A]
+                                optClientName: Option[Name] = None,
+                                isSupportingAgent: Boolean = false)(implicit request: Request[A]) extends MtdItUserBase[A]
 
 case class MtdItUser[A](mtditid: String,
                         nino: String,
@@ -71,6 +75,7 @@ case class MtdItUser[A](mtditid: String,
                         userType: Option[AffinityGroup],
                         arn: Option[String],
                         optClientName: Option[Name] = None,
+                        isSupportingAgent: Boolean = false,
                         featureSwitches: List[FeatureSwitch] = List.empty // TODO: remove default
                        )(implicit request: Request[A]) extends MtdItUserBase[A] {
 

@@ -18,7 +18,7 @@ package auth.authV2
 
 import auth.authV2.AuthExceptions.{MissingAgentReferenceNumber, MissingMtdId}
 import auth.authV2.actions._
-import auth.{FrontendAuthorisedFunctions, MtdItUser}
+import auth.{FrontendAuthorisedFunctions, MtdItUser, MtdItUserWithNino}
 import config.FrontendAuthConnector
 import controllers.agent.sessionUtils.SessionKeys
 import controllers.predicates.IncomeSourceDetailsPredicate
@@ -26,6 +26,7 @@ import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetails
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito
 import org.mockito.Mockito.when
+import org.scalatest.Assertion
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.exceptions.TestFailedException
 import org.scalatestplus.mockito.MockitoSugar.mock
@@ -333,6 +334,10 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
 
   }
 
+  "isAgentWithClient" should {
+
+  }
+
   lazy val mockAuthConnector = mock[FrontendAuthConnector]
   lazy val mockIncomeSourceDetailsService = mock[IncomeSourceDetailsService]
 
@@ -366,6 +371,9 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
   private type AuthAgentRetrievals =
     Enrolments ~ Option[Credentials] ~ Option[AffinityGroup] ~ ConfidenceLevel
 
+  private type AuthAgentWithClientRetrievals =
+    Enrolments ~ Option[Credentials] ~ Option[AffinityGroup] ~ Option[Name]
+
   case class RetrievalData(enrolments: Enrolments,
                            name: Option[Name],
                            credentials: Option[Credentials],
@@ -377,6 +385,7 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
     app.injector.instanceOf[AuthoriseAndRetrieve],
     app.injector.instanceOf[AuthoriseAndRetrieveIndividual],
     app.injector.instanceOf[AuthoriseAndRetrieveAgent],
+    app.injector.instanceOf[AuthoriseAndRetrieveMtdAgent],
     app.injector.instanceOf[AgentHasClientDetails],
     app.injector.instanceOf[AsMtdUser],
     app.injector.instanceOf[NavBarPredicateV2],
@@ -412,6 +421,7 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
 
     val result = authActions.individualOrAgentWithClient.async(block)(request).futureValue
   }
+
   class ResultFixture(retrievals: RetrievalData,
                       request: FakeRequest[AnyContent] = FakeRequest(),
                       incomeSources: IncomeSourceDetailsResponse = defaultIncomeSourcesData,
@@ -470,6 +480,43 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
     }
 
     failedException.getCause.getClass shouldBe expectedError.getClass
+  }
+
+
+  class AgentWithClientFixture(retrievals: RetrievalData,
+                         request: FakeRequest[AnyContent] = FakeRequest(),
+                         block: MtdItUser[_] => Future[Result] = (_) => Future.successful(Ok("OK!")),
+                         authorisationException: Option[AuthorisationException] = None,
+                         expectedError: Option[Throwable] = None
+                 ){
+
+//    def authExceptionResult: Result = {
+//      when(mockAuthConnector.authorise[AuthAgentWithClientRetrievals](any(), any())(any(), any())).thenReturn(
+//        Future.successful[AuthAgentWithClientRetrievals](
+//          retrievals.enrolments ~ retrievals.credentials ~ retrievals.affinityGroup ~ retrievals.name
+//        )
+//      )
+//
+//      authActions.isAgentWithClient.async(block)(request).futureValue
+//    }
+//
+//    def result: Result = {
+//      when(mockAuthConnector.authorise[AuthAgentWithClientRetrievals](any(), any())(any(), any())).thenReturn(
+//        Future.successful[AuthAgentWithClientRetrievals](
+//          retrievals.enrolments ~ retrievals.credentials ~ retrievals.affinityGroup ~ retrievals.name
+//        )
+//      )
+//
+//      authActions.isAgentWithClient.async(block)(request).futureValue
+//    }
+//
+//    def exception: Assertion = {
+//      val failedException: TestFailedException = intercept[TestFailedException] {
+//        authActions.isAgentWithClient.async(block)(request).futureValue
+//      }
+//
+//      failedException.getCause.getClass shouldBe expectedError.getClass
+//    }
   }
 
 }
