@@ -74,20 +74,20 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutPredicateV2,
   def isAgent[A]: ActionBuilder[AgentUser, AnyContent] = checkSessionTimeout andThen authoriseAndRetrieveAgent
 
 
-  //  private def hasRequiredRole(supportedRoles: List[MTDUserRole]): ActionRefiner[MtdItUserOptionNino, MtdItUserOptionNino] = {
-  //    new ActionRefiner[MtdItUserOptionNino, MtdItUserOptionNino] {
-  //
-  //      override protected def refine[A](request: MtdItUserOptionNino[A]): Future[Either[Result, MtdItUserOptionNino[A]]] = {
-  //        val usersRole = request.userType.fold(MTDIndividual)(affGroup => if(affGroup))
-  //        if(supportedRoles.contains(request.userRole)) {
-  //          Future.successful(Right(request))
-  //        } else {
-  //          Future.successful(Left(Unauthorized("Put new view file here")))
-  //        }
-  //      }
-  //
-  //      override protected def executionContext: ExecutionContext = ec
-  //    }
-  //  }
+//    private def agentIsPrimary(supportedRoles: List[MTDUserRole]): ActionRefiner[MtdItUserOptionNino, MtdItUserOptionNino] = {
+//      new ActionRefiner[MtdItUserOptionNino, MtdItUserOptionNino] {
+//
+//        override protected def refine[A](request: MtdItUserOptionNino[A]): Future[Either[Result, MtdItUserOptionNino[A]]] = {
+//          val usersRole = request.userType.fold(MTDIndividual)(affGroup => if(affGroup))
+//          if(supportedRoles.contains(request.userRole)) {
+//            Future.successful(Right(request))
+//          } else {
+//            Future.successful(Left(Unauthorized("Put new view file here")))
+//          }
+//        }
+//
+//        override protected def executionContext: ExecutionContext = ec
+//      }
+//    }
 }
 

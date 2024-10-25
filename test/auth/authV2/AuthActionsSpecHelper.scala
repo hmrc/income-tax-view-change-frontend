@@ -18,12 +18,12 @@ package auth.authV2
 
 import audit.AuditingService
 import auth.authV2.actions._
-import config.{FrontendAppConfig, FrontendAuthConnector}
+import config.{FrontendAppConfig, FrontendAuthConnector, ItvcErrorHandler}
 import controllers.predicates.IncomeSourceDetailsPredicate
 import org.mockito.Mockito
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar.mock
-import services.IncomeSourceDetailsService
+import services.{IncomeSourceDetailsService, SessionDataService}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
@@ -34,6 +34,8 @@ trait AuthActionsSpecHelper extends TestSupport with ScalaFutures {
   lazy val mockIncomeSourceDetailsService = mock[IncomeSourceDetailsService]
   lazy val mockAppConfig = mock[FrontendAppConfig]
   lazy val mockAuditingService = mock[AuditingService]
+  lazy val mockSessionDataService = mock[SessionDataService]
+  lazy val mockItvcErrorHandler = mock[ItvcErrorHandler]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
