@@ -47,15 +47,22 @@ case class OptOutProposition(previousTaxYear: PreviousOptOutTaxYear,
       case _ => None
     }
   }
+
+  def expectedItsaStatusesAfter(customerIntent: TaxYear): Seq[ITSAStatus] = {
+    Seq(
+      previousTaxYear.expectedItsaStatusAfter(customerIntent),
+      currentTaxYear.expectedItsaStatusAfter(customerIntent),
+      nextTaxYear.expectedItsaStatusAfter(customerIntent))
+  }
 }
 
 object OptOutProposition {
 
   def createOptOutProposition(currentYear: TaxYear,
-                                      previousYearCrystallised: Boolean,
-                                      previousYearItsaStatus: ITSAStatus,
-                                      currentYearItsaStatus: ITSAStatus,
-                                      nextYearItsaStatus: ITSAStatus): OptOutProposition = {
+                              previousYearCrystallised: Boolean,
+                              previousYearItsaStatus: ITSAStatus,
+                              currentYearItsaStatus: ITSAStatus,
+                              nextYearItsaStatus: ITSAStatus): OptOutProposition = {
 
     val previousYearOptOut = PreviousOptOutTaxYear(
       status = previousYearItsaStatus,
@@ -76,5 +83,4 @@ object OptOutProposition {
 
     OptOutProposition(previousYearOptOut, currentYearOptOut, nextYearOptOut)
   }
-
 }

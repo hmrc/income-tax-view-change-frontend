@@ -27,16 +27,22 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import utils.Utilities._
 
 
-case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], chargeItem: ChargeItem,
-                              paymentBreakdown: List[FinancialDetail], chargeHistories: List[ChargeHistoryModel],
-                              paymentAllocations: List[PaymentHistoryAllocations], isLatePaymentCharge: Boolean,
-                              isMFADebit: Boolean = false, taxYear: Int)(implicit val dateService: DateServiceInterface) extends ExtendedAuditModel with PaymentSharedFunctions {
+case class ChargeSummaryAudit(mtdItUser: MtdItUser[_],
+                              chargeItem: ChargeItem,
+                              paymentBreakdown: List[FinancialDetail],
+                              chargeHistories: List[ChargeHistoryModel],
+                              paymentAllocations: List[PaymentHistoryAllocations],
+                              isLatePaymentCharge: Boolean,
+                              isMFADebit: Boolean = false,
+                              taxYear: Int
+                             )(implicit val dateService: DateServiceInterface) extends ExtendedAuditModel with PaymentSharedFunctions {
 
-  private val userType: JsObject = mtdItUser.userType match {
-    case Some(Agent) => Json.obj("userType" -> "Agent")
-    case Some(_) => Json.obj("userType" -> "Individual")
-    case None => Json.obj()
-  }
+  private val userType: JsObject =
+    mtdItUser.userType match {
+      case Some(Agent) => Json.obj("userType" -> "Agent")
+      case Some(_) => Json.obj("userType" -> "Individual")
+      case None => Json.obj()
+    }
 
   private def getAllocationDescriptionFromKey(key: Option[String]): String = {
     key match {
@@ -135,7 +141,7 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], chargeItem: ChargeItem,
   private val remainingToPay = if (isLatePaymentCharge)
     chargeItem.interestRemainingToPay else chargeItem.remainingToPay
 
-  private val dueDate = if (isLatePaymentCharge)chargeItem.interestEndDate else chargeItem.dueDate
+  private val dueDate = if (isLatePaymentCharge) chargeItem.interestEndDate else chargeItem.dueDate
 
   private val chargeDetails: JsObject = Json.obj(
     "chargeType" -> getChargeType(chargeItem, chargeItem.isOverdue() && chargeItem.isLatePaymentInterest)) ++

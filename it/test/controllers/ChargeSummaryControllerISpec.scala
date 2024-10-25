@@ -158,7 +158,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         dunningLock = oneDunningLock, interestLocks = twoInterestLocks, latePaymentInterestAmount = None, dueDate =
           dateService.getCurrentDate.plusDays(20).toString)
       And("I wiremock stub a single financial transaction response")
-      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, json )
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, json)
 
       And("I wiremock stub a charge history response")
       IncomeTaxViewChangeStub.stubChargeHistoryResponse(testNino, "ABCD1234")(OK, testChargeHistoryJson(testNino, "ABCD1234", 2500))
@@ -213,19 +213,20 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
 
       verifyIncomeSourceDetailsCall(testMtditid)
 
-      AuditStub.verifyAuditEvent(ChargeSummaryAudit(
-        MtdItUser(
-          testMtditid, testNino, None,
-          multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
-          Some("12345-credId"), Some(Individual), None
-        )(FakeRequest()),
-        chargeItemWithInterestAndOverdue(BalancingCharge, None, Some(LocalDate.of(2018,2,14))),
-        paymentBreakdown = List.empty,
-        chargeHistories = List.empty,
-        paymentAllocations = paymentAllocation,
-        isLatePaymentCharge = true,
-        taxYear = testTaxYear
-      ))
+      AuditStub.verifyAuditEvent(
+        ChargeSummaryAudit(
+          mtdItUser = MtdItUser(
+            testMtditid, testNino, None,
+            multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
+            Some("12345-credId"), Some(Individual), None
+          )(FakeRequest()),
+          chargeItem = chargeItemWithInterestAndOverdue(BalancingCharge, None, Some(LocalDate.of(2018, 2, 14))),
+          paymentBreakdown = List.empty,
+          chargeHistories = List.empty,
+          paymentAllocations = paymentAllocation,
+          isLatePaymentCharge = true,
+          taxYear = testTaxYear
+        ))
 
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       res should have(
@@ -347,9 +348,9 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           )),
         "financialDetails" -> Json.arr(
           Json.obj(
-          "transactionId" -> "CODINGOUT01",
-          "taxYear" -> "2018",
-          "mainTransaction" -> "4910"
+            "transactionId" -> "CODINGOUT01",
+            "taxYear" -> "2018",
+            "mainTransaction" -> "4910"
           )
         )))
 
@@ -704,9 +705,9 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
           Some("12345-credId"), Some(Individual), None
         )(FakeRequest()),
-          chargeItemPaid.copy(
-            dueDate = Some(LocalDate.parse("2018-03-30"))
-          ),
+        chargeItemPaid.copy(
+          dueDate = Some(LocalDate.parse("2018-03-30"))
+        ),
         paymentBreakdown = List(),
         chargeHistories = List.empty,
         paymentAllocations = List.empty,
@@ -715,13 +716,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         taxYear = testTaxYear
       ))
 
-    }
-  }
-
-  "API#1171 IncomeSourceDetails Caching" when {
-    "caching should be ENABLED" in {
-      testIncomeSourceDetailsCaching(false, 1,
-        () => IncomeTaxViewChangeFrontend.getChargeSummary("2018", "1040000123"))
     }
   }
 }

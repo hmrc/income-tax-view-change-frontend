@@ -145,11 +145,4 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
       }
     }
   }
-
-  "API#1171 IncomeSourceDetails Caching" when {
-    "caching should be ENABLED" in {
-      testIncomeSourceDetailsCaching(false, 1,
-        () => IncomeTaxViewChangeFrontend.getPaymentHistory)
-    }
-  }
 }

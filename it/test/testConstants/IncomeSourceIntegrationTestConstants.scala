@@ -263,13 +263,14 @@ object IncomeSourceIntegrationTestConstants {
     yearOfMigration = Some("2018")
   )
 
-  val propertyOnlyResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
-    testNino,
-    testMtdItId,
-    businesses = List(),
-    properties = List(property),
-    yearOfMigration = Some("2018")
-  )
+  val propertyOnlyResponse: IncomeSourceDetailsModel =
+    IncomeSourceDetailsModel(
+      testNino,
+      testMtdItId,
+      businesses = List(),
+      properties = List(property),
+      yearOfMigration = Some("2018")
+    )
 
   val ukPropertyOnlyResponse: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     testNino,
@@ -353,9 +354,9 @@ object IncomeSourceIntegrationTestConstants {
 
   private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
-  private def documentDetailsPayment( transactionId: String,
-                                      amount: BigDecimal,
-                                      clearingDate: LocalDate): JsObject= {
+  private def documentDetailsPayment(transactionId: String,
+                                     amount: BigDecimal,
+                                     clearingDate: LocalDate): JsObject = {
     Json.obj(
       "taxYear" -> testTaxYear,
       "transactionId" -> transactionId,
@@ -370,10 +371,10 @@ object IncomeSourceIntegrationTestConstants {
     )
   }
 
-  private def financialDetailsPayment( transactionId: String,
-                                       amount: BigDecimal,
-                                       clearingDate: LocalDate,
-                                       clearingSapDocument: String): JsObject = {
+  private def financialDetailsPayment(transactionId: String,
+                                      amount: BigDecimal,
+                                      clearingDate: LocalDate,
+                                      clearingSapDocument: String): JsObject = {
     Json.obj(
       "taxYear" -> s"$testTaxYear",
       "mainType" -> "Payment on Account",
@@ -387,10 +388,10 @@ object IncomeSourceIntegrationTestConstants {
           "amount" -> amount,
           "clearingDate" -> dateFormatter.format(clearingDate),
           "dueDate" -> dateFormatter.format(clearingDate)),
-          "paymentAmount" -> amount,
-          "paymentReference" -> "GF235687",
-          "paymentMethod" -> "Payment",
-          "clearingSAPDocument" -> clearingSapDocument
+        "paymentAmount" -> amount,
+        "paymentReference" -> "GF235687",
+        "paymentMethod" -> "Payment",
+        "clearingSAPDocument" -> clearingSapDocument
       )
     )
   }
@@ -512,11 +513,11 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   def testValidFinancialDetailsModelWithPaymentAllocationJson(originalAmount: BigDecimal, outstandingAmount: BigDecimal, taxYear: String = "2018",
-                                         dueDate: String = "2018-02-14", dunningLock: List[String] = noDunningLock,
-                                         interestLocks: List[String] = noInterestLock,
-                                         latePaymentInterestAmount: Option[BigDecimal] = Some(100),
-                                         isClass2Nic: Boolean = false
-                                        ): JsValue = Json.obj(
+                                                              dueDate: String = "2018-02-14", dunningLock: List[String] = noDunningLock,
+                                                              interestLocks: List[String] = noInterestLock,
+                                                              latePaymentInterestAmount: Option[BigDecimal] = Some(100),
+                                                              isClass2Nic: Boolean = false
+                                                             ): JsValue = Json.obj(
     "balanceDetails" -> Json.obj(
       "balanceDueWithin30Days" -> 1.00,
       "overDueAmount" -> 2.00,
@@ -1153,7 +1154,7 @@ object IncomeSourceIntegrationTestConstants {
         "totalAmount" -> amount,
         "reversalDate" -> "2019-02-14",
         "reversalReason" -> "Customer Request",
-        "poaAdjustmentReason" ->  "002"
+        "poaAdjustmentReason" -> "002"
       )
     )
   )
@@ -1172,7 +1173,7 @@ object IncomeSourceIntegrationTestConstants {
       "secondPendingAmountRequested" -> 2.00
     ),
     "documentDetails" -> Json.arr(
-      documentDetailsPayment("PAYID01", -500.0, LocalDate.of(taxYear.toInt,3,29)),
+      documentDetailsPayment("PAYID01", -500.0, LocalDate.of(taxYear.toInt, 3, 29)),
       Json.obj(
         "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000123",
@@ -1233,7 +1234,7 @@ object IncomeSourceIntegrationTestConstants {
       )
     ),
     "financialDetails" -> Json.arr(
-      financialDetailsPayment("PAYID01", -500.0, LocalDate.of(taxYear.toInt,3,29), "123456"),
+      financialDetailsPayment("PAYID01", -500.0, LocalDate.of(taxYear.toInt, 3, 29), "123456"),
       Json.obj(
         "taxYear" -> taxYear,
         "mainType" -> "ITSA Cutover Credits",
@@ -1602,11 +1603,11 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   def testValidFinancialDetailsModelReviewAndReconcileDebitsJson(
-                                                  originalAmount: BigDecimal, outstandingAmount: BigDecimal, taxYear: String = "2018",
-                                                  dueDate: String = "2018-02-14", dunningLock: List[String] = noDunningLock,
-                                                  interestLocks: List[String] = noInterestLock,
-                                                  latePaymentInterestAmount: Option[BigDecimal] = Some(100)
-                                                 ): JsValue = Json.obj(
+                                                                  originalAmount: BigDecimal, outstandingAmount: BigDecimal, taxYear: String = "2018",
+                                                                  dueDate: String = "2018-02-14", dunningLock: List[String] = noDunningLock,
+                                                                  interestLocks: List[String] = noInterestLock,
+                                                                  latePaymentInterestAmount: Option[BigDecimal] = Some(100)
+                                                                ): JsValue = Json.obj(
     "balanceDetails" -> Json.obj(
       "balanceDueWithin30Days" -> 1.00,
       "overDueAmount" -> 2.00,

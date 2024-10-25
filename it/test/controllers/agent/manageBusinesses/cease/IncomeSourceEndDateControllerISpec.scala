@@ -35,7 +35,7 @@ import java.time.LocalDate
 class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
-  val repository = app.injector.instanceOf[UIJourneySessionDataRepository]
+  val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
   val isAgent: Boolean = true
 
   val manageBusinessesUrl: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url

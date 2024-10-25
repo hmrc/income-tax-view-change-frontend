@@ -52,7 +52,7 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
 
         val resultToReturn = for {
           viewModel <- OptionT(optOutService.optOutCheckPointPageViewModel())
-          result <- OptionT(Future.successful(Option(toPropositionView(isAgent, viewModel, cancelURL))))
+          result <- OptionT(Future(Option(toPropositionView(isAgent, viewModel, cancelURL))))
         } yield result
 
         resultToReturn.getOrElse(handleError("No qualified tax year available for opt out", isAgent))
@@ -60,18 +60,20 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
       }
   }
 
-  private def toPropositionView(isAgent: Boolean, viewModel: OptOutCheckpointViewModel, cancelURL: String)(implicit mtdItUser: MtdItUser[_]) = viewModel match {
+  private def toPropositionView(isAgent: Boolean, viewModel: OptOutCheckpointViewModel, cancelURL: String)(implicit mtdItUser: MtdItUser[_]) =
+    viewModel match {
     case oneYear: OneYearOptOutCheckpointViewModel => Ok(view(oneYear, isAgent = isAgent, cancelURL))
     case multiYear: MultiYearOptOutCheckpointViewModel => Ok(checkOptOutAnswers(multiYear, isAgent, cancelURL))
   }
 
-  def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = isAgent) {
-    implicit user =>
-      optOutService.makeOptOutUpdateRequest().map {
-        case ITSAStatusUpdateResponseSuccess(_) => Redirect(routes.ConfirmedOptOutController.show(isAgent))
-        case _ => Redirect(routes.OptOutErrorController.show(isAgent))
-      }
-  }
+  def submit(isAgent: Boolean): Action[AnyContent] =
+    auth.authenticatedAction(isAgent = isAgent) {
+      implicit user =>
+        optOutService.makeOptOutUpdateRequest().map {
+          case ITSAStatusUpdateResponseSuccess(_) => Redirect(routes.ConfirmedOptOutController.show(isAgent))
+          case _ => Redirect(routes.OptOutErrorController.show(isAgent))
+        }
+    }
 
   private def withRecover(isAgent: Boolean)(code: => Future[Result])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
     code.recover {

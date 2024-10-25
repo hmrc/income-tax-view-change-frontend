@@ -20,7 +20,6 @@ import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.agent.sessionUtils
-import controllers.predicates.FeatureSwitchPredicate
 import implicits.ImplicitDateFormatterImpl
 import models.admin.FeatureSwitchName.allFeatureSwitches
 import models.incomeSourceDetails.IncomeSourceDetailsModel
@@ -86,7 +85,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
   implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   // Set fixed date for DateService
-  lazy val fixedDate : LocalDate = LocalDate.of(2023, 12, 15)
+  lazy val fixedDate: LocalDate = LocalDate.of(2023, 12, 15)
   implicit val dateService: DateService = new DateService {
 
     override def getCurrentDate: LocalDate = fixedDate
@@ -97,13 +96,14 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
 
     override def isBeforeLastDayOfTaxYear: Boolean = false
 
-    override def getAccountingPeriodEndDate(startDate: LocalDate): LocalDate =  LocalDate.of(2024, 4, 5)
+    override def getAccountingPeriodEndDate(startDate: LocalDate): LocalDate = LocalDate.of(2024, 4, 5)
   }
 
-  val tsTestUser: MtdItUser[_] = MtdItUser(
-    testMtditid, testNino, None, IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty), None,
-    Some("1234567890"), Some("12345-credId"), Some(Individual), None
-  )(FakeRequest())
+  val tsTestUser: MtdItUser[_] =
+    MtdItUser(
+      mtditid = testMtditid, nino = testNino, userName = None, incomeSources = IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty), btaNavPartial = None,
+      saUtr = Some("1234567890"), credId = Some("12345-credId"), userType = Some(Individual), arn = None
+    )(FakeRequest())
 
   val tsTestUserAgent: MtdItUser[_] = MtdItUser(
     testMtditid, testNino, None, IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty), None,

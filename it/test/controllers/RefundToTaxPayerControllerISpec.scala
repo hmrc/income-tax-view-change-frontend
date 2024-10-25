@@ -137,11 +137,4 @@ class RefundToTaxPayerControllerISpec extends ComponentSpecBase {
       AuditStub.verifyAuditEvent(RefundToTaxPayerResponseAuditModel(testRepaymentHistoryModel)(testUser))
     }
   }
-
-  "API#1171 IncomeSourceDetails Caching" when {
-    "caching should be ENABLED" in {
-      testIncomeSourceDetailsCaching(false, 1,
-        () => IncomeTaxViewChangeFrontend.getRefundToTaxPayer(repaymentRequestNumber))
-    }
-  }
 }

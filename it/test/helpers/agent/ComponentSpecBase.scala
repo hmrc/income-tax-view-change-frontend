@@ -24,7 +24,6 @@ import forms.agent.ClientsUTRForm
 import forms.incomeSources.add.{AddIncomeSourceStartDateCheckForm, IncomeSourceReportingMethodForm}
 import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
 import forms.optOut.ConfirmOptOutSingleTaxYearForm
-import helpers.servicemocks.AuditStub
 import helpers.{CustomMatchers, GenericStubMethods, TestDateService, WiremockHelper}
 import models.admin.FeatureSwitchName
 import org.scalatest._
@@ -122,7 +121,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   override def beforeEach(): Unit = {
     super.beforeEach()
     WireMock.reset()
-    AuditStub.stubAuditing()
+//    AuditStub.stubAuditing()
     cache.removeAll()
     FeatureSwitchName.allFeatureSwitches foreach disable
   }
@@ -624,10 +623,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
         )
       }
     }
-  }
-
-  def testIncomeSourceDetailsCaching(resetCacheAfterFirstCall: Boolean, noOfCalls: Int, callback: () => Unit): Unit = {
-    // tests to be reimplemented after hmrc-mongo caching
   }
 }
 

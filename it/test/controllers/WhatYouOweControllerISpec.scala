@@ -967,13 +967,6 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with ChargeConstants w
       }
     }
 
-    "API#1171 IncomeSourceDetails Caching" when {
-      "caching should be ENABLED" in {
-        testIncomeSourceDetailsCaching(resetCacheAfterFirstCall = false, 1,
-          () => IncomeTaxViewChangeFrontend.getPaymentsDue)
-      }
-    }
-
     "render the money in your account section when balance details has available credits" in {
       enable(CreditsRefundsRepay)
       Given("I wiremock stub a successful Income Source Details response with multiple business and property")

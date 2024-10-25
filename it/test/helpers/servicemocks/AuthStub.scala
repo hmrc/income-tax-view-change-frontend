@@ -16,10 +16,10 @@
 
 package helpers.servicemocks
 
-import testConstants.BaseIntegrationTestConstants._
 import helpers.{ComponentSpecBase, WiremockHelper}
 import play.api.http.Status
 import play.api.libs.json.Json
+import testConstants.BaseIntegrationTestConstants._
 
 object AuthStub extends ComponentSpecBase {
 
@@ -28,7 +28,9 @@ object AuthStub extends ComponentSpecBase {
   val requiredConfidenceLevel = appConfig.requiredConfidenceLevel
 
   def stubAuthorised(confidenceLevel: Option[Int] = None): Unit = {
-    WiremockHelper.stubPost(postAuthoriseUrl, Status.OK,
+    WiremockHelper.stubPost(
+      postAuthoriseUrl,
+      Status.OK,
       Json.parse(
         s"""{
            | "allEnrolments": [{
@@ -51,7 +53,9 @@ object AuthStub extends ComponentSpecBase {
            |  "providerType": "GovernmentGateway"
            | },
            | "confidenceLevel": ${confidenceLevel.getOrElse(requiredConfidenceLevel)}
-           |}""".stripMargin).toString())
+           |}""".stripMargin
+      ).toString()
+    )
   }
 
   def stubAuthorisedWithName(): Unit = {
