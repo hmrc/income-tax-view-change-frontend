@@ -31,6 +31,7 @@ object AuthActionsTestData {
   val userName = Name(Some("Issac Newton"), None)
 
   val mtdEnrolment             = Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", mtdId)), "Activated", None)
+  val agentEnrolment             = Enrolment("HMRC-AS-AGENT", Seq(EnrolmentIdentifier("AgentReferenceNumber", "1")), "Activated", None)
   val ninoEnrolment             = Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", nino)), "Activated", None)
   val saEnrolment               = Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", saUtr)), "Activated", None)
   val credentials               = Credentials("foo", "bar")
@@ -51,6 +52,15 @@ object AuthActionsTestData {
       enrolmentList.toSet,
     )
   }
+
+  def getAllEnrolmentsAgent(hasNino: Boolean, hasSA: Boolean) = {
+    var enrolmentList = List(agentEnrolment)
+    if(hasNino) enrolmentList :+= ninoEnrolment
+    if(hasSA) enrolmentList :+= saEnrolment
+    Enrolments(
+      enrolmentList.toSet,
+    )
+  }
   def getMtdItUserOptionNinoForAuthorise(affinityGroup: Option[AffinityGroup],
                                          hasNino: Boolean = false,
                                          hasSA: Boolean = false,
@@ -65,5 +75,12 @@ object AuthActionsTestData {
     affinityGroup,
     None
   )
+
+  def getAgentData(enrolments: Enrolments)(implicit request: Request[_]) = AgentUser(
+    enrolments,
+    Some(AffinityGroup.Agent),
+    acceptedConfidenceLevel,
+    Some(credentials)
+  )(request)
 
 }

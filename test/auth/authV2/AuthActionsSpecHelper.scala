@@ -46,6 +46,9 @@ trait AuthActionsSpecHelper extends TestSupport with ScalaFutures {
     def ~[B](b: B): A ~ B = new ~(a, b)
   }
 
+  type AgentAuthRetrievals =
+    Enrolments ~ Option[Credentials] ~ Option[AffinityGroup]  ~ ConfidenceLevel
+
   type AuthRetrievals =
     Enrolments ~ Option[Name] ~ Option[Credentials] ~ Option[AffinityGroup]  ~ ConfidenceLevel
 

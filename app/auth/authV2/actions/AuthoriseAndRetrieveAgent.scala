@@ -58,8 +58,7 @@ class AuthoriseAndRetrieveAgent @Inject()(val authorisedFunctions: FrontendAutho
 
     authorisedFunctions.authorised( isAgent or isNotAgent)
       .retrieve(allEnrolments and credentials and affinityGroup and confidenceLevel) {
-        redirectIfNotAgent()
-        constructAgentUser()
+        redirectIfNotAgent() orElse constructAgentUser()
       }(hc, executionContext) recoverWith logAndRedirect
   }
 
@@ -88,15 +87,15 @@ class AuthoriseAndRetrieveAgent @Inject()(val authorisedFunctions: FrontendAutho
         Right(AgentUser(
           enrolments = enrolments,
           affinityGroup = affinityGroup,
-          confidenceLevel =confidenceLevel,
-          credentials = credentials)))
+          confidenceLevel = confidenceLevel,
+          credentials = credentials))
+      )
   }
 
   private def redirectIfNotAgent[A]()(
     implicit request: Request[A]): PartialFunction[AuthAgentRetrievals, Future[Either[Result, AgentUser[A]]]] = {
-
     case _ ~ _ ~ Some(ag@(Organisation | Individual)) ~ _ =>
       Logger(getClass).debug(s"$ag on endpoint for agents")
-      Future.successful(Left(Redirect(controllers.agent.routes.EnterClientsUTRController.show)))
+      Future.successful(Left(Redirect(controllers.routes.HomeController.show())))
   }
 }

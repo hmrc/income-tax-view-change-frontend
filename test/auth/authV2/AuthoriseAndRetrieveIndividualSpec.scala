@@ -165,12 +165,6 @@ class AuthoriseAndRetrieveIndividualSpec extends AuthActionsSpecHelper {
 
     "redirect to EnterClientsUtr page" when {
       "the user is an Agent" in {
-        val expectedResponse = getMtdItUserOptionNinoForAuthorise(
-          affinityGroup = Some(Agent),
-          hasNino = true,
-          hasSA = true,
-          hasUserName = true)(fakeRequestWithActiveSession)
-
         when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
           Future.successful[AuthRetrievals](
             getAllEnrolmentsIndividual(true, true) ~ Some(userName) ~ Some(credentials) ~ Some(Agent) ~ notAcceptedConfidenceLevel
@@ -179,7 +173,7 @@ class AuthoriseAndRetrieveIndividualSpec extends AuthActionsSpecHelper {
 
         val result = authAction.invokeBlock(
           fakeRequestWithActiveSession,
-          defaultAsyncBody(_ shouldBe expectedResponse))
+          defaultAsync)
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/agents/client-utr")
