@@ -141,7 +141,7 @@ viewModel: HomePageViewModel,
                         </span>
                     }
                     <span class="govuk-visually-hidden">@messages("home.agent.visualHidden.clientsName")</span>
-                    @user.userName.map(_.name) @user.userName.map(_.lastName)
+                    @user.optClientName.map(_.name) @user.optClientName.map(_.lastName)
                 }
 
                 @p(classes = "govuk-body margin-bottom-sixty", id = Some("changeClientLink")) {

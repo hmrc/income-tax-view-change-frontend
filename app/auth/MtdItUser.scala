@@ -48,7 +48,8 @@ case class MtdItUserOptionNino[A](mtditid: String,
                                   saUtr: Option[String],
                                   credId: Option[String],
                                   userType: Option[AffinityGroup],
-                                  arn: Option[String])(implicit request: Request[A]) extends WrappedRequest[A](request)
+                                  arn: Option[String],
+                                  optClientName: Option[Name] = None)(implicit request: Request[A]) extends WrappedRequest[A](request)
 
 case class MtdItUserWithNino[A](mtditid: String,
                                 nino: String,
@@ -57,7 +58,8 @@ case class MtdItUserWithNino[A](mtditid: String,
                                 saUtr: Option[String],
                                 credId: Option[String],
                                 userType: Option[AffinityGroup],
-                                arn: Option[String])(implicit request: Request[A]) extends MtdItUserBase[A]
+                                arn: Option[String],
+                                optClientName: Option[Name] = None)(implicit request: Request[A]) extends MtdItUserBase[A]
 
 case class MtdItUser[A](mtditid: String,
                         nino: String,
@@ -68,6 +70,7 @@ case class MtdItUser[A](mtditid: String,
                         credId: Option[String],
                         userType: Option[AffinityGroup],
                         arn: Option[String],
+                        optClientName: Option[Name] = None,
                         featureSwitches: List[FeatureSwitch] = List.empty // TODO: remove default
                        )(implicit request: Request[A]) extends MtdItUserBase[A] {
 

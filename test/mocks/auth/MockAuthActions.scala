@@ -54,6 +54,15 @@ trait MockAuthActions extends
     auditingService = mockAuditingService
   )
 
+  private val authoriseAndRetrieveIndividual = new AuthoriseAndRetrieveIndividual(
+    authorisedFunctions = mockAuthService,
+    appConfig = appConfig,
+    config = conf,
+    env = environment,
+    mcc = stubMessagesControllerComponents(),
+    auditingService = mockAuditingService
+  )
+
   private val authoriseAndRetrieveAgent = new AuthoriseAndRetrieveAgent(
     authorisedFunctions = mockAuthService,
     appConfig = appConfig,
@@ -72,6 +81,7 @@ trait MockAuthActions extends
   val mockAuthActions = new AuthActions(
     app.injector.instanceOf[SessionTimeoutPredicateV2],
     authoriseAndRetrieve,
+    authoriseAndRetrieveIndividual,
     authoriseAndRetrieveAgent,
     app.injector.instanceOf[AgentHasClientDetails],
     app.injector.instanceOf[AsMtdUser],

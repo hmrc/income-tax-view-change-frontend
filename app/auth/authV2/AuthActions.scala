@@ -16,19 +16,22 @@
 
 package auth.authV2
 
-import auth.MtdItUser
-import auth.authV2.actions._
+import auth.{MtdItUser, MtdItUserOptionNino}
+import auth.authV2.actions.{AuthoriseAndRetrieveIndividual, _}
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import controllers.predicates._
+import enums.{MTDIndividual, MTDUserRole}
+import play.api.mvc.Results.Unauthorized
 import play.api.mvc._
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutPredicateV2,
                             val authoriseAndRetrieve: AuthoriseAndRetrieve,
+                            val authoriseAndRetrieveIndividual: AuthoriseAndRetrieveIndividual,
                             val authoriseAndRetrieveAgent: AuthoriseAndRetrieveAgent,
                             val agentHasClientDetails: AgentHasClientDetails,
                             val asMtdUser: AsMtdUser,
@@ -36,32 +39,55 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutPredicateV2,
                             val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                             val featureSwitchPredicate: FeatureSwitchPredicateV2)
                            (implicit val appConfig: FrontendAppConfig,
-                                     val ec: ExecutionContext)  extends  FeatureSwitching {
+                            val ec: ExecutionContext)  extends  FeatureSwitching {
 
   def individualOrAgentWithClient[A]: ActionBuilder[MtdItUser, AnyContent] = {
 
-      (   checkSessionTimeout andThen
+    (   checkSessionTimeout andThen
 
-          authoriseAndRetrieve andThen
+      authoriseAndRetrieve andThen
 
-          agentHasClientDetails andThen
+      agentHasClientDetails andThen
 
-          // get MtdItUser from EnroledUser by requiring mtdId
+      // get MtdItUser from EnroledUser by requiring mtdId
 
-          asMtdUser andThen
+      asMtdUser andThen
 
-          // are income sources required on most pages? could this step
-          // be removed from here and added where required?
+      // are income sources required on most pages? could this step
+      // be removed from here and added where required?
 
-          retrieveNinoWithIncomeSources andThen
+      retrieveNinoWithIncomeSources andThen
 
-          featureSwitchPredicate andThen
+      featureSwitchPredicate andThen
 
-          retrieveBtaNavBar )
+      retrieveBtaNavBar )
+  }
+
+  def isMTDIndividual[A]: ActionBuilder[MtdItUser, AnyContent] = {
+    checkSessionTimeout andThen
+      authoriseAndRetrieveIndividual andThen
+      retrieveNinoWithIncomeSources andThen
+      featureSwitchPredicate andThen
+      retrieveBtaNavBar
   }
 
   def isAgent[A]: ActionBuilder[AgentUser, AnyContent] = checkSessionTimeout andThen authoriseAndRetrieveAgent
 
 
+  //  private def hasRequiredRole(supportedRoles: List[MTDUserRole]): ActionRefiner[MtdItUserOptionNino, MtdItUserOptionNino] = {
+  //    new ActionRefiner[MtdItUserOptionNino, MtdItUserOptionNino] {
+  //
+  //      override protected def refine[A](request: MtdItUserOptionNino[A]): Future[Either[Result, MtdItUserOptionNino[A]]] = {
+  //        val usersRole = request.userType.fold(MTDIndividual)(affGroup => if(affGroup))
+  //        if(supportedRoles.contains(request.userRole)) {
+  //          Future.successful(Right(request))
+  //        } else {
+  //          Future.successful(Left(Unauthorized("Put new view file here")))
+  //        }
+  //      }
+  //
+  //      override protected def executionContext: ExecutionContext = ec
+  //    }
+  //  }
 }
 

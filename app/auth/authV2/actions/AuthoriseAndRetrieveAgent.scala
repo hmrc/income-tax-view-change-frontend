@@ -16,7 +16,6 @@
 
 package auth.authV2.actions
 
-import audit.AuditingService
 import auth.FrontendAuthorisedFunctions
 import auth.authV2.AgentUser
 import config.FrontendAppConfig
@@ -24,10 +23,11 @@ import config.featureswitch.FeatureSwitching
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Request, Result}
 import play.api.{Configuration, Environment, Logger}
+import uk.gov.hmrc.auth.core.AffinityGroup.{Individual, Organisation}
+import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
-import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -54,9 +54,11 @@ class AuthoriseAndRetrieveAgent @Inject()(val authorisedFunctions: FrontendAutho
     implicit val req: Request[A] = request
 
     val isAgent: Predicate = Enrolment("HMRC-AS-AGENT") and AffinityGroup.Agent
+    val isNotAgent: Predicate = AffinityGroup.Individual or AffinityGroup.Organisation
 
-    authorisedFunctions.authorised( isAgent )
+    authorisedFunctions.authorised( isAgent or isNotAgent)
       .retrieve(allEnrolments and credentials and affinityGroup and confidenceLevel) {
+        redirectIfNotAgent()
         constructAgentUser()
       }(hc, executionContext) recoverWith logAndRedirect
   }
@@ -88,5 +90,13 @@ class AuthoriseAndRetrieveAgent @Inject()(val authorisedFunctions: FrontendAutho
           affinityGroup = affinityGroup,
           confidenceLevel =confidenceLevel,
           credentials = credentials)))
+  }
+
+  private def redirectIfNotAgent[A]()(
+    implicit request: Request[A]): PartialFunction[AuthAgentRetrievals, Future[Either[Result, AgentUser[A]]]] = {
+
+    case _ ~ _ ~ Some(ag@(Organisation | Individual)) ~ _ =>
+      Logger(getClass).debug(s"$ag on endpoint for agents")
+      Future.successful(Left(Redirect(controllers.agent.routes.EnterClientsUTRController.show)))
   }
 }

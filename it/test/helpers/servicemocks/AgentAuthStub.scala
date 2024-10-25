@@ -17,7 +17,7 @@
 package helpers.servicemocks
 
 import controllers.agent.AuthUtils._
-import enums.{PrimaryAgent, SecondaryAgent, UserRole}
+import enums.{MTDPrimaryAgent, MTDSecondaryAgent, MTDUserRole}
 import helpers.WiremockHelper._
 import play.api.http.Status
 import play.api.libs.json.{JsString, JsValue, Json}
@@ -30,7 +30,7 @@ object AgentAuthStub {
 
 
   def stubPrimaryAuthorisedAgent(mtdItId: String = "mtdbsaId"): Unit = {
-    val jsonRequest = getAgentAuthRequest(Some(PrimaryAgent), mtdItId)
+    val jsonRequest = getAgentAuthRequest(Some(MTDPrimaryAgent), mtdItId)
 
     stubPostWithRequest(
       url = postAuthoriseUrl,
@@ -41,7 +41,7 @@ object AgentAuthStub {
   }
 
   def stubSecondaryAuthorisedAgent(mtdItId: String = "mtdbsaId"): Unit = {
-    val jsonRequest = getAgentAuthRequest(Some(SecondaryAgent), mtdItId)
+    val jsonRequest = getAgentAuthRequest(Some(MTDSecondaryAgent), mtdItId)
 
     stubPostWithRequest(
       url = postAuthoriseUrl,
@@ -88,7 +88,7 @@ object AgentAuthStub {
   }
 
   def failedPrimaryAgent(mtdItId: String = "MtdItId"): Unit = {
-    val jsonRequest = getAgentAuthRequest(Some(PrimaryAgent), mtdItId)
+    val jsonRequest = getAgentAuthRequest(Some(MTDPrimaryAgent), mtdItId)
 
     val responseHeaders = Map("WWW-Authenticate" -> "MDTP detail=\"InsufficientEnrolments\"",
       "Failing-Enrolment" -> "no mtditid enrolment")
@@ -102,7 +102,7 @@ object AgentAuthStub {
 
 
   def failedSecondaryAgent(mtdItId: String = "MtdItId"): Unit = {
-    val jsonRequest = getAgentAuthRequest(Some(SecondaryAgent), mtdItId)
+    val jsonRequest = getAgentAuthRequest(Some(MTDSecondaryAgent), mtdItId)
     val responseHeaders = Map("WWW-Authenticate" -> "MDTP detail=\"InsufficientEnrolments\"",
       "Failing-Enrolment" -> "no mtditid enrolment")
     stubPostWithRequestAndResponseHeaders(
@@ -114,16 +114,18 @@ object AgentAuthStub {
   }
 
 
-  def getAgentAuthRequest(role: Option[UserRole], mtdItId: String): JsValue = {
+  def getAgentAuthRequest(role: Option[MTDUserRole], mtdItId: String): JsValue = {
+    lazy val isNotAgentPredicate = AffinityGroup.Individual or AffinityGroup.Organisation
+    lazy val isAgentPredicate = Enrolment("HMRC-AS-AGENT") and AffinityGroup.Agent
     val predicateJson = role match {
-      case Some(PrimaryAgent) => Json.arr(Enrolment(primaryAgentEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
+      case Some(MTDPrimaryAgent) => Json.arr(Enrolment(primaryAgentEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
         .withDelegatedAuthRule(primaryAgentAuthRule).toJson)
-      case Some(SecondaryAgent) => Json.arr(Enrolment(secondaryAgentEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
+      case Some(MTDSecondaryAgent) => Json.arr(Enrolment(secondaryAgentEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
         .withDelegatedAuthRule(secondaryAgentAuthRule).toJson)
-      case _ => (Enrolment("HMRC-AS-AGENT") and AffinityGroup.Agent).toJson
+      case _ => Json.arr((isAgentPredicate or isNotAgentPredicate).toJson)
     }
 
-    val json = Json.obj(
+    Json.obj(
       "authorise" -> predicateJson,
       "retrieve" -> Json.arr(
         JsString("allEnrolments"),
@@ -132,9 +134,6 @@ object AgentAuthStub {
         JsString("confidenceLevel")
       )
     )
-
-    println(json)
-    json
   }
 
   def agentSuccessResponse(mtdItId: String, isSupportingAgent: Boolean): String = {

@@ -50,7 +50,7 @@ class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContex
       handleShow(isAgent = true)
   }
 
-  private def handleShow(isAgent: Boolean)(implicit hc: HeaderCarrier): Future[Result] = {
+  private def handleShow(isAgent: Boolean)(implicit request: Request[_], hc: HeaderCarrier): Future[Result] = {
     sessionDataService.getSessionData() map {
       case Left(ex: Throwable) =>
         Logger("application").error(s"${if (isAgent) "Agent" else "Individual"}" +
