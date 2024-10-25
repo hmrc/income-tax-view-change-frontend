@@ -94,7 +94,6 @@ class CustomAuthConnector @Inject()(servicesConfig: ServicesConfig,
     getUserCredentials(nino.nino, userRepository) map {
       userCredentials =>
         val delegateEnrolments = getDelegatedEnrolmentData(isAgent = isAgent, isSupporting = isSupporting, userCredentials.enrolmentData)
-        println(Console.CYAN + delegateEnrolments + Console.RESET)
         Json.obj(
           "credId" -> userCredentials.credId,
           "affinityGroup" -> {
