@@ -118,8 +118,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
   def preMtdPayments(from: String, to: String) = s"${messages("whatYouOwe.pre-mtd-year", from, to)}"
 
-  class TestSetup(creditCharges: List[DocumentDetail] = List(),
-                  charges: WhatYouOweChargesList,
+  class TestSetup(charges: WhatYouOweChargesList,
                   currentTaxYear: Int = fixedDate.getYear,
                   hasLpiWithDunningLock: Boolean = false,
                   dunningLock: Boolean = false,
@@ -146,7 +145,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     val html: HtmlFormat.Appendable = whatYouOweView(
       currentDate = dateService.getCurrentDate,
       hasOverdueOrAccruingInterestCharges = false,
-      creditCharges = creditCharges,
       whatYouOweChargesList = charges,
       hasLpiWithDunningLock = hasLpiWithDunningLock,
       currentTaxYear = currentTaxYear,
@@ -171,8 +169,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     }
   }
 
-  class AgentTestSetup(creditCharges: List[DocumentDetail] = List(),
-                       charges: WhatYouOweChargesList,
+  class AgentTestSetup(charges: WhatYouOweChargesList,
                        currentTaxYear: Int = fixedDate.getYear,
                        migrationYear: Int = fixedDate.getYear - 1,
                        codingOutEnabled: Boolean = true,
@@ -206,7 +203,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     val html: HtmlFormat.Appendable = whatYouOweView(
       currentDateIs,
       hasOverdueOrAccruingInterestCharges = false,
-      creditCharges = creditCharges,
       whatYouOweChargesList = charges,
       hasLpiWithDunningLock = hasLpiWithDunningLock,
       currentTaxYear = currentTaxYear,
@@ -1319,20 +1315,17 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
     val unallocatedCreditMsg = "You have £100.00 in your account. We’ll use this to pay the amount due on the next due date."
     "show unallocated credits" when {
-      "user is an individual with the feature switch on" in new TestSetup(creditCharges = creditDocumentDetailList,
-        charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
+      "user is an individual with the feature switch on" in new TestSetup(charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
         pageDocument.getElementById("unallocated-credit-note").text() shouldBe unallocatedCreditMsg
       }
 
-      "user is an agent with the feature switch on" in new AgentTestSetup(creditCharges = creditDocumentDetailList,
-        charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
+      "user is an agent with the feature switch on" in new AgentTestSetup(charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
         pageDocument.getElementById("unallocated-credit-note").text() shouldBe unallocatedCreditMsg
       }
     }
 
     "not show unallocated credits" when {
-      "user has no money in his account" in new TestSetup(creditCharges = creditDocumentDetailList,
-        charges = whatYouOweDataWithZeroMoneyInAccount()) {
+      "user has no money in his account" in new TestSetup(charges = whatYouOweDataWithZeroMoneyInAccount()) {
         findElementById("unallocated-credit-note") shouldBe None
       }
     }

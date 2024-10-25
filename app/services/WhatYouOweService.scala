@@ -43,17 +43,6 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
     }
   }
 
-  // TODO: This is only used in WhatYouOweController. Return value never used?
-  def getCreditCharges()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[List[DocumentDetail]] = {
-    financialDetailsService.getAllCreditFinancialDetails.map {
-      case financialDetails if financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel]) =>
-        throw new Exception("Error response while getting Unpaid financial details")
-      case financialDetails: List[FinancialDetailsResponseModel] =>
-        val financialDetailsModelList = financialDetails.asInstanceOf[List[FinancialDetailsModel]]
-        financialDetailsModelList.flatMap(_.documentDetails)
-    }
-  }
-
   def getWhatYouOweChargesList(isCodingOutEnabled: Boolean, isReviewAndReconcile: Boolean)
                               (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
     {
