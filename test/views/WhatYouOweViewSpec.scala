@@ -146,7 +146,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     val html: HtmlFormat.Appendable = whatYouOweView(
       currentDate = dateService.getCurrentDate,
       hasOverdueOrAccruingInterestCharges = false,
-      creditCharges = creditCharges,
       whatYouOweChargesList = charges,
       hasLpiWithDunningLock = hasLpiWithDunningLock,
       currentTaxYear = currentTaxYear,
@@ -171,8 +170,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     }
   }
 
-  class AgentTestSetup(creditCharges: List[DocumentDetail] = List(),
-                       charges: WhatYouOweChargesList,
+  class AgentTestSetup(charges: WhatYouOweChargesList,
                        currentTaxYear: Int = fixedDate.getYear,
                        migrationYear: Int = fixedDate.getYear - 1,
                        codingOutEnabled: Boolean = true,
@@ -206,7 +204,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     val html: HtmlFormat.Appendable = whatYouOweView(
       currentDateIs,
       hasOverdueOrAccruingInterestCharges = false,
-      creditCharges = creditCharges,
       whatYouOweChargesList = charges,
       hasLpiWithDunningLock = hasLpiWithDunningLock,
       currentTaxYear = currentTaxYear,
@@ -1324,8 +1321,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("unallocated-credit-note").text() shouldBe unallocatedCreditMsg
       }
 
-      "user is an agent with the feature switch on" in new AgentTestSetup(creditCharges = creditDocumentDetailList,
-        charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
+      "user is an agent with the feature switch on" in new AgentTestSetup(charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
         pageDocument.getElementById("unallocated-credit-note").text() shouldBe unallocatedCreditMsg
       }
     }
