@@ -57,7 +57,9 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
         paymentOnAccountViewModelMaybe <- EitherT(
           Future.successful(financialDetailsMaybe
             .map { financialDetails =>
-              getPaymentOnAccountModel(sortByTaxYear(financialDetails.getDocumentDetails))
+              // TODO: pass correct CodingOut / ReviewReconcile flags
+              val charges = sortByTaxYearC(financialDetails.toChargeItem(true, true))
+              getPaymentOnAccountModel(charges)
             } match {
               case Some(x) => x
               case None => Left(new Exception("Unable to extract getPaymentOnAccountModel"))
@@ -129,7 +131,9 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
       case Some(taxYear: TaxYear) =>
         financialDetailsConnector.getFinancialDetails(taxYear.endYear, nino.value).map {
           case financialDetails: FinancialDetailsModel =>
-            getPaymentOnAccountModel(sortByTaxYear(financialDetails.getDocumentDetails)) match {
+            // TODO: use correct CodingOut and ReviewReconcile flags
+            val charges = sortByTaxYearC(financialDetails.toChargeItem(true, true))
+            getPaymentOnAccountModel(charges) match {
               case Right(x) =>
                 Right(FinancialDetailsAndPoaModel(Some(financialDetails), x))
               case Left(ex) =>

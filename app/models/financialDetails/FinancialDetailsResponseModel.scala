@@ -39,8 +39,19 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
 // Step 1: Hide documentDetails field within FinancialDetailsModel
 ////////////////////////////////////////////////////////////////////////////
 
-  def getDocumentDetails: List[DocumentDetail] = {
-    this.documentDetails
+// Step 2: convert DocumentDetails to ChargeItem
+// adds poaRelevantAmount: Option[BigDecimal] to ChargeItem
+
+// Step 3: Move DocumentDetails under FinancialDetailsModel to keep it private? / protected ?
+
+// Step 4: make next field private as well: financialDetails
+
+// Step x: what about FinancialDetailsWithDocumentDetailsResponse model ??
+
+// Step x+1: review method below / some of them expected to be a duplicates of what we have in ChargeItem's
+
+  def documentDetailExist(id: String) : Boolean = {
+    documentDetails.exists(_.transactionId == id)
   }
 
   def arePoaPaymentsPresent(): Option[TaxYear] = {
@@ -78,10 +89,6 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
 
   def docDetailsFilter(predicate: DocumentDetail => Boolean): Option[DocumentDetail] = {
     this.documentDetails.find(predicate)
-  }
-
-  def documentDetailExist(id: String) : Boolean = {
-    documentDetails.exists(_.transactionId == id)
   }
 
 /////////////////////////////////////////////////////////////////////////
@@ -186,6 +193,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     )
   }
 
+  // TODO: this is joining logic need to refactored into a single method
   def getPairedDocumentDetails(): List[(DocumentDetail, FinancialDetail)] = {
     documentDetails.map(documentDetail =>
       (documentDetail, financialDetails.find(_.transactionId.get == documentDetail.transactionId)

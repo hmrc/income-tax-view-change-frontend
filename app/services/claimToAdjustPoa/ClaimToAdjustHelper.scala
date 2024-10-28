@@ -23,7 +23,7 @@ import models.calculationList.{CalculationListErrorModel, CalculationListModel}
 import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import models.claimToAdjustPoa.PaymentOnAccountViewModel
 import models.core.Nino
-import models.financialDetails.{DocumentDetail, FinancialDetail, FinancialDetailsModel}
+import models.financialDetails.{ChargeItem, DocumentDetail, FinancialDetail, FinancialDetailsModel, PaymentOnAccountOne, PaymentOnAccountTwo}
 import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
 import play.api.Logger
@@ -46,31 +46,34 @@ trait ClaimToAdjustHelper {
   val sortByTaxYear: List[DocumentDetail] => List[DocumentDetail] =
     _.sortBy(_.taxYear).reverse
 
+  val sortByTaxYearC: List[ChargeItem] => List[ChargeItem] = _.sortBy(_.taxYear.startYear).reverse
+
   protected case class FinancialDetailsAndPoaModel(financialDetails: Option[FinancialDetailsModel],
                                                    poaModel: Option[PaymentOnAccountViewModel])
 
   protected case class FinancialDetailAndChargeRefMaybe(documentDetails: List[DocumentDetail],
                                                         chargeReference: Option[String])
 
-  def getPaymentOnAccountModel(documentDetails: List[DocumentDetail],
+  def getPaymentOnAccountModel(charges: List[ChargeItem],
                                poaPreviouslyAdjusted: Option[Boolean] = None): Either[Throwable, Option[PaymentOnAccountViewModel]] = {
     {
       for {
-        poaOneDocDetail <- documentDetails.find(isPoaOne)
-        poaTwoDocDetail <- documentDetails.find(isPoaTwo)
+        poaOneDocDetail <- charges.find(_.transactionType == PaymentOnAccountOne)
+        poaTwoDocDetail <- charges.find(_.transactionType == PaymentOnAccountTwo)
         latestDocumentDetail = poaTwoDocDetail
-        poaTwoDueDate <- poaTwoDocDetail.documentDueDate
-        taxReturnDeadline = getTaxReturnDeadline(poaTwoDueDate)
-        poasAreBeforeDeadline = poaTwoDueDate isBefore taxReturnDeadline
+        //poaTwoDueDate <- poaTwoDocDetail.documentDate
+        taxReturnDeadline = getTaxReturnDeadline(poaTwoDocDetail.documentDate)
+        poasAreBeforeDeadline = poaTwoDocDetail.documentDate isBefore taxReturnDeadline
         if poasAreBeforeDeadline
-      } yield {
+      } yield
+      {
         if (poaOneDocDetail.poaRelevantAmount.isDefined && poaTwoDocDetail.poaRelevantAmount.isDefined) {
           Right(
             Some(
               PaymentOnAccountViewModel(
                 poaOneTransactionId = poaOneDocDetail.transactionId,
                 poaTwoTransactionId = poaTwoDocDetail.transactionId,
-                taxYear = makeTaxYearWithEndYear(latestDocumentDetail.taxYear),
+                taxYear = latestDocumentDetail.taxYear,
                 totalAmountOne = poaOneDocDetail.originalAmount,
                 totalAmountTwo = poaTwoDocDetail.originalAmount,
                 relevantAmountOne = poaOneDocDetail.poaRelevantAmount.get,

@@ -22,6 +22,7 @@ import play.api.libs.json.{Format, Json}
 import services.DateServiceInterface
 import models.financialDetails.TransactionItem
 import models.financialDetails.TransactionType.format
+import services.claimToAdjustPoa.ClaimToAdjustHelper.{POA1, POA2}
 
 import java.time.LocalDate
 
@@ -41,7 +42,11 @@ case class ChargeItem (
                         interestRate: Option[BigDecimal],
                         lpiWithDunningLock: Option[BigDecimal],
                         amountCodedOut: Option[BigDecimal],
-                        dunningLock: Boolean) extends TransactionItem {
+                        dunningLock: Boolean,
+                        // TODO: add mapping during conversion
+                        poaRelevantAmount: Option[BigDecimal] = None
+                      ) extends TransactionItem {
+
 
   def isOverdue()(implicit dateService: DateServiceInterface): Boolean =
     dueDate.exists(_ isBefore dateService.getCurrentDate)
