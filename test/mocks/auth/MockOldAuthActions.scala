@@ -61,7 +61,7 @@ trait MockOldAuthActions extends TestSupport with MockIncomeSourceDetailsService
     mcc = stubMessagesControllerComponents()
   )
 
-  private val incomeSourceDetailsPredicate = new IncomeSourceDetailsPredicate(
+  private val incomeSourceRetrievalAction = new IncomeSourceRetrievalAction(
     mockIncomeSourceDetailsService
   )(ec,
     app.injector.instanceOf[ItvcErrorHandler],
@@ -73,10 +73,11 @@ trait MockOldAuthActions extends TestSupport with MockIncomeSourceDetailsService
     authoriseAndRetrieve,
     authoriseAndRetrieveIndividual,
     authoriseAndRetrieveAgent,
+    app.injector.instanceOf[AuthoriseAndRetrieveMtdAgent],
     app.injector.instanceOf[AgentHasClientDetails],
     app.injector.instanceOf[AsMtdUser],
     app.injector.instanceOf[NavBarRetrievalAction],
-    incomeSourceDetailsPredicate,
+    incomeSourceRetrievalAction,
     app.injector.instanceOf[FeatureSwitchRetrievalAction]
   )(appConfig, ec)
 

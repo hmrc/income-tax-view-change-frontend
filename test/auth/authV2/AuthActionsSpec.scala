@@ -370,9 +370,9 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
 
   private type AuthAgentRetrievals =
     Enrolments ~ Option[Credentials] ~ Option[AffinityGroup] ~ ConfidenceLevel
-
-  private type AuthAgentWithClientRetrievals =
-    Enrolments ~ Option[Credentials] ~ Option[AffinityGroup] ~ Option[Name]
+//
+//  private type AuthAgentWithClientRetrievals =
+//    Enrolments ~ Option[Credentials] ~ Option[AffinityGroup] ~ Option[Name]
 
   case class RetrievalData(enrolments: Enrolments,
                            name: Option[Name],
@@ -389,7 +389,7 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
     app.injector.instanceOf[AgentHasClientDetails],
     app.injector.instanceOf[AsMtdUser],
     app.injector.instanceOf[NavBarRetrievalAction],
-    app.injector.instanceOf[IncomeSourceDetailsPredicate],
+    app.injector.instanceOf[IncomeSourceRetrievalAction],
     app.injector.instanceOf[FeatureSwitchRetrievalAction]
   )(appConfig, ec)
 

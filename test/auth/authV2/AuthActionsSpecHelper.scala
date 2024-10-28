@@ -65,10 +65,11 @@ trait AuthActionsSpecHelper extends TestSupport with ScalaFutures {
     app.injector.instanceOf[AuthoriseAndRetrieve],
     app.injector.instanceOf[AuthoriseAndRetrieveIndividual],
     app.injector.instanceOf[AuthoriseAndRetrieveAgent],
+    app.injector.instanceOf[AuthoriseAndRetrieveMtdAgent],
     app.injector.instanceOf[AgentHasClientDetails],
     app.injector.instanceOf[AsMtdUser],
     app.injector.instanceOf[NavBarRetrievalAction],
-    app.injector.instanceOf[IncomeSourceDetailsPredicate],
+    app.injector.instanceOf[IncomeSourceRetrievalAction],
     app.injector.instanceOf[FeatureSwitchRetrievalAction]
   )(appConfig, ec)
 

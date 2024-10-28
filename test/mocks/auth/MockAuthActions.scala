@@ -79,7 +79,7 @@ trait MockAuthActions extends
     mcc = stubMessagesControllerComponents()
   )
 
-  private val incomeSourceDetailsPredicate = new IncomeSourceDetailsPredicate(
+  private val incomeSourceRetrievalAction = new IncomeSourceRetrievalAction(
     mockIncomeSourceDetailsService
   )(ec,
     app.injector.instanceOf[ItvcErrorHandler],
@@ -95,7 +95,7 @@ trait MockAuthActions extends
     app.injector.instanceOf[AgentHasClientDetails],
     app.injector.instanceOf[AsMtdUser],
     app.injector.instanceOf[NavBarRetrievalAction],
-    incomeSourceDetailsPredicate,
+    incomeSourceRetrievalAction,
     app.injector.instanceOf[FeatureSwitchRetrievalAction]
   )(appConfig, ec)
 
