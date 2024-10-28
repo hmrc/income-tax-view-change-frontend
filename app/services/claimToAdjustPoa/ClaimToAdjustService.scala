@@ -43,7 +43,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
       for {
         fdMaybe <- EitherT(getNonCrystallisedFinancialDetails(nino))
         maybeTaxYear <- EitherT.right[Throwable](Future.successful {
-          fdMaybe.flatMap(x => arePoaPaymentsPresent(x.documentDetails))
+          fdMaybe.flatMap( _.arePoaPaymentsPresent() )
         })
       } yield maybeTaxYear
     }.value
@@ -57,7 +57,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
         paymentOnAccountViewModelMaybe <- EitherT(
           Future.successful(financialDetailsMaybe
             .map { financialDetails =>
-              getPaymentOnAccountModel(sortByTaxYear(financialDetails.documentDetails))
+              getPaymentOnAccountModel(sortByTaxYear(financialDetails.getDocumentDetails))
             } match {
               case Some(x) => x
               case None => Left(new Exception("Unable to extract getPaymentOnAccountModel"))
@@ -129,7 +129,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
       case Some(taxYear: TaxYear) =>
         financialDetailsConnector.getFinancialDetails(taxYear.endYear, nino.value).map {
           case financialDetails: FinancialDetailsModel =>
-            getPaymentOnAccountModel(sortByTaxYear(financialDetails.documentDetails)) match {
+            getPaymentOnAccountModel(sortByTaxYear(financialDetails.getDocumentDetails)) match {
               case Right(x) =>
                 Right(FinancialDetailsAndPoaModel(Some(financialDetails), x))
               case Left(ex) =>

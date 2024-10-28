@@ -75,7 +75,7 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
       chargesWithYears.flatMap {
         case (_, errorModel: FinancialDetailsErrorModel) => Some(errorModel)
         case (_, financialDetails: FinancialDetailsModel) =>
-          val creditDocDetails: List[DocumentDetail] = financialDetails.documentDetails.filter(_.credit.isDefined)
+          val creditDocDetails: List[DocumentDetail] = financialDetails.getDocumentDetailsWithCreds
           if (creditDocDetails.nonEmpty) Some(financialDetails.copy(documentDetails = creditDocDetails)) else None
       }
     }
@@ -86,18 +86,11 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
       chargesWithYears.flatMap {
         case (_, errorModel: FinancialDetailsErrorModel) => Some(errorModel)
         case (_, financialDetails: FinancialDetailsModel) =>
-          val unpaidDocDetails: List[DocumentDetail] = unpaidDocumentDetails(financialDetails, isCodingOutEnabled)
+          val unpaidDocDetails: List[DocumentDetail] = financialDetails.unpaidDocumentDetails(isCodingOutEnabled)
           if (unpaidDocDetails.nonEmpty) Some(financialDetails.copy(documentDetails = unpaidDocDetails)) else None
       }
     }
   }
 
-  private def unpaidDocumentDetails(financialDetailsModel: FinancialDetailsModel, isCodingOutEnabled: Boolean): List[DocumentDetail] = {
-    financialDetailsModel.documentDetails.collect {
-      case documentDetail: DocumentDetail if documentDetail.isCodingOutDocumentDetail(isCodingOutEnabled) => documentDetail
-      case documentDetail: DocumentDetail if documentDetail.latePaymentInterestAmount.isDefined && !documentDetail.interestIsPaid => documentDetail
-      case documentDetail: DocumentDetail if documentDetail.interestOutstandingAmount.isDefined && !documentDetail.interestIsPaid => documentDetail
-      case documentDetail: DocumentDetail if documentDetail.isNotCodingOutDocumentDetail && !documentDetail.isPaid => documentDetail
-    }
-  }
+
 }
