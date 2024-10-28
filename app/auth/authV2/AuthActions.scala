@@ -16,31 +16,27 @@
 
 package auth.authV2
 
-import auth.{MtdItUser, MtdItUserOptionNino}
-import auth.authV2.actions.{AuthoriseAndRetrieveIndividual, _}
+import auth.MtdItUser
+import auth.authV2.actions._
 import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
-import controllers.predicates._
-import enums.{MTDIndividual, MTDUserRole}
-import play.api.mvc.Results.Unauthorized
 import play.api.mvc._
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
-class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutPredicateV2,
+class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
                             val authoriseAndRetrieve: AuthoriseAndRetrieve,
                             val authoriseAndRetrieveIndividual: AuthoriseAndRetrieveIndividual,
                             val authoriseAndRetrieveAgent: AuthoriseAndRetrieveAgent,
                             val authoriseAndRetrieveMtdAgent: AuthoriseAndRetrieveMtdAgent,
                             val agentHasClientDetails: AgentHasClientDetails,
                             val asMtdUser: AsMtdUser,
-                            val retrieveBtaNavBar: NavBarPredicateV2,
-                            val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                            val featureSwitchPredicate: FeatureSwitchPredicateV2)
+                            val retrieveBtaNavBar: NavBarRetrievalAction,
+                            val retrieveNinoWithIncomeSources: IncomeSourceRetrievalAction,
+                            val featureSwitchPredicate: FeatureSwitchRetrievalAction)
                            (implicit val appConfig: FrontendAppConfig,
-                            val ec: ExecutionContext)  extends  FeatureSwitching {
+                            val ec: ExecutionContext) {
 
   def individualOrAgentWithClient[A]: ActionBuilder[MtdItUser, AnyContent] = {
 

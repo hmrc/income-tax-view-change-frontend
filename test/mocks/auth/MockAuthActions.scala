@@ -87,16 +87,16 @@ trait MockAuthActions extends
     stubMessagesControllerComponents())
 
   val mockAuthActions = new AuthActions(
-    app.injector.instanceOf[SessionTimeoutPredicateV2],
+    app.injector.instanceOf[SessionTimeoutAction],
     authoriseAndRetrieve,
     authoriseAndRetrieveIndividual,
     authoriseAndRetrieveAgent,
     authoriseAndRetrieveMtdAgent,
     app.injector.instanceOf[AgentHasClientDetails],
     app.injector.instanceOf[AsMtdUser],
-    app.injector.instanceOf[NavBarPredicateV2],
+    app.injector.instanceOf[NavBarRetrievalAction],
     incomeSourceDetailsPredicate,
-    app.injector.instanceOf[FeatureSwitchPredicateV2]
+    app.injector.instanceOf[FeatureSwitchRetrievalAction]
   )(appConfig, ec)
 
 }

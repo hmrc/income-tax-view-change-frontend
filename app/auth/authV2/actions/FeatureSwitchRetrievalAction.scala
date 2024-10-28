@@ -27,8 +27,8 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class FeatureSwitchPredicateV2 @Inject()(val featureSwitchService: FeatureSwitchService)
-                                        (implicit val appConfig: FrontendAppConfig,
+class FeatureSwitchRetrievalAction @Inject()(val featureSwitchService: FeatureSwitchService)
+                                            (implicit val appConfig: FrontendAppConfig,
                                        val executionContext: ExecutionContext,
                                        val messagesApi: MessagesApi) extends ActionRefiner[MtdItUser, MtdItUser] with SaveOriginAndRedirect {
 

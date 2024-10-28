@@ -381,16 +381,16 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
                            confidenceLevel: ConfidenceLevel)
 
   val authActions = new AuthActions(
-    app.injector.instanceOf[SessionTimeoutPredicateV2],
+    app.injector.instanceOf[SessionTimeoutAction],
     app.injector.instanceOf[AuthoriseAndRetrieve],
     app.injector.instanceOf[AuthoriseAndRetrieveIndividual],
     app.injector.instanceOf[AuthoriseAndRetrieveAgent],
     app.injector.instanceOf[AuthoriseAndRetrieveMtdAgent],
     app.injector.instanceOf[AgentHasClientDetails],
     app.injector.instanceOf[AsMtdUser],
-    app.injector.instanceOf[NavBarPredicateV2],
+    app.injector.instanceOf[NavBarRetrievalAction],
     app.injector.instanceOf[IncomeSourceDetailsPredicate],
-    app.injector.instanceOf[FeatureSwitchPredicateV2]
+    app.injector.instanceOf[FeatureSwitchRetrievalAction]
   )(appConfig, ec)
 
   abstract class Fixture(retrievals: RetrievalData,

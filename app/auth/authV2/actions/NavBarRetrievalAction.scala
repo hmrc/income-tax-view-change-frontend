@@ -37,10 +37,10 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class NavBarPredicateV2 @Inject()(val btaNavBarController: BtaNavBarController,
-                                  val ptaPartial: PtaPartial,
-                                  val itvcErrorHandler: ItvcErrorHandler)
-                                 (implicit val appConfig: FrontendAppConfig,
+class NavBarRetrievalAction @Inject()(val btaNavBarController: BtaNavBarController,
+                                      val ptaPartial: PtaPartial,
+                                      val itvcErrorHandler: ItvcErrorHandler)
+                                     (implicit val appConfig: FrontendAppConfig,
                                 val executionContext: ExecutionContext,
                                 val messagesApi: MessagesApi
                                ) extends ActionRefiner[MtdItUser, MtdItUser] with SaveOriginAndRedirect {

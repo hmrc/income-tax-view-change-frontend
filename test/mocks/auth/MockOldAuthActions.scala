@@ -69,15 +69,15 @@ trait MockOldAuthActions extends TestSupport with MockIncomeSourceDetailsService
     stubMessagesControllerComponents())
 
   val mockAuthActions = new AuthActions(
-    app.injector.instanceOf[SessionTimeoutPredicateV2],
+    app.injector.instanceOf[SessionTimeoutAction],
     authoriseAndRetrieve,
     authoriseAndRetrieveIndividual,
     authoriseAndRetrieveAgent,
     app.injector.instanceOf[AgentHasClientDetails],
     app.injector.instanceOf[AsMtdUser],
-    app.injector.instanceOf[NavBarPredicateV2],
+    app.injector.instanceOf[NavBarRetrievalAction],
     incomeSourceDetailsPredicate,
-    app.injector.instanceOf[FeatureSwitchPredicateV2]
+    app.injector.instanceOf[FeatureSwitchRetrievalAction]
   )(appConfig, ec)
 
   override def setupMockAuthRetrievalSuccess[X, Y](retrievalValue: X ~ Y): Unit = {
