@@ -24,6 +24,7 @@ import controllers.predicates.IncomeSourceDetailsPredicate
 import org.mockito.Mockito
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar.mock
+import services.admin.FeatureSwitchService
 import services.{IncomeSourceDetailsService, SessionDataService}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core._
@@ -40,6 +41,7 @@ trait AuthActionsSpecHelper extends TestSupport with ScalaFutures {
   lazy val mockItvcErrorHandler = mock[ItvcErrorHandler]
   lazy val mockBtaNavBarController = mock[BtaNavBarController]
   lazy val mockPtaPartial = mock[PtaPartial]
+  lazy val mockFeatureSwitchService = mock[FeatureSwitchService]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
