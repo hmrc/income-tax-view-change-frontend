@@ -36,7 +36,8 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
 
 
 ////////////////////////////////////////////////////////////////////////////
-// TODO: We would have to converty DocumentDetails to ChargeItem ?
+// Step 1: Hide documentDetails field within FinancialDetailsModel
+////////////////////////////////////////////////////////////////////////////
 
   def getDocumentDetails: List[DocumentDetail] = {
     this.documentDetails
