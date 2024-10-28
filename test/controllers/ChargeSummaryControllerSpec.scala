@@ -24,7 +24,7 @@ import enums.ChargeType.{ITSA_ENGLAND_AND_NI, NIC4_WALES}
 import implicits.ImplicitDateFormatter
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockIncomeSourceDetailsService
-import models.admin.{ChargeHistory, CodingOut, ReviewAndReconcilePoa}
+import models.admin.{ChargeHistory, ReviewAndReconcilePoa}
 import models.chargeHistory._
 import models.financialDetails.{FinancialDetail, FinancialDetailsResponseModel}
 import org.mockito.ArgumentMatchers.any
@@ -143,17 +143,6 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       }
     }
 
-    "redirect a user back to the custom error page" when {
-
-      "coding out exists but FS is disabled" in new Setup(testFinancialDetailsModelWithCodingOutNics2()) {
-        disable(CodingOut)
-        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithNinoAndOrigin("PTA"))
-
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.errors.routes.NotFoundDocumentIDLookupController.show.url)
-      }
-    }
-
     "load the page" when {
 
       "provided with an id associated to a Review & Reconcile Debit Charge for POA1" in new Setup(
@@ -221,32 +210,6 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         JsoupParse(result).toHtmlDocument.select("#dunningLocksBanner").size() shouldBe 1
         JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
         JsoupParse(result).toHtmlDocument.select("main h3").text() shouldBe paymentHistoryHeadingForPOA1Charge
-      }
-
-      "redirect a user back to the custom error page" when {
-
-        "PAYE SA exists but FS is disabled" in new Setup(testFinancialDetailsModelWithPayeSACodingOut()) {
-          disable(CodingOut)
-          val result: Future[Result] = controller.show(testTaxYear, "CODINGOUT01")(fakeRequestWithNinoAndOrigin("PTA"))
-
-          status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.errors.routes.NotFoundDocumentIDLookupController.show.url)
-        }
-
-        "class 2 Nics exists but FS is disabled" in new Setup(testFinancialDetailsModelWithCodingOutNics2()) {
-          disable(CodingOut)
-          val result: Future[Result] = controller.show(testTaxYear, "CODINGOUT01")(fakeRequestWithNinoAndOrigin("PTA"))
-
-          status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.errors.routes.NotFoundDocumentIDLookupController.show.url)
-        }
-        "cancelled PAYE exists but FS is disabled" in new Setup(testFinancialDetailsModelWithCancelledPayeSa()) {
-          disable(CodingOut)
-          val result: Future[Result] = controller.show(testTaxYear, "CODINGOUT01")(fakeRequestWithNinoAndOrigin("PTA"))
-
-          status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.errors.routes.NotFoundDocumentIDLookupController.show.url)
-        }
       }
 
 
@@ -415,14 +378,6 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
     }
 
     "redirect a user back to the custom error page" when {
-
-      "coding out exists but FS is disabled" in new Setup(testFinancialDetailsModelWithCodingOutNics2(), isAgent = true) {
-        disable(CodingOut)
-        val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123")(fakeRequestConfirmedClient("AB123456C"))
-
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show.url)
-      }
 
       "display any payments you make with contents for agent" in new Setup(
         financialDetailsModel(), isAgent = true) {

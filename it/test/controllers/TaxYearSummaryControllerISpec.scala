@@ -588,7 +588,6 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
 
       "should show user has Coding out that is requested and immediately rejected by NPS" in {
-        enable(CodingOut)
         Given("Business details returns a successful response back")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
 
@@ -640,7 +639,6 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
       }
 
       "should show user has Coding out that has been accepted and rejected by NPS part way through the year" in {
-        enable(CodingOut)
 
         Given("Business details returns a successful response back")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
@@ -693,7 +691,6 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
       }
 
       "should show at crystallization, the user has the coding out requested amount has not been fully collected (partially collected)" in {
-        enable(CodingOut)
 
         Given("Business details returns a successful response back")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)

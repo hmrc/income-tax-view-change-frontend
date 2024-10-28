@@ -20,7 +20,7 @@ import audit.models.WhatYouOweResponseAuditModel
 import auth.MtdItUser
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
-import models.admin.{AdjustPaymentsOnAccount, CodingOut, CreditsRefundsRepay, ReviewAndReconcilePoa}
+import models.admin.{AdjustPaymentsOnAccount, CreditsRefundsRepay, ReviewAndReconcilePoa}
 import models.core.AccountingPeriodModel
 import models.financialDetails._
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
@@ -74,7 +74,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase  with ChargeConstants 
   )(FakeRequest())
 
   val configuredChargeItemGetter: List[FinancialDetail] => DocumentDetail => Option[ChargeItem] =
-    getChargeItemOpt(isEnabled(CodingOut), isEnabled(ReviewAndReconcilePoa))
+    getChargeItemOpt(codingOutEnabled = true, reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa))
 
   val testValidOutStandingChargeResponseJsonWithAciAndBcdCharges: JsValue = Json.parse(
     s"""
@@ -815,7 +815,6 @@ class WhatYouOweControllerISpec extends ComponentSpecBase  with ChargeConstants 
 
   "YearOfMigration exists with valid coding out charges" when {
     "coding out is enabled" in {
-      enable(CodingOut)
       stubAuthorisedAgentUser(authorised = true)
 
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
@@ -834,38 +833,6 @@ class WhatYouOweControllerISpec extends ComponentSpecBase  with ChargeConstants 
       IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
       Then("the result should have a HTTP status of OK (200) and the payments due page with coding out in future payments")
-      result should have(
-        httpStatus(OK),
-        pageTitleAgent("whatYouOwe.heading-agent"),
-        isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
-        isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
-        isElementVisibleById(s"no-payments-due")(expectedValue = false),
-        isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-        isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
-        isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
-        isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
-      )
-    }
-    "coding out is disabled" in {
-      disable(CodingOut)
-      stubAuthorisedAgentUser(authorised = true)
-
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
-        propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
-
-      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05"
-      )(OK, testValidFinancialDetailsModelJsonCodingOut(2000, 2000, testTaxYear.toString, testDate.plusYears(1).toString))
-
-      IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-        "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
-
-      val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
-
-      verifyIncomeSourceDetailsCall(testMtditid)
-      IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
-      IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
-
-      Then("the result should have a HTTP status of OK (200) and the payments due page with no coding out in future payments")
       result should have(
         httpStatus(OK),
         pageTitleAgent("whatYouOwe.heading-agent"),
