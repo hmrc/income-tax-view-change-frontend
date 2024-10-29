@@ -16,13 +16,13 @@
 
 package auth.authV2
 
-import auth.{MtdItUser, MtdItUserOptionNino}
+import auth.MtdItUser
 import auth.authV2.actions._
 import config.FrontendAppConfig
 import play.api.mvc._
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
@@ -37,9 +37,7 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
                             val retrieveBtaNavBar: NavBarRetrievalAction,
                             val retrieveNinoWithIncomeSources: IncomeSourceRetrievalAction,
                             val retrieveClientData: RetrieveClientData,
-                            val retrieveFeatureSwitches: FeatureSwitchRetrievalAction)
-                           (implicit val appConfig: FrontendAppConfig,
-                            val ec: ExecutionContext) {
+                            val retrieveFeatureSwitches: FeatureSwitchRetrievalAction) {
 
   def individualOrAgentWithClient[A]: ActionBuilder[MtdItUser, AnyContent] = {
 
@@ -73,7 +71,7 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
 
   def asAgent[A]: ActionBuilder[AgentUser, AnyContent] = checkSessionTimeout andThen authoriseAndRetrieveAgent
 
-  def asAgentWithConfirmedClient[A]: ActionBuilder[MtdItUser, AnyContent] = {
+  def asMTDAgentWithConfirmedClient[A]: ActionBuilder[MtdItUser, AnyContent] = {
     checkSessionTimeout andThen
       retrieveClientData andThen
       authoriseAndRetrieveMtdAgent andThen

@@ -45,6 +45,8 @@ object AuthActionsTestData {
   val saEnrolment               = Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", saUtr)), "Activated", None)
   val credentials               = Credentials("foo", "bar")
   val defaultIncomeSourcesData  = IncomeSourceDetailsModel(nino, saUtr, Some("2012"), Nil, Nil)
+  val invalidIncomeSourceData  = IncomeSourceDetailsError(500, "mongo error")
+
   val acceptedConfidenceLevel: ConfidenceLevel = ConfidenceLevel.L250
   val notAcceptedConfidenceLevel: ConfidenceLevel = ConfidenceLevel.L50
 

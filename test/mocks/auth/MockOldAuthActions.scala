@@ -82,7 +82,7 @@ trait MockOldAuthActions extends TestSupport with MockIncomeSourceDetailsService
     incomeSourceRetrievalAction,
     app.injector.instanceOf[RetrieveClientData],
     app.injector.instanceOf[FeatureSwitchRetrievalAction]
-  )(appConfig, ec)
+  )
 
   override def setupMockAuthRetrievalSuccess[X, Y](retrievalValue: X ~ Y): Unit = {
     when(mockAuthService.authorised(any()))

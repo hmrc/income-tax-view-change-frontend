@@ -394,7 +394,7 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
     app.injector.instanceOf[IncomeSourceRetrievalAction],
     app.injector.instanceOf[RetrieveClientData],
     app.injector.instanceOf[FeatureSwitchRetrievalAction]
-  )(appConfig, ec)
+  )
 
   abstract class Fixture(retrievals: RetrievalData,
                          request: FakeRequest[AnyContent] = FakeRequest(),

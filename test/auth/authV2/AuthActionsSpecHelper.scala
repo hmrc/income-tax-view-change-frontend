@@ -82,7 +82,7 @@ trait AuthActionsSpecHelper extends TestSupport with ScalaFutures {
     app.injector.instanceOf[IncomeSourceRetrievalAction],
     app.injector.instanceOf[RetrieveClientData],
     app.injector.instanceOf[FeatureSwitchRetrievalAction]
-  )(appConfig, ec)
+  )
 
 
 

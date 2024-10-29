@@ -92,6 +92,6 @@ trait MockAuthActions extends
     incomeSourceRetrievalAction,
     app.injector.instanceOf[RetrieveClientData],
     app.injector.instanceOf[FeatureSwitchRetrievalAction]
-  )(appConfig, ec)
+  )
 
 }
