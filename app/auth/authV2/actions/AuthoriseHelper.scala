@@ -36,19 +36,24 @@ trait AuthoriseHelper extends AuthRedirects  with FeatureSwitching {
 
   val logger: Logger
 
-  def logAndRedirect[A]: PartialFunction[Throwable, Future[Either[Result, MtdItUserOptionNino[A]]]] = {
+  def logAndRedirect[A](requireAgent: Boolean): PartialFunction[Throwable, Future[Either[Result, MtdItUserOptionNino[A]]]] = {
     case _: BearerTokenExpired =>
       logger.debug("Bearer Token Timed Out.")
       Future.successful(Left(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout)))
-    case _: InsufficientEnrolments =>
+    case _: InsufficientEnrolments if requireAgent=>
       logger.debug(s"missing agent reference. Redirect to agent error page.")
       Future.successful(Left(Redirect(controllers.agent.errors.routes.AgentErrorController.show)))
+    case insufficientEnrolments: InsufficientEnrolments =>
+      Logger(getClass).debug(s"Insufficient enrolments: ${insufficientEnrolments.msg}")
+      Future.successful(Left(Redirect(controllers.errors.routes.NotEnrolledController.show)))
     case authorisationException: AuthorisationException =>
       logger.debug(s"Unauthorised request: ${authorisationException.reason}. Redirect to Sign In.")
       Future.successful(Left(Redirect(controllers.routes.SignInController.signIn)))
     // No catch all block at end - bubble up to global error handler
     // See investigation: https://github.com/hmrc/income-tax-view-change-frontend/pull/2432
   }
+
+
 
   def redirectIfAgent[A]()(
     implicit request: Request[A],

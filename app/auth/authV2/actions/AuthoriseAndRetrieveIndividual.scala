@@ -69,7 +69,7 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
       .retrieve(allEnrolments and name and credentials and affinityGroup and confidenceLevel) {
         redirectIfAgent() orElse
         redirectIfInsufficientConfidence() orElse constructMtdItUserOptionNino()
-      }(hc, executionContext) recoverWith logAndRedirect
+      }(hc, executionContext) recoverWith logAndRedirect(false)
   }
 
   // this URL is incorrect in live - the completion and failure URLs must be URL encoded

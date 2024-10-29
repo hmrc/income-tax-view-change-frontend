@@ -68,11 +68,6 @@ class AuthoriseAndRetrieveIndividualSpec extends AuthActionsSpecHelper {
       "return the expected MtdItUserOptionNino response" when {
         s"the user is an ${affinityGroup.toString} enrolled into HMRC-MTD-IT with the required confidence level" that {
           "has a name, nino and sa enrolment" in {
-            val expectedResponse = getMtdItUserOptionNinoForAuthorise(
-              affinityGroup = Some(affinityGroup),
-              hasNino = true,
-              hasSA = true,
-              hasUserName = true)(fakeRequestWithActiveSession)
 
             when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
               Future.successful[AuthRetrievals](
@@ -82,15 +77,19 @@ class AuthoriseAndRetrieveIndividualSpec extends AuthActionsSpecHelper {
 
             val result = authAction.invokeBlock(
               fakeRequestWithActiveSession,
-              defaultAsyncBody(_ shouldBe expectedResponse))
+              defaultAsyncBody{res =>
+                res.userType shouldBe Some(affinityGroup)
+                res.nino shouldBe Some(nino)
+                res.saUtr shouldBe Some(saUtr)
+                res.userName shouldBe Some(userName)
+              }
+            )
 
             status(result) shouldBe OK
             contentAsString(result) shouldBe "Successful"
           }
 
           "also has no name or additional enrolments" in {
-            val expectedResponse = getMtdItUserOptionNinoForAuthorise(
-              affinityGroup = Some(affinityGroup))(fakeRequestWithActiveSession)
 
             when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
               Future.successful[AuthRetrievals](
@@ -100,7 +99,12 @@ class AuthoriseAndRetrieveIndividualSpec extends AuthActionsSpecHelper {
 
             val result = authAction.invokeBlock(
               fakeRequestWithActiveSession,
-              defaultAsyncBody(_ shouldBe expectedResponse))
+              defaultAsyncBody{res =>
+                res.userType shouldBe Some(affinityGroup)
+                res.nino shouldBe None
+                res.saUtr shouldBe None
+                res.userName shouldBe None
+              })
 
             status(result) shouldBe OK
             contentAsString(result) shouldBe "Successful"

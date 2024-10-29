@@ -75,7 +75,7 @@ case class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: FrontendA
     authorisedFunctions.authorised((isAgent and hasDelegatedEnrolment) or isNotAgent)
       .retrieve(allEnrolments and name and credentials and affinityGroup and confidenceLevel) {
         redirectIfNotAgent() orElse constructMtdIdUserOptNino()
-      }(hc, executionContext) recoverWith logAndRedirect
+      }(hc, executionContext) recoverWith logAndRedirect(true)
   }
 
   private def constructMtdIdUserOptNino[A]()(
