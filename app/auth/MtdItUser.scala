@@ -52,7 +52,8 @@ case class MtdItUserOptionNino[A](mtditid: String,
                                   userType: Option[AffinityGroup],
                                   arn: Option[String],
                                   optClientName: Option[Name] = None,
-                                  isSupportingAgent: Boolean = false)(implicit request: Request[A]) extends WrappedRequest[A](request)
+                                  isSupportingAgent: Boolean = false,
+                                  clientConfirmed: Boolean = false)(implicit request: Request[A]) extends WrappedRequest[A](request)
 
 case class MtdItUserWithNino[A](mtditid: String,
                                 nino: String,

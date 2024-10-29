@@ -16,13 +16,13 @@
 
 package auth.authV2
 
-import auth.MtdItUser
+import auth.{MtdItUser, MtdItUserOptionNino}
 import auth.authV2.actions._
 import config.FrontendAppConfig
 import play.api.mvc._
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
@@ -31,11 +31,13 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
                             val authoriseAndRetrieveAgent: AuthoriseAndRetrieveAgent,
                             val authoriseAndRetrieveMtdAgent: AuthoriseAndRetrieveMtdAgent,
                             val agentHasClientDetails: AgentHasClientDetails,
+                            val agentHasConfirmedClientAction: AgentHasConfirmedClientAction,
+                            val agentIsPrimaryAction: AgentIsPrimaryAction,
                             val asMtdUser: AsMtdUser,
                             val retrieveBtaNavBar: NavBarRetrievalAction,
                             val retrieveNinoWithIncomeSources: IncomeSourceRetrievalAction,
                             val retrieveClientData: RetrieveClientData,
-                            val featureSwitchPredicate: FeatureSwitchRetrievalAction)
+                            val retrieveFeatureSwitches: FeatureSwitchRetrievalAction)
                            (implicit val appConfig: FrontendAppConfig,
                             val ec: ExecutionContext) {
 
@@ -56,45 +58,49 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
 
       retrieveNinoWithIncomeSources andThen
 
-      featureSwitchPredicate andThen
+      retrieveFeatureSwitches andThen
 
       retrieveBtaNavBar )
   }
 
-  def isMTDIndividual[A]: ActionBuilder[MtdItUser, AnyContent] = {
+  def asMTDIndividual[A]: ActionBuilder[MtdItUser, AnyContent] = {
     checkSessionTimeout andThen
       authoriseAndRetrieveIndividual andThen
       retrieveNinoWithIncomeSources andThen
-      featureSwitchPredicate andThen
+      retrieveFeatureSwitches andThen
       retrieveBtaNavBar
   }
 
-  def isAgent[A]: ActionBuilder[AgentUser, AnyContent] = checkSessionTimeout andThen authoriseAndRetrieveAgent
+  def asAgent[A]: ActionBuilder[AgentUser, AnyContent] = checkSessionTimeout andThen authoriseAndRetrieveAgent
 
-  def isAgentWithConfirmedClient[A]: ActionBuilder[MtdItUser, AnyContent] = {
+  def asAgentWithConfirmedClient[A]: ActionBuilder[MtdItUser, AnyContent] = {
+    checkSessionTimeout andThen
+      retrieveClientData andThen
+      authoriseAndRetrieveMtdAgent andThen
+      agentHasConfirmedClientAction andThen
+      retrieveNinoWithIncomeSources andThen
+      retrieveFeatureSwitches andThen
+      retrieveBtaNavBar
+  }
+
+  def asMTDAgentWithUnconfirmedClient[A]: ActionBuilder[MtdItUser, AnyContent] = {
     checkSessionTimeout andThen
       retrieveClientData andThen
       authoriseAndRetrieveMtdAgent andThen
       retrieveNinoWithIncomeSources andThen
-      featureSwitchPredicate andThen
+      retrieveFeatureSwitches andThen
       retrieveBtaNavBar
   }
 
-
-//    private def agentIsPrimary(supportedRoles: List[MTDUserRole]): ActionRefiner[MtdItUserOptionNino, MtdItUserOptionNino] = {
-//      new ActionRefiner[MtdItUserOptionNino, MtdItUserOptionNino] {
-//
-//        override protected def refine[A](request: MtdItUserOptionNino[A]): Future[Either[Result, MtdItUserOptionNino[A]]] = {
-//          val usersRole = request.userType.fold(MTDIndividual)(affGroup => if(affGroup))
-//          if(supportedRoles.contains(request.userRole)) {
-//            Future.successful(Right(request))
-//          } else {
-//            Future.successful(Left(Unauthorized("Put new view file here")))
-//          }
-//        }
-//
-//        override protected def executionContext: ExecutionContext = ec
-//      }
-//    }
+  def asMTDPrimaryAgent[A]: ActionBuilder[MtdItUser, AnyContent] = {
+    checkSessionTimeout andThen
+      retrieveClientData andThen
+      authoriseAndRetrieveMtdAgent andThen
+      agentHasConfirmedClientAction andThen
+      agentIsPrimaryAction andThen
+      retrieveNinoWithIncomeSources andThen
+      retrieveFeatureSwitches andThen
+      retrieveBtaNavBar
+  }
 }
 
