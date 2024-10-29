@@ -390,6 +390,7 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
     app.injector.instanceOf[AsMtdUser],
     app.injector.instanceOf[NavBarRetrievalAction],
     app.injector.instanceOf[IncomeSourceRetrievalAction],
+    app.injector.instanceOf[RetrieveClientData],
     app.injector.instanceOf[FeatureSwitchRetrievalAction]
   )(appConfig, ec)
 

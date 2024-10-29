@@ -40,6 +40,8 @@ abstract class MtdItUserBase[A](implicit request: Request[A]) extends WrappedReq
 
   def arn: Option[String]
 
+  def optClientName: Option[Name]
+
   def isSupportingAgent: Boolean
 }
 

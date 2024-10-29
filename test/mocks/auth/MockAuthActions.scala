@@ -96,6 +96,7 @@ trait MockAuthActions extends
     app.injector.instanceOf[AsMtdUser],
     app.injector.instanceOf[NavBarRetrievalAction],
     incomeSourceRetrievalAction,
+    app.injector.instanceOf[RetrieveClientData],
     app.injector.instanceOf[FeatureSwitchRetrievalAction]
   )(appConfig, ec)
 

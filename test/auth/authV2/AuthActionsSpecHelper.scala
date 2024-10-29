@@ -58,6 +58,7 @@ trait AuthActionsSpecHelper extends TestSupport with ScalaFutures {
   type AuthRetrievals =
     Enrolments ~ Option[Name] ~ Option[Credentials] ~ Option[AffinityGroup]  ~ ConfidenceLevel
 
+
   case class RetrievalData(enrolments: Enrolments,
                            name: Option[Name],
                            credentials: Option[Credentials],

@@ -40,7 +40,7 @@ case class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: FrontendA
                                                   override val config: Configuration,
                                                   override val env: Environment,
                                                   mcc: MessagesControllerComponents)
-  extends AuthRedirects with ActionRefiner[ClientDataRequest, MtdItUserOptionNino] with FeatureSwitching {
+  extends AuthoriseHelper with ActionRefiner[ClientDataRequest, MtdItUserOptionNino] {
 
   lazy val logger: Logger = Logger(getClass)
 
@@ -73,36 +73,19 @@ case class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: FrontendA
     }
 
     authorisedFunctions.authorised((isAgent and hasDelegatedEnrolment) or isNotAgent)
-      .retrieve(allEnrolments and credentials and affinityGroup and name) {
-        redirectIfNotAgent orElse constructMtdIdUserOptNino()
+      .retrieve(allEnrolments and name and credentials and affinityGroup and confidenceLevel) {
+        redirectIfNotAgent() orElse constructMtdIdUserOptNino()
       }(hc, executionContext) recoverWith logAndRedirect
   }
 
-  def logAndRedirect[A]: PartialFunction[Throwable, Future[Either[Result, MtdItUserOptionNino[A]]]] = {
-    case _: BearerTokenExpired =>
-      logger.debug("Bearer Token Timed Out.")
-      Future.successful(Left(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout)))
-    case _: InsufficientEnrolments =>
-      logger.debug(s"missing agent reference. Redirect to agent error page.")
-      Future.successful(Left(Redirect(controllers.agent.errors.routes.AgentErrorController.show)))
-    case authorisationException: AuthorisationException =>
-      logger.debug(s"Unauthorised request: ${authorisationException.reason}. Redirect to Sign In.")
-      Future.successful(Left(Redirect(controllers.routes.SignInController.signIn)))
-    // No catch all block at end - bubble up to global error handler
-    // See investigation: https://github.com/hmrc/income-tax-view-change-frontend/pull/2432
-  }
-
-  private type AuthAgentWithNinoRetrievals =
-    Enrolments ~ Option[Credentials] ~ Option[AffinityGroup] ~ Option[Name]
-
   private def constructMtdIdUserOptNino[A]()(
-    implicit request: ClientDataRequest[A]): PartialFunction[AuthAgentWithNinoRetrievals, Future[Either[Result, MtdItUserOptionNino[A]]]] = {
-    case enrolments ~ credentials ~ affinityGroup ~ name =>
+    implicit request: ClientDataRequest[A]): PartialFunction[AuthRetrievals, Future[Either[Result, MtdItUserOptionNino[A]]]] = {
+    case enrolments ~ userName ~ credentials ~ affinityGroup ~ _ =>
       Future.successful(
         Right(MtdItUserOptionNino(
           mtditid = request.clientMTDID,
           nino = Some(request.clientNino),
-          userName = name,
+          userName = userName,
           btaNavPartial = None,
           saUtr = Some(request.clientUTR),
           credId = credentials.map(_.providerId),
@@ -112,13 +95,6 @@ case class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: FrontendA
           isSupportingAgent = request.isSupportingAgent
         ))
       )
-  }
-
-  private def redirectIfNotAgent[A]()(
-    implicit request: Request[A]): PartialFunction[AuthAgentWithNinoRetrievals, Future[Either[Result, MtdItUserOptionNino[A]]]] = {
-    case _ ~ _ ~ Some(ag@(Organisation | Individual)) ~ _ =>
-      logger.debug(s"$ag on endpoint for agents")
-      Future.successful(Left(Redirect(controllers.routes.HomeController.show())))
   }
 }
 

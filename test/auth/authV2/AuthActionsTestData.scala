@@ -16,17 +16,17 @@
 
 package auth.authV2
 
-import auth.{MtdItUser, MtdItUserOptionNino}
 import auth.authV2.actions.ClientDataRequest
+import auth.{MtdItUser, MtdItUserOptionNino}
 import controllers.agent.sessionUtils.SessionKeys
-import models.admin.{FeatureSwitch, NavBarFs}
+import models.admin.FeatureSwitch
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.sessionData.SessionCookieData
 import play.api.mvc.Request
 import play.twirl.api.Html
 import testOnly.models.SessionDataGetResponse.SessionDataGetSuccess
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name}
 import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name}
 
 object AuthActionsTestData {
 
@@ -37,9 +37,10 @@ object AuthActionsTestData {
   val firstName = "Issac"
   val lastName = "Newton"
   val userName = Name(Some("Issac"), Some("Newton"))
+  val optClientName = Name(Some("Test"), Some("User"))
 
-  val mtdEnrolment             = Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", mtdId)), "Activated", None)
-  val agentEnrolment             = Enrolment("HMRC-AS-AGENT", Seq(EnrolmentIdentifier("AgentReferenceNumber", "1")), "Activated", None)
+  val mtdEnrolment              = Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", mtdId)), "Activated", None)
+  val agentEnrolment            = Enrolment("HMRC-AS-AGENT", Seq(EnrolmentIdentifier("AgentReferenceNumber", "1")), "Activated", None)
   val ninoEnrolment             = Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", nino)), "Activated", None)
   val saEnrolment               = Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", saUtr)), "Activated", None)
   val credentials               = Credentials("foo", "bar")
@@ -47,7 +48,8 @@ object AuthActionsTestData {
   val acceptedConfidenceLevel: ConfidenceLevel = ConfidenceLevel.L250
   val notAcceptedConfidenceLevel: ConfidenceLevel = ConfidenceLevel.L50
 
-  def mtdIdAgentPredicate(mtdId: String) = Enrolment("HMRC-MTD-IT").withIdentifier("MTDITID", mtdId).withDelegatedAuthRule("mtd-it-auth")
+  def mtdIdAgentPredicate(mtdId: String): Enrolment = Enrolment("HMRC-MTD-IT").withIdentifier("MTDITID", mtdId).withDelegatedAuthRule("mtd-it-auth")
+  def mtdIdSupportingAgentPredicate(mtdId: String) = Enrolment("HMRC-MTD-IT-SUPP").withIdentifier("MTDITID", mtdId).withDelegatedAuthRule("mtd-it-auth-supp")
   def mtdIdIndividualPredicate(mtdId: String) = Enrolment("HMRC-MTD-IT").withIdentifier("MTDITID", mtdId)
 
 
@@ -60,19 +62,25 @@ object AuthActionsTestData {
     )
   }
 
-  def getAllEnrolmentsAgent(hasNino: Boolean, hasSA: Boolean) = {
-    var enrolmentList = List(agentEnrolment)
+  def getAllEnrolmentsAgent(
+                             hasNino: Boolean,
+                             hasSA: Boolean,
+                             hasDelegatedEnrolment: Boolean = false,
+                             delegatedPredicate: => Enrolment = mtdIdAgentPredicate(mtdId)): Enrolments = {
+    var enrolmentList = if(!hasDelegatedEnrolment) List(agentEnrolment) else List(agentEnrolment, delegatedPredicate)
     if(hasNino) enrolmentList :+= ninoEnrolment
     if(hasSA) enrolmentList :+= saEnrolment
     Enrolments(
       enrolmentList.toSet,
     )
   }
+
   def getMtdItUserOptionNinoForAuthorise(affinityGroup: Option[AffinityGroup],
                                          hasNino: Boolean = false,
                                          hasSA: Boolean = false,
-                                         hasUserName: Boolean = false)
-                                        (implicit request: Request[_]) = MtdItUserOptionNino(
+                                         hasUserName: Boolean = false,
+                                         isSupportingAgent: Boolean = false)
+                                        (implicit request: Request[_]): MtdItUserOptionNino[_] = MtdItUserOptionNino(
     mtdId,
     if(hasNino) Some(nino) else None,
     if(hasUserName) Some(userName) else None,
@@ -80,7 +88,25 @@ object AuthActionsTestData {
     if(hasSA) Some(saUtr) else None,
     Some(credentials.providerId),
     affinityGroup,
-    None
+    Some(arn),
+    None,
+    isSupportingAgent
+  )
+
+  def getMtdItUserOptionNinoForAuthoriseMtdAgent(affinityGroup: Option[AffinityGroup],
+                                                 cdr: ClientDataRequest[_],
+                                                 isSupportingAgent: Boolean = false)
+                                                (implicit request: Request[_]): MtdItUserOptionNino[_] = MtdItUserOptionNino(
+    cdr.clientMTDID,
+    Some(cdr.clientNino),
+    Some(userName),
+    None,
+    Some(cdr.clientUTR),
+    Some(credentials.providerId),
+    affinityGroup,
+    None,
+    cdr.clientName,
+    isSupportingAgent
   )
 
   def getMtdItUser(affinityGroup: AffinityGroup,

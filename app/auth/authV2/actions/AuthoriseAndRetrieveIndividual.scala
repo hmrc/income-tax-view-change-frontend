@@ -46,10 +46,12 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
                                                override val env: Environment,
                                                mcc: MessagesControllerComponents,
                                                val auditingService: AuditingService)
-  extends AuthRedirects with ActionRefiner[Request, MtdItUserOptionNino] with FeatureSwitching {
+  extends AuthoriseHelper with ActionRefiner[Request, MtdItUserOptionNino]{
 
   implicit val executionContext: ExecutionContext = mcc.executionContext
   lazy val requiredConfidenceLevel: Int = appConfig.requiredConfidenceLevel
+
+  lazy val logger = Logger(getClass)
 
   override protected def refine[A](request: Request[A]): Future[Either[Result, MtdItUserOptionNino[A]]] = {
 
@@ -76,32 +78,6 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
     val completionUrl: String = s"$host${controllers.routes.UpliftSuccessController.success(OriginEnum.PTA.toString).url}"
     val failureUrl: String = s"$host${controllers.errors.routes.UpliftFailedController.show.url}"
     s"${appConfig.ivUrl}/uplift?origin=ITVC&confidenceLevel=$requiredConfidenceLevel&completionURL=${URLEncoder.encode(completionUrl, "UTF-8")}&failureURL=${URLEncoder.encode(failureUrl, "UTF-8")}"
-  }
-
-  type AuthRetrievals =
-    Enrolments ~ Option[Name] ~ Option[Credentials] ~ Option[AffinityGroup] ~ ConfidenceLevel
-
-  private def logAndRedirect[A]: PartialFunction[Throwable, Future[Either[Result, MtdItUserOptionNino[A]]]] = {
-    case insufficientEnrolments: InsufficientEnrolments =>
-      Logger(getClass).debug(s"Insufficient enrolments: ${insufficientEnrolments.msg}")
-      Future.successful(Left(Redirect(controllers.errors.routes.NotEnrolledController.show)))
-    case _: BearerTokenExpired =>
-      Logger(getClass).debug("Bearer Token Timed Out.")
-      Future.successful(Left(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout)))
-    case authorisationException: AuthorisationException =>
-      Logger(getClass).debug(s"Unauthorised request: ${authorisationException.reason}. Redirect to Sign In.")
-      Future.successful(Left(Redirect(controllers.routes.SignInController.signIn)))
-    // No catch all block at end - bubble up to global error handler
-    // See investigation: https://github.com/hmrc/income-tax-view-change-frontend/pull/2432
-  }
-
-  private def redirectIfAgent[A]()(
-    implicit request: Request[A],
-    hc: HeaderCarrier): PartialFunction[AuthRetrievals, Future[Either[Result, MtdItUserOptionNino[A]]]] = {
-
-    case _ ~ _ ~ _ ~ Some(Agent) ~ _ =>
-      Logger(getClass).debug(s"Agent on endpoint for individuals")
-    Future.successful(Left(Redirect(controllers.agent.routes.EnterClientsUTRController.show)))
   }
 
   private def redirectIfInsufficientConfidence[A]()(
