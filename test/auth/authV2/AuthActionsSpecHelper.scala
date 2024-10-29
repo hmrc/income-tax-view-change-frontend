@@ -19,6 +19,7 @@ package auth.authV2
 import audit.AuditingService
 import auth.authV2.actions._
 import config.{FrontendAppConfig, FrontendAuthConnector, ItvcErrorHandler}
+import controllers.bta.BtaNavBarController
 import controllers.predicates.IncomeSourceDetailsPredicate
 import org.mockito.Mockito
 import org.scalatest.concurrent.ScalaFutures
@@ -27,6 +28,7 @@ import services.{IncomeSourceDetailsService, SessionDataService}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
+import views.html.navBar.PtaPartial
 
 trait AuthActionsSpecHelper extends TestSupport with ScalaFutures {
 
@@ -36,6 +38,8 @@ trait AuthActionsSpecHelper extends TestSupport with ScalaFutures {
   lazy val mockAuditingService = mock[AuditingService]
   lazy val mockSessionDataService = mock[SessionDataService]
   lazy val mockItvcErrorHandler = mock[ItvcErrorHandler]
+  lazy val mockBtaNavBarController = mock[BtaNavBarController]
+  lazy val mockPtaPartial = mock[PtaPartial]
 
   override def beforeEach(): Unit = {
     super.beforeEach()

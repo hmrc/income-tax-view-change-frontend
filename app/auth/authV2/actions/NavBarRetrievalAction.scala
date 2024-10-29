@@ -49,20 +49,21 @@ class NavBarRetrievalAction @Inject()(val btaNavBarController: BtaNavBarControll
 
     val header: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     implicit val hc: HeaderCarrier = header.copy(extraHeaders = header.headers(Seq(play.api.http.HeaderNames.COOKIE)))
-    if (!isEnabled(NavBarFs)(request) || request.userType.contains(Agent)) {
+    lazy val navigationBarDisabled = !isEnabled(NavBarFs)(request)
+    if (request.userType.contains(Agent) || navigationBarDisabled) {
       Future.successful(Right(request))
     } else {
       request.getQueryString(SessionKeys.origin).fold[Future[Either[Result, MtdItUser[A]]]](ifEmpty = retrieveCacheAndHandleNavBar(request))(_ => {
-        saveOriginAndReturnToHomeWithoutQueryParams(request, !isEnabled(NavBarFs)(request)).map(Left(_))
+        saveOriginAndReturnToHomeWithoutQueryParams(request, navigationBarDisabled).map(Left(_))
       })
     }
   }
 
   def retrieveCacheAndHandleNavBar[A](request: MtdItUser[A])(implicit hc: HeaderCarrier): Future[Either[Result, MtdItUser[A]]] = {
     request.session.get(SessionKeys.origin) match {
-      case Some(origin) if OriginEnum(origin) == Some(PTA) =>
+      case Some(origin) if OriginEnum(origin).contains(PTA) =>
         Future.successful(Right(returnMtdItUserWithNavbar(request, ptaPartial()(request, request.messages, appConfig))))
-      case Some(origin) if OriginEnum(origin) == Some(BTA) =>
+      case Some(origin) if OriginEnum(origin).contains(BTA) =>
         handleBtaNavBar(request)
       case _ =>
         Future.successful(Left(Redirect(appConfig.taxAccountRouterUrl)))

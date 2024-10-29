@@ -16,12 +16,14 @@
 
 package auth.authV2
 
-import auth.MtdItUserOptionNino
+import auth.{MtdItUser, MtdItUserOptionNino}
 import auth.authV2.actions.ClientDataRequest
 import controllers.agent.sessionUtils.SessionKeys
+import models.admin.{FeatureSwitch, NavBarFs}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.sessionData.SessionCookieData
 import play.api.mvc.Request
+import play.twirl.api.Html
 import testOnly.models.SessionDataGetResponse.SessionDataGetSuccess
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name}
 import uk.gov.hmrc.auth.core._
@@ -44,7 +46,6 @@ object AuthActionsTestData {
   val defaultIncomeSourcesData  = IncomeSourceDetailsModel(nino, saUtr, Some("2012"), Nil, Nil)
   val acceptedConfidenceLevel: ConfidenceLevel = ConfidenceLevel.L250
   val notAcceptedConfidenceLevel: ConfidenceLevel = ConfidenceLevel.L50
-
 
   def mtdIdAgentPredicate(mtdId: String) = Enrolment("HMRC-MTD-IT").withIdentifier("MTDITID", mtdId).withDelegatedAuthRule("mtd-it-auth")
   def mtdIdIndividualPredicate(mtdId: String) = Enrolment("HMRC-MTD-IT").withIdentifier("MTDITID", mtdId)
@@ -81,6 +82,24 @@ object AuthActionsTestData {
     affinityGroup,
     None
   )
+
+  def getMtdItUser(affinityGroup: AffinityGroup,
+                   featureSwitches: List[FeatureSwitch] = List.empty,
+                   isSupportingAgent: Boolean = false,
+                   btaNavBar: Option[Html] = None)
+                  (implicit request: Request[_]) = MtdItUser(
+    mtdId,
+    nino,
+    Some(userName),
+    defaultIncomeSourcesData,
+    btaNavBar,
+    Some(saUtr),
+    Some(credentials.providerId),
+    Some(affinityGroup),
+    None,
+    featureSwitches = featureSwitches,
+    isSupportingAgent = isSupportingAgent
+  )(request)
 
   def getAgentData(enrolments: Enrolments)(implicit request: Request[_]) = AgentUser(
     enrolments,
