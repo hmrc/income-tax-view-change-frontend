@@ -18,7 +18,7 @@ package auth.authV2
 
 import audit.AuditingService
 import auth.authV2.actions._
-import config.{FrontendAppConfig, FrontendAuthConnector, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, FrontendAuthConnector, ItvcErrorHandler}
 import controllers.bta.BtaNavBarController
 import controllers.predicates.IncomeSourceDetailsPredicate
 import org.mockito.Mockito
@@ -42,6 +42,7 @@ trait AuthActionsSpecHelper extends TestSupport with ScalaFutures {
   lazy val mockBtaNavBarController = mock[BtaNavBarController]
   lazy val mockPtaPartial = mock[PtaPartial]
   lazy val mockFeatureSwitchService = mock[FeatureSwitchService]
+  lazy val mockAgentErrorHandler = mock[AgentItvcErrorHandler]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
