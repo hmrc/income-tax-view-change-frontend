@@ -21,19 +21,11 @@ import auth.FrontendAuthorisedFunctions
 import auth.authV2.AuthActions
 import auth.authV2.actions._
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import controllers.predicates.IncomeSourceDetailsPredicate
 import mocks.MockItvcErrorHandler
 import mocks.services.MockIncomeSourceDetailsService
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, when}
+import org.mockito.Mockito.mock
 import play.api.test.Helpers.stubMessagesControllerComponents
 import testUtils.TestSupport
-import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
-import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
-import uk.gov.hmrc.auth.core.{AuthorisationException, InvalidBearerToken}
-import uk.gov.hmrc.http.HeaderCarrier
-
-import scala.concurrent.{ExecutionContext, Future}
 
 trait MockAuthActions extends
   TestSupport with
@@ -93,6 +85,8 @@ trait MockAuthActions extends
     authoriseAndRetrieveAgent,
     authoriseAndRetrieveMtdAgent,
     app.injector.instanceOf[AgentHasClientDetails],
+    app.injector.instanceOf[AgentHasConfirmedClientAction],
+    app.injector.instanceOf[AgentIsPrimaryAction],
     app.injector.instanceOf[AsMtdUser],
     app.injector.instanceOf[NavBarRetrievalAction],
     incomeSourceRetrievalAction,

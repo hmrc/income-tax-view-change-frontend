@@ -387,6 +387,8 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
     app.injector.instanceOf[AuthoriseAndRetrieveAgent],
     app.injector.instanceOf[AuthoriseAndRetrieveMtdAgent],
     app.injector.instanceOf[AgentHasClientDetails],
+    app.injector.instanceOf[AgentHasConfirmedClientAction],
+    app.injector.instanceOf[AgentIsPrimaryAction],
     app.injector.instanceOf[AsMtdUser],
     app.injector.instanceOf[NavBarRetrievalAction],
     app.injector.instanceOf[IncomeSourceRetrievalAction],
@@ -455,7 +457,7 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
 
     when(mockAuthConnector.authorise[AuthAgentRetrievals](any(), any())(any(), any())).thenReturn(Future.failed( authorisationException ))
 
-    val result = authActions.isAgent.async(block)(request).futureValue
+    val result = authActions.asAgent.async(block)(request).futureValue
   }
 
   class AgentResultFixture(retrievals: RetrievalData,
@@ -468,7 +470,7 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
       )
     )
 
-    val result = authActions.isAgent.async(block)(request).futureValue
+    val result = authActions.asAgent.async(block)(request).futureValue
   }
 
   class AgentExceptionFixture(retrievals: RetrievalData,
@@ -477,7 +479,7 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
                               expectedError: Throwable) {
 
     val failedException: TestFailedException = intercept[TestFailedException] {
-      authActions.isAgent.async(block)(request).futureValue
+      authActions.asAgent.async(block)(request).futureValue
     }
 
     failedException.getCause.getClass shouldBe expectedError.getClass

@@ -20,7 +20,7 @@ import auth.authV2.actions.ClientDataRequest
 import auth.{MtdItUser, MtdItUserOptionNino}
 import controllers.agent.sessionUtils.SessionKeys
 import models.admin.FeatureSwitch
-import models.incomeSourceDetails.IncomeSourceDetailsModel
+import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
 import models.sessionData.SessionCookieData
 import play.api.mvc.Request
 import play.twirl.api.Html

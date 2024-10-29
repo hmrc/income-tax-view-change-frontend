@@ -92,7 +92,8 @@ case class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: FrontendA
           userType = affinityGroup.map(ag => (ag.toJson \ "affinityGroup").as[AffinityGroup]),
           arn = enrolments.getEnrolment(agentEnrolmentName).flatMap(_.getIdentifier(arnIdentifier)).map(_.value),
           optClientName = request.clientName,
-          isSupportingAgent = request.isSupportingAgent
+          isSupportingAgent = request.isSupportingAgent,
+          clientConfirmed = request.confirmed
         ))
       )
   }

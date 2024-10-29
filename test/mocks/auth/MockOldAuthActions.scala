@@ -75,6 +75,8 @@ trait MockOldAuthActions extends TestSupport with MockIncomeSourceDetailsService
     authoriseAndRetrieveAgent,
     app.injector.instanceOf[AuthoriseAndRetrieveMtdAgent],
     app.injector.instanceOf[AgentHasClientDetails],
+    app.injector.instanceOf[AgentHasConfirmedClientAction],
+    app.injector.instanceOf[AgentIsPrimaryAction],
     app.injector.instanceOf[AsMtdUser],
     app.injector.instanceOf[NavBarRetrievalAction],
     incomeSourceRetrievalAction,
