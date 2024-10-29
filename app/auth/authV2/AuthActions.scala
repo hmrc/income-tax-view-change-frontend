@@ -34,6 +34,7 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
                             val asMtdUser: AsMtdUser,
                             val retrieveBtaNavBar: NavBarRetrievalAction,
                             val retrieveNinoWithIncomeSources: IncomeSourceRetrievalAction,
+                            val retrieveClientData: RetrieveClientData,
                             val featureSwitchPredicate: FeatureSwitchRetrievalAction)
                            (implicit val appConfig: FrontendAppConfig,
                             val ec: ExecutionContext) {
@@ -70,7 +71,14 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
 
   def isAgent[A]: ActionBuilder[AgentUser, AnyContent] = checkSessionTimeout andThen authoriseAndRetrieveAgent
 
-//  def isAgentWithClient[A]: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authoriseAndRetrieveMtdAgent
+  def isAgentWithConfirmedClient[A]: ActionBuilder[MtdItUser, AnyContent] = {
+    checkSessionTimeout andThen
+      retrieveClientData andThen
+      authoriseAndRetrieveMtdAgent andThen
+      retrieveNinoWithIncomeSources andThen
+      featureSwitchPredicate andThen
+      retrieveBtaNavBar
+  }
 
 
 //    private def agentIsPrimary(supportedRoles: List[MTDUserRole]): ActionRefiner[MtdItUserOptionNino, MtdItUserOptionNino] = {

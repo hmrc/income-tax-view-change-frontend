@@ -95,7 +95,7 @@ class AuthoriseAndRetrieveAgent @Inject()(val authorisedFunctions: FrontendAutho
   private def redirectIfNotAgent[A]()(
     implicit request: Request[A]): PartialFunction[AuthAgentRetrievals, Future[Either[Result, AgentUser[A]]]] = {
     case _ ~ _ ~ Some(ag@(Organisation | Individual)) ~ _ =>
-      Logger(getClass).debug(s"$ag on endpoint for agents")
+      logger.debug(s"$ag on endpoint for agents")
       Future.successful(Left(Redirect(controllers.routes.HomeController.show())))
   }
 }

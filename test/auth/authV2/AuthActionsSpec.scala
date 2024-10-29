@@ -334,7 +334,7 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
 
   }
 
-  "isAgentWithClient" should {
+  "isAgentWithConfrimedClient" should {
 
   }
 
@@ -497,7 +497,7 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
 //        )
 //      )
 //
-//      authActions.isAgentWithClient.async(block)(request).futureValue
+//      authActions.isAgentWithConfrimedClient.async(block)(request).futureValue
 //    }
 //
 //    def result: Result = {
@@ -507,12 +507,12 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
 //        )
 //      )
 //
-//      authActions.isAgentWithClient.async(block)(request).futureValue
+//      authActions.isAgentWithConfrimedClient.async(block)(request).futureValue
 //    }
 //
 //    def exception: Assertion = {
 //      val failedException: TestFailedException = intercept[TestFailedException] {
-//        authActions.isAgentWithClient.async(block)(request).futureValue
+//        authActions.isAgentWithConfrimedClient.async(block)(request).futureValue
 //      }
 //
 //      failedException.getCause.getClass shouldBe expectedError.getClass

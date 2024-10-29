@@ -21,8 +21,9 @@ import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import controllers.agent.AuthUtils._
 import play.api.mvc.Results.Redirect
-import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
+import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Request, Result}
 import play.api.{Configuration, Environment, Logger}
+import uk.gov.hmrc.auth.core.AffinityGroup.{Individual, Organisation}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
@@ -53,6 +54,7 @@ case class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: FrontendA
     implicit val req: ClientDataRequest[A] = request
 
     val isAgent: Predicate = Enrolment("HMRC-AS-AGENT") and AffinityGroup.Agent
+    val isNotAgent: Predicate = AffinityGroup.Individual or AffinityGroup.Organisation
 
     val hasDelegatedEnrolment: Predicate = if (request.isSupportingAgent) {
       Enrolment(
@@ -70,9 +72,9 @@ case class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: FrontendA
       )
     }
 
-    authorisedFunctions.authorised(isAgent and hasDelegatedEnrolment)
+    authorisedFunctions.authorised((isAgent and hasDelegatedEnrolment) or isNotAgent)
       .retrieve(allEnrolments and credentials and affinityGroup and name) {
-        constructMtdIdUserOptNino()
+        redirectIfNotAgent orElse constructMtdIdUserOptNino()
       }(hc, executionContext) recoverWith logAndRedirect
   }
 
@@ -110,6 +112,13 @@ case class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: FrontendA
           isSupportingAgent = request.isSupportingAgent
         ))
       )
+  }
+
+  private def redirectIfNotAgent[A]()(
+    implicit request: Request[A]): PartialFunction[AuthAgentWithNinoRetrievals, Future[Either[Result, MtdItUserOptionNino[A]]]] = {
+    case _ ~ _ ~ Some(ag@(Organisation | Individual)) ~ _ =>
+      logger.debug(s"$ag on endpoint for agents")
+      Future.successful(Left(Redirect(controllers.routes.HomeController.show())))
   }
 }
 
