@@ -18,21 +18,17 @@ package auth.authV2
 
 import auth.authV2.AuthActionsTestData._
 import auth.authV2.actions._
-import config.ItvcErrorHandler
-import controllers.agent.sessionUtils
+import config.AgentItvcErrorHandler
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.Assertion
 import play.api
-import play.api.http.HeaderNames
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Results.InternalServerError
-import play.api.mvc.{Request, Result, Results}
-import play.api.test.FakeRequest
+import play.api.mvc.{Result, Results}
 import play.api.test.Helpers._
 import play.api.{Application, Play}
 import services.SessionDataService
-import testConstants.BaseTestConstants.testSessionId
 import testOnly.models.SessionDataGetResponse.{SessionDataNotFound, SessionDataUnexpectedResponse}
 
 import scala.concurrent.Future
@@ -48,7 +44,7 @@ class RetrieveClientDataSpec extends AuthActionsSpecHelper {
     new GuiceApplicationBuilder()
       .overrides(
         api.inject.bind[SessionDataService].toInstance(mockSessionDataService),
-        api.inject.bind[ItvcErrorHandler].toInstance(mockItvcErrorHandler)
+        api.inject.bind[AgentItvcErrorHandler].toInstance(mockAgentErrorHandler)
       )
       .build()
   }
@@ -122,7 +118,7 @@ class RetrieveClientDataSpec extends AuthActionsSpecHelper {
         when(mockSessionDataService.getSessionData(any())(any(), any()))
           .thenReturn(Future.successful(Left(SessionDataUnexpectedResponse("error"))))
 
-        when(mockItvcErrorHandler.showInternalServerError()(any()))
+        when(mockAgentErrorHandler.showInternalServerError()(any()))
           .thenReturn(InternalServerError("ERROR PAGE"))
 
         val result = action.invokeBlock(
