@@ -37,10 +37,10 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class NavBarPredicateV2 @Inject()(val btaNavBarController: BtaNavBarController,
-                                  val ptaPartial: PtaPartial,
-                                  val itvcErrorHandler: ItvcErrorHandler)
-                                 (implicit val appConfig: FrontendAppConfig,
+class NavBarRetrievalAction @Inject()(val btaNavBarController: BtaNavBarController,
+                                      val ptaPartial: PtaPartial,
+                                      val itvcErrorHandler: ItvcErrorHandler)
+                                     (implicit val appConfig: FrontendAppConfig,
                                 val executionContext: ExecutionContext,
                                 val messagesApi: MessagesApi
                                ) extends ActionRefiner[MtdItUser, MtdItUser] with SaveOriginAndRedirect {
@@ -49,20 +49,21 @@ class NavBarPredicateV2 @Inject()(val btaNavBarController: BtaNavBarController,
 
     val header: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     implicit val hc: HeaderCarrier = header.copy(extraHeaders = header.headers(Seq(play.api.http.HeaderNames.COOKIE)))
-    if (!isEnabled(NavBarFs)(request) || request.userType.contains(Agent)) {
+    lazy val navigationBarDisabled = !isEnabled(NavBarFs)(request)
+    if (request.userType.contains(Agent) || navigationBarDisabled) {
       Future.successful(Right(request))
     } else {
       request.getQueryString(SessionKeys.origin).fold[Future[Either[Result, MtdItUser[A]]]](ifEmpty = retrieveCacheAndHandleNavBar(request))(_ => {
-        saveOriginAndReturnToHomeWithoutQueryParams(request, !isEnabled(NavBarFs)(request)).map(Left(_))
+        saveOriginAndReturnToHomeWithoutQueryParams(request, navigationBarDisabled).map(Left(_))
       })
     }
   }
 
   def retrieveCacheAndHandleNavBar[A](request: MtdItUser[A])(implicit hc: HeaderCarrier): Future[Either[Result, MtdItUser[A]]] = {
     request.session.get(SessionKeys.origin) match {
-      case Some(origin) if OriginEnum(origin) == Some(PTA) =>
+      case Some(origin) if OriginEnum(origin).contains(PTA) =>
         Future.successful(Right(returnMtdItUserWithNavbar(request, ptaPartial()(request, request.messages, appConfig))))
-      case Some(origin) if OriginEnum(origin) == Some(BTA) =>
+      case Some(origin) if OriginEnum(origin).contains(BTA) =>
         handleBtaNavBar(request)
       case _ =>
         Future.successful(Left(Redirect(appConfig.taxAccountRouterUrl)))
@@ -72,7 +73,7 @@ class NavBarPredicateV2 @Inject()(val btaNavBarController: BtaNavBarController,
   def returnMtdItUserWithNavbar[A](request: MtdItUser[A], partial: Html): MtdItUser[A] = {
     MtdItUser[A](mtditid = request.mtditid, nino = request.nino, userName = request.userName,
       incomeSources = request.incomeSources, btaNavPartial = Some(partial), saUtr = request.saUtr, credId = request.credId,
-      userType = request.userType, arn = request.arn, featureSwitches = request.featureSwitches)(request)
+      userType = request.userType, arn = request.arn, optClientName = request.optClientName, featureSwitches = request.featureSwitches)(request)
   }
 
   def handleBtaNavBar[A](request: MtdItUser[A])(implicit hc: HeaderCarrier): Future[Either[Result, MtdItUser[A]]] = {

@@ -16,10 +16,10 @@
 
 package enums
 
-sealed trait UserRole
+sealed trait MTDUserRole
 
-case object PrimaryAgent extends UserRole
+case object MTDPrimaryAgent extends MTDUserRole
 
-case object SecondaryAgent extends UserRole
+case object MTDSecondaryAgent extends MTDUserRole
 
-case object Individual extends UserRole
+case object MTDIndividual extends MTDUserRole

@@ -20,7 +20,6 @@ import audit.mocks.MockAuditingService
 import auth.authV2.AuthActions
 import auth.authV2.actions._
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import controllers.predicates.IncomeSourceDetailsPredicate
 import mocks.services.MockIncomeSourceDetailsService
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -44,6 +43,15 @@ trait MockOldAuthActions extends TestSupport with MockIncomeSourceDetailsService
     auditingService = mockAuditingService
   )
 
+  private val authoriseAndRetrieveIndividual = new AuthoriseAndRetrieveIndividual(
+    authorisedFunctions = mockAuthService,
+    appConfig = appConfig,
+    config = conf,
+    env = environment,
+    mcc = stubMessagesControllerComponents(),
+    auditingService = mockAuditingService
+  )
+
   private val authoriseAndRetrieveAgent = new AuthoriseAndRetrieveAgent(
     authorisedFunctions = mockAuthService,
     appConfig = appConfig,
@@ -52,7 +60,7 @@ trait MockOldAuthActions extends TestSupport with MockIncomeSourceDetailsService
     mcc = stubMessagesControllerComponents()
   )
 
-  private val incomeSourceDetailsPredicate = new IncomeSourceDetailsPredicate(
+  private val incomeSourceRetrievalAction = new IncomeSourceRetrievalAction(
     mockIncomeSourceDetailsService
   )(ec,
     app.injector.instanceOf[ItvcErrorHandler],
@@ -60,15 +68,20 @@ trait MockOldAuthActions extends TestSupport with MockIncomeSourceDetailsService
     stubMessagesControllerComponents())
 
   val mockAuthActions = new AuthActions(
-    app.injector.instanceOf[SessionTimeoutPredicateV2],
+    app.injector.instanceOf[SessionTimeoutAction],
     authoriseAndRetrieve,
+    authoriseAndRetrieveIndividual,
     authoriseAndRetrieveAgent,
+    app.injector.instanceOf[AuthoriseAndRetrieveMtdAgent],
     app.injector.instanceOf[AgentHasClientDetails],
+    app.injector.instanceOf[AgentHasConfirmedClientAction],
+    app.injector.instanceOf[AgentIsPrimaryAction],
     app.injector.instanceOf[AsMtdUser],
-    app.injector.instanceOf[NavBarPredicateV2],
-    incomeSourceDetailsPredicate,
-    app.injector.instanceOf[FeatureSwitchPredicateV2]
-  )(appConfig, ec)
+    app.injector.instanceOf[NavBarRetrievalAction],
+    incomeSourceRetrievalAction,
+    app.injector.instanceOf[RetrieveClientData],
+    app.injector.instanceOf[FeatureSwitchRetrievalAction]
+  )
 
   override def setupMockAuthRetrievalSuccess[X, Y](retrievalValue: X ~ Y): Unit = {
     when(mockAuthService.authorised(any()))
@@ -82,7 +95,7 @@ trait MockOldAuthActions extends TestSupport with MockIncomeSourceDetailsService
 
   override def setupMockAgentAuthorisationException(exception: AuthorisationException = new InvalidBearerToken, withClientPredicate: Boolean = true): Unit = {
 
-      when(mockAuthService.authorised(any()))
+    when(mockAuthService.authorised(any()))
       .thenReturn(
         new mockAuthService.AuthorisedFunction(EmptyPredicate) {
           override def apply[A](body: => Future[A])(implicit hc: HeaderCarrier, executionContext: ExecutionContext) = Future.failed(exception)

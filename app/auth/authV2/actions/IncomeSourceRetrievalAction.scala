@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.predicates
+package auth.authV2.actions
 
 import auth.{MtdItUser, MtdItUserOptionNino}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
@@ -31,8 +31,8 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IncomeSourceDetailsPredicate @Inject()(val incomeSourceDetailsService: IncomeSourceDetailsService)
-                                            (implicit val executionContext: ExecutionContext,
+class IncomeSourceRetrievalAction @Inject()(val incomeSourceDetailsService: IncomeSourceDetailsService)
+                                           (implicit val executionContext: ExecutionContext,
                                              val individualErrorHandler: ItvcErrorHandler,
                                              val agentErrorHandler: AgentItvcErrorHandler,
                                              mcc: MessagesControllerComponents) extends BaseController with
@@ -46,7 +46,7 @@ class IncomeSourceDetailsPredicate @Inject()(val incomeSourceDetailsService: Inc
     // no caching for now
     incomeSourceDetailsService.getIncomeSourceDetails() map {
       case response: IncomeSourceDetailsModel =>
-        Right(MtdItUser(request.mtditid, response.nino, request.userName, response, None, request.saUtr, request.credId, request.userType, request.arn, request.optClientName, request.isSupportingAgent))
+        Right(MtdItUser(request.mtditid, response.nino, request.userName, response, None, request.saUtr, request.credId, request.userType, request.arn, request.optClientName))
       case error: IncomeSourceDetailsError => Left(logWithUserType(s"[${error.status}] ${error.reason}"))
     } recover logAndRedirect()
 

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package auth.authV2
+package authV2
 
+import auth.authV2.{AgentUser, AuthActions}
 import auth.authV2.AuthExceptions.{MissingAgentReferenceNumber, MissingMtdId}
 import auth.authV2.actions._
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.FrontendAuthConnector
 import controllers.agent.sessionUtils.SessionKeys
-import controllers.predicates.IncomeSourceDetailsPredicate
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito
@@ -333,6 +333,10 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
 
   }
 
+  "isAgentWithConfrimedClient" should {
+
+  }
+
   lazy val mockAuthConnector = mock[FrontendAuthConnector]
   lazy val mockIncomeSourceDetailsService = mock[IncomeSourceDetailsService]
 
@@ -365,6 +369,9 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
 
   private type AuthAgentRetrievals =
     Enrolments ~ Option[Credentials] ~ Option[AffinityGroup] ~ ConfidenceLevel
+//
+//  private type AuthAgentWithClientRetrievals =
+//    Enrolments ~ Option[Credentials] ~ Option[AffinityGroup] ~ Option[Name]
 
   case class RetrievalData(enrolments: Enrolments,
                            name: Option[Name],
@@ -373,15 +380,20 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
                            confidenceLevel: ConfidenceLevel)
 
   val authActions = new AuthActions(
-    app.injector.instanceOf[SessionTimeoutPredicateV2],
+    app.injector.instanceOf[SessionTimeoutAction],
     app.injector.instanceOf[AuthoriseAndRetrieve],
+    app.injector.instanceOf[AuthoriseAndRetrieveIndividual],
     app.injector.instanceOf[AuthoriseAndRetrieveAgent],
+    app.injector.instanceOf[AuthoriseAndRetrieveMtdAgent],
     app.injector.instanceOf[AgentHasClientDetails],
+    app.injector.instanceOf[AgentHasConfirmedClientAction],
+    app.injector.instanceOf[AgentIsPrimaryAction],
     app.injector.instanceOf[AsMtdUser],
-    app.injector.instanceOf[NavBarPredicateV2],
-    app.injector.instanceOf[IncomeSourceDetailsPredicate],
-    app.injector.instanceOf[FeatureSwitchPredicateV2]
-  )(appConfig, ec)
+    app.injector.instanceOf[NavBarRetrievalAction],
+    app.injector.instanceOf[IncomeSourceRetrievalAction],
+    app.injector.instanceOf[RetrieveClientData],
+    app.injector.instanceOf[FeatureSwitchRetrievalAction]
+  )
 
   abstract class Fixture(retrievals: RetrievalData,
                          request: FakeRequest[AnyContent] = FakeRequest(),
@@ -411,6 +423,7 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
 
     val result = authActions.individualOrAgentWithClient.async(block)(request).futureValue
   }
+
   class ResultFixture(retrievals: RetrievalData,
                       request: FakeRequest[AnyContent] = FakeRequest(),
                       incomeSources: IncomeSourceDetailsResponse = defaultIncomeSourcesData,
@@ -443,7 +456,7 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
 
     when(mockAuthConnector.authorise[AuthAgentRetrievals](any(), any())(any(), any())).thenReturn(Future.failed( authorisationException ))
 
-    val result = authActions.isAgent.async(block)(request).futureValue
+    val result = authActions.asAgent.async(block)(request).futureValue
   }
 
   class AgentResultFixture(retrievals: RetrievalData,
@@ -456,19 +469,7 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
       )
     )
 
-    val result = authActions.isAgent.async(block)(request).futureValue
-  }
-
-  class AgentExceptionFixture(retrievals: RetrievalData,
-                              request: FakeRequest[AnyContent] = FakeRequest(),
-                              block: AgentUser[_] => Future[Result] = (_) => Future.successful(Ok("OK!")),
-                              expectedError: Throwable) {
-
-    val failedException: TestFailedException = intercept[TestFailedException] {
-      authActions.isAgent.async(block)(request).futureValue
-    }
-
-    failedException.getCause.getClass shouldBe expectedError.getClass
+    val result = authActions.asAgent.async(block)(request).futureValue
   }
 
 }
