@@ -26,7 +26,7 @@ import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuthStub.titleInternalServer
 import helpers.servicemocks.ChargeItemStub.chargeItemWithInterest
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
-import models.admin.{ChargeHistory, CodingOut, PaymentAllocation}
+import models.admin.ChargeHistory
 import models.chargeHistory.ChargeHistoryModel
 import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.claimToAdjustPoa.OtherIncomeLower
@@ -141,43 +141,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       )
     }
 
-    s"return $OK with correct page title and audit events when PaymentAllocations FS is enabled" in {
-
-      enable(PaymentAllocation)
-      disable(ChargeHistory)
-      stubAuthorisedAgentUser(authorised = true)
-
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
-
-      stubGetFinancialDetailsSuccess(Some(ITSA_NI), Some(NIC4_SCOTLAND))
-
-      val result = IncomeTaxViewChangeFrontend.getChargeSummary(
-        taxYear.toString, "CHARGEID01", clientDetailsWithConfirmation
-      )
-
-      AuditStub.verifyAuditEvent(ChargeSummaryAudit(
-        MtdItUser(
-          testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
-          None, Some("1234567890"), None, Some(Agent), Some(testArn)
-        )(FakeRequest()),
-        chargeItemWithInterest(),
-        paymentBreakdown = paymentBreakdown,
-        chargeHistories = List.empty,
-        paymentAllocations = paymentAllocation,
-        isLatePaymentCharge = false,
-        taxYear = taxYear
-      ))
-
-      result should have(
-        httpStatus(OK),
-        pageTitleAgent("chargeSummary.paymentOnAccount1.text"),
-        elementTextBySelector("main h2")(importantPaymentBreakdown)
-      )
-    }
-
-    s"return $OK with correct page title and audit events when ChargeHistory and PaymentAllocation FSs are enabled" in {
+    s"return $OK with correct page title and audit events when ChargeHistory FS is enabled" in {
       enable(ChargeHistory)
-      enable(PaymentAllocation)
       stubAuthorisedAgentUser(authorised = true)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
       stubGetFinancialDetailsSuccess(Some(ITSA_NI), Some(NIC4_SCOTLAND))
@@ -208,9 +173,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       ))
     }
 
-    s"return $OK with correct page title and audit events when ChargeHistory and PaymentAllocation FSs are enabled and LPI set to true" in {
+    s"return $OK with correct page title and audit events when ChargeHistory FS is enabled and LPI set to true" in {
       enable(ChargeHistory)
-      enable(PaymentAllocation)
       stubAuthorisedAgentUser(authorised = true)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
       stubGetFinancialDetailsSuccess()
@@ -242,7 +206,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     "load the page with coding out details when coding out is enable and a coded out documentDetail id is passed" in {
 
       Given("the CodingOut feature switch is enabled")
-      enable(CodingOut)
       stubAuthorisedAgentUser(authorised = true)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
       stubChargeHistorySuccess()
@@ -265,7 +228,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
     s"return $OK with correct page title and ChargeHistory FS is enabled and the charge history details API responds with a $NOT_FOUND" in {
       enable(ChargeHistory)
-      enable(PaymentAllocation)
       stubAuthorisedAgentUser(authorised = true)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
       stubGetFinancialDetailsSuccess()
@@ -290,7 +252,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
     s"return $OK with correct page title and ChargeHistory FS is enabled and the charge history details API responds with a $FORBIDDEN" in {
       enable(ChargeHistory)
-      enable(PaymentAllocation)
       stubAuthorisedAgentUser(authorised = true)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
       stubGetFinancialDetailsSuccess()
@@ -316,7 +277,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     "return a technical difficulties page to the user" when {
       "ChargeHistory FS is enabled and the charge history details API responded with an error" in {
         enable(ChargeHistory)
-        enable(PaymentAllocation)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
         stubGetFinancialDetailsSuccess()
@@ -632,7 +592,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
     "load the charge summary page with an UNPAID MFADebit" in {
       enable(ChargeHistory)
-      enable(PaymentAllocation)
       stubAuthorisedAgentUser(authorised = true)
 
       Given("I wiremock stub a successful Income Source Details response with property only")
@@ -666,8 +625,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
     "load the charge summary page with a PAID MFADebit" in {
       enable(ChargeHistory)
-      disable(CodingOut)
-      enable(PaymentAllocation)
       stubAuthorisedAgentUser(authorised = true)
 
       Given("I wiremock stub a successful Income Source Details response with property only")

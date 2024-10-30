@@ -55,7 +55,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
                   paymentAllocations: List[PaymentHistoryAllocations] = List(),
                   payments: FinancialDetailsModel = payments,
                   chargeHistoryEnabled: Boolean = true,
-                  paymentAllocationEnabled: Boolean = false,
                   latePaymentInterestCharge: Boolean = false,
                   codingOutEnabled: Boolean = false,
                   reviewAndReconcileEnabled: Boolean = false,
@@ -76,7 +75,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       paymentAllocations = paymentAllocations,
       payments = payments,
       chargeHistoryEnabled = chargeHistoryEnabled,
-      paymentAllocationEnabled = paymentAllocationEnabled,
       latePaymentInterestCharge = latePaymentInterestCharge,
       codingOutEnabled = codingOutEnabled,
       reviewAndReconcileEnabled = reviewAndReconcileEnabled,
@@ -845,7 +843,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
       "Display a paid MFA Credit" in new TestSetup(
         chargeItem = mfaChargeItem.copy(taxYear = TaxYear.forYearEnd(2019), outstandingAmount = 0.0),
-        paymentAllocationEnabled = true,
         paymentAllocations = paymentAllocations
       ) {
         val summaryListText = "Due date 15 May 2019 Amount £1,400.00 Still to pay £0.00 "
@@ -1141,22 +1138,9 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         document.select("main h3").text shouldBe "Late payment interest history"
       }
 
-      "display the charge creation item when history is found and allocations are disabled" in new TestSetup(
-        chargeItem = chargeItemModel(outstandingAmount = 0.0),
-        adjustmentHistory = amendedAdjustmentHistory,
-        paymentAllocationEnabled = false,
-        paymentAllocations = List(mock(classOf[PaymentHistoryAllocations]))
-      ) {
-        document.select("tbody tr").size() shouldBe 2
-        document.select("tbody tr:nth-child(1) td:nth-child(1)").text() shouldBe "Unknown"
-        document.select("tbody tr:nth-child(1) td:nth-child(2)").text() shouldBe paymentOnAccountCreated(1)
-        document.select("tbody tr:nth-child(1) td:nth-child(3)").text() shouldBe "£1,400.00"
-      }
-
-
       "show payment allocations in history table" when {
 
-        "allocations are enabled and present in the list" when {
+        "allocations are present in the list" when {
 
           val paymentAllocations = List(
             paymentsForCharge(typePOA1, ITSA_NI, "2018-03-30", 1500.0, Some("123456789012"), Some("PAYID01")),
@@ -1187,32 +1171,32 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
           )
 
           "chargeHistory enabled, having Payment created in the first row" in new TestSetup(chargeItem = chargeItemModel(),
-            chargeHistoryEnabled = true, paymentAllocationEnabled = true, paymentAllocations = paymentAllocations) {
+            chargeHistoryEnabled = true, paymentAllocations = paymentAllocations) {
             verifyPaymentHistoryContent(historyRowPOA1Created :: expectedPaymentAllocationRows: _*)
           }
 
           "chargeHistory enabled with a matching link to the payment allocations page" in new TestSetup(chargeItem = chargeItemModel(),
-            chargeHistoryEnabled = true, paymentAllocationEnabled = true, paymentAllocations = paymentAllocations) {
+            chargeHistoryEnabled = true, paymentAllocations = paymentAllocations) {
             document.select(Selectors.table).select("a").size shouldBe 10
             document.select(Selectors.table).select("a").forall(_.attr("href") == controllers.routes.PaymentAllocationsController.viewPaymentAllocation("PAYID01").url) shouldBe true
           }
 
           "chargeHistory disabled" in new TestSetup(chargeItem = chargeItemModel(),
-            chargeHistoryEnabled = false, paymentAllocationEnabled = true, paymentAllocations = paymentAllocations) {
+            chargeHistoryEnabled = false, paymentAllocations = paymentAllocations) {
             verifyPaymentHistoryContent(expectedPaymentAllocationRows: _*)
           }
         }
       }
 
       "hide payment allocations in history table" when {
-        "allocations enabled but list is empty" when {
+        "the allocations list is empty" when {
           "chargeHistory enabled, having Payment created in the first row" in new TestSetup(chargeItem = chargeItemModel(),
-            chargeHistoryEnabled = true, paymentAllocationEnabled = true, paymentAllocations = Nil) {
+            chargeHistoryEnabled = true, paymentAllocations = Nil) {
             verifyPaymentHistoryContent(historyRowPOA1Created)
           }
 
           "chargeHistory disabled, not showing the table at all" in new TestSetup(chargeItem = chargeItemModel(),
-            chargeHistoryEnabled = false, paymentAllocationEnabled = true, paymentAllocations = Nil) {
+            chargeHistoryEnabled = false, paymentAllocations = Nil) {
             (document select Selectors.table).size shouldBe 0
           }
         }
@@ -1232,7 +1216,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         paymentAllocations = List(),
         payments = payments,
         chargeHistoryEnabled = true,
-        paymentAllocationEnabled = false,
         latePaymentInterestCharge = false,
         codingOutEnabled = false,
         reviewAndReconcileEnabled = false,
@@ -1288,7 +1271,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       }
 
       "list payment allocations with right number of rows and agent payment allocations link" in new TestSetup(chargeItem = chargeItemModel(),
-        chargeHistoryEnabled = true, paymentAllocationEnabled = true, paymentAllocations = List(
+        chargeHistoryEnabled = true, paymentAllocations = List(
           paymentsForCharge(typePOA1, ITSA_NI, "2018-03-30", 1500.0, Some("123456789012"), Some("PAYID01"))), isAgent = true) {
         document.select(Selectors.table).select("a").size shouldBe 1
         document.select(Selectors.table).select("a").forall(_.attr("href") == controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent("PAYID01").url) shouldBe true
@@ -1322,7 +1305,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
       "Display a paid MFA Credit" in new TestSetup(
         chargeItem = mfaChargeItem.copy(taxYear = TaxYear.forYearEnd(2019), outstandingAmount = 0.0), isAgent = true,
-        paymentAllocationEnabled = true, paymentAllocations = paymentAllocations) {
+        paymentAllocations = paymentAllocations) {
         val summaryListText = "Due date 15 May 2019 Amount £1,400.00 Still to pay £0.00 "
         val hmrcCreated = messages("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
         val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,400.00"

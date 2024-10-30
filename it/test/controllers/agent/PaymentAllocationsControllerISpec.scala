@@ -23,11 +23,10 @@ import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.AuthStub.titleInternalServer
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.PaymentAllocation
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
@@ -43,7 +42,6 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    disable(PaymentAllocation)
   }
 
   val singleTestPaymentAllocationCharge: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
@@ -142,23 +140,8 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
         )
       }
     }
-    s"return $NOT_FOUND" when {
-      "the PaymentAllocation feature switch is disabled" in {
-        stubAuthorisedAgentUser(authorised = true)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
-        disable(PaymentAllocation)
-
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentAllocation(docNumber, clientDetailsWithConfirmation)
-
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show.url)
-        )
-      }
-    }
 
     s"return $OK and display the Payment Allocations page" in {
-      enable(PaymentAllocation)
       stubAuthorisedAgentUser(authorised = true)
 
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
@@ -178,7 +161,6 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
     }
 
     s"return $OK and display the Payment Allocations page and new LPI layout" in {
-      enable(PaymentAllocation)
       stubAuthorisedAgentUser(authorised = true)
 
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(nino = testNino, from = s"${getCurrentTaxYearEnd.getYear - 1}-04-06",
@@ -199,7 +181,6 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
     }
 
     s"return $INTERNAL_SERVER_ERROR when the payment allocations call fails" in {
-      enable(PaymentAllocation)
       stubAuthorisedAgentUser(authorised = true)
 
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
