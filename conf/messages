@@ -1028,6 +1028,8 @@ chargeSummary.chargeHistory.amend.balancingCharge.text 	   	   	        = Balanc
 chargeSummary.chargeHistory.adjustment.paymentOnAccount1.text           = You updated your first payment on account
 chargeSummary.chargeHistory.adjustment.paymentOnAccount2.text           = You updated your second payment on account
 chargeSummary.chargeHistory.created.hmrcAdjustment.text                 = HMRC adjustment created
+chargeSummary.chargeHistory.POA1RR-credit                               = First payment on account: credit from your tax return
+chargeSummary.chargeHistory.POA2RR-credit                               = Second payment on account: credit from your tax return
 
 chargeSummary.lpi.paymentOnAccount1.text						   = Late payment interest on first payment on account
 chargeSummary.lpi.paymentOnAccount2.text						   = Late payment interest on second payment on account
