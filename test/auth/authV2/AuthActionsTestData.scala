@@ -81,6 +81,7 @@ object AuthActionsTestData {
                                          hasNino: Boolean = false,
                                          hasSA: Boolean = false,
                                          hasUserName: Boolean = false,
+                                         clientConfirmed: Boolean = false,
                                          isSupportingAgent: Boolean = false)
                                         (implicit request: Request[_]): MtdItUserOptionNino[_] = MtdItUserOptionNino(
     mtdId,
@@ -92,7 +93,8 @@ object AuthActionsTestData {
     affinityGroup,
     Some(arn),
     None,
-    isSupportingAgent
+    isSupportingAgent,
+    clientConfirmed = clientConfirmed
   )
 
   def getMtdItUserOptionNinoForAuthoriseMtdAgent(affinityGroup: Option[AffinityGroup],
