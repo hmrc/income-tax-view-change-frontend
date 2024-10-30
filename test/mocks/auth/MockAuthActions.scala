@@ -16,6 +16,7 @@
 
 package mocks.auth
 
+import audit.AuditingService
 import audit.mocks.MockAuditingService
 import auth.FrontendAuthorisedFunctions
 import auth.authV2.AuthActions
@@ -30,7 +31,7 @@ import testUtils.TestSupport
 trait MockAuthActions extends
   TestSupport with
   MockIncomeSourceDetailsService with
-  MockAgentAuthorisedFunctions  with
+  MockAgentAuthorisedFunctions with
   MockAuditingService with
   MockItvcErrorHandler {
 

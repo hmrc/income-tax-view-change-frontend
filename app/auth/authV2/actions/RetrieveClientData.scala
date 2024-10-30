@@ -16,7 +16,7 @@
 
 package auth.authV2.actions
 
-import config.ItvcErrorHandler
+import config.AgentItvcErrorHandler
 import controllers.agent.routes
 import controllers.agent.sessionUtils.SessionKeys
 import play.api.Logger
@@ -31,7 +31,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RetrieveClientData @Inject()(sessionDataService: SessionDataService,
-                                   errorHandler: ItvcErrorHandler)(implicit val executionContext: ExecutionContext) extends ActionRefiner[Request, ClientDataRequest] {
+                                   errorHandler: AgentItvcErrorHandler)(implicit val executionContext: ExecutionContext) extends ActionRefiner[Request, ClientDataRequest] {
 
   lazy val logger: Logger = Logger(getClass)
 

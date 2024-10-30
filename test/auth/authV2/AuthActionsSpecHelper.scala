@@ -39,6 +39,7 @@ trait AuthActionsSpecHelper extends TestSupport with ScalaFutures {
   lazy val mockAuditingService = mock[AuditingService]
   lazy val mockSessionDataService = mock[SessionDataService]
   lazy val mockItvcErrorHandler = mock[ItvcErrorHandler]
+
   lazy val mockBtaNavBarController = mock[BtaNavBarController]
   lazy val mockPtaPartial = mock[PtaPartial]
   lazy val mockFeatureSwitchService = mock[FeatureSwitchService]
