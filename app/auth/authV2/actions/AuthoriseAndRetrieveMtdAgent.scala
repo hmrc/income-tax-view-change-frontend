@@ -18,18 +18,14 @@ package auth.authV2.actions
 
 import auth.{FrontendAuthorisedFunctions, MtdItUserOptionNino}
 import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
 import controllers.agent.AuthUtils._
-import play.api.mvc.Results.Redirect
-import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Request, Result}
+import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
 import play.api.{Configuration, Environment, Logger}
-import uk.gov.hmrc.auth.core.AffinityGroup.{Individual, Organisation}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
+import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.Inject

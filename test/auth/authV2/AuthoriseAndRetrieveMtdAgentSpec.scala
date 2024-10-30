@@ -46,7 +46,7 @@ class AuthoriseAndRetrieveMtdAgentSpec extends AuthActionsSpecHelper {
     new GuiceApplicationBuilder()
       .overrides(
         api.inject.bind[FrontendAuthorisedFunctions].toInstance(frontendAuthFunctions),
-        api.inject.bind[AuditingService].toInstance(mockAuditingService),
+        api.inject.bind[AuditingService].toInstance(mockAuditingService)
       )
       .build()
   }
@@ -60,132 +60,128 @@ class AuthoriseAndRetrieveMtdAgentSpec extends AuthActionsSpecHelper {
 
   def defaultAsync: MtdItUserOptionNino[_] => Future[Result] = (_) => Future.successful(Results.Ok("Successful"))
 
+  def redirectAsync(location: String): MtdItUserOptionNino[_] => Future[Result] = (_) => Future.successful(Results.SeeOther(location))
+
   lazy val authAction = fakeApplication().injector.instanceOf[AuthoriseAndRetrieveMtdAgent]
 
   //TODO move this to AuthActionsTestData
   lazy val fakeClientDetailsRequest = ClientDataRequest(
-    clientMTDID = "XAIT00000000015",
+    clientMTDID = mtdId,
     clientFirstName = Some("Test"),
-    clientLastName = Some("User"),
-    clientNino = "AA111111A",
-    clientUTR = "1234567890",
+    clientLastName = Some("Client"),
+    clientNino = nino,
+    clientUTR = saUtr,
     isSupportingAgent = false,
     confirmed = true
   )(fakeRequestWithClientDetails)
 
   "refine" should {
-      "return the expected MtdItUserOptionNino response" when {
-        s"the user is an Agent enrolled as a HMRC-AS-AGENT with a primary delegated enrolment" that {
-          "has nino and sa enrolment" in {
-            val allEnrolments = getAllEnrolmentsAgent(true, true, hasDelegatedEnrolment =  true)
-            val expectedResponse = getMtdItUserOptionNinoForAuthoriseMtdAgent(
-              Some(AffinityGroup.Agent), fakeClientDetailsRequest
-            )(fakeRequestWithActiveSession)
+    "return the expected MtdItUserOptionNino response" when {
+      s"the user is an Agent enrolled as a HMRC-AS-AGENT with a primary delegated enrolment (HMRC-MTD-IT)" in {
+        val allEnrolments = getAllEnrolmentsAgent(true, true, hasDelegatedEnrolment = true)
 
-            when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
-              Future.successful[AuthRetrievals](
-                allEnrolments ~ Some(userName) ~ Some(credentials) ~ Some(AffinityGroup.Agent) ~ acceptedConfidenceLevel
-              )
-            )
+        when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
+          Future.successful[AuthRetrievals](
+            allEnrolments ~ Some(userName) ~ Some(credentials) ~ Some(AffinityGroup.Agent) ~ acceptedConfidenceLevel
+          )
+        )
 
-            val result = authAction.invokeBlock(
-              fakeClientDetailsRequest,
-              defaultAsyncBody(_ shouldBe expectedResponse))
-
-            status(result) shouldBe OK
-            contentAsString(result) shouldBe "Successful"
+        val result = authAction.invokeBlock(
+          fakeClientDetailsRequest,
+          defaultAsyncBody { res =>
+            res.mtditid shouldBe mtdId
+            res.nino shouldBe Some(nino)
+            res.userName shouldBe Some(userName)
+            res.btaNavPartial shouldBe None
+            res.saUtr shouldBe Some(saUtr)
+            res.credId shouldBe Some(credentials.providerId)
+            res.userType shouldBe Some(AffinityGroup.Agent)
+            res.arn shouldBe Some(arn)
+            res.optClientName shouldBe Some(clientName)
+            res.isSupportingAgent shouldBe false
           }
+        )
 
-          "has no additional enrolments" in {
-            val allEnrolments = getAllEnrolmentsAgent(false, false)
-            val expectedResponse = getMtdItUserOptionNinoForAuthoriseMtdAgent(Some(AffinityGroup.Agent), fakeClientDetailsRequest)(fakeRequestWithActiveSession)
-
-            when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
-              Future.successful[AuthRetrievals](
-                allEnrolments ~ Some(userName) ~ Some(credentials) ~ Some(AffinityGroup.Agent) ~ acceptedConfidenceLevel
-              )
-            )
-
-            val result = authAction.invokeBlock(
-              fakeClientDetailsRequest,
-              defaultAsyncBody(_ shouldBe expectedResponse))
-
-            status(result) shouldBe OK
-            contentAsString(result) shouldBe "Successful"
-          }
-        }
-
-        s"the user is an Agent enrolled as a HMRC-AS-AGENT with a secondary delegated enrolment" that {
-          "has nino and sa enrolment" in {
-            val allEnrolments = getAllEnrolmentsAgent(true, true, hasDelegatedEnrolment =  true)
-            val expectedResponse = getMtdItUserOptionNinoForAuthorise(Some(AffinityGroup.Agent), hasUserName = true)(fakeRequestWithActiveSession)
-
-            when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
-              Future.successful[AuthRetrievals](
-                allEnrolments ~ Some(userName) ~ Some(credentials) ~ Some(AffinityGroup.Agent) ~ acceptedConfidenceLevel
-              )
-            )
-
-            val result = authAction.invokeBlock(
-              fakeClientDetailsRequest,
-              defaultAsyncBody(_ shouldBe expectedResponse))
-
-            status(result) shouldBe OK
-            contentAsString(result) shouldBe "Successful"
-          }
-
-          "has no additional enrolments" in {
-            val allEnrolments = getAllEnrolmentsAgent(false, false)
-            val expectedResponse = getAgentData(allEnrolments)(fakeRequestWithActiveSession)
-
-            when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
-              Future.successful[AuthRetrievals](
-                allEnrolments ~ Some(userName) ~ Some(credentials) ~ Some(AffinityGroup.Agent) ~ acceptedConfidenceLevel
-              )
-            )
-
-            val result = authAction.invokeBlock(
-              fakeClientDetailsRequest,
-              defaultAsyncBody(_ shouldBe expectedResponse))
-
-            status(result) shouldBe OK
-            contentAsString(result) shouldBe "Successful"
-          }
-        }
-
-        "redirect to AgentError page" when {
-          s"the user is an Agent that is not enrolled into HMRC-AS-AGENT" in {
-
-            when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
-              Future.failed[AuthRetrievals](InsufficientEnrolments())
-            )
-
-            val result = authAction.invokeBlock(
-              fakeClientDetailsRequest,
-              defaultAsync)
-
-            status(result) shouldBe SEE_OTHER
-            redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/agents/agent-error")
-          }
-        }
+        status(result) shouldBe OK
+        contentAsString(result) shouldBe "Successful"
       }
+
+      s"the user is an Agent enrolled as a HMRC-AS-AGENT with a secondary delegated enrolment (HMRC-MTD-IT-SUPP)" in {
+        val allEnrolments = getAllEnrolmentsAgent(true, true, hasDelegatedEnrolment = true, mtdIdSupportingAgentPredicate(mtdId))
+
+        when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
+          Future.successful[AuthRetrievals](
+            allEnrolments ~ Some(userName) ~ Some(credentials) ~ Some(AffinityGroup.Agent) ~ acceptedConfidenceLevel
+          )
+        )
+
+        val result = authAction.invokeBlock(
+          fakeClientDetailsRequest,
+          defaultAsyncBody { res =>
+            res.mtditid shouldBe mtdId
+            res.nino shouldBe Some(nino)
+            res.userName shouldBe Some(userName)
+            res.btaNavPartial shouldBe None
+            res.saUtr shouldBe Some(saUtr)
+            res.credId shouldBe Some(credentials.providerId)
+            res.userType shouldBe Some(AffinityGroup.Agent)
+            res.arn shouldBe Some(arn)
+            res.optClientName shouldBe Some(clientName)
+            res.isSupportingAgent shouldBe false
+          }
+        )
+
+        status(result) shouldBe OK
+        contentAsString(result) shouldBe "Successful"
+      }
+    }
 
     "redirect to Home page" when {
       List(Individual, Organisation).foreach { affinityGroup =>
         s"the user is an ${affinityGroup.toString}" in {
           when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
             Future.successful[AuthRetrievals](
-              getAllEnrolmentsAgent(false, false) ~ Some(userName) ~ Some(credentials) ~ Some(AffinityGroup.Agent) ~ acceptedConfidenceLevel
+              getAllEnrolmentsAgent(false, false) ~ Some(userName) ~ Some(credentials) ~ Some(affinityGroup) ~ acceptedConfidenceLevel
             )
           )
 
           val result = authAction.invokeBlock(
             fakeClientDetailsRequest,
-            defaultAsync)
+            redirectAsync("/report-quarterly/income-and-expenses/view/")
+          )
 
           status(result) shouldBe SEE_OTHER
           redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view")
         }
+      }
+    }
+
+    "redirect to the Agent Error page" when {
+      "the user is an Agent that is not enrolled into HMRC-AS-AGENT" in {
+        when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
+          Future.failed[AuthRetrievals](InsufficientEnrolments())
+        )
+
+        val result = authAction.invokeBlock(
+          fakeClientDetailsRequest,
+          defaultAsync)
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/agents/agent-error")
+      }
+
+      "the user is an Agent, but has no delegated enrolments" in {
+        when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
+          Future.failed[AuthRetrievals](InsufficientEnrolments("HMRC-MTD-IT"))
+        )
+
+        val result = authAction.invokeBlock(
+          fakeClientDetailsRequest,
+          defaultAsync
+        )
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/agents/client-utr")
       }
     }
 
@@ -198,7 +194,8 @@ class AuthoriseAndRetrieveMtdAgentSpec extends AuthActionsSpecHelper {
 
         val result = authAction.invokeBlock(
           fakeClientDetailsRequest,
-          defaultAsync)
+          redirectAsync("/report-quarterly/income-and-expenses/view/session-timeout")
+        )
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/session-timeout")
@@ -214,7 +211,8 @@ class AuthoriseAndRetrieveMtdAgentSpec extends AuthActionsSpecHelper {
 
         val result = authAction.invokeBlock(
           fakeClientDetailsRequest,
-          defaultAsync)
+          defaultAsync
+        )
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/sign-in")

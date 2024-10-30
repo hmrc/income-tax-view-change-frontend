@@ -33,11 +33,11 @@ object AuthActionsTestData {
   val nino              = "AA111111A"
   val saUtr             = "123456789"
   val mtdId             = "abcde"
-  val arn               = "12345"
+  val arn               = "1"
   val firstName = "Issac"
   val lastName = "Newton"
   val userName = Name(Some("Issac"), Some("Newton"))
-  val optClientName = Name(Some("Test"), Some("User"))
+  val clientName = Name(Some("Test"), Some("Client"))
 
   val mtdEnrolment              = Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", mtdId)), "Activated", None)
   val agentEnrolment            = Enrolment("HMRC-AS-AGENT", Seq(EnrolmentIdentifier("AgentReferenceNumber", "1")), "Activated", None)
@@ -99,15 +99,15 @@ object AuthActionsTestData {
                                                  cdr: ClientDataRequest[_],
                                                  isSupportingAgent: Boolean = false)
                                                 (implicit request: Request[_]): MtdItUserOptionNino[_] = MtdItUserOptionNino(
-    cdr.clientMTDID,
-    Some(cdr.clientNino),
+    mtdId,
+    Some(nino),
     Some(userName),
     None,
-    Some(cdr.clientUTR),
+    Some(saUtr),
     Some(credentials.providerId),
     affinityGroup,
-    None,
-    cdr.clientName,
+    Some(arn),
+    Some(clientName),
     isSupportingAgent
   )
 

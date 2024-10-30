@@ -18,6 +18,7 @@ package auth.authV2.actions
 
 import auth.MtdItUserOptionNino
 import config.featureswitch.FeatureSwitching
+import controllers.agent.AuthUtils.{agentEnrolmentName, primaryAgentEnrolmentName, secondaryAgentEnrolmentName}
 import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Request, Result}
@@ -29,10 +30,10 @@ import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 
 import scala.concurrent.Future
 
-trait AuthoriseHelper extends AuthRedirects  with FeatureSwitching {
+trait AuthoriseHelper extends AuthRedirects with FeatureSwitching {
 
   type AuthRetrievals =
-    Enrolments ~ Option[Name] ~ Option[Credentials] ~ Option[AffinityGroup]  ~ ConfidenceLevel
+    Enrolments ~ Option[Name] ~ Option[Credentials] ~ Option[AffinityGroup] ~ ConfidenceLevel
 
   val logger: Logger
 
@@ -40,11 +41,14 @@ trait AuthoriseHelper extends AuthRedirects  with FeatureSwitching {
     case _: BearerTokenExpired =>
       logger.debug("Bearer Token Timed Out.")
       Future.successful(Left(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout)))
-    case _: InsufficientEnrolments if requireAgent=>
+    case InsufficientEnrolments(msg) if msg.contains("HMRC-MTD-IT") && requireAgent =>
+      logger.debug(s"missing delegated enrolment. Redirect to agent error page.")
+      Future.successful(Left(Redirect(controllers.agent.routes.EnterClientsUTRController.show)))
+    case _: InsufficientEnrolments if requireAgent =>
       logger.debug(s"missing agent reference. Redirect to agent error page.")
       Future.successful(Left(Redirect(controllers.agent.errors.routes.AgentErrorController.show)))
     case insufficientEnrolments: InsufficientEnrolments =>
-      Logger(getClass).debug(s"Insufficient enrolments: ${insufficientEnrolments.msg}")
+      logger.debug(s"Insufficient enrolments: ${insufficientEnrolments.msg}")
       Future.successful(Left(Redirect(controllers.errors.routes.NotEnrolledController.show)))
     case authorisationException: AuthorisationException =>
       logger.debug(s"Unauthorised request: ${authorisationException.reason}. Redirect to Sign In.")
@@ -54,21 +58,18 @@ trait AuthoriseHelper extends AuthRedirects  with FeatureSwitching {
   }
 
 
-
   def redirectIfAgent[A]()(
     implicit request: Request[A],
     hc: HeaderCarrier): PartialFunction[AuthRetrievals, Future[Either[Result, MtdItUserOptionNino[A]]]] = {
-
     case _ ~ _ ~ _ ~ Some(Agent) ~ _ =>
-      Logger(getClass).debug(s"Agent on endpoint for individuals")
+      logger.debug(s"Agent on endpoint for individuals")
       Future.successful(Left(Redirect(controllers.agent.routes.EnterClientsUTRController.show)))
   }
 
   def redirectIfNotAgent[A]()(
     implicit request: Request[A]): PartialFunction[AuthRetrievals, Future[Either[Result, MtdItUserOptionNino[A]]]] = {
-    case _ ~ _ ~ _~ Some(ag@(Organisation | Individual)) ~ _ =>
+    case _ ~ _ ~ _ ~ Some(ag@(Organisation | Individual)) ~ _ =>
       logger.debug(s"$ag on endpoint for agents")
       Future.successful(Left(Redirect(controllers.routes.HomeController.show())))
   }
-
 }
