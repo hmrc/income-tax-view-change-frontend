@@ -28,6 +28,7 @@ case class ChargeSummaryViewModel(
                                    chargeItem: ChargeItem,
                                    backUrl: String,
                                    paymentBreakdown: List[FinancialDetail],
+                                   reviewAndReconcileCreditsExist: Boolean,
                                    paymentAllocations: List[PaymentHistoryAllocations],
                                    payments: FinancialDetailsModel,
                                    chargeHistoryEnabled: Boolean,

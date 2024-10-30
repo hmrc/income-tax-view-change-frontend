@@ -150,6 +150,43 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
           .flatMap(chargeFinancialDetail => paymentsForAllYears.getAllocationsToCharge(chargeFinancialDetail))
       } else Nil
 
+    val reviewAndReconcileCreditsFinancialDetails: FinancialDetailsModel = {
+
+      val fdm = chargeDetailsforTaxYear.copy(
+        balanceDetails = chargeDetailsforTaxYear.balanceDetails,
+        documentDetails = chargeDetailsforTaxYear.documentDetails,
+        financialDetails = chargeDetailsforTaxYear.financialDetails.filter(fd => ReviewAndReconcileUtils.isReviewAndReconcileCredit(fd.mainTransaction))
+      ).filterPayments()
+
+      fdm.financialDetails.flatMap { fd =>
+        fdm.documentDetails.map { dd =>
+          chargeHistoryService.chargeHistoryResponse(
+            isInterestCharge,
+            dd.isPayeSelfAssessment,
+            fd.chargeReference,
+            isEnabled(ChargeHistory),
+            isEnabled(CodingOut)
+          )
+        }
+      }
+
+//      for {
+//        financialDetail <- fdm.financialDetails
+//        documentDetail  <- fdm.documentDetails
+//      } yield {
+//        chargeHistoryService.chargeHistoryResponse(
+//          isInterestCharge,
+//          documentDetail.isPayeSelfAssessment,
+//          financialDetail.chargeReference,
+//          isEnabled(ChargeHistory),
+//          isEnabled(CodingOut)
+//        ) map {
+//          case Right(chargeHistory) => (documentDetail.documentDueDate, chargeHistory.maxBy(_.reversalDate).totalAmount)
+//
+//        }
+//      }
+    }
+
     chargeHistoryService.chargeHistoryResponse(isInterestCharge, documentDetailWithDueDate.documentDetail.isPayeSelfAssessment,
       chargeReference, isEnabled(ChargeHistory), isEnabled(CodingOut)).map {
       case Right(chargeHistory) =>
@@ -183,11 +220,37 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
               else controllers.routes.WhatYouOweController.show(origin).url
             }
 
+          val fdm = chargeDetailsforTaxYear match {
+            case FinancialDetailsModel(bd, dd, fd) =>
+              FinancialDetailsModel(
+                balanceDetails = bd,
+                documentDetails = dd,
+                financialDetails = fd.filter(fd => ReviewAndReconcileUtils.isReviewAndReconcileCredit(fd.mainTransaction))
+              ).filterPayments()
+          }
+
+          for {
+            financialDetail <- fdm.financialDetails
+            documentDetail <- fdm.documentDetails
+          } yield {
+            chargeHistoryService.chargeHistoryResponse(
+              isInterestCharge,
+              documentDetail.isPayeSelfAssessment,
+              financialDetail.chargeReference,
+              isEnabled(ChargeHistory),
+              isEnabled(CodingOut)
+            ) map {
+              case Right(chargeHistory) => (documentDetail.documentDueDate, chargeHistory.maxBy(_.reversalDate).totalAmount)
+
+            }
+          }
+
             val viewModel: ChargeSummaryViewModel = ChargeSummaryViewModel(
               currentDate = dateService.getCurrentDate,
               chargeItem = chargeItem,
               backUrl = getChargeSummaryBackUrl(sessionGatewayPage, taxYear, origin, isAgent),
               gatewayPage = sessionGatewayPage,
+              reviewAndReconcileCreditsExist = reviewAndReconcileCreditsExist,
               paymentBreakdown = paymentBreakdown,
               paymentAllocations = paymentAllocations,
               payments = paymentsForAllYears,

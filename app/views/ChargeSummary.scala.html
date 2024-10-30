@@ -392,6 +392,22 @@
                     </tr>
                 }
 
+                @if(viewModel.reviewAndReconcileEnabled && viewModel.reviewAndReconcileCreditsExist) {
+                <tr>
+                    <td class="govuk-table__cell govuk-!-width-one-quarter">
+                        @{ viewModel.chargeItem.dueDate.get.toLongDateShort }
+                    </td>
+                    <td class="govuk-table__cell">
+                        <a class="govuk-link" href="">
+                            @{ messages(s"chargeSummary.chargeHistory.${viewModel.chargeItem.getChargeTypeKey(viewModel.codingOutEnabled, viewModel.reviewAndReconcileEnabled)}") }
+                        </a>
+                    </td>
+                    <td class="govuk-table__cell numeric govuk-!-text-align-right">
+                        @{ viewModel.chargeItem.originalAmount.toCurrency }
+                    </td>
+                </tr>
+                }
+
                 @if(viewModel.latePaymentInterestCharge){
                     <tr>
                         <td class="govuk-table__cell govuk-!-width-one-quarter">@{viewModel.chargeItem.interestEndDate.get.toLongDateShort}</td>
