@@ -24,10 +24,12 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.ChargeSummaryController.ErrorCode
 import controllers.agent.predicates.ClientConfirmedController
 import enums.GatewayPage.GatewayPage
+import exceptions.MissingFieldException
 import forms.utils.SessionKeys.gatewayPage
 import models.admin._
 import models.chargeHistory._
 import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocations}
+import models.financialDetails.ReviewAndReconcileUtils.isReviewAndReconcileCredit
 import models.financialDetails._
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -128,6 +130,18 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
     val documentDetailWithDueDate: DocumentDetailWithDueDate = chargeDetailsforTaxYear.findDocumentDetailByIdWithDueDate(id).get
     val financialDetailsForCharge = chargeDetailsforTaxYear.financialDetails.filter(_.transactionId.contains(id))
 
+    val maybeReviewAndReconcileCredits: List[(DocumentDetail, FinancialDetail)] =
+      chargeDetailsforTaxYear
+        .getPairedDocumentDetails()
+        .filter(pairedDetails => isEnabled(ReviewAndReconcilePoa) && isReviewAndReconcileCredit(pairedDetails._2))
+        .sortBy(_._2.mainTransaction)
+        .map {
+          case (DocumentDetail(_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, None, _), _) =>
+            throw MissingFieldException("documentDueDate")
+          case (documentDetail, financialDetail) => (documentDetail, financialDetail)
+
+        }
+
     val chargeItem = ChargeItem.fromDocumentPair(
       documentDetailWithDueDate.documentDetail,
       financialDetailsForCharge,
@@ -188,6 +202,7 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
           latePaymentInterestCharge = isInterestCharge,
           codingOutEnabled = true,
           reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
+          reviewAndReconcileCredits = maybeReviewAndReconcileCredits,
           btaNavPartial = user.btaNavPartial,
           isAgent = isAgent,
           adjustmentHistory = chargeHistoryService.getAdjustmentHistory(chargeHistory, documentDetailWithDueDate.documentDetail),
