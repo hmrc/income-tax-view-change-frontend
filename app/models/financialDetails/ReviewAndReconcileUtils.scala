@@ -27,7 +27,7 @@ object ReviewAndReconcileUtils {
   def isReconcilePoaOneDebit(mainTransaction: Option[String]): Boolean =
     mainTransaction.contains(poaOneReviewAndReconcileDebit)
 
-  def isReconcilePoaTwoDebit(mainTransaction: Option[String]): Boolean =
+  def isReviewAndReconcilePoaTwo(mainTransaction: Option[String]): Boolean =
     mainTransaction.contains(poaTwoReviewAndReconcileDebit)
 
   def getCreditKey(mainTransaction: Option[String]): Either[ReviewAndReconcileMessageKeyError, String] =
