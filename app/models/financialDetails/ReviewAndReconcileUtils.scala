@@ -40,10 +40,14 @@ object ReviewAndReconcileUtils {
     isReconcilePoaOneCredit(financialDetail.mainTransaction) ||
       isReconcilePoaTwoCredit(financialDetail.mainTransaction)
 
-  def getCreditKey(mainTransaction: Option[String]): String =
+  def getCreditKey(mainTransaction: Option[String]): Either[ReviewAndReconcileMessageKeyError, String] =
     mainTransaction match {
-      case Some(`poaOneReviewAndReconcileCredit`) => "POA1RR-credit"
-      case Some(`poaTwoReviewAndReconcileCredit`) => "POA2RR-credit"
-      case e                                      => throw new Exception(s"Could not create message key from invalid mainTransaction: $e")
+      case Some(`poaOneReviewAndReconcileCredit`) => Right("POA1RR-credit")
+      case Some(`poaTwoReviewAndReconcileCredit`) => Right("POA2RR-credit")
+      case Some(e)                                => Left(ReviewAndReconcileMessageKeyError(s"Invalid mainTransaction found: $e"))
+      case None                                   => Left(ReviewAndReconcileMessageKeyError("mainTransaction field empty"))
     }
 }
+
+sealed trait ReviewAndReconcileError
+case class ReviewAndReconcileMessageKeyError(message: String) extends ReviewAndReconcileError
