@@ -70,9 +70,9 @@ class ChargeHistoryService @Inject()(chargeHistoryConnector: ChargeHistoryConnec
   }
 
   def getReviewAndReconcileCredit(chargeItem: ChargeItem,
-                                  chargeDetailsForTaxYear: FinancialDetailsModel,
+                                  chargeDetailsforTaxYear: FinancialDetailsModel,
                                   reviewAndReconcileEnabled: Boolean): Option[ReviewAndReconcileCredit] = {
-    chargeDetailsForTaxYear
+    chargeDetailsforTaxYear
       .getPairedDocumentDetails()
       .collectFirst {
         case (documentDetail, financialDetail) if reviewAndReconcileEnabled &&
