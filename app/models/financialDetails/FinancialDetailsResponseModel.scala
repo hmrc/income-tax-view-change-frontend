@@ -22,11 +22,13 @@ import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations
 import models.financialDetails.ReviewAndReconcileDebitUtils.{isReviewAndReconcilePoaOne, isReviewAndReconcilePoaTwo}
 import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
+import play.api.Logger
 import play.api.libs.json.{Format, Json}
 import services.DateServiceInterface
 import services.claimToAdjustPoa.ClaimToAdjustHelper
 
 import java.time.LocalDate
+import scala.util.{Failure, Success, Try}
 
 sealed trait FinancialDetailsResponseModel
 
@@ -49,7 +51,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
 
   // Step x+1: review method below / some of them expected to be a duplicates of what we have in ChargeItem's
 
-  def documentDetailExist(id: String) : Boolean = {
+  def documentDetailExist(id: String): Boolean = {
     documentDetails.exists(_.transactionId == id)
   }
 
@@ -59,9 +61,17 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
   }
 
   def toChargeItem(codingOut: Boolean, reviewReconcile: Boolean): List[ChargeItem] = {
-    this.documentDetails.map(
-      ChargeItem.fromDocumentPair(_, financialDetails, codingOut, reviewReconcile)
-    )
+    Try {
+      this.documentDetails
+        .map(ChargeItem.fromDocumentPair(_, financialDetails, codingOut, reviewReconcile)
+        )
+    } match {
+      case Success(res) =>
+        res
+      case Failure(ex) =>
+        Logger("application").warn(ex.getMessage)
+        List[ChargeItem]()
+    }
   }
 
   def documentDetailsWithLpiId(chargeReference: Option[String]): Option[DocumentDetail] = {
@@ -72,7 +82,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     this.documentDetails.filter(_.credit.isDefined)
   }
 
-  def unpaidDocumentDetails(isCodingOutEnabled: Boolean) : List[DocumentDetail] = {
+  def unpaidDocumentDetails(isCodingOutEnabled: Boolean): List[DocumentDetail] = {
     this.documentDetails.collect {
       case documentDetail: DocumentDetail if documentDetail.isCodingOutDocumentDetail(isCodingOutEnabled) => documentDetail
       case documentDetail: DocumentDetail if documentDetail.latePaymentInterestAmount.isDefined && !documentDetail.interestIsPaid => documentDetail
@@ -151,7 +161,6 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
   }
 
   def findDocumentDetailForTaxYear(taxYear: Int): Option[DocumentDetail] = documentDetails.find(_.taxYear == taxYear)
-
 
 
   def findDocumentDetailForYearWithDueDate(taxYear: Int)(implicit dateService: DateServiceInterface): Option[DocumentDetailWithDueDate] = {
