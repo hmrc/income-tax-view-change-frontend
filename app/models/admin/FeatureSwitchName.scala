@@ -16,6 +16,7 @@
 
 package models.admin
 
+import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc.PathBindable
 
@@ -57,7 +58,9 @@ object FeatureSwitchName {
       JsSuccess(AdjustPaymentsOnAccount)
     case name if name == JsString(ReviewAndReconcilePoa.name) =>
       JsSuccess(ReviewAndReconcilePoa)
-    case _ => JsError("Invalid feature switch name")
+    case _ =>
+      Logger("application").info(s"Invalid feature switch Json found")
+      JsSuccess(InvalidFS)
   }
 
 
@@ -80,7 +83,8 @@ object FeatureSwitchName {
 
   val allFeatureSwitches: immutable.Set[FeatureSwitchName] =
     Set(ITSASubmissionIntegration, ChargeHistory, NavBarFs, CreditsRefundsRepay,
-      PaymentHistoryRefunds, CalendarQuarterTypes, IncomeSourcesNewJourney, IncomeSources, OptOut, AdjustPaymentsOnAccount, ReviewAndReconcilePoa)
+      PaymentHistoryRefunds, CalendarQuarterTypes, IncomeSourcesNewJourney, IncomeSources, OptOut,
+      AdjustPaymentsOnAccount, ReviewAndReconcilePoa)
 
   def get(str: String): Option[FeatureSwitchName] = allFeatureSwitches find (_.name == str)
 }
@@ -138,6 +142,11 @@ case object AdjustPaymentsOnAccount extends FeatureSwitchName {
 case object ReviewAndReconcilePoa extends FeatureSwitchName {
   override val name: String = s"review-and-reconcile-poa"
   override val toString: String = "Review And Reconcile POA"
+}
+
+case object InvalidFS extends FeatureSwitchName {
+  override val name: String = "invalid-feature-switch"
+  override val toString: String = "Invalid feature Switch"
 }
 
 object FeatureSwitchMongoFormats {
