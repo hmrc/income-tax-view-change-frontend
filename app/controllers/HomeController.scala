@@ -85,9 +85,6 @@ class HomeController @Inject()(val homeView: views.html.Home,
       unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails(isCodingOutEnabled = true)
       paymentsDue = getDueDates(unpaidCharges)
       dunningLockExists = hasDunningLock(unpaidCharges)
-      _ = {
-        println("DATA TEST .. => A")
-      }
       outstandingChargesModel <- getOutstandingChargesModel(unpaidCharges)
       outstandingChargeDueDates = getRelevantDates(outstandingChargesModel)
       overDuePaymentsCount = calculateOverduePaymentsCount(paymentsDue, outstandingChargesModel)

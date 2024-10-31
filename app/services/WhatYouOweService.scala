@@ -60,12 +60,9 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
       case financialDetails: List[FinancialDetailsResponseModel] if financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel]) =>
         throw new Exception("Error response while getting Unpaid financial details")
       case financialDetails =>
-
         val financialDetailsModelList = financialDetails.asInstanceOf[List[FinancialDetailsModel]]
         val balanceDetails = financialDetailsModelList.headOption
           .map(_.balanceDetails).getOrElse(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None))
-
-        println("DATA TEST .. => C2")
         val codedOutChargeItem = if (isCodingOutEnabled) {
           financialDetailsModelList.flatMap(_.toChargeItem(isCodingOutEnabled, isReviewAndReconciledEnabled))
             .filter(_.subTransactionType.contains(Accepted))

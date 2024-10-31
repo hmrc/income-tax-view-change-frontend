@@ -42,7 +42,6 @@ case class ChargeItem (
                         lpiWithDunningLock: Option[BigDecimal],
                         amountCodedOut: Option[BigDecimal],
                         dunningLock: Boolean,
-                        // TODO: set field
                         poaRelevantAmount: Option[BigDecimal]) extends TransactionItem {
 
   def isOverdue()(implicit dateService: DateServiceInterface): Boolean =
