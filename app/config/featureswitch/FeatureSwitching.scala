@@ -71,5 +71,4 @@ trait FeatureSwitching {
       FeatureSwitch(currentFS, isEnabled = isEnabledFromConfig(currentFS))
     }
   }
-
 }

@@ -56,8 +56,8 @@ class AuthenticatorPredicate @Inject()(val checkSessionTimeout: SessionTimeoutPr
               for {
                 fss <- featureSwitchService.getAll
               } yield {
-                authenticatedCodeBlock(mtdItUser
-                  .copy(featureSwitches = fss)(mtdItUser))
+                authenticatedCodeBlock(
+                  mtdItUser.copy(featureSwitches = fss)(mtdItUser))
               }
             }.flatten
             }

@@ -17,64 +17,142 @@
 package config.featureswitch
 
 import auth.MtdItUser
-import models.admin.FeatureSwitchName
+import config.FrontendAppConfig
+import models.admin._
 import models.incomeSourceDetails.IncomeSourceDetailsModel
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.retrieve.Name
 
-class FeatureSwitchingSpec extends TestSupport with FeatureSwitching {
+class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with MockitoSugar {
 
-  val expectedDisabledFeatures: Set[FeatureSwitchName] = FeatureSwitchName.allFeatureSwitches
-  val mtdItUser = MtdItUser(
-    mtditid = "mtditid",
-    nino = "nino",
-    userName = Some(Name(Some("firstName"), Some("lastName"))),
-    incomeSources = IncomeSourceDetailsModel("nino", "mtditid", None, Nil, Nil),
-    btaNavPartial = None,
-    saUtr = Some("saUtr"),
-    credId = Some("credId"),
-    userType = None,
-    arn = None
-  )
+  val mockAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
+
+  object MockFeatureSwitching extends FeatureSwitching {
+    override val appConfig: FrontendAppConfig = mockAppConfig
+  }
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    FeatureSwitchName.allFeatureSwitches.map(_.name).foreach(sys.props.remove)
+    FeatureSwitchName.allFeatureSwitches.foreach(feature => sys.props.remove(feature.name))
   }
 
-  "Features" should {
+  val mtdItUser: MtdItUser[_] =
+    MtdItUser(
+      mtditid = "mtditid",
+      nino = "nino",
+      userName = Some(Name(Some("firstName"), Some("lastName"))),
+      incomeSources = IncomeSourceDetailsModel("nino", "mtditid", None, Nil, Nil),
+      btaNavPartial = None,
+      saUtr = Some("saUtr"),
+      credId = Some("credId"),
+      userType = None,
+      arn = None
+    )
 
-    "fold depending on its state, calling the respective branch only" when {
-      trait FoldSetup {
-        val aValue = 123987
+  "FeatureSwitchName" when {
+    ".allFeatureSwitches" should {
+      "return a list of all feature switches" in {
 
-        def expectedBranch(): Int = {
-          aValue
-        }
+        enable(ReportingFrequencyPage)
+        disable(ReviewAndReconcilePoa)
 
-        def unexpectedBranch(): Int = throw new IllegalStateException
+        val featureSwitchList = FeatureSwitchName.allFeatureSwitches
+
+        featureSwitchList shouldBe
+          Set(
+            ITSASubmissionIntegration,
+            ChargeHistory,
+            NavBarFs,
+            CreditsRefundsRepay,
+            PaymentHistoryRefunds,
+            CalendarQuarterTypes,
+            IncomeSourcesNewJourney,
+            IncomeSources,
+            OptOut,
+            AdjustPaymentsOnAccount,
+            FilterCodedOutPoas,
+            ReviewAndReconcilePoa,
+            ReportingFrequencyPage
+          )
       }
-
-      "a feature is disabled" in new FoldSetup {
-        FeatureSwitchName.allFeatureSwitches.forall { featureSwitchName =>
-          disable(featureSwitchName)
-          val result = expectedDisabledFeatures.headOption match {
-            case Some(fs) =>
-              fs.fold(ifEnabled = unexpectedBranch(), ifDisabled = expectedBranch())
-            case _ => -1
-          }
-          result == aValue
-        } shouldBe true
-      }
-
-      "a feature is disabled v2" in new FoldSetup {
-        FeatureSwitchName.allFeatureSwitches.forall { featureSwitchName =>
-          isEnabled(featureSwitchName)(mtdItUser) || !isEnabled(featureSwitchName,mtdItUser.featureSwitches)
-        } shouldBe true
-
-      }
-
     }
   }
 
+  "FeatureSwitching" should {
+
+    "enable and disable feature switches by setting system properties" in {
+
+      val featureSwitchName = ReportingFrequencyPage
+
+      enable(ReportingFrequencyPage)
+      sys.props(featureSwitchName.name) shouldBe "true"
+
+      disable(featureSwitchName)
+      sys.props(featureSwitchName.name) shouldBe "false"
+    }
+
+    "return true if a feature switch is enabled in system properties" in {
+
+      val featureSwitchName = ReportingFrequencyPage
+      enable(featureSwitchName)
+
+      isEnabledFromConfig(featureSwitchName) shouldBe true
+    }
+
+    "return false if a feature switch is not set or explicitly disabled in system properties" in {
+
+      val featureSwitchName = ReportingFrequencyPage
+
+      isEnabledFromConfig(featureSwitchName) shouldBe false
+
+      enable(featureSwitchName)
+      disable(featureSwitchName)
+
+      isEnabledFromConfig(featureSwitchName) shouldBe false
+    }
+
+    "provide a fold function that branches based on feature state" in {
+      val featureSwitchName = ReportingFrequencyPage
+      enable(featureSwitchName)
+
+      val resultEnabled = featureSwitchName.fold(ifEnabled = "enabled", ifDisabled = "disabled")
+      resultEnabled shouldBe "enabled"
+
+      disable(featureSwitchName)
+
+      val resultDisabled = featureSwitchName.fold(ifEnabled = "enabled", ifDisabled = "disabled")
+      resultDisabled shouldBe "disabled"
+    }
+  }
+
+  "Mock FeatureSwitching" when {
+
+    "use MongoDB feature switch status if MongoDB is enabled in config" in {
+
+      val featureSwitchName = ReviewAndReconcilePoa
+
+      when(mockAppConfig.readFeatureSwitchesFromMongo).thenReturn(true)
+
+      val userFeatureSwitches = List(FeatureSwitch(featureSwitchName, isEnabled = true))
+
+      MockFeatureSwitching.isEnabled(featureSwitchName)(mtdItUser.copy(featureSwitches = userFeatureSwitches)) shouldBe true
+    }
+
+    "fall back to system properties if MongoDB is disabled in config" in {
+
+      val featureSwitchName = ReviewAndReconcilePoa
+
+      when(appConfig.readFeatureSwitchesFromMongo).thenReturn(false)
+
+      enable(featureSwitchName)
+
+      MockFeatureSwitching.isEnabled(featureSwitchName)(mtdItUser) shouldBe true
+
+      disable(featureSwitchName)
+
+      MockFeatureSwitching.isEnabled(featureSwitchName)(mtdItUser) shouldBe false
+    }
+  }
 }

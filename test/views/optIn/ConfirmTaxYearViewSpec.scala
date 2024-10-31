@@ -35,10 +35,16 @@ class ConfirmTaxYearViewSpec extends TestSupport {
   val nextTaxYear: TaxYear = TaxYear.forYearEnd(forNextYearEnd)
 
   class Setup(isAgent: Boolean = true, intent: TaxYear, isNextTaxYear: Boolean) {
-    private val cancelURL = if (isAgent) controllers.routes.ReportingFrequencyPageController.show(true).url else
-      controllers.routes.ReportingFrequencyPageController.show(false).url
-    private val currentYearModel = ConfirmTaxYearViewModel(availableOptInTaxYear = intent, isNextTaxYear = isNextTaxYear, isAgent = isAgent,
-      cancelURL = cancelURL)
+
+    private val cancelURL = controllers.routes.ReportingFrequencyPageController.show().url
+
+    private val currentYearModel =
+      ConfirmTaxYearViewModel(
+        availableOptInTaxYear = intent,
+        isNextTaxYear = isNextTaxYear,
+        isAgent = isAgent,
+        cancelURL = cancelURL
+      )
     val pageDocument: Document = Jsoup.parse(contentAsString(view(currentYearModel)))
   }
 

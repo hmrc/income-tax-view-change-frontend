@@ -37,29 +37,20 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
                             val retrieveClientData: RetrieveClientData,
                             val retrieveFeatureSwitches: FeatureSwitchRetrievalAction) {
 
-  def individualOrAgentWithClient[A]: ActionBuilder[MtdItUser, AnyContent] = {
-
-    (   checkSessionTimeout andThen
-
-      authoriseAndRetrieve andThen
-
-      agentHasClientDetails andThen
-
-      // get MtdItUser from EnroledUser by requiring mtdId
-
-      asMtdUser andThen
-
-      // are income sources required on most pages? could this step
-      // be removed from here and added where required?
-
-      retrieveNinoWithIncomeSources andThen
-
-      retrieveFeatureSwitches andThen
-
-      retrieveBtaNavBar )
+  def individualOrAgentWithClient: ActionBuilder[MtdItUser, AnyContent] = {
+      checkSessionTimeout andThen
+        authoriseAndRetrieve andThen
+        agentHasClientDetails andThen
+        // get MtdItUser from EnroledUser by requiring mtdId
+        asMtdUser andThen
+        // are income sources required on most pages? could this step
+        // be removed from here and added where required?
+        retrieveNinoWithIncomeSources andThen
+        retrieveFeatureSwitches andThen
+        retrieveBtaNavBar
   }
 
-  def asMTDIndividual[A]: ActionBuilder[MtdItUser, AnyContent] = {
+  def asMTDIndividual: ActionBuilder[MtdItUser, AnyContent] = {
     checkSessionTimeout andThen
       authoriseAndRetrieveIndividual andThen
       retrieveNinoWithIncomeSources andThen
@@ -67,9 +58,9 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
       retrieveBtaNavBar
   }
 
-  def asAgent[A]: ActionBuilder[AgentUser, AnyContent] = checkSessionTimeout andThen authoriseAndRetrieveAgent
+  def asAgent: ActionBuilder[AgentUser, AnyContent] = checkSessionTimeout andThen authoriseAndRetrieveAgent
 
-  def asMTDAgentWithConfirmedClient[A]: ActionBuilder[MtdItUser, AnyContent] = {
+  def asMTDAgentWithConfirmedClient: ActionBuilder[MtdItUser, AnyContent] = {
     checkSessionTimeout andThen
       retrieveClientData andThen
       authoriseAndRetrieveMtdAgent andThen
@@ -78,7 +69,7 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
       retrieveFeatureSwitches
   }
 
-  def asMTDAgentWithUnconfirmedClient[A]: ActionBuilder[MtdItUser, AnyContent] = {
+  def asMTDAgentWithUnconfirmedClient: ActionBuilder[MtdItUser, AnyContent] = {
     checkSessionTimeout andThen
       retrieveClientData andThen
       authoriseAndRetrieveMtdAgent andThen
@@ -86,7 +77,7 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
       retrieveFeatureSwitches
   }
 
-  def asMTDPrimaryAgent[A]: ActionBuilder[MtdItUser, AnyContent] = {
+  def asMTDPrimaryAgent: ActionBuilder[MtdItUser, AnyContent] = {
     checkSessionTimeout andThen
       retrieveClientData andThen
       authoriseAndRetrieveMtdAgent andThen

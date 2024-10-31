@@ -48,11 +48,10 @@ import uk.gov.hmrc.play.partials.HeaderCarrierForPartials
 import java.time.LocalDate
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
+import play.twirl.api.Html
 
 trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterAll with BeforeAndAfterEach with Injecting with FeatureSwitching {
   this: Suite =>
-
-  import play.twirl.api.Html
 
   implicit val actorSystem: ActorSystem = app.actorSystem
 
@@ -99,7 +98,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
     override def getAccountingPeriodEndDate(startDate: LocalDate): LocalDate = LocalDate.of(2024, 4, 5)
   }
 
-  val tsTestUser: MtdItUser[_] =
+  val tsTestUser: MtdItUser[AnyContentAsEmpty.type] =
     MtdItUser(
       mtditid = testMtditid, nino = testNino, userName = None, incomeSources = IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty), btaNavPartial = None,
       saUtr = Some("1234567890"), credId = Some("12345-credId"), userType = Some(Individual), arn = None
@@ -167,51 +166,58 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
     def toHtmlDocument: Document = Jsoup.parse(contentAsString(x))
   }
 
-  lazy val fakeRequestWithActiveSession: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(
-    SessionKeys.lastRequestTimestamp -> "1498236506662",
-    SessionKeys.authToken -> "Bearer Token"
-  ).withHeaders(
-    HeaderNames.REFERER -> "/test/url",
-    "X-Session-ID" -> testSessionId
-  )
+  lazy val fakeRequestWithActiveSession: FakeRequest[AnyContentAsEmpty.type] =
+    FakeRequest().withSession(
+      SessionKeys.lastRequestTimestamp -> "1498236506662",
+      SessionKeys.authToken -> "Bearer Token"
+    ).withHeaders(
+      HeaderNames.REFERER -> "/test/url",
+      "X-Session-ID" -> testSessionId
+    )
 
-  lazy val fakePostRequestWithActiveSession: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withMethod("POST").withSession(
-    SessionKeys.lastRequestTimestamp -> "1498236506662",
-    SessionKeys.authToken -> "Bearer Token"
-  ).withHeaders(
-    HeaderNames.REFERER -> "/test/url",
-    "X-Session-ID" -> testSessionId
-  )
+  lazy val fakePostRequestWithActiveSession: FakeRequest[AnyContentAsEmpty.type] =
+    FakeRequest().withMethod("POST").withSession(
+      SessionKeys.lastRequestTimestamp -> "1498236506662",
+      SessionKeys.authToken -> "Bearer Token"
+    ).withHeaders(
+      HeaderNames.REFERER -> "/test/url",
+      "X-Session-ID" -> testSessionId
+    )
 
-  lazy val fakeRequestWithActiveSessionWithBusinessName: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(
-    SessionKeys.lastRequestTimestamp -> "1498236506662",
-    SessionKeys.authToken -> "Bearer Token"
-  ).withHeaders(
-    HeaderNames.REFERER -> "/test/url",
-    "X-Session-ID" -> testSessionId
-  )
+  lazy val fakeRequestWithActiveSessionWithBusinessName: FakeRequest[AnyContentAsEmpty.type] =
+    FakeRequest().withSession(
+      SessionKeys.lastRequestTimestamp -> "1498236506662",
+      SessionKeys.authToken -> "Bearer Token"
+    ).withHeaders(
+      HeaderNames.REFERER -> "/test/url",
+      "X-Session-ID" -> testSessionId
+    )
 
-  def fakeRequestWithActiveSessionWithReferer(referer: String): FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(
-    SessionKeys.lastRequestTimestamp -> "1498236506662",
-    SessionKeys.authToken -> "Bearer Token"
-  ).withHeaders(
-    HeaderNames.REFERER -> referer
-  )
+  def fakeRequestWithActiveSessionWithReferer(referer: String): FakeRequest[AnyContentAsEmpty.type] =
+    FakeRequest().withSession(
+      SessionKeys.lastRequestTimestamp -> "1498236506662",
+      SessionKeys.authToken -> "Bearer Token"
+    ).withHeaders(
+      HeaderNames.REFERER -> referer
+    )
 
-  lazy val fakeRequestWithTimeoutSession: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(
-    SessionKeys.lastRequestTimestamp -> "1498236506662"
-  )
+  lazy val fakeRequestWithTimeoutSession: FakeRequest[AnyContentAsEmpty.type] =
+    FakeRequest().withSession(
+      SessionKeys.lastRequestTimestamp -> "1498236506662"
+    )
 
-  lazy val fakeRequestWithClientUTR: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(
-    sessionUtils.SessionKeys.clientUTR -> "1234567890"
-  )
+  lazy val fakeRequestWithClientUTR: FakeRequest[AnyContentAsEmpty.type] =
+    FakeRequest().withSession(
+      sessionUtils.SessionKeys.clientUTR -> "1234567890"
+    )
 
-  lazy val fakeRequestWithActiveAndRefererToHomePage: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(
-    SessionKeys.lastRequestTimestamp -> "1498236506662",
-    SessionKeys.authToken -> "Bearer Token"
-  ).withHeaders(
-    HeaderNames.REFERER -> "http://www.somedomain.org/report-quarterly/income-and-expenses/view"
-  )
+  lazy val fakeRequestWithActiveAndRefererToHomePage: FakeRequest[AnyContentAsEmpty.type] =
+    FakeRequest().withSession(
+      SessionKeys.lastRequestTimestamp -> "1498236506662",
+      SessionKeys.authToken -> "Bearer Token"
+    ).withHeaders(
+      HeaderNames.REFERER -> "http://www.somedomain.org/report-quarterly/income-and-expenses/view"
+    )
 
   lazy val fakeRequestWithClientDetails: FakeRequest[AnyContentAsEmpty.type] = fakeRequestWithActiveSession.withSession(
     sessionUtils.SessionKeys.clientFirstName -> "Test",

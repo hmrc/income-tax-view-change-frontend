@@ -148,9 +148,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       stubGetFinancialDetailsSuccess(Some(ITSA_NI), Some(NIC4_SCOTLAND))
       stubChargeHistorySuccess()
 
-      val result = IncomeTaxViewChangeFrontend.getChargeSummary(
-        taxYear.toString, "CHARGEID01", clientDetailsWithConfirmation
-      )
+      val result = IncomeTaxViewChangeFrontend.getChargeSummary(taxYear = taxYear.toString, id = "CHARGEID01", additionalCookies = clientDetailsWithConfirmation)
 
       result should have(
         httpStatus(OK),

@@ -31,16 +31,18 @@ class AgentItvcErrorHandler @Inject()(val errorTemplate: ErrorTemplate,
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit r: Request[_]): Html =
     errorTemplate(pageTitle, heading, message, isAgent = true)
 
-  def showInternalServerError()(implicit request: Request[_]): Result = InternalServerError(standardErrorTemplate(
-    messagesApi.preferred(request)("standardError.heading"),
-    messagesApi.preferred(request)("standardError.heading"),
-    messagesApi.preferred(request)("standardError.message")
-  ))
+  def showInternalServerError()(implicit request: Request[_]): Result =
+    InternalServerError(standardErrorTemplate(
+      messagesApi.preferred(request)("standardError.heading"),
+      messagesApi.preferred(request)("standardError.heading"),
+      messagesApi.preferred(request)("standardError.message")
+    ))
 
-  def showOkTechnicalDifficulties()(implicit request: Request[_]): Result = Ok(standardErrorTemplate(
-    messagesApi.preferred(request)("standardError.heading"),
-    messagesApi.preferred(request)("standardError.heading"),
-    messagesApi.preferred(request)("standardError.message")
-  ))
+  def showOkTechnicalDifficulties()(implicit request: Request[_]): Result =
+    Ok(standardErrorTemplate(
+      messagesApi.preferred(request)("standardError.heading"),
+      messagesApi.preferred(request)("standardError.heading"),
+      messagesApi.preferred(request)("standardError.message")
+    ))
 
 }
