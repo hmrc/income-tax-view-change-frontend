@@ -423,15 +423,15 @@
                     </tr>
                 }
 
-                @for((documentDetail, financialDetail) <- viewModel.reviewAndReconcileCredits) {
+                @for(credit <- viewModel.reviewAndReconcileCredits) {
                     <tr>
-                        <td class="govuk-table__cell govuk-!-width-one-quarter">@{documentDetail.documentDueDate.get.toLongDateShort}</td>
+                        <td class="govuk-table__cell govuk-!-width-one-quarter">@{credit.documentDueDate.toLongDateShort}</td>
                         <td class="govuk-table__cell">
-                            <a class="govuk-link" id="poa-allocation-link" href="@RepaymentHistoryUtils.getPoaChargeLinkUrl(viewModel.isAgent, documentDetail.taxYear, documentDetail.transactionId)">
-                                @messages(s"chargeSummary.chargeHistory.${ReviewAndReconcileUtils.getCreditKey(financialDetail.mainTransaction)}")
+                            <a class="govuk-link" id="poa-charge-link" href="@RepaymentHistoryUtils.getPoaChargeLinkUrl(viewModel.isAgent, credit.taxYear, credit.transactionId)">
+                                @messages(credit.messageKey)
                             </a>
                         </td>
-                        <td class="govuk-table__cell">@{documentDetail.originalAmount.abs.toCurrency}</td>
+                        <td class="govuk-table__cell">@{credit.totalAmount.toCurrency}</td>
                     </tr>
                 }
 

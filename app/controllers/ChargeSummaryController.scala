@@ -121,26 +121,14 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
 
 
   private def doShowChargeSummary(taxYear: Int, id: String, isInterestCharge: Boolean,
-                                  chargeDetailsforTaxYear: FinancialDetailsModel, paymentsForAllYears: FinancialDetailsModel,
+                                  chargeDetailsForTaxYear: FinancialDetailsModel, paymentsForAllYears: FinancialDetailsModel,
                                   isAgent: Boolean, origin: Option[String],
                                   isMFADebit: Boolean)
                                  (implicit user: MtdItUser[_], dateService: DateServiceInterface): Future[Result] = {
 
     val sessionGatewayPage = user.session.get(gatewayPage).map(GatewayPage(_))
-    val documentDetailWithDueDate: DocumentDetailWithDueDate = chargeDetailsforTaxYear.findDocumentDetailByIdWithDueDate(id).get
-    val financialDetailsForCharge = chargeDetailsforTaxYear.financialDetails.filter(_.transactionId.contains(id))
-
-    val maybeReviewAndReconcileCredits: List[(DocumentDetail, FinancialDetail)] =
-      chargeDetailsforTaxYear
-        .getPairedDocumentDetails()
-        .filter(pairedDetails => isEnabled(ReviewAndReconcilePoa) && isReviewAndReconcileCredit(pairedDetails._2))
-        .sortBy(_._2.mainTransaction)
-        .map {
-          case (DocumentDetail(_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, None, _), _) =>
-            throw MissingFieldException("documentDueDate")
-          case (documentDetail, financialDetail) => (documentDetail, financialDetail)
-
-        }
+    val documentDetailWithDueDate: DocumentDetailWithDueDate = chargeDetailsForTaxYear.findDocumentDetailByIdWithDueDate(id).get
+    val financialDetailsForCharge = chargeDetailsForTaxYear.financialDetails.filter(_.transactionId.contains(id))
 
     val chargeItem = ChargeItem.fromDocumentPair(
       documentDetailWithDueDate.documentDetail,
@@ -172,10 +160,10 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
 
         val (poaOneChargeUrl, poaTwoChargeUrl) =
           (for {
-            poaOneTaxYearTo     <- chargeDetailsforTaxYear.documentDetails.filter(isPoaOne).map(_.taxYear).headOption
-            poaOneTransactionId <- chargeDetailsforTaxYear.documentDetails.filter(isPoaOne).map(_.transactionId).headOption
-            poaTwoTaxYearTo     <- chargeDetailsforTaxYear.documentDetails.filter(isPoaTwo).map(_.taxYear).headOption
-            poaTwoTransactionId <- chargeDetailsforTaxYear.documentDetails.filter(isPoaTwo).map(_.transactionId).headOption
+            poaOneTaxYearTo     <- chargeDetailsForTaxYear.documentDetails.filter(isPoaOne).map(_.taxYear).headOption
+            poaOneTransactionId <- chargeDetailsForTaxYear.documentDetails.filter(isPoaOne).map(_.transactionId).headOption
+            poaTwoTaxYearTo     <- chargeDetailsForTaxYear.documentDetails.filter(isPoaTwo).map(_.taxYear).headOption
+            poaTwoTransactionId <- chargeDetailsForTaxYear.documentDetails.filter(isPoaTwo).map(_.transactionId).headOption
           } yield
             if (isAgent)
               (routes.ChargeSummaryController.showAgent(poaOneTaxYearTo, poaOneTransactionId).url,
@@ -202,11 +190,11 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
           latePaymentInterestCharge = isInterestCharge,
           codingOutEnabled = true,
           reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
-          reviewAndReconcileCredits = maybeReviewAndReconcileCredits,
+          reviewAndReconcileCredits = chargeHistoryService.getReviewAndReconcileCredits(chargeDetailsForTaxYear, isEnabled(ReviewAndReconcilePoa)),
           btaNavPartial = user.btaNavPartial,
           isAgent = isAgent,
           adjustmentHistory = chargeHistoryService.getAdjustmentHistory(chargeHistory, documentDetailWithDueDate.documentDetail),
-          poaExtraChargeLink = checkForPoaExtraChargeLink(chargeDetailsforTaxYear, documentDetailWithDueDate, isAgent),
+          poaExtraChargeLink = checkForPoaExtraChargeLink(chargeDetailsForTaxYear, documentDetailWithDueDate, isAgent),
           poaOneChargeUrl = poaOneChargeUrl,
           poaTwoChargeUrl = poaTwoChargeUrl
         )

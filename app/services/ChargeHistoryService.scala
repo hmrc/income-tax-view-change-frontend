@@ -19,8 +19,10 @@ package services
 import auth.MtdItUser
 import connectors.ChargeHistoryConnector
 import enums.CreateReversalReason
+import exceptions.MissingFieldException
 import models.chargeHistory._
-import models.financialDetails.DocumentDetail
+import models.financialDetails.ReviewAndReconcileUtils.isReviewAndReconcileCredit
+import models.financialDetails.{DocumentDetail, FinancialDetail, FinancialDetailsModel, ReviewAndReconcileCredit, ReviewAndReconcileUtils}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -68,4 +70,19 @@ class ChargeHistoryService @Inject()(chargeHistoryConnector: ChargeHistoryConnec
     }
   }
 
+  def getReviewAndReconcileCredits(chargeDetailsForTaxYear: FinancialDetailsModel, reviewAndReconcileEnabled: Boolean): List[ReviewAndReconcileCredit] =
+    chargeDetailsForTaxYear
+      .getPairedDocumentDetails()
+      .filter { case (_, financialDetail) => reviewAndReconcileEnabled && isReviewAndReconcileCredit(financialDetail) }
+      .sortBy { case (_, financialDetail) => financialDetail.mainTransaction }
+      .map {
+        case (documentDetail, financialDetail) =>
+          ReviewAndReconcileCredit(
+            transactionId = documentDetail.transactionId,
+            taxYear = documentDetail.taxYear,
+            documentDueDate = documentDetail.documentDueDate.getOrElse(throw MissingFieldException("documentDueDate")),
+            messageKey = s"chargeSummary.chargeHistory.${ReviewAndReconcileUtils.getCreditKey(financialDetail.mainTransaction)}",
+            totalAmount = documentDetail.originalAmount.abs
+          )
+      }
 }
