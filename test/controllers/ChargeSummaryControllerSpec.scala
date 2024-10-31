@@ -160,9 +160,6 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 
         val result: Future[Result] = controller.show(testTaxYear, id1040000123)(fakeRequestWithNinoAndOrigin("PTA"))
 
-        println(s"\n${JsoupParse(result).toHtmlDocument}\n")
-
-
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeadingForRAR1(startYear.toString, endYear.toString)
         JsoupParse(result).toHtmlDocument.getElementsByClass("govuk-warning-text__text").text() shouldBe warningText
@@ -315,6 +312,21 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeadingForRAR1(startYear.toString, endYear.toString)
         JsoupParse(result).toHtmlDocument.select("#payment-processing-bullets").isEmpty shouldBe true
       }
+
+      "display the Review & Reconcile credit for POA1 when present in the user's financial details" in new Setup(
+        financialDetailsModelWithPoaOneAndTwoWithRarCredits()) {
+        enable(ReviewAndReconcilePoa)
+        val result: Future[Result] = controller.show(testTaxYear, id1040000125)(fakeRequestWithNinoAndOrigin("PTA"))
+
+        println(s"\n${JsoupParse(result).toHtmlDocument}\n")
+
+        status(result) shouldBe Status.OK
+        JsoupParse(result).toHtmlDocument.getElementById("rar-charge-link").text() shouldBe "First payment on account: credit from your tax return"
+        JsoupParse(result).toHtmlDocument.getElementById("rar-charge-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(testTaxYear, id1040000123).url
+        JsoupParse(result).toHtmlDocument.getElementById("rar-total-amount").text() shouldBe "£1,400.00"
+        JsoupParse(result).toHtmlDocument.getElementById("rar-due-date").text() shouldBe LocalDate.of(2018, 3, 29).toLongDateShort
+      }
+
     }
 
     "load an error page" when {

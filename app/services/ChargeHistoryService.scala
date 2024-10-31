@@ -72,26 +72,29 @@ class ChargeHistoryService @Inject()(chargeHistoryConnector: ChargeHistoryConnec
   def getReviewAndReconcileCredit(chargeItem: ChargeItem,
                                   chargeDetailsforTaxYear: FinancialDetailsModel,
                                   reviewAndReconcileEnabled: Boolean): Option[ReviewAndReconcileCredit] = {
-    chargeDetailsforTaxYear
-      .getPairedDocumentDetails()
-      .collectFirst {
-        case (documentDetail, financialDetail) if reviewAndReconcileEnabled &&
-          ((chargeItem.isPaymentOnAccountOne && financialDetail.isReconcilePoaOneCredit) ||
-           (chargeItem.isPaymentOnAccountTwo && financialDetail.isReconcilePoaTwoCredit)) =>
 
-          ReviewAndReconcileCredit(
-            transactionId = documentDetail.transactionId,
-            taxYear = documentDetail.taxYear,
-            documentDueDate = documentDetail.documentDueDate.getOrElse(throw MissingFieldException("documentDueDate")),
-            messageKey = s"chargeSummary.chargeHistory.${
-              ReviewAndReconcileUtils.getCreditKey(financialDetail.mainTransaction)
-                .fold(
-                  e => throw new Exception(e.message),
-                  valid => valid
-                )
-            }",
-            totalAmount = documentDetail.originalAmount.abs
-          )
-      }
+    if (reviewAndReconcileEnabled)
+      chargeDetailsforTaxYear
+        .getPairedDocumentDetails()
+        .collectFirst {
+          case (documentDetail, financialDetail) if
+            (chargeItem.isPaymentOnAccountOne && financialDetail.isReconcilePoaOneCredit) ||
+            (chargeItem.isPaymentOnAccountTwo && financialDetail.isReconcilePoaTwoCredit) =>
+
+            ReviewAndReconcileCredit(
+              transactionId = documentDetail.transactionId,
+              taxYear = documentDetail.taxYear,
+              documentDueDate = documentDetail.documentDueDate.getOrElse(throw MissingFieldException("documentDueDate")),
+              messageKey = s"chargeSummary.chargeHistory.${
+                ReviewAndReconcileUtils.getCreditKey(financialDetail.mainTransaction)
+                  .fold(
+                    e => throw new Exception(e.message),
+                    valid => valid
+                  )
+              }",
+              totalAmount = documentDetail.originalAmount.abs
+            )
+        }
+    else None
   }
 }
