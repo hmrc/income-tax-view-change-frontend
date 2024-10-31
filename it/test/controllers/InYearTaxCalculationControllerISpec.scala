@@ -37,6 +37,7 @@ import java.time.LocalDate
 import java.util.Locale
 
 class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
+
   val currentDate = LocalDate.of(2023, 4, 5)
   val implicitDateFormatter: ImplicitDateFormatter = app.injector.instanceOf[ImplicitDateFormatterImpl]
 

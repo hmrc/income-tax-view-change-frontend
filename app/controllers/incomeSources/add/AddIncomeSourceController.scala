@@ -17,11 +17,11 @@
 package controllers.incomeSources.add
 
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.Add
 import models.admin.IncomeSources
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
@@ -36,11 +36,13 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
 @Singleton
-class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources,
-                                          val checkSessionTimeout: SessionTimeoutPredicate,
-                                          val authorisedFunctions: AuthorisedFunctions,
-                                          val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                          auth: AuthenticatorPredicate)
+class AddIncomeSourceController @Inject()(
+                                           val addIncomeSources: AddIncomeSources,
+                                           val checkSessionTimeout: SessionTimeoutPredicate,
+                                           val authorisedFunctions: AuthorisedFunctions,
+                                           val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                           auth: AuthenticatorPredicate
+                                         )
                                          (implicit val appConfig: FrontendAppConfig,
                                           implicit val ec: ExecutionContext,
                                           implicit val itvcErrorHandler: ItvcErrorHandler,

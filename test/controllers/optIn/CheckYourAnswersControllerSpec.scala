@@ -56,6 +56,7 @@ class CheckYourAnswersControllerSpec extends TestSupport
   val taxYear2023 = TaxYear.forYearEnd(endTaxYear)
 
   def showTests(isAgent: Boolean): Unit = {
+    
     "show page" should {
 
       s"return result with $OK status" in {
@@ -65,7 +66,7 @@ class CheckYourAnswersControllerSpec extends TestSupport
         when(mockOptInService.getMultiYearCheckYourAnswersViewModel(any())(any(), any(), any()))
           .thenReturn(Future.successful(Some(MultiYearCheckYourAnswersViewModel(
             taxYear2023,
-            isAgent, routes.ReportingFrequencyPageController.show(isAgent).url,
+            isAgent, routes.ReportingFrequencyPageController.show().url,
             intentIsNextYear = true)
           )))
 

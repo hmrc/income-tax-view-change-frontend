@@ -41,12 +41,12 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AuthoriseAndRetrieve @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
-                           val appConfig: FrontendAppConfig,
-                           override val config: Configuration,
-                           override val env: Environment,
-                           mcc: MessagesControllerComponents,
-                           val auditingService: AuditingService)
-  extends  AuthRedirects with ActionRefiner[Request, EnroledUser] with FeatureSwitching {
+                                     val appConfig: FrontendAppConfig,
+                                     override val config: Configuration,
+                                     override val env: Environment,
+                                     mcc: MessagesControllerComponents,
+                                     val auditingService: AuditingService)
+  extends AuthRedirects with ActionRefiner[Request, EnroledUser] with FeatureSwitching {
 
   val requireClientSelected: Boolean = true
 
@@ -70,7 +70,7 @@ class AuthoriseAndRetrieve @Inject()(val authorisedFunctions: FrontendAuthorised
 
       // previously authorised here:
       // auth.BaseFrontendController.AuthenticatedActions.asyncInternal
-      def hasClient(id:String) = Enrolment(appConfig.mtdItEnrolmentKey)
+      def hasClient(id: String) = Enrolment(appConfig.mtdItEnrolmentKey)
         .withIdentifier(appConfig.mtdItIdentifierKey, id)
         .withDelegatedAuthRule("mtd-it-auth")
 
@@ -86,9 +86,10 @@ class AuthoriseAndRetrieve @Inject()(val authorisedFunctions: FrontendAuthorised
 
     val requiredClientId: Option[String] = request.session.get(SessionKeys.clientMTDID).filter(_ => requireClientSelected)
 
-    authorisedFunctions.authorised( isIndividual or isAgent(requiredClientId) )
+    authorisedFunctions
+      .authorised(isIndividual or isAgent(requiredClientId))
       .retrieve(allEnrolments and name and credentials and affinityGroup and confidenceLevel) {
-            redirectIfInsufficientConfidence() orElse constructEnroledUser()
+        redirectIfInsufficientConfidence() orElse constructEnroledUser()
       }(hc, executionContext) recoverWith logAndRedirect
   }
 
@@ -101,21 +102,21 @@ class AuthoriseAndRetrieve @Inject()(val authorisedFunctions: FrontendAuthorised
   }
 
   type AuthRetrievals =
-    Enrolments ~ Option[Name] ~ Option[Credentials] ~ Option[AffinityGroup]  ~ ConfidenceLevel
+    Enrolments ~ Option[Name] ~ Option[Credentials] ~ Option[AffinityGroup] ~ ConfidenceLevel
 
-    private def logAndRedirect[A]: PartialFunction[Throwable, Future[Either[Result, EnroledUser[A]]]] = {
-      case insufficientEnrolments: InsufficientEnrolments =>
-        Logger(getClass).debug(s"Insufficient enrolments: ${insufficientEnrolments.msg}" )
-        Future.successful(Left(Redirect(controllers.errors.routes.NotEnrolledController.show)))
-      case _: BearerTokenExpired =>
-        Logger(getClass).debug("Bearer Token Timed Out.")
-        Future.successful(Left(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout)))
-      case authorisationException: AuthorisationException =>
-        Logger(getClass).debug(s"Unauthorised request: ${authorisationException.reason}. Redirect to Sign In.")
-        Future.successful(Left(Redirect(controllers.routes.SignInController.signIn)))
-      // No catch all block at end - bubble up to global error handler
-      // See investigation: https://github.com/hmrc/income-tax-view-change-frontend/pull/2432
-    }
+  private def logAndRedirect[A]: PartialFunction[Throwable, Future[Either[Result, EnroledUser[A]]]] = {
+    case insufficientEnrolments: InsufficientEnrolments =>
+      Logger(getClass).debug(s"Insufficient enrolments: ${insufficientEnrolments.msg}")
+      Future.successful(Left(Redirect(controllers.errors.routes.NotEnrolledController.show)))
+    case _: BearerTokenExpired =>
+      Logger(getClass).debug("Bearer Token Timed Out.")
+      Future.successful(Left(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout)))
+    case authorisationException: AuthorisationException =>
+      Logger(getClass).debug(s"Unauthorised request: ${authorisationException.reason}. Redirect to Sign In.")
+      Future.successful(Left(Redirect(controllers.routes.SignInController.signIn)))
+    // No catch all block at end - bubble up to global error handler
+    // See investigation: https://github.com/hmrc/income-tax-view-change-frontend/pull/2432
+  }
 
   private def redirectIfInsufficientConfidence[A]()(
     implicit request: Request[A],
@@ -134,13 +135,13 @@ class AuthoriseAndRetrieve @Inject()(val authorisedFunctions: FrontendAuthorised
 
   private def constructEnroledUser[A]()(
     implicit request: Request[A]): PartialFunction[AuthRetrievals, Future[Either[Result, EnroledUser[A]]]] = {
-      case enrolments ~ userName ~ credentials ~ affinityGroup ~ confidenceLevel =>
-        Future.successful(
-          Right(EnroledUser(
-            enrolments = enrolments,
-            userName = userName,
-            affinityGroup = affinityGroup,
-            confidenceLevel =confidenceLevel,
-            credentials = credentials)))
+    case enrolments ~ userName ~ credentials ~ affinityGroup ~ confidenceLevel =>
+      Future.successful(
+        Right(EnroledUser(
+          enrolments = enrolments,
+          userName = userName,
+          affinityGroup = affinityGroup,
+          confidenceLevel = confidenceLevel,
+          credentials = credentials)))
   }
 }

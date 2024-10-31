@@ -95,18 +95,19 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
 
   trait Test {
 
-    val controller = new RefundToTaxPayerController(
-      refundToTaxPayerView,
-      mockRepaymentHistoryConnector,
-      mockAuthService,
-      app.injector.instanceOf[ItvcErrorHandler],
-      mockAuditingService,
-      testAuthenticator
-    )(app.injector.instanceOf[MessagesControllerComponents],
-      ec,
-      app.injector.instanceOf[FrontendAppConfig],
-      mockItvcErrorHandler
-    )
+    val controller =
+      new RefundToTaxPayerController(
+        refundToTaxPayerView = refundToTaxPayerView,
+        repaymentHistoryConnector = mockRepaymentHistoryConnector,
+        authorisedFunctions = mockAuthService,
+        itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
+        auditingService = mockAuditingService,
+        auth = testAuthenticator
+      )(app.injector.instanceOf[MessagesControllerComponents],
+        ec,
+        app.injector.instanceOf[FrontendAppConfig],
+        mockItvcErrorHandler
+      )
   }
 
   "The RefundToTaxPayerController.show function" when {

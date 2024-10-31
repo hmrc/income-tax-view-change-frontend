@@ -26,6 +26,7 @@ import views.html.errorPages.templates.ErrorTemplate
 import javax.inject.Inject
 
 trait ShowInternalServerError {
+
   def showInternalServerError()(implicit request: Request[_]): Result
 }
 
@@ -37,10 +38,11 @@ class ItvcErrorHandler @Inject()(val errorTemplate: ErrorTemplate,
     errorTemplate(pageTitle, heading, message, isAgent = false)
   }
 
-  def showInternalServerError()(implicit request: Request[_]): Result = InternalServerError(standardErrorTemplate(
-    messagesApi.preferred(request)("standardError.heading"),
-    messagesApi.preferred(request)("standardError.heading"),
-    messagesApi.preferred(request)("standardError.message")
-  ))
+  def showInternalServerError()(implicit request: Request[_]): Result =
+    InternalServerError(standardErrorTemplate(
+      messagesApi.preferred(request)("standardError.heading"),
+      messagesApi.preferred(request)("standardError.heading"),
+      messagesApi.preferred(request)("standardError.message")
+    ))
 
 }

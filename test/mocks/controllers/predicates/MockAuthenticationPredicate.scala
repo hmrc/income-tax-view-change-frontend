@@ -32,7 +32,8 @@ trait MockAuthenticationPredicate extends TestSupport with MockFrontendAuthorise
   with MockAuditingService with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with MockItvcErrorHandler
   with MockFeatureSwitchService with MockFeatureSwitchPredicate {
 
-  val testAuthenticator = new AuthenticatorPredicate(checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
+  val testAuthenticator = new AuthenticatorPredicate(
+    checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
     authenticate = MockAuthenticationPredicate,
     featureSwitchService = featureSwitchService,
     authorisedFunctions = mockAuthService,
@@ -41,7 +42,11 @@ trait MockAuthenticationPredicate extends TestSupport with MockFrontendAuthorise
     retrieveNinoWithIncomeSources = MockIncomeSourceDetailsPredicate,
     incomeSourceDetailsService = mockIncomeSourceDetailsService,
     retrieveNino = app.injector.instanceOf[NinoPredicate])(
-    app.injector.instanceOf[MessagesControllerComponents], app.injector.instanceOf[FrontendAppConfig], mockItvcErrorHandler, ec)
+    app.injector.instanceOf[MessagesControllerComponents],
+    app.injector.instanceOf[FrontendAppConfig],
+    mockItvcErrorHandler,
+    ec
+  )
 
   object MockAuthenticationPredicate extends AuthenticationPredicate()(
     ec,
