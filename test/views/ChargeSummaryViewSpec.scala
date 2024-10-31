@@ -25,6 +25,7 @@ import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargeHist
 import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
+import models.repaymentHistory.RepaymentHistoryUtils
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
@@ -53,6 +54,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
                   dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)),
                   paymentBreakdown: List[FinancialDetail] = List(),
                   paymentAllocations: List[PaymentHistoryAllocations] = List(),
+                  reviewAndReconcileCredit: Option[ReviewAndReconcileCredit] = None,
                   payments: FinancialDetailsModel = payments,
                   chargeHistoryEnabled: Boolean = true,
                   latePaymentInterestCharge: Boolean = false,
@@ -73,7 +75,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       btaNavPartial = None,
       paymentBreakdown = paymentBreakdown,
       paymentAllocations = paymentAllocations,
-      reviewAndReconcileCredit = Some(ReviewAndReconcileCredit(2020, "test-id", LocalDate.of(2018,3,29), "chargeSummary.chargeHistory.POA1RR-credit", 1000)),
+      reviewAndReconcileCredit = reviewAndReconcileCredit,
       payments = payments,
       chargeHistoryEnabled = chargeHistoryEnabled,
       latePaymentInterestCharge = latePaymentInterestCharge,
@@ -360,7 +362,36 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     document.select("#payment-processing-bullets li:nth-child(2)").text() shouldBe messages("chargeSummary.payments-bullet2")
   }
 
-  "when user is an individual" when {
+  "user is an individual" when {
+
+    "render the row for the charge" should {
+      "charge is a Review and Reconcile credit for Payment on Account 1" in new TestSetup(
+        reviewAndReconcileCredit = Some(ReviewAndReconcileCredit(
+          2020,
+          "some-id",
+          LocalDate.of(2018, 8, 6),
+          "chargeSummary.chargeHistory.POA1RR-credit", 1000)
+        )
+      ) {
+        document.selectById("rar-due-date").text() shouldBe("6 Aug 2018")
+        document.selectById("rar-charge-link").text() shouldBe "First payment on account: credit from your tax return"
+        document.selectById("rar-charge-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(2020, "some-id").url
+        document.selectById("rar-total-amount").text() shouldBe "£1,000.00"
+      }
+      "charge is a Review and Reconcile credit for Payment on Account 2" in new TestSetup(
+        reviewAndReconcileCredit = Some(ReviewAndReconcileCredit(
+          2020,
+          "some-id",
+          LocalDate.of(2018, 8, 6),
+          "chargeSummary.chargeHistory.POA2RR-credit", 1000)
+        )
+      ) {
+        document.selectById("rar-due-date").text() shouldBe ("6 Aug 2018")
+        document.selectById("rar-charge-link").text() shouldBe "Second payment on account: credit from your tax return"
+        document.selectById("rar-charge-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(2020, "some-id").url
+        document.selectById("rar-total-amount").text() shouldBe "£1,000.00"
+      }
+    }
 
     "charge is a POA1" when {
 
@@ -1219,7 +1250,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         chargeHistoryEnabled = true,
         latePaymentInterestCharge = false,
         codingOutEnabled = false,
-        reviewAndReconcileCredit = Some(ReviewAndReconcileCredit(2020, "test-id", LocalDate.of(2018,3,29), "chargeSummary.chargeHistory.POA1RR-credit", 1000)),
+        reviewAndReconcileCredit = None,
         reviewAndReconcileEnabled = false,
         isAgent = false,
         poaOneChargeUrl = "",
@@ -1234,6 +1265,38 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
   }
 
   "agent" when {
+
+    "render the row for the charge" should {
+      "charge is a Review and Reconcile credit for Payment on Account 1" in new TestSetup(
+        isAgent = true,
+        reviewAndReconcileCredit = Some(ReviewAndReconcileCredit(
+          2020,
+          "some-id",
+          LocalDate.of(2018, 8, 6),
+          "chargeSummary.chargeHistory.POA1RR-credit", 1000)
+        )
+      ) {
+        document.selectById("rar-due-date").text() shouldBe ("6 Aug 2018")
+        document.selectById("rar-charge-link").text() shouldBe "First payment on account: credit from your tax return"
+        document.selectById("rar-charge-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(2020, "some-id").url
+        document.selectById("rar-total-amount").text() shouldBe "£1,000.00"
+      }
+      "charge is a Review and Reconcile credit for Payment on Account 2" in new TestSetup(
+        isAgent = true,
+        reviewAndReconcileCredit = Some(ReviewAndReconcileCredit(
+          2020,
+          "some-id",
+          LocalDate.of(2018, 8, 6),
+          "chargeSummary.chargeHistory.POA2RR-credit", 1000)
+        )
+      ) {
+        document.selectById("rar-due-date").text() shouldBe ("6 Aug 2018")
+        document.selectById("rar-charge-link").text() shouldBe "Second payment on account: credit from your tax return"
+        document.selectById("rar-charge-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(2020, "some-id").url
+        document.selectById("rar-total-amount").text() shouldBe "£1,000.00"
+      }
+    }
+
     "The charge summary view" should {
 
       "have a interest lock payment link when the interest is accruing" in new TestSetup(chargeItem = chargeItemModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues, isAgent = true,
