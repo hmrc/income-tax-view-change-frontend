@@ -34,7 +34,7 @@ case class ChargeSummaryViewModel(
                                    latePaymentInterestCharge: Boolean,
                                    codingOutEnabled: Boolean,
                                    reviewAndReconcileEnabled: Boolean,
-                                   reviewAndReconcileCredits: List[ReviewAndReconcileCredit],
+                                   reviewAndReconcileCredit: Option[ReviewAndReconcileCredit],
                                    isAgent: Boolean = false,
                                    btaNavPartial: Option[Html] = None,
                                    origin: Option[String] = None,

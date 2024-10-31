@@ -24,12 +24,10 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.ChargeSummaryController.ErrorCode
 import controllers.agent.predicates.ClientConfirmedController
 import enums.GatewayPage.GatewayPage
-import exceptions.MissingFieldException
 import forms.utils.SessionKeys.gatewayPage
 import models.admin._
 import models.chargeHistory._
 import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocations}
-import models.financialDetails.ReviewAndReconcileUtils.isReviewAndReconcileCredit
 import models.financialDetails._
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -190,7 +188,7 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
           latePaymentInterestCharge = isInterestCharge,
           codingOutEnabled = true,
           reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
-          reviewAndReconcileCredits = chargeHistoryService.getReviewAndReconcileCredits(chargeDetailsForTaxYear, isEnabled(ReviewAndReconcilePoa)),
+          reviewAndReconcileCredit = chargeHistoryService.getReviewAndReconcileCredit(chargeItem, chargeDetailsForTaxYear, isEnabled(ReviewAndReconcilePoa)),
           btaNavPartial = user.btaNavPartial,
           isAgent = isAgent,
           adjustmentHistory = chargeHistoryService.getAdjustmentHistory(chargeHistory, documentDetailWithDueDate.documentDetail),

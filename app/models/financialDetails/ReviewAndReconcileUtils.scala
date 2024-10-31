@@ -21,24 +21,14 @@ object ReviewAndReconcileUtils {
   lazy val poaOneReviewAndReconcileDebit = "4911"
   lazy val poaTwoReviewAndReconcileDebit = "4913"
 
-  private val poaOneReviewAndReconcileCredit = "4912"
-  private val poaTwoReviewAndReconcileCredit = "4914"
+  lazy val poaOneReviewAndReconcileCredit = "4912"
+  lazy val poaTwoReviewAndReconcileCredit = "4914"
 
   def isReconcilePoaOneDebit(mainTransaction: Option[String]): Boolean =
     mainTransaction.contains(poaOneReviewAndReconcileDebit)
 
   def isReconcilePoaTwoDebit(mainTransaction: Option[String]): Boolean =
     mainTransaction.contains(poaTwoReviewAndReconcileDebit)
-
-  def isReconcilePoaOneCredit(mainTransaction: Option[String]): Boolean =
-    mainTransaction.contains(poaOneReviewAndReconcileCredit)
-
-  def isReconcilePoaTwoCredit(mainTransaction: Option[String]): Boolean =
-    mainTransaction.contains(poaTwoReviewAndReconcileCredit)
-
-  val isReviewAndReconcileCredit: FinancialDetail => Boolean = financialDetail =>
-    isReconcilePoaOneCredit(financialDetail.mainTransaction) ||
-      isReconcilePoaTwoCredit(financialDetail.mainTransaction)
 
   def getCreditKey(mainTransaction: Option[String]): Either[ReviewAndReconcileMessageKeyError, String] =
     mainTransaction match {

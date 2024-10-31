@@ -21,8 +21,7 @@ import connectors.ChargeHistoryConnector
 import enums.CreateReversalReason
 import exceptions.MissingFieldException
 import models.chargeHistory._
-import models.financialDetails.ReviewAndReconcileUtils.isReviewAndReconcileCredit
-import models.financialDetails.{DocumentDetail, FinancialDetail, FinancialDetailsModel, ReviewAndReconcileCredit, ReviewAndReconcileUtils}
+import models.financialDetails.{ChargeItem, DocumentDetail, FinancialDetailsModel, ReviewAndReconcileCredit, ReviewAndReconcileUtils}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -70,20 +69,29 @@ class ChargeHistoryService @Inject()(chargeHistoryConnector: ChargeHistoryConnec
     }
   }
 
-  def getReviewAndReconcileCredits(chargeDetailsForTaxYear: FinancialDetailsModel, reviewAndReconcileEnabled: Boolean): List[ReviewAndReconcileCredit] =
+  def getReviewAndReconcileCredit(chargeItem: ChargeItem,
+                                  chargeDetailsForTaxYear: FinancialDetailsModel,
+                                  reviewAndReconcileEnabled: Boolean): Option[ReviewAndReconcileCredit] = {
     chargeDetailsForTaxYear
       .getPairedDocumentDetails()
-      .filter { case (_, financialDetail) => reviewAndReconcileEnabled && isReviewAndReconcileCredit(financialDetail) }
-      .sortBy { case (_, financialDetail) => financialDetail.mainTransaction }
-      .map {
-        case (documentDetail, financialDetail) =>
+      .collectFirst {
+        case (documentDetail, financialDetail) if reviewAndReconcileEnabled &&
+          ((chargeItem.isPaymentOnAccountOne && financialDetail.isReconcilePoaOneCredit) ||
+           (chargeItem.isPaymentOnAccountTwo && financialDetail.isReconcilePoaTwoCredit)) =>
+
           ReviewAndReconcileCredit(
             transactionId = documentDetail.transactionId,
             taxYear = documentDetail.taxYear,
             documentDueDate = documentDetail.documentDueDate.getOrElse(throw MissingFieldException("documentDueDate")),
-            messageKey = s"chargeSummary.chargeHistory.${ReviewAndReconcileUtils.getCreditKey(financialDetail.mainTransaction)
-              .fold(e => throw new Exception(e.message), valid => valid)}",
+            messageKey = s"chargeSummary.chargeHistory.${
+              ReviewAndReconcileUtils.getCreditKey(financialDetail.mainTransaction)
+                .fold(
+                  e => throw new Exception(e.message),
+                  valid => valid
+                )
+            }",
             totalAmount = documentDetail.originalAmount.abs
           )
       }
+  }
 }

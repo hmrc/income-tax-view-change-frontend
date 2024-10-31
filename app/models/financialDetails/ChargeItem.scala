@@ -20,8 +20,6 @@ import exceptions.CouldNotCreateChargeItemException
 import models.incomeSourceDetails.TaxYear
 import play.api.libs.json.{Format, Json}
 import services.DateServiceInterface
-import models.financialDetails.TransactionItem
-import models.financialDetails.TransactionType.format
 
 import java.time.LocalDate
 
@@ -45,6 +43,10 @@ case class ChargeItem (
 
   def isOverdue()(implicit dateService: DateServiceInterface): Boolean =
     dueDate.exists(_ isBefore dateService.getCurrentDate)
+
+  def isPaymentOnAccountOne: Boolean = transactionType == PaymentOnAccountOne
+
+  def isPaymentOnAccountTwo: Boolean = transactionType == PaymentOnAccountTwo
 
   val isCredit = originalAmount < 0
 
