@@ -19,7 +19,7 @@ package models.financialDetails
 import auth.MtdItUser
 import enums.{Poa1Charge, Poa1ReconciliationDebit, Poa2Charge, Poa2ReconciliationDebit, TRMAmendCharge, TRMNewCharge}
 import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
-import models.financialDetails.ReviewAndReconcileUtils.{isReconcilePoaOneDebit, isReviewAndReconcilePoaTwo}
+import models.financialDetails.ReviewAndReconcileUtils.{isReviewAndReconcilePoaOne, isReviewAndReconcilePoaTwo}
 import play.api.libs.json.{Format, Json}
 import services.DateServiceInterface
 
@@ -60,7 +60,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
 
   def isReviewAndReconcilePoaOneDebit(documentId: String): Boolean = {
     financialDetails.exists { fd =>
-      fd.transactionId.contains(documentId) && isReconcilePoaOneDebit(fd.mainTransaction)
+      fd.transactionId.contains(documentId) && isReviewAndReconcilePoaOne(fd.mainTransaction)
     }
   }
 
@@ -73,7 +73,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
   def isReviewAndReconcilePoaOneDebit(documentId: String, reviewAndReconcileIsEnabled: Boolean): Boolean = {
     reviewAndReconcileIsEnabled &&
       financialDetails.exists { fd =>
-        fd.transactionId.contains(documentId) && isReconcilePoaOneDebit(fd.mainTransaction)
+        fd.transactionId.contains(documentId) && isReviewAndReconcilePoaOne(fd.mainTransaction)
       }
   }
 
