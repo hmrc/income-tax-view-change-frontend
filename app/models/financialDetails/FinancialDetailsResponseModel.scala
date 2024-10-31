@@ -20,16 +20,87 @@ import auth.MtdItUser
 import enums.{Poa1Charge, Poa1ReconciliationDebit, Poa2Charge, Poa2ReconciliationDebit, TRMAmendCharge, TRMNewCharge}
 import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails.ReviewAndReconcileDebitUtils.{isReviewAndReconcilePoaOne, isReviewAndReconcilePoaTwo}
+import models.incomeSourceDetails.TaxYear
+import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
+import play.api.Logger
 import play.api.libs.json.{Format, Json}
 import services.DateServiceInterface
+import services.claimToAdjustPoa.ClaimToAdjustHelper
 
 import java.time.LocalDate
+import scala.util.{Failure, Success, Try}
 
 sealed trait FinancialDetailsResponseModel
 
 case class FinancialDetailsModel(balanceDetails: BalanceDetails,
-                                 documentDetails: List[DocumentDetail],
+                                 private val documentDetails: List[DocumentDetail],
                                  financialDetails: List[FinancialDetail]) extends FinancialDetailsResponseModel {
+
+  ////////////////////////////////////////////////////////////////////////////
+  // Step 1: Hide documentDetails field within FinancialDetailsModel
+  ////////////////////////////////////////////////////////////////////////////
+
+  // Step 2: convert DocumentDetails to ChargeItem
+  // adds poaRelevantAmount: Option[BigDecimal] to ChargeItem
+
+  // Step 3: Move DocumentDetails under FinancialDetailsModel to keep it private? / protected ?
+
+  // Step 4: make next field private as well: financialDetails
+
+  // Step x: what about FinancialDetailsWithDocumentDetailsResponse model ??
+
+  // Step x+1: review method below / some of them expected to be a duplicates of what we have in ChargeItem's
+
+  def documentDetailExist(id: String): Boolean = {
+    documentDetails.exists(_.transactionId == id)
+  }
+
+  def arePoaPaymentsPresent(): Option[TaxYear] = {
+    documentDetails.filter(_.documentDescription.exists(description => ClaimToAdjustHelper.poaDocumentDescriptions.contains(description)))
+      .sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
+  }
+
+  def toChargeItem(codingOut: Boolean, reviewReconcile: Boolean): List[ChargeItem] = {
+    Try {
+      this.documentDetails
+        .map(ChargeItem.fromDocumentPair(_, financialDetails, codingOut, reviewReconcile)
+        )
+    } match {
+      case Success(res) =>
+        res
+      case Failure(ex) =>
+        Logger("application").warn(ex.getMessage)
+        List[ChargeItem]()
+    }
+  }
+
+  def documentDetailsWithLpiId(chargeReference: Option[String]): Option[DocumentDetail] = {
+    documentDetails.find(_.latePaymentInterestId == chargeReference)
+  }
+
+  def getDocumentDetailsWithCreds: List[DocumentDetail] = {
+    this.documentDetails.filter(_.credit.isDefined)
+  }
+
+  def unpaidDocumentDetails(isCodingOutEnabled: Boolean): List[DocumentDetail] = {
+    this.documentDetails.collect {
+      case documentDetail: DocumentDetail if documentDetail.isCodingOutDocumentDetail(isCodingOutEnabled) => documentDetail
+      case documentDetail: DocumentDetail if documentDetail.latePaymentInterestAmount.isDefined && !documentDetail.interestIsPaid => documentDetail
+      case documentDetail: DocumentDetail if documentDetail.interestOutstandingAmount.isDefined && !documentDetail.interestIsPaid => documentDetail
+      case documentDetail: DocumentDetail if documentDetail.isNotCodingOutDocumentDetail && !documentDetail.isPaid => documentDetail
+    }
+  }
+
+  def docDetailsNotDueWithInterest(currentDate: LocalDate): List[DocumentDetail] = {
+    this.documentDetails
+      .filter(x => !x.isPaid && x.hasAccruingInterest && x.documentDueDate.getOrElse(LocalDate.MIN).isAfter(currentDate))
+  }
+
+  def docDetailsFilter(predicate: DocumentDetail => Boolean): Option[DocumentDetail] = {
+    this.documentDetails.find(predicate)
+  }
+
+  /////////////////////////////////////////////////////////////////////////
 
   def getDueDateForFinancialDetail(financialDetail: FinancialDetail): Option[LocalDate] = {
     financialDetail.items.flatMap(_.headOption.flatMap(_.dueDate))
@@ -90,7 +161,6 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
   }
 
   def findDocumentDetailForTaxYear(taxYear: Int): Option[DocumentDetail] = documentDetails.find(_.taxYear == taxYear)
-
 
 
   def findDocumentDetailForYearWithDueDate(taxYear: Int)(implicit dateService: DateServiceInterface): Option[DocumentDetailWithDueDate] = {

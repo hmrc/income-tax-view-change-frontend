@@ -132,6 +132,8 @@ object ChargeType {
   private val paymentOnAccountOne = "4920"
   private val paymentOnAccountTwo = "4930"
 
+  //private val paymentOnAccountSomething = "0060"
+
   private val mfaDebit = Range.inclusive(4000, 4003)
     .map(_.toString).toList
 
@@ -154,6 +156,8 @@ object ChargeType {
         Some(PaymentOnAccountTwoReviewAndReconcileCredit)
       case (x, _) if ChargeType.mfaDebit.contains(x) =>
         Some(MfaDebitCharge)
+//      case (ChargeType.paymentOnAccountSomething, _) =>
+//        Some(PaymentType)
       case _ => None
     }
   }
