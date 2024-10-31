@@ -24,122 +24,127 @@ class OptInCompletedViewModelSpec extends UnitSpec {
   val endTaxYear = 2023
   val currentTaxYear: TaxYear = TaxYear.forYearEnd(endTaxYear)
 
-  s"OptInCompletedViewModel - for year ${currentTaxYear.toString}" should {
-
-    val optInTaxYear = currentTaxYear
-
-    s"Individual" in {
-      val model = OptInCompletedViewModel(
-        isAgent = false,
-        optInTaxYear = optInTaxYear,
-        isCurrentYear = false,
-        showAnnualReportingAdvice = false,
-        optInIncludedNextYear = false,
-        annualWithFollowingYearMandated = false
-      )
-
-      model.startYear shouldBe "2022"
-      model.endYear shouldBe "2023"
-      model.isAgent shouldBe false
-      model.showAnnualReportingAdvice shouldBe false
-      model.nextYear shouldBe "2024"
-      model.annualWithFollowingYearMandated shouldBe false
-    }
-
-    s"Individual with following year Voluntary" in {
-      val model = OptInCompletedViewModel(
-        isAgent = false,
-        optInTaxYear = optInTaxYear,
-        isCurrentYear = false,
-        showAnnualReportingAdvice = false,
-        optInIncludedNextYear = true,
-        annualWithFollowingYearMandated = false
-      )
-
-      model.startYear shouldBe "2022"
-      model.endYear shouldBe "2023"
-      model.isAgent shouldBe false
-      model.showAnnualReportingAdvice shouldBe false
-      model.nextYear shouldBe "2024"
-      model.optInIncludedNextYear shouldBe true
-      model.annualWithFollowingYearMandated shouldBe false
-    }
-
-    s"Individual with this year Annual and following year Mandatory" in {
-      val model = OptInCompletedViewModel(
-        isAgent = false,
-        optInTaxYear = optInTaxYear,
-        isCurrentYear = false,
-        showAnnualReportingAdvice = false,
-        optInIncludedNextYear = false,
-        annualWithFollowingYearMandated = true
-      )
-
-      model.startYear shouldBe "2022"
-      model.endYear shouldBe "2023"
-      model.isAgent shouldBe false
-      model.showAnnualReportingAdvice shouldBe false
-      model.nextYear shouldBe "2024"
-      model.optInIncludedNextYear shouldBe false
-      model.annualWithFollowingYearMandated shouldBe true
-    }
-
-    s"Agent" in {
-      val model = OptInCompletedViewModel(
-        isAgent = true,
-        optInTaxYear = optInTaxYear,
-        isCurrentYear = true,
-        showAnnualReportingAdvice = false,
-        optInIncludedNextYear = false,
-        annualWithFollowingYearMandated = false
-      )
-
-      model.startYear shouldBe "2022"
-      model.endYear shouldBe "2023"
-      model.isAgent shouldBe true
-      model.showAnnualReportingAdvice shouldBe false
-      model.nextYear shouldBe "2024"
-      model.annualWithFollowingYearMandated shouldBe false
-    }
-  }
-
-  s"OptInCompletedViewModel - for year ${currentTaxYear.nextYear.toString}" should {
+  "OptInCompletedViewModel" when {
 
     val optInTaxYear = currentTaxYear.nextYear
 
-    s"Individual" in {
-      val model = OptInCompletedViewModel(
-        isAgent = false,
-        optInTaxYear = optInTaxYear,
-        isCurrentYear = true,
-        showAnnualReportingAdvice = false,
-        optInIncludedNextYear = false,
-        annualWithFollowingYearMandated = false
-      )
+    ".startDateNextYear()" should {
 
-      model.startYear shouldBe "2023"
-      model.endYear shouldBe "2024"
-      model.isAgent shouldBe false
-      model.showAnnualReportingAdvice shouldBe false
-      model.nextYear shouldBe "2025"
+      "return the correctly formatted date, formatting = d MMMM uuuu" in {
+
+        val model =
+          OptInCompletedViewModel(
+            isAgent = false,
+            optInTaxYear = optInTaxYear,
+            isCurrentYear = true,
+            showAnnualReportingAdvice = false,
+            optInIncludedNextYear = false,
+            annualWithFollowingYearMandated = false
+          )
+
+        model.startDateNextYear shouldBe "6 April 2024"
+      }
     }
 
-    s"Agent" in {
-      val model = OptInCompletedViewModel(
-        isAgent = true,
-        optInTaxYear = optInTaxYear,
-        isCurrentYear = true,
-        showAnnualReportingAdvice = false,
-        optInIncludedNextYear = false,
-        annualWithFollowingYearMandated = false
-      )
+    ".headingMessageKey()" when {
 
-      model.startYear shouldBe "2023"
-      model.endYear shouldBe "2024"
-      model.isAgent shouldBe true
-      model.showAnnualReportingAdvice shouldBe false
-      model.nextYear shouldBe "2025"
+      "both isCurrentYear & annualWithFollowingYearMandated are true" should {
+
+        "return the correct message key" in {
+          val model =
+            OptInCompletedViewModel(
+              isAgent = false,
+              optInTaxYear = optInTaxYear,
+              isCurrentYear = true,
+              showAnnualReportingAdvice = false,
+              optInIncludedNextYear = false,
+              annualWithFollowingYearMandated = true
+            )
+
+          model.headingMessageKey shouldBe "optin.completedOptIn.followingVoluntary.heading.desc"
+        }
+      }
+
+      "both isCurrentYear & optInIncludedNextYear are true" should {
+
+        "return the correct message key" in {
+          val model =
+            OptInCompletedViewModel(
+              isAgent = false,
+              optInTaxYear = optInTaxYear,
+              isCurrentYear = true,
+              showAnnualReportingAdvice = false,
+              optInIncludedNextYear = true,
+              annualWithFollowingYearMandated = false
+            )
+
+          model.headingMessageKey shouldBe "optin.completedOptIn.followingVoluntary.heading.desc"
+        }
+      }
+
+      "isCurrentYear is true & showAnnualReportingAdvice is false" should {
+
+        "return the correct message key" in {
+          val model =
+            OptInCompletedViewModel(
+              isAgent = false,
+              optInTaxYear = optInTaxYear,
+              isCurrentYear = true,
+              showAnnualReportingAdvice = false,
+              optInIncludedNextYear = false,
+              annualWithFollowingYearMandated = false
+            )
+
+          model.headingMessageKey shouldBe "optin.completedOptIn.cy.heading.desc"
+        }
+      }
+
+      "all (isCurrentYear, showAnnualReportingAdvice, annualWithFollowingYearMandated) three content flags are false" should {
+
+        "return the correct message key" in {
+          val model =
+            OptInCompletedViewModel(
+              isAgent = false,
+              optInTaxYear = optInTaxYear,
+              isCurrentYear = false,
+              showAnnualReportingAdvice = false,
+              optInIncludedNextYear = false,
+              annualWithFollowingYearMandated = false
+            )
+
+          model.headingMessageKey shouldBe "optin.completedOptIn.ny.heading.desc"
+        }
+      }
+    }
+
+    "the isAgent flag is true, the NextUpdate Agent url is set" in {
+
+      val model =
+        OptInCompletedViewModel(
+          isAgent = true,
+          optInTaxYear = optInTaxYear,
+          isCurrentYear = true,
+          showAnnualReportingAdvice = false,
+          optInIncludedNextYear = false,
+          annualWithFollowingYearMandated = true,
+        )
+
+      model.nextUpdatesLink shouldBe controllers.routes.NextUpdatesController.showAgent.url
+    }
+
+    "the isAgent flag is false, the non agent user NextUpdate url is set" in {
+
+      val model =
+        OptInCompletedViewModel(
+          isAgent = false,
+          optInTaxYear = optInTaxYear,
+          isCurrentYear = true,
+          showAnnualReportingAdvice = false,
+          optInIncludedNextYear = false,
+          annualWithFollowingYearMandated = true,
+        )
+
+      model.nextUpdatesLink shouldBe controllers.routes.NextUpdatesController.show().url
     }
   }
-
 }
