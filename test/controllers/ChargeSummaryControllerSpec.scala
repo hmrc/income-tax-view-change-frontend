@@ -26,7 +26,8 @@ import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSour
 import mocks.services.MockIncomeSourceDetailsService
 import models.admin.{ChargeHistory, ReviewAndReconcilePoa}
 import models.chargeHistory._
-import models.financialDetails.{FinancialDetail, FinancialDetailsResponseModel}
+import models.financialDetails.{ChargeItem, FinancialDetail, FinancialDetailsResponseModel, PaymentOnAccountOne, PaymentOnAccountOneReviewAndReconcileCredit}
+import models.incomeSourceDetails.TaxYear
 import models.repaymentHistory.RepaymentHistoryUtils
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
@@ -84,7 +85,26 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       .thenReturn(adjustmentHistoryModel)
 
     when(mockChargeHistoryService.getReviewAndReconcileCredit(any(), any(), any()))
-      .thenReturn(Some(ReviewAndReconcileCredit(2018, "transactionId", LocalDate.of(2018, 1, 1), "chargeSummary.chargeHistory.POA1RR-credit", 1000)))
+      .thenReturn(Some(
+        ChargeItem(
+          transactionId = "transactionId",
+          taxYear = TaxYear(2017, 2018),
+          transactionType = PaymentOnAccountOneReviewAndReconcileCredit,
+          subTransactionType = None,
+          documentDate = LocalDate.of(2018, 1, 1),
+          dueDate = Some(LocalDate.of(2018, 1, 1)),
+          originalAmount = 1000,
+          outstandingAmount = 0,
+          interestOutstandingAmount = None,
+          latePaymentInterestAmount = None,
+          interestFromDate = None,
+          interestEndDate = None,
+          interestRate = None,
+          lpiWithDunningLock = None,
+          amountCodedOut = None,
+          dunningLock = false
+        )
+      ))
 
     mockBothIncomeSources()
     if (isAgent) {
@@ -370,6 +390,8 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
     "display the Review & Reconcile credit for POA1 when present in the user's financial details" in new Setup(
       financialDetailsModelWithPoaOneAndTwoWithRarCredits(), isAgent = true, enableReviewAndReconcile = true) {
       val result: Future[Result] = controller.showAgent(testTaxYear, id1040000125)(fakeRequestConfirmedClient("AB123456C"))
+
+      println(s"\n${JsoupParse(result).toHtmlDocument}\n")
 
       status(result) shouldBe Status.OK
       JsoupParse(result).toHtmlDocument.getElementById("rar-charge-link").text() shouldBe "First payment on account: credit from your tax return"
