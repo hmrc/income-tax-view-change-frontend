@@ -71,8 +71,8 @@ class ChargeHistoryService @Inject()(chargeHistoryConnector: ChargeHistoryConnec
   def getReviewAndReconcileCredit(chargeItem: ChargeItem,
                                   chargeDetailsforTaxYear: FinancialDetailsModel,
                                   reviewAndReconcileEnabled: Boolean): Option[ChargeItem] = {
-    (for {
-      financialDetailForRarCredit <- chargeDetailsforTaxYear.financialDetails.filter(
+    for {
+      financialDetailForRarCredit <- chargeDetailsforTaxYear.financialDetails.find(
         chargeItem.transactionType match {
           case PaymentOnAccountOne => (fd: FinancialDetail) => reviewAndReconcileEnabled && fd.isReconcilePoaOneCredit
           case PaymentOnAccountTwo => (fd: FinancialDetail) => reviewAndReconcileEnabled && fd.isReconcilePoaTwoCredit
@@ -88,6 +88,6 @@ class ChargeHistoryService @Inject()(chargeHistoryConnector: ChargeHistoryConnec
         codingOut = true,
         reviewAndReconcileEnabled
       )
-    }).headOption
+    }
   }
 }
