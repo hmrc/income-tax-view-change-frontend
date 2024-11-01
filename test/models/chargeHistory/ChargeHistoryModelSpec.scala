@@ -38,19 +38,21 @@ class ChargeHistoryModelSpec extends UnitSpec with Matchers {
     "calling .reasonCode" should {
 
       "return a valid message key for a poa adjustment" in {
-        testPoaChargeHistoryModel("Reversal").reasonCode shouldBe AdjustmentReversalReason
+        testPoaChargeHistoryModel("Reversal").reasonCode shouldBe Right(AdjustmentReversalReason.value)
       }
 
       "return a valid message key for an amended reversal" in {
-        testChargeHistoryModel("amended return").reasonCode shouldBe AmendedReturnReversalReason
+        testChargeHistoryModel("amended return").reasonCode shouldBe Right(AmendedReturnReversalReason.value)
       }
 
       "return a valid message key for a customer requested reversal" in {
-        testChargeHistoryModel("Customer Request").reasonCode shouldBe CustomerRequestReason
+        testChargeHistoryModel("Customer Request").reasonCode shouldBe Right(CustomerRequestReason.value)
       }
 
-      "return an unknown message key for a non matching reversal reason" in {
-        testChargeHistoryModel("Unknown").reasonCode shouldBe UnknownReversalReason
+      "return an exception and message for an unknown message key" in {
+        val exception = intercept[Exception](testChargeHistoryModel("Unknown").reasonCode)
+        exception shouldBe an[Exception]
+        exception.getMessage shouldBe "Unknown reversal reason"
       }
     }
   }

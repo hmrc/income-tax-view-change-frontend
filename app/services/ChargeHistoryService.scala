@@ -59,7 +59,7 @@ class ChargeHistoryService @Inject()(chargeHistoryConnector: ChargeHistoryConnec
       val (nextAmount, adjList) = acc
       val newAdjustment = AdjustmentModel(
         adjustmentDate = Some(current.reversalDate),
-        reasonCode = current.reasonCode,
+        reasonCode = current.reversalReasonAdjustment,
         amount = nextAmount
       )
       (current.totalAmount, newAdjustment :: adjList)

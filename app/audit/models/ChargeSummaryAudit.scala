@@ -102,7 +102,7 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_],
   private def chargeHistoryJson(chargeHistory: ChargeHistoryModel): JsObject = Json.obj(
     "date" -> chargeHistory.reversalDate,
     "description" -> getChargeTypeFromKey(
-      Some(s"chargeSummary.chargeHistory.${chargeHistory.reasonCode.value}.${chargeItem.getChargeTypeKey()}")),
+      Some(s"chargeSummary.chargeHistory.${chargeHistory.reasonCode.getOrElse("Unknown")}.${chargeItem.getChargeTypeKey()}")),
     "amount" -> chargeHistory.totalAmount
   )
 

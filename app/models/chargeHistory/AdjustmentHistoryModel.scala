@@ -24,5 +24,5 @@ case class AdjustmentHistoryModel(creationEvent: AdjustmentModel,
                                   adjustments: List[AdjustmentModel])
 
 case class AdjustmentModel(amount: BigDecimal,
-                      adjustmentDate: Option[LocalDate],
+                           adjustmentDate: Option[LocalDate],
                            reasonCode: ReversalReason)
