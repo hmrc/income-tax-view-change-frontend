@@ -54,7 +54,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
                   dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)),
                   paymentBreakdown: List[FinancialDetail] = List(),
                   paymentAllocations: List[PaymentHistoryAllocations] = List(),
-                  reviewAndReconcileCredit: Option[ReviewAndReconcileCredit] = None,
+                  reviewAndReconcileCredit: Option[ChargeItem] = None,
                   payments: FinancialDetailsModel = payments,
                   chargeHistoryEnabled: Boolean = true,
                   latePaymentInterestCharge: Boolean = false,

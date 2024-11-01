@@ -26,7 +26,7 @@ import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSour
 import mocks.services.MockIncomeSourceDetailsService
 import models.admin.{ChargeHistory, ReviewAndReconcilePoa}
 import models.chargeHistory._
-import models.financialDetails.{FinancialDetail, FinancialDetailsResponseModel, ReviewAndReconcileCredit}
+import models.financialDetails.{FinancialDetail, FinancialDetailsResponseModel}
 import models.repaymentHistory.RepaymentHistoryUtils
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}

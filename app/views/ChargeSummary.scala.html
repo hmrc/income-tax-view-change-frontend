@@ -422,15 +422,15 @@
                     </tr>
                 }
 
-                @viewModel.reviewAndReconcileCredit.map { credit =>
+                @viewModel.reviewAndReconcileCredit.map { charge =>
                     <tr>
-                        <td class="govuk-table__cell govuk-!-width-one-quarter" id="rar-due-date">@{credit.documentDueDate.toLongDateShort}</td>
+                        <td class="govuk-table__cell govuk-!-width-one-quarter" id="rar-due-date">@{charge.getDueDate.toLongDateShort}</td>
                         <td class="govuk-table__cell">
-                            <a class="govuk-link" id="rar-charge-link" href="@RepaymentHistoryUtils.getPoaChargeLinkUrl(viewModel.isAgent, credit.taxYear.endYear, credit.transactionId)">
-                                @messages(credit.messageKey)
+                            <a class="govuk-link" id="rar-charge-link" href="@RepaymentHistoryUtils.getPoaChargeLinkUrl(viewModel.isAgent, charge.taxYear.endYear, charge.transactionId)">
+                                @messages(s"chargeSummary.chargeHistory.${charge.transactionType.key}")
                             </a>
                         </td>
-                        <td class="govuk-table__cell" id="rar-total-amount">@{credit.totalAmount.toCurrency}</td>
+                        <td class="govuk-table__cell" id="rar-total-amount">@{charge.originalAmount.abs.toCurrency}</td>
                     </tr>
                 }
 

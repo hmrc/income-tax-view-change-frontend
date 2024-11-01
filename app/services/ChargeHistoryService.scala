@@ -23,7 +23,7 @@ import enums.CreateReversalReason
 import exceptions.MissingFieldException
 import models.chargeHistory._
 import models.financialDetails.ChargeItem.fromDocumentPair
-import models.financialDetails.{ChargeItem, DocumentDetail, FinancialDetailsModel, PaymentOnAccountOne, PaymentOnAccountTwo, ReviewAndReconcileCredit, ReviewAndReconcileUtils}
+import models.financialDetails.{ChargeItem, DocumentDetail, FinancialDetail, FinancialDetailsModel, PaymentOnAccountOne, PaymentOnAccountTwo, ReviewAndReconcileUtils}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -73,52 +73,24 @@ class ChargeHistoryService @Inject()(chargeHistoryConnector: ChargeHistoryConnec
 
   def getReviewAndReconcileCredit(chargeItem: ChargeItem,
                                   chargeDetailsforTaxYear: FinancialDetailsModel,
-                                  reviewAndReconcileEnabled: Boolean): Option[ReviewAndReconcileCredit] = {
-
-    if (reviewAndReconcileEnabled) {
-      if (chargeItem.isPaymentOnAccountOne) {
-        (for {
-          fdForRarPoaOneCredit <- chargeDetailsforTaxYear.financialDetails.filter(_.isReconcilePoaOneCredit && reviewAndReconcileEnabled)
-          transactionId <- fdForRarPoaOneCredit.transactionId
-          ddForRarPoaOneCredit <- chargeDetailsforTaxYear.documentDetails.find(_.transactionId == transactionId)
-          reviewAndReconcileChargeItem = fromDocumentPair(ddForRarPoaOneCredit, List(fdForRarPoaOneCredit), codingOut = true, reviewAndReconcileEnabled)
-        } yield {
-          ReviewAndReconcileCredit(
-            transactionId = reviewAndReconcileChargeItem.transactionId,
-            taxYear = reviewAndReconcileChargeItem.taxYear,
-            documentDueDate = ddForRarPoaOneCredit.documentDueDate.getOrElse(throw MissingFieldException("documentDueDate")),
-            messageKey = s"chargeSummary.chargeHistory.${
-              ReviewAndReconcileUtils.getCreditKey(fdForRarPoaOneCredit.mainTransaction)
-                .fold(
-                  e => throw new Exception(e.message),
-                  valid => valid
-                )
-            }",
-            totalAmount = chargeItem.originalAmount.abs
-          )
-        }).headOption
-      } else if (chargeItem.isPaymentOnAccountTwo) {
-        (for {
-          fdForRarPoaTwoCredit        <- chargeDetailsforTaxYear.financialDetails.filter(_.isReconcilePoaTwoCredit && reviewAndReconcileEnabled)
-          transactionId               <- fdForRarPoaTwoCredit.transactionId
-          ddForRarPoaTwoCredit        <- chargeDetailsforTaxYear.documentDetails.find(_.transactionId == transactionId)
-          reviewAndReconcileChargeItem = fromDocumentPair(ddForRarPoaTwoCredit, List(fdForRarPoaTwoCredit), codingOut = true, reviewAndReconcileEnabled)
-        } yield {
-          ReviewAndReconcileCredit(
-            transactionId = reviewAndReconcileChargeItem.transactionId,
-            taxYear = reviewAndReconcileChargeItem.taxYear,
-            documentDueDate = ddForRarPoaTwoCredit.documentDueDate.getOrElse(throw MissingFieldException("documentDueDate")),
-            messageKey = s"chargeSummary.chargeHistory.${
-              ReviewAndReconcileUtils.getCreditKey(fdForRarPoaTwoCredit.mainTransaction)
-                .fold(
-                  e => throw new Exception(e.message),
-                  valid => valid
-                )
-            }",
-            totalAmount = chargeItem.originalAmount.abs
-          )
-        }).headOption
-      } else None
-    } else None
+                                  reviewAndReconcileEnabled: Boolean): Option[ChargeItem] = {
+    (for {
+      fdForRarCredit <- chargeDetailsforTaxYear.financialDetails.filter(
+        chargeItem.transactionType match {
+          case PaymentOnAccountOne => (fd: FinancialDetail) => reviewAndReconcileEnabled && fd.isReconcilePoaOneCredit
+          case PaymentOnAccountTwo => (fd: FinancialDetail) => reviewAndReconcileEnabled && fd.isReconcilePoaTwoCredit
+          case _                   => (_:  FinancialDetail) => false
+        }
+      )
+      transactionId               <- fdForRarCredit.transactionId
+      ddForRarCredit              <- chargeDetailsforTaxYear.documentDetails.find(_.transactionId == transactionId)
+    } yield {
+      ChargeItem.fromDocumentPair(
+        ddForRarCredit,
+        List(fdForRarCredit),
+        codingOut = true,
+        reviewAndReconcileEnabled
+      )
+    }).headOption
   }
 }

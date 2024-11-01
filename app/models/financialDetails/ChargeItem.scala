@@ -16,7 +16,7 @@
 
 package models.financialDetails
 
-import exceptions.CouldNotCreateChargeItemException
+import exceptions.{CouldNotCreateChargeItemException, MissingFieldException}
 import models.incomeSourceDetails.TaxYear
 import play.api.libs.json.{Format, Json}
 import services.DateServiceInterface
@@ -50,6 +50,8 @@ case class ChargeItem (
 
   def isPaymentOnAccountTwo: Boolean = transactionType == PaymentOnAccountTwo
 
+  def isPaymentOnAccount: Boolean = isPaymentOnAccountOne || isPaymentOnAccountTwo
+
   val isCredit = originalAmount < 0
 
   val hasLpiWithDunningLock: Boolean =
@@ -69,6 +71,9 @@ case class ChargeItem (
       dueDate
     }
   }
+
+  def getDueDate: LocalDate =
+    dueDate.getOrElse(throw MissingFieldException("documentDueDate"))
 
   def isPaid: Boolean = outstandingAmount match {
     case amount if amount == 0 => true

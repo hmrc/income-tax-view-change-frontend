@@ -29,21 +29,5 @@ object ReviewAndReconcileUtils {
 
   def isReviewAndReconcilePoaTwo(mainTransaction: Option[String]): Boolean =
     mainTransaction.contains(poaTwoReviewAndReconcileDebit)
-
-  def isReconcilePoaOneCredit(mainTransaction: Option[String]): Boolean =
-    mainTransaction.contains(poaOneReviewAndReconcileCredit)
-
-  def isReconcilePoaTwoCredit(mainTransaction: Option[String]): Boolean =
-    mainTransaction.contains(poaTwoReviewAndReconcileCredit)
-
-  def getCreditKey(mainTransaction: Option[String]): Either[ReviewAndReconcileMessageKeyError, String] =
-    mainTransaction match {
-      case Some(`poaOneReviewAndReconcileCredit`) => Right("POA1RR-credit")
-      case Some(`poaTwoReviewAndReconcileCredit`) => Right("POA2RR-credit")
-      case Some(e)                                => Left(ReviewAndReconcileMessageKeyError(s"Invalid mainTransaction found: $e"))
-      case None                                   => Left(ReviewAndReconcileMessageKeyError("mainTransaction field empty"))
-    }
 }
 
-sealed trait ReviewAndReconcileError
-case class ReviewAndReconcileMessageKeyError(message: String) extends ReviewAndReconcileError
