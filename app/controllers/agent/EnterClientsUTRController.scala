@@ -28,7 +28,7 @@ import controllers.agent.sessionUtils.SessionKeys
 import controllers.predicates.AuthPredicate.AuthPredicate
 import controllers.predicates.IncomeTaxAgentUser
 import controllers.predicates.agent.AgentAuthenticationPredicate.defaultAgentPredicates
-import enums.{PrimaryAgent, SecondaryAgent, UserRole}
+import enums.{MTDPrimaryAgent, MTDSecondaryAgent, MTDUserRole}
 import forms.agent.ClientsUTRForm
 import models.sessionData.SessionCookieData
 import play.api.Logger
@@ -59,14 +59,14 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
                                           val ec: ExecutionContext)
   extends BaseAgentController with I18nSupport with FeatureSwitching with SessionCookieUtil {
 
-  def show: Action[AnyContent] = authActions.isAgent.async {implicit user =>
+  def show: Action[AnyContent] = authActions.asAgent.async {implicit user =>
     Future.successful(Ok(enterClientsUTR(
       clientUTRForm = ClientsUTRForm.form,
       postAction = routes.EnterClientsUTRController.submit
     )))
   }
 
-  def showWithUtr(utr: String): Action[AnyContent] = authActions.isAgent.async {implicit user =>
+  def showWithUtr(utr: String): Action[AnyContent] = authActions.asAgent.async {implicit user =>
     val utrSafe = utr.filter(_.isDigit).take(10)
     Future.successful(Ok(enterClientsUTR(
       clientUTRForm = ClientsUTRForm.form.fill(utrSafe),
@@ -75,7 +75,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
   }
 
 
-  def submit: Action[AnyContent] = authActions.isAgent.async { implicit user =>
+  def submit: Action[AnyContent] = authActions.asAgent.async { implicit user =>
     ClientsUTRForm.form.bindFromRequest().fold(
       hasErrors => Future.successful(BadRequest(enterClientsUTR(
         clientUTRForm = hasErrors,
@@ -87,7 +87,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
         ) flatMap {
           case Right(clientDetails) =>
             checkAgentAuthorisedAndGetRole(clientDetails.mtdItId).flatMap{ userRole =>
-              val sessionCookieData: SessionCookieData = SessionCookieData(clientDetails, validUTR, userRole == SecondaryAgent)
+              val sessionCookieData: SessionCookieData = SessionCookieData(clientDetails, validUTR, userRole == MTDSecondaryAgent)
               handleSessionCookies(sessionCookieData) { sessionCookies =>
                 sendAudit(true, user, sessionCookieData.utr, sessionCookieData.nino, sessionCookieData.mtditid)
                 Future.successful(Redirect(routes.ConfirmClientUTRController.show).addingToSession(sessionCookies: _*))
@@ -114,16 +114,16 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
   }
 
 
-  private def checkAgentAuthorisedAndGetRole(mtdItId: String)(implicit request: Request[_]): Future[UserRole] = {
+  private def checkAgentAuthorisedAndGetRole(mtdItId: String)(implicit request: Request[_]): Future[MTDUserRole] = {
     authorisedFunctions
       .authorised(Enrolment(primaryAgentEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
         .withDelegatedAuthRule(primaryAgentAuthRule)).retrieve(allEnrolments and credentials and affinityGroup and confidenceLevel) {
-        case _ ~ _ ~ _ ~ _ => Future.successful(PrimaryAgent)
+        case _ ~ _ ~ _ ~ _ => Future.successful(MTDPrimaryAgent)
       }.recoverWith { case e =>
         authorisedFunctions
           .authorised(Enrolment(secondaryAgentEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
             .withDelegatedAuthRule(secondaryAgentAuthRule)).retrieve(allEnrolments and credentials and affinityGroup and confidenceLevel)
-          { case _ ~ _ ~ _ ~ _ => Future.successful(SecondaryAgent)
+          { case _ ~ _ ~ _ ~ _ => Future.successful(MTDSecondaryAgent)
           }
       }
   }
