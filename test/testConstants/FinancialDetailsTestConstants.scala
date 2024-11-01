@@ -590,14 +590,16 @@ object FinancialDetailsTestConstants {
     FinancialDetailsModel(
       balanceDetails = balanceDetails,
       documentDetails = List(
+        documentDetailModel(transactionId = id1040000126, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, latePaymentInterestAmount = None, documentDueDate = Some(LocalDate.of(2020,1,1))),
         documentDetailModel(transactionId = id1040000125, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, latePaymentInterestAmount = None, documentDueDate = Some(LocalDate.of(2020,1,1))),
-        documentDetailModel(transactionId = id1040000123, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, latePaymentInterestAmount = None, documentDueDate = Some(LocalDate.of(2020,1,1))),
         documentDetailModel(transactionId = id1040000124, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, latePaymentInterestAmount = None, documentDueDate = Some(LocalDate.of(2020,1,1))),
+        documentDetailModel(transactionId = id1040000123, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, latePaymentInterestAmount = None, documentDueDate = Some(LocalDate.of(2020,1,1)))
       ),
       financialDetails = List(
         financialDetail(transactionId = Some(id1040000125), taxYear = testTaxYear, mainTransaction = "4920"),
-        financialDetail(transactionId = Some(id1040000123), taxYear = testTaxYear, mainTransaction = "4912"),
-        financialDetail(transactionId = Some(id1040000124), taxYear = testTaxYear, mainTransaction = "4914")
+        financialDetail(transactionId = Some(id1040000126), taxYear = testTaxYear, mainTransaction = "4930"),
+        financialDetail(transactionId = Some(id1040000124), taxYear = testTaxYear, mainTransaction = "4914"),
+        financialDetail(transactionId = Some(id1040000123), taxYear = testTaxYear, mainTransaction = "4912")
       )
     )
 
@@ -1122,6 +1124,27 @@ object FinancialDetailsTestConstants {
       financialDetails = List(
         FinancialDetail(fixedDateTwo.getYear.toString, Some("SA POA 1 Reconciliation"), Some("4911"), Some(id1040000123), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDateTwo.minusDays(1)))))),
         FinancialDetail(fixedDateTwo.getYear.toString, Some("SA POA 2 Reconciliation"), Some("4913"), Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDateTwo.plusDays(30))))))
+      )
+    )
+
+  val testFinancialDetailsModelWithReviewAndReconcileCreditsAndPoas: FinancialDetailsModel =
+    FinancialDetailsModel(
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+      documentDetails = List(
+        DocumentDetail(fixedDateTwo.getYear, id1040000123, Some("ITSA- POA 1"), Some("documentText"), 50, 43.21, LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId"),
+          Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(100), Some(100), Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = Some(fixedDateTwo.minusDays(1)), documentDueDate = Some(fixedDateTwo.plusDays(30))),
+        DocumentDetail(fixedDateTwo.getYear, id1040000124, Some("ITSA - POA 2"), Some("documentText"), 50, 43.21, LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId"),
+          Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(100), Some(100), Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = Some(fixedDateTwo.minusDays(1)), documentDueDate = Some(fixedDateTwo.plusDays(30))),
+        DocumentDetail(fixedDateTwo.getYear, id1040000125, Some("SA POA 1 Reconciliation Credit"), Some("documentText"), 50, 43.21, LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId"),
+          Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(100), Some(100), Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = Some(fixedDateTwo.minusDays(1)), documentDueDate = Some(fixedDateTwo.plusDays(30))),
+        DocumentDetail(fixedDateTwo.getYear, id1040000126, Some("SA POA 2 Reconciliation Credit"), Some("documentText"), 75, 12.34, LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId"),
+          Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(100), Some(100), Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = Some(fixedDateTwo.minusDays(1)), documentDueDate = Some(fixedDateTwo.plusDays(30)))
+      ),
+      financialDetails = List(
+        FinancialDetail(fixedDateTwo.getYear.toString, Some("ITSA- POA 1"), Some("4920"), Some(id1040000123), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDateTwo.minusDays(1)))))),
+        FinancialDetail(fixedDateTwo.getYear.toString, Some("ITSA - POA 2"), Some("4930"), Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDateTwo.minusDays(1)))))),
+        FinancialDetail(fixedDateTwo.getYear.toString, Some("SA POA 1 Reconciliation Credit"), Some("4912"), Some(id1040000125), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDateTwo.plusDays(30)))))),
+        FinancialDetail(fixedDateTwo.getYear.toString, Some("SA POA 2 Reconciliation Credit"), Some("4914"), Some(id1040000126), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDateTwo.plusDays(30))))))
       )
     )
 

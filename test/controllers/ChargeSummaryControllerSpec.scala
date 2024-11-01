@@ -26,7 +26,7 @@ import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSour
 import mocks.services.MockIncomeSourceDetailsService
 import models.admin.{ChargeHistory, ReviewAndReconcilePoa}
 import models.chargeHistory._
-import models.financialDetails.{ChargeItem, FinancialDetail, FinancialDetailsResponseModel, PaymentOnAccountOne, PaymentOnAccountOneReviewAndReconcileCredit}
+import models.financialDetails.{ChargeItem, FinancialDetail, FinancialDetailsResponseModel, PaymentOnAccountOneReviewAndReconcileCredit, PaymentOnAccountTwoReviewAndReconcileCredit, TransactionType}
 import models.incomeSourceDetails.TaxYear
 import models.repaymentHistory.RepaymentHistoryUtils
 import org.mockito.ArgumentMatchers.any
@@ -35,7 +35,7 @@ import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import services.{ChargeHistoryService, DateService, FinancialDetailsService}
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testTaxYear}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testTaxYear}
 import testConstants.ChargeConstants
 import testConstants.FinancialDetailsTestConstants._
 import testUtils.TestSupport
@@ -58,38 +58,15 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
     financialDetail(taxYear = taxYear, chargeType = NIC4_WALES, dunningLock = Some("Stand over order"))
   )
 
-  def testChargeHistoryModel(): ChargesHistoryModel = ChargesHistoryModel("NINO", "AB123456C", "ITSA", None)
+  val mockChargeHistoryService: ChargeHistoryService = mock(classOf[ChargeHistoryService])
 
-  def emptyAdjustmentHistoryModel: AdjustmentHistoryModel = AdjustmentHistoryModel(AdjustmentModel(1000, None, AmendedReturnReversalReason), List())
-
-  class Setup(financialDetails: FinancialDetailsResponseModel,
-              adjustmentHistoryModel: AdjustmentHistoryModel = emptyAdjustmentHistoryModel,
-              chargeHistoryResponse: Either[ChargesHistoryErrorModel, List[ChargeHistoryModel]] = Right(List()),
-              enableReviewAndReconcile: Boolean = false,
-              isAgent: Boolean = false) {
-    val financialDetailsService: FinancialDetailsService = mock(classOf[FinancialDetailsService])
-    val mockChargeHistoryService: ChargeHistoryService = mock(classOf[ChargeHistoryService])
-
-    if (enableReviewAndReconcile) {
-      enable(ReviewAndReconcilePoa)
-    }
-
-
-    when(financialDetailsService.getAllFinancialDetails(any(), any(), any()))
-      .thenReturn(Future.successful(List((2018, financialDetails))))
-
-    when(mockChargeHistoryService.chargeHistoryResponse(any(), any(), any(), any(), any())(any(), any(), any()))
-      .thenReturn(Future.successful(chargeHistoryResponse))
-
-    when(mockChargeHistoryService.getAdjustmentHistory(any(), any()))
-      .thenReturn(adjustmentHistoryModel)
-
+  def mockGetReviewAndReconcileCredit(transactionType: TransactionType): Unit =
     when(mockChargeHistoryService.getReviewAndReconcileCredit(any(), any(), any()))
       .thenReturn(Some(
         ChargeItem(
           transactionId = "transactionId",
           taxYear = TaxYear(2017, 2018),
-          transactionType = PaymentOnAccountOneReviewAndReconcileCredit,
+          transactionType = transactionType,
           subTransactionType = None,
           documentDate = LocalDate.of(2018, 1, 1),
           dueDate = Some(LocalDate.of(2018, 1, 1)),
@@ -105,6 +82,32 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
           dunningLock = false
         )
       ))
+
+  def testChargeHistoryModel(): ChargesHistoryModel = ChargesHistoryModel("NINO", "AB123456C", "ITSA", None)
+
+  def emptyAdjustmentHistoryModel: AdjustmentHistoryModel = AdjustmentHistoryModel(AdjustmentModel(1000, None, AmendedReturnReversalReason), List())
+
+  class Setup(financialDetails: FinancialDetailsResponseModel,
+              adjustmentHistoryModel: AdjustmentHistoryModel = emptyAdjustmentHistoryModel,
+              chargeHistoryResponse: Either[ChargesHistoryErrorModel, List[ChargeHistoryModel]] = Right(List()),
+              enableReviewAndReconcile: Boolean = false,
+              isAgent: Boolean = false) {
+    val financialDetailsService: FinancialDetailsService = mock(classOf[FinancialDetailsService])
+
+    if (enableReviewAndReconcile) enable(ReviewAndReconcilePoa)
+    else disable(ReviewAndReconcilePoa)
+
+
+    when(financialDetailsService.getAllFinancialDetails(any(), any(), any()))
+      .thenReturn(Future.successful(List((2018, financialDetails))))
+
+    when(mockChargeHistoryService.chargeHistoryResponse(any(), any(), any(), any(), any())(any(), any(), any()))
+      .thenReturn(Future.successful(chargeHistoryResponse))
+
+    when(mockChargeHistoryService.getAdjustmentHistory(any(), any()))
+      .thenReturn(adjustmentHistoryModel)
+
+    mockGetReviewAndReconcileCredit(PaymentOnAccountOneReviewAndReconcileCredit)
 
     mockBothIncomeSources()
     if (isAgent) {
@@ -336,10 +339,26 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 
       "display the Review & Reconcile credit for POA1 when present in the user's financial details" in new Setup(
         financialDetailsModelWithPoaOneAndTwoWithRarCredits(), enableReviewAndReconcile = true) {
+        enable(ChargeHistory)
         val result: Future[Result] = controller.show(testTaxYear, id1040000125)(fakeRequestWithNinoAndOrigin("PTA"))
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.getElementById("rar-charge-link").text() shouldBe "First payment on account: credit from your tax return"
+        JsoupParse(result).toHtmlDocument.getElementById("rar-charge-link").attr("href") shouldBe
+          RepaymentHistoryUtils.getPoaChargeLinkUrl(isAgent = false, testTaxYear, "transactionId")
+        JsoupParse(result).toHtmlDocument.getElementById("rar-total-amount").text() shouldBe "£1,000.00"
+        JsoupParse(result).toHtmlDocument.getElementById("rar-due-date").text() shouldBe "1 Jan 2018"
+      }
+
+      "display the Review & Reconcile credit for POA2 when present in the user's financial details" in new Setup(
+        financialDetailsModelWithPoaOneAndTwoWithRarCredits(), enableReviewAndReconcile = true) {
+        enable(ChargeHistory)
+        val result: Future[Result] = controller.show(testTaxYear, id1040000126)(fakeRequestWithNinoAndOrigin("PTA"))
+
+        mockGetReviewAndReconcileCredit(PaymentOnAccountTwoReviewAndReconcileCredit)
+
+        status(result) shouldBe Status.OK
+        JsoupParse(result).toHtmlDocument.getElementById("rar-charge-link").text() shouldBe "Second payment on account: credit from your tax return"
         JsoupParse(result).toHtmlDocument.getElementById("rar-charge-link").attr("href") shouldBe
           RepaymentHistoryUtils.getPoaChargeLinkUrl(isAgent = false, testTaxYear, "transactionId")
         JsoupParse(result).toHtmlDocument.getElementById("rar-total-amount").text() shouldBe "£1,000.00"
@@ -391,10 +410,23 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       financialDetailsModelWithPoaOneAndTwoWithRarCredits(), isAgent = true, enableReviewAndReconcile = true) {
       val result: Future[Result] = controller.showAgent(testTaxYear, id1040000125)(fakeRequestConfirmedClient("AB123456C"))
 
-      println(s"\n${JsoupParse(result).toHtmlDocument}\n")
-
       status(result) shouldBe Status.OK
       JsoupParse(result).toHtmlDocument.getElementById("rar-charge-link").text() shouldBe "First payment on account: credit from your tax return"
+      JsoupParse(result).toHtmlDocument.getElementById("rar-charge-link").attr("href") shouldBe
+        RepaymentHistoryUtils.getPoaChargeLinkUrl(isAgent = true, testTaxYear, "transactionId")
+      JsoupParse(result).toHtmlDocument.getElementById("rar-total-amount").text() shouldBe "£1,000.00"
+      JsoupParse(result).toHtmlDocument.getElementById("rar-due-date").text() shouldBe "1 Jan 2018"
+    }
+
+    "display the Review & Reconcile credit for POA2 when present in the user's financial details" in new Setup(
+      financialDetailsModelWithPoaOneAndTwoWithRarCredits(), isAgent = true, enableReviewAndReconcile = true) {
+
+      mockGetReviewAndReconcileCredit(PaymentOnAccountTwoReviewAndReconcileCredit)
+
+      val result: Future[Result] = controller.showAgent(testTaxYear, id1040000126)(fakeRequestConfirmedClient("AB123456C"))
+
+      status(result) shouldBe Status.OK
+      JsoupParse(result).toHtmlDocument.getElementById("rar-charge-link").text() shouldBe "Second payment on account: credit from your tax return"
       JsoupParse(result).toHtmlDocument.getElementById("rar-charge-link").attr("href") shouldBe
         RepaymentHistoryUtils.getPoaChargeLinkUrl(isAgent = true, testTaxYear, "transactionId")
       JsoupParse(result).toHtmlDocument.getElementById("rar-total-amount").text() shouldBe "£1,000.00"
