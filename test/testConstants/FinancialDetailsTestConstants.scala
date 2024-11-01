@@ -586,6 +586,22 @@ object FinancialDetailsTestConstants {
       )
     )
 
+  def financialDetailsModelWithPoaOneAndTwoWithRarCredits() =
+    FinancialDetailsModel(
+      balanceDetails = balanceDetails,
+      documentDetails = List(
+        documentDetailModel(transactionId = id1040000125, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, latePaymentInterestAmount = None, documentDueDate = Some(LocalDate.of(2020,1,1))),
+        documentDetailModel(transactionId = id1040000123, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, latePaymentInterestAmount = None, documentDueDate = Some(LocalDate.of(2020,1,1))),
+        documentDetailModel(transactionId = id1040000124, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, latePaymentInterestAmount = None, documentDueDate = Some(LocalDate.of(2020,1,1))),
+      ),
+      financialDetails = List(
+        financialDetail(transactionId = Some(id1040000125), taxYear = testTaxYear, mainTransaction = "4920"),
+        financialDetail(transactionId = Some(id1040000123), taxYear = testTaxYear, mainTransaction = "4912"),
+        financialDetail(transactionId = Some(id1040000124), taxYear = testTaxYear, mainTransaction = "4914")
+      )
+    )
+
+
   def financialDetailsModelWithMFADebit() =
     FinancialDetailsModel(
       balanceDetails = balanceDetails,

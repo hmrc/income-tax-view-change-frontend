@@ -426,7 +426,7 @@
                     <tr>
                         <td class="govuk-table__cell govuk-!-width-one-quarter" id="rar-due-date">@{credit.documentDueDate.toLongDateShort}</td>
                         <td class="govuk-table__cell">
-                            <a class="govuk-link" id="rar-charge-link" href="@RepaymentHistoryUtils.getPoaChargeLinkUrl(viewModel.isAgent, credit.taxYear, credit.transactionId)">
+                            <a class="govuk-link" id="rar-charge-link" href="@RepaymentHistoryUtils.getPoaChargeLinkUrl(viewModel.isAgent, credit.taxYear.endYear, credit.transactionId)">
                                 @messages(credit.messageKey)
                             </a>
                         </td>

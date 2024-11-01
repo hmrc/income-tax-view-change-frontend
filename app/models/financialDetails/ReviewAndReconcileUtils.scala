@@ -30,6 +30,12 @@ object ReviewAndReconcileUtils {
   def isReviewAndReconcilePoaTwo(mainTransaction: Option[String]): Boolean =
     mainTransaction.contains(poaTwoReviewAndReconcileDebit)
 
+  def isReconcilePoaOneCredit(mainTransaction: Option[String]): Boolean =
+    mainTransaction.contains(poaOneReviewAndReconcileCredit)
+
+  def isReconcilePoaTwoCredit(mainTransaction: Option[String]): Boolean =
+    mainTransaction.contains(poaTwoReviewAndReconcileCredit)
+
   def getCreditKey(mainTransaction: Option[String]): Either[ReviewAndReconcileMessageKeyError, String] =
     mainTransaction match {
       case Some(`poaOneReviewAndReconcileCredit`) => Right("POA1RR-credit")

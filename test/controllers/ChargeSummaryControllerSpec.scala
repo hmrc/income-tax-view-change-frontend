@@ -27,13 +27,14 @@ import mocks.services.MockIncomeSourceDetailsService
 import models.admin.{ChargeHistory, ReviewAndReconcilePoa}
 import models.chargeHistory._
 import models.financialDetails.{FinancialDetail, FinancialDetailsResponseModel, ReviewAndReconcileCredit}
+import models.repaymentHistory.RepaymentHistoryUtils
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import services.{ChargeHistoryService, DateService, FinancialDetailsService}
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testTaxYear}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testTaxYear}
 import testConstants.ChargeConstants
 import testConstants.FinancialDetailsTestConstants._
 import testUtils.TestSupport
@@ -314,19 +315,16 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       }
 
       "display the Review & Reconcile credit for POA1 when present in the user's financial details" in new Setup(
-        financialDetailsModelWithPoaOneAndTwoWithRarCredits()) {
-        enable(ReviewAndReconcilePoa)
+        financialDetailsModelWithPoaOneAndTwoWithRarCredits(), enableReviewAndReconcile = true) {
         val result: Future[Result] = controller.show(testTaxYear, id1040000125)(fakeRequestWithNinoAndOrigin("PTA"))
-
-        println(s"\n${JsoupParse(result).toHtmlDocument}\n")
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.getElementById("rar-charge-link").text() shouldBe "First payment on account: credit from your tax return"
-        JsoupParse(result).toHtmlDocument.getElementById("rar-charge-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(testTaxYear, id1040000123).url
-        JsoupParse(result).toHtmlDocument.getElementById("rar-total-amount").text() shouldBe "£1,400.00"
-        JsoupParse(result).toHtmlDocument.getElementById("rar-due-date").text() shouldBe LocalDate.of(2018, 3, 29).toLongDateShort
+        JsoupParse(result).toHtmlDocument.getElementById("rar-charge-link").attr("href") shouldBe
+          RepaymentHistoryUtils.getPoaChargeLinkUrl(isAgent = false, testTaxYear, "transactionId")
+        JsoupParse(result).toHtmlDocument.getElementById("rar-total-amount").text() shouldBe "£1,000.00"
+        JsoupParse(result).toHtmlDocument.getElementById("rar-due-date").text() shouldBe "1 Jan 2018"
       }
-
     }
 
     "load an error page" when {
@@ -368,6 +366,18 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
   }
 
   "The ChargeSummaryController for Agents" should {
+
+    "display the Review & Reconcile credit for POA1 when present in the user's financial details" in new Setup(
+      financialDetailsModelWithPoaOneAndTwoWithRarCredits(), isAgent = true, enableReviewAndReconcile = true) {
+      val result: Future[Result] = controller.showAgent(testTaxYear, id1040000125)(fakeRequestConfirmedClient("AB123456C"))
+
+      status(result) shouldBe Status.OK
+      JsoupParse(result).toHtmlDocument.getElementById("rar-charge-link").text() shouldBe "First payment on account: credit from your tax return"
+      JsoupParse(result).toHtmlDocument.getElementById("rar-charge-link").attr("href") shouldBe
+        RepaymentHistoryUtils.getPoaChargeLinkUrl(isAgent = true, testTaxYear, "transactionId")
+      JsoupParse(result).toHtmlDocument.getElementById("rar-total-amount").text() shouldBe "£1,000.00"
+      JsoupParse(result).toHtmlDocument.getElementById("rar-due-date").text() shouldBe "1 Jan 2018"
+    }
 
     "hide payment processing info" in new Setup(financialDetailsReviewAndReconcile, isAgent = true) {
       disable(ChargeHistory)

@@ -16,9 +16,11 @@
 
 package models.financialDetails
 
+import models.incomeSourceDetails.TaxYear
+
 import java.time.LocalDate
 
-case class ReviewAndReconcileCredit(taxYear: Int,
+case class ReviewAndReconcileCredit(taxYear: TaxYear,
                                     transactionId: String,
                                     documentDueDate: LocalDate,
                                     messageKey: String,

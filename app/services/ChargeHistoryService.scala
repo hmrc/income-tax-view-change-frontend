@@ -17,11 +17,13 @@
 package services
 
 import auth.MtdItUser
+import cats.implicits.catsSyntaxOptionId
 import connectors.ChargeHistoryConnector
 import enums.CreateReversalReason
 import exceptions.MissingFieldException
 import models.chargeHistory._
-import models.financialDetails.{ChargeItem, DocumentDetail, FinancialDetailsModel, ReviewAndReconcileCredit, ReviewAndReconcileUtils}
+import models.financialDetails.ChargeItem.fromDocumentPair
+import models.financialDetails.{ChargeItem, DocumentDetail, FinancialDetailsModel, PaymentOnAccountOne, PaymentOnAccountTwo, ReviewAndReconcileCredit, ReviewAndReconcileUtils}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -73,28 +75,50 @@ class ChargeHistoryService @Inject()(chargeHistoryConnector: ChargeHistoryConnec
                                   chargeDetailsforTaxYear: FinancialDetailsModel,
                                   reviewAndReconcileEnabled: Boolean): Option[ReviewAndReconcileCredit] = {
 
-    if (reviewAndReconcileEnabled)
-      chargeDetailsforTaxYear
-        .getPairedDocumentDetails()
-        .collectFirst {
-          case (documentDetail, financialDetail) if
-            (chargeItem.isPaymentOnAccountOne && financialDetail.isReconcilePoaOneCredit) ||
-            (chargeItem.isPaymentOnAccountTwo && financialDetail.isReconcilePoaTwoCredit) =>
-
-            ReviewAndReconcileCredit(
-              transactionId = documentDetail.transactionId,
-              taxYear = documentDetail.taxYear,
-              documentDueDate = documentDetail.documentDueDate.getOrElse(throw MissingFieldException("documentDueDate")),
-              messageKey = s"chargeSummary.chargeHistory.${
-                ReviewAndReconcileUtils.getCreditKey(financialDetail.mainTransaction)
-                  .fold(
-                    e => throw new Exception(e.message),
-                    valid => valid
-                  )
-              }",
-              totalAmount = documentDetail.originalAmount.abs
-            )
-        }
-    else None
+    if (reviewAndReconcileEnabled) {
+      if (chargeItem.isPaymentOnAccountOne) {
+        (for {
+          fdForRarPoaOneCredit <- chargeDetailsforTaxYear.financialDetails.filter(_.isReconcilePoaOneCredit && reviewAndReconcileEnabled)
+          transactionId <- fdForRarPoaOneCredit.transactionId
+          ddForRarPoaOneCredit <- chargeDetailsforTaxYear.documentDetails.find(_.transactionId == transactionId)
+          reviewAndReconcileChargeItem = fromDocumentPair(ddForRarPoaOneCredit, List(fdForRarPoaOneCredit), codingOut = true, reviewAndReconcileEnabled)
+        } yield {
+          ReviewAndReconcileCredit(
+            transactionId = reviewAndReconcileChargeItem.transactionId,
+            taxYear = reviewAndReconcileChargeItem.taxYear,
+            documentDueDate = ddForRarPoaOneCredit.documentDueDate.getOrElse(throw MissingFieldException("documentDueDate")),
+            messageKey = s"chargeSummary.chargeHistory.${
+              ReviewAndReconcileUtils.getCreditKey(fdForRarPoaOneCredit.mainTransaction)
+                .fold(
+                  e => throw new Exception(e.message),
+                  valid => valid
+                )
+            }",
+            totalAmount = chargeItem.originalAmount.abs
+          )
+        }).headOption
+      } else if (chargeItem.isPaymentOnAccountTwo) {
+        (for {
+          fdForRarPoaTwoCredit        <- chargeDetailsforTaxYear.financialDetails.filter(_.isReconcilePoaTwoCredit && reviewAndReconcileEnabled)
+          transactionId               <- fdForRarPoaTwoCredit.transactionId
+          ddForRarPoaTwoCredit        <- chargeDetailsforTaxYear.documentDetails.find(_.transactionId == transactionId)
+          reviewAndReconcileChargeItem = fromDocumentPair(ddForRarPoaTwoCredit, List(fdForRarPoaTwoCredit), codingOut = true, reviewAndReconcileEnabled)
+        } yield {
+          ReviewAndReconcileCredit(
+            transactionId = reviewAndReconcileChargeItem.transactionId,
+            taxYear = reviewAndReconcileChargeItem.taxYear,
+            documentDueDate = ddForRarPoaTwoCredit.documentDueDate.getOrElse(throw MissingFieldException("documentDueDate")),
+            messageKey = s"chargeSummary.chargeHistory.${
+              ReviewAndReconcileUtils.getCreditKey(fdForRarPoaTwoCredit.mainTransaction)
+                .fold(
+                  e => throw new Exception(e.message),
+                  valid => valid
+                )
+            }",
+            totalAmount = chargeItem.originalAmount.abs
+          )
+        }).headOption
+      } else None
+    } else None
   }
 }
