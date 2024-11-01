@@ -17,13 +17,10 @@
 package services
 
 import auth.MtdItUser
-import cats.implicits.catsSyntaxOptionId
 import connectors.ChargeHistoryConnector
 import enums.CreateReversalReason
-import exceptions.MissingFieldException
 import models.chargeHistory._
-import models.financialDetails.ChargeItem.fromDocumentPair
-import models.financialDetails.{ChargeItem, DocumentDetail, FinancialDetail, FinancialDetailsModel, PaymentOnAccountOne, PaymentOnAccountTwo, ReviewAndReconcileUtils}
+import models.financialDetails.{ChargeItem, DocumentDetail, FinancialDetail, FinancialDetailsModel, PaymentOnAccountOne, PaymentOnAccountTwo}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject

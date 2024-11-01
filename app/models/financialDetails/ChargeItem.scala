@@ -46,12 +46,6 @@ case class ChargeItem (
   def isOverdue()(implicit dateService: DateServiceInterface): Boolean =
     dueDate.exists(_ isBefore dateService.getCurrentDate)
 
-  def isPaymentOnAccountOne: Boolean = transactionType == PaymentOnAccountOne
-
-  def isPaymentOnAccountTwo: Boolean = transactionType == PaymentOnAccountTwo
-
-  def isPaymentOnAccount: Boolean = isPaymentOnAccountOne || isPaymentOnAccountTwo
-
   val isCredit = originalAmount < 0
 
   val hasLpiWithDunningLock: Boolean =
@@ -72,8 +66,7 @@ case class ChargeItem (
     }
   }
 
-  def getDueDate: LocalDate =
-    dueDate.getOrElse(throw MissingFieldException("documentDueDate"))
+  def getDueDate: LocalDate = dueDate.getOrElse(throw MissingFieldException("documentDueDate"))
 
   def isPaid: Boolean = outstandingAmount match {
     case amount if amount == 0 => true
