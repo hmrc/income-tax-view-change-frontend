@@ -59,7 +59,7 @@ object FeatureSwitchName {
     case name if name == JsString(ReviewAndReconcilePoa.name) =>
       JsSuccess(ReviewAndReconcilePoa)
     case _ =>
-      Logger("application").info(s"Invalid feature switch Json found")
+      Logger("application").error(s"Invalid feature switch Json found")
       JsSuccess(InvalidFS)
   }
 
