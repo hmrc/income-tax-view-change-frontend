@@ -290,6 +290,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
     "user has valid POA charges" should {
       "render all PoA charges (that aren't coded out) in the charges table" in {
         enable(AdjustPaymentsOnAccount)
+        enable(FilterCodedOutPoas)
         mockSingleBusinessIncomeSource()
         mockCalculationSuccessfulNew(testMtditid)
         mockFinancialDetailsSuccess(financialDetailsModel(amountCodedOut = None))
@@ -304,8 +305,9 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         status(result) shouldBe OK
         contentAsString(result).contains("First payment on account") shouldBe true
       }
-      "not render PoA charges if they are coded out in the charges table" in {
+      "not render PoA charges if they are coded out and FS enabled in the charges table" in {
         enable(AdjustPaymentsOnAccount)
+        enable(FilterCodedOutPoas)
         mockSingleBusinessIncomeSource()
         mockCalculationSuccessfulNew(testMtditid)
         mockFinancialDetailsSuccess(financialDetailsModel(amountCodedOut = Some(100)))
@@ -319,6 +321,22 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
 
         status(result) shouldBe OK
         contentAsString(result).contains("First payment on account") shouldBe false
+      }
+      "render PoA charges if they are coded out and FS disabled in the charges table" in {
+        enable(AdjustPaymentsOnAccount)
+        mockSingleBusinessIncomeSource()
+        mockCalculationSuccessfulNew(testMtditid)
+        mockFinancialDetailsSuccess(financialDetailsModel(amountCodedOut = Some(100)))
+        mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+          toDate = LocalDate.of(testTaxYear, 4, 5))(
+          response = testObligtionsModel
+        )
+        setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
+
+        val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
+
+        status(result) shouldBe OK
+        contentAsString(result).contains("First payment on account") shouldBe true
       }
     }
     "user has Review and Reconcile debit charges" should {

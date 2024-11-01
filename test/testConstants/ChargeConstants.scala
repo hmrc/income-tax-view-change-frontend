@@ -285,6 +285,43 @@ trait ChargeConstants {
     dunningLock = false
   )
 
+  val poa1WithCodedOut = ChargeItem(
+    transactionId = id1040000123,
+    taxYear = TaxYear.forYearEnd(currentYear.toInt),
+    transactionType = PaymentOnAccountOne,
+    subTransactionType = None,
+    outstandingAmount = 1000,
+    originalAmount = 43.21,
+    documentDate = LocalDate.of(2018, 3, 29),
+    dueDate = Some(fixedDate.plusDays(30)),
+    latePaymentInterestAmount = None,
+    interestOutstandingAmount = None,
+    interestFromDate = Some( LocalDate.of(2018, 3, 29)),
+    interestEndDate = Some(LocalDate.of(2018, 3, 29)),
+    lpiWithDunningLock = Some(100),
+    interestRate = Some(100),
+    amountCodedOut = Some(30),
+    dunningLock = false
+  )
+  val poa2WithCodedOut = ChargeItem(
+    transactionId = id1040000124,
+    taxYear = TaxYear.forYearEnd(currentYear.toInt),
+    transactionType = PaymentOnAccountTwo,
+    subTransactionType = None,
+    outstandingAmount = 400,
+    originalAmount = 12.34,
+    documentDate = LocalDate.of(2018, 3, 29),
+    dueDate = Some(fixedDate.minusDays(1)),
+    latePaymentInterestAmount = None,
+    interestOutstandingAmount = None,
+    interestFromDate = Some( LocalDate.of(2018, 3, 29)),
+    interestEndDate = Some(LocalDate.of(2018, 3, 29)),
+    lpiWithDunningLock = Some(100),
+    interestRate = Some(100),
+    amountCodedOut = Some(70),
+    dunningLock = false
+  )
+
   val poa2 = ChargeItem(
       transactionId = id1040000124,
       taxYear = TaxYear.forYearEnd(currentYear.toInt),
