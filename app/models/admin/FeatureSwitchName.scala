@@ -47,8 +47,6 @@ object FeatureSwitchName {
       JsSuccess(PaymentHistoryRefunds)
     case name if name == JsString(CalendarQuarterTypes.name) =>
       JsSuccess(CalendarQuarterTypes)
-    case name if name == JsString(IncomeSourcesNewJourney.name) =>
-      JsSuccess(IncomeSourcesNewJourney)
     case name if name == JsString(IncomeSources.name) =>
       JsSuccess(IncomeSources)
     case name if name == JsString(OptOut.name) =>
