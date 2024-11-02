@@ -112,6 +112,26 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
   }
 
+  def reviewAndReconcileCreditChargeItem(transactionType: TransactionType): Option[ChargeItem] =
+    Some(ChargeItem(
+      transactionId = "some-id",
+      taxYear = TaxYear(2019, 2020),
+      transactionType = transactionType,
+      subTransactionType = None,
+      documentDate = LocalDate.of(2018, 8, 6),
+      dueDate = Some(LocalDate.of(2018, 8, 6)),
+      originalAmount = 1000,
+      outstandingAmount = 0,
+      interestOutstandingAmount = None,
+      latePaymentInterestAmount = None,
+      interestFromDate = None,
+      interestEndDate = None,
+      interestRate = None,
+      lpiWithDunningLock = None,
+      amountCodedOut = None,
+      dunningLock = false
+    ))
+
   def paymentsForCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal, clearingSAPDocument: Option[String], clearingId: Option[String]): PaymentHistoryAllocations =
     PaymentHistoryAllocations(
       allocations = List(PaymentHistoryAllocation(
@@ -366,24 +386,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
     "render the row for the charge" should {
       "charge is a Review and Reconcile credit for Payment on Account 1" in new TestSetup(
-        reviewAndReconcileCredit = Some(ChargeItem(
-          transactionId = "some-id",
-          taxYear = TaxYear(2019, 2020),
-          transactionType = PaymentOnAccountOneReviewAndReconcileCredit,
-          subTransactionType = None,
-          documentDate = LocalDate.of(2018, 8, 6),
-          dueDate = Some(LocalDate.of(2018, 8, 6)),
-          originalAmount = 1000,
-          outstandingAmount = 0,
-          interestOutstandingAmount = None,
-          latePaymentInterestAmount = None,
-          interestFromDate = None,
-          interestEndDate = None,
-          interestRate = None,
-          lpiWithDunningLock = None,
-          amountCodedOut = None,
-          dunningLock = false
-        ))
+        reviewAndReconcileCredit = reviewAndReconcileCreditChargeItem(PaymentOnAccountOneReviewAndReconcileCredit)
       ) {
         document.selectById("rar-due-date").text() shouldBe("6 Aug 2018")
         document.selectById("rar-charge-link").text() shouldBe "First payment on account: credit from your tax return"
@@ -391,24 +394,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         document.selectById("rar-total-amount").text() shouldBe "£1,000.00"
       }
       "charge is a Review and Reconcile credit for Payment on Account 2" in new TestSetup(
-        reviewAndReconcileCredit = Some(ChargeItem(
-          transactionId = "some-id",
-          taxYear = TaxYear(2019, 2020),
-          transactionType = PaymentOnAccountTwoReviewAndReconcileCredit,
-          subTransactionType = None,
-          documentDate = LocalDate.of(2018, 8, 6),
-          dueDate = Some(LocalDate.of(2018, 8, 6)),
-          originalAmount = 1000,
-          outstandingAmount = 0,
-          interestOutstandingAmount = None,
-          latePaymentInterestAmount = None,
-          interestFromDate = None,
-          interestEndDate = None,
-          interestRate = None,
-          lpiWithDunningLock = None,
-          amountCodedOut = None,
-          dunningLock = false
-        ))
+        reviewAndReconcileCredit = reviewAndReconcileCreditChargeItem(PaymentOnAccountTwoReviewAndReconcileCredit)
       ) {
         document.selectById("rar-due-date").text() shouldBe ("6 Aug 2018")
         document.selectById("rar-charge-link").text() shouldBe "Second payment on account: credit from your tax return"
@@ -1293,24 +1279,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     "render the row for the charge" should {
       "charge is a Review and Reconcile credit for Payment on Account 1" in new TestSetup(
         isAgent = true,
-        reviewAndReconcileCredit = Some(ChargeItem(
-          transactionId = "some-id",
-          taxYear = TaxYear(2019, 2020),
-          transactionType = PaymentOnAccountOneReviewAndReconcileCredit,
-          subTransactionType = None,
-          documentDate = LocalDate.of(2018, 8, 6),
-          dueDate = Some(LocalDate.of(2018, 8, 6)),
-          originalAmount = 1000,
-          outstandingAmount = 0,
-          interestOutstandingAmount = None,
-          latePaymentInterestAmount = None,
-          interestFromDate = None,
-          interestEndDate = None,
-          interestRate = None,
-          lpiWithDunningLock = None,
-          amountCodedOut = None,
-          dunningLock = false
-        ))
+        reviewAndReconcileCredit = reviewAndReconcileCreditChargeItem(PaymentOnAccountOneReviewAndReconcileCredit)
       ) {
         document.selectById("rar-due-date").text() shouldBe ("6 Aug 2018")
         document.selectById("rar-charge-link").text() shouldBe "First payment on account: credit from your tax return"
@@ -1319,24 +1288,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       }
       "charge is a Review and Reconcile credit for Payment on Account 2" in new TestSetup(
         isAgent = true,
-        reviewAndReconcileCredit = Some(ChargeItem(
-          transactionId = "some-id",
-          taxYear = TaxYear(2019, 2020),
-          transactionType = PaymentOnAccountTwoReviewAndReconcileCredit,
-          subTransactionType = None,
-          documentDate = LocalDate.of(2018, 8, 6),
-          dueDate = Some(LocalDate.of(2018, 8, 6)),
-          originalAmount = 1000,
-          outstandingAmount = 0,
-          interestOutstandingAmount = None,
-          latePaymentInterestAmount = None,
-          interestFromDate = None,
-          interestEndDate = None,
-          interestRate = None,
-          lpiWithDunningLock = None,
-          amountCodedOut = None,
-          dunningLock = false
-        ))
+        reviewAndReconcileCredit = reviewAndReconcileCreditChargeItem(PaymentOnAccountTwoReviewAndReconcileCredit)
       ) {
         document.selectById("rar-due-date").text() shouldBe ("6 Aug 2018")
         document.selectById("rar-charge-link").text() shouldBe "Second payment on account: credit from your tax return"
