@@ -25,11 +25,9 @@ import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargeHist
 import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
-import models.repaymentHistory.RepaymentHistoryUtils
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
-import org.mockito.Mockito.mock
 import org.scalatest.Assertion
 import play.twirl.api.Html
 import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
@@ -39,7 +37,6 @@ import testUtils.ViewSpec
 import views.html.ChargeSummary
 
 import java.time.LocalDate
-import scala.util.Try
 
 class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeConstants {
 
