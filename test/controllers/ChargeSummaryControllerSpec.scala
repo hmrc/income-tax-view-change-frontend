@@ -191,7 +191,14 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         JsoupParse(result).toHtmlDocument.getElementById("charge-history-h3").text() shouldBe paymentHistoryHeadingForRARCharge
         JsoupParse(result).toHtmlDocument.getElementById("poa1-link").attr("href") shouldBe
           controllers.routes.ChargeSummaryController.show(testTaxYear, id1040000125).url
-        JsoupParse(result).toHtmlDocument.getElementById("payment-history-table").text() should include(descriptionTextForRAR1)
+
+        JsoupParse(result).toHtmlDocument
+          .getElementById("payment-history-table")
+          .getElementsByClass("govuk-table__body")
+          .first()
+          .getElementsByClass("govuk-table__cell")
+          .get(1)
+          .text() shouldBe descriptionTextForRAR1
       }
 
       "provided with an id associated to a Review & Reconcile Debit Charge for POA2" in new Setup(testFinancialDetailsModelWithReviewAndReconcileAndPoas) {
@@ -210,7 +217,13 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         JsoupParse(result).toHtmlDocument.getElementById("charge-history-h3").text() shouldBe paymentHistoryHeadingForRARCharge
         JsoupParse(result).toHtmlDocument.getElementById("poa2-link").attr("href") shouldBe
           controllers.routes.ChargeSummaryController.show(testTaxYear, id1040000126).url
-        JsoupParse(result).toHtmlDocument.getElementById("payment-history-table").text() should include(descriptionTextForRAR2)
+        JsoupParse(result).toHtmlDocument
+          .getElementById("payment-history-table")
+          .getElementsByClass("govuk-table__body")
+          .first()
+          .getElementsByClass("govuk-table__cell")
+          .get(1)
+          .text() shouldBe descriptionTextForRAR2
       }
 
       "provided with an id associated to interest on a Review & Reconcile Debit Charge for POA" in new Setup(testFinancialDetailsModelWithReviewAndReconcileInterest) {
@@ -488,8 +501,15 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         JsoupParse(result).toHtmlDocument.getElementById("charge-history-h3").text() shouldBe paymentHistoryHeadingForRARCharge
         JsoupParse(result).toHtmlDocument.getElementById("poa1-link").attr("href") shouldBe
           controllers.routes.ChargeSummaryController.showAgent(testTaxYear, id1040000125).url
-        JsoupParse(result).toHtmlDocument.getElementById("payment-history-table").text() should include(descriptionTextForRAR1)
+        JsoupParse(result).toHtmlDocument
+          .getElementById("payment-history-table")
+          .getElementsByClass("govuk-table__body")
+          .first()
+          .getElementsByClass("govuk-table__cell")
+          .get(1)
+          .text() shouldBe descriptionTextForRAR1
       }
+    }
 
       "provided with an id associated to a Review and Reconcile Debit Charge for POA2" in new Setup(testFinancialDetailsModelWithReviewAndReconcileAndPoas, isAgent = true) {
         enable(ChargeHistory)
@@ -507,7 +527,13 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         JsoupParse(result).toHtmlDocument.getElementById("charge-history-h3").text() shouldBe paymentHistoryHeadingForRARCharge
         JsoupParse(result).toHtmlDocument.getElementById("poa2-link").attr("href") shouldBe
           controllers.routes.ChargeSummaryController.showAgent(testTaxYear, id1040000126).url
-        JsoupParse(result).toHtmlDocument.getElementById("payment-history-table").text() should include(descriptionTextForRAR2)
+        JsoupParse(result).toHtmlDocument
+          .getElementById("payment-history-table")
+          .getElementsByClass("govuk-table__body")
+          .first()
+          .getElementsByClass("govuk-table__cell")
+          .get(1)
+          .text() shouldBe descriptionTextForRAR2
       }
 
       "provided with an id that matches a charge in the financial response" in new Setup(financialDetailsModel(), isAgent = true) {
@@ -636,5 +662,4 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
           messages("chargeSummary.hmrcAdjustment.text")
       }
     }
-  }
 }
