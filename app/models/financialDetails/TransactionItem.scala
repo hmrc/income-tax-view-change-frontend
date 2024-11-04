@@ -38,9 +38,10 @@ trait TransactionItem {
 
   def isOverdue()(implicit dateService: DateServiceInterface): Boolean
 
-  def notCodedOutPoa: Boolean = {
-    transactionType match {
-      case PaymentOnAccountOne | PaymentOnAccountTwo if amountCodedOut.getOrElse[BigDecimal](0) > 0 => false
+  def notCodedOutPoa(filterCodedOutPoasEnabled: Boolean): Boolean = {
+    (filterCodedOutPoasEnabled, transactionType) match {
+      case (false, _) => true
+      case (_, PaymentOnAccountOne | PaymentOnAccountTwo) if amountCodedOut.getOrElse[BigDecimal](0) > 0 => false
       case _ => true
     }
   }

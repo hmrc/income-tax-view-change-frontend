@@ -59,7 +59,8 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
     for {
-      whatYouOweChargesList <- whatYouOweService.getWhatYouOweChargesList(isCodingOutEnabled = true, isEnabled(ReviewAndReconcilePoa))
+      whatYouOweChargesList <- whatYouOweService.getWhatYouOweChargesList(isCodingOutEnabled = true,
+        isEnabled(ReviewAndReconcilePoa), isEnabled(FilterCodedOutPoas))
       ctaViewModel <- claimToAdjustViewModel(Nino(user.nino))
     } yield {
 
