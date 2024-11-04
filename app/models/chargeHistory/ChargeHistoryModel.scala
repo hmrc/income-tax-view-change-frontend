@@ -33,14 +33,14 @@ case class ChargeHistoryModel(taxYear: String,
                               reversalReason: String,
                               poaAdjustmentReason: Option[String]) {
 
-  val reasonCode: Either[Throwable, String] = {
+  val reasonCode: Either[Throwable, ReversalReason] = {
     if (poaAdjustmentReason.isDefined)
-      Right(AdjustmentReversalReason.value)
+      Right(AdjustmentReversalReason)
     else
       reversalReason match {
-        case "amended return" => Right(AmendedReturnReversalReason.value)
-        case "Customer Request" => Right(CustomerRequestReason.value)
-        case _ => Left(throw new Exception("Unknown reversal reason"))
+        case "amended return" => Right(AmendedReturnReversalReason)
+        case "Customer Request" => Right(CustomerRequestReason)
+        case _ => Left(new Exception())
       }
   }
 

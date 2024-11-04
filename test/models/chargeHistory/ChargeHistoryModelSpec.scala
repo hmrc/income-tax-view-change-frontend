@@ -16,7 +16,8 @@
 
 package models.chargeHistory
 
-import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, CustomerRequestReason, UnknownReversalReason}
+import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, CustomerRequestReason}
+import org.scalatest.Inside.inside
 import org.scalatest.matchers.should.Matchers
 import testUtils.UnitSpec
 
@@ -40,24 +41,25 @@ class ChargeHistoryModelSpec extends UnitSpec with Matchers {
       "the Poa adjustment reason is defined" should {
 
         "return AdjustmentReversalReason when the Poa adjustment reason is defined" in {
-          testPoaChargeHistoryModel("Reversal").reasonCode shouldBe Right(AdjustmentReversalReason.value)
+          testPoaChargeHistoryModel("Reversal").reasonCode shouldBe Right(AdjustmentReversalReason)
         }
       }
 
       "the Poa adjustment reason is not defined" should {
 
         "return AmendedReturnReversalReason when the reversal reason is 'amended return'" in {
-          testChargeHistoryModel("amended return").reasonCode shouldBe Right(AmendedReturnReversalReason.value)
+          testChargeHistoryModel("amended return").reasonCode shouldBe Right(AmendedReturnReversalReason)
         }
 
         "return CustomerRequestReason when the reversal reason is 'Customer Request'" in {
-          testChargeHistoryModel("Customer Request").reasonCode shouldBe Right(CustomerRequestReason.value)
+          testChargeHistoryModel("Customer Request").reasonCode shouldBe Right(CustomerRequestReason)
         }
 
-        "return an exception with the message 'Unknown reversal reason' when the reversal reason is unknown" in {
-          val exception = intercept[Exception](testChargeHistoryModel("Unknown").reasonCode)
-          exception shouldBe an[Exception]
-          exception.getMessage shouldBe "Unknown reversal reason"
+        "return an exception when the reversal reason is unknown" in {
+          val exception = testChargeHistoryModel("Unknown").reasonCode
+          inside(exception) { case Left(e) =>
+            e shouldBe an[Exception]
+          }
         }
       }
     }
