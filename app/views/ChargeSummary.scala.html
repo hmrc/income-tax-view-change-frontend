@@ -25,6 +25,7 @@
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
 @import views.html.partials.chargeSummary._
+@import models.repaymentHistory.RepaymentHistoryUtils
 
 @import java.time.LocalDate
 
@@ -418,6 +419,18 @@
                         <td class="govuk-table__cell govuk-!-width-one-quarter">@{viewModel.chargeItem.documentDate.toLongDateShort}</td>
                         <td class="govuk-table__cell">@messages("chargeSummary.codingOutPayHistoryAmount", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)</td>
                         <td class="govuk-table__cell">@{viewModel.chargeItem.originalAmount.toCurrency}</td>
+                    </tr>
+                }
+
+                @viewModel.reviewAndReconcileCredit.map { charge =>
+                    <tr>
+                        <td class="govuk-table__cell govuk-!-width-one-quarter" id="rar-due-date">@{charge.getDueDate.toLongDateShort}</td>
+                        <td class="govuk-table__cell">
+                            <a class="govuk-link" id="rar-charge-link" href="@RepaymentHistoryUtils.getPoaChargeLinkUrl(viewModel.isAgent, charge.taxYear.endYear, charge.transactionId)">
+                                @messages(s"chargeSummary.chargeHistory.${charge.transactionType.key}")
+                            </a>
+                        </td>
+                        <td class="govuk-table__cell" id="rar-total-amount">@{charge.originalAmount.abs.toCurrency}</td>
                     </tr>
                 }
 
