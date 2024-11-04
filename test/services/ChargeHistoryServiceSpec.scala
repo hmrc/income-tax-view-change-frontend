@@ -106,7 +106,7 @@ class ChargeHistoryServiceSpec extends TestSupport with MockChargeHistoryConnect
     "return the adjustments in the correct list" when {
       "there is no charge history" in {
         val desiredAdjustments = AdjustmentHistoryModel(
-          creationEvent = AdjustmentModel(2500, Some(LocalDate.of(2024, 1, 10)), CreateReversalReason),
+          creationEvent = AdjustmentModel(2500, Some(LocalDate.of(2024, 1, 10)), CreateReversalReason.value),
           adjustments = List.empty
         )
         val res = TestChargeHistoryService.getAdjustmentHistory(Nil, unchangedDocumentDetail)
@@ -114,11 +114,11 @@ class ChargeHistoryServiceSpec extends TestSupport with MockChargeHistoryConnect
       }
       "there is a charge history" in {
         val desiredAdjustments = AdjustmentHistoryModel(
-          creationEvent = AdjustmentModel(2500, Some(LocalDate.of(2024, 2, 10)), CreateReversalReason),
+          creationEvent = AdjustmentModel(2500, Some(LocalDate.of(2024, 2, 10)), CreateReversalReason.value),
           adjustments = List(
-            AdjustmentModel(2000, Some(LocalDate.of(2024, 2, 10)), AdjustmentReversalReason),
-            AdjustmentModel(2300, Some(LocalDate.of(2024, 7, 15)), AdjustmentReversalReason),
-            AdjustmentModel(2200, Some(LocalDate.of(2024, 10, 20)), AdjustmentReversalReason),
+            AdjustmentModel(2000, Some(LocalDate.of(2024, 2, 10)), AdjustmentReversalReason.value),
+            AdjustmentModel(2300, Some(LocalDate.of(2024, 7, 15)), AdjustmentReversalReason.value),
+            AdjustmentModel(2200, Some(LocalDate.of(2024, 10, 20)), AdjustmentReversalReason.value),
           )
         )
 
@@ -127,10 +127,10 @@ class ChargeHistoryServiceSpec extends TestSupport with MockChargeHistoryConnect
       }
       "there is a charge history and charge history entries are not in chronological order" in {
         val desiredAdjustments = AdjustmentHistoryModel(
-          creationEvent = AdjustmentModel(2500, Some(LocalDate.of(2024, 2, 10)), CreateReversalReason),
+          creationEvent = AdjustmentModel(2500, Some(LocalDate.of(2024, 2, 10)), CreateReversalReason.value),
           adjustments = List(
-            AdjustmentModel(2000, Some(LocalDate.of(2024, 2, 10)), AdjustmentReversalReason),
-            AdjustmentModel(2200, Some(LocalDate.of(2024, 3, 15)), AdjustmentReversalReason)
+            AdjustmentModel(2000, Some(LocalDate.of(2024, 2, 10)), AdjustmentReversalReason.value),
+            AdjustmentModel(2200, Some(LocalDate.of(2024, 3, 15)), AdjustmentReversalReason.value)
           )
         )
 
@@ -236,11 +236,11 @@ class ChargeHistoryServiceSpec extends TestSupport with MockChargeHistoryConnect
       }
       "there is a charge history including adjustments for tax return amendments" in {
         val desiredAdjustments = AdjustmentHistoryModel(
-          creationEvent = AdjustmentModel(2500, Some(LocalDate.of(2024, 1, 15)), CreateReversalReason),
+          creationEvent = AdjustmentModel(2500, Some(LocalDate.of(2024, 1, 15)), CreateReversalReason.value),
           adjustments = List(
-            AdjustmentModel(2000, Some(LocalDate.of(2024, 1, 15)), AmendedReturnReversalReason),
-            AdjustmentModel(2300, Some(LocalDate.of(2024, 2, 10)), AdjustmentReversalReason),
-            AdjustmentModel(2200, Some(LocalDate.of(2024, 3, 15)), AdjustmentReversalReason),
+            AdjustmentModel(2000, Some(LocalDate.of(2024, 1, 15)), AmendedReturnReversalReason.value),
+            AdjustmentModel(2300, Some(LocalDate.of(2024, 2, 10)), AdjustmentReversalReason.value),
+            AdjustmentModel(2200, Some(LocalDate.of(2024, 3, 15)), AdjustmentReversalReason.value),
           )
         )
 

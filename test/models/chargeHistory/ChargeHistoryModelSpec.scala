@@ -35,24 +35,30 @@ class ChargeHistoryModelSpec extends UnitSpec with Matchers {
 
   "chargeHistoryModel" when {
 
-    "calling .reasonCode" should {
+    "calling .reasonCode" when {
 
-      "return a valid message key for a poa adjustment" in {
-        testPoaChargeHistoryModel("Reversal").reasonCode shouldBe Right(AdjustmentReversalReason.value)
+      "the Poa adjustment reason is defined" should {
+
+        "return AdjustmentReversalReason when the Poa adjustment reason is defined" in {
+          testPoaChargeHistoryModel("Reversal").reasonCode shouldBe Right(AdjustmentReversalReason.value)
+        }
       }
 
-      "return a valid message key for an amended reversal" in {
-        testChargeHistoryModel("amended return").reasonCode shouldBe Right(AmendedReturnReversalReason.value)
-      }
+      "the Poa adjustment reason is not defined" should {
 
-      "return a valid message key for a customer requested reversal" in {
-        testChargeHistoryModel("Customer Request").reasonCode shouldBe Right(CustomerRequestReason.value)
-      }
+        "return AmendedReturnReversalReason when the reversal reason is 'amended return'" in {
+          testChargeHistoryModel("amended return").reasonCode shouldBe Right(AmendedReturnReversalReason.value)
+        }
 
-      "return an exception and message for an unknown message key" in {
-        val exception = intercept[Exception](testChargeHistoryModel("Unknown").reasonCode)
-        exception shouldBe an[Exception]
-        exception.getMessage shouldBe "Unknown reversal reason"
+        "return CustomerRequestReason when the reversal reason is 'Customer Request'" in {
+          testChargeHistoryModel("Customer Request").reasonCode shouldBe Right(CustomerRequestReason.value)
+        }
+
+        "return an exception with the message 'Unknown reversal reason' when the reversal reason is unknown" in {
+          val exception = intercept[Exception](testChargeHistoryModel("Unknown").reasonCode)
+          exception shouldBe an[Exception]
+          exception.getMessage shouldBe "Unknown reversal reason"
+        }
       }
     }
   }
