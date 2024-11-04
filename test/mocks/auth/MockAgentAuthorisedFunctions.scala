@@ -35,6 +35,8 @@ trait MockAgentAuthorisedFunctions extends BeforeAndAfterEach {
 
   val mockAuthService: FrontendAuthorisedFunctions
   lazy val isAgentPredicate: Predicate = Enrolment("HMRC-AS-AGENT") and AffinityGroup.Agent
+  lazy val isNotAgentPredicate: Predicate = AffinityGroup.Individual or AffinityGroup.Organisation
+  lazy val authPredicateForAgent: Predicate = isAgentPredicate or isNotAgentPredicate
 
 
   override def beforeEach(): Unit = {
@@ -43,7 +45,7 @@ trait MockAgentAuthorisedFunctions extends BeforeAndAfterEach {
   }
 
   def setupMockAgentAuthSuccess[X, Y](retrievalValue: X ~ Y): Unit = {
-    when(mockAuthService.authorised(isAgentPredicate))
+    when(mockAuthService.authorised(authPredicateForAgent))
       .thenReturn(
         new mockAuthService.AuthorisedFunction(EmptyPredicate) {
           override def retrieve[A](retrieval: Retrieval[A]) = new mockAuthService.AuthorisedFunctionWithResult[A](EmptyPredicate, retrieval) {
@@ -53,7 +55,7 @@ trait MockAgentAuthorisedFunctions extends BeforeAndAfterEach {
   }
 
   def setupMockAgentAuthException(exception: AuthorisationException = new InvalidBearerToken): Unit = {
-    when(mockAuthService.authorised(isAgentPredicate))
+    when(mockAuthService.authorised(authPredicateForAgent))
       .thenReturn(
         new mockAuthService.AuthorisedFunction(EmptyPredicate) {
           override def apply[A](body: => Future[A])(implicit hc: HeaderCarrier, executionContext: ExecutionContext) = Future.failed(exception)

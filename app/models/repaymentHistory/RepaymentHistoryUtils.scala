@@ -47,7 +47,7 @@ object RepaymentHistoryUtils {
     }
   }
 
-  private def getPoaChargeLinkUrl(isAgent: Boolean, taxYear: Int, chargeId: String): String = {
+  def getPoaChargeLinkUrl(isAgent: Boolean, taxYear: Int, chargeId: String): String = {
     if (isAgent) {
       controllers.routes.ChargeSummaryController.showAgent(taxYear, chargeId).url
     } else {

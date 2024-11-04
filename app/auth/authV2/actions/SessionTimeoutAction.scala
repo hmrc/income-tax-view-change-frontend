@@ -25,7 +25,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SessionTimeoutPredicateV2 @Inject()(val parser: BodyParsers.Default)(implicit val executionContext: ExecutionContext)
+class SessionTimeoutAction @Inject()(val parser: BodyParsers.Default)(implicit val executionContext: ExecutionContext)
   extends ActionRefiner[Request, Request] with ActionBuilder[Request, AnyContent] {
 
   override protected def refine[A](request: Request[A]): Future[Either[Result, Request[A]]] = {

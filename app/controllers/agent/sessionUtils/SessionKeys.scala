@@ -23,6 +23,7 @@ object SessionKeys {
   val clientUTR: String = "ClientUTR"
   val clientFirstName: String = "ClientFirstName"
   val clientLastName: String = "ClientLastName"
+  val isSupportingAgent: String = "isSupportingAgent"
 
   val confirmedClient: String = "ConfirmedClient"
 

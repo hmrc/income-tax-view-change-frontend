@@ -219,16 +219,18 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
     sessionUtils.SessionKeys.clientUTR -> "1234567890",
     sessionUtils.SessionKeys.clientMTDID -> "XAIT00000000015",
     sessionUtils.SessionKeys.clientNino -> testNino,
+    sessionUtils.SessionKeys.isSupportingAgent -> "false"
   )
 
-  def fakeRequestConfirmedClient(clientNino: String = "AA111111A"): FakeRequest[AnyContentAsEmpty.type] =
+  def fakeRequestConfirmedClient(clientNino: String = "AA111111A", isSupportingAgent: Boolean = false): FakeRequest[AnyContentAsEmpty.type] =
     fakeRequestWithActiveSession.withSession(
       sessionUtils.SessionKeys.clientFirstName -> "Test",
       sessionUtils.SessionKeys.clientLastName -> "User",
       sessionUtils.SessionKeys.clientUTR -> "1234567890",
       sessionUtils.SessionKeys.clientMTDID -> "XAIT00000000015",
       sessionUtils.SessionKeys.clientNino -> clientNino,
-      sessionUtils.SessionKeys.confirmedClient -> "true"
+      sessionUtils.SessionKeys.confirmedClient -> "true",
+      sessionUtils.SessionKeys.isSupportingAgent -> isSupportingAgent.toString
     )
 
   def fakeRequestConfirmedClientTimeout(clientNino: String = "AA111111A"): FakeRequest[AnyContentAsEmpty.type] =
@@ -238,7 +240,8 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
       sessionUtils.SessionKeys.clientUTR -> "1234567890",
       sessionUtils.SessionKeys.clientMTDID -> "XAIT00000000015",
       sessionUtils.SessionKeys.clientNino -> clientNino,
-      sessionUtils.SessionKeys.confirmedClient -> "true"
+      sessionUtils.SessionKeys.confirmedClient -> "true",
+      sessionUtils.SessionKeys.isSupportingAgent -> "false"
     )
 
   def fakePostRequestConfirmedClient(clientNino: String = "AA111111A"): FakeRequest[AnyContentAsEmpty.type] =

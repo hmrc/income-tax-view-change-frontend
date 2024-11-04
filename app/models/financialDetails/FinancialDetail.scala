@@ -17,6 +17,7 @@
 package models.financialDetails
 
 import models.financialDetails.FinancialDetail.Types._
+import models.financialDetails.ReviewAndReconcileUtils.{poaOneReviewAndReconcileCredit, poaTwoReviewAndReconcileCredit}
 import play.api.libs.json.{Format, Json}
 import services.DateServiceInterface
 
@@ -53,6 +54,10 @@ case class FinancialDetail(taxYear: String,
       subItems.filter(_.dunningLock.contains("Stand over order"))
     }
   }
+
+  val isReconcilePoaOneCredit: Boolean = mainTransaction.contains(poaOneReviewAndReconcileCredit)
+
+  val isReconcilePoaTwoCredit: Boolean = mainTransaction.contains(poaTwoReviewAndReconcileCredit)
 
   lazy private val interestLockReasons = Set(
     "Clerical Interest Signal",
