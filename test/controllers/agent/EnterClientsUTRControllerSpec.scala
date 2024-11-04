@@ -17,51 +17,42 @@
 package controllers.agent
 
 import audit.models.EnterClientUTRAuditModel
-import config.AgentItvcErrorHandler
-import config.featureswitch.FeatureSwitching
 import controllers.agent.sessionUtils.SessionKeys
 import forms.agent.ClientsUTRForm
 import mocks.auth.MockAuthActions
-import mocks.services.{MockClientDetailsService, MockSessionDataService}
+import mocks.services.MockClientDetailsService
 import mocks.views.agent.MockEnterClientsUTR
 import models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostSuccess}
 import org.mockito.ArgumentMatchers
-import org.mockito.Mockito.{mock, times, verify}
-import play.api.mvc.MessagesControllerComponents
+import org.mockito.Mockito.{times, verify}
+import play.api
+import play.api.Application
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
+import services.agent.ClientDetailsService
 import services.agent.ClientDetailsService._
 import testConstants.BaseTestConstants.{agentAuthRetrievalSuccess, testArn, testCredId, testMtditid, testNino}
-import testUtils.TestSupport
-import uk.gov.hmrc.auth.core.{AuthorisedFunctions, Enrolment, InsufficientEnrolments}
+import uk.gov.hmrc.auth.core.{Enrolment, InsufficientEnrolments}
+import views.html.agent.EnterClientsUTR
 
-class EnterClientsUTRControllerSpec extends TestSupport
+class EnterClientsUTRControllerSpec extends MockAuthActions
   with MockEnterClientsUTR
-  with MockClientDetailsService
-  with FeatureSwitching
-  with MockSessionDataService
-  with MockAuthActions {
+  with MockClientDetailsService {
 
-  object TestEnterClientsUTRController extends EnterClientsUTRController(
-    enterClientsUTR,
-    mockClientDetailsService,
-    mockAuthService,
-    authActions = mockAuthActions,
-    mockAuditingService,
-    mockSessionDataService
-  )(
-    app.injector.instanceOf[MessagesControllerComponents],
-    appConfig,
-    app.injector.instanceOf[AgentItvcErrorHandler],
-    ec
-  )
+  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+    .overrides(
+      api.inject.bind[EnterClientsUTR].toInstance(enterClientsUTR),
+      api.inject.bind[ClientDetailsService].toInstance(mockClientDetailsService)
+    ).build()
+
+  val testEnterClientsUTRController = fakeApplication().injector.instanceOf[EnterClientsUTRController]
 
   "show" when {
     "the user is not authenticated" should {
       "redirect them to sign in" in {
         setupMockAgentAuthException()
 
-        val result = TestEnterClientsUTRController.show()(fakeRequestWithActiveSession)
+        val result = testEnterClientsUTRController.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
@@ -69,7 +60,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
     }
     "the user has timed out" should {
       "redirect to the session timeout page" in {
-        val result = TestEnterClientsUTRController.show()(fakeRequestWithTimeoutSession)
+        val result = testEnterClientsUTRController.show()(fakeRequestWithTimeoutSession)
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
@@ -80,7 +71,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
         setupMockAgentAuthException(InsufficientEnrolments())
         mockShowOkTechnicalDifficulties()
 
-        val result = TestEnterClientsUTRController.show()(fakeRequestWithActiveSession)
+        val result = testEnterClientsUTRController.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentErrorController.show.url)
@@ -91,7 +82,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
       setupMockAgentAuthSuccess(agentAuthRetrievalSuccess)
       mockEnterClientsUTR(HtmlFormat.empty)
 
-      val result = TestEnterClientsUTRController.show()(fakeRequestWithActiveSession)
+      val result = testEnterClientsUTRController.show()(fakeRequestWithActiveSession)
 
       status(result) shouldBe OK
       contentType(result) shouldBe Some(HTML)
@@ -105,14 +96,14 @@ class EnterClientsUTRControllerSpec extends TestSupport
       "redirect them to sign in" in {
         setupMockAgentAuthException()
 
-        val result = TestEnterClientsUTRController.submit()(fakeRequestWithActiveSession)
+        val result = testEnterClientsUTRController.submit()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
       }
       "the user has timed out" should {
         "redirect to the session timeout page" in {
-          val result = TestEnterClientsUTRController.submit()(fakeRequestWithTimeoutSession)
+          val result = testEnterClientsUTRController.submit()(fakeRequestWithTimeoutSession)
 
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
@@ -122,7 +113,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
         "return Ok with technical difficulties" in {
           setupMockAgentAuthException(InsufficientEnrolments())
 
-          val result = TestEnterClientsUTRController.submit()(fakeRequestWithActiveSession)
+          val result = testEnterClientsUTRController.submit()(fakeRequestWithActiveSession)
 
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentErrorController.show.url)
@@ -141,7 +132,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
 
           setupMockPrimaryAgentAuthRetrievalSuccess(agentAuthRetrievalSuccess, testMtditid)
 
-          val result = TestEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+          val result = testEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> validUTR
           ))
 
@@ -171,7 +162,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
 
           setupMockSecondaryAgentAuthRetrievalSuccess(agentAuthRetrievalSuccess, testMtditid)
 
-          val result = TestEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+          val result = testEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> validUTR
           ))
 
@@ -200,7 +191,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
 
           setupMockPrimaryAgentAuthRetrievalSuccess(agentAuthRetrievalSuccess, testMtditid)
 
-          val result = TestEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+          val result = testEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> utrWithSpaces
           ))
 
@@ -232,7 +223,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
 
           setupMockSecondaryAgentAuthRetrievalSuccess(agentAuthRetrievalSuccess, testMtditid)
 
-          val result = TestEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+          val result = testEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> utrWithSpaces
           ))
 
@@ -258,7 +249,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
           setupMockAgentAuthSuccess(agentAuthRetrievalSuccess)
           mockEnterClientsUTR(HtmlFormat.empty)
 
-          val result = TestEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+          val result = testEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> "invalid"
           ))
 
@@ -276,7 +267,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
             response = Left(CitizenDetailsNotFound)
           )
 
-          val result = TestEnterClientsUTRController.submit(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+          val result = testEnterClientsUTRController.submit(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> validUTR
           ))
 
@@ -292,7 +283,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
             response = Left(BusinessDetailsNotFound)
           )
 
-          val result = TestEnterClientsUTRController.submit(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+          val result = testEnterClientsUTRController.submit(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> validUTR
           ))
 
@@ -312,7 +303,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
           setupMockPrimaryAgentAuthorisationException(testMtditid)
           setupMockSecondaryAgentAuthorisationException(testMtditid)
 
-          val result = TestEnterClientsUTRController.submit(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+          val result = testEnterClientsUTRController.submit(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> validUTR
           ))
 
@@ -331,7 +322,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
             response = Left(APIError)
           )
 
-          val result = TestEnterClientsUTRController.submit(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+          val result = testEnterClientsUTRController.submit(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> validUTR
           ))
           status(result) shouldBe INTERNAL_SERVER_ERROR
@@ -348,7 +339,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
 
           setupMockPrimaryAgentAuthRetrievalSuccess(agentAuthRetrievalSuccess, testMtditid)
 
-          val result = TestEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+          val result = testEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> validUTR
           ))
 
@@ -368,7 +359,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
 
           setupMockSecondaryAgentAuthRetrievalSuccess(agentAuthRetrievalSuccess, testMtditid)
 
-          val result = TestEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+          val result = testEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> validUTR
           ))
 

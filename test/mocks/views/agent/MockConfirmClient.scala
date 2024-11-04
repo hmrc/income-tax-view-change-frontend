@@ -26,15 +26,15 @@ import views.html.agent.confirmClient
 trait MockConfirmClient extends BeforeAndAfterEach {
   self: Suite =>
 
-  val confirmClient: confirmClient = mock(classOf[confirmClient])
+  lazy val mockConfirmClient: confirmClient = mock(classOf[confirmClient])
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(confirmClient)
+    reset(mockConfirmClient)
   }
 
   def mockConfirmClient(response: Html): Unit = {
-    when(confirmClient.apply(any(), any(), any(), any())(any(), any(), any()))
+    when(mockConfirmClient.apply(any(), any(), any(), any())(any(), any(), any()))
       .thenReturn(response)
   }
 
