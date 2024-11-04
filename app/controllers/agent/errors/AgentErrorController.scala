@@ -23,13 +23,14 @@ import controllers.predicates.agent.AgentAuthenticationPredicate.{defaultAgentPr
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import views.html.agent.errorPages.AgentError
+import views.html.agent.errorPages.{AgentError, UnauthorisedAgentView}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AgentErrorController @Inject()(val authorisedFunctions: AuthorisedFunctions,
-                                     agentErrorView: AgentError)
+                                     agentErrorView: AgentError,
+                                     unauthorisedAgentView: UnauthorisedAgentView)
                                     (implicit mcc: MessagesControllerComponents,
                                      val appConfig: FrontendAppConfig,
                                      val itvcErrorHandler: AgentItvcErrorHandler,
@@ -38,5 +39,9 @@ class AgentErrorController @Inject()(val authorisedFunctions: AuthorisedFunction
   val show: Action[AnyContent] = Authenticated.asyncWithoutClientAuth(timeoutPredicate) { implicit request =>
     implicit user =>
       Future.successful(Ok(agentErrorView()))
+  }
+
+  val unauthorised: Action[AnyContent] = Action { implicit request =>
+    Unauthorized(unauthorisedAgentView())
   }
 }

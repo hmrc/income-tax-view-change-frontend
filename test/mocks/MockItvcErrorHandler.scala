@@ -49,4 +49,9 @@ trait MockItvcErrorHandler extends BeforeAndAfterEach {
       .thenReturn(HtmlFormat.empty)
   }
 
+  def unauthorisedSupportingAgent(): Unit = {
+    when(mockItvcErrorHandler.supportingAgentUnauthorised()(any()))
+      .thenReturn(Unauthorized(HtmlFormat.empty))
+  }
+
 }

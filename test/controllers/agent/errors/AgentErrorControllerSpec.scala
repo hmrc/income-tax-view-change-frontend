@@ -23,7 +23,7 @@ import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testUtils.TestSupport
-import views.html.agent.errorPages.AgentError
+import views.html.agent.errorPages.{AgentError, UnauthorisedAgentView}
 
 class AgentErrorControllerSpec extends TestSupport
   with MockFrontendAuthorisedFunctions
@@ -31,7 +31,8 @@ class AgentErrorControllerSpec extends TestSupport
 
   val TestAgentErrorController = new AgentErrorController(
     mockAuthService,
-    app.injector.instanceOf[AgentError]
+    app.injector.instanceOf[AgentError],
+    app.injector.instanceOf[UnauthorisedAgentView]
   )(
     app.injector.instanceOf[MessagesControllerComponents],
     appConfig,
@@ -39,7 +40,7 @@ class AgentErrorControllerSpec extends TestSupport
     ec
   )
 
-  "Calling the show action of the NotAnAgentController" should {
+  "Calling the show action of the AgentErrorController" should {
 
     lazy val result = TestAgentErrorController.show(fakeRequestWithActiveSession)
     lazy val document = Jsoup.parse(contentAsString(result))

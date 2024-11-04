@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.agent
+package views.agent.errorPages
 
 import org.jsoup.select.Elements
 import play.api.mvc.Call

@@ -25,6 +25,13 @@ import play.api.test.Helpers._
 import play.api.{Application, Play}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import authV2.AuthActionsTestData._
+import com.vladsch.flexmark.ast.HtmlEntity
+import config.AgentItvcErrorHandler
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import play.api
+import play.api.mvc.Results.Unauthorized
+import play.twirl.api.HtmlFormat
 
 import scala.concurrent.Future
 
@@ -37,6 +44,7 @@ class AgentIsPrimaryActionSpec extends AuthActionsSpecHelper {
 
   override def fakeApplication(): Application = {
     new GuiceApplicationBuilder()
+      .overrides(api.inject.bind[AgentItvcErrorHandler].toInstance(mockAgentErrorHandler))
       .build()
   }
 
@@ -64,20 +72,24 @@ class AgentIsPrimaryActionSpec extends AuthActionsSpecHelper {
         status(result) shouldBe OK
         contentAsString(result) shouldBe "Successful"
       }
-      "Redirect to the Unathorised page" in {
-        val fakeRequest = getMtdItUserOptionNinoForAuthorise(Some(Agent), isSupportingAgent = true)(fakeRequestWithActiveSession)
 
-        val result = action.invokeBlock(
-          fakeRequest,
-          defaultAsync
-        )
+      "Show the Unauthorised page" when {
+        "the user is a secondary agent" in {
+          when(mockAgentErrorHandler.supportingAgentUnauthorised()(any()))
+            .thenReturn(Unauthorized(HtmlFormat.escape("supporting agent is not authorised")))
 
-        status(result) shouldBe UNAUTHORIZED
-        contentAsString(result) shouldBe "new page to go here"
+          val fakeRequest = getMtdItUserOptionNinoForAuthorise(Some(Agent), isSupportingAgent = true)(fakeRequestWithActiveSession)
 
+          val result = action.invokeBlock(
+            fakeRequest,
+            defaultAsync
+          )
+
+          status(result) shouldBe UNAUTHORIZED
+          contentType(result) shouldBe Some(HTML)
+          contentAsString(result) should include("supporting agent is not authorised")
+        }
       }
     }
-
   }
-
 }

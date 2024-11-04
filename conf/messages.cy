@@ -57,6 +57,14 @@ agent-error.heading                                            = Ni allwch ddefn
 agent-error.note                                               = I ddefnyddio’r gwasanaeth hwn, mae’n rhaid i chi sefydlu
 agent-error.link                                               = cyfrif gwasanaethau asiant
 
+## Unauthorised Agent Page ##
+agent-unauthorised.heading                                      = Nid ydych wedi’ch awdurdodi i gael mynediad at y dudalen hon
+agent-unauthorised.note                                         = Rydych yn asiant ategol ar gyfer y cleient hwn. Y prif asiant yn unig sy’n gallu cael mynediad at gofnodion sy’n dangos:
+agent-unauthorised.note.b1                                      = taliadau, credydau ac ad-daliadau
+agent-unauthorised.note.b2                                      = Ffurflenni Treth
+agent-unauthorised.note.b3                                      = y ffioedd sy’n ddyledus nesaf
+agent-unauthorised.link                                         = Darllenwch ragor am y gwahaniaeth rhwng prif asiantau ac asiantau ategol ar GOV.UK.
+
 ## Custom Error Page ##
 error.custom.heading                                          = Mae problem wedi codi
 error.custom.message                                          = Mae’r dudalen rydych yn ceisio’i gweld wedi newid

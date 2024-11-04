@@ -72,6 +72,14 @@ agent-error.heading                                            = You can’t use
 agent-error.note                                               = To use this service, you need to
 agent-error.link                                               = set up an agent services account
 
+## Unauthorised Agent Page ##
+agent-unauthorised.heading                                      = You are not authorised to access this page
+agent-unauthorised.note                                         = You are a supporting agent for this client. Only their main agent can access records that show:
+agent-unauthorised.note.b1                                      = payments, credits and refunds
+agent-unauthorised.note.b2                                      = returns
+agent-unauthorised.note.b3                                      = next charges due
+agent-unauthorised.link                                         = Read more about the difference between main and supporting agents on GOV.UK.
+
 ## BTA Links ##
 bta.home                                                        = Business tax home
 bta.messages                                                    = Messages
