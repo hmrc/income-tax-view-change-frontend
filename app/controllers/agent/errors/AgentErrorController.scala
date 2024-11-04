@@ -40,8 +40,4 @@ class AgentErrorController @Inject()(val authorisedFunctions: AuthorisedFunction
     implicit user =>
       Future.successful(Ok(agentErrorView()))
   }
-
-  val unauthorised: Action[AnyContent] = Action { implicit request =>
-    Unauthorized(unauthorisedAgentView())
-  }
 }
