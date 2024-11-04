@@ -98,12 +98,8 @@
 
     @h1(id = Some("heading"), msg = messages("optout.chooseOptOutTaxYear.heading"), classes = "govuk-heading-l")
 
-    @p(id=Some("description1")) {
-        @messages("optout.chooseOptOutTaxYear.desc1")
-    }
-
-    @p(id=Some("description2")) {
-        @messages("optout.chooseOptOutTaxYear.desc2")
+    @p(id=Some("description")) {
+        @messages("optout.chooseOptOutTaxYear.desc")
     }
 
     @if(submissionCounts.isQuarterlyUpdatesMade) {

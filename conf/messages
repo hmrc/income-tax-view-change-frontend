@@ -2229,7 +2229,7 @@ optOut.ConfirmOptOutMultiTaxYearChoice.form.no-select.error = Select the tax yea
 
 # opt out choose tax year
 optout.chooseOptOutTaxYear.heading                   = Opting out of quarterly reporting
-optout.chooseOptOutTaxYear.desc1                     = You can opt out from any of the tax years available and report annually from that year onwards. This means you’ll then report annually for all of your current businesses and any that you add in future.
+optout.chooseOptOutTaxYear.desc                     = You can opt out from any of the tax years available and report annually from that year onwards. This means you’ll then report annually for all of your current businesses and any that you add in future.
 optout.chooseOptOutTaxYear.whichTaxYear              = Which tax year do you want to opt out from?
 optout.chooseOptOutTaxYear.taxYearOnwards            = {0} to {1} onwards
 optout.chooseOptOutTaxYear.cancel                    = Cancel
