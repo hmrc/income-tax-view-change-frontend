@@ -17,18 +17,18 @@
 package auth.authV2.actions
 
 import auth.MtdItUserOptionNino
-import play.api.mvc.Results.Unauthorized
+import config.AgentItvcErrorHandler
 import play.api.mvc.{ActionRefiner, Result}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AgentIsPrimaryAction @Inject()(implicit val executionContext: ExecutionContext)
-  extends ActionRefiner[MtdItUserOptionNino, MtdItUserOptionNino] {
+class AgentIsPrimaryAction @Inject()(agentItvcErrorHandler: AgentItvcErrorHandler)(implicit val executionContext: ExecutionContext)
+extends ActionRefiner[MtdItUserOptionNino, MtdItUserOptionNino] {
 
   override protected def refine[A](request: MtdItUserOptionNino[A]): Future[Either[Result, MtdItUserOptionNino[A]]] = {
     if(request.isSupportingAgent) {
-      Future.successful(Left(Unauthorized("new page to go here")))
+      Future.successful(Left(agentItvcErrorHandler.supportingAgentUnauthorised()(request)))
     } else {
       Future.successful(Right(request))
     }
