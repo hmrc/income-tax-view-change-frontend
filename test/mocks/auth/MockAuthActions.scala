@@ -16,29 +16,22 @@
 
 package mocks.auth
 
+import audit.AuditingService
 import audit.mocks.MockAuditingService
 import auth.FrontendAuthorisedFunctions
 import auth.authV2.AuthActions
 import auth.authV2.actions._
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import controllers.predicates.IncomeSourceDetailsPredicate
 import mocks.MockItvcErrorHandler
 import mocks.services.MockIncomeSourceDetailsService
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, when}
+import org.mockito.Mockito.mock
 import play.api.test.Helpers.stubMessagesControllerComponents
 import testUtils.TestSupport
-import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
-import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
-import uk.gov.hmrc.auth.core.{AuthorisationException, InvalidBearerToken}
-import uk.gov.hmrc.http.HeaderCarrier
-
-import scala.concurrent.{ExecutionContext, Future}
 
 trait MockAuthActions extends
   TestSupport with
   MockIncomeSourceDetailsService with
-  MockAgentAuthorisedFunctions  with
+  MockAgentAuthorisedFunctions with
   MockAuditingService with
   MockItvcErrorHandler {
 
@@ -46,6 +39,15 @@ trait MockAuthActions extends
 
 
   private val authoriseAndRetrieve = new AuthoriseAndRetrieve(
+    authorisedFunctions = mockAuthService,
+    appConfig = appConfig,
+    config = conf,
+    env = environment,
+    mcc = stubMessagesControllerComponents(),
+    auditingService = mockAuditingService
+  )
+
+  private val authoriseAndRetrieveIndividual = new AuthoriseAndRetrieveIndividual(
     authorisedFunctions = mockAuthService,
     appConfig = appConfig,
     config = conf,
@@ -62,7 +64,15 @@ trait MockAuthActions extends
     mcc = stubMessagesControllerComponents()
   )
 
-  private val incomeSourceDetailsPredicate = new IncomeSourceDetailsPredicate(
+  private val authoriseAndRetrieveMtdAgent = new AuthoriseAndRetrieveMtdAgent(
+    authorisedFunctions = mockAuthService,
+    appConfig = appConfig,
+    config = conf,
+    env = environment,
+    mcc = stubMessagesControllerComponents()
+  )
+
+  private val incomeSourceRetrievalAction = new IncomeSourceRetrievalAction(
     mockIncomeSourceDetailsService
   )(ec,
     app.injector.instanceOf[ItvcErrorHandler],
@@ -70,14 +80,19 @@ trait MockAuthActions extends
     stubMessagesControllerComponents())
 
   val mockAuthActions = new AuthActions(
-    app.injector.instanceOf[SessionTimeoutPredicateV2],
+    app.injector.instanceOf[SessionTimeoutAction],
     authoriseAndRetrieve,
+    authoriseAndRetrieveIndividual,
     authoriseAndRetrieveAgent,
+    authoriseAndRetrieveMtdAgent,
     app.injector.instanceOf[AgentHasClientDetails],
+    app.injector.instanceOf[AgentHasConfirmedClientAction],
+    app.injector.instanceOf[AgentIsPrimaryAction],
     app.injector.instanceOf[AsMtdUser],
-    app.injector.instanceOf[NavBarPredicateV2],
-    incomeSourceDetailsPredicate,
-    app.injector.instanceOf[FeatureSwitchPredicateV2]
-  )(appConfig, ec)
+    app.injector.instanceOf[NavBarRetrievalAction],
+    incomeSourceRetrievalAction,
+    app.injector.instanceOf[RetrieveClientData],
+    app.injector.instanceOf[FeatureSwitchRetrievalAction]
+  )
 
 }

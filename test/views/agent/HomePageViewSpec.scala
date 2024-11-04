@@ -59,7 +59,8 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
     Some(testSaUtr),
     Some(testCredId),
     Some(Agent),
-    Some(testArn)
+    Some(testArn),
+    Some(testClientName)
   )(FakeRequest())
 
   val testMtdItUserMigrated: MtdItUser[_] = MtdItUser(
@@ -71,7 +72,8 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
     Some(testSaUtr),
     Some(testCredId),
     Some(Agent),
-    Some(testArn)
+    Some(testArn),
+    Some(testClientName)
   )(FakeRequest())
 
   val year2018: Int = 2018
@@ -160,8 +162,8 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
         document.select("h1").text() shouldBe messages("home.agent.heading")
       }
 
-      s"have the hint with the users name '$testUserName' and utr '$testSaUtr' " in new TestSetup {
-        getHintNth() shouldBe Some(s"Unique Taxpayer Reference (UTR): $testSaUtr Client’s name $testUserName")
+      s"have the hint with the clients name '$testUserName' and utr '$testSaUtr' " in new TestSetup {
+        getHintNth() shouldBe Some(s"Unique Taxpayer Reference (UTR): $testSaUtr Client’s name $testClientNameString")
       }
 
       "have an next payment due tile" which {

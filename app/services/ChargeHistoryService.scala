@@ -20,7 +20,7 @@ import auth.MtdItUser
 import connectors.ChargeHistoryConnector
 import enums.CreateReversalReason
 import models.chargeHistory._
-import models.financialDetails.DocumentDetail
+import models.financialDetails.{ChargeItem, DocumentDetail, FinancialDetail, FinancialDetailsModel, PaymentOnAccountOne, PaymentOnAccountTwo}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -68,4 +68,26 @@ class ChargeHistoryService @Inject()(chargeHistoryConnector: ChargeHistoryConnec
     }
   }
 
+  def getReviewAndReconcileCredit(chargeItem: ChargeItem,
+                                  chargeDetailsforTaxYear: FinancialDetailsModel,
+                                  reviewAndReconcileEnabled: Boolean): Option[ChargeItem] = {
+    for {
+      financialDetailForRarCredit <- chargeDetailsforTaxYear.financialDetails.find(
+        chargeItem.transactionType match {
+          case PaymentOnAccountOne => (fd: FinancialDetail) => reviewAndReconcileEnabled && fd.isReconcilePoaOneCredit
+          case PaymentOnAccountTwo => (fd: FinancialDetail) => reviewAndReconcileEnabled && fd.isReconcilePoaTwoCredit
+          case _                   => (_:  FinancialDetail) => false
+        }
+      )
+      id                         <- financialDetailForRarCredit.transactionId
+      documentDetailForRarCredit <- chargeDetailsforTaxYear.documentDetails.find(_.transactionId == id)
+    } yield {
+      ChargeItem.fromDocumentPair(
+        documentDetailForRarCredit,
+        List(financialDetailForRarCredit),
+        codingOut = true,
+        reviewAndReconcileEnabled
+      )
+    }
+  }
 }

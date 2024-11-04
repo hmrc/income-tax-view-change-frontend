@@ -24,12 +24,13 @@ import controllers.agent.sessionUtils.SessionKeys
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Result}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
+import uk.gov.hmrc.auth.core.retrieve.Name
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AsMtdUser @Inject()
-  (implicit val executionContext: ExecutionContext) extends ActionRefiner[EnroledUser, MtdItUserOptionNino] {
+(implicit val executionContext: ExecutionContext) extends ActionRefiner[EnroledUser, MtdItUserOptionNino] {
 
   lazy val noClientDetailsRoute: Result = Redirect(routes.EnterClientsUTRController.show)
 
@@ -37,9 +38,20 @@ class AsMtdUser @Inject()
 
     implicit val r = request
 
-    val optMtdId = request.affinityGroup match {
-      case Some(Agent) => request.session.get(SessionKeys.clientMTDID)
-      case _ => request.mtdId
+    def getClientName: Option[Name] = {
+      val firstName = request.session.get(SessionKeys.clientFirstName)
+      val lastName = request.session.get(SessionKeys.clientLastName)
+
+      if (firstName.isDefined && lastName.isDefined) {
+        Some(Name(firstName, lastName))
+      } else {
+        None
+      }
+    }
+
+    val (optMtdId, optClientName) = request.affinityGroup match {
+      case Some(Agent) => (request.session.get(SessionKeys.clientMTDID), getClientName)
+      case _ => (request.mtdId, None)
     }
 
     Future.successful(
@@ -50,7 +62,8 @@ class AsMtdUser @Inject()
           saUtr = request.saId,
           credId = request.credId,
           userType = request.affinityGroup,
-          arn = request.arn))
+          arn = request.arn,
+          optClientName = optClientName))
         .map(Right(_))
         .getOrElse(
           request.affinityGroup match {

@@ -18,50 +18,85 @@ package auth.authV2
 
 import auth.MtdItUser
 import auth.authV2.actions._
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
-import controllers.predicates._
 import play.api.mvc._
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
 
 @Singleton
-class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutPredicateV2,
+class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
                             val authoriseAndRetrieve: AuthoriseAndRetrieve,
+                            val authoriseAndRetrieveIndividual: AuthoriseAndRetrieveIndividual,
                             val authoriseAndRetrieveAgent: AuthoriseAndRetrieveAgent,
+                            val authoriseAndRetrieveMtdAgent: AuthoriseAndRetrieveMtdAgent,
                             val agentHasClientDetails: AgentHasClientDetails,
+                            val agentHasConfirmedClientAction: AgentHasConfirmedClientAction,
+                            val agentIsPrimaryAction: AgentIsPrimaryAction,
                             val asMtdUser: AsMtdUser,
-                            val retrieveBtaNavBar: NavBarPredicateV2,
-                            val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                            val featureSwitchPredicate: FeatureSwitchPredicateV2)
-                           (implicit val appConfig: FrontendAppConfig,
-                                     val ec: ExecutionContext)  extends  FeatureSwitching {
+                            val retrieveBtaNavBar: NavBarRetrievalAction,
+                            val retrieveNinoWithIncomeSources: IncomeSourceRetrievalAction,
+                            val retrieveClientData: RetrieveClientData,
+                            val retrieveFeatureSwitches: FeatureSwitchRetrievalAction) {
 
   def individualOrAgentWithClient[A]: ActionBuilder[MtdItUser, AnyContent] = {
 
-      (   checkSessionTimeout andThen
+    (   checkSessionTimeout andThen
 
-          authoriseAndRetrieve andThen
+      authoriseAndRetrieve andThen
 
-          agentHasClientDetails andThen
+      agentHasClientDetails andThen
 
-          // get MtdItUser from EnroledUser by requiring mtdId
+      // get MtdItUser from EnroledUser by requiring mtdId
 
-          asMtdUser andThen
+      asMtdUser andThen
 
-          // are income sources required on most pages? could this step
-          // be removed from here and added where required?
+      // are income sources required on most pages? could this step
+      // be removed from here and added where required?
 
-          retrieveNinoWithIncomeSources andThen
+      retrieveNinoWithIncomeSources andThen
 
-          featureSwitchPredicate andThen
+      retrieveFeatureSwitches andThen
 
-          retrieveBtaNavBar )
+      retrieveBtaNavBar )
   }
 
-  def isAgent[A]: ActionBuilder[AgentUser, AnyContent] = checkSessionTimeout andThen authoriseAndRetrieveAgent
+  def asMTDIndividual[A]: ActionBuilder[MtdItUser, AnyContent] = {
+    checkSessionTimeout andThen
+      authoriseAndRetrieveIndividual andThen
+      retrieveNinoWithIncomeSources andThen
+      retrieveFeatureSwitches andThen
+      retrieveBtaNavBar
+  }
 
+  def asAgent[A]: ActionBuilder[AgentUser, AnyContent] = checkSessionTimeout andThen authoriseAndRetrieveAgent
 
+  def asMTDAgentWithConfirmedClient[A]: ActionBuilder[MtdItUser, AnyContent] = {
+    checkSessionTimeout andThen
+      retrieveClientData andThen
+      authoriseAndRetrieveMtdAgent andThen
+      agentHasConfirmedClientAction andThen
+      retrieveNinoWithIncomeSources andThen
+      retrieveFeatureSwitches andThen
+      retrieveBtaNavBar
+  }
+
+  def asMTDAgentWithUnconfirmedClient[A]: ActionBuilder[MtdItUser, AnyContent] = {
+    checkSessionTimeout andThen
+      retrieveClientData andThen
+      authoriseAndRetrieveMtdAgent andThen
+      retrieveNinoWithIncomeSources andThen
+      retrieveFeatureSwitches andThen
+      retrieveBtaNavBar
+  }
+
+  def asMTDPrimaryAgent[A]: ActionBuilder[MtdItUser, AnyContent] = {
+    checkSessionTimeout andThen
+      retrieveClientData andThen
+      authoriseAndRetrieveMtdAgent andThen
+      agentHasConfirmedClientAction andThen
+      agentIsPrimaryAction andThen
+      retrieveNinoWithIncomeSources andThen
+      retrieveFeatureSwitches andThen
+      retrieveBtaNavBar
+  }
 }
 
