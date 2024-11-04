@@ -78,7 +78,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
         when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
           .thenReturn(Future.successful(List(financialDetailsDueInMoreThan30Days())))
 
-        TestWhatYouOweService.getWhatYouOweChargesList(isCodingOutEnabled = true, isReviewAndReconcile = isEnabled(ReviewAndReconcilePoa), isFilterCodedOutPoas = isEnabled(FilterCodedOutPoas)).futureValue shouldBe whatYouOweDataWithDataDueInMoreThan30Days(
+        TestWhatYouOweService.getWhatYouOweChargesList(isCodingOutEnabled = true, isReviewAndReconcile = isEnabled(ReviewAndReconcilePoa), isFilterCodedOutPoasEnabled = isEnabled(FilterCodedOutPoas)).futureValue shouldBe whatYouOweDataWithDataDueInMoreThan30Days(
           dueDates = dueDateMoreThan30Days
         )
       }
@@ -90,7 +90,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
         when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
           .thenReturn(Future.successful(List(financialDetailsDueIn30Days())))
 
-        TestWhatYouOweService.getWhatYouOweChargesList(isCodingOutEnabled = true, isReviewAndReconcile = isEnabled(ReviewAndReconcilePoa), isFilterCodedOutPoas = isEnabled(FilterCodedOutPoas)).futureValue shouldBe whatYouOweDataWithDataDueIn30Days()
+        TestWhatYouOweService.getWhatYouOweChargesList(isCodingOutEnabled = true, isReviewAndReconcile = isEnabled(ReviewAndReconcilePoa), isFilterCodedOutPoasEnabled = isEnabled(FilterCodedOutPoas)).futureValue shouldBe whatYouOweDataWithDataDueIn30Days()
       }
       "when both financial details and outstanding charges return success response and valid data of overdue" should {
         "return a success response back" in {
@@ -99,7 +99,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsOverdueData())))
 
-          TestWhatYouOweService.getWhatYouOweChargesList(isCodingOutEnabled = true, isReviewAndReconcile = isEnabled(ReviewAndReconcilePoa), isFilterCodedOutPoas = isEnabled(FilterCodedOutPoas)).futureValue shouldBe whatYouOweDataWithOverdueDataIt()
+          TestWhatYouOweService.getWhatYouOweChargesList(isCodingOutEnabled = true, isReviewAndReconcile = isEnabled(ReviewAndReconcilePoa), isFilterCodedOutPoasEnabled = isEnabled(FilterCodedOutPoas)).futureValue shouldBe whatYouOweDataWithOverdueDataIt()
         }
       }
       "when both financial details and outstanding charges return success response and valid data of mixed due dates of overdue and in future payments" should {
@@ -109,7 +109,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsWithMixedData1)))
 
-          TestWhatYouOweService.getWhatYouOweChargesList(isCodingOutEnabled = true, isEnabled(ReviewAndReconcilePoa), isFilterCodedOutPoas = isEnabled(FilterCodedOutPoas)).futureValue shouldBe whatYouOweDataWithMixedData1
+          TestWhatYouOweService.getWhatYouOweChargesList(isCodingOutEnabled = true, isEnabled(ReviewAndReconcilePoa), isFilterCodedOutPoasEnabled = isEnabled(FilterCodedOutPoas)).futureValue shouldBe whatYouOweDataWithMixedData1
         }
       }
       "when both financial details and outstanding charges return success response and valid data of mixed due dates of overdue and dueInThirtyDays" should {
@@ -119,7 +119,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsWithMixedData2)))
 
-          TestWhatYouOweService.getWhatYouOweChargesList(isCodingOutEnabled = true, isEnabled(ReviewAndReconcilePoa), isFilterCodedOutPoas = isEnabled(FilterCodedOutPoas)).futureValue shouldBe whatYouOweDataWithMixedData2
+          TestWhatYouOweService.getWhatYouOweChargesList(isCodingOutEnabled = true, isEnabled(ReviewAndReconcilePoa), isFilterCodedOutPoasEnabled = isEnabled(FilterCodedOutPoas)).futureValue shouldBe whatYouOweDataWithMixedData2
         }
       }
       "when both financial details return success and outstanding charges return 500" should {
@@ -263,7 +263,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
             .thenReturn(Future.successful(List(financialDetailsWithOutstandingChargesAndLpi(outstandingAmount = List(1000, 400),
               amountCodedOut = List(Some(30), Some(70))))))
 
-          TestWhatYouOweService.getWhatYouOweChargesList(isCodingOutEnabled = true, isEnabled(ReviewAndReconcilePoa), isFilterCodedOutPoas = true).futureValue shouldBe WhatYouOweChargesList(
+          TestWhatYouOweService.getWhatYouOweChargesList(isCodingOutEnabled = true, isEnabled(ReviewAndReconcilePoa), isFilterCodedOutPoasEnabled = true).futureValue shouldBe WhatYouOweChargesList(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
             chargesList = List())
         }
@@ -274,7 +274,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
             .thenReturn(Future.successful(List(financialDetailsWithOutstandingChargesAndLpi(outstandingAmount = List(1000, 400),
               amountCodedOut = List(Some(30), Some(70))))))
 
-          TestWhatYouOweService.getWhatYouOweChargesList(isCodingOutEnabled = true, isEnabled(ReviewAndReconcilePoa), isFilterCodedOutPoas =  false).futureValue shouldBe WhatYouOweChargesList(
+          TestWhatYouOweService.getWhatYouOweChargesList(isCodingOutEnabled = true, isEnabled(ReviewAndReconcilePoa), isFilterCodedOutPoasEnabled =  false).futureValue shouldBe WhatYouOweChargesList(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
             chargesList = List(poa2WithCodedOut, poa1WithCodedOut))
         }

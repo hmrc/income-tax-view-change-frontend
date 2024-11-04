@@ -139,7 +139,7 @@ private def getOutstandingChargesModel(unpaidCharges: List[FinancialDetailsRespo
     unpaidCharges,
     isCodingOutEnabled = true,
     isReviewAndReconciledEnabled = isEnabled(ReviewAndReconcilePoa),
-    isFilterCodedOutPoas = isEnabled(FilterCodedOutPoas)
+    isFilterCodedOutPoasEnabled = isEnabled(FilterCodedOutPoas)
   ) map {
     case WhatYouOweChargesList(_, _, Some(OutstandingChargesModel(outstandingCharges)), _) =>
       outstandingCharges.filter(_.isBalancingChargeDebit)
