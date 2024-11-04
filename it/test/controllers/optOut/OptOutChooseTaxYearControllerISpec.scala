@@ -67,7 +67,6 @@ class OptOutChooseTaxYearControllerISpec extends ComponentSpecBase {
             httpStatus(OK),
             elementTextByID("heading")(headingText),
             elementTextByID("description1")(description1Text),
-            elementTextByID("description2")(description2Text),
             elementTextBySelector("div.govuk-radios__item:nth-child(3) > label:nth-child(2)")(radioLabel3),
           )
         }
@@ -215,9 +214,7 @@ class OptOutChooseTaxYearControllerISpec extends ComponentSpecBase {
 }
 
 object OptOutChooseTaxYearControllerISpec {
-  val headingText = "Confirm you want to opt out of quarterly reporting"
-  val description1Text = "You can opt out from any of the tax years available and report annually from that tax year " +
-    "onwards. This applies to all your businesses (even if they are less than 2 years old)."
-  val description2Text = "If you opt out, you can submit your tax return through your HMRC online account or software."
+  val headingText = "Opting out of quarterly reporting"
+  val description1Text = "You can opt out from any of the tax years available and report annually from that year onwards. This means you’ll then report annually for all of your current businesses and any that you add in future."
   val radioLabel3 = "2023 to 2024 onwards"
 }
