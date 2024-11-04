@@ -16,20 +16,18 @@
 
 package models.financialDetails
 
-object ReviewAndReconcileDebitUtils {
+object ReviewAndReconcileUtils {
 
-  lazy val poaOneMainTransaction = "4911"
-  lazy val poaTwoMainTransaction = "4913"
+  lazy val poaOneReviewAndReconcileDebit = "4911"
+  lazy val poaTwoReviewAndReconcileDebit = "4913"
+
+  lazy val poaOneReviewAndReconcileCredit = "4912"
+  lazy val poaTwoReviewAndReconcileCredit = "4914"
 
   def isReviewAndReconcilePoaOne(mainTransaction: Option[String]): Boolean =
-    mainTransaction.contains(poaOneMainTransaction)
+    mainTransaction.contains(poaOneReviewAndReconcileDebit)
 
   def isReviewAndReconcilePoaTwo(mainTransaction: Option[String]): Boolean =
-    mainTransaction.contains(poaTwoMainTransaction)
-
-  def filterReviewAndReconcileDebits(reviewAndReconcileDebitsIsEnabled: Boolean,
-                                     documentDetailsWithDueDate: DocumentDetailWithDueDate,
-                                     financialDetails: FinancialDetailsModel): Boolean =
-    !reviewAndReconcileDebitsIsEnabled &&
-      financialDetails.isReviewAndReconcileDebit(documentDetailsWithDueDate.documentDetail.transactionId)
+    mainTransaction.contains(poaTwoReviewAndReconcileDebit)
 }
+

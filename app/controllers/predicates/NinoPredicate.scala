@@ -44,7 +44,7 @@ class NinoPredicate @Inject()(val ninoLookupService: NinoLookupService,
     implicit val req: MtdItUserOptionNino[A] = request
 
     def buildMtdUserWithNino(nino: String) = MtdItUserWithNino(request.mtditid, nino, request.userName, None,
-      request.saUtr, request.credId, request.userType, None)
+      request.saUtr, request.credId, request.userType, None, request.optClientName, request.isSupportingAgent)
 
     (request.nino, request.session.get("nino")) match {
       case (Some(nino), _) =>

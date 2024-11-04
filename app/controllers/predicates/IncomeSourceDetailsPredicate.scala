@@ -46,7 +46,7 @@ class IncomeSourceDetailsPredicate @Inject()(val incomeSourceDetailsService: Inc
     // no caching for now
     incomeSourceDetailsService.getIncomeSourceDetails() map {
       case response: IncomeSourceDetailsModel =>
-        Right(MtdItUser(request.mtditid, response.nino, request.userName, response, None, request.saUtr, request.credId, request.userType, request.arn))
+        Right(MtdItUser(request.mtditid, response.nino, request.userName, response, None, request.saUtr, request.credId, request.userType, request.arn, request.optClientName, request.isSupportingAgent))
       case error: IncomeSourceDetailsError => Left(logWithUserType(s"[${error.status}] ${error.reason}"))
     } recover logAndRedirect()
 

@@ -19,7 +19,7 @@ package connectors
 import config.FrontendAppConfig
 import models.sessionData.SessionDataModel
 import models.sessionData.SessionDataPostResponse.SessionDataPostResponse
-import testOnly.models.SessionDataGetResponse.SessionGetResponse
+import models.sessionData.SessionDataGetResponse.SessionGetResponse
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}

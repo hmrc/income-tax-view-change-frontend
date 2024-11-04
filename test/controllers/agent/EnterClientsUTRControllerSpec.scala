@@ -95,7 +95,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
 
       status(result) shouldBe OK
       contentType(result) shouldBe Some(HTML)
-      verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(isAgentPredicate))
+      verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(authPredicateForAgent))
     }
 
   }
@@ -153,7 +153,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
           result.futureValue.session.get(SessionKeys.clientUTR) shouldBe Some(validUTR)
           result.futureValue.session.get(SessionKeys.clientNino) shouldBe Some(testNino)
           result.futureValue.session.get(SessionKeys.clientMTDID) shouldBe Some(testMtditid)
-          verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(isAgentPredicate))
+          verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(authPredicateForAgent))
           verify(mockAuthService, times(1)).authorised(Enrolment("HMRC-MTD-IT").withIdentifier("MTDITID", testMtditid).withDelegatedAuthRule("mtd-it-auth"))
         }
 
@@ -183,7 +183,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
           result.futureValue.session.get(SessionKeys.clientUTR) shouldBe Some(validUTR)
           result.futureValue.session.get(SessionKeys.clientNino) shouldBe Some(testNino)
           result.futureValue.session.get(SessionKeys.clientMTDID) shouldBe Some(testMtditid)
-          verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(isAgentPredicate))
+          verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(authPredicateForAgent))
           verify(mockAuthService, times(1)).authorised(Enrolment("HMRC-MTD-IT").withIdentifier("MTDITID", testMtditid).withDelegatedAuthRule("mtd-it-auth"))
           verify(mockAuthService, times(1)).authorised(Enrolment("HMRC-MTD-IT-SUPP").withIdentifier("MTDITID", testMtditid).withDelegatedAuthRule("mtd-it-auth-supp"))
         }
@@ -214,7 +214,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
           result.futureValue.session.get(SessionKeys.clientUTR) shouldBe Some(validUTR)
           result.futureValue.session.get(SessionKeys.clientNino) shouldBe Some(testNino)
           result.futureValue.session.get(SessionKeys.clientMTDID) shouldBe Some(testMtditid)
-          verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(isAgentPredicate))
+          verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(authPredicateForAgent))
           verify(mockAuthService, times(1)).authorised(Enrolment("HMRC-MTD-IT").withIdentifier("MTDITID", testMtditid).withDelegatedAuthRule("mtd-it-auth"))
         }
         "the utr entered has spaces, there is a client/secondary agent relationship, is valid and the POST request to session data service is successful" in {
@@ -246,7 +246,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
           result.futureValue.session.get(SessionKeys.clientUTR) shouldBe Some(validUTR)
           result.futureValue.session.get(SessionKeys.clientNino) shouldBe Some(testNino)
           result.futureValue.session.get(SessionKeys.clientMTDID) shouldBe Some(testMtditid)
-          verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(isAgentPredicate))
+          verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(authPredicateForAgent))
           verify(mockAuthService, times(1)).authorised(Enrolment("HMRC-MTD-IT").withIdentifier("MTDITID", testMtditid).withDelegatedAuthRule("mtd-it-auth"))
           verify(mockAuthService, times(1)).authorised(Enrolment("HMRC-MTD-IT-SUPP").withIdentifier("MTDITID", testMtditid).withDelegatedAuthRule("mtd-it-auth-supp"))
 

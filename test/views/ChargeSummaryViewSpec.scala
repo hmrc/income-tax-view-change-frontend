@@ -28,7 +28,6 @@ import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
-import org.mockito.Mockito.mock
 import org.scalatest.Assertion
 import play.twirl.api.Html
 import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
@@ -38,7 +37,6 @@ import testUtils.ViewSpec
 import views.html.ChargeSummary
 
 import java.time.LocalDate
-import scala.util.Try
 
 class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeConstants {
 
@@ -53,6 +51,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
                   dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)),
                   paymentBreakdown: List[FinancialDetail] = List(),
                   paymentAllocations: List[PaymentHistoryAllocations] = List(),
+                  reviewAndReconcileCredit: Option[ChargeItem] = None,
                   payments: FinancialDetailsModel = payments,
                   chargeHistoryEnabled: Boolean = true,
                   latePaymentInterestCharge: Boolean = false,
@@ -73,6 +72,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       btaNavPartial = None,
       paymentBreakdown = paymentBreakdown,
       paymentAllocations = paymentAllocations,
+      reviewAndReconcileCredit = reviewAndReconcileCredit,
       payments = payments,
       chargeHistoryEnabled = chargeHistoryEnabled,
       latePaymentInterestCharge = latePaymentInterestCharge,
@@ -108,6 +108,26 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     }
 
   }
+
+  def reviewAndReconcileCreditChargeItem(transactionType: TransactionType): Option[ChargeItem] =
+    Some(ChargeItem(
+      transactionId = "some-id",
+      taxYear = TaxYear(2019, 2020),
+      transactionType = transactionType,
+      subTransactionType = None,
+      documentDate = LocalDate.of(2018, 8, 6),
+      dueDate = Some(LocalDate.of(2018, 8, 6)),
+      originalAmount = 1000,
+      outstandingAmount = 0,
+      interestOutstandingAmount = None,
+      latePaymentInterestAmount = None,
+      interestFromDate = None,
+      interestEndDate = None,
+      interestRate = None,
+      lpiWithDunningLock = None,
+      amountCodedOut = None,
+      dunningLock = false
+    ))
 
   def paymentsForCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal, clearingSAPDocument: Option[String], clearingId: Option[String]): PaymentHistoryAllocations =
     PaymentHistoryAllocations(
@@ -359,7 +379,26 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     document.select("#payment-processing-bullets li:nth-child(2)").text() shouldBe messages("chargeSummary.payments-bullet2")
   }
 
-  "when user is an individual" when {
+  "user is an individual" when {
+
+    "render the row for the charge" should {
+      "charge is a Review and Reconcile credit for Payment on Account 1" in new TestSetup(
+        reviewAndReconcileCredit = reviewAndReconcileCreditChargeItem(PaymentOnAccountOneReviewAndReconcileCredit)
+      ) {
+        document.selectById("rar-due-date").text() shouldBe("6 Aug 2018")
+        document.selectById("rar-charge-link").text() shouldBe "First payment on account: credit from your tax return"
+        document.selectById("rar-charge-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(2020, "some-id").url
+        document.selectById("rar-total-amount").text() shouldBe "£1,000.00"
+      }
+      "charge is a Review and Reconcile credit for Payment on Account 2" in new TestSetup(
+        reviewAndReconcileCredit = reviewAndReconcileCreditChargeItem(PaymentOnAccountTwoReviewAndReconcileCredit)
+      ) {
+        document.selectById("rar-due-date").text() shouldBe ("6 Aug 2018")
+        document.selectById("rar-charge-link").text() shouldBe "Second payment on account: credit from your tax return"
+        document.selectById("rar-charge-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(2020, "some-id").url
+        document.selectById("rar-total-amount").text() shouldBe "£1,000.00"
+      }
+    }
 
     "charge is a POA1" when {
 
@@ -1218,6 +1257,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         chargeHistoryEnabled = true,
         latePaymentInterestCharge = false,
         codingOutEnabled = false,
+        reviewAndReconcileCredit = None,
         reviewAndReconcileEnabled = false,
         isAgent = false,
         poaOneChargeUrl = "",
@@ -1232,6 +1272,28 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
   }
 
   "agent" when {
+
+    "render the row for the charge" should {
+      "charge is a Review and Reconcile credit for Payment on Account 1" in new TestSetup(
+        isAgent = true,
+        reviewAndReconcileCredit = reviewAndReconcileCreditChargeItem(PaymentOnAccountOneReviewAndReconcileCredit)
+      ) {
+        document.selectById("rar-due-date").text() shouldBe ("6 Aug 2018")
+        document.selectById("rar-charge-link").text() shouldBe "First payment on account: credit from your tax return"
+        document.selectById("rar-charge-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(2020, "some-id").url
+        document.selectById("rar-total-amount").text() shouldBe "£1,000.00"
+      }
+      "charge is a Review and Reconcile credit for Payment on Account 2" in new TestSetup(
+        isAgent = true,
+        reviewAndReconcileCredit = reviewAndReconcileCreditChargeItem(PaymentOnAccountTwoReviewAndReconcileCredit)
+      ) {
+        document.selectById("rar-due-date").text() shouldBe ("6 Aug 2018")
+        document.selectById("rar-charge-link").text() shouldBe "Second payment on account: credit from your tax return"
+        document.selectById("rar-charge-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(2020, "some-id").url
+        document.selectById("rar-total-amount").text() shouldBe "£1,000.00"
+      }
+    }
+
     "The charge summary view" should {
 
       "have a interest lock payment link when the interest is accruing" in new TestSetup(chargeItem = chargeItemModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues, isAgent = true,

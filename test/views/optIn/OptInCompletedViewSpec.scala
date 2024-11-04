@@ -23,102 +23,134 @@ import org.jsoup.nodes.Document
 import play.api.test.Helpers._
 import testUtils.TestSupport
 import views.html.optIn.OptInCompletedView
+import views.messages.OptInCompletedViewMessages._
 
 
 class OptInCompletedViewSpec extends TestSupport {
 
-  val forYearEnd = 2023
-  val taxYear22_23: TaxYear = TaxYear.forYearEnd(forYearEnd)
+  val taxYear22_23: TaxYear = TaxYear(2022, 2023)
 
   val view: OptInCompletedView = app.injector.instanceOf[OptInCompletedView]
 
-  class SetupForCurrentYear(isAgent: Boolean = true, taxYear: TaxYear,
-                            followingYearVoluntary: Boolean,
-                            annualWithFollowingYearMandated: Boolean = false) {
-    val model: OptInCompletedViewModel = OptInCompletedViewModel(
-      isAgent = isAgent,
-      optInTaxYear = taxYear,
-      isCurrentYear = true,
-      showAnnualReportingAdvice = false,
-      optInIncludedNextYear = followingYearVoluntary,
-      annualWithFollowingYearMandated = annualWithFollowingYearMandated
-    )
+  def bullet(i: Int) = s"#optin-completed-view > ul > li:nth-child($i)"
+
+  def nextUpdatesLink(origin: Option[String] = None) = controllers.routes.NextUpdatesController.show(origin).url
+
+  def reportingFrequencyLinkUrl(isAgent: Boolean) = controllers.optIn.routes.OptInCompletedController.show(isAgent).url //TODO: Needs fixing/updating
+
+  class SetupForCurrentYear(
+                             isAgent: Boolean = true,
+                             taxYear: TaxYear,
+                             followingYearVoluntary: Boolean,
+                             annualWithFollowingYearMandated: Boolean = false
+                           ) {
+    val model: OptInCompletedViewModel =
+      OptInCompletedViewModel(
+        isAgent = isAgent,
+        optInTaxYear = taxYear,
+        isCurrentYear = true,
+        showAnnualReportingAdvice = false,
+        optInIncludedNextYear = followingYearVoluntary,
+        annualWithFollowingYearMandated = annualWithFollowingYearMandated
+      )
+
     val pageDocument: Document = Jsoup.parse(contentAsString(view(model = model)))
   }
 
-  s"has the correct content for year $taxYear22_23 which is the current year" in new SetupForCurrentYear(false, taxYear22_23, false) {
-    pageDocument.title() shouldBe "Opt in completed - Manage your Income Tax updates - GOV.UK"
+  object Selectors {
 
-    pageDocument.getElementsByClass("govuk-panel__title").text() shouldBe "Opt in completed"
-    pageDocument.getElementsByClass("govuk-panel__body").text() shouldBe "You are now reporting quarterly from 2022 to 2023 tax year onwards"
+    val pageTitleClass = "govuk-panel__title"
+    val pagePanelBodyClass = "govuk-panel__body"
+    val warningInsetId = "warning-inset"
+
+    def paragraphId(i: Int) = s"optin-completed-view-p$i"
+
+    val yourRevisedDeadlineH2 = "your-revised-deadline-heading"
+    val yourRevisedDeadlineInset = "your-revised-deadline-inset"
+    val yourRevisedDeadlineP1 = "your-account-has-been-updated"
+    val yourRevisedDeadlineP1Link = "#your-account-has-been-updated > a"
+    val yourRevisedDeadlineP2 = "opt-out-reporting-quarterly"
+    val yourRevisedDeadlineP2Link = "#opt-out-reporting-quarterly > a"
+  }
+
+  s"has the correct content for year $taxYear22_23 which is the current year" in new SetupForCurrentYear(false, taxYear22_23, false) {
+
+    pageDocument.title() shouldBe titleContent
+
+    pageDocument.getElementsByClass(Selectors.pageTitleClass).text() shouldBe panelTitleContent
+    pageDocument.getElementsByClass(Selectors.pagePanelBodyClass).text() shouldBe "You are now reporting quarterly from 2022 to 2023 tax year onwards"
+
     val expectedText: String = "For example, if your income from self-employment or property, or both, exceeds the threshold " +
       "in the 2022 to 2023 tax year, you would have to report quarterly from 6 April 2024."
-    pageDocument.getElementById("warning-inset").text() shouldBe expectedText
 
-    pageDocument.getElementById("optin-completed-view-p5").text() shouldBe "You have just chosen to voluntarily report quarterly from the 2022 to 2023 tax year onwards, but in the future it could be mandatory for you if:"
-    pageDocument.getElementById("optin-completed-view-p6").text() shouldBe "You can check the threshold for qualifying " +
-      "income in the criteria for people who will need to sign up for Making Tax Digital for Income Tax " +
-      "(opens in new tab)."
+    pageDocument.getElementById(Selectors.warningInsetId).text() shouldBe expectedText
+
+    pageDocument.getElementById(Selectors.paragraphId(5)).text() shouldBe "You have just chosen to voluntarily report quarterly from the 2022 to 2023 tax year onwards, but in the future it could be mandatory for you if:"
+    pageDocument.getElementById(Selectors.paragraphId(6)).text() shouldBe optinCompletedViewP6
 
   }
 
   val anotherForYearEnd = 2022
   val taxYear21_22: TaxYear = TaxYear.forYearEnd(anotherForYearEnd)
-  s"has the correct content for year $taxYear21_22 which is the current year" in new SetupForCurrentYear(false, taxYear21_22, false) {
-    pageDocument.title() shouldBe "Opt in completed - Manage your Income Tax updates - GOV.UK"
 
-    pageDocument.getElementsByClass("govuk-panel__title").text() shouldBe "Opt in completed"
-    pageDocument.getElementsByClass("govuk-panel__body").text() shouldBe "You are now reporting quarterly from 2021 to 2022 tax year onwards"
+  s"has the correct content for year $taxYear21_22 which is the current year" in new SetupForCurrentYear(false, taxYear21_22, false) {
+
+    pageDocument.title() shouldBe titleContent
+
+    pageDocument.getElementsByClass(Selectors.pageTitleClass).text() shouldBe panelTitleContent
+
+    pageDocument.getElementsByClass(Selectors.pagePanelBodyClass).text() shouldBe "You are now reporting quarterly from 2021 to 2022 tax year onwards"
     val expectedText: String = "For example, if your income from self-employment or property, or both, exceeds the threshold " +
       "in the 2021 to 2022 tax year, you would have to report quarterly from 6 April 2023."
-    pageDocument.getElementById("warning-inset").text() shouldBe expectedText
 
-    pageDocument.getElementById("optin-completed-view-p5").text() shouldBe "You have just chosen to voluntarily report quarterly from the 2021 to 2022 tax year onwards, but in the future it could be mandatory for you if:"
-    pageDocument.getElementById("optin-completed-view-p6").text() shouldBe "You can check the threshold for qualifying " +
-      "income in the criteria for people who will need to sign up for Making Tax Digital for Income Tax " +
-      "(opens in new tab)."
+    pageDocument.getElementById(Selectors.warningInsetId).text() shouldBe expectedText
+
+    pageDocument.getElementById(Selectors.paragraphId(5)).text() shouldBe
+      "You have just chosen to voluntarily report quarterly from the 2021 to 2022 tax year onwards, but in the future it could be mandatory for you if:"
+
+    pageDocument.getElementById(Selectors.paragraphId(6)).text() shouldBe optinCompletedViewP6
 
   }
 
   s"has the correct heading for year $taxYear22_23 which is the current year and next year is Voluntary" in new SetupForCurrentYear(false, taxYear22_23, true) {
-    pageDocument.title() shouldBe "Opt in completed - Manage your Income Tax updates - GOV.UK"
 
-    pageDocument.getElementsByClass("govuk-panel__title").text() shouldBe "Opt in completed"
-    pageDocument.getElementsByClass("govuk-panel__body").text() shouldBe messages("optin.completedOptIn.followingVoluntary.heading.desc", "2022", "2023")
+    pageDocument.title() shouldBe titleContent
+
+    pageDocument.getElementsByClass(Selectors.pageTitleClass).text() shouldBe panelTitleContent
+    pageDocument.getElementsByClass(Selectors.pagePanelBodyClass).text() shouldBe messages("optin.completedOptIn.followingVoluntary.heading.desc", "2022", "2023")
 
     val expectedText: String = "For example, if your income from self-employment or property, or both, exceeds the threshold " +
       "in the 2022 to 2023 tax year, you would have to report quarterly from 6 April 2024."
-    pageDocument.getElementById("warning-inset").text() shouldBe expectedText
 
-    pageDocument.getElementById("optin-completed-view-p5").text() shouldBe "You have just chosen to voluntarily report quarterly from the 2022 to 2023 tax year onwards, but in the future it could be mandatory for you if:"
-    pageDocument.getElementById("optin-completed-view-p6").text() shouldBe "You can check the threshold for qualifying " +
-      "income in the criteria for people who will need to sign up for Making Tax Digital for Income Tax " +
-      "(opens in new tab)."
+    pageDocument.getElementById(Selectors.warningInsetId).text() shouldBe expectedText
+
+    pageDocument.getElementById(Selectors.paragraphId(5)).text() shouldBe "You have just chosen to voluntarily report quarterly from the 2022 to 2023 tax year onwards, but in the future it could be mandatory for you if:"
+    pageDocument.getElementById(Selectors.paragraphId(6)).text() shouldBe optinCompletedViewP6
   }
 
-  def bullet(i: Int) = s"#optin-completed-view > ul > li:nth-child($i)"
+  s"has the correct heading for year $taxYear22_23 which is the current year (Annual) and next year is Mandatory" in
+    new SetupForCurrentYear(false, taxYear22_23, true, true) {
 
-  s"has the correct heading for year $taxYear22_23 which is the current year (Annual) and next year is Mandatory" in new SetupForCurrentYear(false, taxYear22_23, true, true) {
-    pageDocument.title() shouldBe "Opt in completed - Manage your Income Tax updates - GOV.UK"
+      pageDocument.title() shouldBe titleContent
 
-    pageDocument.getElementsByClass("govuk-panel__title").text() shouldBe "Opt in completed"
-    pageDocument.getElementsByClass("govuk-panel__body").text() shouldBe messages("optin.completedOptIn.followingVoluntary.heading.desc", "2022", "2023")
+      pageDocument.getElementsByClass(Selectors.pageTitleClass).text() shouldBe panelTitleContent
+      pageDocument.getElementsByClass(Selectors.pagePanelBodyClass).text() shouldBe messages("optin.completedOptIn.followingVoluntary.heading.desc", "2022", "2023")
 
-    val expectedText: String = "From 6 April 2023, you’ll be required to send quarterly updates through compatible software."
-    pageDocument.getElementById("warning-inset").text() shouldBe expectedText
+      val expectedText: String = "From 6 April 2023, you’ll be required to send quarterly updates through compatible software."
+      pageDocument.getElementById(Selectors.warningInsetId).text() shouldBe expectedText
 
-    pageDocument.getElementById("optin-completed-view-p5").text() shouldBe "You have just chosen to voluntarily report quarterly from the 2022 to 2023 tax year."
+      pageDocument.getElementById(Selectors.paragraphId(5)).text() shouldBe "You have just chosen to voluntarily report quarterly from the 2022 to 2023 tax year."
 
-    pageDocument.select(bullet(1)).text() shouldBe "HMRC lowered the income threshold for Making Tax Digital for Income Tax"
-    pageDocument.select(bullet(2)).text() shouldBe "you reported an increase in your qualifying income in a tax return"
+      pageDocument.select(bullet(1)).text() shouldBe bullet1Content
+      pageDocument.select(bullet(2)).text() shouldBe bullet2Content
 
-    pageDocument.getElementById("optin-completed-view-p6").text() shouldBe "You can check the threshold for qualifying " +
-      "income in the criteria for people who will need to sign up for Making Tax Digital for Income Tax " +
-      "(opens in new tab)."
-  }
+      pageDocument.getElementById(Selectors.paragraphId(6)).text() shouldBe optinCompletedViewP6
+    }
 
-  class SetupNextYear(isAgent: Boolean = true,
-                      taxYear: TaxYear) {
+  class SetupNextYear(
+                       isAgent: Boolean = true,
+                       taxYear: TaxYear
+                     ) {
     val model: OptInCompletedViewModel =
       OptInCompletedViewModel(
         isAgent = isAgent,
@@ -128,33 +160,42 @@ class OptInCompletedViewSpec extends TestSupport {
         optInIncludedNextYear = false,
         annualWithFollowingYearMandated = false
       )
+
     val pageDocument: Document = Jsoup.parse(contentAsString(view(model = model)))
   }
 
-  s"has the correct content for year $taxYear22_23 which is the next year" in new SetupNextYear(false, taxYear22_23) {
-    pageDocument.title() shouldBe "Opt in completed - Manage your Income Tax updates - GOV.UK"
+  "has the correct content for tax year 2022-2023 which is the next tax year" in
+    new SetupNextYear(isAgent = false, taxYear = taxYear22_23) {
 
-    pageDocument.getElementsByClass("govuk-panel__title").text() shouldBe "Opt in completed"
-    pageDocument.getElementsByClass("govuk-panel__body").text() shouldBe "You opted in to quarterly reporting from 2022 to 2023 tax year onwards"
+      def testContentByIds(idsAndContent: Seq[(String, String)]): Unit =
+        idsAndContent.foreach {
+          case (selectors, content) =>
+            pageDocument.getElementById(selectors).text() shouldBe content
+        }
 
-    pageDocument.getElementById("optin-completed-view-p1").text() shouldBe "Check the updates and deadlines page for " +
-      "the current tax year’s deadlines. Deadlines for future years will not be visible until they become the current " +
-      "year."
-    pageDocument.getElementById("optin-completed-view-p2").text() shouldBe "You can decide at any time to opt out of " +
-      "reporting quarterly for all your businesses on your reporting frequency page."
+      val expectedContent: Seq[(String, String)] =
+        Seq(
+          Selectors.yourRevisedDeadlineH2 -> yourRevisedDeadlineH2,
+          Selectors.yourRevisedDeadlineInset -> yourRevisedDeadlineInset,
+          Selectors.yourRevisedDeadlineP1 -> yourRevisedDeadlineContentP1,
+          Selectors.yourRevisedDeadlineP2 -> yourRevisedDeadlineContentP2,
+          Selectors.paragraphId(3) -> optinCompletedViewP3,
+          Selectors.paragraphId(4) -> optinCompletedViewP4,
+          Selectors.paragraphId(5) -> optinCompletedViewP5,
+          Selectors.paragraphId(6) -> optinCompletedViewP6,
+        )
 
-    pageDocument.getElementById("optin-completed-view-p3").text() shouldBe "For any tax year you are reporting " +
-      "quarterly, you will need software compatible with Making Tax Digital for Income Tax (opens in new tab)."
+      pageDocument.title() shouldBe titleContent
 
-    pageDocument.getElementById("optin-completed-view-p4").text() shouldBe "When reporting annually, you can submit " +
-      "your tax return directly through your HMRC online account or compatible software."
+      pageDocument.getElementsByClass(Selectors.pageTitleClass).text() shouldBe panelTitleContent
 
-    pageDocument.getElementById("optin-completed-view-p5").text() shouldBe "You are voluntarily opted in to reporting " +
-      "quarterly from the next tax year onwards, but in the future it could be mandatory for you if:"
-    pageDocument.getElementById("optin-completed-view-p6").text() shouldBe "You can check the threshold for qualifying " +
-      "income in the criteria for people who will need to sign up for Making Tax Digital for Income Tax " +
-      "(opens in new tab)."
+      pageDocument.getElementsByClass(Selectors.pagePanelBodyClass).text() shouldBe panelBodyContent
 
-  }
+      testContentByIds(expectedContent)
+
+      pageDocument.select(Selectors.yourRevisedDeadlineP1Link).attr("href") shouldBe nextUpdatesLink()
+
+      pageDocument.select(Selectors.yourRevisedDeadlineP2Link).attr("href") shouldBe reportingFrequencyLinkUrl(false)
+    }
 
 }

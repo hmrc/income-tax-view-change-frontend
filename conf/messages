@@ -1028,6 +1028,8 @@ chargeSummary.chargeHistory.amend.balancingCharge.text 	   	   	        = Balanc
 chargeSummary.chargeHistory.adjustment.paymentOnAccount1.text           = You updated your first payment on account
 chargeSummary.chargeHistory.adjustment.paymentOnAccount2.text           = You updated your second payment on account
 chargeSummary.chargeHistory.created.hmrcAdjustment.text                 = HMRC adjustment created
+chargeSummary.chargeHistory.POA1RR-credit                               = First payment on account: credit from your tax return
+chargeSummary.chargeHistory.POA2RR-credit                               = Second payment on account: credit from your tax return
 
 chargeSummary.lpi.paymentOnAccount1.text						   = Late payment interest on first payment on account
 chargeSummary.lpi.paymentOnAccount2.text						   = Late payment interest on second payment on account
@@ -2297,13 +2299,16 @@ optin.completedOptIn.cy.heading.desc                     = You are now reporting
 optin.completedOptIn.ny.heading.desc                     = You opted in to quarterly reporting from {0} to {1} tax year onwards
 optin.completedOptIn.followingVoluntary.heading.desc     = You are now reporting quarterly for {0} to {1} tax year
 
-optin.completedOptIn.nextUpdates                = Your next updates due
-optin.completedOptIn.nextUpdate.desc1.a         = Check the
-optin.completedOptIn.nextUpdate.desc1.b         = updates and deadlines
-optin.completedOptIn.nextUpdate.desc1.c         = page for the current tax year’s deadlines. Deadlines for future years will not be visible until they become the current year.
-optin.completedOptIn.nextUpdate.desc2.a         = You can decide at any time to opt out of reporting quarterly for all your businesses on
-optin.completedOptIn.nextUpdate.desc2.b         = your reporting frequency
-optin.completedOptIn.nextUpdate.desc2.c         = page.
+optin.completedOptIn.yourRevisedDeadline.inset = Your revised deadlines will be available in the next few minutes.
+
+optin.completedOptIn.yourRevisedDeadline.h2 = Your revised deadlines
+optin.completedOptIn.yourRevisedDeadline.p1.a = Even if they are not displayed right away on the
+optin.completedOptIn.yourRevisedDeadline.p1.b = page, your account has been updated.
+optin.completedOptIn.yourRevisedDeadline.p1.link = updates and deadlines
+
+optin.completedOptIn.yourRevisedDeadline.p2.a = You can decide at any time to opt out of reporting quarterly for all your businesses on
+optin.completedOptIn.yourRevisedDeadline.p2.b =  page.
+optin.completedOptIn.yourRevisedDeadline.p2.link = your reporting frequency
 
 optin.completedOptIn.submitUpdates              = Submit updates in software
 optin.completedOptIn.submitUpdates.desc1.a      = For any tax year you are reporting quarterly, you will need

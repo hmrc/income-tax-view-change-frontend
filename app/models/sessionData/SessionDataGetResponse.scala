@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package testOnly.models
+package models.sessionData
 
 import play.api.Logger
 import play.api.http.Status.{NOT_FOUND, OK}
@@ -34,7 +34,17 @@ object SessionDataGetResponse {
     implicit val format: OFormat[SessionDataGetSuccess] = Json.format[SessionDataGetSuccess]
   }
 
-  type SessionGetResponse = Either[Throwable, SessionDataGetSuccess]
+  sealed trait SessionDataGetFailure
+
+  case class SessionDataNotFound(msg: String) extends Exception with SessionDataGetFailure {
+    override def getMessage: String = msg
+  }
+
+  case class SessionDataUnexpectedResponse(msg: String) extends Exception with SessionDataGetFailure {
+    override def getMessage: String = msg
+  }
+
+  type SessionGetResponse = Either[SessionDataGetFailure, SessionDataGetSuccess]
 
   implicit object SessionGetResponseReads extends HttpReads[SessionGetResponse] {
     override def read(method: String, url: String, response: HttpResponse): SessionGetResponse = {
@@ -42,15 +52,15 @@ object SessionDataGetResponse {
         case OK =>
           Logger("application").info("Get session call successful. OK response was returned from the API")
           response.json.validate[SessionDataGetSuccess].fold(
-            invalid => Left(new Exception(s"Json validation error for SessionDataModel. Invalid: $invalid")),
+            invalid => Left(SessionDataUnexpectedResponse(s"Json validation error for SessionDataModel. Invalid: $invalid")),
             valid => Right(valid)
           )
         case NOT_FOUND =>
           Logger("application").error(s"No user session was found. status: $NOT_FOUND")
-          Left(new Exception(s"No user session was found. status: $NOT_FOUND"))
+          Left(SessionDataNotFound(s"No user session was found. status: $NOT_FOUND"))
         case status =>
           Logger("application").error(s"User session could not be saved. status: $status")
-          Left(new Exception(s"User session could not be saved. status: $status"))
+          Left(SessionDataUnexpectedResponse(s"User session could not be saved. status: $status"))
       }
     }
   }
