@@ -66,7 +66,7 @@ class OptOutChooseTaxYearControllerISpec extends ComponentSpecBase {
           result should have(
             httpStatus(OK),
             elementTextByID("heading")(headingText),
-            elementTextByID("description1")(description1Text),
+            elementTextByID("description")(descriptionText),
             elementTextBySelector("div.govuk-radios__item:nth-child(3) > label:nth-child(2)")(radioLabel3),
           )
         }
@@ -215,6 +215,6 @@ class OptOutChooseTaxYearControllerISpec extends ComponentSpecBase {
 
 object OptOutChooseTaxYearControllerISpec {
   val headingText = "Opting out of quarterly reporting"
-  val description1Text = "You can opt out from any of the tax years available and report annually from that year onwards. This means you’ll then report annually for all of your current businesses and any that you add in future."
+  val descriptionText = "You can opt out from any of the tax years available and report annually from that year onwards. This means you’ll then report annually for all of your current businesses and any that you add in future."
   val radioLabel3 = "2023 to 2024 onwards"
 }

@@ -46,8 +46,7 @@ class OptOutChooseTaxYearViewSpec extends TestSupport {
   object optOutChooseTaxYear {
     val heading: String = messages("optout.chooseOptOutTaxYear.heading")
     val title: String = messages("htmlTitle", heading)
-    val summary1: String = messages("optout.chooseOptOutTaxYear.desc1")
-    val summary2: String = messages("optout.chooseOptOutTaxYear.desc2")
+    val summary: String = messages("optout.chooseOptOutTaxYear.desc")
     val whichTaxYear: String = messages("optout.chooseOptOutTaxYear.whichTaxYear")
     val confirmOptOutURL: String = controllers.optOut.routes.ConfirmOptOutController.show(isAgent = false).url
     val confirmOptOutURLAgent: String = controllers.optOut.routes.ConfirmOptOutController.show(isAgent = true).url
@@ -68,8 +67,7 @@ class OptOutChooseTaxYearViewSpec extends TestSupport {
     }
 
     "have the correct summary heading and page contents" in new Setup(false) {
-      pageDocument.getElementById("description1").text() shouldBe optOutChooseTaxYear.summary1
-      pageDocument.getElementById("description2").text() shouldBe optOutChooseTaxYear.summary2
+      pageDocument.getElementById("description").text() shouldBe optOutChooseTaxYear.summary
       pageDocument.getElementById("whichTaxYear").child(0).text() shouldBe optOutChooseTaxYear.whichTaxYear
       pageDocument.getElementById("cancel-button").text() shouldBe optOutChooseTaxYear.cancelButton
       pageDocument.getElementById("cancel-button").attr("href") shouldBe optOutChooseTaxYear.cancelButtonHref
@@ -77,8 +75,7 @@ class OptOutChooseTaxYearViewSpec extends TestSupport {
     }
 
     "have the correct summary heading and page contents for Agents" in new Setup(true) {
-      pageDocument.getElementById("description1").text() shouldBe optOutChooseTaxYear.summary1
-      pageDocument.getElementById("description2").text() shouldBe optOutChooseTaxYear.summary2
+      pageDocument.getElementById("description").text() shouldBe optOutChooseTaxYear.summary
       pageDocument.getElementById("whichTaxYear").child(0).text() shouldBe optOutChooseTaxYear.whichTaxYear
       pageDocument.getElementById("cancel-button").text() shouldBe optOutChooseTaxYear.cancelButton
       pageDocument.getElementById("cancel-button").attr("href") shouldBe optOutChooseTaxYear.cancelButtonAgentHref
