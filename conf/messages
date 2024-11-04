@@ -2228,10 +2228,8 @@ optOut.confirmSingleYearOptOut.form.no-select.error         = Select yes to opt 
 optOut.ConfirmOptOutMultiTaxYearChoice.form.no-select.error = Select the tax year you want to report annually from
 
 # opt out choose tax year
-optout.chooseOptOutTaxYear.heading                   = Confirm you want to opt out of quarterly reporting
-optout.chooseOptOutTaxYear.desc1                     = You can opt out from any of the tax years available and report annually from that tax year onwards. This applies to all your businesses (even if they are less than 2 years old).
-optout.chooseOptOutTaxYear.desc2                     = If you opt out, you can submit your tax return through your HMRC online account or software.
-optout.chooseOptOutTaxYear.submissions.deleted       = Quarterly updates that you’ve submitted will be deleted from our records if you opt out from that tax year. You’ll need to include any income from these updates in your tax return.
+optout.chooseOptOutTaxYear.heading                   = Opting out of quarterly reporting
+optout.chooseOptOutTaxYear.desc1                     = You can opt out from any of the tax years available and report annually from that year onwards. This means you’ll then report annually for all of your current businesses and any that you add in future.
 optout.chooseOptOutTaxYear.whichTaxYear              = Which tax year do you want to opt out from?
 optout.chooseOptOutTaxYear.taxYearOnwards            = {0} to {1} onwards
 optout.chooseOptOutTaxYear.cancel                    = Cancel
