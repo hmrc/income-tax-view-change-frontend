@@ -18,7 +18,7 @@ package testOnly.controllers
 
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
-import models.admin.FeatureSwitchName
+import models.admin.{FeatureSwitchName, InvalidFS}
 import models.admin.FeatureSwitchName.allFeatureSwitches
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -54,7 +54,7 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
 
   def show(): Action[AnyContent] = Action.async { implicit user =>
     featureSwitchService.getAll.flatMap { featureSwitches =>
-      val fss = featureSwitches.map(x => {
+      val fss = featureSwitches.filter(_.name.name != InvalidFS.name).map(x => {
         (FeatureSwitchName.allFeatureSwitches.find(_.name == x.name.name).get -> x.isEnabled)
       }).toMap
       Future.successful(
