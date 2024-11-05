@@ -23,7 +23,7 @@ import enums.JourneyType.{JourneyType, Manage}
 import mocks.connectors.MockBusinessDetailsConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.MockSessionService
-import models.admin.{CalendarQuarterTypes, IncomeSources}
+import models.admin.IncomeSources
 import models.core.AddressModel
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.LatencyDetails
@@ -59,7 +59,6 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
     super.beforeEach()
     disableAllSwitches()
     enable(IncomeSources)
-    enable(CalendarQuarterTypes)
     reset(mockCalculationListService)
     reset(mockITSAStatusService)
     reset(mockDateService)
@@ -192,29 +191,6 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
 
         status(result) shouldBe Status.SEE_OTHER
       }
-      "CalendarQuarterTypes FS is disabled" in {
-        disable(CalendarQuarterTypes)
-        mockAndBasicSetup(ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION)
-        setupMockAuthorisationSuccess(false)
-        setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Manage, SelfEmployment)))))
-        setupMockSetSessionKeyMongo(Right(true))
-
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = false, SelfEmployment, Some(incomeSourceIdHash))(fakeRequestWithNino)
-        val document: Document = Jsoup.parse(contentAsString(result))
-
-        status(result) shouldBe Status.OK
-        document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__row").size() shouldBe 5
-        document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__row").get(0) shouldNot be(TestManageIncomeSourceDetailsController.calendar)
-        document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__row").get(1) shouldNot be(TestManageIncomeSourceDetailsController.calendar)
-        document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__row").get(2) shouldNot be(TestManageIncomeSourceDetailsController.calendar)
-        document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__row").get(3) shouldNot be(TestManageIncomeSourceDetailsController.calendar)
-
-      }
     }
   }
   "Agent - ManageIncomeSourceDetailsController" should {
@@ -230,28 +206,6 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
 
         status(result) shouldBe SEE_OTHER
       }
-    }
-    "CalendarQuarterTypes FS is disabled" in {
-      disable(CalendarQuarterTypes)
-      mockAndBasicSetup(ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION, isAgent = true)
-      setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Manage, SelfEmployment)))))
-      setupMockSetSessionKeyMongo(Right(true))
-
-      val result: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = true, SelfEmployment, Some(incomeSourceIdHash))(fakeRequestConfirmedClient())
-      val document: Document = Jsoup.parse(contentAsString(result))
-
-      status(result) shouldBe Status.OK
-      document.getElementById("manage-details-table")
-        .getElementsByClass("govuk-summary-list__row").size() shouldBe 5
-      document.getElementById("manage-details-table")
-        .getElementsByClass("govuk-summary-list__row").get(0) shouldNot be(TestManageIncomeSourceDetailsController.calendar)
-      document.getElementById("manage-details-table")
-        .getElementsByClass("govuk-summary-list__row").get(1) shouldNot be(TestManageIncomeSourceDetailsController.calendar)
-      document.getElementById("manage-details-table")
-        .getElementsByClass("govuk-summary-list__row").get(2) shouldNot be(TestManageIncomeSourceDetailsController.calendar)
-      document.getElementById("manage-details-table")
-        .getElementsByClass("govuk-summary-list__row").get(3) shouldNot be(TestManageIncomeSourceDetailsController.calendar)
-
     }
   }
 
