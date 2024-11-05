@@ -45,12 +45,12 @@ trait ControllerISpecHelper extends ComponentSpecBase {
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn.url)
+          redirectURI(controllers.timeout.routes.SessionTimeoutController.timeout.url)
         )
       }
     }
 
-    "does not have HMRC-AS-IT enrolment" should {
+    "does not have HMRC-MTD-IT enrolment" should {
       s"redirect ($SEE_OTHER) to ${controllers.agent.errors.routes.AgentErrorController.show.url}" in {
         MTDIndividualAuthStub.stubInsufficientEnrolments()
         val result = buildMTDClient(requestPath, optBody = optBody).futureValue

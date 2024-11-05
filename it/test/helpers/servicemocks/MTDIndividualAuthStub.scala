@@ -95,7 +95,7 @@ object MTDIndividualAuthStub {
 
   def stubInsufficientEnrolments(): Unit = {
     val responseHeaders = Map("WWW-Authenticate" -> "MDTP detail=\"InsufficientEnrolments\"",
-      "Failing-Enrolment" -> "no HMRC-AS-IT enrolment")
+      "Failing-Enrolment" -> "no HMRC-MTD-IT enrolment")
 
     stubPostWithRequestAndResponseHeaders(
       url = postAuthoriseUrl,

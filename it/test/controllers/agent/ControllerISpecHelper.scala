@@ -18,7 +18,7 @@ package controllers.agent
 
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.MTDAgentAuthStub
-import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.http.Status.SEE_OTHER
 import testConstants.BaseIntegrationTestConstants._
 
 trait ControllerISpecHelper extends ComponentSpecBase {
@@ -55,16 +55,13 @@ trait ControllerISpecHelper extends ComponentSpecBase {
     }
 
     "has an expired bearerToken" should {
-      s"redirect ($SEE_OTHER) to IV uplift" in {
+      s"redirect ($SEE_OTHER) to ${controllers.timeout.routes.SessionTimeoutController.timeout.url}" in {
         MTDAgentAuthStub.stubBearerTokenExpired(testMtditid, isSupportingAgent = isSupportingAgent)
         val result = buildMTDClient(requestPath, additionalCookies, optBody).futureValue
 
-        result.status shouldBe SEE_OTHER
-        result.header("Location").get should contain("")
-
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn.url)
+          redirectURI(controllers.timeout.routes.SessionTimeoutController.timeout.url)
         )
       }
     }
@@ -100,7 +97,7 @@ trait ControllerISpecHelper extends ComponentSpecBase {
         val result = buildMTDClient(requestPath, additionalCookies, optBody).futureValue
 
         result should have(
-          httpStatus(OK),
+          httpStatus(SEE_OTHER),
           redirectURI(controllers.routes.HomeController.show().url)
         )
       }
