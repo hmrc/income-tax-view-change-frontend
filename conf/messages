@@ -962,13 +962,9 @@ chargeSummary.poa2ExtraAmountInterest.p3                            = Interest i
 chargeSummary.poa2ExtraAmountInterest.p3LinkText                    = Bank of England base rate (opens in new tab)
 chargeSummary.poa2ExtraAmountInterest.p3AfterLink                   = plus 2.5%.
 
-chargeSummary.poa1Credit.p1                                         = HMRC has added a credit to your account because your tax return shows that your adjusted
-chargeSummary.poa1Credit.link                                       = first payment on account
-chargeSummary.poa1Credit.afterLink                                  = was too high.
+chargeSummary.POA1Credit.p1                                         = HMRC has added a credit to your account because your tax return shows that your adjusted first payment on account was too high.
 
-chargeSummary.poa2Credit.p1                                         = HMRC has added a credit to your account because your tax return shows that your adjusted
-chargeSummary.poa2Credit.link                                       = second payment on account
-chargeSummary.poa2Credit.afterLink                                  = was too high.
+chargeSummary.POA2Credit.p1                                         = HMRC has added a credit to your account because your tax return shows that your adjusted second payment on account was too high.
 
 chargeSummary.definition.balancingcharge.p1                        = A balancing payment is the tax you still need to pay for a tax year. This happens if you:
 chargeSummary.definition.balancingcharge.bullet1                   = did not have any tax to pay during the year (for example, if your last Self Assessment tax bill was under £1,000)
