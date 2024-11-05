@@ -22,7 +22,6 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{JourneyType, Manage}
-import models.admin.CalendarQuarterTypes
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.IncomeSourceIdHash.mkFromQueryString
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
@@ -116,21 +115,19 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
   }
 
   private def getQuarterType(latencyDetails: Option[LatencyDetails], quarterTypeElection: Option[QuarterTypeElection])(implicit user: MtdItUser[_]): Option[QuarterReportingType] = {
-    if (isEnabled(CalendarQuarterTypes)) {
-      quarterTypeElection.flatMap(quarterTypeElection => {
-        latencyDetails match {
-          case Some(latencyDetails: LatencyDetails) =>
-            val quarterIndicator = "Q"
-            val currentTaxYearEnd = dateService.getCurrentTaxYearEnd.toString
-            val showForLatencyTaxYear1 = (latencyDetails.taxYear1 == currentTaxYearEnd) && latencyDetails.latencyIndicator1.equals(quarterIndicator)
-            val showForLatencyTaxYear2 = (latencyDetails.taxYear2 == currentTaxYearEnd) && latencyDetails.latencyIndicator2.equals(quarterIndicator)
-            val showIfLatencyExpired = latencyDetails.taxYear2 < currentTaxYearEnd
-            val showQuarterReportingType = showForLatencyTaxYear1 || showForLatencyTaxYear2 || showIfLatencyExpired
-            if (showQuarterReportingType) quarterTypeElection.isStandardQuarterlyReporting else None
-          case None => quarterTypeElection.isStandardQuarterlyReporting
-        }
-      })
-    } else None
+    quarterTypeElection.flatMap(quarterTypeElection => {
+      latencyDetails match {
+        case Some(latencyDetails: LatencyDetails) =>
+          val quarterIndicator = "Q"
+          val currentTaxYearEnd = dateService.getCurrentTaxYearEnd.toString
+          val showForLatencyTaxYear1 = (latencyDetails.taxYear1 == currentTaxYearEnd) && latencyDetails.latencyIndicator1.equals(quarterIndicator)
+          val showForLatencyTaxYear2 = (latencyDetails.taxYear2 == currentTaxYearEnd) && latencyDetails.latencyIndicator2.equals(quarterIndicator)
+          val showIfLatencyExpired = latencyDetails.taxYear2 < currentTaxYearEnd
+          val showQuarterReportingType = showForLatencyTaxYear1 || showForLatencyTaxYear2 || showIfLatencyExpired
+          if (showQuarterReportingType) quarterTypeElection.isStandardQuarterlyReporting else None
+        case None => quarterTypeElection.isStandardQuarterlyReporting
+      }
+    })
   }
 
   private def getCrystallisationInformation(latencyDetails: Option[LatencyDetails])
