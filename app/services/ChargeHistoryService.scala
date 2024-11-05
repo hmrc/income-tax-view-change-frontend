@@ -20,7 +20,7 @@ import auth.MtdItUser
 import connectors.ChargeHistoryConnector
 import enums.CreateReversalReason
 import models.chargeHistory._
-import models.financialDetails.{ChargeItem, DocumentDetail, FinancialDetail, FinancialDetailsModel, PaymentOnAccountOne, PaymentOnAccountTwo}
+import models.financialDetails._
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -59,7 +59,10 @@ class ChargeHistoryService @Inject()(chargeHistoryConnector: ChargeHistoryConnec
       val (nextAmount, adjList) = acc
       val newAdjustment = AdjustmentModel(
         adjustmentDate = Some(current.reversalDate),
-        reasonCode = current.reasonCode,
+        reasonCode = current.reasonCode match {
+          case Left(ex) => throw new Exception(ex)
+          case Right(rc) => rc
+        },
         amount = nextAmount
       )
       (current.totalAmount, newAdjustment :: adjList)
