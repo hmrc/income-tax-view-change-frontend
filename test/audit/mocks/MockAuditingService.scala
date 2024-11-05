@@ -18,6 +18,7 @@ package audit.mocks
 
 import audit.AuditingService
 import audit.models.{AuditModel, ExtendedAuditModel}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.mockito.{AdditionalMatchers, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
@@ -51,6 +52,16 @@ trait MockAuditingService extends TestSupport with BeforeAndAfterEach {
     verify(mockAuditingService).extendedAudit(
       ArgumentMatchers.eq(model),
       AdditionalMatchers.or(ArgumentMatchers.eq(path), ArgumentMatchers.isNull)
+    )(
+      ArgumentMatchers.any[HeaderCarrier],
+      ArgumentMatchers.any[Request[_]],
+      ArgumentMatchers.any[ExecutionContext]
+    )
+
+  def verifyExtendedAuditSent(model: ExtendedAuditModel): Unit =
+    verify(mockAuditingService).extendedAudit(
+      ArgumentMatchers.eq(model),
+      any()
     )(
       ArgumentMatchers.any[HeaderCarrier],
       ArgumentMatchers.any[Request[_]],

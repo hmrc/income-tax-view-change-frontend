@@ -115,6 +115,7 @@ object BaseIntegrationTestConstants {
     SessionKeys.clientMTDID -> testMtditid
   )
 
+
   val clientDetailsWithConfirmation: Map[String, String] = Map(
     SessionKeys.clientFirstName -> "Test",
     SessionKeys.clientLastName -> "User",
@@ -132,6 +133,14 @@ object BaseIntegrationTestConstants {
     SessionKeys.clientMTDID -> testMtditid,
     SessionKeys.confirmedClient -> "true"
   )
+
+  def getAgentClientDetailsForCookie(isSupportingAgent: Boolean, requiresConfirmation: Boolean): Map[String, String] = {
+    if(requiresConfirmation) {
+      clientDetailsWithConfirmation ++ Map(SessionKeys.isSupportingAgent -> isSupportingAgent.toString)
+    } else {
+      clientDetailsWithoutConfirmation ++ Map(SessionKeys.isSupportingAgent -> isSupportingAgent.toString)
+    }
+  }
 
   val getCurrentTaxYearEnd: LocalDate = {
     val currentDate: LocalDate = LocalDate.of(2023, 4, 5)

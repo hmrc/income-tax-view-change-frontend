@@ -52,17 +52,6 @@ class ConfirmClientUTRController @Inject()(confirmClient: confirmClient,
   }
 
   def submit: Action[AnyContent] = authActions.asMTDAgentWithUnconfirmedClient { implicit user =>
-    val audit = ConfirmClientDetailsAuditModel(
-      clientName = user.optClientNameAsString.getOrElse(""),
-      nino = user.nino,
-      mtditid = user.mtditid,
-      arn = user.arn.getOrElse(""),
-      saUtr = user.saUtr.getOrElse(""),
-      credId = user.credId
-    )
-
-    println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-    println(audit)
     auditingService.extendedAudit(ConfirmClientDetailsAuditModel(
       clientName = user.optClientNameAsString.getOrElse(""),
       nino = user.nino,

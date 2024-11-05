@@ -24,8 +24,9 @@ import authV2.AuthActionsTestData._
 import config.featureswitch.FeatureSwitching
 import mocks.MockItvcErrorHandler
 import mocks.services.{MockIncomeSourceDetailsService, MockSessionDataService}
-import org.mockito.Mockito.mock
+import org.mockito.Mockito.{mock, reset}
 import play.api
+import play.api.Play
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.stubMessagesControllerComponents
@@ -38,10 +39,21 @@ trait MockAuthActions extends
   TestSupport with
   MockIncomeSourceDetailsService with
   MockAgentAuthorisedFunctions with
+  MockUserAuthorisedFunctions with
   MockAuditingService with
   MockItvcErrorHandler with
   MockSessionDataService with
   FeatureSwitching {
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockAuthService)
+  }
+
+  override def afterEach() = {
+    Play.stop(fakeApplication())
+    super.afterEach()
+  }
 
   implicit class Ops[A](a: A) {
     def ~[B](b: B): A ~ B = new ~(a, b)
@@ -62,7 +74,14 @@ trait MockAuthActions extends
 
   val mockAuthActions: AuthActions = app.injector.instanceOf[AuthActions]
 
-  def setupMockAgentWithClientAuth[X, Y](isSupportingAgent: Boolean): Unit = {
+  def setupMockUserAuth[X, Y]: Unit = {
+    disableAllSwitches()
+    val allEnrolments = getAllEnrolmentsIndividual(true, true)
+    val retrievalValue = allEnrolments ~ Some(userName) ~ Some(credentials) ~ Some(AffinityGroup.Agent) ~ acceptedConfidenceLevel
+    setupMockUserAuthSuccess(retrievalValue)
+  }
+
+  def setupMockAgentWithClientAuthAndIncomeSources[X, Y](isSupportingAgent: Boolean): Unit = {
     disableAllSwitches()
     setupMockGetSessionDataSuccess()
     val allEnrolments = getAllEnrolmentsAgent(true, true, hasDelegatedEnrolment = true)
@@ -71,10 +90,12 @@ trait MockAuthActions extends
     mockSingleBusinessIncomeSource()
   }
 
+  def setupMockUserAuthorisationException(exception: AuthorisationException = new InvalidBearerToken): Unit = {
+    setupMockUserAuthException(exception)
+  }
+
   def setupMockAgentWithClientAuthorisationException(exception: AuthorisationException = new InvalidBearerToken, isSupportingAgent: Boolean): Unit = {
     setupMockGetSessionDataSuccess()
     setupMockAgentWithClientAuthException(exception, mtdId, isSupportingAgent)
   }
-
-
 }

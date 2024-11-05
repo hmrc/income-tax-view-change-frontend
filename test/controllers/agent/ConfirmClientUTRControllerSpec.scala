@@ -24,7 +24,8 @@ import mocks.views.agent.MockConfirmClient
 import play.api
 import play.api.Application
 import play.api.test.Helpers._
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testArn, testCredId, testMtditidAgent, testNino, testSaUtrId}
+import play.twirl.api.{Html, HtmlFormat}
+import testConstants.BaseTestConstants.testNino
 import uk.gov.hmrc.auth.core.{BearerTokenExpired, InsufficientEnrolments}
 import views.html.agent.confirmClient
 
@@ -99,7 +100,8 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions
 
         "that is fully authenticated" should {
           "return OK and display confirm Client details page" in {
-            setupMockAgentWithClientAuth(isSupportingAgent)
+            setupMockAgentWithClientAuthAndIncomeSources(isSupportingAgent)
+            mockConfirmClientResponse(HtmlFormat.empty)
 
             val result = testConfirmClientUTRController.show()(fakeRequest)
 
@@ -166,22 +168,18 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions
             }
           }
 
-          lazy val request = fakeRequestWithClientDetails.addingToSession(SessionKeys.confirmedClient -> "false")
-
           "is fully authenticated" should {
             "redirect to Home page and add confirmedClient: true flag to session" in {
-              setupMockAgentWithClientAuth(isSupportingAgent)
+              setupMockAgentWithClientAuthAndIncomeSources(isSupportingAgent)
 
               val result = testConfirmClientUTRController.submit()(fakeRequest)
 
               val expectedAudit = ConfirmClientDetailsAuditModel(clientName = "Test User", nino = testNino, mtditid = AuthActionsTestData.mtdId, arn = AuthActionsTestData.arn, saUtr = AuthActionsTestData.saUtr, credId = Some(AuthActionsTestData.credentials.providerId))
-              println("*************************")
-              println(expectedAudit)
-              verifyExtendedAudit(expectedAudit)
 
               status(result) shouldBe SEE_OTHER
               redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
-              result.futureValue.session(request).get(SessionKeys.confirmedClient) shouldBe Some("true")
+              session(result).get(SessionKeys.confirmedClient) shouldBe Some("true")
+              verifyExtendedAuditSent(expectedAudit)
             }
           }
         }

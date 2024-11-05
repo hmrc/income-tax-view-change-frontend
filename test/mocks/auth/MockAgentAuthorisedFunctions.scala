@@ -49,11 +49,6 @@ trait MockAgentAuthorisedFunctions extends BeforeAndAfterEach {
     primaryAgentPredicate(mtdItId)
   }
 
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    reset(mockAuthService)
-  }
-
   def setupMockAgentAuthSuccess[X, Y](retrievalValue: X ~ Y): Unit = {
     when(mockAuthService.authorised(authPredicateForAgent))
       .thenReturn(

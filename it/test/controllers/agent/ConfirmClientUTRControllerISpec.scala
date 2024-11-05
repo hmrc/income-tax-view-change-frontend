@@ -17,132 +17,114 @@
 package controllers.agent
 
 import audit.models.ConfirmClientDetailsAuditModel
-import config.featureswitch.FeatureSwitching
-import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.AuditStub
-import helpers.servicemocks.AuthStub.titleInternalServer
+import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub, MTDAgentAuthStub}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status._
-import play.api.libs.ws.WSResponse
 import testConstants.BaseIntegrationTestConstants._
+import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
 
-class ConfirmClientUTRControllerISpec extends ComponentSpecBase with FeatureSwitching {
+class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
 
+  val path = "/agents/confirm-client-details"
 
-  s"GET ${controllers.agent.routes.ConfirmClientUTRController.show.url}" should {
-    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" when {
-      "the user is not authenticated" in {
-        stubAuthorisedAgentUser(authorised = false)
+  s"GET ${controllers.agent.routes.ConfirmClientUTRController.show.url}" when {
+    s"a user is a primary agent (session data isSupportingAgent = false)" that {
+      val additionalCookies = getAgentClientDetailsForCookie(false, false)
+      "is authenticated, with a valid agent and client delegated enrolment" should {
+        "render the confirm client utr page with an empty black banner" in {
+          MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, false)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getConfirmClientUTR()
+          val result = buildMTDClient(path, additionalCookies).futureValue
 
-        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn.url}")
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn.url)
-        )
+          result should have(
+            httpStatus(OK),
+            pageTitleAgentLogin("agent.confirmClient.heading")
+          )
+
+          val document: Document = Jsoup.parse(result.toString)
+          document.select(".govuk-header__content")
+            .select(".hmrc-header__service-name hmrc-header__service-name--linked")
+            .text() shouldBe ""
+        }
       }
+
+      testAuthFailuresForMTDAgent(path, false, false)
     }
 
-    s"return $OK with technical difficulties" when {
-      "the user is authenticated but doesn't have the agent enrolment" in {
-        stubAuthorisedAgentUser(authorised = true, hasAgentEnrolment = false)
+    s"a user is a supporting agent (session data isSupportingAgent = true)" that {
+      val additionalCookies = getAgentClientDetailsForCookie(true, false)
+      "is authenticated, with a valid agent and client delegated enrolment" should {
+        "render the confirm client utr page with an empty black banner" in {
+          MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, true)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getConfirmClientUTR()
+          val result = buildGETMTDClient(path, additionalCookies).futureValue
 
-        Then(s"Technical difficulties are shown with status OK")
-        result should have(
-          httpStatus(OK),
-          pageTitleAgent(titleInternalServer, isErrorPage = true)
-        )
+          result should have(
+            httpStatus(OK),
+            pageTitleAgentLogin("agent.confirmClient.heading")
+          )
+
+          val document: Document = Jsoup.parse(result.toString)
+          document.select(".govuk-header__content")
+            .select(".hmrc-header__service-name hmrc-header__service-name--linked")
+            .text() shouldBe ""
+        }
       }
+
+      testAuthFailuresForMTDAgent(path, true, false)
     }
 
-    s"redirect ($SEE_OTHER) to ${controllers.agent.routes.EnterClientsUTRController.show.url}" when {
-      "the client's name and UTR are not in session" in {
-        stubAuthorisedAgentUser(authorised = true)
-
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getConfirmClientUTR()
-
-        Then("The enter client's utr page is returned to the user")
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.routes.EnterClientsUTRController.show.url)
-        )
-      }
-    }
-
-    s"return $OK with the confirm client utr page" in {
-      stubAuthorisedAgentUser(authorised = true)
-
-      val result: WSResponse = IncomeTaxViewChangeFrontend.getConfirmClientUTR(clientDetailsWithoutConfirmation)
-
-      Then("The confirm client's utr page is returned to the user")
-      result should have(
-        httpStatus(OK),
-        pageTitleAgentLogin("agent.confirmClient.heading")
-      )
-    }
-
-    s"return $OK with empty black banner on the confirm client utr page" in {
-      stubAuthorisedAgentUser(authorised = true)
-
-      val result: WSResponse = IncomeTaxViewChangeFrontend.getConfirmClientUTR(clientDetailsWithoutConfirmation)
-
-      val document: Document = Jsoup.parse(result.toString)
-      document.select(".govuk-header__content")
-        .select(".hmrc-header__service-name hmrc-header__service-name--linked")
-        .text() shouldBe ""
-
-      result should have(
-        httpStatus(OK),
-        pageTitleAgentLogin("agent.confirmClient.heading")
-      )
-    }
+    testNoClientDataFailure(path)
   }
 
-  s"POST ${controllers.agent.routes.ConfirmClientUTRController.submit.url}" should {
-    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" when {
-      "the user is not authenticated" in {
-        stubAuthorisedAgentUser(authorised = false)
+  s"POST ${controllers.agent.routes.ConfirmClientUTRController.submit.url}" when {
+    s"a user is a primary agent (session data isSupportingAgent = false)" that {
+      val additionalCookies = getAgentClientDetailsForCookie(false, false)
+      "is authenticated, with a valid agent and client delegated enrolment" should {
+        s"redirect ($SEE_OTHER) to the agent home page" in {
+          MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, true)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-        val result: WSResponse = IncomeTaxViewChangeFrontend.postConfirmClientUTR()
+          val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
 
-        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn.url}")
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn.url)
-        )
+          result should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(controllers.routes.HomeController.showAgent.url)
+          )
+          AuditStub.verifyAuditEvent(ConfirmClientDetailsAuditModel(clientName = "Test User", nino = testNino, mtditid = testMtditid, arn = "1", saUtr = testSaUtr, credId = None))
+
+        }
       }
+
+      testAuthFailuresForMTDAgent(path, true, false, optBody = Some(Map.empty))
+
     }
 
-    s"return $OK with technical difficulties" when {
-      "the user is authenticated but doesn't have the agent enrolment" in {
-        stubAuthorisedAgentUser(authorised = true, hasAgentEnrolment = false)
+    s"a user is a supporting agent (session data isSupportingAgent = true)" that {
+      val additionalCookies = getAgentClientDetailsForCookie(false, false)
+      "is authenticated, with a valid agent and client delegated enrolment" should {
+        s"redirect ($SEE_OTHER) to the agent home page" in {
+          MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, false)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-        val result: WSResponse = IncomeTaxViewChangeFrontend.postConfirmClientUTR()
+          val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
 
-        Then(s"Technical difficulties are shown with status OK")
-        result should have(
-          httpStatus(OK),
-          pageTitleAgent(titleInternalServer, isErrorPage = true)
-        )
+          result should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(controllers.routes.HomeController.showAgent.url)
+          )
+          AuditStub.verifyAuditEvent(ConfirmClientDetailsAuditModel(clientName = "Test User", nino = testNino, mtditid = testMtditid, arn = "1", saUtr = testSaUtr, credId = None))
+
+        }
       }
+
+      testAuthFailuresForMTDAgent(path, false, false, optBody = Some(Map.empty))
+
     }
 
-    s"redirect ($SEE_OTHER) to the next page" in {
-      stubAuthorisedAgentUser(authorised = true)
-
-      val result: WSResponse = IncomeTaxViewChangeFrontend.postConfirmClientUTR(clientDetailsWithoutConfirmation)
-
-      AuditStub.verifyAuditEvent(ConfirmClientDetailsAuditModel(clientName = "Test User", nino = testNino, mtditid = testMtditid, arn = "1", saUtr = testSaUtr, credId = None))
-
-      Then("The user is redirected to the next page")
-      result should have(
-        httpStatus(SEE_OTHER),
-        redirectURI(controllers.routes.HomeController.showAgent.url)
-      )
-    }
+    testNoClientDataFailure(path, optBody = Some(Map.empty))
   }
 }
