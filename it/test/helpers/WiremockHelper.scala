@@ -23,10 +23,15 @@ import com.github.tomakehurst.wiremock.common.ConsoleNotifier
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
 import com.github.tomakehurst.wiremock.http.{HttpHeader, HttpHeaders}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import helpers.servicemocks.AuthStub.bakeSessionCookie
 import org.scalatest.concurrent.{Eventually, IntegrationPatience}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
+import play.api.http.HeaderNames
 import play.api.libs.json.JsValue
-import play.api.libs.ws.WSClient
+import play.api.libs.ws.{WSClient, WSResponse}
+import testConstants.BaseIntegrationTestConstants.testSessionId
+
+import scala.concurrent.Future
 
 object WiremockHelper extends Eventually with IntegrationPatience {
 
@@ -240,5 +245,33 @@ trait WiremockHelper {
 
   def buildClient(path: String) = ws.url(s"http://localhost:$port/report-quarterly/income-and-expenses/view$path")
     .withFollowRedirects(false)
+
+  def buildMTDClient(path: String,
+                     additionalCookies: Map[String, String] = Map.empty,
+                     optBody: Option[Map[String, Seq[String]]] = None): Future[WSResponse] = {
+    optBody match {
+      case Some(body) => buildPOSTMTDPostClient(path, additionalCookies, body)
+      case _ => buildGETMTDClient(path, additionalCookies)
+    }
+  }
+
+  def buildGETMTDClient(path: String,
+                        additionalCookies: Map[String, String] = Map.empty): Future[WSResponse] =
+    buildClient(path)
+      .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies),
+        "X-Session-ID" -> testSessionId
+      ).get()
+
+  def buildPOSTMTDPostClient(path: String,
+                             additionalCookies: Map[String, String] = Map.empty,
+                             body: Map[String, Seq[String]]): Future[WSResponse] =
+    buildClient(path)
+      .withMethod("POST")
+      .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies),
+        "Csrf-Token" -> "nocheck",
+        "X-Session-ID" -> testSessionId,
+        "X-Session-Id" -> testSessionId,
+        "sessionId-qqq" -> testSessionId
+      ).post(body)
 }
 

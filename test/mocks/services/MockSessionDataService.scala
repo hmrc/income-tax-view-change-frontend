@@ -16,6 +16,8 @@
 
 package mocks.services
 
+import authV2.AuthActionsTestData.sessionGetSuccessResponse
+import models.sessionData.SessionDataGetResponse.SessionDataNotFound
 import models.sessionData.SessionDataPostResponse.SessionDataPostResponse
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
@@ -27,7 +29,7 @@ import scala.concurrent.Future
 
 trait MockSessionDataService extends UnitSpec with BeforeAndAfterEach {
 
-  val mockSessionDataService: SessionDataService = mock(classOf[SessionDataService])
+  lazy val mockSessionDataService: SessionDataService = mock(classOf[SessionDataService])
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -36,6 +38,16 @@ trait MockSessionDataService extends UnitSpec with BeforeAndAfterEach {
 
   def setupMockPostSessionData(response: SessionDataPostResponse): Unit = {
     when(mockSessionDataService.postSessionData(any())(any())).thenReturn(Future.successful(response))
+  }
+
+  def setupMockGetSessionDataSuccess(): Unit = {
+    when(mockSessionDataService.getSessionData(any())(any(), any()))
+      .thenReturn(Future.successful(Right(sessionGetSuccessResponse)))
+  }
+
+  def setupMockGetSessionDataNotFound(): Unit = {
+    when(mockSessionDataService.getSessionData(any())(any(), any()))
+      .thenReturn(Future.successful(Left(SessionDataNotFound("session not found"))))
   }
 
 }

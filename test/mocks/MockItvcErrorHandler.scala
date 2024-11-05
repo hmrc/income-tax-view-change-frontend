@@ -27,7 +27,7 @@ import play.twirl.api.HtmlFormat
 trait MockItvcErrorHandler extends BeforeAndAfterEach {
   self: Suite =>
 
-  val mockItvcErrorHandler: AgentItvcErrorHandler = mock(classOf[AgentItvcErrorHandler])
+  lazy val mockItvcErrorHandler: AgentItvcErrorHandler = mock(classOf[AgentItvcErrorHandler])
 
   override def beforeEach(): Unit = {
     super.beforeEach()

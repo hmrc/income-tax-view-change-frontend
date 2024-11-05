@@ -170,18 +170,21 @@ class AuthoriseAndRetrieveMtdAgentSpec extends AuthActionsSpecHelper {
         redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/agents/agent-error")
       }
 
-      "the user is an Agent, but has no delegated enrolments" in {
-        when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
-          Future.failed[AuthRetrievals](InsufficientEnrolments("HMRC-MTD-IT"))
-        )
+      "redirect to the ClientRelationshipFailureController" when {
 
-        val result = authAction.invokeBlock(
-          fakeClientDetailsRequest,
-          defaultAsync
-        )
+        "the user is an Agent, but has no delegated enrolments" in {
+          when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
+            Future.failed[AuthRetrievals](InsufficientEnrolments("HMRC-MTD-IT"))
+          )
 
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/agents/client-utr")
+          val result = authAction.invokeBlock(
+            fakeClientDetailsRequest,
+            defaultAsync
+          )
+
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/agents/not-authorised-to-view-client")
+        }
       }
     }
 

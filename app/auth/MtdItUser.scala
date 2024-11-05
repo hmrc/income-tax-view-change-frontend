@@ -84,4 +84,13 @@ case class MtdItUser[A](mtditid: String,
 
   def isAgent(): Boolean = userType.contains(Agent)
 
+  def optClientNameAsString: Option[String] = {
+    val firstName = optClientName.fold[Option[String]](None)(_.name)
+    val lastName  = optClientName.fold[Option[String]](None)(_.lastName)
+    (firstName, lastName) match {
+      case (Some(fn), Some(ln)) => Some(s"$fn $ln")
+      case _ => None
+    }
+  }
+
 }

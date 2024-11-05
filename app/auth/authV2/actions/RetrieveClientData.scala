@@ -44,8 +44,15 @@ class RetrieveClientData @Inject()(sessionDataService: SessionDataService,
       .fromRequestAndSession(request, request.session)
 
     sessionDataService.getSessionData(useCookie = true).map {
-      case Right(sessionData) => Right(ClientDataRequest(sessionData.mtditid,None, None, sessionData.nino, sessionData.utr,
-        getBooleanFromSession(SessionKeys.isSupportingAgent), getBooleanFromSession(SessionKeys.confirmedClient)))
+      case Right(sessionData) => Right(ClientDataRequest(
+        sessionData.mtditid,
+        r.session.get(SessionKeys.clientFirstName),
+        r.session.get(SessionKeys.clientLastName),
+        sessionData.nino,
+        sessionData.utr,
+        getBooleanFromSession(SessionKeys.isSupportingAgent),
+        getBooleanFromSession(SessionKeys.confirmedClient))
+      )
       case Left(_: SessionDataNotFound) => Left(Redirect(routes.EnterClientsUTRController.show))
       case Left(_) => Left(errorHandler.showInternalServerError())
     }

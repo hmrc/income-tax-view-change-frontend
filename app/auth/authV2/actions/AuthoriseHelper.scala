@@ -42,7 +42,7 @@ trait AuthoriseHelper extends AuthRedirects with FeatureSwitching {
       Future.successful(Left(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout)))
     case InsufficientEnrolments(msg) if msg.contains("HMRC-MTD-IT") && requireAgent =>
       logger.debug(s"missing delegated enrolment. Redirect to agent error page.")
-      Future.successful(Left(Redirect(controllers.agent.routes.EnterClientsUTRController.show)))
+      Future.successful(Left(Redirect(controllers.agent.routes.ClientRelationshipFailureController.show)))
     case _: InsufficientEnrolments if requireAgent =>
       logger.debug(s"missing agent reference. Redirect to agent error page.")
       Future.successful(Left(Redirect(controllers.agent.errors.routes.AgentErrorController.show)))
