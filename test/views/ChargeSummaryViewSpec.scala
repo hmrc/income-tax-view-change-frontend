@@ -45,7 +45,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
   import Messages._
 
-  val defaultAdjustmentHistory: AdjustmentHistoryModel = AdjustmentHistoryModel(AdjustmentModel(1400, Some(LocalDate.of(2018,3,29)), AdjustmentReversalReason.value), List())
+  val defaultAdjustmentHistory: AdjustmentHistoryModel = AdjustmentHistoryModel(AdjustmentModel(1400, Some(LocalDate.of(2018,3,29)), AdjustmentReversalReason), List())
 
   class TestSetup(chargeItem: ChargeItem = chargeItemModel(),
                   dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)),
@@ -286,17 +286,17 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
   val amendedChargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("", "", fixedDate, "", 1500, LocalDate.of(2018, 7, 6), "amended return", Some("001"))
   val amendedAdjustmentHistory: AdjustmentHistoryModel = AdjustmentHistoryModel(
-    creationEvent = AdjustmentModel(1400, None, CreateReversalReason.value),
-    adjustments = List(AdjustmentModel(1500, Some(LocalDate.of(2018, 7, 6)), AdjustmentReversalReason.value))
+    creationEvent = AdjustmentModel(1400, None, CreateReversalReason),
+    adjustments = List(AdjustmentModel(1500, Some(LocalDate.of(2018, 7, 6)), AdjustmentReversalReason))
   )
   val adjustmentHistoryWithBalancingCharge: AdjustmentHistoryModel = AdjustmentHistoryModel(
-    creationEvent = AdjustmentModel(1400, None, CreateReversalReason.value),
-    adjustments = List(AdjustmentModel(1500, Some(LocalDate.of(2018, 7, 6)), AmendedReturnReversalReason.value))
+    creationEvent = AdjustmentModel(1400, None, CreateReversalReason),
+    adjustments = List(AdjustmentModel(1500, Some(LocalDate.of(2018, 7, 6)), AmendedReturnReversalReason))
   )
   val customerRequestChargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("", "", fixedDate, "", 1500, LocalDate.of(2018, 7, 6), "Customer Request", Some("002"))
   val customerRequestAdjustmentHistory : AdjustmentHistoryModel = AdjustmentHistoryModel(
-    creationEvent = AdjustmentModel(1400, None, CreateReversalReason.value),
-    adjustments = List(AdjustmentModel(1500, Some(LocalDate.of(2018, 7, 6)), CustomerRequestReason.value))
+    creationEvent = AdjustmentModel(1400, None, CreateReversalReason),
+    adjustments = List(AdjustmentModel(1500, Some(LocalDate.of(2018, 7, 6)), CustomerRequestReason))
   )
 
   val paymentBreakdown: List[FinancialDetail] = List(

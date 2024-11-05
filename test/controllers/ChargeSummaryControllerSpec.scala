@@ -85,7 +85,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 
   def testChargeHistoryModel(): ChargesHistoryModel = ChargesHistoryModel("NINO", "AB123456C", "ITSA", None)
 
-  def emptyAdjustmentHistoryModel: AdjustmentHistoryModel = AdjustmentHistoryModel(AdjustmentModel(1000, None, AmendedReturnReversalReason.value), List())
+  def emptyAdjustmentHistoryModel: AdjustmentHistoryModel = AdjustmentHistoryModel(AdjustmentModel(1000, None, AmendedReturnReversalReason), List())
 
   class Setup(financialDetails: FinancialDetailsResponseModel,
               adjustmentHistoryModel: AdjustmentHistoryModel = emptyAdjustmentHistoryModel,

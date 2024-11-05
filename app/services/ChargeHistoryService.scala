@@ -45,10 +45,10 @@ class ChargeHistoryService @Inject()(chargeHistoryConnector: ChargeHistoryConnec
     chargeHistory match {
       case Nil =>
         val creation = AdjustmentModel(amount = documentDetail.originalAmount,
-          adjustmentDate = Some(documentDetail.documentDate), reasonCode = CreateReversalReason.value)
+          adjustmentDate = Some(documentDetail.documentDate), reasonCode = CreateReversalReason)
         AdjustmentHistoryModel(creation, List.empty)
       case _ =>
-        val creation = AdjustmentModel(amount = chargeHistory.minBy(_.documentDate).totalAmount, adjustmentDate = Some(chargeHistory.minBy(_.documentDate).documentDate), reasonCode = CreateReversalReason.value)
+        val creation = AdjustmentModel(amount = chargeHistory.minBy(_.documentDate).totalAmount, adjustmentDate = Some(chargeHistory.minBy(_.documentDate).documentDate), reasonCode = CreateReversalReason)
         val poaAdjustmentHistory: List[AdjustmentModel] = adjustments(chargeHistory.sortBy(_.documentDate), documentDetail.originalAmount)
         AdjustmentHistoryModel(creation, poaAdjustmentHistory.sortBy(_.adjustmentDate))
     }
@@ -61,7 +61,7 @@ class ChargeHistoryService @Inject()(chargeHistoryConnector: ChargeHistoryConnec
         adjustmentDate = Some(current.reversalDate),
         reasonCode = current.reasonCode match {
           case Left(ex) => throw new Exception(ex)
-          case Right(rc) => rc.value
+          case Right(rc) => rc
         },
         amount = nextAmount
       )
