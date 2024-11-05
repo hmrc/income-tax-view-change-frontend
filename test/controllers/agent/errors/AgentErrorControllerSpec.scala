@@ -23,7 +23,7 @@ import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testUtils.TestSupport
-import views.html.agent.errorPages.{AgentError, UnauthorisedAgentView}
+import views.html.agent.errorPages.AgentError
 
 class AgentErrorControllerSpec extends TestSupport
   with MockFrontendAuthorisedFunctions
@@ -31,8 +31,7 @@ class AgentErrorControllerSpec extends TestSupport
 
   val TestAgentErrorController = new AgentErrorController(
     mockAuthService,
-    app.injector.instanceOf[AgentError],
-    app.injector.instanceOf[UnauthorisedAgentView]
+    app.injector.instanceOf[AgentError]
   )(
     app.injector.instanceOf[MessagesControllerComponents],
     appConfig,
