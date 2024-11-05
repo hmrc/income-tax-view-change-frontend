@@ -998,9 +998,9 @@ chargeSummary.poa2ExtraAmountInterest.p3                            = Mae llog y
 chargeSummary.poa2ExtraAmountInterest.p3LinkText                    = gyfradd sail Banc Lloegr (yn agor tab newydd)
 chargeSummary.poa2ExtraAmountInterest.p3AfterLink                   = , ynghyd â 2.5%.
 
-chargeSummary.poa1Credit.p1                                         = Mae CThEF wedi ychwanegu credyd at eich cyfrif oherwydd bod eich Ffurflen Dreth yn dangos bod eich taliad cyntaf ar gyfrif a gafodd ei addasu, yn rhy uchel.
+chargeSummary.POA1Credit.p1                                         = Mae CThEF wedi ychwanegu credyd at eich cyfrif oherwydd bod eich Ffurflen Dreth yn dangos bod eich taliad cyntaf ar gyfrif a gafodd ei addasu, yn rhy uchel.
 
-chargeSummary.poa2Credit.p1                                         = Mae CThEF wedi ychwanegu credyd at eich cyfrif oherwydd bod eich Ffurflen Dreth yn dangos bod eich ail daliad ar gyfrif a gafodd ei addasu, yn rhy uchel.
+chargeSummary.POA2Credit.p1                                         = Mae CThEF wedi ychwanegu credyd at eich cyfrif oherwydd bod eich Ffurflen Dreth yn dangos bod eich ail daliad ar gyfrif a gafodd ei addasu, yn rhy uchel.
 
 chargeSummary.definition.balancingcharge.p1                        = Taliad mantoli yw’r dreth sydd dal gennych i’w thalu ar gyfer blwyddyn dreth. Mae hyn yn digwydd os yw’r canlynol yn wir:
 chargeSummary.definition.balancingcharge.bullet1                   = nid oedd gennych unrhyw dreth i’w thalu yn ystod y flwyddyn (er enghraifft, os oedd eich bil treth Hunanasesiad diwethaf o dan £1,000)
