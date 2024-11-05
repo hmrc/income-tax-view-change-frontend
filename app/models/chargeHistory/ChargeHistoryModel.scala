@@ -40,7 +40,7 @@ case class ChargeHistoryModel(taxYear: String,
       reversalReason match {
         case "amended return" => Right(AmendedReturnReversalReason)
         case "Customer Request" => Right(CustomerRequestReason)
-        case _ => Left(new Exception())
+        case _ => Left(new Exception("Unable to resolve reversal reason"))
       }
   }
 
