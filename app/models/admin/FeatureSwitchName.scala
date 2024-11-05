@@ -46,8 +46,6 @@ object FeatureSwitchName {
       JsSuccess(CreditsRefundsRepay)
     case name if name == JsString(PaymentHistoryRefunds.name) =>
       JsSuccess(PaymentHistoryRefunds)
-    case name if name == JsString(CalendarQuarterTypes.name) =>
-      JsSuccess(CalendarQuarterTypes)
     case name if name == JsString(IncomeSourcesNewJourney.name) =>
       JsSuccess(IncomeSourcesNewJourney)
     case name if name == JsString(IncomeSources.name) =>
@@ -58,6 +56,8 @@ object FeatureSwitchName {
       JsSuccess(AdjustPaymentsOnAccount)
     case name if name == JsString(ReviewAndReconcilePoa.name) =>
       JsSuccess(ReviewAndReconcilePoa)
+    case name if name == JsString(FilterCodedOutPoas.name) =>
+      JsSuccess(FilterCodedOutPoas)
     case _ =>
       Logger("application").error(s"Invalid feature switch Json found")
       JsSuccess(InvalidFS)
@@ -83,8 +83,8 @@ object FeatureSwitchName {
 
   val allFeatureSwitches: immutable.Set[FeatureSwitchName] =
     Set(ITSASubmissionIntegration, ChargeHistory, NavBarFs, CreditsRefundsRepay,
-      PaymentHistoryRefunds, CalendarQuarterTypes, IncomeSourcesNewJourney, IncomeSources, OptOut,
-      AdjustPaymentsOnAccount, ReviewAndReconcilePoa)
+      PaymentHistoryRefunds, IncomeSourcesNewJourney, IncomeSources, OptOut,
+      AdjustPaymentsOnAccount, ReviewAndReconcilePoa, FilterCodedOutPoas)
 
   def get(str: String): Option[FeatureSwitchName] = allFeatureSwitches find (_.name == str)
 }
@@ -114,11 +114,6 @@ case object PaymentHistoryRefunds extends FeatureSwitchName {
   override def toString: String = "Payment History Refunds"
 }
 
-case object CalendarQuarterTypes extends FeatureSwitchName {
-  override val name = "calendar-quarter-types"
-  override val toString = "Calendar Quarter Types"
-}
-
 case object IncomeSourcesNewJourney extends FeatureSwitchName {
   override val name = "income-sources-new-journey"
   override val toString = "Income Sources New Journey"
@@ -142,6 +137,11 @@ case object AdjustPaymentsOnAccount extends FeatureSwitchName {
 case object ReviewAndReconcilePoa extends FeatureSwitchName {
   override val name: String = s"review-and-reconcile-poa"
   override val toString: String = "Review And Reconcile POA"
+}
+
+case object FilterCodedOutPoas extends FeatureSwitchName {
+  override val name: String = s"filter-coded-out-poas"
+  override val toString: String = "Filter Coded Out Poas"
 }
 
 case object InvalidFS extends FeatureSwitchName {

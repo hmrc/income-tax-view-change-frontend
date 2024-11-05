@@ -75,8 +75,7 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
       authoriseAndRetrieveMtdAgent andThen
       agentHasConfirmedClientAction andThen
       retrieveNinoWithIncomeSources andThen
-      retrieveFeatureSwitches andThen
-      retrieveBtaNavBar
+      retrieveFeatureSwitches
   }
 
   def asMTDAgentWithUnconfirmedClient[A]: ActionBuilder[MtdItUser, AnyContent] = {
@@ -84,8 +83,7 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
       retrieveClientData andThen
       authoriseAndRetrieveMtdAgent andThen
       retrieveNinoWithIncomeSources andThen
-      retrieveFeatureSwitches andThen
-      retrieveBtaNavBar
+      retrieveFeatureSwitches
   }
 
   def asMTDPrimaryAgent[A]: ActionBuilder[MtdItUser, AnyContent] = {
@@ -95,8 +93,7 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
       agentHasConfirmedClientAction andThen
       agentIsPrimaryAction andThen
       retrieveNinoWithIncomeSources andThen
-      retrieveFeatureSwitches andThen
-      retrieveBtaNavBar
+      retrieveFeatureSwitches
   }
 }
 

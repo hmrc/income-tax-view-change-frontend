@@ -30,7 +30,7 @@ import scala.concurrent.Future
 trait MockIncomeSourceDetailsService extends BeforeAndAfterEach {
   self: Suite =>
 
-  val mockIncomeSourceDetailsService: IncomeSourceDetailsService = mock(classOf[IncomeSourceDetailsService])
+  lazy val mockIncomeSourceDetailsService: IncomeSourceDetailsService = mock(classOf[IncomeSourceDetailsService])
 
   override def beforeEach(): Unit = {
     super.beforeEach()

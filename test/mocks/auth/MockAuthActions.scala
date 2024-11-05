@@ -20,79 +20,82 @@ import audit.AuditingService
 import audit.mocks.MockAuditingService
 import auth.FrontendAuthorisedFunctions
 import auth.authV2.AuthActions
-import auth.authV2.actions._
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
+import authV2.AuthActionsTestData._
+import config.featureswitch.FeatureSwitching
 import mocks.MockItvcErrorHandler
-import mocks.services.MockIncomeSourceDetailsService
-import org.mockito.Mockito.mock
+import mocks.services.{MockIncomeSourceDetailsService, MockSessionDataService}
+import org.mockito.Mockito.{mock, reset}
+import play.api
+import play.api.Play
+import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.stubMessagesControllerComponents
+import services.{IncomeSourceDetailsService, SessionDataService}
 import testUtils.TestSupport
+import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.auth.core.{AffinityGroup, AuthorisationException, InvalidBearerToken}
 
 trait MockAuthActions extends
   TestSupport with
   MockIncomeSourceDetailsService with
   MockAgentAuthorisedFunctions with
+  MockUserAuthorisedFunctions with
   MockAuditingService with
-  MockItvcErrorHandler {
+  MockItvcErrorHandler with
+  MockSessionDataService with
+  FeatureSwitching {
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockAuthService)
+  }
+
+  override def afterEach() = {
+    Play.stop(fakeApplication())
+    super.afterEach()
+  }
+
+  implicit class Ops[A](a: A) {
+    def ~[B](b: B): A ~ B = new ~(a, b)
+  }
 
   lazy val mockAuthService: FrontendAuthorisedFunctions = mock(classOf[FrontendAuthorisedFunctions])
 
+  def applicationBuilderWithAuthBindings(): GuiceApplicationBuilder = {
+    new GuiceApplicationBuilder()
+      .overrides(
+        api.inject.bind[FrontendAuthorisedFunctions].toInstance(mockAuthService),
+        api.inject.bind[MessagesControllerComponents].toInstance(stubMessagesControllerComponents()),
+        api.inject.bind[IncomeSourceDetailsService].toInstance(mockIncomeSourceDetailsService),
+        api.inject.bind[AuditingService].toInstance(mockAuditingService),
+        api.inject.bind[SessionDataService].toInstance(mockSessionDataService)
+      )
+  }
 
-  private val authoriseAndRetrieve = new AuthoriseAndRetrieve(
-    authorisedFunctions = mockAuthService,
-    appConfig = appConfig,
-    config = conf,
-    env = environment,
-    mcc = stubMessagesControllerComponents(),
-    auditingService = mockAuditingService
-  )
+  val mockAuthActions: AuthActions = app.injector.instanceOf[AuthActions]
 
-  private val authoriseAndRetrieveIndividual = new AuthoriseAndRetrieveIndividual(
-    authorisedFunctions = mockAuthService,
-    appConfig = appConfig,
-    config = conf,
-    env = environment,
-    mcc = stubMessagesControllerComponents(),
-    auditingService = mockAuditingService
-  )
+  def setupMockUserAuth[X, Y]: Unit = {
+    disableAllSwitches()
+    val allEnrolments = getAllEnrolmentsIndividual(true, true)
+    val retrievalValue = allEnrolments ~ Some(userName) ~ Some(credentials) ~ Some(AffinityGroup.Agent) ~ acceptedConfidenceLevel
+    setupMockUserAuthSuccess(retrievalValue)
+  }
 
-  private val authoriseAndRetrieveAgent = new AuthoriseAndRetrieveAgent(
-    authorisedFunctions = mockAuthService,
-    appConfig = appConfig,
-    config = conf,
-    env = environment,
-    mcc = stubMessagesControllerComponents()
-  )
+  def setupMockAgentWithClientAuthAndIncomeSources[X, Y](isSupportingAgent: Boolean): Unit = {
+    disableAllSwitches()
+    setupMockGetSessionDataSuccess()
+    val allEnrolments = getAllEnrolmentsAgent(true, true, hasDelegatedEnrolment = true)
+    val retrievalValue = allEnrolments ~ Some(userName) ~ Some(credentials) ~ Some(AffinityGroup.Agent) ~ acceptedConfidenceLevel
+    setupMockAgentWithClientAuthSuccess(retrievalValue, mtdId, isSupportingAgent)
+    mockSingleBusinessIncomeSource()
+  }
 
-  private val authoriseAndRetrieveMtdAgent = new AuthoriseAndRetrieveMtdAgent(
-    authorisedFunctions = mockAuthService,
-    appConfig = appConfig,
-    config = conf,
-    env = environment,
-    mcc = stubMessagesControllerComponents()
-  )
+  def setupMockUserAuthorisationException(exception: AuthorisationException = new InvalidBearerToken): Unit = {
+    setupMockUserAuthException(exception)
+  }
 
-  private val incomeSourceRetrievalAction = new IncomeSourceRetrievalAction(
-    mockIncomeSourceDetailsService
-  )(ec,
-    app.injector.instanceOf[ItvcErrorHandler],
-    app.injector.instanceOf[AgentItvcErrorHandler],
-    stubMessagesControllerComponents())
-
-  val mockAuthActions = new AuthActions(
-    app.injector.instanceOf[SessionTimeoutAction],
-    authoriseAndRetrieve,
-    authoriseAndRetrieveIndividual,
-    authoriseAndRetrieveAgent,
-    authoriseAndRetrieveMtdAgent,
-    app.injector.instanceOf[AgentHasClientDetails],
-    app.injector.instanceOf[AgentHasConfirmedClientAction],
-    app.injector.instanceOf[AgentIsPrimaryAction],
-    app.injector.instanceOf[AsMtdUser],
-    app.injector.instanceOf[NavBarRetrievalAction],
-    incomeSourceRetrievalAction,
-    app.injector.instanceOf[RetrieveClientData],
-    app.injector.instanceOf[FeatureSwitchRetrievalAction]
-  )
-
+  def setupMockAgentWithClientAuthorisationException(exception: AuthorisationException = new InvalidBearerToken, isSupportingAgent: Boolean): Unit = {
+    setupMockGetSessionDataSuccess()
+    setupMockAgentWithClientAuthException(exception, mtdId, isSupportingAgent)
+  }
 }

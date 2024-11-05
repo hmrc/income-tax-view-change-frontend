@@ -26,7 +26,7 @@ import views.html.agent.EnterClientsUTR
 trait MockEnterClientsUTR extends BeforeAndAfterEach {
   self: Suite =>
 
-  val enterClientsUTR: EnterClientsUTR = mock(classOf[EnterClientsUTR])
+  lazy val enterClientsUTR: EnterClientsUTR = mock(classOf[EnterClientsUTR])
 
   override def beforeEach(): Unit = {
     super.beforeEach()

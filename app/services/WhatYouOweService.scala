@@ -18,10 +18,13 @@ package services
 
 import auth.MtdItUser
 import config.FrontendAppConfig
+import config.featureswitch.FeatureSwitching
 import connectors.FinancialDetailsConnector
+import models.admin.FilterCodedOutPoas
 import models.financialDetails._
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import uk.gov.hmrc.http.HeaderCarrier
+
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -30,7 +33,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsService,
                                   val financialDetailsConnector: FinancialDetailsConnector,
                                   implicit val dateService: DateServiceInterface)
-                                 (implicit ec: ExecutionContext, implicit val appConfig: FrontendAppConfig) extends TransactionUtils {
+                                 (implicit ec: ExecutionContext, implicit val appConfig: FrontendAppConfig)
+  extends TransactionUtils with FeatureSwitching {
 
   implicit lazy val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
 
@@ -43,18 +47,19 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
     }
   }
 
-  def getWhatYouOweChargesList(isCodingOutEnabled: Boolean, isReviewAndReconcile: Boolean)
+  def getWhatYouOweChargesList(isCodingOutEnabled: Boolean, isReviewAndReconcile: Boolean, isFilterCodedOutPoasEnabled: Boolean)
                               (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
     {
       for {
         unpaidChanges <- financialDetailsService.getAllUnpaidFinancialDetails(isCodingOutEnabled)
-      } yield getWhatYouOweChargesList(unpaidChanges, isCodingOutEnabled, isReviewAndReconcile)
+      } yield getWhatYouOweChargesList(unpaidChanges, isCodingOutEnabled, isReviewAndReconcile, isFilterCodedOutPoasEnabled)
     }.flatten
   }
 
   def getWhatYouOweChargesList(unpaidCharges: List[FinancialDetailsResponseModel],
                                isCodingOutEnabled: Boolean,
-                               isReviewAndReconciledEnabled: Boolean)
+                               isReviewAndReconciledEnabled: Boolean,
+                               isFilterCodedOutPoasEnabled: Boolean)
                               (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
 
     unpaidCharges match {
@@ -77,7 +82,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
 
         val whatYouOweChargesList = WhatYouOweChargesList(
           balanceDetails = balanceDetails,
-          chargesList = getFilteredChargesList(financialDetailsModelList, isCodingOutEnabled, isReviewAndReconciledEnabled),
+          chargesList = getFilteredChargesList(financialDetailsModelList, isCodingOutEnabled, isReviewAndReconciledEnabled, isFilterCodedOutPoasEnabled),
           codedOutDocumentDetail = codedOutChargeItem)
 
         callOutstandingCharges(mtdUser.saUtr, mtdUser.incomeSources.yearOfMigration, dateService.getCurrentTaxYearEnd).map {
@@ -102,7 +107,8 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
   }
 
   private def getFilteredChargesList(financialDetailsList: List[FinancialDetailsModel],
-                                     isCodingOutEnabled: Boolean, isReviewAndReconciled: Boolean): List[ChargeItem] = {
+                                     isCodingOutEnabled: Boolean, isReviewAndReconciled: Boolean, isFilterCodedOutPoasEnabled: Boolean)
+                                    (implicit user: MtdItUser[_]): List[ChargeItem] = {
 
     def getChargeItem(financialDetails: List[FinancialDetail]): DocumentDetail => Option[ChargeItem] =
       getChargeItemOpt(
@@ -117,7 +123,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
       .filter(validChargeTypeCondition)
       .filterNot(_.subTransactionType.contains(Accepted))
       .filter(_.remainingToPayByChargeOrInterest > 0)
-      .filter(_.notCodedOutPoa)
+      .filter(_.notCodedOutPoa(isFilterCodedOutPoasEnabled))
       .sortBy(_.dueDate.get)
   }
 }
