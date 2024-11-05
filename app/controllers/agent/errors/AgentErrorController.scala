@@ -19,18 +19,17 @@ package controllers.agent.errors
 import com.google.inject.{Inject, Singleton}
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.BaseAgentController
-import controllers.predicates.agent.AgentAuthenticationPredicate.{defaultAgentPredicates, timeoutPredicate}
+import controllers.predicates.agent.AgentAuthenticationPredicate.timeoutPredicate
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import views.html.agent.errorPages.{AgentError, UnauthorisedAgentView}
+import views.html.agent.errorPages.AgentError
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AgentErrorController @Inject()(val authorisedFunctions: AuthorisedFunctions,
-                                     agentErrorView: AgentError,
-                                     unauthorisedAgentView: UnauthorisedAgentView)
+                                     agentErrorView: AgentError)
                                     (implicit mcc: MessagesControllerComponents,
                                      val appConfig: FrontendAppConfig,
                                      val itvcErrorHandler: AgentItvcErrorHandler,
