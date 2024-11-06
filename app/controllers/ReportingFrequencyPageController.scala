@@ -16,45 +16,50 @@
 
 package controllers
 
-import auth.{FrontendAuthorisedFunctions, MtdItUser}
+import auth.FrontendAuthorisedFunctions
+import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import play.api.Logger
+import models.admin.ReportingFrequencyPage
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.optIn.OptInService
-import utils.AuthenticatorPredicate
+import views.html.errorPages.templates.ErrorTemplate
 
-import java.time.LocalDateTime
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
-/* todo will be fully implemented in MISUV-TBD */
-class ReportingFrequencyPageController @Inject()(val optInService: OptInService,
-                                                 val authorisedFunctions: FrontendAuthorisedFunctions,
-                                                 val auth: AuthenticatorPredicate)
-                                                (implicit val appConfig: FrontendAppConfig,
-                                                 mcc: MessagesControllerComponents,
-                                                 val ec: ExecutionContext,
-                                                 val itvcErrorHandler: ItvcErrorHandler,
-                                                 val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+// TODO: Needs view to be implemented
+class ReportingFrequencyPageController @Inject()(
+                                                  val optInService: OptInService,
+                                                  val authorisedFunctions: FrontendAuthorisedFunctions,
+                                                  val auth: AuthActions,
+                                                  errorTemplate: ErrorTemplate
+                                                )
+                                                (
+                                                  implicit val appConfig: FrontendAppConfig,
+                                                  mcc: MessagesControllerComponents,
+                                                  val ec: ExecutionContext,
+                                                  val itvcErrorHandler: ItvcErrorHandler,
+                                                  val itvcErrorHandlerAgent: AgentItvcErrorHandler
+                                                )
+
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-
-  private def withRecover(isAgent: Boolean)(code: => Future[Result])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
-    code.recover {
-      case ex: Exception =>
-        Logger("application").error(s"request failed :: $ex")
-        errorHandler(isAgent).showInternalServerError()
-    }
-  }
-
-  def show(isAgent: Boolean = false): Action[AnyContent] = auth.authenticatedAction(isAgent) {
-    implicit user =>
-      withRecover(isAgent) {
-        optInService.setupSessionData().map(_ => Ok(s"Reporting Frequency Page. Time:${LocalDateTime.now()}"))
+  def show(): Action[AnyContent] =
+    auth.individualOrAgentWithClient { implicit user =>
+      if (isEnabled(ReportingFrequencyPage)) {
+        Ok("Reporting Frequency Page - Placeholder")
+      } else {
+        InternalServerError(
+          errorTemplate(
+            pageTitle = "standardError.heading",
+            heading = "standardError.heading",
+            message = "standardError.message",
+            isAgent = user.isAgent()
+          )
+        )
       }
-  }
+    }
 }

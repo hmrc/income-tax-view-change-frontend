@@ -24,6 +24,11 @@ import scala.collection.immutable
 
 case class FeatureSwitch(name: FeatureSwitchName, isEnabled: Boolean)
 
+object FeatureSwitchMongoFormats {
+  implicit val formats: Format[FeatureSwitch] =
+    Json.format[FeatureSwitch]
+}
+
 object FeatureSwitch {
   implicit val format: OFormat[FeatureSwitch] = Json.format[FeatureSwitch]
 }
@@ -33,31 +38,34 @@ sealed trait FeatureSwitchName {
 }
 
 object FeatureSwitchName {
+
   implicit val writes: Writes[FeatureSwitchName] = (o: FeatureSwitchName) => JsString(o.name)
 
   implicit val reads: Reads[FeatureSwitchName] = {
-    case name if name == JsString(ITSASubmissionIntegration.name) =>
+    case JsString(ITSASubmissionIntegration.name) =>
       JsSuccess(ITSASubmissionIntegration)
-    case name if name == JsString(ChargeHistory.name) =>
+    case JsString(ChargeHistory.name) =>
       JsSuccess(ChargeHistory)
-    case name if name == JsString(NavBarFs.name) =>
+    case JsString(NavBarFs.name) =>
       JsSuccess(NavBarFs)
-    case name if name == JsString(CreditsRefundsRepay.name) =>
+    case JsString(CreditsRefundsRepay.name) =>
       JsSuccess(CreditsRefundsRepay)
-    case name if name == JsString(PaymentHistoryRefunds.name) =>
+    case JsString(PaymentHistoryRefunds.name) =>
       JsSuccess(PaymentHistoryRefunds)
-    case name if name == JsString(IncomeSourcesNewJourney.name) =>
+    case JsString(IncomeSourcesNewJourney.name) =>
       JsSuccess(IncomeSourcesNewJourney)
-    case name if name == JsString(IncomeSources.name) =>
+    case JsString(IncomeSources.name) =>
       JsSuccess(IncomeSources)
-    case name if name == JsString(OptOut.name) =>
+    case JsString(OptOut.name) =>
       JsSuccess(OptOut)
-    case name if name == JsString(AdjustPaymentsOnAccount.name) =>
+    case JsString(AdjustPaymentsOnAccount.name) =>
       JsSuccess(AdjustPaymentsOnAccount)
-    case name if name == JsString(ReviewAndReconcilePoa.name) =>
+    case JsString(ReviewAndReconcilePoa.name) =>
       JsSuccess(ReviewAndReconcilePoa)
-    case name if name == JsString(FilterCodedOutPoas.name) =>
+    case JsString(FilterCodedOutPoas.name) =>
       JsSuccess(FilterCodedOutPoas)
+    case JsString(ReportingFrequencyPage.name) =>
+      JsSuccess(ReportingFrequencyPage)
     case _ =>
       Logger("application").error(s"Invalid feature switch Json found")
       JsSuccess(InvalidFS)
@@ -82,35 +90,51 @@ object FeatureSwitchName {
   }
 
   val allFeatureSwitches: immutable.Set[FeatureSwitchName] =
-    Set(ITSASubmissionIntegration, ChargeHistory, NavBarFs, CreditsRefundsRepay,
-      PaymentHistoryRefunds, IncomeSourcesNewJourney, IncomeSources, OptOut,
-      AdjustPaymentsOnAccount, ReviewAndReconcilePoa, FilterCodedOutPoas)
+    Set(
+      ITSASubmissionIntegration,
+      ChargeHistory,
+      NavBarFs,
+      CreditsRefundsRepay,
+      PaymentHistoryRefunds,
+      IncomeSourcesNewJourney,
+      IncomeSources,
+      OptOut,
+      AdjustPaymentsOnAccount,
+      ReviewAndReconcilePoa,
+      FilterCodedOutPoas,
+      ReportingFrequencyPage
+    )
 
   def get(str: String): Option[FeatureSwitchName] = allFeatureSwitches find (_.name == str)
 }
 
 case object ITSASubmissionIntegration extends FeatureSwitchName {
   override val name: String = "itsa-submission-integration"
+
   override def toString: String = "ITSA Submission Integration"
 }
 
 case object ChargeHistory extends FeatureSwitchName {
   override val name: String = "charge-history"
+
   override def toString: String = "Charge History"
 }
 
 case object NavBarFs extends FeatureSwitchName {
   override val name = "nav-bar"
+
   override def toString: String = "Nav Bar"
 }
 
 case object CreditsRefundsRepay extends FeatureSwitchName {
   override val name = "credits-refunds-repay"
+
   override def toString: String = "Credits/Refunds Repayment"
 }
 
 case object PaymentHistoryRefunds extends FeatureSwitchName {
   override val name = "payment-history-refunds"
+
   override def toString: String = "Payment History Refunds"
 }
 
@@ -125,17 +149,17 @@ case object IncomeSources extends FeatureSwitchName {
 }
 
 case object OptOut extends FeatureSwitchName {
-  override val name = s"opt-out"
+  override val name = "opt-out"
   override val toString = "Opt Out"
 }
 
 case object AdjustPaymentsOnAccount extends FeatureSwitchName {
-  override val name: String = s"adjust-payments-on-account"
+  override val name: String = "adjust-payments-on-account"
   override val toString: String = "Adjust Payments On Account"
 }
 
 case object ReviewAndReconcilePoa extends FeatureSwitchName {
-  override val name: String = s"review-and-reconcile-poa"
+  override val name: String = "review-and-reconcile-poa"
   override val toString: String = "Review And Reconcile POA"
 }
 
@@ -149,8 +173,9 @@ case object InvalidFS extends FeatureSwitchName {
   override val toString: String = "Invalid feature Switch"
 }
 
-object FeatureSwitchMongoFormats {
-  implicit val formats: Format[FeatureSwitch] =
-    Json.format[FeatureSwitch]
+case object ReportingFrequencyPage extends FeatureSwitchName {
+  override val name: String = "reporting-frequency-page"
+  override val toString: String = "Reporting Frequency page"
 }
+
 

@@ -25,10 +25,10 @@
 
 @(pageTitle: String, heading: String, message: String, isAgent: Boolean)(implicit request : Request[_], messages: Messages)
 
-@mainTemplate(pageTitle = pageTitle, isAgent = isAgent, isErrorPage = true) {
+@mainTemplate(pageTitle = messages(pageTitle), isAgent = isAgent, isErrorPage = true) {
 
      @h1(msg = heading)
-     @p(message)
+     @p(messages(message))
 
 }
 
