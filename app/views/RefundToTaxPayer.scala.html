@@ -97,7 +97,7 @@
             <dl class="govuk-summary-list" id="refund-to-taxpayer-table-under-details">
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key dt-cell-width">@messages("refund-to-taxpayer.tableHead.requested-on")</dt>
-                    <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">@{
+                    <dd class="govuk-summary-list__value govuk-!-text-align-right">@{
                         getRepaymentHistoryData(repaymentHistoryModel).creationDate.getOrElse(throw MissingFieldException("Creation Date")).toLongDate
                     }</dd>
                 </div>
