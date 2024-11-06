@@ -73,8 +73,8 @@ lazy val scoverageSettings = {
     ScoverageKeys.coverageExcludedPackages := "<empty>;controllers\\..*Reverse.*;models/.data/..*;" +
       "filters.*;.handlers.*;components.*;.*BuildInfo.*;.*standardError*.*;.*Routes.*;views.html.*;appConfig.*;" +
       "controllers.feedback.*;app.*;prod.*;appConfig.*;com.*;testOnlyDoNotUseInAppConf.*;testOnly.*;\"",
-    ScoverageKeys.coverageMinimumStmtTotal := 89,
-    ScoverageKeys.coverageFailOnMinimum := false,
+    ScoverageKeys.coverageMinimumStmtTotal := 85.0,
+    ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting := true
   )
 }
