@@ -59,6 +59,8 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
     financialDetailsService, auditingService, itvcErrorHandler, chargeSummaryView, incomeSourceDetailsService,
     chargeHistoryService, authorisedFunctions, customNotFoundErrorView))
 
+  val interestEndDate: LocalDate = LocalDate.of(2024, 11, 5)
+
   before {
     Mockito.reset(controller)
   }
@@ -79,7 +81,7 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
         when(documentDetail.isPayeSelfAssessment).thenReturn(false)
 
         when(documentDetail.originalAmount).thenReturn(10)
-        when(documentDetail.interestEndDate).thenReturn(Some(LocalDate.now()))
+        when(documentDetail.interestEndDate).thenReturn(Some(interestEndDate))
         when(documentDetail.latePaymentInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
 
         val outcome = controller.mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate)(tsTestUser)
@@ -106,7 +108,7 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
         when(documentDetail.isPayeSelfAssessment).thenReturn(true)
 
         when(documentDetail.originalAmount).thenReturn(10)
-        when(documentDetail.interestEndDate).thenReturn(Some(LocalDate.now()))
+        when(documentDetail.interestEndDate).thenReturn(Some(interestEndDate))
         when(documentDetail.latePaymentInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
 
         val outcome = controller.mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate)(tsTestUser)
@@ -153,7 +155,7 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
         when(documentDetail.isPayeSelfAssessment).thenReturn(true)
 
         when(documentDetail.originalAmount).thenReturn(10)
-        when(documentDetail.interestEndDate).thenReturn(Some(LocalDate.now()))
+        when(documentDetail.interestEndDate).thenReturn(Some(interestEndDate))
         when(documentDetail.latePaymentInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
 
         val outcome = controller.mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate)(tsTestUser)
@@ -206,7 +208,7 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
         when(documentDetail.isPayeSelfAssessment).thenReturn(true)
 
         when(documentDetail.originalAmount).thenReturn(10)
-        when(documentDetail.interestEndDate).thenReturn(Some(LocalDate.now()))
+        when(documentDetail.interestEndDate).thenReturn(Some(interestEndDate))
         when(documentDetail.latePaymentInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
 
         val outcome = controller.mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate)(tsTestUser)
