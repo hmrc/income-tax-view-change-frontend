@@ -21,23 +21,28 @@ import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
+import models.ReportingFrequencyViewModel
 import models.admin.ReportingFrequencyPage
+import models.optout.{OptOutMultiYearViewModel, OptOutOneYearViewModel}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import services.DateService
 import services.optIn.OptInService
+import services.optout.OptOutService
+import views.html.ReportingFrequencyView
 import views.html.errorPages.templates.ErrorTemplate
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-// TODO: Needs view to be implemented
 class ReportingFrequencyPageController @Inject()(
-                                                  val optInService: OptInService,
+                                                  optOutService: OptOutService,
                                                   val authorisedFunctions: FrontendAuthorisedFunctions,
                                                   val auth: AuthActions,
-                                                  errorTemplate: ErrorTemplate
-                                                )
-                                                (
+                                                  dateService: DateService,
+                                                  errorTemplate: ErrorTemplate,
+                                                  view: ReportingFrequencyView
+                                                )(
                                                   implicit val appConfig: FrontendAppConfig,
                                                   mcc: MessagesControllerComponents,
                                                   val ec: ExecutionContext,
@@ -48,18 +53,39 @@ class ReportingFrequencyPageController @Inject()(
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   def show(): Action[AnyContent] =
-    auth.individualOrAgentWithClient { implicit user =>
-      if (isEnabled(ReportingFrequencyPage)) {
-        Ok("Reporting Frequency Page - Placeholder")
-      } else {
-        InternalServerError(
-          errorTemplate(
-            pageTitle = "standardError.heading",
-            heading = "standardError.heading",
-            message = "standardError.message",
-            isAgent = user.isAgent()
+    auth.individualOrAgentWithClient.async { implicit user =>
+
+      for {
+        (checks, optOutJourneyType) <- optOutService.nextUpdatesPageOptOutViewModels()
+      } yield {
+        if (isEnabled(ReportingFrequencyPage)) {
+
+          val optOutUrl: Option[String] =
+            optOutJourneyType.map {
+              case singleYearModel: OptOutOneYearViewModel =>
+                controllers.optOut.routes.ConfirmOptOutController.show(user.isAgent()).url
+              case multiYearModel: OptOutMultiYearViewModel =>
+                controllers.optOut.routes.OptOutChooseTaxYearController.show(user.isAgent()).url
+            }
+
+          Ok(view(
+            ReportingFrequencyViewModel(
+              isAgent = user.isAgent(),
+              currentTaxYear = dateService.getCurrentTaxYear,
+              nextTaxYear = dateService.getCurrentTaxYear.nextYear,
+              optOutJourneyUrl = optOutUrl
+            )
+          ))
+        } else {
+          InternalServerError(
+            errorTemplate(
+              pageTitle = "standardError.heading",
+              heading = "standardError.heading",
+              message = "standardError.message",
+              isAgent = user.isAgent()
+            )
           )
-        )
+        }
       }
     }
 }

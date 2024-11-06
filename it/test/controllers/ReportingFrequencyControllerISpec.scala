@@ -74,8 +74,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecBase with Feature
               .execute[HttpResponse]
 
           res.futureValue.status shouldBe OK
-          //        Jsoup.parse(res.futureValue.body).title shouldBe "New page title"  //TODO: change the test to look for the title of the new page when implemented
-          res.futureValue.body shouldBe "Reporting Frequency Page - Placeholder"
+          Jsoup.parse(res.futureValue.body).title shouldBe "Your reporting frequency - Manage your Income Tax updates - GOV.UK"
         }
       }
     }
