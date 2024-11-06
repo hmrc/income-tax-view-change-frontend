@@ -52,8 +52,6 @@ object FeatureSwitchName {
       JsSuccess(CreditsRefundsRepay)
     case JsString(PaymentHistoryRefunds.name) =>
       JsSuccess(PaymentHistoryRefunds)
-    case JsString(CalendarQuarterTypes.name) =>
-      JsSuccess(CalendarQuarterTypes)
     case JsString(IncomeSourcesNewJourney.name) =>
       JsSuccess(IncomeSourcesNewJourney)
     case JsString(IncomeSources.name) =>
