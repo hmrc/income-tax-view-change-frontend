@@ -236,7 +236,7 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
       }
 
       s"has a summary list of refund to tax payer" which {
-        s"has summary list headings with requested amount present due to difference in refund amount and requested amount fileds" in new RefundToTaxPayerViewSetup(testRepaymentHistoryModelRequestedAmountDiffersToRefundAmount) {
+        s"has summary list headings with requested amount present due to difference in refund amount and requested amount fields" in new RefundToTaxPayerViewSetup(testRepaymentHistoryModelRequestedAmountDiffersToRefundAmount) {
           val allTableData: Elements = document.getElementById("refund-to-taxpayer-table").getElementsByTag("dt")
           allTableData.get(0).text() shouldBe RefundToTaxPayerMessages.tableHeadEstimatedDate
           allTableData.get(1).text() shouldBe RefundToTaxPayerMessages.tableHeadMethod
@@ -254,7 +254,7 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
       }
 
       s"has a summary list of refund to tax payer" which {
-        s"has summary list values with requested amount present due to difference in refund amount and requested amount fileds" in new RefundToTaxPayerViewSetup(testRepaymentHistoryModelRequestedAmountDiffersToRefundAmount) {
+        s"has summary list values with requested amount present due to difference in refund amount and requested amount fields" in new RefundToTaxPayerViewSetup(testRepaymentHistoryModelRequestedAmountDiffersToRefundAmount) {
           val allTableData: Elements = document.getElementById("refund-to-taxpayer-table").getElementsByTag("dd")
           allTableData.get(0).text() shouldBe "23 July 2021"
           allTableData.get(1).text() shouldBe RefundToTaxPayerMessages.tableValueMethodTypeCard
