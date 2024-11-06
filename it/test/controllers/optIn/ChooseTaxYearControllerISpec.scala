@@ -17,7 +17,7 @@
 package controllers.optIn
 
 
-import controllers.optIn.ChooseYearControllerISpec.{description1Text, headingText, taxYearChoiceOne, taxYearChoiceTwo}
+import controllers.optIn.ChooseYearControllerISpec.{descriptionText, headingText, taxYearChoiceOne, taxYearChoiceTwo}
 import forms.optIn.ChooseTaxYearForm
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -35,7 +35,7 @@ import utils.OptInJourney
 
 object ChooseYearControllerISpec {
   val headingText = "Voluntarily opting in to reporting quarterly"
-  val description1Text = "If you opt in to the next tax year, you will not have to submit a quarterly update until then."
+  val descriptionText = "If you opt in to the next tax year, you will not have to submit a quarterly update until then."
   val taxYearChoiceOne = "2022 to 2023 onwards"
   val taxYearChoiceTwo = "2023 to 2024 onwards"
 }
@@ -70,7 +70,7 @@ class ChooseYearControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           elementTextByID("heading")(headingText),
-          elementTextByID("description1")(description1Text),
+          elementTextByID("description1")(descriptionText),
           elementTextBySelector("#whichTaxYear.govuk-fieldset legend.govuk-fieldset__legend.govuk-fieldset__legend--m")("Which tax year do you want to opt in from?"),
           elementTextBySelector("div.govuk-radios__item:nth-child(1) > label:nth-child(2)")(taxYearChoiceOne),
           elementTextBySelector("div.govuk-radios__item:nth-child(2) > label:nth-child(2)")(taxYearChoiceTwo),

@@ -2167,10 +2167,8 @@ optOut.confirmSingleYearOptOut.form.no-select.error         = Dewiswch ‘Iawn�
 optOut.ConfirmOptOutMultiTaxYearChoice.form.no-select.error = Dewiswch y flwyddyn dreth yr hoffech ddechrau cyflwyno yn flynyddol
 
 # opt out choose tax year
-optout.chooseOptOutTaxYear.heading                   = Cadarnhau eich bod am optio allan o gyflwyno adroddiadau yn chwarterol
-optout.chooseOptOutTaxYear.desc1                     = Gallwch optio allan o unrhyw un o’r blynyddoedd treth sydd ar gael a chyflwyno adroddiadau yn flynyddol o’r flwyddyn honno ymlaen. Mae hyn yn berthnasol i’ch busnesau i gyd (hyd yn oed os ydynt yn llai na 2 flwydd oed).
-optout.chooseOptOutTaxYear.desc2                     = Os ydych yn optio allan, gallwch gyflwyno’ch Ffurflen Dreth drwy’ch meddalwedd neu’ch cyfrif ar-lein CThEF.
-optout.chooseOptOutTaxYear.submissions.deleted       = Gallwch optio allan o unrhyw un o’r blynyddoedd treth sydd ar gael a chyflwyno adroddiadau yn flynyddol o’r flwyddyn dreth honno ymlaen.
+optout.chooseOptOutTaxYear.heading                   = Optio allan o adrodd yn chwarterol
+optout.chooseOptOutTaxYear.desc                      = Gallwch optio allan o unrhyw un o’r blynyddoedd treth sydd ar gael a chyflwyno adroddiadau yn flynyddol o’r flwyddyn honno ymlaen. Mae hyn yn golygu y byddwch yn adrodd yn flynyddol ar gyfer pob un o’ch busnesau cyfredol ac unrhyw fusnesau eraill y byddwch yn eu hychwanegu yn y dyfodol.
 optout.chooseOptOutTaxYear.whichTaxYear              = eich cyfrif ar-lein CThEF meddalwedd cadw cofnodion sy’n cydweddu?
 optout.chooseOptOutTaxYear.taxYearOnwards            = {0} i {1} ymlaen
 optout.chooseOptOutTaxYear.cancel                    = Canslo

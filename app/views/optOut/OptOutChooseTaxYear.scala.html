@@ -44,10 +44,6 @@
     controllers.optOut.routes.OptOutChooseTaxYearController.submit(isAgent)
 }
 
-@warningBlock = {
-    @govukInsetText(InsetText(id=Some("warning-inset"), content = HtmlContent(messages("optout.chooseOptOutTaxYear.submissions.deleted"))))
-}
-
 @formBlock = {
     @formWithCSRF(action = confirmOptOutPostUrl, Symbol("id") -> "confirm-multi-year-opt-out-form") {
         @govukRadios(Radios(
@@ -98,16 +94,8 @@
 
     @h1(id = Some("heading"), msg = messages("optout.chooseOptOutTaxYear.heading"), classes = "govuk-heading-l")
 
-    @p(id=Some("description1")) {
-        @messages("optout.chooseOptOutTaxYear.desc1")
-    }
-
-    @p(id=Some("description2")) {
-        @messages("optout.chooseOptOutTaxYear.desc2")
-    }
-
-    @if(submissionCounts.isQuarterlyUpdatesMade) {
-        @warningBlock
+    @p(id=Some("description")) {
+        @messages("optout.chooseOptOutTaxYear.desc")
     }
 
     @formBlock
