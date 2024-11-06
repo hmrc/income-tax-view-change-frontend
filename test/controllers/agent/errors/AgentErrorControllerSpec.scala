@@ -39,7 +39,7 @@ class AgentErrorControllerSpec extends TestSupport
     ec
   )
 
-  "Calling the show action of the NotAnAgentController" should {
+  "Calling the show action of the AgentErrorController" should {
 
     lazy val result = TestAgentErrorController.show(fakeRequestWithActiveSession)
     lazy val document = Jsoup.parse(contentAsString(result))

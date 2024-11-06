@@ -19,7 +19,7 @@ package controllers.agent.errors
 import com.google.inject.{Inject, Singleton}
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.BaseAgentController
-import controllers.predicates.agent.AgentAuthenticationPredicate.{defaultAgentPredicates, timeoutPredicate}
+import controllers.predicates.agent.AgentAuthenticationPredicate.timeoutPredicate
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
