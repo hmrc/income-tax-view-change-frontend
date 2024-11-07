@@ -182,6 +182,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
       }
 
       "the user has a Opt Out Feature Switch Enabled" in {
+        
         enable(OptOut)
 
         val currentTaxYear = dateService.getCurrentTaxYearEnd
