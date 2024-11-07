@@ -33,7 +33,7 @@ import scala.concurrent.Future
 
 trait MockNextUpdatesService extends UnitSpec with BeforeAndAfterEach with ImplicitDateFormatter {
 
-  val mockNextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
+  lazy val mockNextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
 
   override def beforeEach(): Unit = {
     super.beforeEach()

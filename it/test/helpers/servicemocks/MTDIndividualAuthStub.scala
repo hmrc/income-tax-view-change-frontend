@@ -25,10 +25,10 @@ import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolment}
 object MTDIndividualAuthStub {
 
   val postAuthoriseUrl = "/auth/authorise"
-  val requiredConfidenceLevel = 200
+  val requiredConfidenceLevel = 250
 
   lazy val getAuthRequest: JsValue = {
-    lazy val isAgentPredicate = Enrolment("HMRC-AS-AGENT") and AffinityGroup.Agent
+    lazy val isAgentPredicate = AffinityGroup.Agent
     lazy val isNotAgentPredicate = AffinityGroup.Organisation or AffinityGroup.Individual
     lazy val hasEnrolment = Enrolment("HMRC-MTD-IT")
 
@@ -145,11 +145,14 @@ object MTDIndividualAuthStub {
       )
     } else Json.obj()
 
-
     Json.stringify(Json.obj(
       "allEnrolments" -> getEnrolmentsJson(hasNinoEnrolment, hasSaEnrolment)
     ) ++ userNameJsObj ++ Json.obj(
-      "affinityGroup" -> "Agent",
+      "optionalCredentials" -> Json.obj(
+        "providerId" -> "12345-credId",
+        "providerType" -> "GovernmentGateway"
+      ),
+      "affinityGroup" -> "Individual",
       "confidenceLevel" -> confidenceLevel
     ))
   }
@@ -189,7 +192,7 @@ object MTDIndividualAuthStub {
             "value" -> testMtditid
           )
         )
-      ) ++ ninoEnrolment ++ saEnrolment
+      ), ninoEnrolment, saEnrolment
     )
   }
 
@@ -206,6 +209,10 @@ object MTDIndividualAuthStub {
             )
           )
         )
+      ),
+      "optionalCredentials" -> Json.obj(
+        "providerId" -> "12345-credId",
+        "providerType" -> "GovernmentGateway"
       ),
       "affinityGroup" -> "Agent",
       "confidenceLevel" -> requiredConfidenceLevel

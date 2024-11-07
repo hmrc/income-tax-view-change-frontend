@@ -101,6 +101,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   with WiremockHelper with BeforeAndAfterEach with BeforeAndAfterAll with Eventually
   with GenericStubMethods with FeatureSwitching with SessionCookieBaker {
 
+  val haveDefaultAuthMocks: Boolean = true
+
   val mockHost: String = WiremockHelper.wiremockHost
   val mockPort: String = WiremockHelper.wiremockPort.toString
   val mockUrl: String = s"http://$mockHost:$mockPort"
@@ -199,8 +201,10 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   override def beforeEach(): Unit = {
     super.beforeEach()
     WireMock.reset()
-    isAuthorisedUser(true)
-    stubUserDetails()
+    if(haveDefaultAuthMocks) {
+      isAuthorisedUser(true)
+      stubUserDetails()
+    }
     AuditStub.stubAuditing()
     cache.removeAll()
     FeatureSwitchName.allFeatureSwitches foreach disable

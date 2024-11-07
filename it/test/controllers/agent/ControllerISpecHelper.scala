@@ -38,7 +38,7 @@ trait ControllerISpecHelper extends ComponentSpecBase {
 
   def testAuthFailuresForMTDAgent(requestPath: String,
                                   isSupportingAgent: Boolean,
-                                  requiresConfirmedClient: Boolean,
+                                  requiresConfirmedClient: Boolean = true,
                                   optBody: Option[Map[String, Seq[String]]] = None): Unit = {
     val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, requiresConfirmedClient)
 

@@ -16,13 +16,13 @@
 
 package controllers
 
-import audit.models.IvUpliftRequiredAuditModel
 import helpers.ComponentSpecBase
-import helpers.servicemocks.MTDIndividualAuthStub.requiredConfidenceLevel
-import helpers.servicemocks.{AuditStub, MTDIndividualAuthStub}
+import helpers.servicemocks.MTDIndividualAuthStub
 import play.api.http.Status.SEE_OTHER
 
 trait ControllerISpecHelper extends ComponentSpecBase {
+
+  override val haveDefaultAuthMocks: Boolean = false
 
   def testAuthFailuresForMTDIndividual(requestPath: String,
                                   optBody: Option[Map[String, Seq[String]]] = None): Unit = {
@@ -51,13 +51,13 @@ trait ControllerISpecHelper extends ComponentSpecBase {
     }
 
     "does not have HMRC-MTD-IT enrolment" should {
-      s"redirect ($SEE_OTHER) to ${controllers.agent.errors.routes.AgentErrorController.show.url}" in {
+      s"redirect ($SEE_OTHER) to ${controllers.errors.routes.NotEnrolledController.show.url}" in {
         MTDIndividualAuthStub.stubInsufficientEnrolments()
         val result = buildMTDClient(requestPath, optBody = optBody).futureValue
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.errors.routes.AgentErrorController.show.url)
+          redirectURI(controllers.errors.routes.NotEnrolledController.show.url)
         )
       }
     }
@@ -68,8 +68,7 @@ trait ControllerISpecHelper extends ComponentSpecBase {
         val result = buildMTDClient(requestPath, optBody = optBody).futureValue
 
         result.status shouldBe SEE_OTHER
-        result.header("Location").get should include("http://stubIV.com")
-        AuditStub.verifyAuditEvent(IvUpliftRequiredAuditModel("Individual", 50, requiredConfidenceLevel))
+        result.header("Location").get should include("/iv-stub")
       }
     }
 

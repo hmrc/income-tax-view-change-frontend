@@ -58,8 +58,7 @@ trait AuthoriseHelper extends AuthRedirects with FeatureSwitching {
 
 
   def redirectIfAgent[A]()(
-    implicit request: Request[A],
-    hc: HeaderCarrier): PartialFunction[AuthRetrievals, Future[Either[Result, MtdItUserOptionNino[A]]]] = {
+    implicit request: Request[A]): PartialFunction[AuthRetrievals, Future[Either[Result, MtdItUserOptionNino[A]]]] = {
     case _ ~ _ ~ _ ~ Some(Agent) ~ _ =>
       logger.debug(s"Agent on endpoint for individuals")
       Future.successful(Left(Redirect(controllers.agent.routes.EnterClientsUTRController.show)))
