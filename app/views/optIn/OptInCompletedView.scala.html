@@ -81,6 +81,9 @@
                 <li>@messages("optin.completedOptIn.futureReporting.p1")</li>
                 <li>@messages("optin.completedOptIn.futureReporting.p2")</li>
             </ul>
+
+            @exampleScenarioInset
+            <p class="govuk-body">@messages("optin.completedOptIn.futureReporting.desc2")</p>
         } else {
             <h2 class="govuk-heading-m" >@messages("optin.completedOptIn.nymandated.futureReporting")</h2>
             <p id="optin-completed-view-p5" class="govuk-body">
@@ -93,9 +96,6 @@
                 <li>@messages("optin.completedOptIn.nymandated.futureReporting.bullet.p2")</li>
             </ul>
         }
-
-        @exampleScenarioInset
-        <p class="govuk-body">@messages("optin.completedOptIn.futureReporting.desc2")</p>
 
         <p id="optin-completed-view-p6" class="govuk-body">
             @messages("optin.completedOptIn.incomeThreshold.desc.a")
@@ -134,7 +134,7 @@
 }
 
 @annualFollowingInset = @{
-    govukInsetText(InsetText(id=Some("warning-inset"), content = HtmlContent(messages("optin.completedOptIn.nymandated.inset", model.startDateNextYear))))
+    govukInsetText(InsetText(id=Some("warning-inset-annual-following"), content = HtmlContent(messages("optin.completedOptIn.nymandated.inset", model.startDateNextYear))))
 }
 
 @exampleScenarioInset = @{
