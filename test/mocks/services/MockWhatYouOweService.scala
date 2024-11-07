@@ -31,7 +31,7 @@ trait MockWhatYouOweService extends UnitSpec with MockDateService with BeforeAnd
 
   implicit val dateService: DateService
 
-  val mockWhatYouOweService: WhatYouOweService = mock(classOf[WhatYouOweService])
+  lazy val mockWhatYouOweService: WhatYouOweService = mock(classOf[WhatYouOweService])
 
   val emptyWhatYouOweChargesList: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(0.0, 0.0, 0.0, None, None, None, None, None))
 

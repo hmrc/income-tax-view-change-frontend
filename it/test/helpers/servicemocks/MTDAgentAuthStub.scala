@@ -122,7 +122,7 @@ object MTDAgentAuthStub {
   def getMTDAgentAuthRequest(mtdItId: String, isSupportingAgent: Boolean): JsValue = {
     lazy val isAgentPredicate = Enrolment("HMRC-AS-AGENT") and AffinityGroup.Agent
     lazy val isNotAgentPredicate = AffinityGroup.Individual or AffinityGroup.Organisation
-    lazy val isPrimaryAgentPredicate = Enrolment(primaryAgentEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
+    lazy val isPrimaryAgentPredicate = Enrolment(mtdEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
       .withDelegatedAuthRule(primaryAgentAuthRule)
     lazy val isSupportingAgentPredicate = Enrolment(secondaryAgentEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
       .withDelegatedAuthRule(secondaryAgentAuthRule)
@@ -177,6 +177,10 @@ object MTDAgentAuthStub {
         ),
         mtdItAgentEnrolment
       ),
+      "optionalCredentials" -> Json.obj(
+        "providerId" -> "12345-credId",
+        "providerType" -> "GovernmentGateway"
+      ),
       "affinityGroup" -> "Agent",
       "confidenceLevel" -> requiredConfidenceLevel
     ))
@@ -185,6 +189,10 @@ object MTDAgentAuthStub {
   def mtdNotAgentSuccessResponse(mtdItId: String): String = {
     Json.stringify(Json.obj(
       "allEnrolments" -> Json.arr(),
+      "optionalCredentials" -> Json.obj(
+        "providerId" -> "12345-credId",
+        "providerType" -> "GovernmentGateway"
+      ),
       "affinityGroup" -> "Individual",
       "confidenceLevel" -> requiredConfidenceLevel
     ))

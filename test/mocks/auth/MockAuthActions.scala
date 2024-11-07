@@ -24,16 +24,18 @@ import authV2.AuthActionsTestData._
 import config.featureswitch.FeatureSwitching
 import mocks.MockItvcErrorHandler
 import mocks.services.{MockIncomeSourceDetailsService, MockSessionDataService}
+import org.jsoup.Jsoup
 import org.mockito.Mockito.{mock, reset}
 import play.api
 import play.api.Play
+import play.api.http.Status
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.mvc.MessagesControllerComponents
-import play.api.test.Helpers.stubMessagesControllerComponents
+import play.api.mvc.{Action, AnyContent}
+import play.api.test.Helpers._
 import services.{IncomeSourceDetailsService, SessionDataService}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.retrieve.~
-import uk.gov.hmrc.auth.core.{AffinityGroup, AuthorisationException, InvalidBearerToken}
+import uk.gov.hmrc.auth.core.{AffinityGroup, AuthorisationException, BearerTokenExpired, InsufficientEnrolments, InvalidBearerToken}
 
 trait MockAuthActions extends
   TestSupport with
@@ -65,7 +67,6 @@ trait MockAuthActions extends
     new GuiceApplicationBuilder()
       .overrides(
         api.inject.bind[FrontendAuthorisedFunctions].toInstance(mockAuthService),
-        api.inject.bind[MessagesControllerComponents].toInstance(stubMessagesControllerComponents()),
         api.inject.bind[IncomeSourceDetailsService].toInstance(mockIncomeSourceDetailsService),
         api.inject.bind[AuditingService].toInstance(mockAuditingService),
         api.inject.bind[SessionDataService].toInstance(mockSessionDataService)
@@ -77,8 +78,16 @@ trait MockAuthActions extends
   def setupMockUserAuth[X, Y]: Unit = {
     disableAllSwitches()
     val allEnrolments = getAllEnrolmentsIndividual(true, true)
-    val retrievalValue = allEnrolments ~ Some(userName) ~ Some(credentials) ~ Some(AffinityGroup.Agent) ~ acceptedConfidenceLevel
+    val retrievalValue = allEnrolments ~ Some(userName) ~ Some(credentials) ~ Some(AffinityGroup.Individual) ~ acceptedConfidenceLevel
     setupMockUserAuthSuccess(retrievalValue)
+  }
+
+  def setupMockAgentWithClientAuth[X, Y](isSupportingAgent: Boolean): Unit = {
+    disableAllSwitches()
+    setupMockGetSessionDataSuccess()
+    val allEnrolments = getAllEnrolmentsAgent(true, true, hasDelegatedEnrolment = true)
+    val retrievalValue = allEnrolments ~ Some(userName) ~ Some(credentials) ~ Some(AffinityGroup.Agent) ~ acceptedConfidenceLevel
+    setupMockAgentWithClientAuthSuccess(retrievalValue, mtdId, isSupportingAgent)
   }
 
   def setupMockAgentWithClientAuthAndIncomeSources[X, Y](isSupportingAgent: Boolean): Unit = {
@@ -97,5 +106,121 @@ trait MockAuthActions extends
   def setupMockAgentWithClientAuthorisationException(exception: AuthorisationException = new InvalidBearerToken, isSupportingAgent: Boolean): Unit = {
     setupMockGetSessionDataSuccess()
     setupMockAgentWithClientAuthException(exception, mtdId, isSupportingAgent)
+  }
+
+  def testMTDIndividualAuthFailures(action: Action[AnyContent]): Unit = {
+    "the user is not authenticated" should {
+      "redirect to signin" in {
+        setupMockUserAuthorisationException()
+
+        val result = action(fakeRequestWithActiveSession)
+
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
+      }
+    }
+
+    "the user has a session that has timed out" should {
+      "redirect to timeout controller" in {
+        setupMockUserAuthorisationException(new BearerTokenExpired)
+
+        val result = action(fakeRequestWithActiveSession)
+
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
+      }
+    }
+
+    "the user is not enrolled into HMRC-MTD-IT" should {
+      "redirect to NotEnrolledController controller" in {
+        setupMockUserAuthorisationException(InsufficientEnrolments("missing HMRC-MTD-IT enrolment"))
+
+        val result = action(fakeRequestWithActiveSession)
+
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.errors.routes.NotEnrolledController.show.url)
+      }
+    }
+
+    "the user is not authenticated and enrolled into HMRC-MTD-IT but doesn't have income source" should {
+      "render the internal error page" in {
+        setupMockUserAuth
+        mockErrorIncomeSource()
+
+        val result = action(fakeRequestWithActiveSession)
+
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        val errorPage = Jsoup.parse(contentAsString(result))
+        errorPage.title shouldEqual "Sorry, there is a problem with the service - GOV.UK"
+      }
+    }
+  }
+
+  def testMTDAgentAuthFailures(action: Action[AnyContent], isSupportingAgent: Boolean): Unit = {
+    val fakeRequest = fakeRequestConfirmedClient(isSupportingAgent = isSupportingAgent)
+    val userType = if(isSupportingAgent) "supporting agent" else "primary agent"
+    s"the $userType is not authenticated" should {
+      "redirect to signin" in {
+        disableAllSwitches()
+        setupMockGetSessionDataSuccess()
+        setupMockAgentWithClientAuthException( new InvalidBearerToken, mtdId, isSupportingAgent)
+
+        val result = action(fakeRequest)
+
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
+      }
+    }
+
+    s"the $userType has a session that has timed out" should {
+      "redirect to timeout controller" in {
+        disableAllSwitches()
+        setupMockGetSessionDataSuccess()
+        setupMockAgentWithClientAuthException( new BearerTokenExpired, mtdId, isSupportingAgent)
+
+        val result = action(fakeRequest)
+
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
+      }
+    }
+
+    s"the $userType does not have an arn enrolment" should {
+      "redirect to AgentError controller" in {
+        disableAllSwitches()
+        setupMockGetSessionDataSuccess()
+        setupMockAgentWithClientAuthException(InsufficientEnrolments("missing HMRC-AS-AGENT enrolment"), mtdId, isSupportingAgent)
+
+        val result = action(fakeRequest)
+
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentErrorController.show.url)
+      }
+    }
+
+    s"the $userType does not have a valid delegated MTD enrolment" should {
+      "redirect to ClientRelationshipFailureController controller" in {
+        disableAllSwitches()
+        setupMockGetSessionDataSuccess()
+        setupMockAgentWithClientAuthorisationException(exception = InsufficientEnrolments("HMRC-MTD-IT is missing"), isSupportingAgent)
+        val result = action(fakeRequest)
+
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.agent.routes.ClientRelationshipFailureController.show.url)
+      }
+    }
+
+    s"the $userType is not authenticated and has delegated enrolment but doesn't have income source" should {
+      "render the internal error page" in {
+        setupMockAgentWithClientAuth(isSupportingAgent)
+        mockErrorIncomeSource()
+
+        val result = action(fakeRequest)
+
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        val errorPage = Jsoup.parse(contentAsString(result))
+        errorPage.title shouldEqual "Sorry, there is a problem with the service - GOV.UK"
+      }
+    }
   }
 }

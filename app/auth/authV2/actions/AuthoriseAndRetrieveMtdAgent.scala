@@ -61,7 +61,7 @@ case class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: FrontendA
       )
     } else {
       Enrolment(
-        key = primaryAgentEnrolmentName,
+        key = mtdEnrolmentName,
         identifiers = Seq(EnrolmentIdentifier(agentIdentifier, request.clientMTDID)),
         state = "Activated",
         delegatedAuthRule = Some(primaryAgentAuthRule)

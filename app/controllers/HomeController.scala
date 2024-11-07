@@ -19,11 +19,11 @@ package controllers
 import audit.AuditingService
 import audit.models.HomeAudit
 import auth.MtdItUser
+import auth.authV2.AuthActions
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
 import models.admin._
-import models.financialDetails.{DocumentDetail, FinancialDetail, FinancialDetailsModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
+import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
 import models.homePage._
 import models.incomeSourceDetails.TaxYear
 import models.obligations.NextUpdatesTileViewModel
@@ -32,8 +32,8 @@ import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services._
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.AuthenticatorPredicate
 
 import java.time.LocalDate
@@ -42,26 +42,25 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class HomeController @Inject()(val homeView: views.html.Home,
-                               val authorisedFunctions: AuthorisedFunctions,
+                               val authActions: AuthActions,
                                val nextUpdatesService: NextUpdatesService,
                                val incomeSourceDetailsService: IncomeSourceDetailsService,
                                val financialDetailsService: FinancialDetailsService,
                                val dateService: DateServiceInterface,
                                val whatYouOweService: WhatYouOweService,
-                               auditingService: AuditingService,
-                               auth: AuthenticatorPredicate)
+                               auditingService: AuditingService)
                               (implicit val ec: ExecutionContext,
                                implicit val itvcErrorHandler: ItvcErrorHandler,
                                implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                mcc: MessagesControllerComponents,
-                               val appConfig: FrontendAppConfig) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
+                               val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
-  def show(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
       handleShowRequest(isAgent = false, origin)
   }
 
-  def showAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent(): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit mtdItUser =>
       handleShowRequest(isAgent = true)
   }

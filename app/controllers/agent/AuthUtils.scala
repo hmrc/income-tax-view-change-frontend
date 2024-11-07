@@ -21,7 +21,7 @@ object AuthUtils {
   val agentIdentifier = "MTDITID"
   val arnIdentifier = "AgentReferenceNumber"
 
-  val primaryAgentEnrolmentName = "HMRC-MTD-IT"
+  val mtdEnrolmentName = "HMRC-MTD-IT"
   val primaryAgentAuthRule = "mtd-it-auth"
 
   val secondaryAgentEnrolmentName = "HMRC-MTD-IT-SUPP"

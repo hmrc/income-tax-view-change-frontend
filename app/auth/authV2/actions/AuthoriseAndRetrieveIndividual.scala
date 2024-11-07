@@ -21,6 +21,7 @@ import audit.models.IvUpliftRequiredAuditModel
 import auth._
 import auth.authV2.AuthExceptions.MissingMtdId
 import config.FrontendAppConfig
+import controllers.agent.AuthUtils.mtdEnrolmentName
 import controllers.predicates.agent.Constants
 import models.OriginEnum
 import play.api.mvc.Results.Redirect
@@ -59,7 +60,7 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
 
     // authorise on HMRC-MTD-IT enrolment and Individual / Organisation affinity group
     val predicate: Predicate =
-      Enrolment(appConfig.mtdItEnrolmentKey) and
+      Enrolment(mtdEnrolmentName) and
         (AffinityGroup.Organisation or AffinityGroup.Individual)
 
     authorisedFunctions.authorised(predicate or AffinityGroup.Agent)
@@ -83,7 +84,7 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
 
     case _ ~ _ ~ _ ~ ag ~ confidenceLevel
       if confidenceLevel.level < requiredConfidenceLevel =>
-      auditingService.audit(IvUpliftRequiredAuditModel(ag.toString, confidenceLevel.level, requiredConfidenceLevel), Some(request.path))
+      auditingService.audit(IvUpliftRequiredAuditModel(ag.fold("")(_.toString), confidenceLevel.level, requiredConfidenceLevel), Some(request.path))
       Future.successful(Left(Redirect(ivUpliftRedirectUrl)))
   }
 
