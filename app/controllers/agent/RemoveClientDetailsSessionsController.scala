@@ -24,13 +24,15 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.AuthenticatorPredicate
+import auth.authV2.AuthActions
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class RemoveClientDetailsSessionsController @Inject()(val authorisedFunctions: AuthorisedFunctions,
-                                                      val auth: AuthenticatorPredicate)
+                                                      val auth: AuthenticatorPredicate,
+                                                      val authActions: AuthActions)
                                                      (implicit mcc: MessagesControllerComponents,
                                                       val appConfig: FrontendAppConfig,
                                                       val itvcErrorHandler: AgentItvcErrorHandler,
@@ -38,15 +40,16 @@ class RemoveClientDetailsSessionsController @Inject()(val authorisedFunctions: A
   extends BaseAgentController with I18nSupport with FeatureSwitching {
 
 
-  def show: Action[AnyContent] = auth.authenticatedActionWithNinoAgent { implicit response =>
-      Future.successful(Redirect(controllers.agent.routes.EnterClientsUTRController.show.url)
+  def show: Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient { implicit user =>
+      Redirect(controllers.agent.routes.EnterClientsUTRController.show.url)
         .removingFromSession(
           SessionKeys.clientFirstName,
           SessionKeys.clientLastName,
           SessionKeys.clientMTDID,
           SessionKeys.clientUTR,
-          SessionKeys.clientNino
-        )(response.request))
+          SessionKeys.clientNino,
+          SessionKeys.confirmedClient
+        )
 
   }
 }
