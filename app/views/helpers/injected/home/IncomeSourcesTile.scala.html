@@ -1,0 +1,97 @@
+@*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.components._
+@import java.time.LocalDate
+@import models.homePage.HomePageViewModel
+
+@this(
+    home_tile: home_tile,
+    p: p,
+    link: link
+)
+
+@(viewModel: HomePageViewModel, isAgent: Boolean)(implicit messages: Messages)
+
+@addIncomeSourceControllerURL = @{
+    if(isAgent) {
+        controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
+    } else {
+        controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
+    }
+}
+
+@ceaseIncomeSourceControllerURL = @{
+    if(isAgent) {
+        controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url
+    } else {
+        controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url
+    }
+}
+
+@addIncomeSourceLink = @{
+    link(
+        link = addIncomeSourceControllerURL,
+        messageKey = "home.incomeSources.addIncomeSource.view"
+    )
+}
+
+@ceaseIncomeSourceLink = @{
+    link(
+        link = ceaseIncomeSourceControllerURL,
+        messageKey = "home.incomeSources.ceaseIncomeSource.view"
+    )
+}
+
+@manageIncomeSourceLink = @{
+    link(
+        link = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(isAgent).url,
+        messageKey = "home.incomeSources.manageIncomeSource.view"
+    )
+}
+
+@manageYourBusinessesLink = @{
+    link(
+        link = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url,
+        messageKey = "home.incomeSources.newJourney.view"
+    )
+}
+
+@if(viewModel.yourBusinessesTileViewModel.incomeSourcesEnabled) {
+    @if(viewModel.yourBusinessesTileViewModel.incomeSourcesNewJourneyEnabled) {
+        @home_tile("income-sources-tile", messages("home.incomeSources.newJourneyHeading")) {
+            @p(classes = "govuk-!-margin-bottom-4") {
+                @manageYourBusinessesLink
+            }
+        }
+    } else {
+        @home_tile("income-sources-tile", messages("home.incomeSources.heading")) {
+            @p(classes = "govuk-!-margin-bottom-4") {
+                @addIncomeSourceLink
+            }
+            @p(classes = "govuk-!-margin-bottom-4") {
+                @manageIncomeSourceLink
+            }
+            @if(viewModel.yourBusinessesTileViewModel.displayCeaseAnIncome) {
+                @p(classes = "govuk-!-margin-bottom-4") {
+                    @ceaseIncomeSourceLink
+                }
+            }
+        }
+    }
+}
+
+

@@ -113,7 +113,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
   class Setup(paymentDueDate: LocalDate = nextPaymentDueDate, overDuePaymentsCount: Int = 0, paymentsAccruingInterestCount: Int = 0, reviewAndReconcileEnabled: Boolean = false,
               nextUpdatesTileViewModel: NextUpdatesTileViewModel = viewModelFuture, utr: Option[String] = Some("1234567890"), paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
-              user: MtdItUser[_] = testMtdItUser(), dunningLockExists: Boolean = false, isAgent: Boolean = false, creditAndRefundEnabled: Boolean = false, displayCeaseAnIncome: Boolean = false,
+              user: MtdItUser[_] = testMtdItUser(), dunningLockExists: Boolean = false, creditAndRefundEnabled: Boolean = false, displayCeaseAnIncome: Boolean = false,
               incomeSourcesEnabled: Boolean = false, incomeSourcesNewJourneyEnabled: Boolean = false) {
 
     val returnsTileViewModel = ReturnsTileViewModel(currentTaxYear = TaxYear(currentTaxYear - 1, currentTaxYear), iTSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled)
@@ -136,8 +136,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
     val home: Home = app.injector.instanceOf[Home]
     lazy val page: HtmlFormat.Appendable = home(
-      homePageViewModel,
-      isAgent
+      homePageViewModel
     )(FakeRequest(), implicitly, user, implicitly)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
@@ -249,10 +248,6 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
       "display an overdue warning message when a payment is overdue" in new Setup(overDuePaymentsCount = 1) {
         getTextOfElementById("overdue-warning") shouldBe Some(overdueMessage)
-      }
-
-      "as an agent don't display an overdue warning message when no payment is overdue" in new Setup(overDuePaymentsCount = 0, isAgent = true) {
-        getTextOfElementById("overdue-warning") shouldBe None
       }
 
       "display an dunning lock overdue warning message when a payment is overdue" in new Setup(overDuePaymentsCount = 1, dunningLockExists = true) {
@@ -393,15 +388,6 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       "the claim a refund feature switch is on" in new Setup(user = testMtdItUserNotMigrated(), creditAndRefundEnabled = true) {
         val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").last())
         link.map(_.attr("href")) shouldBe Some(controllers.routes.NotMigratedUserController.show().url)
-        link.map(_.text) shouldBe Some(messages("notmigrated.user.heading"))
-      }
-    }
-
-    "show the 'How to claim a refund' link for not migrated agent" when {
-      "the claim a refund feature switch is on" in new Setup(user = testMtdItUserNotMigrated(),
-        creditAndRefundEnabled = true, isAgent = true) {
-        val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").last())
-        link.map(_.attr("href")) shouldBe Some(controllers.routes.NotMigratedUserController.showAgent().url)
         link.map(_.text) shouldBe Some(messages("notmigrated.user.heading"))
       }
     }

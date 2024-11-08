@@ -66,6 +66,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
   trait Setup {
     val controller = new HomeController(
       app.injector.instanceOf[views.html.Home],
+      app.injector.instanceOf[views.html.agent.PrimaryAgentHome],
       mockAuthService,
       mockNextUpdatesService,
       mockIncomeSourceDetailsService,
@@ -100,6 +101,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
 
   object TestHomeController extends HomeController(
     app.injector.instanceOf[views.html.Home],
+    app.injector.instanceOf[views.html.agent.PrimaryAgentHome],
     mockAuthService,
     mockNextUpdatesService,
     mockIncomeSourceDetailsService,
