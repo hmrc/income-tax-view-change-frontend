@@ -1117,6 +1117,7 @@ paymentHistory.textLink1                                        = gwasanaeth Hun
 paymentHistory.button                                           = Taliadau {0}
 paymentsHistory.CardRef                                         = Cyfeirnod ar gyfer taliad a wnaed drwy gerdyn debyd:
 paymentHistory.refund                                           = Anfonwyd yr ad-daliad
+paymentHistory.payment                                          = Taliad roeddech wedi’i wneud i CThEF
 paymentHistory.paymentToHmrc                                    = Taliad roeddech wedi’i wneud i CThEF
 paymentHistory.cutOver                                          = Credyd o flwyddyn dreth gynharach
 paymentHistory.mfa                                              = Credyd o ganlyniad i addasiad gan CThEF
@@ -1259,6 +1260,7 @@ credit-and-refund.no-credit                                       = Nid oes genn
 credit-and-refund.claim-refund-btn                                = Hawlio ad-daliad
 credit-and-refund.check-refund-btn                                = Gwirio statws ad-daliad
 
+credit-and-refund.credit-from-hmrc-title                          = credyd o ganlyniad i addasiad gan CThEF
 credit-and-refund.credit-from-hmrc-title-prt-1                    = yn sgil
 credit-and-refund.credit-from-hmrc-title-prt-2                    = credyd o ganlyniad i addasiad gan CThEF
 
@@ -1281,6 +1283,7 @@ credit-and-refund.credit-from-adjustment-prt-2                    = o ganlyniad 
 
 credit-and-refund.credit-from-earlier-tax-year                    = credyd o flwyddyn dreth gynharach
 credit-and-refund.credit-from-earlier-tax-year                    = o flwyddyn dreth gynharach -
+credit-and-refund.credit-from-earlier-tax-year-2                  = credyd o flwyddyn dreth gynharach
 
 credit-and-refund.payment                                         = o daliad roeddech wedi’i wneud i CThEF ar
 
@@ -1435,6 +1438,7 @@ incomeSources.add.UKPropertyStartDate.heading                   = Pryd y dechreu
 incomeSources.add.UKPropertyStartDate.hint                      = Gall y dyddiad y dechreuodd eich busnes fasnachu fod heddiw, yn y gorffennol neu hyd at 7 diwrnod yn y dyfodol.
 incomeSources.add.UKPropertyStartDate.hint2                     = Dyma’r dyddiad cyntaf y cawsoch incwm rhent o’r busnes eiddo yn y DU hwn, megis rhoi unrhyw eiddo neu dir ar osod.
 incomeSources.add.UKPropertyStartDate.required.all              = Nodwch y dyddiad y dechreuodd eich busnes eiddo yn y DU
+incomeSources.add.UKPropertyStartDate.error.required            = Nodwch y dyddiad y dechreuodd eich busnes eiddo yn y DU
 incomeSources.add.UKPropertyStartDate.error.future              = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo yn y DU fod cyn {0}
 incomeSources.add.UKPropertyStartDate.error.invalid             = Mae’n rhaid i’r dyddiad fod yn ddyddiad go iawn
 add-uk-property-start-date-check.error                          = Dewiswch ‘Iawn’ os yw dyddiad dechrau’r busnes eiddo yn y DU yn gywir
@@ -1522,6 +1526,7 @@ incomeSources.add.foreignProperty.startDate.heading                  = Pryd y de
 incomeSources.add.foreignProperty.startDate.hint                     = Gall y dyddiad y dechreuodd eich busnes fasnachu fod heddiw, yn y gorffennol neu hyd at 7 diwrnod yn y dyfodol.
 incomeSources.add.foreignProperty.startDate.hint2                    = Dyma’r dyddiad cyntaf y cawsoch incwm rhent o’r busnes eiddo tramor hwn, megis rhoi unrhyw eiddo neu dir ar osod.
 incomeSources.add.foreignProperty.startDate.hintExample              = Er enghraifft, 27 3 2020
+incomeSources.add.foreignProperty.startDate.error.required           = Nodwch y dyddiad y dechreuodd eich busnes eiddo tramor
 incomeSources.add.foreignProperty.startDate.error.empty              = Nodwch y dyddiad y dechreuodd eich busnes eiddo tramor fasnachu
 incomeSources.add.foreignProperty.startDate.error.missingMonthYear   = Mae’n rhaid i’r dyddiad gynnwys mis a blwyddyn
 incomeSources.add.foreignProperty.startDate.error.missingDayYear     = Mae’n rhaid i’r dyddiad gynnwys diwrnod a blwyddyn
@@ -1565,6 +1570,11 @@ add-business-start-date.form.error.emptyDateField    = Nodwch y dyddiad y dechre
 add-business-start-date.error.future                 = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo tramor fod cyn {0}
 add-business-start-date.error.required.all           = Nodwch y dyddiad y dechreuodd eich busnes fasnachu
 add-business-start-date.error.invalid                = Mae’n rhaid i’r dyddiad fod yn ddyddiad go iawn
+add-business-start-date.invalid                      = Mae’n rhaid i’r dyddiad fod yn ddyddiad go iawn
+add-business-start-date.required.all                 = Enter the date your business started trading
+add-business-start-date.required.two                 = Mae’n rhaid i’r dyddiad gynnwys {0} a {1}
+add-business-start-date.required                     = Mae’n rhaid i’r dyddiad gynnwys {0}
+add-business-start-date.future                       = The date your business started trading must be before {0}
 
 # add business accounting method
 incomeSources.add.SE.AccountingMethod.heading                 = Pa ddull cyfrifyddu yr ydych yn ei ddefnyddio ar gyfer eich busnes unig fasnachwr?

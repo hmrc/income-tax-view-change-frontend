@@ -1087,8 +1087,6 @@ chargeSummary.paymentAllocations.bcd.nic4                          = Payment all
 chargeSummary.paymentAllocations.bcd.sl                            = Payment allocated to Student Loans for Balancing payment
 chargeSummary.paymentAllocations.bcd.cgt                           = Payment allocated to Capital Gains Tax for Balancing payment
 chargeSummary.paymentAllocations.mfaDebit                          = Payment put towards HMRC adjustment
-chargeSummary.paymentAllocations.bcd.cancelled                     = Cancelled PAYE Self Assessment (through your PAYE tax code)
-chargeSummary.paymentAllocations.bcd.accepted                      = Amount collected through your PAYE tax code for {0} to {1} tax year
 
 chargeSummary.codingOutHeader                                      = Self Assessment payment (through your PAYE tax code)
 chargeSummary.codingOutMessage                                     = This is the remaining tax you owe for the {0} to {1} tax year.
@@ -1239,8 +1237,6 @@ inYear-tax-overview.agent.inset                                  = This calculat
 credit-and-refund.heading                                         = Claim a refund
 
 credit-and-refund.available-to-claim                              = {0} available to claim
-
-credit-and-refund.subHeading.has-no-credits                       = has been requested as a refund and is in progress.
 
 credit-and-refund.upcoming-allocated-credit-1                     = HMRC has reserved {0} of this to cover your upcoming tax bill.
 credit-and-refund.upcoming-allocated-credit-1-all                 = HMRC has reserved all {0} to cover your upcoming tax bill.
@@ -1600,8 +1596,8 @@ add-business-start-date.heading                      = When did your business st
 add-business-start-date.hint                         = The date your business started trading can be today, in the past or up to 7 days in the future.
 add-business-start-date.hint2                        = This is the date we’ll use to calculate your Class 2 National Insurance charge, if appropriate.
 add-business-start-date.day                          = Day
-add-business-start-date.form.month                   = Month
-add-business-start-date.form.year                    = Year
+add-business-start-date.month                        = Month
+add-business-start-date.year                         = Year
 add-business-start-date.error.future                 = The date your business started trading must be before {0}
 add-business-start-date.error.invalid                = The date must be a real date
 
@@ -1829,20 +1825,6 @@ business-ceased.obligation.income-sources-button                    = Your incom
 business-ceased.obligation.previous-tax-years-heading               = Previous tax years
 business-ceased.obligation.previous-tax-years-t1                    = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
 business-ceased.obligation.to                                       =  to
-
-incomeSources.add.businessReportingMethod.heading                   =   Choose a reporting method
-incomeSources.add.businessReportingMethod.description1              =   Your business qualifies for a grace period available up until April {0} where you can report annually.
-incomeSources.add.businessReportingMethod.description2              =   This involves a single update no later than 31 January.
-incomeSources.add.businessReportingMethod.description3              =   This grace period is not affected by either:
-incomeSources.add.businessReportingMethod.description4.bullet1      =   your level of income from other sources
-incomeSources.add.businessReportingMethod.description4.bullet2      =   the turnover you expect your new business to make
-incomeSources.add.businessReportingMethod.description4.bullet3      =   how you report with any existing income sources
-incomeSources.add.businessReportingMethod.chooseReport              =   Choose how you want to report
-incomeSources.add.businessReportingMethod.taxYear                   =   Tax year {0}-{1}
-incomeSources.add.businessReportingMethod.chooseAnnualReport        =   Choose annual reporting
-incomeSources.add.businessReportingMethod.chooseQuarterlyReport     =   Choose quarterly reporting
-incomeSources.add.businessReportingMethod.error                     =   Select if you want to report annually or quarterly for tax year {0} to {1}
-
 
 # add uk property business accounting method
 incomeSources.add.UK.AccountingMethod.heading                 = What accounting method do you use for your UK property business?
