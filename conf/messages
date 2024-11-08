@@ -113,7 +113,10 @@ feedback.received                                               = Your feedback 
 
 ## Home Page ##
 home.heading                                                    = Income Tax
+home.agent.primary.caption                                      = You are signed in as a main agent
+home.agent.supporting.caption                                   = You are signed in as a supporting agent
 home.agent.heading                                              = Your client’s Income Tax
+home.agent.headingWithClientName                                = {0}’s Income Tax
 home.agent.changeClientLink                                     = Change client
 home.agent.payments.view                                        = Check what your client owes
 home.agent.returns.viewLink                                     = View your client’s current {0} to {1} return
@@ -162,6 +165,14 @@ home.interest-accruing                                          = You have charg
 
 home.updates.overdue.charges                                    = {0} OVERDUE CHARGES
 home.updates.overdue.updates                                    = {0} OVERDUE UPDATES
+
+home.agent.supporting.paymentAndReturns                         = Payments and returns
+home.agent.supporting.cannotAccess                              = Supporting agents cannot access records that show:
+home.agent.supporting.cannotAccess.payments                     = payments, credits and refunds
+home.agent.supporting.cannotAccess.returns                      = returns
+home.agent.supporting.cannotAccess.nextChargesDue               = next charges due
+home.agent.supporting.readMore                                  = Read more about the difference between main and supporting agents on GOV.UK (opens in new tab).
+
 
 ## List UTRs ##
 listUTRs.heading                                               = List UTRs

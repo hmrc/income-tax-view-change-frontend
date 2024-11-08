@@ -42,6 +42,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class HomeController @Inject()(val homeView: views.html.Home,
+                               val primaryAgentHomeView: views.html.agent.PrimaryAgentHome,
                                val authActions: AuthActions,
                                val nextUpdatesService: NextUpdatesService,
                                val incomeSourceDetailsService: IncomeSourceDetailsService,
@@ -114,10 +115,15 @@ class HomeController @Inject()(val homeView: views.html.Home,
           origin = origin
         )
           auditingService.extendedAudit(HomeAudit(user, paymentsDueMerged, overDuePaymentsCount, nextUpdatesTileViewModel))
-          Ok(homeView(
-            homeViewModel,
-            isAgent = isAgent
-          ))
+          if(isAgent) {
+            Ok(primaryAgentHomeView(
+              homeViewModel
+            ))
+          } else {
+            Ok(homeView(
+              homeViewModel
+            ))
+          }
         case Left(ex: Throwable) =>
           Logger("application").error(s"Unable to create the view model ${ex.getMessage} - ${ex.getCause}")
           handleErrorGettingDueDates(isAgent)

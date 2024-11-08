@@ -103,7 +103,10 @@ feedback.received                                               = Mae eich adbor
 
 ## Home Page ##
 home.heading                                                    = Treth Incwm
+home.agent.primary.caption                                      = Rydych wedi mewngofnodi fel asiant ategol
+home.agent.supporting.caption                                   = Rydych wedi mewngofnodi fel asiant ategol
 home.agent.heading                                              = Treth Incwm eich cleient
+home.agent.headingWithClientName                                = Treth Incwm {0}
 home.agent.changeClientLink                                     = Newid cleient
 home.agent.payments.view                                        = Gwirio’r hyn sydd ar eich cleient
 home.agent.returns.viewLink                                     = Bwrw golwg dros Ffurflen Dreth bresennol eich cleient ar gyfer {0} i {1}
@@ -150,6 +153,14 @@ home.incomeSources.addIncomeSource.view                         = Ychwanegu unig
 home.incomeSources.manageIncomeSource.view                      = Bwrw golwg dros eich ffynonellau incwm a’u rheoli
 home.incomeSources.ceaseIncomeSource.view                       = Dod â ffynhonnell incwm i ben
 home.incomeSources.newJourney.view                              = Ychwanegu, rheoli neu ddod â busnes neu ffynhonnell incwm i ben
+
+home.agent.supporting.paymentAndReturns                         = Taliadau a Ffurflenni Treth
+home.agent.supporting.cannotAccess                              = Ni all asiantau ategol gael mynediad at gofnodion sy’n dangos:
+home.agent.supporting.cannotAccess.payments                     = taliadau, credydau ac ad-daliadau
+home.agent.supporting.cannotAccess.returns                      = Ffurflenni Treth
+home.agent.supporting.cannotAccess.nextChargesDue               = y ffioedd sy’n ddyledus nesaf
+home.agent.supporting.readMore                                  = Darllenwch ragor am y gwahaniaeth rhwng prif asiantau ac asiantau ategol ar GOV.UK (yn agor tab newydd).
+
 
 ## Tax Years Page ##
 taxYears.heading                                               = Mlynyddoedd treth

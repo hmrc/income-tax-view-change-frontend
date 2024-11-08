@@ -1,0 +1,94 @@
+@*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.components._
+@import java.time.LocalDate
+@import _root_.implicits.ImplicitDateFormatterImpl
+@import models.homePage.HomePageViewModel
+@import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+
+@this(
+    home_tile: home_tile,
+    p: p,
+    link: link
+)
+
+@(viewModel: HomePageViewModel, isAgent: Boolean)(implicit messages: Messages)
+
+@paymentHistoryControllerURL = @{
+    if(isAgent) {
+        controllers.routes.PaymentHistoryController.showAgent.url
+    } else {
+        controllers.routes.PaymentHistoryController.show(viewModel.origin).url
+    }
+}
+
+@paymentHistoryLink = @{
+    link(
+        link = paymentHistoryControllerURL,
+        messageKey = viewModel.paymentCreditAndRefundHistoryTileViewModel.paymentCreditRefundHistoryMessageKey()
+    )
+}
+
+@creditAndRefundsControllerURL = @{
+    if(isAgent) {
+        controllers.routes.CreditAndRefundController.showAgent().url
+    } else {
+        controllers.routes.CreditAndRefundController.show().url
+    }
+}
+
+@creditAndRefundsLink = @{
+    link(
+        link = creditAndRefundsControllerURL,
+        messageKey = "home.credAndRefund.view"
+    )
+}
+
+@NotMigratedUserControllerURL = @{
+    if (isAgent) {
+        controllers.routes.NotMigratedUserController.showAgent().url
+    } else {
+        controllers.routes.NotMigratedUserController.show().url
+    }
+}
+
+@NotMigratedUserLink = @{
+    link(
+        link = NotMigratedUserControllerURL,
+        messageKey = "home.credAndRefund_howToClaim.view"
+    )
+}
+
+@home_tile("payment-history-tile", viewModel.paymentCreditAndRefundHistoryTileViewModel.title()) {
+    @viewModel.paymentCreditAndRefundHistoryTileViewModel.availableCredit.map { amount =>
+        <p class="govuk-body" id="available-credit">
+            @messages("home.paymentHistoryRefund.availableCredit", amount.toCurrencyString)
+        </p>
+    }
+
+    <p class="govuk-!-margin-bottom-4">
+        @paymentHistoryLink
+    </p>
+
+    @if(viewModel.paymentCreditAndRefundHistoryTileViewModel.creditsRefundsRepayEnabled) {
+        @if(viewModel.paymentCreditAndRefundHistoryTileViewModel.isUserMigrated) {
+            @creditAndRefundsLink
+        } else {
+            @NotMigratedUserLink
+        }
+    }
+}
