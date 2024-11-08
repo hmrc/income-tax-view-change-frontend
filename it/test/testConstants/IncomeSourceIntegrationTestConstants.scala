@@ -153,8 +153,8 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   val multipleBusinessesResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
-    testNino,
-    testMtdItId,
+    nino = testNino,
+    mtdbsa = testMtdItId,
     businesses = List(
       business1,
       business2
