@@ -55,7 +55,7 @@ viewModel: HomePageViewModel
     <div class="grid-row">
         <div class="flex-container govuk-!-padding-0">
             @paymentsTile(viewModel, true)
-            @updatesTile(viewModel, true)
+            @updatesTile(viewModel.nextUpdatesTileViewModel, true)
         </div>
     </div>
 
@@ -68,7 +68,7 @@ viewModel: HomePageViewModel
 
     <div class="grid-row">
         <div class="flex-container govuk-!-padding-0">
-            @incomeSourcesTile(viewModel, true)
+            @incomeSourcesTile(viewModel.yourBusinessesTileViewModel, true)
         </div>
     </div>
 }

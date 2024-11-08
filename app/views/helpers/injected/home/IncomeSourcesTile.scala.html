@@ -16,7 +16,7 @@
 
 @import views.html.components._
 @import java.time.LocalDate
-@import models.homePage.HomePageViewModel
+@import models.homePage.YourBusinessesTileViewModel
 
 @this(
     home_tile: home_tile,
@@ -24,7 +24,7 @@
     link: link
 )
 
-@(viewModel: HomePageViewModel, isAgent: Boolean)(implicit messages: Messages)
+@(yourBusinessesTileViewModel: YourBusinessesTileViewModel, isAgent: Boolean)(implicit messages: Messages)
 
 @addIncomeSourceControllerURL = @{
     if(isAgent) {
@@ -70,8 +70,8 @@
     )
 }
 
-@if(viewModel.yourBusinessesTileViewModel.incomeSourcesEnabled) {
-    @if(viewModel.yourBusinessesTileViewModel.incomeSourcesNewJourneyEnabled) {
+@if(yourBusinessesTileViewModel.incomeSourcesEnabled) {
+    @if(yourBusinessesTileViewModel.incomeSourcesNewJourneyEnabled) {
         @home_tile("income-sources-tile", messages("home.incomeSources.newJourneyHeading")) {
             @p(classes = "govuk-!-margin-bottom-4") {
                 @manageYourBusinessesLink
@@ -85,7 +85,7 @@
             @p(classes = "govuk-!-margin-bottom-4") {
                 @manageIncomeSourceLink
             }
-            @if(viewModel.yourBusinessesTileViewModel.displayCeaseAnIncome) {
+            @if(yourBusinessesTileViewModel.displayCeaseAnIncome) {
                 @p(classes = "govuk-!-margin-bottom-4") {
                     @ceaseIncomeSourceLink
                 }

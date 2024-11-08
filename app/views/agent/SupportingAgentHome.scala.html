@@ -17,7 +17,8 @@
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
 @import exceptions.MissingFieldException
-@import models.homePage.HomePageViewModel
+@import models.homePage.YourBusinessesTileViewModel
+@import models.obligations.NextUpdatesTileViewModel
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
 @import views.html.helpers.injected.home._
@@ -36,7 +37,8 @@
 )
 
 @(
-viewModel: HomePageViewModel
+    yourBusinessesTileViewModel: YourBusinessesTileViewModel,
+    nextUpdatesTileViewModel: NextUpdatesTileViewModel
 )(
   	implicit request: Request[_],
 	messages: Messages,
@@ -52,8 +54,8 @@ viewModel: HomePageViewModel
 @tiles() = {
     <div class="grid-row">
         <div class="flex-container govuk-!-padding-0">
-            @updatesTile(viewModel, true)
-            @incomeSourcesTile(viewModel, true)
+            @updatesTile(nextUpdatesTileViewModel, true)
+            @incomeSourcesTile(yourBusinessesTileViewModel, true)
         </div>
     </div>
 }
@@ -61,7 +63,7 @@ viewModel: HomePageViewModel
 @customLayout = {
     <div class="grid-row">
         <div class="column-full">
-            <span class="govuk-caption-xl">@messages("home.agent.primary.caption")</span>
+            <span class="govuk-caption-xl">@messages("home.agent.supporting.caption")</span>
             @h1(pageHeading, classes = "govuk-heading-xl margin-bottom-zero")
 
             @p(classes = "govuk-hint margin-bottom-zero") {
@@ -74,21 +76,6 @@ viewModel: HomePageViewModel
 
             @p(classes = "govuk-body margin-bottom-sixty", id = Some("changeClientLink")) {
                 @link(controllers.agent.routes.RemoveClientDetailsSessionsController.show.url, "govuk-link--no-visited-state", "home.agent.changeClientLink")
-            }
-            @if(viewModel.nextPaymentsTileViewModel.reviewAndReconcileEnabled && viewModel.nextPaymentsTileViewModel.paymentsAccruingInterestCount > 0) {
-                <div id="accrues-interest-warning" class="grid-row">
-                    <div class="column-full">
-                    @govukWarningText(WarningText(content = Text(messages("home.interest-accruing"))))
-                    </div>
-                </div>
-            }else {
-                @if(viewModel.nextPaymentsTileViewModel.overDuePaymentsCount > 0) {
-                    <div id="overdue-warning" class="grid-row">
-                        <div class="column-full">
-                        @govukWarningText(WarningText(content = Text(messages(s"home.agent.overdue.message.dunningLock.${viewModel.dunningLockExists}"))))
-                        </div>
-                    </div>
-                }
             }
         </div>
     </div>

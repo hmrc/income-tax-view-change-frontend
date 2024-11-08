@@ -17,7 +17,7 @@
 @import views.html.components._
 @import java.time.LocalDate
 @import _root_.implicits.ImplicitDateFormatterImpl
-@import models.homePage.HomePageViewModel
+@import models.obligations.NextUpdatesTileViewModel
 @import views.html.layouts.unifiedLayout
 
 
@@ -28,7 +28,7 @@
     link: link
 )
 
-@(viewModel: HomePageViewModel, isAgent: Boolean)(implicit messages: Messages)
+@(nextUpdatesTileViewModel: NextUpdatesTileViewModel, isAgent: Boolean, optOrigin: Option[String] = None)(implicit messages: Messages)
 
 @import implicitDateFormatter.longDate
 
@@ -36,14 +36,14 @@
     if(isAgent) {
         controllers.routes.NextUpdatesController.showAgent.url
     } else {
-        controllers.routes.NextUpdatesController.show(viewModel.origin).url
+        controllers.routes.NextUpdatesController.show(optOrigin).url
     }
 }
 
 @nextUpdatesLink = @{
     link(
         link = nextUpdatesControllerURL,
-        messageKey = if(viewModel.nextUpdatesTileViewModel.isOptOutEnabled) {
+        messageKey = if(nextUpdatesTileViewModel.isOptOutEnabled) {
             "home.updates.view.opt-out"
         } else {
             "home.updates.view"
@@ -52,21 +52,21 @@
 }
 
 @updatesTileContentUpdatesDue0 = {
-    @viewModel.nextUpdatesTileViewModel.getNextDeadline.map(_.toLongDate)
+    @nextUpdatesTileViewModel.getNextDeadline.map(_.toLongDate)
 }
 
 @updatesTileContentUpdatesDue1 = {
     <span class="govuk-tag govuk-tag--red">@{messages("taxYears.overdue")}</span>
-    @viewModel.nextUpdatesTileViewModel.getNextDeadline.map(_.toLongDate)
+    @nextUpdatesTileViewModel.getNextDeadline.map(_.toLongDate)
 }
 
 @updatesTileContentUpdatesDueMany = {
-    <span class="govuk-tag govuk-tag--red">@{messages("home.updates.overdue.updates", viewModel.nextUpdatesTileViewModel.getNumberOfOverdueObligations)}</span>
+    <span class="govuk-tag govuk-tag--red">@{messages("home.updates.overdue.updates", nextUpdatesTileViewModel.getNumberOfOverdueObligations)}</span>
 }
 
 @home_tile("updates-tile", messages("home.updates.heading")) {
-    @if(viewModel.nextUpdatesTileViewModel.showNextUpdatesTileContent) {
-        @{viewModel.nextUpdatesTileViewModel.getNumberOfOverdueObligations match {
+    @if(nextUpdatesTileViewModel.showNextUpdatesTileContent) {
+        @{nextUpdatesTileViewModel.getNumberOfOverdueObligations match {
             case 0 => p()(updatesTileContentUpdatesDue0)
             case 1 => p()(updatesTileContentUpdatesDue1)
             case _ => p()(updatesTileContentUpdatesDueMany)
