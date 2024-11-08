@@ -18,6 +18,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import _root_.implicits.ImplicitDateFormatterImpl
+@import _root_.implicits.HtmlFormatter.NbspString
 
 @this(govukTable: GovukTable,
         implicitDateFormatter: ImplicitDateFormatterImpl)
@@ -47,7 +48,7 @@
                     @messages("chargeSummary.taxYear", chargeItem.taxYear.startYear.toString, chargeItem.taxYear.endYear.toString)
                 </span>
             </td>
-            <td class="govuk-table__cell">@chargeItem.dueDate.getOrElse(chargeItem.documentDate).toLongDateShort</td>
+            <td class="govuk-table__cell">@chargeItem.dueDate.getOrElse(chargeItem.documentDate).toLongDateShort.toHtmlNonBroken</td>
             <td class="govuk-table__cell govuk-table__cell--numeric">@chargeItem.originalAmount.abs.toCurrencyString</td>
         </tr>
     </tbody>
