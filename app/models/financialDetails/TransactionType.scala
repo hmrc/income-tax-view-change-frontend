@@ -157,7 +157,7 @@ object ChargeType {
       case (x, _) if ChargeType.mfaDebit.contains(x) =>
         Some(MfaDebitCharge)
       case (ChargeType.poaOneReviewAndReconcileDebit, true) =>
-        Some(PaymentOnAccountOneReviewAndReconcile) // TODO: need to confirm this mapping
+        Some(PaymentOnAccountOneReviewAndReconcile)
       case _ => None
     }
   }

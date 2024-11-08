@@ -56,8 +56,8 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
 
   def getAllFinancialDetails(implicit user: MtdItUser[_],
                              hc: HeaderCarrier, ec: ExecutionContext): Future[List[(Int, FinancialDetailsResponseModel)]] = {
-    Logger("application").warn(
-      s"Requesting Financial Details for all periods for mtditid: ${user.mtditid} => Years => ${user.incomeSources.orderedTaxYearsByYearOfMigration}")
+    Logger("application").debug(
+      s"Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
 
     Future.sequence(user.incomeSources.orderedTaxYearsByYearOfMigration.map {
       taxYear =>
