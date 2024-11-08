@@ -140,7 +140,7 @@ class OptInCompletedViewSpec extends TestSupport {
       val expectedText: String = "From 6 April 2023, you’ll be required to send quarterly updates through compatible software."
       pageDocument.getElementById(Selectors.warningInsetAnnualFollowingId).text() shouldBe expectedText
 
-      pageDocument.getElementById(Selectors.warningInsetId) shouldBe null
+      Option(pageDocument.getElementById(Selectors.warningInsetId)) shouldBe None
 
       pageDocument.getElementById(Selectors.paragraphId(5)).text() shouldBe "You have just chosen to voluntarily report quarterly from the 2022 to 2023 tax year."
 
