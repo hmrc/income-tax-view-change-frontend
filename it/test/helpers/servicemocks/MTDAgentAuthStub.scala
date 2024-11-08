@@ -88,7 +88,7 @@ object MTDAgentAuthStub {
     )
   }
 
-  def stubMissingDelegaetedEnrolment(mtdItId: String = "MtdItId", isSupportingAgent: Boolean): Unit = {
+  def stubMissingDelegatedEnrolment(mtdItId: String = "MtdItId", isSupportingAgent: Boolean): Unit = {
     if(isSupportingAgent) notASecondaryAgent(mtdItId) else notAPrimaryAgent(mtdItId)
   }
 

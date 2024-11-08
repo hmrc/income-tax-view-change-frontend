@@ -20,7 +20,7 @@ import audit.models.NextUpdatesAuditing.NextUpdatesAuditModel
 import auth.MtdItUser
 import helpers.ComponentSpecBase
 import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
-import helpers.servicemocks.{AuditStub, CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.{AuditStub, CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub, MTDIndividualAuthStub}
 import models.admin.OptOut
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
@@ -35,7 +35,9 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 class NextUpdatesControllerForOptOutISpec extends ComponentSpecBase {
 
-  "Calling the NextUpdatesController" when {
+  val path = "/next-updates"
+
+  s"GET $path" when {
 
     val testPropertyOnlyUser: MtdItUser[_] = MtdItUser(
       testMtditid, testNino, None, ukPropertyOnlyResponse,
@@ -46,6 +48,7 @@ class NextUpdatesControllerForOptOutISpec extends ComponentSpecBase {
 
       "show opt-out message if the user has Previous Year as Voluntary, Current Year as NoStatus, Next Year as NoStatus" in {
         enable(OptOut)
+        MTDIndividualAuthStub.stubAuthorised()
 
         val currentTaxYear = dateService.getCurrentTaxYearEnd
         val previousYear = currentTaxYear - 1
@@ -64,7 +67,7 @@ class NextUpdatesControllerForOptOutISpec extends ComponentSpecBase {
         savedTaxYearOpn.isDefined shouldBe true
         savedTaxYearOpn.get shouldBe TaxYear.forYearEnd(2024)
 
-        val res = IncomeTaxViewChangeFrontend.getNextUpdates
+        val res = buildGETMTDClient(path).futureValue
 
         val afterResetOpn: Option[TaxYear] = optOutSessionDataRepository.fetchSavedIntent().futureValue
         //assert intent tax-year is reset to none
@@ -87,6 +90,7 @@ class NextUpdatesControllerForOptOutISpec extends ComponentSpecBase {
 
       "show multi year opt-out message if the user has Previous Year as Voluntary, Current Year as Voluntary, Next Year as Voluntary" in {
         enable(OptOut)
+        MTDIndividualAuthStub.stubAuthorised()
 
         val currentTaxYear = dateService.getCurrentTaxYearEnd
         val previousYear = currentTaxYear - 1
@@ -106,7 +110,7 @@ class NextUpdatesControllerForOptOutISpec extends ComponentSpecBase {
         savedTaxYearOpn.isDefined shouldBe true
         savedTaxYearOpn.get shouldBe TaxYear.forYearEnd(2024)
 
-        val res = IncomeTaxViewChangeFrontend.getNextUpdates
+        val res = buildGETMTDClient(path).futureValue
 
         val afterResetOpn: Option[TaxYear] = optOutSessionDataRepository.fetchSavedIntent().futureValue
         //assert intent tax-year is reset to none

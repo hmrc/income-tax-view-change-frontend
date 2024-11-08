@@ -80,7 +80,7 @@ trait ControllerISpecHelper extends ComponentSpecBase {
 
     "does not have a valid delegated MTD enrolment" should {
       s"redirect ($SEE_OTHER) to ${controllers.agent.routes.ClientRelationshipFailureController.show.url}" in {
-        MTDAgentAuthStub.stubMissingDelegaetedEnrolment(testMtditid, isSupportingAgent = isSupportingAgent)
+        MTDAgentAuthStub.stubMissingDelegatedEnrolment(testMtditid, isSupportingAgent = isSupportingAgent)
         val result = buildMTDClient(requestPath, additionalCookies, optBody).futureValue
 
         result should have(
