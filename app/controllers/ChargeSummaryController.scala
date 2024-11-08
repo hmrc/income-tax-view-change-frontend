@@ -83,6 +83,7 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
   def handleRequest(taxYear: Int, id: String, isInterestCharge: Boolean = false, isAgent: Boolean, origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
     financialDetailsService.getAllFinancialDetails.flatMap { financialResponses =>
+      Logger("application").warn(s"- Current TaxYear => ${taxYear}")
       Logger("application").debug(s"- financialResponses = $financialResponses")
 
       val paymentsFromAllYears = financialResponses.collect {
