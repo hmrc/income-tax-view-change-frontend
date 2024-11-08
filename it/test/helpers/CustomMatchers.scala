@@ -89,11 +89,11 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
       }
     }
 
-  def pageTitleCustom(title: String): HavePropertyMatcher[WSResponse, String] =
+  def pageTitleCustom(title: String,
+                      isErrorPage: Boolean = false): HavePropertyMatcher[WSResponse, String] =
     new HavePropertyMatcher[WSResponse, String] {
       def apply(response: WSResponse) = {
         val body = Jsoup.parse(response.body)
-
         Then(s"the page title should be '$title'")
         HavePropertyMatchResult(
           body.title == title,
@@ -116,6 +116,31 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
           case (true, false, _) => messagesAPI("htmlTitle.invalidInput", messagesAPI(messageKey))
           case (_, _, false) => messagesAPI("html.confirmClient", messagesAPI(messageKey))
           case (_, _, true) => messagesAPI("htmlTitle.agent", messagesAPI(messageKey))
+        }
+
+        Then(s"the page title should be '$expectedTitle'")
+        HavePropertyMatchResult(
+          body.title == expectedTitle,
+          "pageTitle",
+          expectedTitle,
+          body.title
+        )
+      }
+    }
+
+  def pageTitleInd(messageKey: String,
+                     isInvalidInput: Boolean = false,
+                     isErrorPage: Boolean = false,
+                     showServiceName: Boolean = true): HavePropertyMatcher[WSResponse, String] =
+    new HavePropertyMatcher[WSResponse, String] {
+
+      def apply(response: WSResponse): HavePropertyMatchResult[String] = {
+        val body = Jsoup.parse(response.body)
+        val expectedTitle = (isInvalidInput, isErrorPage, showServiceName) match {
+          case (false, true, _) => messagesAPI("htmlTitle.errorPage", messagesAPI(messageKey))
+          case (true, false, _) => messagesAPI("htmlTitle.invalidInput", messagesAPI(messageKey))
+          case (_, _, false) => messagesAPI("html.confirmClient", messagesAPI(messageKey))
+          case (_, _, true) => messagesAPI("htmlTitle", messagesAPI(messageKey))
         }
 
         Then(s"the page title should be '$expectedTitle'")

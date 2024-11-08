@@ -18,155 +18,652 @@ package controllers
 
 import audit.models.{HomeAudit, NextUpdatesResponseAuditModel}
 import auth.MtdItUser
-import helpers.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDIndividualAuthStub}
+import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.admin.{IncomeSources, IncomeSourcesNewJourney, NavBarFs}
-import models.obligations.ObligationsModel
+import models.core.{AccountingPeriodModel, CessationModel}
+import models.financialDetails._
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
+import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import play.api.http.Status._
+import play.api.i18n.{Messages, MessagesApi}
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
-import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, testValidFinancialDetailsModelJson}
+import testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2CessationReason, b2TradingStart}
 import testConstants.NextUpdatesIntegrationTestConstants._
+import testConstants.OutstandingChargesIntegrationTestConstants.{validOutStandingChargeResponseJsonWithAciAndBcdCharges, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges}
 import testConstants.messages.HomeMessages._
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
-class HomeControllerISpec extends ComponentSpecBase {
+import java.time.LocalDate
+
+class HomeControllerISpec extends ControllerISpecHelper {
+
+  val implicitDateFormatter: ImplicitDateFormatter = app.injector.instanceOf[ImplicitDateFormatterImpl]
+  implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
+
+  val incomeSourceDetailsModel: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    nino = testNino,
+    mtdbsa = testMtditid,
+    yearOfMigration = Some(getCurrentTaxYearEnd.getYear.toString),
+    businesses = List(BusinessDetailsModel(
+      "testId",
+      incomeSource = Some(testIncomeSource),
+      Some(AccountingPeriodModel(currentDate, currentDate.plusYears(1))),
+      None,
+      Some(getCurrentTaxYearEnd),
+      Some(b2TradingStart),
+      Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason))),
+      address = Some(address),
+      cashOrAccruals = false
+    )),
+    properties = Nil
+  )
 
   val testUser: MtdItUser[_] = MtdItUser(
-    testMtditid, testNino, None, multipleBusinessesAndPropertyResponse, None,
+    testMtditid, testNino, None, incomeSourceDetailsModel, None,
     Some("1234567890"), Some("12345-credId"), Some(Individual), None
   )(FakeRequest())
 
-  "Navigating to /report-quarterly/income-and-expenses/view" when {
-    "Authorised" should {
-      "render the home page with the payment due date" in {
+  val path = "/"
+
+  import implicitDateFormatter.longDate
+
+  "GET /" when {
+    "an authenticated user" should {
+      "render the home page" which {
+        "displays the next upcoming payment and charge" when {
+          "there are payments upcoming and nothing is overdue" in {
+            disable(NavBarFs)
+            MTDIndividualAuthStub.stubAuthorised()
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+              status = OK,
+              response = incomeSourceDetailsModel
+            )
+            val currentObligations: ObligationsModel = ObligationsModel(Seq(
+              GroupedObligationsModel(
+                identification = "testId",
+                obligations = List(
+                  SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", StatusFulfilled)
+                ))
+            ))
+
+            IncomeTaxViewChangeStub.stubGetNextUpdates(
+              nino = testNino,
+              deadlines = currentObligations
+            )
+
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+              nino = testNino,
+              from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+              to = getCurrentTaxYearEnd.toString
+            )(
+              status = OK,
+              response = Json.toJson(FinancialDetailsModel(
+                balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+                documentDetails = List(
+                  DocumentDetail(
+                    taxYear = getCurrentTaxYearEnd.getYear,
+                    transactionId = "testTransactionId",
+                    documentDescription = Some("ITSA- POA 1"),
+                    documentText = Some("documentText"),
+                    outstandingAmount = 500.00,
+                    originalAmount = 1000.00,
+                    documentDate = LocalDate.of(2018, 3, 29),
+                    effectiveDateOfPayment = Some(currentDate),
+                    documentDueDate = Some(currentDate)
+                  )
+                ),
+                financialDetails = List(
+                  FinancialDetail(
+                    taxYear = getCurrentTaxYearEnd.getYear.toString,
+                    mainType = Some("SA Payment on Account 1"),
+                    transactionId = Some("testTransactionId"),
+                    items = Some(Seq(SubItem(Some(currentDate))))
+                  )
+                )
+              ))
+            )
+
+            IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+              "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+            val result = buildGETMTDClient(path).futureValue
+
+            result should have(
+              httpStatus(OK),
+              pageTitleInd("home.heading"),
+              elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
+              elementTextBySelector("#payments-tile p:nth-child(2)")(currentDate.toLongDate)
+            )
+
+            verifyAuditContainsDetail(HomeAudit(testUser, Some(Left(currentDate -> false)), Left(currentDate -> false)).detail)
+            verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
+          }
+        }
+
+        "displays no upcoming payment" when {
+          "there are no upcoming payments" in {
+            disable(NavBarFs)
+            MTDIndividualAuthStub.stubAuthorised()
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+              status = OK,
+              response = incomeSourceDetailsModel
+            )
+
+            val currentObligations: ObligationsModel = ObligationsModel(Seq(
+              GroupedObligationsModel(
+                identification = "testId",
+                obligations = List(
+                  SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", StatusFulfilled)
+                ))
+            ))
+
+            IncomeTaxViewChangeStub.stubGetNextUpdates(
+              nino = testNino,
+              deadlines = currentObligations
+            )
+
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+              nino = testNino,
+              from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+              to = getCurrentTaxYearEnd.toString
+            )(
+              status = OK,
+              response = Json.toJson(FinancialDetailsModel(
+                balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+                documentDetails = List(
+                  DocumentDetail(
+                    taxYear = getCurrentTaxYearEnd.getYear,
+                    transactionId = "testTransactionId",
+                    documentDescription = Some("ITSA- POA 1"),
+                    documentText = Some("documentText"),
+                    outstandingAmount = 0,
+                    originalAmount = 1000.00,
+                    documentDate = LocalDate.of(2018, 3, 29)
+                  )
+                ),
+                financialDetails = List(
+                  FinancialDetail(
+                    taxYear = getCurrentTaxYearEnd.getYear.toString,
+                    mainType = Some("SA Payment on Account 1"),
+                    transactionId = Some("testTransactionId"),
+                    items = Some(Seq(SubItem(Some(currentDate))))
+                  )
+                )
+              ))
+            )
+
+            IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+              "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+            val result = buildGETMTDClient(path).futureValue
+
+            result should have(
+              httpStatus(OK),
+              pageTitleInd("home.heading"),
+              elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
+              elementTextBySelector("#payments-tile p:nth-child(2)")(noPaymentsDue)
+            )
+
+            verifyAuditContainsDetail(HomeAudit(testUser, None, Left(currentDate -> false)).detail)
+            verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
+          }
+        }
+
+        "displays an overdue payment and an overdue obligation" when {
+          "there is a single payment overdue and a single obligation overdue" in {
+            disable(NavBarFs)
+            MTDIndividualAuthStub.stubAuthorised()
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+              status = OK,
+              response = incomeSourceDetailsModel
+            )
+
+            val currentObligations: ObligationsModel = ObligationsModel(Seq(
+              GroupedObligationsModel(
+                identification = "testId",
+                obligations = List(
+                  SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
+                ))
+            ))
+
+            IncomeTaxViewChangeStub.stubGetNextUpdates(
+              nino = testNino,
+              deadlines = currentObligations
+            )
+
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+              nino = testNino,
+              from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+              to = getCurrentTaxYearEnd.toString
+            )(
+              status = OK,
+              response = Json.toJson(FinancialDetailsModel(
+                balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+                documentDetails = List(
+                  DocumentDetail(
+                    taxYear = getCurrentTaxYearEnd.getYear,
+                    transactionId = "testTransactionId",
+                    documentDescription = Some("ITSA- POA 1"),
+                    documentText = Some("documentText"),
+                    outstandingAmount = 500.00,
+                    originalAmount = 1000.00,
+                    documentDate = LocalDate.of(2018, 3, 29),
+                    effectiveDateOfPayment = Some(currentDate.minusDays(1)),
+                    documentDueDate = Some(currentDate.minusDays(1))
+                  )
+                ),
+                financialDetails = List(
+                  FinancialDetail(
+                    taxYear = getCurrentTaxYearEnd.getYear.toString,
+                    mainType = Some("SA Payment on Account 1"),
+                    transactionId = Some("testTransactionId"),
+                    items = Some(Seq(SubItem(Some(currentDate.minusDays(1)))))
+                  )
+                )
+              ))
+            )
+
+            IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+              "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+            val result = buildGETMTDClient(path).futureValue
+
+            result should have(
+              httpStatus(OK),
+              pageTitleInd("home.heading"),
+              elementTextBySelector("#updates-tile p:nth-child(2)")(s"$overdue ${currentDate.minusDays(1).toLongDate}"),
+              elementTextBySelector("#payments-tile p:nth-child(2)")(s"$overdue ${currentDate.minusDays(1).toLongDate}")
+            )
+
+            verifyAuditContainsDetail(HomeAudit(testUser, Some(Left(currentDate.minusDays(1) -> true)), Left(currentDate.minusDays(1) -> true)).detail)
+            verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
+          }
+
+          "there is a single payment overdue and a single obligation overdue and one overdue CESA " in {
+            disable(NavBarFs)
+            MTDIndividualAuthStub.stubAuthorised()
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+              status = OK,
+              response = incomeSourceDetailsModel
+            )
+
+            val currentObligations: ObligationsModel = ObligationsModel(Seq(
+              GroupedObligationsModel(
+                identification = "testId",
+                obligations = List(
+                  SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
+                ))
+            ))
+
+            IncomeTaxViewChangeStub.stubGetNextUpdates(
+              nino = testNino,
+              deadlines = currentObligations
+            )
+
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+              nino = testNino,
+              from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+              to = getCurrentTaxYearEnd.toString
+            )(
+              status = OK,
+              response = Json.toJson(FinancialDetailsModel(
+                balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+                documentDetails = List(
+                  DocumentDetail(
+                    taxYear = getCurrentTaxYearEnd.getYear,
+                    transactionId = "testTransactionId",
+                    documentDescription = Some("ITSA- POA 1"),
+                    documentText = Some("documentText"),
+                    outstandingAmount = 500.00,
+                    originalAmount = 1000.00,
+                    documentDate = LocalDate.of(2018, 3, 29),
+                    effectiveDateOfPayment = Some(currentDate.minusDays(1)),
+                    documentDueDate = Some(currentDate.minusDays(1))
+                  )
+                ),
+                financialDetails = List(
+                  FinancialDetail(
+                    taxYear = getCurrentTaxYearEnd.getYear.toString,
+                    mainType = Some("SA Payment on Account 1"),
+                    transactionId = Some("testTransactionId"),
+                    items = Some(Seq(SubItem(Some(currentDate.minusDays(1)))))
+                  )
+                )
+              ))
+            )
+
+            IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+              "utr", testSaUtr.toLong, getCurrentTaxYearEnd.minusYears(1).getYear.toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
+
+            val result = buildGETMTDClient(path).futureValue
+
+            result should have(
+              httpStatus(OK),
+              pageTitleInd("home.heading"),
+              elementTextBySelector("#updates-tile p:nth-child(2)")(s"$overdue ${currentDate.minusDays(1).toLongDate}"),
+              elementTextBySelector("#payments-tile p:nth-child(2)")(overduePayments(numberOverdue = "2"))
+            )
+
+            verifyAuditContainsDetail(HomeAudit(testUser, Some(Right(2)), Left(currentDate.minusDays(1) -> true)).detail)
+            verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
+          }
+        }
+        "display a count of the overdue payments a count of overdue obligations" when {
+          "there is more than one payment overdue and more than one obligation overdue" in {
+            disable(NavBarFs)
+            MTDIndividualAuthStub.stubAuthorised()
+
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+              status = OK,
+              response = incomeSourceDetailsModel
+            )
+
+            val currentObligations: ObligationsModel =
+              ObligationsModel(
+                Seq(
+                  GroupedObligationsModel(
+                    identification = "testId",
+                    obligations = List(
+                      SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled),
+                      SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(2), "Quarterly", None, "testPeriodKey", StatusFulfilled)
+                    ))
+                ))
+
+            IncomeTaxViewChangeStub.stubGetNextUpdates(
+              nino = testNino,
+              deadlines = currentObligations
+            )
+
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+              nino = testNino,
+              from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+              to = getCurrentTaxYearEnd.toString
+            )(
+              status = OK,
+              response = Json.toJson(FinancialDetailsModel(
+                balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+                documentDetails = List(
+                  DocumentDetail(
+                    taxYear = getCurrentTaxYearEnd.getYear,
+                    transactionId = "testTransactionId1",
+                    documentText = Some("documentText"),
+                    documentDescription = Some("ITSA- POA 1"),
+                    outstandingAmount = 500.00,
+                    originalAmount = 1000.00,
+                    documentDate = LocalDate.of(2018, 3, 29),
+                    effectiveDateOfPayment = Some(currentDate.minusDays(1)),
+                    documentDueDate = Some(currentDate.minusDays(1)),
+                  ),
+                  DocumentDetail(
+                    taxYear = getCurrentTaxYearEnd.getYear,
+                    transactionId = "testTransactionId2",
+                    documentText = Some("documentText"),
+                    documentDescription = Some("ITSA - POA 2"),
+                    outstandingAmount = 500.00,
+                    originalAmount = 1000.00,
+                    documentDate = LocalDate.of(2018, 3, 29),
+                    effectiveDateOfPayment = Some(currentDate.minusDays(1)),
+                    documentDueDate = Some(currentDate.minusDays(1))
+                  )
+                ),
+                financialDetails = List(
+                  FinancialDetail(
+                    taxYear = getCurrentTaxYearEnd.getYear.toString,
+                    mainType = Some("SA Payment on Account 1"),
+                    transactionId = Some("testTransactionId1"),
+                    items = Some(Seq(SubItem(Some(currentDate.minusDays(1)))))
+                  ),
+                  FinancialDetail(
+                    taxYear = getCurrentTaxYearEnd.getYear.toString,
+                    mainType = Some("SA Payment on Account 2"),
+                    transactionId = Some("testTransactionId2"),
+                    items = Some(Seq(SubItem(Some(currentDate.minusDays(2)))))
+                  )
+                )
+              ))
+            )
+
+            IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+              "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+            val result = buildGETMTDClient(path).futureValue
+
+            result should have(
+              httpStatus(OK),
+              pageTitleInd("home.heading"),
+              elementTextBySelector("#updates-tile p:nth-child(2)")(overdueUpdates(numberOverdue = "2")),
+              elementTextBySelector("#payments-tile p:nth-child(2)")(overduePayments(numberOverdue = "2"))
+            )
+
+            verifyAuditContainsDetail(HomeAudit(testUser, Some(Right(2)), Right(2)).detail)
+            verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
+          }
+        }
+        "display Income Sources tile" when {
+          "IncomeSources feature switch is enabled" in {
+            disable(NavBarFs)
+            MTDIndividualAuthStub.stubAuthorised()
+            enable(IncomeSources)
+
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+              status = OK,
+              response = incomeSourceDetailsModel
+            )
+
+            val currentObligations: ObligationsModel = ObligationsModel(Seq(
+              GroupedObligationsModel(
+                identification = "testId",
+                obligations = List(
+                  SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", StatusFulfilled)
+                ))
+            ))
+
+            IncomeTaxViewChangeStub.stubGetNextUpdates(
+              nino = testNino,
+              deadlines = currentObligations
+            )
+
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+              nino = testNino,
+              from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+              to = getCurrentTaxYearEnd.toString
+            )(
+              status = OK,
+              response = Json.toJson(FinancialDetailsModel(
+                balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+                documentDetails = List(
+                  DocumentDetail(
+                    taxYear = getCurrentTaxYearEnd.getYear,
+                    transactionId = "testTransactionId",
+                    documentDescription = Some("ITSA- POA 1"),
+                    documentText = Some("documentText"),
+                    outstandingAmount = 500.00,
+                    originalAmount = 1000.00,
+                    documentDate = LocalDate.of(2018, 3, 29),
+                    effectiveDateOfPayment = Some(currentDate),
+                    documentDueDate = Some(currentDate)
+                  )
+                ),
+                financialDetails = List(
+                  FinancialDetail(
+                    taxYear = getCurrentTaxYearEnd.getYear.toString,
+                    mainType = Some("SA Payment on Account 1"),
+                    transactionId = Some("testTransactionId"),
+                    items = Some(Seq(SubItem(Some(currentDate))))
+                  )
+                )
+              ))
+            )
+
+            IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+              "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+            val result = buildGETMTDClient(path).futureValue
+
+            result should have(
+              httpStatus(OK),
+              pageTitleInd("home.heading"),
+              elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
+              elementTextBySelector("#payments-tile p:nth-child(2)")(currentDate.toLongDate),
+              elementTextBySelector("#income-sources-tile h2:nth-child(1)")("Income Sources")
+            )
+          }
+        }
+        "display Your Businesses tile" when {
+          "IncomeSources and IncomeSourcesNewJourney feature switches are enabled" in {
+            disable(NavBarFs)
+            MTDIndividualAuthStub.stubAuthorised()
+            enable(IncomeSources)
+            enable(IncomeSourcesNewJourney)
+
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+              status = OK,
+              response = incomeSourceDetailsModel
+            )
+
+            val currentObligations: ObligationsModel = ObligationsModel(Seq(
+              GroupedObligationsModel(
+                identification = "testId",
+                obligations = List(
+                  SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", StatusFulfilled)
+                ))
+            ))
+
+            IncomeTaxViewChangeStub.stubGetNextUpdates(
+              nino = testNino,
+              deadlines = currentObligations
+            )
+
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+              nino = testNino,
+              from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+              to = getCurrentTaxYearEnd.toString
+            )(
+              status = OK,
+              response = Json.toJson(FinancialDetailsModel(
+                balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+                documentDetails = List(
+                  DocumentDetail(
+                    taxYear = getCurrentTaxYearEnd.getYear,
+                    transactionId = "testTransactionId",
+                    documentDescription = Some("ITSA- POA 1"),
+                    documentText = Some("documentText"),
+                    outstandingAmount = 500.00,
+                    originalAmount = 1000.00,
+                    documentDate = LocalDate.of(2018, 3, 29),
+                    effectiveDateOfPayment = Some(currentDate),
+                    documentDueDate = Some(currentDate)
+                  )
+                ),
+                financialDetails = List(
+                  FinancialDetail(
+                    taxYear = getCurrentTaxYearEnd.getYear.toString,
+                    mainType = Some("SA Payment on Account 1"),
+                    transactionId = Some("testTransactionId"),
+                    items = Some(Seq(SubItem(Some(currentDate))))
+                  )
+                )
+              ))
+            )
+
+            IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+              "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+            val result = buildGETMTDClient(path).futureValue
+
+            result should have(
+              httpStatus(OK),
+              pageTitleInd("home.heading"),
+              elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
+              elementTextBySelector("#payments-tile p:nth-child(2)")(currentDate.toLongDate),
+              elementTextBySelector("#income-sources-tile h2:nth-child(1)")("Your businesses")
+            )
+          }
+        }
+      }
+
+      "render the error page" when {
+
+        "retrieving the charges was unsuccessful" in {
+          disable(NavBarFs)
+          MTDIndividualAuthStub.stubAuthorised()
+
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            status = OK,
+            response = incomeSourceDetailsModel
+          )
+
+          val currentObligations: ObligationsModel = ObligationsModel(Seq(
+            GroupedObligationsModel(
+              identification = "testId",
+              obligations = List(
+                SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", StatusFulfilled)
+              ))
+          ))
+
+          IncomeTaxViewChangeStub.stubGetNextUpdates(
+            nino = testNino,
+            deadlines = currentObligations
+          )
+
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+            nino = testNino,
+            from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+            to = getCurrentTaxYearEnd.toString
+          )(
+            status = INTERNAL_SERVER_ERROR,
+            response = Json.obj()
+          )
+
+          val result = buildGETMTDClient(path).futureValue
+
+          result should have(
+            httpStatus(INTERNAL_SERVER_ERROR),
+            pageTitleInd(titleInternalServer, isErrorPage = true)
+          )
+
+          verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
+        }
+      }
+      "retrieving the obligations was unsuccessful" in {
         disable(NavBarFs)
-        enable(IncomeSources)
-        Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+        MTDIndividualAuthStub.stubAuthorised()
 
-        val currentObligations: ObligationsModel = ObligationsModel(Seq(
-          singleObligationQuarterlyReturnModel(testSelfEmploymentId),
-          singleObligationQuarterlyReturnModel(otherTestSelfEmploymentId),
-          singleObligationOverdueModel(testPropertyId),
-          singleObligationCrystallisationModel
-        ))
-
-        And("I wiremock stub obligation responses")
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, currentObligations)
-
-        And("I stub a successful financial details response")
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, "2017-04-06", "2018-04-05")(OK,
-          testValidFinancialDetailsModelJson(3400.00, 2000.00))
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, "2018-04-06", "2019-04-05")(OK,
-          testValidFinancialDetailsModelJson(3400.00, 1000.00, "2019"))
-
-        When("I call GET /report-quarterly/income-and-expenses/view")
-        val res = IncomeTaxViewChangeFrontend.getHome
-
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        verifyNextUpdatesCall(testNino)
-
-        Then("the result should have a HTTP status of OK (200) and the Income Tax home page")
-
-        res should have(
-          httpStatus(OK),
-          pageTitleIndividual("home.heading"),
-          elementTextBySelector("#updates-tile p:nth-child(2)")(overdueUpdates("4")),
-          elementTextBySelector("#payments-tile p:nth-child(2)")(overduePayments("6")),
-          elementTextBySelector("#income-sources-tile h2:nth-child(1)")("Income Sources")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+          status = OK,
+          response = incomeSourceDetailsModel
         )
 
-        verifyAuditContainsDetail(HomeAudit(testUser, Some(Right(6)), Right(4)).detail)
-        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, testSelfEmploymentId, singleObligationQuarterlyReturnModel(testSelfEmploymentId).obligations).detail)
-        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, otherTestSelfEmploymentId, singleObligationQuarterlyReturnModel(otherTestSelfEmploymentId).obligations).detail)
-        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, testPropertyId, singleObligationOverdueModel(testPropertyId).obligations).detail)
-        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, testMtditid, singleObligationCrystallisationModel.obligations).detail)
-      }
-      "render the home page with Your Business tile when new IS journey FS enabled" in {
-        disable(NavBarFs)
-        enable(IncomeSources)
-        enable(IncomeSourcesNewJourney)
-        Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-
-        val currentObligations: ObligationsModel = ObligationsModel(Seq(
-          singleObligationQuarterlyReturnModel(testSelfEmploymentId),
-          singleObligationQuarterlyReturnModel(otherTestSelfEmploymentId),
-          singleObligationOverdueModel(testPropertyId),
-          singleObligationCrystallisationModel
-        ))
-
-        And("I wiremock stub obligation responses")
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, currentObligations)
-
-        And("I stub a successful financial details response")
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, "2017-04-06", "2018-04-05")(OK,
-          testValidFinancialDetailsModelJson(3400.00, 2000.00))
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, "2018-04-06", "2019-04-05")(OK,
-          testValidFinancialDetailsModelJson(3400.00, 1000.00, "2019"))
-
-        When("I call GET /report-quarterly/income-and-expenses/view")
-        val res = IncomeTaxViewChangeFrontend.getHome
-
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        verifyNextUpdatesCall(testNino)
-
-        Then("the result should have a HTTP status of OK (200) and the Income Tax home page")
-
-        res should have(
-          httpStatus(OK),
-          pageTitleIndividual("home.heading"),
-          elementTextBySelector("#updates-tile p:nth-child(2)")(overdueUpdates("4")),
-          elementTextBySelector("#payments-tile p:nth-child(2)")(overduePayments("6")),
-          elementTextBySelector("#income-sources-tile h2:nth-child(1)")("Your businesses")
-        )
-      }
-
-      "render the ISE page when receive an error from the backend" in {
-        disable(NavBarFs)
-        Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-
-        And("I wiremock stub a single business obligation response")
         IncomeTaxViewChangeStub.stubGetNextUpdatesError(testNino)
 
-        When("I call GET /report-quarterly/income-and-expenses/view")
-        val res = IncomeTaxViewChangeFrontend.getHome
+        val result = buildGETMTDClient(path).futureValue
 
-        verifyIncomeSourceDetailsCall(testMtditid)
+        result should have(
+          httpStatus(INTERNAL_SERVER_ERROR),
+          pageTitleInd(titleInternalServer, isErrorPage = true)
+        )
+      }
+      "retrieving the income sources was unsuccessful" in {
+        disable(NavBarFs)
+        enable(IncomeSources)
+        MTDIndividualAuthStub.stubAuthorised()
 
-        verifyNextUpdatesCall(testNino)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsErrorResponse(testMtditid)(
+          status = INTERNAL_SERVER_ERROR)
 
-        Then("the result should have a HTTP status of ISE (500) and the Income Tax home page")
-        res should have(
-          httpStatus(INTERNAL_SERVER_ERROR)
+        val result = buildGETMTDClient(path).futureValue
+
+        result should have(
+          httpStatus(INTERNAL_SERVER_ERROR),
+          pageTitleInd(titleInternalServer, isErrorPage = true)
         )
       }
     }
 
-//    "low confidence level user" should {
-//      "redirect to ivuplift service" in {
-//        enable(IvUplift)
-//        AuthStub.stubAuthorised(Some(50))
-//
-//        When(s"I call GET /report-quarterly/income-and-expenses/view")
-//        val res = IncomeTaxViewChangeFrontend.get("/")
-//        val expectedRedirectUrl = "http://localhost:9948/iv-stub/uplift?origin=ITVC&confidenceLevel=250" +
-//          "&completionURL=http://localhost:9081/report-quarterly/income-and-expenses/view/uplift-success?origin=PTA&failureURL=" +
-//          "http://localhost:9081/report-quarterly/income-and-expenses/view/cannot-view-page"
-//        Then("the http response for an unauthorised user is returned")
-//
-//        //println(expectedRedirectUrl)
-//        res should have(
-//          httpStatus(SEE_OTHER),
-//          redirectURI(expectedRedirectUrl)
-//        )
-//      }
-//    }
-    unauthorisedTest("")
+    testAuthFailuresForMTDIndividual(path)
   }
 }

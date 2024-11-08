@@ -17,7 +17,7 @@
 package helpers.servicemocks
 
 import controllers.agent.AuthUtils._
-import enums.{MTDPrimaryAgent, MTDSecondaryAgent, MTDUserRole}
+import enums.{MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import helpers.WiremockHelper._
 import play.api.http.Status
 import play.api.libs.json.{JsString, JsValue, Json}
@@ -41,7 +41,7 @@ object AgentAuthStub {
   }
 
   def stubSecondaryAuthorisedAgent(mtdItId: String = "mtdbsaId"): Unit = {
-    val jsonRequest = getAgentAuthRequest(Some(MTDSecondaryAgent), mtdItId)
+    val jsonRequest = getAgentAuthRequest(Some(MTDSupportingAgent), mtdItId)
 
     stubPostWithRequest(
       url = postAuthoriseUrl,
@@ -102,7 +102,7 @@ object AgentAuthStub {
 
 
   def failedSecondaryAgent(mtdItId: String = "MtdItId"): Unit = {
-    val jsonRequest = getAgentAuthRequest(Some(MTDSecondaryAgent), mtdItId)
+    val jsonRequest = getAgentAuthRequest(Some(MTDSupportingAgent), mtdItId)
     val responseHeaders = Map("WWW-Authenticate" -> "MDTP detail=\"InsufficientEnrolments\"",
       "Failing-Enrolment" -> "no mtditid enrolment")
     stubPostWithRequestAndResponseHeaders(
@@ -118,9 +118,9 @@ object AgentAuthStub {
     lazy val isNotAgentPredicate = AffinityGroup.Individual or AffinityGroup.Organisation
     lazy val isAgentPredicate = Enrolment("HMRC-AS-AGENT") and AffinityGroup.Agent
     val predicateJson = role match {
-      case Some(MTDPrimaryAgent) => Json.arr(Enrolment(primaryAgentEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
+      case Some(MTDPrimaryAgent) => Json.arr(Enrolment(mtdEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
         .withDelegatedAuthRule(primaryAgentAuthRule).toJson)
-      case Some(MTDSecondaryAgent) => Json.arr(Enrolment(secondaryAgentEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
+      case Some(MTDSupportingAgent) => Json.arr(Enrolment(secondaryAgentEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
         .withDelegatedAuthRule(secondaryAgentAuthRule).toJson)
       case _ => Json.arr((isAgentPredicate or isNotAgentPredicate).toJson)
     }

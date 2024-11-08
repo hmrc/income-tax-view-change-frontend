@@ -31,9 +31,9 @@ trait MockUserAuthorisedFunctions extends BeforeAndAfterEach {
   self: Suite =>
 
   val mockAuthService: FrontendAuthorisedFunctions
-  lazy val isMTDUserPredicate: Predicate = Enrolment("HMRC-MTD-IT") and AffinityGroup.Agent
-  lazy val individualOrOrganisation: Predicate = AffinityGroup.Individual or AffinityGroup.Organisation
-  lazy val predicate: Predicate = (isMTDUserPredicate and individualOrOrganisation) or AffinityGroup.Agent
+  lazy val isMTDUserPredicate: Predicate = Enrolment(mtdEnrolmentName) and
+    (AffinityGroup.Organisation or AffinityGroup.Individual)
+  lazy val predicate: Predicate = isMTDUserPredicate or AffinityGroup.Agent
 
 
   def setupMockUserAuthSuccess[X, Y](retrievalValue: X ~ Y): Unit = {

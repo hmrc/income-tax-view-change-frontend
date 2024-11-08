@@ -17,7 +17,7 @@
 package mocks.auth
 
 import auth.FrontendAuthorisedFunctions
-import controllers.agent.AuthUtils.{agentIdentifier, primaryAgentAuthRule, primaryAgentEnrolmentName, secondaryAgentAuthRule, secondaryAgentEnrolmentName}
+import controllers.agent.AuthUtils.{agentIdentifier, primaryAgentAuthRule, mtdEnrolmentName, secondaryAgentAuthRule, secondaryAgentEnrolmentName}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
@@ -37,7 +37,7 @@ trait MockAgentAuthorisedFunctions extends BeforeAndAfterEach {
   lazy val isAgentPredicate: Predicate = Enrolment("HMRC-AS-AGENT") and AffinityGroup.Agent
   lazy val isNotAgentPredicate: Predicate = AffinityGroup.Individual or AffinityGroup.Organisation
   lazy val authPredicateForAgent: Predicate = isAgentPredicate or isNotAgentPredicate
-  def primaryAgentPredicate(mtdItId: String): Predicate = Enrolment(primaryAgentEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
+  def primaryAgentPredicate(mtdItId: String): Predicate = Enrolment(mtdEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
     .withDelegatedAuthRule(primaryAgentAuthRule)
   def secondaryAgentPredicate(mtdItId: String): Predicate = Enrolment(secondaryAgentEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
     .withDelegatedAuthRule(secondaryAgentAuthRule)
@@ -98,7 +98,7 @@ trait MockAgentAuthorisedFunctions extends BeforeAndAfterEach {
   }
 
   def setupMockPrimaryAgentAuthRetrievalSuccess[X, Y](retrievalValue: X ~ Y, mtdItId: String): Unit = {
-    val predicate = Enrolment(primaryAgentEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
+    val predicate = Enrolment(mtdEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
       .withDelegatedAuthRule(primaryAgentAuthRule)
     when(mockAuthService.authorised(predicate))
       .thenReturn(
@@ -111,7 +111,7 @@ trait MockAgentAuthorisedFunctions extends BeforeAndAfterEach {
 
   def setupMockPrimaryAgentAuthorisationException(mtdItId: String): Unit = {
 
-    val predicate = Enrolment(primaryAgentEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
+    val predicate = Enrolment(mtdEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
       .withDelegatedAuthRule(primaryAgentAuthRule)
     when(mockAuthService.authorised(predicate))
       .thenReturn(

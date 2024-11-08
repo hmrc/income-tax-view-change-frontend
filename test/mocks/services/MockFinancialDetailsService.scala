@@ -32,7 +32,7 @@ import scala.concurrent.Future
 
 trait MockFinancialDetailsService extends UnitSpec with BeforeAndAfterEach {
 
-  val mockFinancialDetailsService: FinancialDetailsService = mock(classOf[FinancialDetailsService])
+  lazy val mockFinancialDetailsService: FinancialDetailsService = mock(classOf[FinancialDetailsService])
 
 
   override def beforeEach(): Unit = {

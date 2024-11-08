@@ -14,19 +14,13 @@
  * limitations under the License.
  */
 
-package controllers.agent
+package models
 
-object AuthUtils {
+import models.incomeSourceDetails.TaxYear
 
-  val agentIdentifier = "MTDITID"
-  val arnIdentifier = "AgentReferenceNumber"
-
-  val mtdEnrolmentName = "HMRC-MTD-IT"
-  val primaryAgentAuthRule = "mtd-it-auth"
-
-  val secondaryAgentEnrolmentName = "HMRC-MTD-IT-SUPP"
-  val secondaryAgentAuthRule = "mtd-it-auth-supp"
-
-  val agentEnrolmentName = "HMRC-AS-AGENT"
-
-}
+case class ReportingFrequencyViewModel(
+                                        isAgent: Boolean,
+                                        currentTaxYear: TaxYear,
+                                        nextTaxYear: TaxYear,
+                                        optOutJourneyUrl: Option[String]
+                                      )

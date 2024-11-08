@@ -20,6 +20,6 @@ sealed trait MTDUserRole
 
 case object MTDPrimaryAgent extends MTDUserRole
 
-case object MTDSecondaryAgent extends MTDUserRole
+case object MTDSupportingAgent extends MTDUserRole
 
 case object MTDIndividual extends MTDUserRole

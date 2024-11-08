@@ -137,7 +137,7 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
       _ <- repository.initialiseOptOutJourney(proposition)
     } yield (nextUpdatesQuarterlyReportingContentChecks(proposition), nextUpdatesOptOutViewModel(proposition))
   }
-
+  
   private def nextUpdatesQuarterlyReportingContentChecks(oop: OptOutProposition) = {
     val currentYearStatus = oop.currentTaxYear.status
     val previousYearStatus = oop.previousTaxYear.status

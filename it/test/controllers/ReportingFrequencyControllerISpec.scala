@@ -19,9 +19,9 @@ package controllers
 import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
-import helpers.servicemocks.{AuthStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.{AuthStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.admin.FeatureSwitchName.allFeatureSwitches
-import models.admin.ReportingFrequencyPage
+import models.admin.{OptOut, ReportingFrequencyPage}
 import org.jsoup.Jsoup
 import play.api.http.HeaderNames
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
@@ -61,11 +61,13 @@ class ReportingFrequencyControllerISpec extends ControllerISpecBase with Feature
 
         "return the ReportingFrequency page, OK - 200" in {
 
-          AuthStub.stubAuthorised()
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
-
           allFeatureSwitches.foreach(switch => disable(switch))
           enable(ReportingFrequencyPage)
+          enable(OptOut)
+
+          AuthStub.stubAuthorised()
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(dateService.getCurrentTaxYearEnd)
 
           val res =
             httpClient
@@ -74,8 +76,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecBase with Feature
               .execute[HttpResponse]
 
           res.futureValue.status shouldBe OK
-          //        Jsoup.parse(res.futureValue.body).title shouldBe "New page title"  //TODO: change the test to look for the title of the new page when implemented
-          res.futureValue.body shouldBe "Reporting Frequency Page - Placeholder"
+          Jsoup.parse(res.futureValue.body).title shouldBe "Your reporting frequency - Manage your Income Tax updates - GOV.UK"
         }
       }
     }
