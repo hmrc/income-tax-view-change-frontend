@@ -25,7 +25,7 @@ import views.html.nextUpdates.NextUpdates
 trait MockNextUpdates extends BeforeAndAfterEach {
   self: Suite =>
 
-  val nextUpdatesObj: NextUpdates = mock(classOf[NextUpdates])
+  lazy val nextUpdatesObj: NextUpdates = mock(classOf[NextUpdates])
 
   override def beforeEach(): Unit = {
     super.beforeEach()

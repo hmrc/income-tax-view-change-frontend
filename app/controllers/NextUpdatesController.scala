@@ -18,19 +18,19 @@ package controllers
 
 import audit.AuditingService
 import audit.models.NextUpdatesAuditing.NextUpdatesAuditModel
-import auth.{FrontendAuthorisedFunctions, MtdItUser}
+import auth.MtdItUser
+import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import controllers.agent.predicates.ClientConfirmedController
 import models.admin.OptOut
 import models.obligations._
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import services.NextUpdatesService
 import services.optout.OptOutService
-import services.{IncomeSourceDetailsService, NextUpdatesService}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.AuthenticatorPredicate
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.nextUpdates.{NextUpdates, NextUpdatesOptOut, NoNextUpdates}
 
 import javax.inject.{Inject, Singleton}
@@ -45,12 +45,11 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
                                       itvcErrorHandler: ItvcErrorHandler,
                                       optOutService: OptOutService,
                                       val appConfig: FrontendAppConfig,
-                                      val authorisedFunctions: FrontendAuthorisedFunctions,
-                                      val auth: AuthenticatorPredicate)
+                                      val authActions: AuthActions)
                                      (implicit mcc: MessagesControllerComponents,
                                       implicit val agentItvcErrorHandler: AgentItvcErrorHandler,
                                       val ec: ExecutionContext)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
+  extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
 
   private def hasAnyIncomeSource(action: => Future[Result])(implicit user: MtdItUser[_], origin: Option[String]): Future[Result] = {
     if (user.incomeSources.hasBusinessIncome || user.incomeSources.hasPropertyIncome) {
@@ -95,8 +94,7 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
     }(user, origin)
 
 
-  def show(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-    implicit user =>
+  def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async { implicit user =>
       getNextUpdates(
         controllers.routes.HomeController.show(origin),
         isAgent = false,
@@ -104,7 +102,7 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
         origin)
   }
 
-  def showAgent: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent: Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit mtdItUser =>
       getNextUpdates(
         controllers.routes.HomeController.showAgent,
