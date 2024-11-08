@@ -2183,6 +2183,7 @@ optOut.ConfirmOptOutMultiTaxYearChoice.form.no-select.error = Dewiswch y flwyddy
 
 # opt out choose tax year
 optout.chooseOptOutTaxYear.heading                   = Optio allan o adrodd yn chwarterol
+optout.chooseOptOutTaxYear.submissions.deleted       = Gallwch optio allan o unrhyw un o’r blynyddoedd treth sydd ar gael a chyflwyno adroddiadau yn flynyddol o’r flwyddyn dreth honno ymlaen.
 optout.chooseOptOutTaxYear.desc                      = Gallwch optio allan o unrhyw un o’r blynyddoedd treth sydd ar gael a chyflwyno adroddiadau yn flynyddol o’r flwyddyn honno ymlaen. Mae hyn yn golygu y byddwch yn adrodd yn flynyddol ar gyfer pob un o’ch busnesau cyfredol ac unrhyw fusnesau eraill y byddwch yn eu hychwanegu yn y dyfodol.
 optout.chooseOptOutTaxYear.whichTaxYear              = eich cyfrif ar-lein CThEF meddalwedd cadw cofnodion sy’n cydweddu?
 optout.chooseOptOutTaxYear.taxYearOnwards            = {0} i {1} ymlaen
