@@ -26,6 +26,7 @@
 @import views.html.layouts.unifiedLayout
 @import views.html.partials.chargeSummary._
 @import models.repaymentHistory.RepaymentHistoryUtils
+@import _root_.implicits.HtmlFormatter.NbspString
 
 @import java.time.LocalDate
 
@@ -247,7 +248,7 @@
 
 @getCreationDate(date: Option[LocalDate]) = @{
     date match {
-        case Some(value) => value.toLongDateShort
+        case Some(value) => value.toLongDateShort.toHtmlNonBroken
         case None => messages("incomeSources.generic.unknown")
     }
 }
@@ -378,7 +379,7 @@
             <tr class="govuk-table__row">
                 <th scope="col" class="govuk-table__header">@messages("chargeSummary.chargeHistory.date")</th>
                 <th scope="col" class="govuk-table__header">@messages("chargeSummary.chargeHistory.description")</th>
-                <th scope="col" class="govuk-table__header govuk-!-text-align-right">@messages("chargeSummary.chargeHistory.amount")</th>
+                <th scope="col" class="govuk-table__header govuk-table__header--numeric">@messages("chargeSummary.chargeHistory.amount")</th>
             </tr>
             </thead>
 
@@ -386,14 +387,14 @@
             @if(viewModel.chargeHistoryEnabled){
                 @if(viewModel.noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment) {
                     <tr>
-                        <td class="govuk-table__cell govuk-!-width-one-quarter">@{
+                        <td class="govuk-table__cell">@{
                             getCreationDate(viewModel.adjustmentHistory.creationEvent.adjustmentDate)
                         }</td>
                         <td class="govuk-table__cell">@{
                             messages(s"chargeSummary.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey(viewModel.codingOutEnabled, viewModel.reviewAndReconcileEnabled)}")
                         }
                         </td>
-                        <td class="govuk-table__cell numeric govuk-!-text-align-right">@{
+                        <td class="govuk-table__cell govuk-table__cell--numeric">@{
                             viewModel.adjustmentHistory.creationEvent.amount.toCurrency
                         }</td>
                     </tr>
@@ -401,37 +402,37 @@
 
                 @if(viewModel.latePaymentInterestCharge){
                     <tr>
-                        <td class="govuk-table__cell govuk-!-width-one-quarter">@{viewModel.chargeItem.interestEndDate.get.toLongDateShort}</td>
+                        <td class="govuk-table__cell">@{viewModel.chargeItem.interestEndDate.get.toLongDateShort.toHtmlNonBroken}</td>
                         <td class="govuk-table__cell">@messages(s"chargeSummary.lpi.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey(viewModel.codingOutEnabled, viewModel.reviewAndReconcileEnabled)}")</td>
-                        <td class="govuk-table__cell govuk-!-text-align-right">@{viewModel.chargeItem.latePaymentInterestAmount.get.toCurrency}</td>
+                        <td class="govuk-table__cell govuk-table__cell--numeric">@{viewModel.chargeItem.latePaymentInterestAmount.get.toCurrency}</td>
                     </tr>
                 }
 
                 @if(viewModel.codingOutEnabled && viewModel.chargeItem.subTransactionType == Some(Accepted)) {
                     <tr>
-                        <td class="govuk-table__cell govuk-!-width-one-quarter">@{viewModel.chargeItem.documentDate.toLongDateShort}</td>
+                        <td class="govuk-table__cell">@{viewModel.chargeItem.documentDate.toLongDateShort.toHtmlNonBroken}</td>
                         <td class="govuk-table__cell">@messages("chargeSummary.codingOutPayHistoryAmount", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)</td>
-                        <td class="govuk-table__cell">@{viewModel.chargeItem.originalAmount.toCurrency}</td>
+                        <td class="govuk-table__cell govuk-table__cell--numeric">@{viewModel.chargeItem.originalAmount.toCurrency}</td>
                     </tr>
                 }
 
                 @viewModel.reviewAndReconcileCredit.map { charge =>
                     <tr>
-                        <td class="govuk-table__cell govuk-!-width-one-quarter" id="rar-due-date">@{charge.getDueDate.toLongDateShort}</td>
+                        <td class="govuk-table__cell" id="rar-due-date">@{charge.getDueDate.toLongDateShort.toHtmlNonBroken}</td>
                         <td class="govuk-table__cell">
                             <a class="govuk-link" id="rar-charge-link" href="@RepaymentHistoryUtils.getPoaChargeLinkUrl(viewModel.isAgent, charge.taxYear.endYear, charge.transactionId)">
                                 @messages(s"chargeSummary.chargeHistory.${charge.transactionType.key}")
                             </a>
                         </td>
-                        <td class="govuk-table__cell" id="rar-total-amount">@{charge.originalAmount.abs.toCurrency}</td>
+                        <td class="govuk-table__cell govuk-table__cell--numeric" id="rar-total-amount">@{charge.originalAmount.abs.toCurrency}</td>
                     </tr>
                 }
 
                 @for(charge <- viewModel.adjustmentHistory.adjustments) {
                     <tr>
-                        <td class="govuk-table__cell govuk-!-width-one-quarter">@{charge.adjustmentDate.getOrElse(viewModel.chargeItem.documentDate).toLongDateShort}</td>
+                        <td class="govuk-table__cell">@{charge.adjustmentDate.getOrElse(viewModel.chargeItem.documentDate).toLongDateShort.toHtmlNonBroken}</td>
                         <td class="govuk-table__cell">@messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${viewModel.chargeItem.getChargeTypeKey(viewModel.codingOutEnabled, viewModel.reviewAndReconcileEnabled)}")</td>
-                        <td class="govuk-table__cell">@{charge.amount.toCurrency}</td>
+                        <td class="govuk-table__cell govuk-table__cell--numeric">@{charge.amount.toCurrency}</td>
                     </tr>
                 }
             }
