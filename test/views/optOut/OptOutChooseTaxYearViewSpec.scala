@@ -54,6 +54,8 @@ class OptOutChooseTaxYearViewSpec extends TestSupport {
     val cancelButtonHref: String = controllers.routes.NextUpdatesController.show().url
     val cancelButtonAgentHref: String = controllers.routes.NextUpdatesController.showAgent.url
     val continueButton: String = messages("optout.chooseOptOutTaxYear.continue")
+    val warningInsertMessage: String = messages("optout.chooseOptOutTaxYear.submissions.deleted")
+    val warningInsertClass: String = "govuk-inset-text"
   }
 
   "Opt-out confirm page" should {
@@ -64,6 +66,16 @@ class OptOutChooseTaxYearViewSpec extends TestSupport {
 
     "have the correct heading" in new Setup(false) {
       pageDocument.select("h1").text() shouldBe optOutChooseTaxYear.heading
+    }
+
+    "show the warning block (for already having done submissions) user: non-agent" in new Setup(false) {
+      pageDocument.getElementById("warning-inset").text shouldBe optOutChooseTaxYear.warningInsertMessage
+      pageDocument.getElementById("warning-inset").className shouldBe optOutChooseTaxYear.warningInsertClass
+    }
+
+    "show the warning block (for already having done submissions) user: agent" in new Setup(true) {
+      pageDocument.getElementById("warning-inset").text shouldBe optOutChooseTaxYear.warningInsertMessage
+      pageDocument.getElementById("warning-inset").className shouldBe optOutChooseTaxYear.warningInsertClass
     }
 
     "have the correct summary heading and page contents" in new Setup(false) {
