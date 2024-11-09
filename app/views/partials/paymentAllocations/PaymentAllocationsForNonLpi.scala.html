@@ -44,7 +44,7 @@
                 </a>
                 <span class="govuk-body-s" aria-hidden="true">@messages("paymentAllocation.taxYear", (paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).getTaxYear(implicitDateFormatter) - 1).toString, paymentAllocation.allocationDetail.get.getTaxYear(implicitDateFormatter).toString)</span>
             </td>
-            <td class="govuk-table__cell">@paymentAllocation.clearingDate.getOrElse(throw MissingFieldException("Payment Clearing Date")).toLongDateShort.toHtmlNonBroken</td>
+            <td class="govuk-table__cell">@paymentAllocation.clearingDate.getOrElse(throw MissingFieldException("Payment Clearing Date")).toLongDateShort.toNonBreaking</td>
             <td class="govuk-table__cell govuk-table__cell--numeric">@paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).amount.getOrElse(throw MissingFieldException("Payment Amount")).toCurrencyString</td>
         </tr>
     </tbody>
