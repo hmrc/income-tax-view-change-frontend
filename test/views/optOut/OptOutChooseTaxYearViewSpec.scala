@@ -37,10 +37,16 @@ class OptOutChooseTaxYearViewSpec extends TestSupport {
   val availableOptOutTaxYearsList: List[String] = List(taxYear.toString)
   val submissionsCountForTaxYearModel: QuarterlyUpdatesCountForTaxYearModel =
     QuarterlyUpdatesCountForTaxYearModel(Seq(QuarterlyUpdatesCountForTaxYear(TaxYear.forYearEnd(2024), 6)))
+  val submissionsCountEmpty: QuarterlyUpdatesCountForTaxYearModel =
+    QuarterlyUpdatesCountForTaxYearModel(Seq())
 
   class Setup(isAgent: Boolean = true) {
     val cancelURL = if (isAgent) controllers.routes.NextUpdatesController.showAgent.url else controllers.routes.NextUpdatesController.show().url
     val pageDocument: Document = Jsoup.parse(contentAsString(optOutChooseTaxYearView(ConfirmOptOutMultiTaxYearChoiceForm(availableOptOutTaxYearsList), availableOptOutTaxYear, submissionsCountForTaxYearModel, isAgent, cancelURL)))
+  }
+  class SetupNoSubmissions(isAgent: Boolean = true) extends Setup{
+    //This is for tests without previous tax submissions
+    override val pageDocument: Document = Jsoup.parse(contentAsString(optOutChooseTaxYearView(ConfirmOptOutMultiTaxYearChoiceForm(availableOptOutTaxYearsList), availableOptOutTaxYear, submissionsCountEmpty, isAgent, cancelURL)))
   }
 
   object optOutChooseTaxYear {
@@ -54,9 +60,11 @@ class OptOutChooseTaxYearViewSpec extends TestSupport {
     val cancelButtonHref: String = controllers.routes.NextUpdatesController.show().url
     val cancelButtonAgentHref: String = controllers.routes.NextUpdatesController.showAgent.url
     val continueButton: String = messages("optout.chooseOptOutTaxYear.continue")
+    val warningInsertMessage: String = messages("optout.chooseOptOutTaxYear.submissions.deleted")
+    val warningInsertClass: String = "govuk-inset-text"
   }
 
-  "Opt-out confirm page" should {
+  "Opt-out confirm page (with submissions)" should {
 
     "have the correct title" in new Setup(false) {
       pageDocument.title() shouldBe optOutChooseTaxYear.title
@@ -64,6 +72,16 @@ class OptOutChooseTaxYearViewSpec extends TestSupport {
 
     "have the correct heading" in new Setup(false) {
       pageDocument.select("h1").text() shouldBe optOutChooseTaxYear.heading
+    }
+
+    "show the warning block (for already having done submissions) user: non-agent" in new Setup(false) {
+      pageDocument.getElementById("warning-inset").text shouldBe optOutChooseTaxYear.warningInsertMessage
+      pageDocument.getElementById("warning-inset").className shouldBe optOutChooseTaxYear.warningInsertClass
+    }
+
+    "show the warning block (for already having done submissions) user: agent" in new Setup(true) {
+      pageDocument.getElementById("warning-inset").text shouldBe optOutChooseTaxYear.warningInsertMessage
+      pageDocument.getElementById("warning-inset").className shouldBe optOutChooseTaxYear.warningInsertClass
     }
 
     "have the correct summary heading and page contents" in new Setup(false) {
@@ -83,4 +101,16 @@ class OptOutChooseTaxYearViewSpec extends TestSupport {
     }
 
   }
+
+  "Opt-out confirm page (without submissions)" should {
+
+    "don't show the warning block (for no submissions) user: non-agent" in new SetupNoSubmissions(false) {
+      Option(pageDocument.getElementById("warning-inset")) shouldBe None
+    }
+
+    "don't show the warning block (for no submissions) user: agent" in new SetupNoSubmissions(true) {
+      Option(pageDocument.getElementById("warning-inset")) shouldBe None
+    }
+  }
 }
+
