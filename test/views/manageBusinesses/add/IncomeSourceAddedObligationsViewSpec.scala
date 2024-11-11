@@ -342,7 +342,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
   val nextUpdatesAgentUrl: String = controllers.routes.NextUpdatesController.showAgent.url
 
   val manageBusinessesUrl: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
-  val manageBusinessesAgentUrl: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent.url
+  val manageBusinessesAgentUrl: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
 
   val submitSoftwareUrl = "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
 

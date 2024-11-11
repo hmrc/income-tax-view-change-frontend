@@ -49,8 +49,8 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
 
       "render the manage businesses page" when {
         "the IncomeSources FS in enabled" in {
-          enable(IncomeSources)
           setupMockUserAuth
+          enable(IncomeSources)
           mockBothIncomeSources()
           setupMockCreateSession(true)
           setupMockClearSession(true)
@@ -67,6 +67,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
             )
 
           val result = testManageYourBusinessesController.show()(fakeRequestWithActiveSession)
+          result.map(res => println(res))
           status(result) shouldBe Status.OK
         }
       }
@@ -85,8 +86,8 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
 
       "render the error page" when {
         "the call to get income source view model fails" in {
-          disable(IncomeSources)
           setupMockUserAuth
+          enable(IncomeSources)
           mockBothIncomeSources()
           when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any()))
             .thenReturn(
@@ -98,8 +99,8 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
         }
 
         "the header carrier is missing the X-sessionId" in {
-          enable(IncomeSources)
           setupMockUserAuth
+          enable(IncomeSources)
           mockBothIncomeSources()
           setupMockCreateSession(true)
           setupMockClearSession(true)
@@ -132,8 +133,8 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
       s"the $mtdUserRole is authenticated" should {
         "render the manage businesses page" when {
           "the IncomeSources FS in enabled" in {
-            enable(IncomeSources)
             setupMockAgentWithClientAuth(isSupportingAgent)
+            enable(IncomeSources)
             mockBothIncomeSources()
             setupMockCreateSession(true)
             setupMockClearSession(true)
@@ -168,8 +169,8 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
 
         "render the error page" when {
           "the call to get income source view model fails" in {
-            disable(IncomeSources)
             setupMockAgentWithClientAuth(isSupportingAgent)
+            enable(IncomeSources)
             mockBothIncomeSources()
             when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any()))
               .thenReturn(
@@ -181,8 +182,8 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
           }
 
           "the header carrier is missing the X-sessionId" in {
-            enable(IncomeSources)
             setupMockAgentWithClientAuth(isSupportingAgent)
+            enable(IncomeSources)
             mockBothIncomeSources()
             setupMockCreateSession(true)
             setupMockClearSession(true)
