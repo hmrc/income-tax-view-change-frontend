@@ -21,7 +21,7 @@
 
 @import java.time.LocalDate
 @import exceptions.MissingFieldException
-
+@import _root_.implicits.HtmlFormatter.NbspString
 @import services.DateServiceInterface
 
 @this(p: p, link: link, implicitDateFormatter: ImplicitDateFormatterImpl)
@@ -49,7 +49,7 @@
                 <span class="govuk-tag govuk-tag--red">@messages("chargeSummary.overdue")</span>
             }
             @{
-                if(interestCharge) {
+                (if(interestCharge) {
                     chargeItem.interestEndDate.getOrElse(throw MissingFieldException("Interest End Date")).toLongDate
                 } else if(chargeItem.transactionType == models.financialDetails.BalancingCharge && chargeItem.subTransactionType == None) {
                     chargeItem.getDueDateForNonZeroBalancingCharge(codingOutEnabled).map(_.toLongDate).getOrElse(messages("tax-year-summary.na"))
@@ -57,7 +57,7 @@
                     chargeItem.dueDate.map(_.toLongDateShort).getOrElse(messages("chargeSummary.na"))
                 } else {
                     chargeItem.dueDate.map(_.toLongDate).getOrElse(messages("chargeSummary.na"))
-                }
+                }).toNonBreaking
             }
         </dd>
     </div>
