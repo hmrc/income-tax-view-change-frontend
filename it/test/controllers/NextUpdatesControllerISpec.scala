@@ -18,9 +18,8 @@ package controllers
 
 import audit.models.NextUpdatesAuditing.NextUpdatesAuditModel
 import auth.MtdItUser
-import helpers.ComponentSpecBase
 import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
-import helpers.servicemocks.{AuditStub, CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks._
 import models.admin.OptOut
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
@@ -33,9 +32,11 @@ import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.NextUpdatesIntegrationTestConstants._
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
-class NextUpdatesControllerISpec extends ComponentSpecBase {
+class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
-  "Calling the NextUpdatesController" when {
+  val path = "/next-updates"
+
+  s"GET $path" when {
 
     val testPropertyOnlyUser: MtdItUser[_] = MtdItUser(
       testMtditid, testNino, None, ukPropertyOnlyResponse,
@@ -47,15 +48,16 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
       None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
     )(FakeRequest())
 
-    unauthorisedTest("/next-updates")
+    testAuthFailuresForMTDIndividual(path)
 
     "renderViewNextUpdates" when {
 
       "the user has no obligations" in {
+        MTDIndividualAuthStub.stubAuthorised()
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-        val res = IncomeTaxViewChangeFrontend.getNextUpdates
+        val res = buildGETMTDClient(path).futureValue
 
         verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -72,13 +74,15 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
       }
 
       "the user has a quarterly property income obligation only" in {
+        MTDIndividualAuthStub.stubAuthorised()
+
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
         IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
 
         IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
 
-        val res = IncomeTaxViewChangeFrontend.getNextUpdates
+        val res = buildGETMTDClient(path).futureValue
 
         AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
 
@@ -101,13 +105,15 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
       }
 
       "the user has a quarterly business income obligation only" in {
+        MTDIndividualAuthStub.stubAuthorised()
+
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
 
         IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testSelfEmploymentId))))
 
         IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
 
-        val res = IncomeTaxViewChangeFrontend.getNextUpdates
+        val res = buildGETMTDClient(path).futureValue
 
         AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testBusinessOnlyUser))
 
@@ -132,12 +138,13 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
       }
 
       "the user has multiple quarterly business income obligations only" in {
+        MTDIndividualAuthStub.stubAuthorised()
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
         IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testSelfEmploymentId),
           singleObligationQuarterlyModel(otherTestSelfEmploymentId))))
 
-        val res = IncomeTaxViewChangeFrontend.getNextUpdates
+        val res = buildGETMTDClient(path).futureValue
 
         AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testBusinessOnlyUser))
 
@@ -160,12 +167,13 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
       }
 
       "the user has a Crystallised obligation only" in {
+        MTDIndividualAuthStub.stubAuthorised()
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
         IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(noObligationsModel(testSelfEmploymentId), crystallisedEOPSModel)))
         IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
 
-        val res = IncomeTaxViewChangeFrontend.getNextUpdates
+        val res = buildGETMTDClient(path).futureValue
 
         AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testBusinessOnlyUser))
 
@@ -184,6 +192,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
       "the user has a Opt Out Feature Switch Enabled" in {
         
         enable(OptOut)
+        MTDIndividualAuthStub.stubAuthorised()
 
         val currentTaxYear = dateService.getCurrentTaxYearEnd
         val previousYear = currentTaxYear - 1
@@ -197,7 +206,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
         CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
 
-        val res = IncomeTaxViewChangeFrontend.getNextUpdates
+        val res = buildGETMTDClient(path).futureValue
 
         AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
 
@@ -232,6 +241,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
 
       "the user has a Opt Out Feature Switch Disabled" in {
         disable(OptOut)
+        MTDIndividualAuthStub.stubAuthorised()
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -239,7 +249,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
 
-        val res = IncomeTaxViewChangeFrontend.getNextUpdates
+        val res = buildGETMTDClient(path).futureValue
 
         AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
 
@@ -267,6 +277,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
 
       "show opt-out message if the user has Previous Year as Voluntary, Current Year as NoStatus, Next Year as NoStatus" in {
         enable(OptOut)
+        MTDIndividualAuthStub.stubAuthorised()
 
         val currentTaxYear = dateService.getCurrentTaxYearEnd
         val previousYear = currentTaxYear - 1
@@ -280,7 +291,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
         CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
 
-        val res = IncomeTaxViewChangeFrontend.getNextUpdates
+        val res = buildGETMTDClient(path).futureValue
 
         AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
 
@@ -299,6 +310,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
 
       "show multi year opt-out message if the user has Previous Year as Voluntary, Current Year as Voluntary, Next Year as Voluntary" in {
         enable(OptOut)
+        MTDIndividualAuthStub.stubAuthorised()
 
         val currentTaxYear = dateService.getCurrentTaxYearEnd
         val previousYear = currentTaxYear - 1
@@ -313,7 +325,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
         CalculationListStub.stubGetLegacyCalculationList(testNino,
           previousYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
 
-        val res = IncomeTaxViewChangeFrontend.getNextUpdates
+        val res = buildGETMTDClient(path).futureValue
 
         AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
 
@@ -333,6 +345,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
       "Opt Out feature switch is enabled" when {
         "ITSA Status API Failure" in {
           enable(OptOut)
+          MTDIndividualAuthStub.stubAuthorised()
 
           val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
           val previousYear = currentTaxYear.addYears(-1)
@@ -347,7 +360,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
           CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
 
-          val res = IncomeTaxViewChangeFrontend.getNextUpdates
+          val res = buildGETMTDClient(path).futureValue
 
           AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
 
@@ -364,6 +377,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
 
         "Calculation API Failure" in {
           enable(OptOut)
+          MTDIndividualAuthStub.stubAuthorised()
 
           val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
           val previousYear = currentTaxYear.addYears(-1)
@@ -378,7 +392,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
           CalculationListStub.stubGetLegacyCalculationListError(testNino, previousYear.endYear.toString)
 
 
-          val res = IncomeTaxViewChangeFrontend.getNextUpdates
+          val res = buildGETMTDClient(path).futureValue
 
           AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
 
@@ -395,6 +409,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
 
         "ITSA Status API Failure and Calculation API Failure" in {
           enable(OptOut)
+          MTDIndividualAuthStub.stubAuthorised()
 
           val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
           val previousYear = currentTaxYear.addYears(-1)
@@ -409,7 +424,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
           CalculationListStub.stubGetLegacyCalculationListError(testNino, previousYear.endYear.toString)
 
 
-          val res = IncomeTaxViewChangeFrontend.getNextUpdates
+          val res = buildGETMTDClient(path).futureValue
 
           AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
 

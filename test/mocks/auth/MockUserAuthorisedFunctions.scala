@@ -17,7 +17,7 @@
 package mocks.auth
 
 import auth.FrontendAuthorisedFunctions
-import controllers.agent.AuthUtils._
+import controllers.predicates.agent.Constants.mtdEnrolmentName
 import org.mockito.Mockito._
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import uk.gov.hmrc.auth.core._
@@ -34,7 +34,6 @@ trait MockUserAuthorisedFunctions extends BeforeAndAfterEach {
   lazy val isMTDUserPredicate: Predicate = Enrolment(mtdEnrolmentName) and
     (AffinityGroup.Organisation or AffinityGroup.Individual)
   lazy val predicate: Predicate = isMTDUserPredicate or AffinityGroup.Agent
-
 
   def setupMockUserAuthSuccess[X, Y](retrievalValue: X ~ Y): Unit = {
     when(mockAuthService.authorised(predicate))
