@@ -42,13 +42,13 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
       }
     }
 
-    s"return $OK with technical difficulties" when {
+    s"return $SEE_OTHER with Agent error page" when {
       "the user is authenticated but doesn't have the agent enrolment" in {
         stubAgentAuthorisedUser(authorised = true, hasAgentEnrolment = false)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getUTRError()
 
-        Then(s"Technical difficulties are shown with status OK")
+        Then(s"Agent error page is shown with status SEE_OTHER")
         result should have(
           httpStatus(SEE_OTHER),
           redirectURI(controllers.agent.errors.routes.AgentErrorController.show.url)
@@ -86,13 +86,13 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
       }
     }
 
-    s"return $OK with technical difficulties" when {
+    s"return $SEE_OTHER to agent error page" when {
       "the user is authenticated but doesn't have the agent enrolment" in {
         stubAgentAuthorisedUser(authorised = true, hasAgentEnrolment = false)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.postUTRError
 
-        Then("Technical difficulties are shown with status OK")
+        Then("Agent error page is shown with status SEE_OTHER")
         result should have(
           httpStatus(SEE_OTHER),
           redirectURI(controllers.agent.errors.routes.AgentErrorController.show.url)
