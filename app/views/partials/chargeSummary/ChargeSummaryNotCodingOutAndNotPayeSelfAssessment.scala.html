@@ -18,7 +18,7 @@
 @import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import views.html.components._
 @import models.financialDetails.{DocumentDetailWithDueDate, DocumentDetail}
-
+@import _root_.implicits.HtmlFormatter.NbspString
 @import java.time.LocalDate
 @import exceptions.MissingFieldException
 @import _root_.implicits.HtmlFormatter.NbspString
@@ -68,7 +68,7 @@
             <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
             @messages("chargeSummary.lpi.interestPeriod.dates",
                 chargeItem.interestFromDate.getOrElse(throw MissingFieldException("Interest From Date")).toLongDateShort,
-                chargeItem.interestEndDate.getOrElse(throw MissingFieldException("Interest End Date")).toLongDateShort)</dd>
+                chargeItem.interestEndDate.getOrElse(throw MissingFieldException("Interest End Date")).toLongDateShort).toNonBreaking</dd>
         </div>
     }
     <div class="govuk-summary-list__row">
