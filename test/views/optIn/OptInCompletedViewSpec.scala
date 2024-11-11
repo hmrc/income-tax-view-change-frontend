@@ -62,6 +62,7 @@ class OptInCompletedViewSpec extends TestSupport {
     val pageTitleClass = "govuk-panel__title"
     val pagePanelBodyClass = "govuk-panel__body"
     val warningInsetId = "warning-inset"
+    val warningInsetAnnualFollowingId = "warning-inset-annual-following"
 
     def paragraphId(i: Int) = s"optin-completed-view-p$i"
 
@@ -137,7 +138,9 @@ class OptInCompletedViewSpec extends TestSupport {
       pageDocument.getElementsByClass(Selectors.pagePanelBodyClass).text() shouldBe messages("optin.completedOptIn.followingVoluntary.heading.desc", "2022", "2023")
 
       val expectedText: String = "From 6 April 2023, you’ll be required to send quarterly updates through compatible software."
-      pageDocument.getElementById(Selectors.warningInsetId).text() shouldBe expectedText
+      pageDocument.getElementById(Selectors.warningInsetAnnualFollowingId).text() shouldBe expectedText
+
+      Option(pageDocument.getElementById(Selectors.warningInsetId)) shouldBe None
 
       pageDocument.getElementById(Selectors.paragraphId(5)).text() shouldBe "You have just chosen to voluntarily report quarterly from the 2022 to 2023 tax year."
 
