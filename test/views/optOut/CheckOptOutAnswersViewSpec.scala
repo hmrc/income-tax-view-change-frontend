@@ -41,15 +41,15 @@ class CheckOptOutAnswersViewSpec extends TestSupport {
   }
 
   object checkOptOutAnswers {
-    val heading: String = messages("optout.checkAnswers.heading")
-    val title: String = messages("htmlTitle", heading)
-    val optOutTable: String = messages("optout.checkAnswers.optOut")
-    val optOutTableTaxYears: String = messages("optout.checkAnswers.taxYears", intentStartTaxYear, intentEndTaxYear)
-    val optOutTableChange: String = messages("optout.checkAnswers.change")
-    val paragraph1: String = messages("optout.checkAnswers.p1")
-    val paragraph2: String = messages("optout.checkAnswers.p2")
-    val confirmButton: String = messages("optout.checkAnswers.confirm")
-    val cancelButton: String = messages("optout.checkAnswers.cancel")
+    val heading: String = "Check your answers"
+    val title: String = s"$heading - Manage your Income Tax updates - GOV.UK"
+    val optOutTable: String = "Opt out from"
+    val optOutTableTaxYears: String = "2019 to 2020 tax year onwards"
+    val optOutTableChange: String = "Change"
+    val paragraph1: String = "If you opt out, you can submit your tax return through your HMRC online account or compatible software."
+    val paragraph2: String = "In future, you could be required to report quarterly again if, for example, your income increases or the threshold for reporting quarterly changes. If this happens, we’ll write to you to let you know."
+    val confirmButton: String = "Confirm and save"
+    val cancelButton: String = "Cancel"
     val cancelButtonHref: String = controllers.routes.NextUpdatesController.show().url
     val cancelButtonAgentHref: String = controllers.routes.NextUpdatesController.showAgent.url
 
