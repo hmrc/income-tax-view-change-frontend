@@ -2162,8 +2162,8 @@ optout.confirmedOptOut.reportQuarterly.reason1                   = gostyngodd CT
 optout.confirmedOptOut.reportQuarterly.reason2                   = gwnaethoch roi gwybod am gynnydd yn eich incwm cymwys mewn Ffurflen Dreth
 
 optOut.confirmSingleYearOptOut.title                        = Optio allan o gyflwyno adroddiadau am flwyddyn dreth unigol
-optOut.confirmSingleYearOptOut.detail.text                  = Gallwch ond optio allan a chyflwyno adroddiadau’n flynyddol ar gyfer blwyddyn dreth {0} i {1}.
-optOut.confirmSingleYearOptOut.inset.text                   = O 6 Ebrill {0} ymlaen, bydd angen i chi anfon diweddariadau chwarterol eto drwy feddalwedd.
+optOut.confirmSingleYearOptOut.detail.text                  = Gallwch opio allan ar gyfer blwyddyn dreth {0} i {1} yn unig.
+optOut.confirmSingleYearOptOut.inset.text                   = Os byddwch yn mynd yn eich blaen, o 6 Ebrill {0} ymlaen, bydd angen i chi anfon diweddariadau chwarterol eto drwy feddalwedd.
 optOut.confirmSingleYearOptOut.form.title                   = A ydych am optio allan o flwyddyn dreth {0} i {1} o hyd?
 optOut.confirmSingleYearOptOut.form.answer.one.hint         = Rwyf am optio allan a chyflwyno adroddiadau’n flynyddol.
 optOut.confirmSingleYearOptOut.form.answer.two.hint         = Rwyf am barhau i gyflwyno adroddiadau’n chwarterol.
