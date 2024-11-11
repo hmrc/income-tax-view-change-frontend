@@ -28,13 +28,13 @@ class WelshMessagesSpec extends ComponentSpecBase {
     // Only to be used whenever welsh isn't available yet. Remove from list when they are added.
     // TODO: Remove once opt in welsh is created
     val exclusions = Seq(
-      "optin.completedOptIn.nymandated.futureReporting.bullet.p2",
-      "optin.completedOptIn.followingVoluntary.heading.desc",
-      "optin.completedOptIn.nymandated.inset",
-      "optin.completedOptIn.nymandated.futureReporting",
-      "optin.completedOptIn.nymandated.futureReporting.desc1",
-      "optin.completedOptIn.nymandated.futureReporting.desc2",
-      "optin.completedOptIn.nymandated.futureReporting.bullet.p1"
+//      "optin.completedOptIn.nymandated.futureReporting.bullet.p2",
+//      "optin.completedOptIn.followingVoluntary.heading.desc",
+//      "optin.completedOptIn.nymandated.inset",
+//      "optin.completedOptIn.nymandated.futureReporting",
+//      "optin.completedOptIn.nymandated.futureReporting.desc1",
+//      "optin.completedOptIn.nymandated.futureReporting.desc2",
+//      "optin.completedOptIn.nymandated.futureReporting.bullet.p1"
     )
 
     val missingWelshKeys = englishMessages.keySet.filterNot(key => welshMessages.keySet(key) || exclusions.contains(key))

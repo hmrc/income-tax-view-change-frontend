@@ -173,10 +173,6 @@ home.agent.supporting.cannotAccess.returns                      = returns
 home.agent.supporting.cannotAccess.nextChargesDue               = next charges due
 home.agent.supporting.readMore                                  = Read more about the difference between main and supporting agents on GOV.UK (opens in new tab).
 
-
-## List UTRs ##
-listUTRs.heading                                               = List UTRs
-
 ## Tax Years Page ##
 taxYears.heading                                               = Tax years
 taxYears.viewSummary                                            = View summary
