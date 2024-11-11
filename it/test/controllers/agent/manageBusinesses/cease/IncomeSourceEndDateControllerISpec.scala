@@ -38,7 +38,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
   val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
   val isAgent: Boolean = true
 
-  val manageBusinessesUrl: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url
+  val manageBusinessesUrl: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
 
   val dateBusinessShowAgentUrl: String = controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.show(Some(testSelfEmploymentId), SelfEmployment, isAgent, isChange = false).url
   val dateBusinessSubmitAgentUrl: String = controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.submit(Some(testSelfEmploymentId), SelfEmployment, isAgent, isChange = false).url

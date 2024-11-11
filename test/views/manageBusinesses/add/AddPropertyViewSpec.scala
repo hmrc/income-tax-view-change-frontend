@@ -30,7 +30,11 @@ class AddPropertyViewSpec extends TestSupport{
 
   class Setup(isAgent: Boolean, hasError: Boolean) {
     lazy val postCall = controllers.manageBusinesses.add.routes.AddPropertyController.submit(isAgent)
-    lazy val backUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url
+    lazy val backUrl: String = if(isAgent) {
+      controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+    } else {
+      controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+    }
     lazy val document: Document = {
       Jsoup.parse(
         contentAsString(
@@ -61,8 +65,13 @@ class AddPropertyViewSpec extends TestSupport{
         document.getElementsByClass("govuk-radios").size() shouldBe 1
       }
       "render the back link with the correct URL" in new Setup(isAgent, hasError = false) {
+        val manageBusinessesUrl: String = if(isAgent) {
+          controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+        } else {
+          controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+        }
         document.getElementById("back-fallback").text() shouldBe messages("base.back")
-        document.getElementById("back-fallback").attr("href") shouldBe controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url
+        document.getElementById("back-fallback").attr("href") shouldBe manageBusinessesUrl
       }
       "render the continue button" in new Setup(isAgent, hasError = false) {
         document.getElementById("continue-button").text() shouldBe messages("base.continue")

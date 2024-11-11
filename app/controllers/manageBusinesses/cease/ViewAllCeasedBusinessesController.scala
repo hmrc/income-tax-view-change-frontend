@@ -46,10 +46,15 @@ class ViewAllCeasedBusinessesController @Inject()(val viewAllCeasedBusinesses: V
   with FeatureSwitching with IncomeSourcesUtils {
 
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
+    val backUrl = if(isAgent) {
+      controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+    } else {
+      controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+    }
     handleRequest(
       sources = user.incomeSources,
       isAgent = isAgent,
-      backUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url
+      backUrl = backUrl
     )
   }
 

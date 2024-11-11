@@ -25,7 +25,7 @@ import testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyAndCea
 
 class ManageYourBusinessesControllerISpec extends ComponentSpecBase {
 
-  val showIndividualViewIncomeSourceControllerUrl: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(false).url
+  val showIndividualViewIncomeSourceControllerUrl: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
   val pageTitleMsgKey = "manage.your.businesses.heading"
   val soleTraderBusinessesHeading = messagesAPI("manage.your.businesses.self-employed-h2")
   val propertyBusinessesHeading = messagesAPI("manage.your.businesses.property-h2")

@@ -53,6 +53,12 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                                                     val appConfig: FrontendAppConfig)
   extends ClientConfirmedController with FeatureSwitching with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
 
+  private def backUrl(isAgent: Boolean) = if(isAgent) {
+    controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+  } else {
+    controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+  }
+
 
   def show(isAgent: Boolean, incomeSourceType: IncomeSourceType, id: Option[String]): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
@@ -72,7 +78,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
             sources = user.incomeSources,
             isAgent = isAgent,
             incomeSourceIdHashMaybe = None,
-            backUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url,
+            backUrl = backUrl(isAgent),
             incomeSourceType = incomeSourceType
           )
         }
@@ -96,7 +102,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
               case Right(_) => handleRequest(
                 sources = user.incomeSources,
                 isAgent = isAgent,
-                backUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url,
+                backUrl = backUrl(isAgent),
                 incomeSourceIdHashMaybe = Some(incomeSourceIdHash),
                 incomeSourceType = SelfEmployment
               )
