@@ -18,15 +18,14 @@ package controllers.agent
 
 import audit.models.NextUpdatesResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
-import helpers.agent.ComponentSpecBase
+import enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub, MTDAgentAuthStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.admin.OptOut
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
-import models.obligations.{SingleObligationModel, GroupedObligationsModel, ObligationsModel, StatusFulfilled}
+import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import play.api.http.Status._
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
@@ -38,7 +37,7 @@ import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
 
-class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching {
+class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
   lazy val fixedDate: LocalDate = LocalDate.of(2024, 6, 5)
 
@@ -68,301 +67,289 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
   val implicitDateFormatter: ImplicitDateFormatter = app.injector.instanceOf[ImplicitDateFormatterImpl]
   implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
-  "Calling the NextUpdatesController" when {
-    "the user is unauthorised" in {
+  val path = "/agents/next-updates"
 
-      stubAuthorisedAgentUser(authorised = false)
+  s"GET $path" when {
+    Map(MTDPrimaryAgent -> false, MTDSupportingAgent -> true).foreach { case  (userType, isSupportingAgent) =>
+      val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, true)
 
-      val res = IncomeTaxViewChangeFrontend.getAgentNextUpdates(clientDetailsWithoutConfirmation)
+      s"there is a ${userType.toString}" that {
 
-      Then("the page redirects to clients UTR page")
-      res should have(
-        httpStatus(SEE_OTHER)
-        //          pageTitle("What is your client’s Unique Taxpayer Reference?") //need to add this check when page title is fixed
-      )
-    }
-    "the user does not have confirmed client" in {
+        testAuthFailuresForMTDAgent(path, isSupportingAgent)
 
-      stubAuthorisedAgentUser(authorised = true)
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-        status = OK,
-        response = incomeSourceDetails
-      )
+        "is authenticated with a client" that {
 
-      val res = IncomeTaxViewChangeFrontend.getAgentNextUpdates(clientDetailsWithoutConfirmation)
+          "has obligations" in {
+            MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
 
-      Then("the page redirects to clients UTR page")
-      res should have(
-        httpStatus(SEE_OTHER)
-        //          pageTitle("What is your client’s Unique Taxpayer Reference?") //need to add this check when page title is fixed
-      )
-    }
+            val currentObligations: ObligationsModel = ObligationsModel(Seq(
+              GroupedObligationsModel(
+                identification = "testId",
+                obligations = List(
+                  SingleObligationModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
+                ))
+            ))
 
-    "the user has obligations" in {
-      stubAuthorisedAgentUser(authorised = true)
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+              status = OK,
+              response = incomeSourceDetails
+            )
 
-      val currentObligations: ObligationsModel = ObligationsModel(Seq(
-        GroupedObligationsModel(
-          identification = "testId",
-          obligations = List(
-            SingleObligationModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
-          ))
-      ))
+            IncomeTaxViewChangeStub.stubGetNextUpdates(
+              nino = testNino,
+              deadlines = currentObligations
+            )
 
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-        status = OK,
-        response = incomeSourceDetails
-      )
+            val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-      IncomeTaxViewChangeStub.stubGetNextUpdates(
-        nino = testNino,
-        deadlines = currentObligations
-      )
+            verifyIncomeSourceDetailsCall(testMtditid)
 
-      val res = IncomeTaxViewChangeFrontend.getAgentNextUpdates(clientDetailsWithConfirmation)
+            verifyNextUpdatesCall(testNino)
 
-      verifyIncomeSourceDetailsCall(testMtditid)
+            Then("the next update view displays the correct title")
+            res should have(
+              httpStatus(OK),
+              pageTitleAgent("nextUpdates.heading")
+            )
 
-      verifyNextUpdatesCall(testNino)
+            verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
+          }
 
-      Then("the next update view displays the correct title")
-      res should have(
-        httpStatus(OK),
-        pageTitleAgent("nextUpdates.heading")
-      )
+          "has no obligations" in {
+            MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+              status = OK,
+              response = incomeSourceDetails
+            )
 
-      verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
-    }
+            IncomeTaxViewChangeStub.stubGetNextUpdates(
+              nino = testNino,
+              deadlines = ObligationsModel(Seq())
+            )
 
-    "the user has no obligations" in {
-      stubAuthorisedAgentUser(authorised = true)
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-        status = OK,
-        response = incomeSourceDetails
-      )
+            val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-      IncomeTaxViewChangeStub.stubGetNextUpdates(
-        nino = testNino,
-        deadlines = ObligationsModel(Seq())
-      )
+            verifyIncomeSourceDetailsCall(testMtditid)
 
-      val res = IncomeTaxViewChangeFrontend.getAgentNextUpdates(clientDetailsWithConfirmation)
+            IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
 
-      verifyIncomeSourceDetailsCall(testMtditid)
+            Then("then Internal server error is returned")
+            res should have(
+              httpStatus(INTERNAL_SERVER_ERROR)
+            )
+          }
 
-      IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
+          "has obligations and the Opt Out feature switch enabled" in {
+            MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+            enable(OptOut)
+            val currentTaxYear = dateService.getCurrentTaxYearEnd
+            val previousYear = currentTaxYear - 1
+            val currentObligations: ObligationsModel = ObligationsModel(Seq(
+              GroupedObligationsModel(
+                identification = "testId",
+                obligations = List(
+                  SingleObligationModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
+                ))
+            ))
 
-      Then("then Internal server error is returned")
-      res should have(
-        httpStatus(INTERNAL_SERVER_ERROR)
-      )
-    }
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+              status = OK,
+              response = incomeSourceDetails
+            )
 
-    "the user has obligations and the Opt Out feature switch enabled" in {
-      stubAuthorisedAgentUser(authorised = true)
-      enable(OptOut)
-      val currentTaxYear = dateService.getCurrentTaxYearEnd
-      val previousYear = currentTaxYear - 1
-      val currentObligations: ObligationsModel = ObligationsModel(Seq(
-        GroupedObligationsModel(
-          identification = "testId",
-          obligations = List(
-            SingleObligationModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
-          ))
-      ))
-
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-        status = OK,
-        response = incomeSourceDetails
-      )
-
-      IncomeTaxViewChangeStub.stubGetNextUpdates(
-        nino = testNino,
-        deadlines = currentObligations
-      )
-      ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(dateService.getCurrentTaxYearEnd)
-      CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
+            IncomeTaxViewChangeStub.stubGetNextUpdates(
+              nino = testNino,
+              deadlines = currentObligations
+            )
+            ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(dateService.getCurrentTaxYearEnd)
+            CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
 
-      val res = IncomeTaxViewChangeFrontend.getAgentNextUpdates(clientDetailsWithConfirmation)
+            val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-      verifyIncomeSourceDetailsCall(testMtditid)
+            verifyIncomeSourceDetailsCall(testMtditid)
 
-      verifyNextUpdatesCall(testNino)
+            verifyNextUpdatesCall(testNino)
 
-      Then("the next update view displays the correct title")
-      res should have(
-        httpStatus(OK),
-        pageTitleAgent("nextUpdates.heading"),
-        elementTextBySelector("#updates-software-heading")(expectedValue = "Submitting updates in software"),
-        elementTextBySelector("#updates-software-link")
-        (expectedValue = "Use your compatible record keeping software (opens in new tab) " +
-          "to keep digital records of all your business income and expenses. You must submit these " +
-          "updates through your software by each date shown."),
-      )
+            Then("the next update view displays the correct title")
+            res should have(
+              httpStatus(OK),
+              pageTitleAgent("nextUpdates.heading"),
+              elementTextBySelector("#updates-software-heading")(expectedValue = "Submitting updates in software"),
+              elementTextBySelector("#updates-software-link")
+              (expectedValue = "Use your compatible record keeping software (opens in new tab) " +
+                "to keep digital records of all your business income and expenses. You must submit these " +
+                "updates through your software by each date shown."),
+            )
 
-      verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
-    }
+            verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
+          }
 
-    "the user has obligations and the Opt Out feature switch disabled" in {
-      stubAuthorisedAgentUser(authorised = true)
-      disable(OptOut)
+          "has obligations and the Opt Out feature switch disabled" in {
+            MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+            disable(OptOut)
 
-      val currentObligations: ObligationsModel = ObligationsModel(Seq(
-        GroupedObligationsModel(
-          identification = "testId",
-          obligations = List(
-            SingleObligationModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
-          ))
-      ))
+            val currentObligations: ObligationsModel = ObligationsModel(Seq(
+              GroupedObligationsModel(
+                identification = "testId",
+                obligations = List(
+                  SingleObligationModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
+                ))
+            ))
 
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-        status = OK,
-        response = incomeSourceDetails
-      )
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+              status = OK,
+              response = incomeSourceDetails
+            )
 
-      IncomeTaxViewChangeStub.stubGetNextUpdates(
-        nino = testNino,
-        deadlines = currentObligations
-      )
+            IncomeTaxViewChangeStub.stubGetNextUpdates(
+              nino = testNino,
+              deadlines = currentObligations
+            )
 
-      val res = IncomeTaxViewChangeFrontend.getAgentNextUpdates(clientDetailsWithConfirmation)
+            val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-      verifyIncomeSourceDetailsCall(testMtditid)
+            verifyIncomeSourceDetailsCall(testMtditid)
 
-      verifyNextUpdatesCall(testNino)
+            verifyNextUpdatesCall(testNino)
 
-      Then("the next update view displays the correct title")
-      res should have(
-        httpStatus(OK),
-        pageTitleAgent("nextUpdates.heading"),
-        isElementVisibleById("#updates-software-heading")(expectedValue = false),
-        isElementVisibleById("#updates-software-link")(expectedValue = false),
-      )
+            Then("the next update view displays the correct title")
+            res should have(
+              httpStatus(OK),
+              pageTitleAgent("nextUpdates.heading"),
+              isElementVisibleById("#updates-software-heading")(expectedValue = false),
+              isElementVisibleById("#updates-software-link")(expectedValue = false),
+            )
 
-      verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
-    }
+            verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
+          }
 
-    "show Next updates page" when {
-      "Opt Out feature switch is enabled" when {
-        "ITSA Status API Failure" in {
-          stubAuthorisedAgentUser(authorised = true)
-          enable(OptOut)
-          val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
-          val previousYear = currentTaxYear.addYears(-1)
-          val currentObligations: ObligationsModel = ObligationsModel(Seq(
-            GroupedObligationsModel(
-              identification = "testId",
-              obligations = List(
-                SingleObligationModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
-              ))
-          ))
+          "Opt Out feature switch is enabled" should {
+            "show next updates" when {
 
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-            status = OK,
-            response = incomeSourceDetails
-          )
+              "there is an ITSA Status API failure" in {
+                MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+                enable(OptOut)
+                val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
+                val previousYear = currentTaxYear.addYears(-1)
+                val currentObligations: ObligationsModel = ObligationsModel(Seq(
+                  GroupedObligationsModel(
+                    identification = "testId",
+                    obligations = List(
+                      SingleObligationModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
+                    ))
+                ))
 
-          IncomeTaxViewChangeStub.stubGetNextUpdates(
-            nino = testNino,
-            deadlines = currentObligations
-          )
-          ITSAStatusDetailsStub.stubGetITSAStatusDetailsError(previousYear.formatTaxYearRange, futureYears = true)
-          CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  status = OK,
+                  response = incomeSourceDetails
+                )
 
-
-          val res = IncomeTaxViewChangeFrontend.getAgentNextUpdates(clientDetailsWithConfirmation)
-
-          verifyIncomeSourceDetailsCall(testMtditid)
-
-          verifyNextUpdatesCall(testNino)
-
-          Then("the next update view displays the correct title even if the OptOut fail")
-          res should have(
-            httpStatus(OK),
-            pageTitleAgent("nextUpdates.heading")
-          )
-        }
-
-        "Calculation API Failure" in {
-          stubAuthorisedAgentUser(authorised = true)
-          enable(OptOut)
-          val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
-          val previousYear = currentTaxYear.addYears(-1)
-          val currentObligations: ObligationsModel = ObligationsModel(Seq(
-            GroupedObligationsModel(
-              identification = "testId",
-              obligations = List(
-                SingleObligationModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
-              ))
-          ))
-
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-            status = OK,
-            response = incomeSourceDetails
-          )
-
-          IncomeTaxViewChangeStub.stubGetNextUpdates(
-            nino = testNino,
-            deadlines = currentObligations
-          )
-          ITSAStatusDetailsStub.stubGetITSAStatusDetails(previousYear.formatTaxYearRange)
-          CalculationListStub.stubGetLegacyCalculationListError(testNino, previousYear.endYear.toString)
+                IncomeTaxViewChangeStub.stubGetNextUpdates(
+                  nino = testNino,
+                  deadlines = currentObligations
+                )
+                ITSAStatusDetailsStub.stubGetITSAStatusDetailsError(previousYear.formatTaxYearRange, futureYears = true)
+                CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
 
-          val res = IncomeTaxViewChangeFrontend.getAgentNextUpdates(clientDetailsWithConfirmation)
+                val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-          verifyIncomeSourceDetailsCall(testMtditid)
+                verifyIncomeSourceDetailsCall(testMtditid)
 
-          verifyNextUpdatesCall(testNino)
+                verifyNextUpdatesCall(testNino)
 
-          Then("the next update view displays the correct title even if the OptOut fail")
-          res should have(
-            httpStatus(OK),
-            pageTitleAgent("nextUpdates.heading")
-          )
-        }
+                Then("the next update view displays the correct title even if the OptOut fail")
+                res should have(
+                  httpStatus(OK),
+                  pageTitleAgent("nextUpdates.heading")
+                )
+              }
 
-        "ITSA Status API Failure and Calculation API Failure" in {
-          stubAuthorisedAgentUser(authorised = true)
-          enable(OptOut)
-          val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
-          val previousYear = currentTaxYear.addYears(-1)
-          val currentObligations: ObligationsModel = ObligationsModel(Seq(
-            GroupedObligationsModel(
-              identification = "testId",
-              obligations = List(
-                SingleObligationModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
-              ))
-          ))
+              "there is an Calculation API failure" in {
+                MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+                enable(OptOut)
+                val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
+                val previousYear = currentTaxYear.addYears(-1)
+                val currentObligations: ObligationsModel = ObligationsModel(Seq(
+                  GroupedObligationsModel(
+                    identification = "testId",
+                    obligations = List(
+                      SingleObligationModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
+                    ))
+                ))
 
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-            status = OK,
-            response = incomeSourceDetails
-          )
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  status = OK,
+                  response = incomeSourceDetails
+                )
 
-          IncomeTaxViewChangeStub.stubGetNextUpdates(
-            nino = testNino,
-            deadlines = currentObligations
-          )
-          ITSAStatusDetailsStub.stubGetITSAStatusDetailsError(previousYear.formatTaxYearRange, futureYears = true)
-          CalculationListStub.stubGetLegacyCalculationListError(testNino, previousYear.endYear.toString)
+                IncomeTaxViewChangeStub.stubGetNextUpdates(
+                  nino = testNino,
+                  deadlines = currentObligations
+                )
+                ITSAStatusDetailsStub.stubGetITSAStatusDetails(previousYear.formatTaxYearRange)
+                CalculationListStub.stubGetLegacyCalculationListError(testNino, previousYear.endYear.toString)
 
 
-          val res = IncomeTaxViewChangeFrontend.getAgentNextUpdates(clientDetailsWithConfirmation)
+                val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-          verifyIncomeSourceDetailsCall(testMtditid)
+                verifyIncomeSourceDetailsCall(testMtditid)
 
-          verifyNextUpdatesCall(testNino)
+                verifyNextUpdatesCall(testNino)
 
-          Then("the next update view displays the correct title even if the OptOut fail")
-          res should have(
-            httpStatus(OK),
-            pageTitleAgent("nextUpdates.heading")
-          )
+                Then("the next update view displays the correct title even if the OptOut fail")
+                res should have(
+                  httpStatus(OK),
+                  pageTitleAgent("nextUpdates.heading")
+                )
+              }
+
+              "there is both an ITSA Status and Calculation API failure" in {
+                MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+                enable(OptOut)
+                val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
+                val previousYear = currentTaxYear.addYears(-1)
+                val currentObligations: ObligationsModel = ObligationsModel(Seq(
+                  GroupedObligationsModel(
+                    identification = "testId",
+                    obligations = List(
+                      SingleObligationModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
+                    ))
+                ))
+
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  status = OK,
+                  response = incomeSourceDetails
+                )
+
+                IncomeTaxViewChangeStub.stubGetNextUpdates(
+                  nino = testNino,
+                  deadlines = currentObligations
+                )
+                ITSAStatusDetailsStub.stubGetITSAStatusDetailsError(previousYear.formatTaxYearRange, futureYears = true)
+                CalculationListStub.stubGetLegacyCalculationListError(testNino, previousYear.endYear.toString)
+
+
+                val res = buildGETMTDClient(path, additionalCookies).futureValue
+
+                verifyIncomeSourceDetailsCall(testMtditid)
+
+                verifyNextUpdatesCall(testNino)
+
+                Then("the next update view displays the correct title even if the OptOut fail")
+                res should have(
+                  httpStatus(OK),
+                  pageTitleAgent("nextUpdates.heading")
+                )
+              }
+            }
+          }
         }
       }
     }
+
+    testNoClientDataFailure(path)
   }
 
 }

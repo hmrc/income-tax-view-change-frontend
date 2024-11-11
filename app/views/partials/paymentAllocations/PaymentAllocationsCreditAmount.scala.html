@@ -20,6 +20,7 @@
 @import models.paymentAllocationCharges._
 @import views.html.components.link
 @import java.time.LocalDate
+@import _root_.implicits.HtmlFormatter.NbspString
 
 @this(implicitDateFormatter: ImplicitDateFormatterImpl,
     link: link)
@@ -54,7 +55,7 @@ messages("paymentAllocation.moneyOnAccount")
                     </td>
                     <td class="govuk-table__cell">
                     @{
-                        dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDateShort
+                        dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDateShort.toNonBreaking
                     }
                     </td>
                     <td class="govuk-table__cell govuk-table__cell--numeric">@{
