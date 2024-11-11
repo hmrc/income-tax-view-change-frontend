@@ -22,6 +22,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import enums.MTDSupportingAgent
 import models.admin._
 import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
 import models.homePage._
@@ -42,13 +43,16 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class HomeController @Inject()(val homeView: views.html.Home,
+                               val primaryAgentHomeView: views.html.agent.PrimaryAgentHome,
+                               val supportingAgentHomeView: views.html.agent.SupportingAgentHome,
                                val authActions: AuthActions,
                                val nextUpdatesService: NextUpdatesService,
                                val incomeSourceDetailsService: IncomeSourceDetailsService,
                                val financialDetailsService: FinancialDetailsService,
                                val dateService: DateServiceInterface,
                                val whatYouOweService: WhatYouOweService,
-                               auditingService: AuditingService)
+                               auditingService: AuditingService,
+                               auth: AuthenticatorPredicate)
                               (implicit val ec: ExecutionContext,
                                implicit val itvcErrorHandler: ItvcErrorHandler,
                                implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
@@ -57,28 +61,45 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
   def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
-      handleShowRequest(isAgent = false, origin)
+      handleShowRequest(origin)
   }
 
   def showAgent(): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit mtdItUser =>
-      handleShowRequest(isAgent = true)
+      handleShowRequest()
   }
 
-  def handleShowRequest(isAgent: Boolean, origin: Option[String] = None)
+  def handleShowRequest(origin: Option[String] = None)
                        (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] =
     nextUpdatesService.getDueDates().flatMap {
-      case Right(nextUpdatesDueDates: Seq[LocalDate]) => buildHomePage(nextUpdatesDueDates, isAgent, origin)
+      case Right(nextUpdatesDueDates: Seq[LocalDate]) if user.usersRole == MTDSupportingAgent =>
+        buildHomePageForSupportingAgent(nextUpdatesDueDates)
+      case Right(nextUpdatesDueDates: Seq[LocalDate]) => buildHomePage(nextUpdatesDueDates, origin)
       case Left(ex) =>
         Logger("application").error(s"Unable to get next updates ${ex.getMessage} - ${ex.getCause}")
-        Future.successful(handleErrorGettingDueDates(isAgent))
+        Future.successful(handleErrorGettingDueDates(user.isAgent()))
     } recover {
       case ex =>
         Logger("application").error(s"Downstream error, ${ex.getMessage} - ${ex.getCause}")
-        handleErrorGettingDueDates(isAgent)
+        handleErrorGettingDueDates(user.isAgent())
     }
 
-  private def buildHomePage(nextUpdatesDueDates: Seq[LocalDate], isAgent: Boolean, origin: Option[String])
+  private def buildHomePageForSupportingAgent(nextUpdatesDueDates: Seq[LocalDate])
+                                             (implicit user: MtdItUser[_]): Future[Result] = {
+    val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, dateService.getCurrentDate, isEnabled(OptOut))
+    val yourBusinessesTileViewModel = YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome, isEnabled(IncomeSources),
+      isEnabled(IncomeSourcesNewJourney))
+    Future.successful(
+      Ok(
+        supportingAgentHomeView(
+          yourBusinessesTileViewModel,
+          nextUpdatesTileViewModel
+        )
+      )
+    )
+  }
+
+  private def buildHomePage(nextUpdatesDueDates: Seq[LocalDate], origin: Option[String])
                            (implicit user: MtdItUser[_]): Future[Result] =
     for {
       unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails(isCodingOutEnabled = true)
@@ -114,13 +135,18 @@ class HomeController @Inject()(val homeView: views.html.Home,
           origin = origin
         )
           auditingService.extendedAudit(HomeAudit(user, paymentsDueMerged, overDuePaymentsCount, nextUpdatesTileViewModel))
-          Ok(homeView(
-            homeViewModel,
-            isAgent = isAgent
-          ))
+          if(user.isAgent()) {
+            Ok(primaryAgentHomeView(
+              homeViewModel
+            ))
+          } else {
+            Ok(homeView(
+              homeViewModel
+            ))
+          }
         case Left(ex: Throwable) =>
           Logger("application").error(s"Unable to create the view model ${ex.getMessage} - ${ex.getCause}")
-          handleErrorGettingDueDates(isAgent)
+          handleErrorGettingDueDates(user.isAgent())
     }
 }
 

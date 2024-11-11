@@ -33,12 +33,12 @@ import testConstants.BaseTestConstants._
 import testConstants.FinancialDetailsTestConstants.financialDetailsModel
 import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
-import views.html.Home
+import views.html.agent.PrimaryAgentHome
 
 import java.time.{LocalDate, Month}
 import scala.util.Try
 
-class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
+class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 
   lazy val backUrl: String = controllers.agent.routes.ConfirmClientUTRController.show.url
 
@@ -73,7 +73,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
     Some(testCredId),
     Some(Agent),
     Some(testArn),
-    Some(testClientName)
+    None
   )(FakeRequest())
 
   val year2018: Int = 2018
@@ -102,7 +102,6 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
                   ITSASubmissionIntegrationEnabled: Boolean = true,
                   dunningLockExists: Boolean = false,
                   currentTaxYear: Int = currentTaxYear,
-                  isAgent: Boolean = true,
                   displayCeaseAnIncome: Boolean = false,
                   incomeSourcesEnabled: Boolean = false,
                   incomeSourcesNewJourneyEnabled: Boolean = false,
@@ -110,7 +109,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
                   user: MtdItUser[_] = testMtdItUserNotMigrated
                  ) {
 
-    val agentHome: Home = app.injector.instanceOf[Home]
+    val agentHome: PrimaryAgentHome = app.injector.instanceOf[PrimaryAgentHome]
 
     val paymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(List(financialDetailsModel()), creditAndRefundEnabled, paymentHistoryEnabled, isUserMigrated = user.incomeSources.yearOfMigration.isDefined)
 
@@ -130,8 +129,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
       dunningLockExists = dunningLockExists
     )
     val view: HtmlFormat.Appendable = agentHome(
-      homePageViewModel,
-      isAgent
+      homePageViewModel
     )(FakeRequest(), implicitly, user, mockAppConfig)
 
     lazy val document: Document = Jsoup.parse(contentAsString(view))
@@ -158,12 +156,20 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
         document.title() shouldBe messages("htmlTitle.agent", messages("home.agent.heading"))
       }
 
-      s"have the page heading ${messages("home.agent.heading")}" in new TestSetup {
+      s"have the page caption You are signed in as a main agent" in new TestSetup {
+        document.getElementsByClass("govuk-caption-xl").text() shouldBe "You are signed in as a main agent"
+      }
+
+      s"have the page heading ${messages("home.agent.headingWithClientName", testClientNameString)}" in new TestSetup {
+        document.select("h1").text() shouldBe messages("home.agent.headingWithClientName", testClientNameString)
+      }
+
+      s"have the page heading ${messages("home.agent.heading")}" in new TestSetup(user = testMtdItUserMigrated) {
         document.select("h1").text() shouldBe messages("home.agent.heading")
       }
 
-      s"have the hint with the clients name '$testUserName' and utr '$testSaUtr' " in new TestSetup {
-        getHintNth() shouldBe Some(s"Unique Taxpayer Reference (UTR): $testSaUtr Client’s name $testClientNameString")
+      s"have the hint with the clients utr '$testSaUtr' " in new TestSetup {
+        getHintNth() shouldBe Some(s"Unique Taxpayer Reference (UTR): $testSaUtr")
       }
 
       "have an next payment due tile" which {

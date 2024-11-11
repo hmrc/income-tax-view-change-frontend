@@ -18,7 +18,6 @@ package controllers.agent
 
 import audit.models.{HomeAudit, NextUpdatesResponseAuditModel}
 import auth.MtdItUser
-import enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.AuthStub.titleInternalServer
 import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDAgentAuthStub}
@@ -41,7 +40,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import java.time.LocalDate
 
-class HomeControllerISpec extends ControllerISpecHelper {
+class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
 
   val implicitDateFormatter: ImplicitDateFormatter = app.injector.instanceOf[ImplicitDateFormatterImpl]
   implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
@@ -74,10 +73,9 @@ class HomeControllerISpec extends ControllerISpecHelper {
   import implicitDateFormatter.longDate
 
   "GET /" when {
-    List(MTDPrimaryAgent, MTDSupportingAgent).foreach { userType =>
       val isSupportingAgent = false
-      val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, true)
-      s"there is a ${userType.toString}" that {
+      val additionalCookies = getAgentClientDetailsForCookie(false, true)
+      s"there is a primary agent" that {
         s"is a authenticated for a client" should {
           "render the home page" which {
             "displays the next upcoming payment and charge" when {
@@ -672,7 +670,6 @@ class HomeControllerISpec extends ControllerISpecHelper {
 
         testAuthFailuresForMTDAgent(path, isSupportingAgent)
       }
-    }
     testNoClientDataFailure(path)
   }
 

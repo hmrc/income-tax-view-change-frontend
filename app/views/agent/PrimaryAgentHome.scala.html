@@ -1,0 +1,121 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.layouts.unifiedLayout
+@import views.html.components._
+@import exceptions.MissingFieldException
+@import models.homePage.HomePageViewModel
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
+@import views.html.helpers.injected.home._
+
+@this(
+    layout: unifiedLayout,
+    h1: h1,
+    h2: h2,
+    h3link: h3link,
+    p: p,
+    link: link,
+    govukWarningText : GovukWarningText,
+    paymentsTile: PaymentsTile,
+    updatesTile: UpdatesTile,
+    paymentHistoryTile: PaymentHistoryTile,
+    returnsTile: ReturnsTile,
+    incomeSourcesTile: IncomeSourcesTile
+)
+
+@(
+viewModel: HomePageViewModel
+)(
+  	implicit request: Request[_],
+	messages: Messages,
+  	user: auth.MtdItUser[_],
+	appConfig: config.FrontendAppConfig)
+
+@pageHeading = @{
+    user.optClientNameAsString.fold(messages("home.agent.heading")){
+        clientName => messages("home.agent.headingWithClientName", clientName)
+    }
+}
+
+@tiles() = {
+    <div class="grid-row">
+        <div class="flex-container govuk-!-padding-0">
+            @paymentsTile(viewModel, true)
+            @updatesTile(viewModel.nextUpdatesTileViewModel, true)
+        </div>
+    </div>
+
+    <div class="grid-row">
+        <div class="flex-container govuk-!-padding-0">
+            @paymentHistoryTile(viewModel, true)
+            @returnsTile(viewModel, true)
+        </div>
+    </div>
+
+    <div class="grid-row">
+        <div class="flex-container govuk-!-padding-0">
+            @incomeSourcesTile(viewModel.yourBusinessesTileViewModel, true)
+        </div>
+    </div>
+}
+
+@customLayout = {
+    <div class="grid-row">
+        <div class="column-full">
+            <span class="govuk-caption-xl">@messages("home.agent.primary.caption")</span>
+            @h1(pageHeading, classes = "govuk-heading-xl margin-bottom-zero")
+
+            @p(classes = "govuk-hint margin-bottom-zero") {
+                @user.saUtr.map { utr =>
+                    <span style="display:block">
+                        @messages("home.unique.taxpayer.reference", utr)
+                    </span>
+                }
+            }
+
+            @p(classes = "govuk-body margin-bottom-sixty", id = Some("changeClientLink")) {
+                @link(controllers.agent.routes.RemoveClientDetailsSessionsController.show.url, "govuk-link--no-visited-state", "home.agent.changeClientLink")
+            }
+            @if(viewModel.nextPaymentsTileViewModel.reviewAndReconcileEnabled && viewModel.nextPaymentsTileViewModel.paymentsAccruingInterestCount > 0) {
+                <div id="accrues-interest-warning" class="grid-row">
+                    <div class="column-full">
+                    @govukWarningText(WarningText(content = Text(messages("home.interest-accruing"))))
+                    </div>
+                </div>
+            }else {
+                @if(viewModel.nextPaymentsTileViewModel.overDuePaymentsCount > 0) {
+                    <div id="overdue-warning" class="grid-row">
+                        <div class="column-full">
+                        @govukWarningText(WarningText(content = Text(messages(s"home.agent.overdue.message.dunningLock.${viewModel.dunningLockExists}"))))
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+    @tiles()
+}
+
+@layout(
+    pageTitle = messages("home.agent.heading"),
+    mainClass = Some("full-width"),
+    isAgent = true,
+    btaNavPartial = user.btaNavPartial
+) {
+    @customLayout
+}
+

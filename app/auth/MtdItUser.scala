@@ -16,6 +16,7 @@
 
 package auth
 
+import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import models.admin.FeatureSwitch
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.mvc.{Request, WrappedRequest}
@@ -91,6 +92,12 @@ case class MtdItUser[A](mtditid: String,
       case (Some(fn), Some(ln)) => Some(s"$fn $ln")
       case _ => None
     }
+  }
+
+  lazy val usersRole: MTDUserRole = (isAgent(), isSupportingAgent) match {
+    case (true, true) => MTDSupportingAgent
+    case (true, _) => MTDPrimaryAgent
+    case _ => MTDIndividual
   }
 
 }
