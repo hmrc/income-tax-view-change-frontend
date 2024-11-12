@@ -45,12 +45,12 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
   private val previousYear = currentTaxYear.addYears(-1)
 
   private val expectedTitle = s"Confirm and opt out for the ${previousYear.startYear} to ${previousYear.endYear} tax year"
-  private val summary = "If you opt out, you can submit your tax return through your HMRC online account or software."
+  private val summary = "If you opt out, you can submit your tax return through your HMRC online account or compatible software."
   private val infoMessage = s"In future, you could be required to report quarterly again if, for example, your income increases or the threshold for reporting quarterly changes. If this happens, we’ll write to you to let you know."
   private val emptyBodyString = ""
 
   private val optOutExpectedTitle = s"Check your answers"
-  private val optOutSummary = "If you opt out, you can submit your tax return through your HMRC online account or software."
+  private val optOutSummary = "If you opt out, you can submit your tax return through your HMRC online account or compatible software."
   private val optOutWarning = "In future, you could be required to report quarterly again if, for example, your income increases or the threshold for reporting quarterly changes. If this happens, we’ll write to you to let you know."
 
   private val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
