@@ -16,27 +16,20 @@
 
 package controllers.agent.errors
 
+import auth.authV2.AuthActions
 import com.google.inject.{Inject, Singleton}
-import config.{AgentItvcErrorHandler, FrontendAppConfig}
-import controllers.agent.predicates.BaseAgentController
-import controllers.predicates.agent.AgentAuthenticationPredicate.timeoutPredicate
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.errorPages.CustomNotFoundError
 
-import scala.concurrent.{ExecutionContext, Future}
-
 @Singleton
-class AgentNotFoundDocumentIDLookupController @Inject()(val authorisedFunctions: AuthorisedFunctions,
+class AgentNotFoundDocumentIDLookupController @Inject()(val authActions: AuthActions,
                                                         customNotFoundError: CustomNotFoundError)
                                                        (implicit mcc: MessagesControllerComponents,
-                                                        val appConfig: FrontendAppConfig,
-                                                        val itvcErrorHandler: AgentItvcErrorHandler,
-                                                        val ec: ExecutionContext) extends BaseAgentController with I18nSupport {
+                                                        ) extends FrontendController(mcc) with I18nSupport {
 
-  val show: Action[AnyContent] = Authenticated.asyncWithoutClientAuth(timeoutPredicate) { implicit request =>
-    implicit user =>
-      Future.successful(Ok(customNotFoundError(isAgent = true)))
+  val show: Action[AnyContent] = authActions.asAgent(false) {implicit user =>
+      Ok(customNotFoundError(isAgent = true))
   }
 }

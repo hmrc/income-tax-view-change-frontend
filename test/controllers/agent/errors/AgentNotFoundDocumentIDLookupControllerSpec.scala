@@ -16,48 +16,27 @@
 
 package controllers.agent.errors
 
-import mocks.MockItvcErrorHandler
-import mocks.auth.MockFrontendAuthorisedFunctions
+import mocks.auth.MockAuthActions
 import org.jsoup.Jsoup
-import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
-import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
-import testUtils.TestSupport
-import views.html.errorPages.CustomNotFoundError
+import testConstants.BaseTestConstants.agentAuthRetrievalSuccess
 
-class AgentNotFoundDocumentIDLookupControllerSpec extends TestSupport
-  with MockFrontendAuthorisedFunctions
-  with MockItvcErrorHandler {
+class AgentNotFoundDocumentIDLookupControllerSpec extends MockAuthActions {
 
-  val TestAgentErrorController = new AgentNotFoundDocumentIDLookupController(
-    mockAuthService,
-    app.injector.instanceOf[CustomNotFoundError]
-  )(
-    app.injector.instanceOf[MessagesControllerComponents],
-    appConfig,
-    mockItvcErrorHandler,
-    ec
-  )
+  override def fakeApplication() = applicationBuilderWithAuthBindings().build()
+
+  val testAgentErrorController = fakeApplication().injector.instanceOf[AgentNotFoundDocumentIDLookupController]
 
   "Calling the show action of the NotAnAgentController" should {
 
-    lazy val result = TestAgentErrorController.show(fakeRequestWithActiveSession)
-    lazy val document = Jsoup.parse(contentAsString(result))
-
-    "return OK (200)" in {
-      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+    "render the Agent not found page" in {
+      setupMockAgentWithoutARNAuthSuccess(agentAuthRetrievalSuccess)
+      val result = testAgentErrorController.show(fakeRequestWithActiveSession)
       status(result) shouldBe OK
-    }
-
-    "return HTML" in {
-      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+      val document = Jsoup.parse(contentAsString(result))
+      document.title() shouldBe messages("htmlTitle.agent", messages("error.custom.heading"))
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
-    }
-
-    s"have the title ${messages("htmlTitle.agent", messages("base.error_summary.heading"))}" in {
-      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-      document.title() shouldBe messages("htmlTitle.agent", messages("error.custom.heading"))
     }
   }
 }
