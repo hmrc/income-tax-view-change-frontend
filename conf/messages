@@ -2190,10 +2190,10 @@ claimToAdjustPoa.youCannotGoBack.bullet3Link             = homepage
 
 # opt out confirm
 optout.confirmOptOut.heading            = Confirm and opt out for the {0} to {1} tax year
-optout.confirmOptOut.desc               = If you opt out, you can submit your tax return through your HMRC online account or software.
+optout.confirmOptOut.desc               = If you opt out, you can submit your tax return through your HMRC online account or compatible software.
 optout.confirmOptOut.quarterly-updates  = You have <b>{0} quarterly updates submitted</b> for this tax year. If you continue, these updates will be deleted from our records. You’ll need to include any income from these updates in your tax return.
 optout.confirmOptOut.info-message       = In future, you could be required to report quarterly again if, for example, your income increases or the threshold for reporting quarterly changes. If this happens, we’ll write to you to let you know.
-optout.confirmOptOut.confirm            = Confirm
+optout.confirmOptOut.confirm            = Confirm and save
 optout.confirmOptOut.cancel             = Cancel
 
 #opt out multi year check answers
@@ -2201,9 +2201,9 @@ optout.checkAnswers.heading             = Check your answers
 optout.checkAnswers.optOut              = Opt out from
 optout.checkAnswers.taxYears            = {0} to {1} tax year onwards
 optout.checkAnswers.change              = Change
-optout.checkAnswers.p1                  = If you opt out, you can submit your tax return through your HMRC online account or software.
+optout.checkAnswers.p1                  = If you opt out, you can submit your tax return through your HMRC online account or compatible software.
 optout.checkAnswers.p2                  = In future, you could be required to report quarterly again if, for example, your income increases or the threshold for reporting quarterly changes. If this happens, we’ll write to you to let you know.
-optout.checkAnswers.confirm             = Confirm
+optout.checkAnswers.confirm             = Confirm and save
 optout.checkAnswers.cancel              = Cancel
 
 # opt out confirmed
