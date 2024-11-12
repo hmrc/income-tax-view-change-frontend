@@ -26,14 +26,14 @@ import views.html.agent.errorPages.UTRError
 trait MockUTRError extends BeforeAndAfterEach {
   self: Suite =>
 
-  val utrError: UTRError = mock(classOf[UTRError])
+  lazy val utrError: UTRError = mock(classOf[UTRError])
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(utrError)
   }
 
-  def mockUTRError(response: Html): Unit = {
+  def mockUTRErrorResponse(response: Html): Unit = {
     when(utrError.apply(any())(any(), any(), any()))
       .thenReturn(response)
   }
