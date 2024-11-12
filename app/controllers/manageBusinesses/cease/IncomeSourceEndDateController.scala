@@ -54,7 +54,11 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
 
   private def getBackCall(isAgent: Boolean): Call = {
-    controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent)
+    if(isAgent) {
+      controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent()
+    } else {
+      controllers.manageBusinesses.routes.ManageYourBusinessesController.show()
+    }
   }
 
   private def getPostAction(isAgent: Boolean, isChange: Boolean, maybeIncomeSourceId: Option[IncomeSourceId], incomeSourceType: IncomeSourceType

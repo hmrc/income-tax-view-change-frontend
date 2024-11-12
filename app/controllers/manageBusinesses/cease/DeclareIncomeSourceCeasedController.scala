@@ -49,6 +49,12 @@ class DeclareIncomeSourceCeasedController @Inject()(val authorisedFunctions: Fro
                                                    )
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
 
+  private def getBackUrl(isAgent: Boolean): String = if(isAgent) {
+    controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+  } else {
+    controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+  }
+
   def show(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] =
     auth.authenticatedAction(isAgent = false) {
       implicit user =>
@@ -89,7 +95,7 @@ class DeclareIncomeSourceCeasedController @Inject()(val authorisedFunctions: Fro
                 incomeSourceType = incomeSourceType,
                 soleTraderBusinessName = maybeBusinessName,
                 isAgent = isAgent,
-                backUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url,
+                backUrl = getBackUrl(isAgent),
                 postAction = postAction(id, isAgent, incomeSourceType)
               )
             )

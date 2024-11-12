@@ -30,7 +30,7 @@ class AddPropertyControllerISpec extends ComponentSpecBase {
   val addPropertyShowUrl = controllers.manageBusinesses.add.routes.AddPropertyController.show(isAgent = false).url
   val addPropertySubmitUrl = controllers.manageBusinesses.add.routes.AddPropertyController.submit(isAgent = false).url
 
-  val manageBusinessesUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent = false).url
+  val manageBusinessesUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
   val startDateUkPropertyUrl = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = false, incomeSourceType = UkProperty, isChange = false).url
   val startDateForeignPropertyUrl = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = false, incomeSourceType = ForeignProperty, isChange = false).url
 

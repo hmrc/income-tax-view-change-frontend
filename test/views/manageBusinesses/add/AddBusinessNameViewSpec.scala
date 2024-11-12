@@ -57,8 +57,10 @@ class AddBusinessNameViewSpec extends ViewSpec {
         } else {
           controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
         }
+      } else if(isAgent) {
+        controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
       } else {
-        controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url
+        controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
       }
     }
 
