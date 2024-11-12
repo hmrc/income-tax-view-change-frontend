@@ -2234,8 +2234,8 @@ optout.confirmedOptOut.reportQuarterly.reason1                   = HMRC lowered 
 optout.confirmedOptOut.reportQuarterly.reason2                   = you reported an increase in your qualifying income in last year’s tax return
 
 optOut.confirmSingleYearOptOut.title                        = Opt out of quarterly reporting for a single tax year
-optOut.confirmSingleYearOptOut.detail.text                  = You can only opt out and report annually for the {0} to {1} tax year.
-optOut.confirmSingleYearOptOut.inset.text                   = From 6 April {0}, you’ll be required to send quarterly updates again through software.
+optOut.confirmSingleYearOptOut.detail.text                  = You can only opt out for the {0} to {1} tax year.
+optOut.confirmSingleYearOptOut.inset.text                   = If you continue, from 6 April {0}. you’ll be required to send quarterly updates again through software.
 optOut.confirmSingleYearOptOut.form.title                   = Do you still want to opt out for the {0} to {1} tax year?
 optOut.confirmSingleYearOptOut.form.answer.one.hint         = I want to opt out and report annually.
 optOut.confirmSingleYearOptOut.form.answer.two.hint         = I want to continue reporting quarterly.

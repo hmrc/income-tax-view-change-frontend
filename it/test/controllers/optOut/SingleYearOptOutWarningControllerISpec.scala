@@ -39,8 +39,8 @@ class SingleYearOptOutWarningControllerISpec extends ComponentSpecBase {
   private val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
   private val previousYear = currentTaxYear.addYears(-1)
 
-  private val expectedInsetText = s"From 6 April ${previousYear.endYear}, you’ll be required to send quarterly updates again through software."
-  private val expectedDetailText = s"You can only opt out and report annually for the ${previousYear.startYear} to ${previousYear.endYear} tax year."
+  private val expectedInsetText = s"If you continue, from 6 April ${previousYear.endYear}. you’ll be required to send quarterly updates again through software."
+  private val expectedDetailText = s"You can only opt out for the ${previousYear.startYear} to ${previousYear.endYear} tax year."
   private val expectedFormTitle = s"Do you still want to opt out for the ${previousYear.startYear} to ${previousYear.endYear} tax year?"
   private val expectedErrorText = s"Select yes to opt out for the ${previousYear.startYear.toString} to ${previousYear.endYear.toString} tax year"
 

@@ -52,11 +52,11 @@ class SingleYearOptOutWarningViewSpec extends ViewSpec {
       }
 
       "have the correct detail text" in new Setup(renderedView) {
-        document.selectById("detail-text").text() shouldBe s"You can only opt out and report annually for the ${taxYear.startYear} to ${taxYear.endYear} tax year."
+        document.selectById("detail-text").text() shouldBe s"You can only opt out for the ${taxYear.startYear} to ${taxYear.endYear} tax year."
       }
 
       "have the correct inset text" in new Setup(renderedView) {
-        document.selectById("warning-inset").text() shouldBe s"From 6 April ${taxYear.endYear}, you’ll be required to send quarterly updates again through software."
+        document.selectById("warning-inset").text() shouldBe s"If you continue, from 6 April ${taxYear.endYear}. you’ll be required to send quarterly updates again through software."
       }
 
       "have correct form details" in new Setup(renderedView) {
