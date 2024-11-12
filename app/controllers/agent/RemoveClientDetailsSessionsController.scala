@@ -25,19 +25,19 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.AuthenticatorPredicate
 import auth.authV2.AuthActions
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RemoveClientDetailsSessionsController @Inject()(val authorisedFunctions: AuthorisedFunctions,
-                                                      val auth: AuthenticatorPredicate,
+class RemoveClientDetailsSessionsController @Inject()(val auth: AuthenticatorPredicate,
                                                       val authActions: AuthActions)
                                                      (implicit mcc: MessagesControllerComponents,
                                                       val appConfig: FrontendAppConfig,
                                                       val itvcErrorHandler: AgentItvcErrorHandler,
                                                       val ec: ExecutionContext)
-  extends BaseAgentController with I18nSupport with FeatureSwitching {
+  extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
 
   def show: Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient { implicit user =>
@@ -48,6 +48,7 @@ class RemoveClientDetailsSessionsController @Inject()(val authorisedFunctions: A
           SessionKeys.clientMTDID,
           SessionKeys.clientUTR,
           SessionKeys.clientNino,
+          SessionKeys.isSupportingAgent,
           SessionKeys.confirmedClient
         )
 

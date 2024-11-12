@@ -26,34 +26,70 @@ class RemoveClientDetailsSessionsControllerISpec extends ControllerISpecHelper {
   val path = "/agents/remove-client-sessions"
 
   s"GET ${controllers.agent.routes.EnterClientsUTRController.show.url}" when {
-    val isSupportingAgent = false
-    val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, true)
-    "Removing the client details session keys" should {
-      "redirect to client UTR page" in {
-        MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+    s"a user is a primary agent (session data isSupportingAgent = false)" that {
+      val isSupportingAgent = false
+      val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, true)
+      "Removing the client details session keys" should {
+        "redirect to client UTR page" in {
+          MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-        val result = buildMTDClient(path, additionalCookies).futureValue
+          val result = buildMTDClient(path, additionalCookies).futureValue
 
-        val removedSessionKeys: List[String] =
-          List(
-            "SessionKeys.clientLastName",
-            "SessionKeys.clientFirstName",
-            "SessionKeys.clientNino",
-            "SessionKeys.clientUTR",
-            "SessionKeys.confirmedClient"
+          val removedSessionKeys: List[String] =
+            List(
+              "SessionKeys.clientLastName",
+              "SessionKeys.clientFirstName",
+              "SessionKeys.clientNino",
+              "SessionKeys.clientUTR",
+              "SessionKeys.isSupportingAgent",
+              "SessionKeys.confirmedClient"
+            )
+
+          removedSessionKeys.foreach(key => result.cookie(key) shouldBe None)
+
+          result should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(controllers.agent.routes.EnterClientsUTRController.show.url)
           )
 
-        removedSessionKeys.foreach(key => result.cookie(key) shouldBe None)
-
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.routes.EnterClientsUTRController.show.url)
-        )
-
+        }
       }
+      testAuthFailuresForMTDAgent(path, isSupportingAgent, false)
     }
-    testAuthFailuresForMTDAgent(path, isSupportingAgent, false)
-  }
 
+
+    s"a user is a supporting agent (session data isSupportingAgent = true)" that {
+      val isSupportingAgent = true
+      val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, true)
+      "Removing the client details session keys" should {
+        "redirect to client UTR page" in {
+          MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+
+          val result = buildMTDClient(path, additionalCookies).futureValue
+
+          val removedSessionKeys: List[String] =
+            List(
+              "SessionKeys.clientLastName",
+              "SessionKeys.clientFirstName",
+              "SessionKeys.clientNino",
+              "SessionKeys.clientUTR",
+              "SessionKeys.isSupportingAgent",
+              "SessionKeys.confirmedClient"
+            )
+
+          removedSessionKeys.foreach(key => result.cookie(key) shouldBe None)
+
+          result should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(controllers.agent.routes.EnterClientsUTRController.show.url)
+          )
+
+        }
+      }
+      testAuthFailuresForMTDAgent(path, isSupportingAgent, false)
+    }
+    testNoClientDataFailure(path)
+  }
 }

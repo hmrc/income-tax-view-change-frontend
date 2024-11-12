@@ -35,12 +35,14 @@ class RemoveClientDetailsSessionsControllerSpec extends MockAuthActions
 
   val testRemoveClientDetailsSessionsController = fakeApplication().injector.instanceOf[RemoveClientDetailsSessionsController]
 
-  val fakeRequest = fakePostRequestConfirmedClient()
+    Map("primary agent" -> false, "supporting agent" -> true).foreach { case (agentType, isSupportingAgent) =>
+      val fakeRequest = fakeRequestConfirmedClient(isSupportingAgent = isSupportingAgent)
 
-    ".show" when {
+      ".show" when {
+        s"the user is a $agentType" that {
         "the user is not authenticated" should {
           "redirect the user to authenticate" in {
-            setupMockAgentWithClientAuthorisationException(isSupportingAgent = false)
+            setupMockAgentWithClientAuthorisationException(isSupportingAgent = isSupportingAgent)
 
             val result = testRemoveClientDetailsSessionsController.show()(fakeRequest)
 
@@ -51,7 +53,7 @@ class RemoveClientDetailsSessionsControllerSpec extends MockAuthActions
 
         "the user has timed out" should {
           "redirect to the session timeout page" in {
-            setupMockAgentWithClientAuthorisationException(exception = BearerTokenExpired(), isSupportingAgent = false)
+            setupMockAgentWithClientAuthorisationException(exception = BearerTokenExpired(), isSupportingAgent = isSupportingAgent)
 
             val result = testRemoveClientDetailsSessionsController.show()(fakeRequest)
 
@@ -61,7 +63,7 @@ class RemoveClientDetailsSessionsControllerSpec extends MockAuthActions
         }
 
         "remove client details session keys and redirect to the enter client UTR page" in {
-          setupMockAgentWithClientAuthAndIncomeSources(false) //only works when false
+          setupMockAgentWithClientAuthAndIncomeSources(isSupportingAgent = isSupportingAgent)
 
           val result = testRemoveClientDetailsSessionsController.show()(fakeRequest)
 
@@ -71,6 +73,7 @@ class RemoveClientDetailsSessionsControllerSpec extends MockAuthActions
               "SessionKeys.clientFirstName",
               "SessionKeys.clientNino",
               "SessionKeys.clientUTR",
+              "SessionKeys.isSupportingAgent",
               "SessionKeys.confirmedClient"
             )
 
@@ -81,5 +84,6 @@ class RemoveClientDetailsSessionsControllerSpec extends MockAuthActions
 
         }
       }
-
+    }
+  }
 }
