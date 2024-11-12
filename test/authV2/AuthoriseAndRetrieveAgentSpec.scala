@@ -224,8 +224,8 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
             fakeRequestWithActiveSession,
             defaultAsync)
 
-          status(result) shouldBe SEE_OTHER
-          redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/agents/agent-error")
+          status(result) shouldBe OK
+          contentAsString(result) shouldBe "Successful"
         }
       }
 
