@@ -20,11 +20,11 @@ import controllers.agent.ControllerISpecHelper
 import helpers.servicemocks.MTDAgentAuthStub
 import play.api.http.Status._
 
-class AgentErrorControllerISpec extends ControllerISpecHelper {
+class AgentNotFoundDocumentIDLookupControllerISpec extends ControllerISpecHelper {
 
-  val agentErrorUri: String = "/agents/agent-error"
+  val agentErrorUri: String = "/agents/custom-not-found"
 
-  "Calling the AgentErrorController.show()" when {
+  "Calling the AgentNotFoundDocumentIDLookupController.show()" when {
 
     "user is authorised" should {
       "respond with the correct page" in {
@@ -34,7 +34,7 @@ class AgentErrorControllerISpec extends ControllerISpecHelper {
 
         res should have(
           httpStatus(OK),
-          pageTitleAgent("agent-error.heading", isErrorPage = true)
+          pageTitleAgent("error.custom.heading")
         )
       }
     }

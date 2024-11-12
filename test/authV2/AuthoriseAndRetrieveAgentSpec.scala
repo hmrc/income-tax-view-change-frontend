@@ -29,7 +29,7 @@ import play.api.mvc.{Result, Results}
 import play.api.test.Helpers._
 import play.api.{Application, Play}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
-import uk.gov.hmrc.auth.core.{BearerTokenExpired, InsufficientEnrolments, MissingBearerToken}
+import uk.gov.hmrc.auth.core.{BearerTokenExpired, Enrolments, InsufficientEnrolments, MissingBearerToken}
 import authV2.AuthActionsTestData._
 
 import scala.concurrent.Future
@@ -63,7 +63,8 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
 
   lazy val authAction = fakeApplication().injector.instanceOf[AuthoriseAndRetrieveAgent]
 
-  "refine" should {
+  "refine" when {
+    "arn is required" should {
       "return the expected MtdItUserOptionNino response" when {
         s"the user is an Agent enrolled as a HMRC-AS-AGENT" that {
           "has nino and sa enrolment" in {
@@ -76,7 +77,7 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
               )
             )
 
-            val result = authAction.invokeBlock(
+            val result = authAction.authorise().invokeBlock(
               fakeRequestWithActiveSession,
               defaultAsyncBody(_ shouldBe expectedResponse))
 
@@ -94,7 +95,7 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
               )
             )
 
-            val result = authAction.invokeBlock(
+            val result = authAction.authorise().invokeBlock(
               fakeRequestWithActiveSession,
               defaultAsyncBody(_ shouldBe expectedResponse))
 
@@ -102,72 +103,181 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
             contentAsString(result) shouldBe "Successful"
           }
         }
-
-        "redirect to AgentError page" when {
-          s"the user is an Agent that is not enrolled into HMRC-AS-AGENT" in {
-
-            when(mockAuthConnector.authorise[AgentAuthRetrievals](any(), any())(any(), any())).thenReturn(
-              Future.failed[AgentAuthRetrievals](InsufficientEnrolments())
-            )
-
-            val result = authAction.invokeBlock(
-              fakeRequestWithActiveSession,
-              defaultAsync)
-
-            status(result) shouldBe SEE_OTHER
-            redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/agents/agent-error")
-          }
-        }
       }
 
-    "redirect to Home page" when {
-      List(Individual, Organisation).foreach { affinityGroup =>
-        s"the user is an ${affinityGroup.toString}" in {
+      "redirect to AgentError page" when {
+        s"the user is an Agent that is not enrolled into HMRC-AS-AGENT" in {
+
           when(mockAuthConnector.authorise[AgentAuthRetrievals](any(), any())(any(), any())).thenReturn(
-            Future.successful[AgentAuthRetrievals](
-              getAllEnrolmentsAgent(false, false) ~ Some(credentials) ~ Some(affinityGroup) ~ notAcceptedConfidenceLevel
-            )
+            Future.failed[AgentAuthRetrievals](InsufficientEnrolments())
           )
 
-          val result = authAction.invokeBlock(
+          val result = authAction.authorise().invokeBlock(
             fakeRequestWithActiveSession,
             defaultAsync)
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view")
+          redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/agents/agent-error")
+        }
+      }
+
+      "redirect to Home page" when {
+        List(Individual, Organisation).foreach { affinityGroup =>
+          s"the user is an ${affinityGroup.toString}" in {
+            when(mockAuthConnector.authorise[AgentAuthRetrievals](any(), any())(any(), any())).thenReturn(
+              Future.successful[AgentAuthRetrievals](
+                getAllEnrolmentsAgent(false, false) ~ Some(credentials) ~ Some(affinityGroup) ~ notAcceptedConfidenceLevel
+              )
+            )
+
+            val result = authAction.authorise().invokeBlock(
+              fakeRequestWithActiveSession,
+              defaultAsync)
+
+            status(result) shouldBe SEE_OTHER
+            redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view")
+          }
+        }
+      }
+
+      "redirect to Session timed out page" when {
+        s"the user is has an expired bearer token" in {
+
+          when(mockAuthConnector.authorise[AgentAuthRetrievals](any(), any())(any(), any())).thenReturn(
+            Future.failed[AgentAuthRetrievals](BearerTokenExpired())
+          )
+
+          val result = authAction.authorise().invokeBlock(
+            fakeRequestWithActiveSession,
+            defaultAsync)
+
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/session-timeout")
+        }
+      }
+
+      "redirect to Signin" when {
+        s"the user is not signed in" in {
+
+          when(mockAuthConnector.authorise[AgentAuthRetrievals](any(), any())(any(), any())).thenReturn(
+            Future.failed[AgentAuthRetrievals](MissingBearerToken())
+          )
+
+          val result = authAction.authorise().invokeBlock(
+            fakeRequestWithActiveSession,
+            defaultAsync)
+
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/sign-in")
         }
       }
     }
 
-    "redirect to Session timed out page" when {
-      s"the user is has an expired bearer token" in {
+    "arn is not required" should {
+      "return the expected MtdItUserOptionNino response" when {
+        s"the user is an Agent enrolled as a HMRC-AS-AGENT" that {
+          "has nino and sa enrolment" in {
+            val allEnrolments = getAllEnrolmentsAgent(true, true)
+            val expectedResponse = getAgentData(allEnrolments)(fakeRequestWithActiveSession)
 
-        when(mockAuthConnector.authorise[AgentAuthRetrievals](any(), any())(any(), any())).thenReturn(
-          Future.failed[AgentAuthRetrievals](BearerTokenExpired())
-        )
+            when(mockAuthConnector.authorise[AgentAuthRetrievals](any(), any())(any(), any())).thenReturn(
+              Future.successful[AgentAuthRetrievals](
+                allEnrolments ~ Some(credentials) ~ Some(Agent) ~ acceptedConfidenceLevel
+              )
+            )
 
-        val result = authAction.invokeBlock(
-          fakeRequestWithActiveSession,
-          defaultAsync)
+            val result = authAction.authorise(false).invokeBlock(
+              fakeRequestWithActiveSession,
+              defaultAsyncBody(_ shouldBe expectedResponse))
 
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/session-timeout")
+            status(result) shouldBe OK
+            contentAsString(result) shouldBe "Successful"
+          }
+
+          "has no additional enrolments" in {
+            val allEnrolments = getAllEnrolmentsAgent(false, false)
+            val expectedResponse = getAgentData(allEnrolments)(fakeRequestWithActiveSession)
+
+            when(mockAuthConnector.authorise[AgentAuthRetrievals](any(), any())(any(), any())).thenReturn(
+              Future.successful[AgentAuthRetrievals](
+                allEnrolments ~ Some(credentials) ~ Some(Agent) ~ acceptedConfidenceLevel
+              )
+            )
+
+            val result = authAction.authorise(false).invokeBlock(
+              fakeRequestWithActiveSession,
+              defaultAsyncBody(_ shouldBe expectedResponse))
+
+            status(result) shouldBe OK
+            contentAsString(result) shouldBe "Successful"
+          }
+        }
+        s"the user is an Agent that is not enrolled into HMRC-AS-AGENT" in {
+
+          when(mockAuthConnector.authorise[AgentAuthRetrievals](any(), any())(any(), any())).thenReturn(
+            Future.successful[AgentAuthRetrievals](
+              Enrolments(Set.empty) ~ Some(credentials) ~ Some(Agent) ~ acceptedConfidenceLevel
+            )
+          )
+
+          val result = authAction.authorise(false).invokeBlock(
+            fakeRequestWithActiveSession,
+            defaultAsync)
+
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/agents/agent-error")
+        }
       }
-    }
 
-    "redirect to Signin" when {
-      s"the user is not signed in" in {
+      "redirect to Home page" when {
+        List(Individual, Organisation).foreach { affinityGroup =>
+          s"the user is an ${affinityGroup.toString}" in {
+            when(mockAuthConnector.authorise[AgentAuthRetrievals](any(), any())(any(), any())).thenReturn(
+              Future.successful[AgentAuthRetrievals](
+                getAllEnrolmentsAgent(false, false) ~ Some(credentials) ~ Some(affinityGroup) ~ notAcceptedConfidenceLevel
+              )
+            )
 
-        when(mockAuthConnector.authorise[AgentAuthRetrievals](any(), any())(any(), any())).thenReturn(
-          Future.failed[AgentAuthRetrievals](MissingBearerToken())
-        )
+            val result = authAction.authorise(false).invokeBlock(
+              fakeRequestWithActiveSession,
+              defaultAsync)
 
-        val result = authAction.invokeBlock(
-          fakeRequestWithActiveSession,
-          defaultAsync)
+            status(result) shouldBe SEE_OTHER
+            redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view")
+          }
+        }
+      }
 
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/sign-in")
+      "redirect to Session timed out page" when {
+        s"the user is has an expired bearer token" in {
+
+          when(mockAuthConnector.authorise[AgentAuthRetrievals](any(), any())(any(), any())).thenReturn(
+            Future.failed[AgentAuthRetrievals](BearerTokenExpired())
+          )
+
+          val result = authAction.authorise(false).invokeBlock(
+            fakeRequestWithActiveSession,
+            defaultAsync)
+
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/session-timeout")
+        }
+      }
+
+      "redirect to Signin" when {
+        s"the user is not signed in" in {
+
+          when(mockAuthConnector.authorise[AgentAuthRetrievals](any(), any())(any(), any())).thenReturn(
+            Future.failed[AgentAuthRetrievals](MissingBearerToken())
+          )
+
+          val result = authAction.authorise(false).invokeBlock(
+            fakeRequestWithActiveSession,
+            defaultAsync)
+
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/sign-in")
+        }
       }
     }
   }

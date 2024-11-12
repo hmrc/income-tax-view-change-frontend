@@ -68,7 +68,7 @@ trait ControllerISpecHelper extends ComponentSpecBase {
 
     "does not have arn enrolment" should {
       s"redirect ($SEE_OTHER) to ${controllers.agent.errors.routes.AgentErrorController.show.url}" in {
-        MTDAgentAuthStub.stubNoAgentEnrolment(testMtditid, isSupportingAgent = isSupportingAgent)
+        MTDAgentAuthStub.stubNoAgentEnrolmentError(testMtditid, isSupportingAgent = isSupportingAgent)
         val result = buildMTDClient(requestPath, additionalCookies, optBody).futureValue
 
         result should have(
