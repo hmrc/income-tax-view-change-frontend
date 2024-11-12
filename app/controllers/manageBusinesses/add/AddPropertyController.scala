@@ -19,7 +19,7 @@ package controllers.manageBusinesses.add
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
+import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import forms.manageBusinesses.add.{AddProprertyForm => form}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -41,15 +41,20 @@ class AddPropertyController @Inject()(auth: AuthenticatorPredicate,
                                       val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with I18nSupport with IncomeSourcesUtils{
 
+  private def getBackUrl(isAgent: Boolean): String = if(isAgent) {
+    controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+  } else {
+    controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+  }
+
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       handleRequest(isAgent)
   }
 
   def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
-    val backUrl = Some(controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url)
     val postAction = controllers.manageBusinesses.add.routes.AddPropertyController.submit(isAgent)
-    Future.successful(Ok(addProperty(form.apply, isAgent, backUrl, postAction)))
+    Future.successful(Ok(addProperty(form.apply, isAgent, Some(getBackUrl(isAgent)), postAction)))
   }
 
   def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
@@ -59,7 +64,6 @@ class AddPropertyController @Inject()(auth: AuthenticatorPredicate,
   }
 
   private def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
-    val backUrl = Some(controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url)
     val postAction = controllers.manageBusinesses.add.routes.AddPropertyController.submit(isAgent)
     form.apply.bindFromRequest().fold(
       formWithErrors =>
@@ -68,7 +72,7 @@ class AddPropertyController @Inject()(auth: AuthenticatorPredicate,
             addProperty(
               isAgent = isAgent,
               form = formWithErrors,
-              backUrl = backUrl,
+              backUrl = Some(getBackUrl(isAgent)),
               postAction = postAction
             )
           )

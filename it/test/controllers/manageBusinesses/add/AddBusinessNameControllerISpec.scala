@@ -53,15 +53,11 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
 
   val journeyTypeSE: JourneyType = JourneyType(Add, SelfEmployment)
 
-  def backUrl(isChange: Boolean, isAgent: Boolean): String = {
+  def backUrl(isChange: Boolean): String = {
     if (isChange) {
-      if (isAgent) {
-        controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
-      } else {
-        controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
-      }
+      controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
     } else {
-      controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url
+      controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
     }
   }
 
@@ -76,7 +72,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontendManageBusinesses.getAddBusinessName
 
         lazy val document: Document = Jsoup.parse(result.body)
-        document.getElementsByClass("govuk-back-link").attr("href") shouldBe backUrl(isChange = false, isAgent = false)
+        document.getElementsByClass("govuk-back-link").attr("href") shouldBe backUrl(isChange = false)
 
         result should have(
           httpStatus(OK),
@@ -155,7 +151,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontendManageBusinesses.get("/manage-your-businesses/add-sole-trader/change-business-name")
 
         lazy val document: Document = Jsoup.parse(result.body)
-        document.getElementsByClass("govuk-back-link").attr("href") shouldBe backUrl(isChange = true, isAgent = false)
+        document.getElementsByClass("govuk-back-link").attr("href") shouldBe backUrl(isChange = true)
 
         result should have(
           httpStatus(OK),

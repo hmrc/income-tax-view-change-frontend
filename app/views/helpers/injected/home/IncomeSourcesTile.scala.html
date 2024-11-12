@@ -42,6 +42,14 @@
     }
 }
 
+@manageBusinessesControllerURL = @{
+    if(isAgent) {
+        controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+    } else {
+        controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+    }
+}
+
 @addIncomeSourceLink = @{
     link(
         link = addIncomeSourceControllerURL,
@@ -65,7 +73,7 @@
 
 @manageYourBusinessesLink = @{
     link(
-        link = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url,
+        link = manageBusinessesControllerURL,
         messageKey = "home.incomeSources.newJourney.view"
     )
 }

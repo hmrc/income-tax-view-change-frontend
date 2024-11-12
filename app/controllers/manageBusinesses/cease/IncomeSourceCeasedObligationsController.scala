@@ -85,7 +85,7 @@ class IncomeSourceCeasedObligationsController @Inject()(val authorisedFunctions:
                   endDate,
                   isAgent)(dateService)
 
-                lazy val viewAllBusinessLink = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url
+                lazy val viewAllBusinessLink = if (isAgent) controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url else controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                 lazy val viewUpcomingUpdatesLink = if (isAgent) controllers.routes.NextUpdatesController.showAgent.url else controllers.routes.NextUpdatesController.show().url
 
                 Ok(obligationsView(incomeSourceCeasedObligationsViewModel, viewAllBusinessLink, viewUpcomingUpdatesLink))

@@ -85,7 +85,11 @@
 }
 
 @getManageUrl = @{
-    controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url
+    if(isAgent) {
+        controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+    } else {
+        controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+    }
 }
 
 @getNextUpdatesUrl = @{

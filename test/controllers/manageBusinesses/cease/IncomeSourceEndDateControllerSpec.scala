@@ -28,6 +28,7 @@ import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.mockito.ArgumentMatchers.isA
 import org.mockito.Mockito.mock
 import org.scalatest.Assertion
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
@@ -80,9 +81,14 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
     }
 
     def getActions(isAgent: Boolean, incomeSourceType: IncomeSourceType, id: Option[String], isChange: Boolean): (Call, Call, Call) = {
-      (controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent),
+      val manageBusinessesCall = if(isAgent) {
+        controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent()
+      } else {
+        controllers.manageBusinesses.routes.ManageYourBusinessesController.show()
+      }
+      (manageBusinessesCall,
         routes.IncomeSourceEndDateController.submit(id = id, incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = isChange),
-        controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent))
+        manageBusinessesCall)
 
     }
 

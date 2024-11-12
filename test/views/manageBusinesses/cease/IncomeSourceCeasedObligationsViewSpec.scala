@@ -97,7 +97,7 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
       cessationDate = cessationDate,
       businessName = Some("Test Name")), viewAllBusinessLink, viewUpcomingUpdatesLink)
 
-  val manageYourBusinessShowURL: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent = false).url
+  val manageYourBusinessShowURL: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
   val viewUpcomingUpdatesURL: String = controllers.routes.NextUpdatesController.show().url
 
   "Income Source Ceased Obligations " should {

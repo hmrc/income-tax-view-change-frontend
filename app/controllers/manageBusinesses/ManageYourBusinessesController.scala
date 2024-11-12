@@ -17,14 +17,17 @@
 package controllers.manageBusinesses
 
 import auth.MtdItUser
+import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
+import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
 import views.html.manageBusinesses.ManageYourBusinesses
 
@@ -33,30 +36,34 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ManageYourBusinessesController @Inject()(val manageYourBusinesses: ManageYourBusinesses,
-                                               val authorisedFunctions: AuthorisedFunctions,
-                                               val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                               val sessionService: SessionService,
-                                               val auth: AuthenticatorPredicate)
+                                               val authActions: AuthActions,
+                                               incomeSourceDetailsService: IncomeSourceDetailsService,
+                                               val sessionService: SessionService)
                                               (implicit val ec: ExecutionContext,
-                                               implicit override val mcc: MessagesControllerComponents,
+                                               implicit val mcc: MessagesControllerComponents,
                                                implicit val itvcErrorHandler: ItvcErrorHandler,
                                                implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                               val appConfig: FrontendAppConfig) extends ClientConfirmedController
-  with FeatureSwitching with IncomeSourcesUtils {
+                                               val appConfig: FrontendAppConfig) extends FrontendController(mcc)
+  with FeatureSwitching with IncomeSourcesUtils with I18nSupport {
 
-  def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
+  def show(): Action[AnyContent] = authActions.asMTDIndividual.async { implicit user =>
     handleRequest(
       sources = user.incomeSources,
-      isAgent = isAgent,
-      backUrl = {
-        if (isAgent) controllers.routes.HomeController.showAgent
-        else controllers.routes.HomeController.show()
-      }.url
-    )
+      isAgent = false,
+      backUrl = controllers.routes.HomeController.show().url
+    )(user, itvcErrorHandler)
+  }
+
+  def showAgent(): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async { implicit user =>
+    handleRequest(
+      sources = user.incomeSources,
+      isAgent = true,
+      backUrl = controllers.routes.HomeController.showAgent.url
+    )(user, itvcErrorHandlerAgent)
   }
 
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)
-                   (implicit user: MtdItUser[_]): Future[Result] = {
+                   (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
 
     withIncomeSourcesFS {
       incomeSourceDetailsService.getViewIncomeSourceViewModel(sources) match {
@@ -73,12 +80,12 @@ class ManageYourBusinessesController @Inject()(val manageYourBusinesses: ManageY
             case ex: Exception =>
               Logger("application").error(
                 s"Session Error: ${ex.getMessage} - ${ex.getCause}")
-              showInternalServerError(isAgent)
+              errorHandler.showInternalServerError()
           }
         case Left(ex) =>
           Logger("application").error(
             s"Error: ${ex.getMessage} - ${ex.getCause}")
-          Future(showInternalServerError(isAgent))
+          Future(errorHandler.showInternalServerError())
       }
     }
   }

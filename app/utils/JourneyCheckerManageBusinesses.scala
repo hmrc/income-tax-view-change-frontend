@@ -75,7 +75,12 @@ trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils {
   private lazy val journeyRestartUrl: MtdItUser[_] => Future[Result] =
     user => {
       Future.successful {
-        Redirect(controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent(user)))
+        val manageBusinessesCall = if(isAgent(user)) {
+          controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent()
+        } else {
+          controllers.manageBusinesses.routes.ManageYourBusinessesController.show()
+        }
+        Redirect(manageBusinessesCall)
       }
     }
 
