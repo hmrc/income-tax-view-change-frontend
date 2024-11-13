@@ -54,7 +54,7 @@
 }
 
 @changeReportingMethodUrl(taxYear: String, changeTo: String) = @{
-    controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController.show(taxYear, changeTo, isAgent, viewModel.incomeSourceType).url
+    controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController.show(taxYear, changeTo, viewModel.incomeSourceType).url
 }
 
 @changeToValue(currentMethod: String) = @{

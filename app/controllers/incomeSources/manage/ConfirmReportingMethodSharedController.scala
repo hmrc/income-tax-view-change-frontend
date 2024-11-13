@@ -19,9 +19,9 @@ package controllers.incomeSources.manage
 import audit.AuditingService
 import audit.models.IncomeSourceReportingMethodAuditModel
 import auth.MtdItUser
+import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{IncomeSourceJourneyType, JourneyType, Manage}
 import exceptions.MissingSessionKey
@@ -32,53 +32,74 @@ import models.incomeSourceDetails.{LatencyYear, ManageIncomeSourceData, TaxYear}
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import play.api.MarkerContext.NoMarker
+import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{DateService, SessionService, UpdateIncomeSourceService}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.{IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.manage.{ConfirmReportingMethod, ManageIncomeSources}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: ManageIncomeSources,
-                                                       val authorisedFunctions: AuthorisedFunctions,
+                                                       val authActions: AuthActions,
                                                        val updateIncomeSourceService: UpdateIncomeSourceService,
                                                        val confirmReportingMethod: ConfirmReportingMethod,
                                                        val sessionService: SessionService,
                                                        val auditingService: AuditingService,
-                                                       val dateService: DateService,
-                                                       val auth: AuthenticatorPredicate)
+                                                       val dateService: DateService)
                                                       (implicit val ec: ExecutionContext,
-                                                       implicit val itvcErrorHandler: ItvcErrorHandler,
-                                                       override implicit val mcc: MessagesControllerComponents,
-                                                       implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                                       implicit val appConfig: FrontendAppConfig) extends ClientConfirmedController
-  with FeatureSwitching with IncomeSourcesUtils with JourneyChecker {
+                                                       val itvcErrorHandler: ItvcErrorHandler,
+                                                       val mcc: MessagesControllerComponents,
+                                                       val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                                       val appConfig: FrontendAppConfig) extends FrontendController(mcc)
+  with FeatureSwitching with IncomeSourcesUtils with JourneyChecker with I18nSupport {
 
   def show(taxYear: String,
            changeTo: String,
-           isAgent: Boolean,
            incomeSourceType: IncomeSourceType
-          ): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
-    withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = AfterSubmissionPage) { sessionData =>
+          ): Action[AnyContent] = authActions.asMTDIndividual.async { implicit user =>
+    withSessionData(JourneyType(Manage, incomeSourceType), journeyState = AfterSubmissionPage) { sessionData =>
       val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
       val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
-      handleShowRequest(taxYear, changeTo, isAgent, incomeSourceType, incomeSourceIdOpt)
+      handleShowRequest(taxYear, changeTo, false, incomeSourceType, incomeSourceIdOpt)
+    }
+  }
+
+  def showAgent(taxYear: String,
+           changeTo: String,
+           incomeSourceType: IncomeSourceType
+          ): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async { implicit user =>
+    withSessionData(JourneyType(Manage, incomeSourceType), journeyState = AfterSubmissionPage) { sessionData =>
+      val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
+      val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
+      handleShowRequest(taxYear, changeTo, true, incomeSourceType, incomeSourceIdOpt)
     }
   }
 
   def submit(taxYear: String,
              changeTo: String,
-             isAgent: Boolean,
              incomeSourceType: IncomeSourceType
-            ): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
+            ): Action[AnyContent] = authActions.asMTDIndividual.async { implicit user =>
 
     withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), BeforeSubmissionPage) { sessionData =>
       val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
       val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
-      handleSubmitRequest(taxYear, changeTo, isAgent, incomeSourceIdOpt, incomeSourceType)
+      handleSubmitRequest(taxYear, changeTo, false, incomeSourceIdOpt, incomeSourceType)
+    }
+  }
+
+  def submitAgent(taxYear: String,
+             changeTo: String,
+             incomeSourceType: IncomeSourceType
+            ): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async { implicit user =>
+
+    withSessionData(JourneyType(Manage, incomeSourceType), BeforeSubmissionPage) { sessionData =>
+      val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
+      val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
+      handleSubmitRequest(taxYear, changeTo, true, incomeSourceIdOpt, incomeSourceType)
     }
   }
 
@@ -101,13 +122,13 @@ user.incomeSources.getLatencyDetails(incomeSourceType, id.value) match {
 
           Ok(
             confirmReportingMethod(
-              isAgent = isAgent,
               backUrl = backCall.url,
+              isAgent = isAgent,
               newReportingMethod = reportingMethod,
               form = ConfirmReportingMethodForm(changeTo),
               taxYearEndYear = taxYearModel.endYear.toString,
               taxYearStartYear = taxYearModel.startYear.toString,
-              postAction = getPostAction(taxYear, changeTo, isAgent, incomeSourceType),
+              postAction = getPostAction(taxYear, changeTo, incomeSourceType),
               isCurrentTaxYear = dateService.getCurrentTaxYearEnd.equals(taxYearModel.endYear)
             ))
                 }
@@ -151,7 +172,7 @@ user.incomeSources.getLatencyDetails(incomeSourceType, id.value) match {
                     newReportingMethod = reportingMethod,
                     taxYearEndYear = taxYearModel.endYear.toString,
                     taxYearStartYear = taxYearModel.startYear.toString,
-                    postAction = getPostAction(taxYear, changeTo, isAgent, incomeSourceType),
+                    postAction = getPostAction(taxYear, changeTo, incomeSourceType),
                     isCurrentTaxYear = dateService.getCurrentTaxYearEnd.equals(taxYearModel.endYear)
                   )
                 )
@@ -272,9 +293,9 @@ user.incomeSources.getLatencyDetails(incomeSourceType, id.value) match {
     (backCall, successCall)
   }
 
-  private def getPostAction(taxYear: String, changeTo: String, isAgent: Boolean, incomeSourceType: IncomeSourceType): Call = {
+  private def getPostAction(taxYear: String, changeTo: String, incomeSourceType: IncomeSourceType): Call = {
     routes.ConfirmReportingMethodSharedController
-      .submit(taxYear, changeTo, isAgent, incomeSourceType)
+      .submit(taxYear, changeTo, incomeSourceType)
   }
 
   private def getErrorCall(incomeSourceType: IncomeSourceType, isAgent: Boolean): Call = {
