@@ -380,7 +380,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
         filtered shouldBe List(true, false, true, false)
       }
     }
-    "include FS related charges" when{
+    "include FS related charges" when {
       "FS is enabled" in {
         val chargesListWithRandR: List[ChargeItem] = List(
           chargeItemModel(transactionType = BalancingCharge),
@@ -390,6 +390,13 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
         )
         val filtered = chargesListWithRandR.map(filterAllowedCharges(true, PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile))
         filtered shouldBe List(true, true, true, true)
+      }
+    }
+    "return empty list" when {
+      "fed an empty list" in {
+        val chargesList = List()
+        val filtered = chargesList.map(filterAllowedCharges(true, PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile))
+        filtered shouldBe List()
       }
     }
   }
