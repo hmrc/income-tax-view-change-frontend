@@ -16,55 +16,57 @@
 
 package controllers.manageBusinesses.add
 
-import models.admin.IncomeSources
-import helpers.ComponentSpecBase
-import helpers.servicemocks.{AddressLookupStub, IncomeTaxViewChangeStub}
+import controllers.ControllerISpecHelper
+import helpers.servicemocks.{AddressLookupStub, IncomeTaxViewChangeStub, MTDIndividualAuthStub}
+import models.admin.{IncomeSources, NavBarFs}
 import play.api.http.Status.{OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
 
-class AddBusinessAddressControllerISpec extends ComponentSpecBase {
+class AddBusinessAddressControllerISpec extends ControllerISpecHelper {
 
-  val changeBusinessAddressShowUrl: String = controllers.manageBusinesses.add.routes.AddBusinessAddressController.show(isChange = true).url
-  val businessAddressShowUrl: String = controllers.manageBusinesses.add.routes.AddBusinessAddressController.show(isChange = false).url
+  val path = "/manage-your-businesses/add-sole-trader/business-address"
+  val changePath = "/manage-your-businesses/add-sole-trader/change-business-address-lookup"
 
-  s"calling GET $businessAddressShowUrl" should {
-    "render the add business address page" when {
-      "User is authorised" in {
-        Given("I wiremock stub a successful Income Source Details response")
+  s"GET $path" when {
+    "the user is authenticated, with a valid MTD enrolment" should {
+      "redirect to address lookup" in {
         enable(IncomeSources)
+        disable(NavBarFs)
+        MTDIndividualAuthStub.stubAuthorised()
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-        And("address lookup service returns an ACCEPTED (202) HTTP status and has a location in its header")
         AddressLookupStub.stubPostInitialiseAddressLookup()
 
-        When(s"I call GET $businessAddressShowUrl")
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.getAddBusinessAddress
+        val result = buildGETMTDClient(path).futureValue
 
         result should have(
           httpStatus(SEE_OTHER),
+          redirectURI("TestRedirect")
         )
       }
     }
+    testAuthFailuresForMTDIndividual(path)
   }
 
-  s"calling GET $changeBusinessAddressShowUrl" should {
-    "render the change business address page" when {
-      "User is authorised" in {
-        Given("I wiremock stub a successful Income Source Details response")
+  s"GET $changePath" when {
+    "the user is authenticated, with a valid MTD enrolment" should {
+      "redirect to address lookup" in {
         enable(IncomeSources)
+        disable(NavBarFs)
+        MTDIndividualAuthStub.stubAuthorised()
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-        And("address lookup service returns an ACCEPTED (202) HTTP status and has a location in its header")
         AddressLookupStub.stubPostInitialiseAddressLookup()
 
-        When(s"I call GET $changeBusinessAddressShowUrl")
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.getAddChangeBusinessAddress
+        val result = buildGETMTDClient(changePath).futureValue
 
         result should have(
           httpStatus(SEE_OTHER),
+          redirectURI("TestRedirect")
         )
       }
     }
+    testAuthFailuresForMTDIndividual(changePath)
   }
 }
