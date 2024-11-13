@@ -28,7 +28,7 @@ import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.admin.FeatureSwitchService
-import services.{CalculationService, IncomeSourceDetailsService}
+import services.{CalculationService, IncomeSourceDetailsService, SessionDataService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.play.language.LanguageUtils
 import utils.AuthenticatorPredicate
@@ -45,7 +45,8 @@ class ForecastIncomeSummaryController @Inject()(val forecastIncomeSummaryView: F
                                                 val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                 val authorisedFunctions: AuthorisedFunctions,
                                                 val featureSwitchService: FeatureSwitchService,
-                                                auth: AuthenticatorPredicate)
+                                                auth: AuthenticatorPredicate,
+                                                val sessionDataService: SessionDataService)
                                                (implicit val ec: ExecutionContext,
                                                 val languageUtils: LanguageUtils,
                                                 val appConfig: FrontendAppConfig,
@@ -87,7 +88,9 @@ class ForecastIncomeSummaryController @Inject()(val forecastIncomeSummaryView: F
 
   def showAgent(taxYear: Int): Action[AnyContent] = auth.authenticatedActionWithNinoAgent {
     implicit response =>
-        handleRequest(taxYear, isAgent = true)(getMtdItUserWithNino()(response.agent, response.request))
+      getMtdItUserWithNino()(response.agent, response.request) flatMap { userWithNino =>
+        handleRequest(taxYear, isAgent = true)(userWithNino)
+      }
   }
 
   def backUrl(taxYear: Int, origin: Option[String], isAgent: Boolean): String =

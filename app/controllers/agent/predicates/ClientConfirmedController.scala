@@ -17,7 +17,8 @@
 package controllers.agent.predicates
 
 import auth.{MtdItUser, MtdItUserOptionNino, MtdItUserWithNino}
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
+import config.featureswitch.FeatureSwitching
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.sessionUtils.SessionKeys
 import controllers.predicates.AuthPredicate.AuthPredicate
 import controllers.predicates.IncomeTaxAgentUser
@@ -25,14 +26,17 @@ import controllers.predicates.agent.AgentAuthenticationPredicate
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
 import play.api.mvc.{AnyContent, MessagesControllerComponents, Request, Result}
-import services.IncomeSourceDetailsService
+import services.{IncomeSourceDetailsService, SessionDataService}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.Name
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
 import scala.concurrent.Future
 
-trait ClientConfirmedController extends BaseAgentController {
+trait ClientConfirmedController extends BaseAgentController with FeatureSwitching {
+
+  val appConfig: FrontendAppConfig
+  val sessionDataService: SessionDataService
 
   override protected def baseAgentPredicates: AuthPredicate[IncomeTaxAgentUser] = AgentAuthenticationPredicate.confirmedClientPredicates
 
@@ -64,26 +68,52 @@ trait ClientConfirmedController extends BaseAgentController {
   }
 
   def getMtdItUserWithNino()(
-    implicit user: IncomeTaxAgentUser, request: Request[AnyContent]): MtdItUserWithNino[AnyContent] = {
-    MtdItUserWithNino(
-      mtditid = getClientMtditid, nino = getClientNino, userName = None,
-      saUtr = getClientUtr, credId = user.credId, userType = Some(Agent), arn = user.agentReferenceNumber, optClientName = getClientName
-    )
+    implicit user: IncomeTaxAgentUser, request: Request[AnyContent]): Future[MtdItUserWithNino[AnyContent]] = {
+    if (appConfig.isSessionDataStorageEnabled) {
+      sessionDataService.getSessionData() map {
+        case Left(error) => throw new InternalServerException(s"client details not found: $error")
+        case Right(data) =>
+          MtdItUserWithNino(
+            mtditid = data.mtditid, nino = data.nino, userName = None,
+            saUtr = Some(data.utr), credId = user.credId, userType = Some(Agent), arn = user.agentReferenceNumber, optClientName = None
+          )
+      }
+    }
+    else {
+      Future.successful(MtdItUserWithNino(
+        mtditid = getClientMtditid, nino = getClientNino, userName = None,
+        saUtr = getClientUtr, credId = user.credId, userType = Some(Agent), arn = user.agentReferenceNumber, optClientName = getClientName
+      ))
+    }
   }
 
   def getMtdItUserWithIncomeSources(incomeSourceDetailsService: IncomeSourceDetailsService)(
     implicit user: IncomeTaxAgentUser, request: Request[AnyContent], hc: HeaderCarrier): Future[MtdItUser[AnyContent]] = {
-    val userOptionNino: MtdItUserOptionNino[_] = MtdItUserOptionNino(
-      getClientMtditid, Some(getClientNino), None, None, getClientUtr, user.credId, Some(Agent), user.agentReferenceNumber, getClientName
-    )
+    val userMaybeNino: Future[MtdItUserOptionNino[_]] =
+      if (appConfig.isSessionDataStorageEnabled) {
+        sessionDataService.getSessionData() map {
+          case Left(error) => throw new InternalServerException(s"client details not found: $error")
+          case Right(data) =>
+            MtdItUserOptionNino(
+              data.mtditid, Some(data.nino), None, None, Some(data.utr), user.credId, Some(Agent), user.agentReferenceNumber, getClientName
+            )
+        }
+      }
+      else {
+        Future.successful(MtdItUserOptionNino(
+          getClientMtditid, Some(getClientNino), None, None, getClientUtr, user.credId, Some(Agent), user.agentReferenceNumber, getClientName
+        ))
+      }
 
-    incomeSourceDetailsService.getIncomeSourceDetails()(hc = hc, mtdUser = userOptionNino) map {
-      case model@IncomeSourceDetailsModel(nino, _, _, _, _) => MtdItUser(
-        userOptionNino.mtditid, nino, userOptionNino.userName, model, None, userOptionNino.saUtr,
-        userOptionNino.credId, userOptionNino.userType, userOptionNino.arn, userOptionNino.optClientName)
-      case _ =>
-        Logger("application").error("Failed to retrieve income sources for agent")
-        throw new InternalServerException("IncomeSourceDetailsModel not created")
+    userMaybeNino.flatMap { userOptionNino =>
+      incomeSourceDetailsService.getIncomeSourceDetails()(hc = hc, mtdUser = userOptionNino) map {
+        case model@IncomeSourceDetailsModel(nino, _, _, _, _) => MtdItUser(
+          userOptionNino.mtditid, nino, userOptionNino.userName, model, None, userOptionNino.saUtr,
+          userOptionNino.credId, userOptionNino.userType, userOptionNino.arn, userOptionNino.optClientName)
+        case _ =>
+          Logger("application").error("Failed to retrieve income sources for agent")
+          throw new InternalServerException("IncomeSourceDetailsModel not created")
+      }
     }
   }
 

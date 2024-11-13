@@ -29,7 +29,7 @@ import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculat
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{CalculationService, IncomeSourceDetailsService}
+import services.{CalculationService, IncomeSourceDetailsService, SessionDataService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.AuthenticatorPredicate
 import views.html.FinalTaxCalculationView
@@ -46,7 +46,8 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
                                               implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                               val incomeSourceDetailsService: IncomeSourceDetailsService,
                                               implicit val appConfig: FrontendAppConfig,
-                                              val auth: AuthenticatorPredicate
+                                              val auth: AuthenticatorPredicate,
+                                              val sessionDataService: SessionDataService
                                              ) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
   def handleShowRequest(taxYear: Int,

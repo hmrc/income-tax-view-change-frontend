@@ -24,7 +24,7 @@ import forms.utils.SessionKeys
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.CalculationPollingService
+import services.{CalculationPollingService, SessionDataService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -42,7 +42,8 @@ class CalculationPollingController @Inject()(val authorisedFunctions: Authorised
                                             (implicit val appConfig: FrontendAppConfig,
                                              implicit override val mcc: MessagesControllerComponents,
                                              implicit val ec: ExecutionContext,
-                                             val languageUtils: LanguageUtils)
+                                             val languageUtils: LanguageUtils,
+                                             val sessionDataService: SessionDataService)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
   def handleRequest(origin: Option[String] = None,
@@ -96,6 +97,7 @@ class CalculationPollingController @Inject()(val authorisedFunctions: Authorised
 
   def calculationPollerAgent(taxYear: Int, isFinalCalc: Boolean, origin: Option[String] = None): Action[AnyContent] = {
     auth.authenticatedActionWithNinoAgent { implicit response =>
+      getMtdItUserWithNino()(response.agent, response.request) flatMap { userWithNino =>
 
         lazy val successfulPollRedirect: Call = if (isFinalCalc) {
           controllers.routes.FinalTaxCalculationController.showAgent(taxYear)
@@ -110,9 +112,9 @@ class CalculationPollingController @Inject()(val authorisedFunctions: Authorised
           isAgent = true,
           successfulPollRedirect = successfulPollRedirect,
           calculationId = response.request.session.get(SessionKeys.calculationId)
-        )(getMtdItUserWithNino()(response.agent, response.request), response.hc, implicitly)
+        )(userWithNino, response.hc, implicitly)
 
+      }
     }
   }
-
 }

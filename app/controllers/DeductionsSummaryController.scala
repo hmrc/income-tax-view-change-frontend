@@ -29,7 +29,7 @@ import models.liabilitycalculation.viewmodels.AllowancesAndDeductionsViewModel
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
-import services.CalculationService
+import services.{CalculationService, SessionDataService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -46,7 +46,8 @@ class DeductionsSummaryController @Inject()(val authorisedFunctions: AuthorisedF
                                             val deductionBreakdownView: DeductionBreakdown,
                                             val itvcErrorHandler: ItvcErrorHandler,
                                             val auth: AuthenticatorPredicate,
-                                            implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                            implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                            val sessionDataService: SessionDataService)
                                            (implicit val appConfig: FrontendAppConfig,
                                             implicit override val mcc: MessagesControllerComponents,
                                             val ec: ExecutionContext,
@@ -88,11 +89,13 @@ class DeductionsSummaryController @Inject()(val authorisedFunctions: AuthorisedF
 
   def showDeductionsSummaryAgent(taxYear: Int): Action[AnyContent] = {
     auth.authenticatedActionWithNinoAgent { implicit response =>
+      getMtdItUserWithNino()(response.agent, response.request) flatMap { userWithNino =>
         handleRequest(
           itcvErrorHandler = itvcErrorHandlerAgent,
           taxYear = taxYear,
           isAgent = true
-        )(getMtdItUserWithNino()(response.agent, response.request), response.hc, implicitly, response.messages)
+        )(userWithNino, response.hc, implicitly, response.messages)
+      }
     }
   }
 
