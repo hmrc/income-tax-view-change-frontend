@@ -20,6 +20,7 @@ import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.agent.sessionUtils
+import enums.{MTDIndividual, MTDPrimaryAgent, MTDUserRole}
 import implicits.ImplicitDateFormatterImpl
 import models.admin.FeatureSwitchName.allFeatureSwitches
 import models.incomeSourceDetails.IncomeSourceDetailsModel
@@ -165,6 +166,14 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
 
   implicit class JsoupParse(x: Future[Result]) {
     def toHtmlDocument: Document = Jsoup.parse(contentAsString(x))
+  }
+
+  def getFakeRequestBasedOnMTDUserType(mtdUserRole: MTDUserRole): FakeRequest[AnyContentAsEmpty.type] = {
+    mtdUserRole match {
+      case MTDIndividual => fakeRequestWithActiveSession
+      case MTDPrimaryAgent => fakeRequestConfirmedClient()
+      case _ => fakeRequestConfirmedClient(isSupportingAgent = true)
+    }
   }
 
   lazy val fakeRequestWithActiveSession: FakeRequest[AnyContentAsEmpty.type] =
