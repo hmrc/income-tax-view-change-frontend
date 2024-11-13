@@ -17,7 +17,7 @@
 package testOnly.controllers
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import models.sessionData.SessionDataModel
 import models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostSuccess}
@@ -37,7 +37,9 @@ class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContex
                                                 implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                 val authorisedFunctions: FrontendAuthorisedFunctions,
                                                 val auth: AuthenticatorPredicate,
-                                                val sessionDataService: SessionDataService
+                                                val sessionDataService: SessionDataService,
+                                                val appConfig: FrontendAppConfig,
+                                                implicit val hc: HeaderCarrier
                                                ) extends ClientConfirmedController {
 
   def show(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {

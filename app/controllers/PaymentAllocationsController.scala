@@ -32,7 +32,7 @@ import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import play.mvc.Http
-import services.{IncomeSourceDetailsService, PaymentAllocationsService}
+import services.{IncomeSourceDetailsService, PaymentAllocationsService, SessionDataService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{AuthenticatorPredicate, FallBackBackLinks}
@@ -50,7 +50,8 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
                                              implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                              paymentAllocations: PaymentAllocationsService,
                                              auditingService: AuditingService,
-                                             val auth: AuthenticatorPredicate)
+                                             val auth: AuthenticatorPredicate,
+                                             val sessionDataService: SessionDataService)
                                             (implicit override val mcc: MessagesControllerComponents,
                                              val ec: ExecutionContext,
                                              val implicitDateFormatter: ImplicitDateFormatterImpl,

@@ -21,7 +21,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.IncomeSourceType
 import play.api.mvc._
-import services.CreateBusinessDetailsService
+import services.{CreateBusinessDetailsService, SessionDataService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
 import views.html.manageBusinesses.add.IncomeSourceNotAddedError
@@ -32,7 +32,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class IncomeSourceNotAddedController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                                val businessDetailsService: CreateBusinessDetailsService,
                                                val incomeSourceNotAddedError: IncomeSourceNotAddedError,
-                                               val auth: AuthenticatorPredicate)
+                                               val auth: AuthenticatorPredicate,
+                                               val sessionDataService: SessionDataService)
                                               (implicit val appConfig: FrontendAppConfig,
                                                mcc: MessagesControllerComponents,
                                                val ec: ExecutionContext,

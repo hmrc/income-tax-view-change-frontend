@@ -25,7 +25,7 @@ import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{IncomeSourceDetailsService, SessionService}
+import services.{IncomeSourceDetailsService, SessionDataService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
 import views.html.manageBusinesses.cease.CeaseIncomeSources
@@ -39,7 +39,8 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
                                             implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                             val incomeSourceDetailsService: IncomeSourceDetailsService,
                                             val sessionService: SessionService,
-                                            val auth: AuthenticatorPredicate)
+                                            val auth: AuthenticatorPredicate,
+                                            val sessionDataService: SessionDataService)
                                            (implicit val ec: ExecutionContext,
                                             implicit override val mcc: MessagesControllerComponents,
                                             val appConfig: FrontendAppConfig)

@@ -24,6 +24,7 @@ import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import services.SessionDataService
 import services.optIn.OptInService
 import utils.AuthenticatorPredicate
 import views.html.optIn.BeforeYouStart
@@ -32,7 +33,8 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class BeforeYouStartController @Inject()(val beforeYouStart: BeforeYouStart,
-                                         val optInService: OptInService)
+                                         val optInService: OptInService,
+                                         val sessionDataService: SessionDataService)
                                         (implicit val appConfig: FrontendAppConfig,
                                          val ec: ExecutionContext,
                                          val auth: AuthenticatorPredicate,

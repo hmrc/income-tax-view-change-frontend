@@ -27,7 +27,7 @@ import models.creditDetailModel.CreditDetailModel
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{CreditHistoryService, IncomeSourceDetailsService}
+import services.{CreditHistoryService, IncomeSourceDetailsService, SessionDataService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.AuthenticatorPredicate
@@ -39,15 +39,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
                                          val authorisedFunctions: AuthorisedFunctions,
-                                         incomeSourceDetailsService: IncomeSourceDetailsService,
                                          creditHistoryService: CreditHistoryService,
                                          itvcErrorHandler: ItvcErrorHandler,
-                                         checkSessionTimeout: SessionTimeoutPredicate,
-                                         retrieveBtaNavBar: NavBarPredicate,
-                                         authenticate: AuthenticationPredicate,
-                                         retrieveNino: NinoPredicate,
-                                         retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                                         auth: AuthenticatorPredicate)
+                                         auth: AuthenticatorPredicate,
+                                         val sessionDataService: SessionDataService)
                                         (implicit val appConfig: FrontendAppConfig,
                                          mcc: MessagesControllerComponents,
                                          msgApi: MessagesApi,

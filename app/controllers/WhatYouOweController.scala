@@ -30,7 +30,7 @@ import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{ClaimToAdjustService, DateServiceInterface, WhatYouOweService}
+import services.{ClaimToAdjustService, DateServiceInterface, SessionDataService, WhatYouOweService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.AuthenticatorPredicate
 import views.html.WhatYouOwe
@@ -49,7 +49,8 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
                                      implicit override val mcc: MessagesControllerComponents,
                                      implicit val ec: ExecutionContext,
                                      whatYouOwe: WhatYouOwe,
-                                     val auth: AuthenticatorPredicate
+                                     val auth: AuthenticatorPredicate,
+                                     val sessionDataService: SessionDataService
                                     ) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
   def handleRequest(backUrl: String,

@@ -28,7 +28,7 @@ import models.incomeSourceDetails.CeaseIncomeSourceData
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
-import services.{IncomeSourceDetailsService, SessionService}
+import services.{IncomeSourceDetailsService, SessionDataService, SessionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.cease.DeclarePropertyCeased
@@ -39,7 +39,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class DeclarePropertyCeasedController @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
                                                 val view: DeclarePropertyCeased,
                                                 val sessionService: SessionService,
-                                                val auth: AuthenticatorPredicate)
+                                                val auth: AuthenticatorPredicate,
+                                                val sessionDataService: SessionDataService)
                                                (implicit val appConfig: FrontendAppConfig,
                                                 mcc: MessagesControllerComponents,
                                                 val ec: ExecutionContext,

@@ -20,6 +20,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.SessionDataService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.AuthenticatorPredicate
 import views.html.optIn.OptInError
@@ -29,7 +30,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class OptInErrorController @Inject()(val view: OptInError,
                                      val auth: AuthenticatorPredicate,
-                                     val authorisedFunctions: AuthorisedFunctions)
+                                     val authorisedFunctions: AuthorisedFunctions,
+                                     val sessionDataService: SessionDataService)
                                     (implicit val appConfig: FrontendAppConfig,
                                       val ec: ExecutionContext,
                                       val itvcErrorHandler: ItvcErrorHandler,

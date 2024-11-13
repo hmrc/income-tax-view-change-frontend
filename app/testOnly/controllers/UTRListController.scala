@@ -23,6 +23,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
+import services.SessionDataService
 import testOnly.models.Identifier
 import testOnly.services.EnrolmentService
 import testOnly.utils.UserRepository
@@ -40,7 +41,8 @@ class UTRListController @Inject()(
                                    val authorisedFunctions: AuthorisedFunctions,
                                    enrolmentService: EnrolmentService,
                                    userRepository: UserRepository,
-                                   val auth: AuthenticatorPredicate
+                                   val auth: AuthenticatorPredicate,
+                                   val sessionDataService: SessionDataService
                                  )(implicit
                                    val appConfig: FrontendAppConfig,
                                    mcc: MessagesControllerComponents,

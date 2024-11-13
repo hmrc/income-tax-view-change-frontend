@@ -26,7 +26,7 @@ import models.admin.ReportingFrequencyPage
 import models.optout.{OptOutMultiYearViewModel, OptOutOneYearViewModel}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.DateService
+import services.{DateService, SessionDataService}
 import services.optIn.OptInService
 import services.optout.OptOutService
 import views.html.ReportingFrequencyView
@@ -41,7 +41,8 @@ class ReportingFrequencyPageController @Inject()(
                                                   val auth: AuthActions,
                                                   dateService: DateService,
                                                   errorTemplate: ErrorTemplate,
-                                                  view: ReportingFrequencyView
+                                                  view: ReportingFrequencyView,
+                                                  val sessionDataService: SessionDataService
                                                 )(
                                                   implicit val appConfig: FrontendAppConfig,
                                                   mcc: MessagesControllerComponents,

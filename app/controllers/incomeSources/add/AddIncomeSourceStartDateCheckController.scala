@@ -29,7 +29,7 @@ import models.incomeSourceDetails.UIJourneySessionData
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{DateService, SessionService}
+import services.{DateService, SessionDataService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.play.language.LanguageUtils
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
@@ -45,7 +45,8 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
                                                         val addIncomeSourceStartDateCheckView: AddIncomeSourceStartDateCheck,
                                                         val languageUtils: LanguageUtils,
                                                         val sessionService: SessionService,
-                                                        auth: AuthenticatorPredicate)
+                                                        auth: AuthenticatorPredicate,
+                                                        val sessionDataService: SessionDataService)
                                                        (implicit val appConfig: FrontendAppConfig,
                                                         implicit val dateService: DateService,
                                                         mcc: MessagesControllerComponents,

@@ -25,7 +25,7 @@ import enums.JourneyType.{JourneyType, Manage}
 import models.incomeSourceDetails.{ManageIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.mvc._
-import services.{IncomeSourceDetailsService, SessionService}
+import services.{IncomeSourceDetailsService, SessionDataService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
@@ -37,7 +37,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class CannotGoBackErrorController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                             val cannotGoBackError: YouCannotGoBackError,
                                             val sessionService: SessionService,
-                                            val auth: AuthenticatorPredicate)
+                                            val auth: AuthenticatorPredicate,
+                                            val sessionDataService: SessionDataService)
                                            (implicit val appConfig: FrontendAppConfig,
                                             mcc: MessagesControllerComponents,
                                             val ec: ExecutionContext,

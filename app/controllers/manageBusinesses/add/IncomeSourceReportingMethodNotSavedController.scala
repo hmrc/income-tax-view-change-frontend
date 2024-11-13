@@ -22,6 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.IncomeSourceType
 import play.api.mvc._
+import services.SessionDataService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
@@ -33,7 +34,8 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class IncomeSourceReportingMethodNotSavedController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                                               val view: IncomeSourceReportingMethodNotSaved,
-                                                              val auth: AuthenticatorPredicate)
+                                                              val auth: AuthenticatorPredicate,
+                                                              val sessionDataService: SessionDataService)
                                                              (implicit val ec: ExecutionContext,
                                                               implicit override val mcc: MessagesControllerComponents,
                                                               implicit val itvcAgentErrorHandler: AgentItvcErrorHandler,

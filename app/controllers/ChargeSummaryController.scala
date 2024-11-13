@@ -33,7 +33,7 @@ import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.claimToAdjustPoa.ClaimToAdjustHelper.{isPoaOne, isPoaTwo}
-import services.{ChargeHistoryService, DateServiceInterface, FinancialDetailsService, IncomeSourceDetailsService}
+import services.{ChargeHistoryService, DateServiceInterface, FinancialDetailsService, IncomeSourceDetailsService, SessionDataService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
 import utils.{AuthenticatorPredicate, FallBackBackLinks}
@@ -55,7 +55,8 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
                                         val incomeSourceDetailsService: IncomeSourceDetailsService,
                                         val chargeHistoryService: ChargeHistoryService,
                                         val authorisedFunctions: FrontendAuthorisedFunctions,
-                                        val customNotFoundErrorView: CustomNotFoundError)
+                                        val customNotFoundErrorView: CustomNotFoundError,
+                                        val sessionDataService: SessionDataService)
                                        (implicit val appConfig: FrontendAppConfig,
                                         dateService: DateServiceInterface,
                                         val languageUtils: LanguageUtils,

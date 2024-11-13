@@ -25,6 +25,7 @@ import models.optin.OptInCompletedViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import services.SessionDataService
 import services.optIn.OptInService
 import services.optIn.core.OptInProposition
 import utils.AuthenticatorPredicate
@@ -36,7 +37,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class OptInCompletedController @Inject()(val view: OptInCompletedView,
                                          val optInService: OptInService,
                                          val authorisedFunctions: FrontendAuthorisedFunctions,
-                                         val auth: AuthenticatorPredicate)
+                                         val auth: AuthenticatorPredicate,
+                                         val sessionDataService: SessionDataService)
                                         (implicit val appConfig: FrontendAppConfig,
                                          mcc: MessagesControllerComponents,
                                          val ec: ExecutionContext,

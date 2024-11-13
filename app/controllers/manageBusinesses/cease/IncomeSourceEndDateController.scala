@@ -30,7 +30,7 @@ import models.incomeSourceDetails.CeaseIncomeSourceData
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{DateService, SessionService}
+import services.{DateService, SessionDataService, SessionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.manageBusinesses.cease.IncomeSourceEndDate
@@ -44,7 +44,8 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
                                               val incomeSourceEndDate: IncomeSourceEndDate,
                                               val sessionService: SessionService,
                                               form: CeaseIncomeSourceEndDateFormProvider,
-                                              val auth: AuthenticatorPredicate)
+                                              val auth: AuthenticatorPredicate,
+                                              val sessionDataService: SessionDataService)
                                              (implicit val appConfig: FrontendAppConfig,
                                               mcc: MessagesControllerComponents,
                                               val ec: ExecutionContext,

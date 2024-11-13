@@ -29,7 +29,7 @@ import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculat
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.CalculationService
+import services.{CalculationService, SessionDataService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -46,7 +46,8 @@ class TaxDueSummaryController @Inject()(val authorisedFunctions: AuthorisedFunct
                                         implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                         val taxCalcBreakdown: TaxCalcBreakdown,
                                         val auditingService: AuditingService,
-                                        val auth: AuthenticatorPredicate)
+                                        val auth: AuthenticatorPredicate,
+                                        val sessionDataService: SessionDataService)
                                        (implicit val appConfig: FrontendAppConfig,
                                         val languageUtils: LanguageUtils,
                                         mcc: MessagesControllerComponents,

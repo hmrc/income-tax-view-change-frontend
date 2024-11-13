@@ -26,6 +26,7 @@ import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import repositories.OptOutSessionDataRepository
+import services.SessionDataService
 import services.optout.OptOutService
 import utils.AuthenticatorPredicate
 import views.html.optOut.OptOutChooseTaxYear
@@ -35,7 +36,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class OptOutChooseTaxYearController @Inject()(val optOutChooseTaxYear: OptOutChooseTaxYear,
                                               val optOutService: OptOutService,
-                                              val repository: OptOutSessionDataRepository)
+                                              val repository: OptOutSessionDataRepository,
+                                              val sessionDataService: SessionDataService)
                                              (implicit val appConfig: FrontendAppConfig,
                                               val ec: ExecutionContext,
                                               val auth: AuthenticatorPredicate,

@@ -28,7 +28,7 @@ import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculat
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
-import services.{CalculationService, IncomeSourceDetailsService}
+import services.{CalculationService, IncomeSourceDetailsService, SessionDataService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -46,7 +46,8 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
                                         val auditingService: AuditingService,
                                         val itvcErrorHandler: ItvcErrorHandler,
                                         implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                        val auth: AuthenticatorPredicate)
+                                        val auth: AuthenticatorPredicate,
+                                        val sessionDataService: SessionDataService)
                                        (implicit val ec: ExecutionContext,
                                         val languageUtils: LanguageUtils,
                                         val appConfig: FrontendAppConfig,

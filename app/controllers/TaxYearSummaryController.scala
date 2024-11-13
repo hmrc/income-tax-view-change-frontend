@@ -58,7 +58,8 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
                                          val languageUtils: LanguageUtils,
                                          val authorisedFunctions: AuthorisedFunctions,
                                          val auditingService: AuditingService,
-                                         claimToAdjustService: ClaimToAdjustService)
+                                         claimToAdjustService: ClaimToAdjustService,
+                                         val sessionDataService: SessionDataService)
                                         (implicit val appConfig: FrontendAppConfig,
                                          dateService: DateServiceInterface,
                                          val agentItvcErrorHandler: AgentItvcErrorHandler,

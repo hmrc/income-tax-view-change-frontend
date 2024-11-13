@@ -26,6 +26,7 @@ import models.optout.{MultiYearOptOutCheckpointViewModel, OneYearOptOutCheckpoin
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import services.SessionDataService
 import services.optout.OptOutService
 import utils.AuthenticatorPredicate
 import views.html.optOut.{CheckOptOutAnswers, ConfirmOptOut}
@@ -36,7 +37,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
                                         checkOptOutAnswers: CheckOptOutAnswers,
                                         optOutService: OptOutService,
-                                        auth: AuthenticatorPredicate)
+                                        auth: AuthenticatorPredicate,
+                                        val sessionDataService: SessionDataService)
                                        (implicit val appConfig: FrontendAppConfig,
                                         val ec: ExecutionContext,
                                         val authorisedFunctions: FrontendAuthorisedFunctions,

@@ -24,6 +24,7 @@ import forms.manageBusinesses.add.{AddProprertyForm => form}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import services.SessionDataService
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
 import views.html.manageBusinesses.add.AddProperty
 
@@ -33,7 +34,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AddPropertyController @Inject()(auth: AuthenticatorPredicate,
                                       val addProperty: AddProperty,
-                                      val authorisedFunctions: FrontendAuthorisedFunctions)
+                                      val authorisedFunctions: FrontendAuthorisedFunctions,
+                                      val sessionDataService: SessionDataService)
                                      (implicit val appConfig: FrontendAppConfig,
                                       mcc: MessagesControllerComponents,
                                       val ec: ExecutionContext,

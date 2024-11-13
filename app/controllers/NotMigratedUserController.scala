@@ -23,6 +23,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import services.SessionDataService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.AuthenticatorPredicate
 import views.html.notMigrated.NotMigratedUser
@@ -35,7 +36,8 @@ class NotMigratedUserController @Inject()(val notMigrated: NotMigratedUser,
                                           val authorisedFunctions: AuthorisedFunctions,
                                           val itvcErrorHandler: ItvcErrorHandler,
                                           implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                          val auth: AuthenticatorPredicate)
+                                          val auth: AuthenticatorPredicate,
+                                          val sessionDataService: SessionDataService)
                                          (implicit val ec: ExecutionContext,
                                           mcc: MessagesControllerComponents,
                                           val appConfig: FrontendAppConfig) extends ClientConfirmedController with I18nSupport with FeatureSwitching {

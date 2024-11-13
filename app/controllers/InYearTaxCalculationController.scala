@@ -29,7 +29,7 @@ import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculat
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{CalculationService, DateServiceInterface}
+import services.{CalculationService, DateServiceInterface, SessionDataService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
 import utils.AuthenticatorPredicate
@@ -51,7 +51,8 @@ class InYearTaxCalculationController @Inject()(val executionContext: ExecutionCo
                                                 implicit val appConfig: FrontendAppConfig,
                                                 implicit override val mcc: MessagesControllerComponents,
                                                 implicit val ec: ExecutionContext,
-                                                val auth: AuthenticatorPredicate
+                                                val auth: AuthenticatorPredicate,
+                                               val sessionDataService: SessionDataService
                                               ) extends ClientConfirmedController with FeatureSwitching with I18nSupport with ImplicitDateFormatter {
 
 

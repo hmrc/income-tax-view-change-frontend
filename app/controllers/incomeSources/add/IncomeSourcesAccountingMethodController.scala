@@ -28,7 +28,7 @@ import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.SessionService
+import services.{SessionDataService, SessionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
 import views.html.errorPages.CustomNotFoundError
@@ -42,7 +42,8 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
                                                         val view: IncomeSourcesAccountingMethod,
                                                         val customNotFoundErrorView: CustomNotFoundError,
                                                         val sessionService: SessionService,
-                                                        val auth: AuthenticatorPredicate)
+                                                        val auth: AuthenticatorPredicate,
+                                                        val sessionDataService: SessionDataService)
                                                        (implicit val appConfig: FrontendAppConfig,
                                                         mcc: MessagesControllerComponents,
                                                         val ec: ExecutionContext,

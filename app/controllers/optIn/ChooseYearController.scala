@@ -27,6 +27,7 @@ import models.optin.ChooseTaxYearViewModel
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
+import services.SessionDataService
 import services.optIn.OptInService
 import utils.AuthenticatorPredicate
 import views.html.optIn.ChooseTaxYearView
@@ -37,7 +38,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class ChooseYearController @Inject()(val optInService: OptInService,
                                      val view: ChooseTaxYearView,
                                      val authorisedFunctions: FrontendAuthorisedFunctions,
-                                     val auth: AuthenticatorPredicate)
+                                     val auth: AuthenticatorPredicate,
+                                     val sessionDataService: SessionDataService)
                                     (implicit val appConfig: FrontendAppConfig,
                                      mcc: MessagesControllerComponents,
                                      val ec: ExecutionContext,

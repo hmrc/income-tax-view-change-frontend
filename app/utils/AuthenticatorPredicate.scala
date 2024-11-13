@@ -23,7 +23,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
-import services.IncomeSourceDetailsService
+import services.{IncomeSourceDetailsService, SessionDataService}
 import services.admin.FeatureSwitchService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
@@ -40,7 +40,8 @@ class AuthenticatorPredicate @Inject()(val checkSessionTimeout: SessionTimeoutPr
                                        val featureSwitchPredicate: FeatureSwitchPredicate,
                                        val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                        val retrieveNino: NinoPredicate,
-                                       val incomeSourceDetailsService: IncomeSourceDetailsService)
+                                       val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                       val sessionDataService: SessionDataService)
                                       (implicit mcc: MessagesControllerComponents,
                                        val appConfig: FrontendAppConfig,
                                        val itvcErrorHandler: AgentItvcErrorHandler,

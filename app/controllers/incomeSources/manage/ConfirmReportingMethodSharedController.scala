@@ -33,7 +33,7 @@ import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseErr
 import play.api.Logger
 import play.api.MarkerContext.NoMarker
 import play.api.mvc._
-import services.{DateService, SessionService, UpdateIncomeSourceService}
+import services.{DateService, SessionDataService, SessionService, UpdateIncomeSourceService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
@@ -49,7 +49,8 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                                        val sessionService: SessionService,
                                                        val auditingService: AuditingService,
                                                        val dateService: DateService,
-                                                       val auth: AuthenticatorPredicate)
+                                                       val auth: AuthenticatorPredicate,
+                                                       val sessionDataService: SessionDataService)
                                                       (implicit val ec: ExecutionContext,
                                                        implicit val itvcErrorHandler: ItvcErrorHandler,
                                                        override implicit val mcc: MessagesControllerComponents,

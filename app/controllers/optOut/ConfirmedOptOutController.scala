@@ -23,6 +23,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import services.SessionDataService
 import services.optout.OptOutService
 import utils.AuthenticatorPredicate
 import views.html.optOut.ConfirmedOptOut
@@ -33,7 +34,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class ConfirmedOptOutController @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
                                           val view: ConfirmedOptOut,
                                           val auth: AuthenticatorPredicate,
-                                          val optOutService: OptOutService)
+                                          val optOutService: OptOutService,
+                                          val sessionDataService: SessionDataService)
                                          (implicit val appConfig: FrontendAppConfig,
                                           mcc: MessagesControllerComponents,
                                           val ec: ExecutionContext,

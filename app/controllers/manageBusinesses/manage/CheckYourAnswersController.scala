@@ -32,7 +32,7 @@ import models.incomeSourceDetails.{ManageIncomeSourceData, TaxYear}
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import play.api.mvc._
-import services.{SessionService, UpdateIncomeSourceService}
+import services.{SessionDataService, SessionService, UpdateIncomeSourceService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
@@ -47,7 +47,8 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
                                            val updateIncomeSourceService: UpdateIncomeSourceService,
                                            val sessionService: SessionService,
                                            val auditingService: AuditingService,
-                                           val auth: AuthenticatorPredicate)
+                                           val auth: AuthenticatorPredicate,
+                                           val sessionDataService: SessionDataService)
                                           (implicit val ec: ExecutionContext,
                                            implicit override val mcc: MessagesControllerComponents,
                                            implicit val itvcErrorHandler: ItvcErrorHandler,

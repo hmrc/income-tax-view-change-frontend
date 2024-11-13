@@ -29,7 +29,7 @@ import models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewMo
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{IncomeSourceDetailsService, SessionService, UpdateIncomeSourceService}
+import services.{IncomeSourceDetailsService, SessionDataService, SessionService, UpdateIncomeSourceService}
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.cease.CeaseCheckIncomeSourceDetails
 
@@ -44,7 +44,8 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
                                                          val updateIncomeSourceService: UpdateIncomeSourceService,
                                                          val sessionService: SessionService,
                                                          val auditingService: AuditingService,
-                                                         val auth: AuthenticatorPredicate)
+                                                         val auth: AuthenticatorPredicate,
+                                                         val sessionDataService: SessionDataService)
                                                        (implicit val appConfig: FrontendAppConfig,
                                                         mcc: MessagesControllerComponents,
                                                         val ec: ExecutionContext,

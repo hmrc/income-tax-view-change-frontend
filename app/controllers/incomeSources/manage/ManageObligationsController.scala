@@ -28,7 +28,7 @@ import models.incomeSourceDetails.ManageIncomeSourceData
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
 import play.api.Logger
 import play.api.mvc._
-import services.{IncomeSourceDetailsService, NextUpdatesService, SessionService}
+import services.{IncomeSourceDetailsService, NextUpdatesService, SessionDataService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
@@ -44,7 +44,8 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
                                             val obligationsView: ManageObligations,
                                             val sessionService: SessionService,
                                             nextUpdatesService: NextUpdatesService,
-                                            val auth: AuthenticatorPredicate)
+                                            val auth: AuthenticatorPredicate,
+                                            val sessionDataService: SessionDataService)
                                            (implicit val ec: ExecutionContext,
                                             implicit override val mcc: MessagesControllerComponents,
                                             val appConfig: FrontendAppConfig) extends ClientConfirmedController
