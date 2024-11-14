@@ -65,9 +65,9 @@ class OptOutCancelledControllerSpec extends MockOldAuthActions with MockIncomeSo
 
   "OptOutCancelledPageController" when {
 
-    ".show()" when {
+    ".show()" should {
 
-      "show the OptOutCancelled view" in {
+      "show the OptOutCancelled view and return OK response status" in {
 
         disableAllSwitches()
         enable(ReportingFrequencyPage)
