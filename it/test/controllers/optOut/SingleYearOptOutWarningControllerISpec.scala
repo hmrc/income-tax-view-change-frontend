@@ -34,7 +34,8 @@ class SingleYearOptOutWarningControllerISpec extends ComponentSpecBase {
   private val validNoForm = ConfirmOptOutSingleTaxYearForm(Some(false), "")
   private val inValidForm = ConfirmOptOutSingleTaxYearForm(None, "")
   private val confirmOptOutPageUrl = controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url
-  private val nextUpdatesPageUrl = controllers.routes.NextUpdatesController.show().url
+  
+  private val optOutCancelledUrl = controllers.optOut.routes.OptOutCancelledController.show().url
 
   private val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
   private val previousYear = currentTaxYear.addYears(-1)
@@ -129,8 +130,8 @@ class SingleYearOptOutWarningControllerISpec extends ComponentSpecBase {
       }
     }
 
-    s"return status $SEE_OTHER with location $nextUpdatesPageUrl" when {
-      "Yes response is sent" in {
+    "redirect to OptOutCancelled page and return status 303 - SEE_OTHER" when {
+      "user answers No" in {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -146,7 +147,7 @@ class SingleYearOptOutWarningControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(nextUpdatesPageUrl)
+          redirectURI(optOutCancelledUrl)
         )
       }
     }
