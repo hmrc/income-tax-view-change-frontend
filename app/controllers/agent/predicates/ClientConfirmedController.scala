@@ -95,7 +95,7 @@ trait ClientConfirmedController extends BaseAgentController with FeatureSwitchin
           case Left(error) => throw new InternalServerException(s"client details not found: $error")
           case Right(data) =>
             MtdItUserOptionNino(
-              data.mtditid, Some(data.nino), None, None, Some(data.utr), user.credId, Some(Agent), user.agentReferenceNumber, getClientName
+              data.mtditid, Some(data.nino), None, None, Some(data.utr), user.credId, Some(Agent), user.agentReferenceNumber, None
             )
         }
       }
