@@ -70,7 +70,6 @@ class OptOutCancelledControllerSpec extends MockOldAuthActions with MockIncomeSo
       "show the OptOutCancelled view and return OK response status" in {
 
         disableAllSwitches()
-        enable(ReportingFrequencyPage)
 
         val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2017"), List(business1), Nil)
 

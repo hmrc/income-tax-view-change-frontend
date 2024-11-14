@@ -65,7 +65,6 @@ class OptOutCancelledViewSpec extends TestSupport {
       "return the correct content" in {
 
         disableAllSwitches()
-        enable(ReportingFrequencyPage)
 
         val isAgentFlag = true
 
@@ -100,11 +99,9 @@ class OptOutCancelledViewSpec extends TestSupport {
         testContentByIds(expectedContent)
 
         pageDocument.select(bullet(1)).text() shouldBe bullet1LinkContent
-
         pageDocument.select(bullet(1)).attr("href") shouldBe nextUpdatesUrl(isAgentFlag)
 
         pageDocument.select(bullet(2)).text() shouldBe bullet2LinkContent
-
         pageDocument.select(bullet(2)).attr("href") shouldBe homePageUrl(isAgentFlag)
 
         pageDocument.select(Selectors.p3Link).text() shouldBe p3LinkContent
@@ -117,8 +114,7 @@ class OptOutCancelledViewSpec extends TestSupport {
       "return the correct content" in {
 
         disableAllSwitches()
-        enable(ReportingFrequencyPage)
-
+        
         val isAgentFlag = false
 
         val pageDocument: Document =
@@ -152,11 +148,9 @@ class OptOutCancelledViewSpec extends TestSupport {
         testContentByIds(expectedContent)
 
         pageDocument.select(bullet(1)).text() shouldBe bullet1LinkContent
-
         pageDocument.select(bullet(1)).attr("href") shouldBe nextUpdatesUrl(isAgentFlag)
 
         pageDocument.select(bullet(2)).text() shouldBe bullet2LinkContent
-
         pageDocument.select(bullet(2)).attr("href") shouldBe homePageUrl(isAgentFlag)
 
         pageDocument.select(Selectors.p3Link).text() shouldBe p3LinkContent
