@@ -32,8 +32,10 @@ import views.html.optOut.SingleYearOptOutWarning
 
 import scala.concurrent.Future
 
-class SingleYearOptOutWarningControllerSpec extends TestSupport
-  with MockAuthenticationPredicate with MockOptOutService {
+class SingleYearOptOutWarningControllerSpec
+  extends TestSupport
+    with MockAuthenticationPredicate
+    with MockOptOutService {
 
   object TestSingleYearOptOutWarningController extends SingleYearOptOutWarningController(
     auth = testAuthenticator,
@@ -48,10 +50,11 @@ class SingleYearOptOutWarningControllerSpec extends TestSupport
   }
 
   def tests(isAgent: Boolean): Unit = {
+
     val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
     val requestPOST = if (isAgent) fakePostRequestConfirmedClient() else fakePostRequestWithNinoAndOrigin("PTA")
     val confirmOptOutPage = Some(controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url)
-    val nextUpdatesPage = if (isAgent) controllers.routes.NextUpdatesController.showAgent.url else controllers.routes.NextUpdatesController.show().url
+    val optOutCancelledUrl = controllers.optOut.routes.OptOutCancelledController.show().url
     val taxYear = TaxYear.forYearEnd(2024)
     val eligibleTaxYearResponse = Future.successful(Some(OptOutOneYearViewModel(taxYear, None)))
     val noEligibleTaxYearResponse = Future.successful(None)
@@ -105,7 +108,8 @@ class SingleYearOptOutWarningControllerSpec extends TestSupport
           redirectLocation(result) shouldBe confirmOptOutPage
         }
       }
-      s"return result with $SEE_OTHER status with redirect to $nextUpdatesPage" when {
+      s"return result with 303 status with redirect to Opt Out Cancelled Page" when {
+
         "No response is submitted" in {
           setupMockAuthorisationSuccess(isAgent)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
@@ -117,9 +121,10 @@ class SingleYearOptOutWarningControllerSpec extends TestSupport
               ConfirmOptOutSingleTaxYearForm.csrfToken -> ""
             ))
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(nextUpdatesPage)
+          redirectLocation(result) shouldBe Some(optOutCancelledUrl)
         }
       }
+
       s"return result with $BAD_REQUEST status" when {
         "invalid response is submitted" in {
           setupMockAuthorisationSuccess(isAgent)

@@ -48,7 +48,8 @@ class SingleYearOptOutWarningController @Inject()(auth: AuthenticatorPredicate,
 
   private val submitAction = (isAgent: Boolean) => controllers.optOut.routes.SingleYearOptOutWarningController.submit(isAgent)
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-  private val nextUpdatesUrl = (isAgent: Boolean) => if (isAgent) controllers.routes.NextUpdatesController.showAgent else controllers.routes.NextUpdatesController.show()
+  private val nextUpdatesUrl = (isAgent: Boolean) =>
+    if (isAgent) controllers.routes.NextUpdatesController.showAgent else controllers.routes.NextUpdatesController.show()
 
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user => withRecover(isAgent)(handleRequest(isAgent))
@@ -71,10 +72,9 @@ class SingleYearOptOutWarningController @Inject()(auth: AuthenticatorPredicate,
 
     }
 
-  private def handleSubmitRequest(isAgent: Boolean)(implicit mtdItUser: MtdItUser[_]): Future[Result] =
+  private def handleSubmitRequest(isAgent: Boolean)(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
     withOptOutQualifiedTaxYear(isAgent) {
       taxYear =>
-
         ConfirmOptOutSingleTaxYearForm(taxYear).bindFromRequest().fold(
           formWithError => {
             BadRequest(view(
@@ -92,14 +92,16 @@ class SingleYearOptOutWarningController @Inject()(auth: AuthenticatorPredicate,
               Logger("application").info(s"redirecting to : $nextPage")
               Redirect(nextPage)
             case ConfirmOptOutSingleTaxYearForm(Some(false), _) =>
-              Logger("application").info(s"redirecting to : ${nextUpdatesUrl(isAgent)}")
-              Redirect(nextUpdatesUrl(isAgent))
+              val optOutCancelledUrl = controllers.optOut.routes.OptOutCancelledController.show().url
+              Logger("application").info(s"redirecting to : $optOutCancelledUrl")
+              Redirect(optOutCancelledUrl)
             case _ =>
               Logger("application").error("bad request")
               errorHandler(isAgent).showInternalServerError()
           })
 
     }
+  }
 
   private def withRecover(isAgent: Boolean)(code: => Future[Result])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
     code.recover {
