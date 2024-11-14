@@ -48,7 +48,7 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       withRecover(isAgent) {
-        val cancelURL = if (isAgent) controllers.routes.NextUpdatesController.showAgent.url else controllers.routes.NextUpdatesController.show().url
+        val cancelURL = controllers.optOut.routes.OptOutCancelledController.show().url
 
         val resultToReturn = for {
           viewModel <- OptionT(optOutService.optOutCheckPointPageViewModel())
