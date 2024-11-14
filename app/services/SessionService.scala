@@ -32,15 +32,15 @@ class SessionService @Inject()(
                                 config: FrontendAppConfig
                               ) {
 
-  def getMongo(journeyType: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[UIJourneySessionData]]] = {
+  def getMongo(journeyType: JourneyType)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[UIJourneySessionData]]] = {
     if (config.encryptionIsEnabled)
-      sensitiveUIJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType) map {
+      sensitiveUIJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType.toString) map {
         case Some(data: UIJourneySessionData) =>
           Right(Some(data))
         case None => Right(None)
       }
     else
-      uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType) map {
+      uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType.toString) map {
         case Some(data: UIJourneySessionData) =>
           Right(Some(data))
         case None => Right(None)
@@ -48,8 +48,8 @@ class SessionService @Inject()(
 
   }
 
-  def createSession(journeyType: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
-    setMongoData(UIJourneySessionData(hc.sessionId.get.value, journeyType, None))
+  def createSession(journeyType: JourneyType)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+    setMongoData(UIJourneySessionData(hc.sessionId.get.value, journeyType.toString, None))
   }
 
   private def getKeyFromObject[A](objectOpt: Option[Any], key: String): Either[Throwable, Option[A]] = {
