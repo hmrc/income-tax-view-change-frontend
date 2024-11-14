@@ -18,6 +18,7 @@ package models.financialDetails
 
 import config.FrontendAppConfig
 import enums.CodingOutType.{CODING_OUT_ACCEPTED, CODING_OUT_CANCELLED, CODING_OUT_CLASS2_NICS}
+import models.financialDetails.ChargeItem.filterAllowedCharges
 import services.{DateService, DateServiceInterface}
 import testConstants.BaseTestConstants.app
 import testConstants.ChargeConstants
@@ -364,5 +365,39 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
           key shouldBe "balancingCharge.text"
         }
       }
+  }
+
+  "filterAllowedCharges" should {
+    "filter out FS related charges" when {
+      "relevant FS is disabled" in {
+        val chargesListWithRandR: List[ChargeItem] = List(
+          chargeItemModel(transactionType = BalancingCharge),
+          chargeItemModel(transactionType = PaymentOnAccountOneReviewAndReconcile),
+          chargeItemModel(transactionType = PaymentOnAccountTwo),
+          chargeItemModel(transactionType = PaymentOnAccountTwoReviewAndReconcile)
+        )
+        val filtered = chargesListWithRandR.map(filterAllowedCharges(false, PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile))
+        filtered shouldBe List(true, false, true, false)
+      }
+    }
+    "include FS related charges" when {
+      "FS is enabled" in {
+        val chargesListWithRandR: List[ChargeItem] = List(
+          chargeItemModel(transactionType = BalancingCharge),
+          chargeItemModel(transactionType = PaymentOnAccountOneReviewAndReconcile),
+          chargeItemModel(transactionType = PaymentOnAccountTwo),
+          chargeItemModel(transactionType = PaymentOnAccountTwoReviewAndReconcile)
+        )
+        val filtered = chargesListWithRandR.map(filterAllowedCharges(true, PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile))
+        filtered shouldBe List(true, true, true, true)
+      }
+    }
+    "return empty list" when {
+      "fed an empty list" in {
+        val chargesList = List()
+        val filtered = chargesList.map(filterAllowedCharges(true, PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile))
+        filtered shouldBe List()
+      }
+    }
   }
 }
