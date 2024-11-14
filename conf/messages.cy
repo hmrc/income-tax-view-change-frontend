@@ -2299,6 +2299,10 @@ optIn.confirmNextTaxYear.desc                       = Os byddwch yn optio i mewn
 
 # Reporting Frequency Page
 
+reporting.frequency.title = Amlder eich adroddiadau
+
+reporting.frequency.h1 = Amlder eich adroddiadau
+
 reporting.frequency.h2 = Rheoli amlder eich adroddiadau ar gyfer eich holl fusnesau
 
 reporting.frequency.manageReportingFrequency.p1 = Os ydych yn adrodd yn flynyddol, neu’n adrodd yn chwarterol yn wirfoddol, mae’n bosibl y byddwch yn gallu newid amlder eich adroddiadau ar gyfer blynyddoedd treth penodol.
