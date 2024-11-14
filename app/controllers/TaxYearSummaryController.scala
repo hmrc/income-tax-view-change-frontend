@@ -185,7 +185,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
               .map(ci => TaxYearSummaryChargeItem.fromChargeItem(ci, financialDetails.findDueDateByDocumentDetails(dd))))
             .filterNot(_.originalAmount < 0)
             .filter(_.notCodedOutPoa(isEnabled(FilterCodedOutPoas)))
-            .filter(ChargeItem.filterChargeWithOutstandingAmount(isEnabled(ReviewAndReconcilePoa),
+            .filter(ChargeItem.filterAllowedCharges(isEnabled(ReviewAndReconcilePoa),
               PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile))
         }
 

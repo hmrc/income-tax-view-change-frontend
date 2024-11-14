@@ -140,11 +140,10 @@ object ChargeItem {
 
   implicit val format: Format[ChargeItem] = Json.format[ChargeItem]
 
-  def filterChargeWithOutstandingAmount(isChargeTypeEnabled:Boolean, chargeType: ChargeType*)
-                  (chargeItem: TransactionItem): Boolean = {
+  def filterAllowedCharges(isChargeTypeEnabled:Boolean, chargeType: ChargeType*)
+                          (chargeItem: TransactionItem): Boolean = {
     (isChargeTypeEnabled, chargeItem.transactionType) match {
       case (false, transactionType) if chargeType.toList.contains(transactionType) => false
-      case (true, transactionType) if chargeType.toList.contains(transactionType) && chargeItem.outstandingAmount <= 0  => false
       case _ => true
     }
   }
