@@ -104,6 +104,8 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
         case None => form(messagesPrefix)
       }
 
+      println(getBackUrl(incomeSourceType, isAgent, isChange))
+
       Future.successful {
         Ok(
           addIncomeSourceStartDate(
@@ -203,8 +205,8 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
                          isChange: Boolean): String = {
 
     ((isAgent, isChange, incomeSourceType) match {
-      case (false, false, SelfEmployment) => routes.AddBusinessNameController.show()
-      case (_, false, SelfEmployment) => routes.AddBusinessNameController.showAgent()
+      case (false, false, SelfEmployment) => routes.AddBusinessNameController.show(isChange)
+      case (_, false, SelfEmployment) => routes.AddBusinessNameController.showAgent(isChange)
       case (false, false, _) => routes.AddIncomeSourceController.show()
       case (_, false, _) => routes.AddIncomeSourceController.showAgent()
       case (false, _, _) => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)

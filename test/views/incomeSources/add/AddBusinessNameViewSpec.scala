@@ -38,15 +38,10 @@ class AddBusinessNameViewSpec extends ViewSpec {
     val testChangeCall: Call = Call("POST", "/test-change-url")
 
     val postAction: Call = {
-      if (isChange) {
-        if (isAgent) {
-          controllers.incomeSources.add.routes.AddBusinessNameController.submitChangeAgent()
-        } else {
-          controllers.incomeSources.add.routes.AddBusinessNameController.submitChange()
-        }
+      if (isAgent) {
+        controllers.incomeSources.add.routes.AddBusinessNameController.submitAgent(isChange)
       } else {
-        if (isAgent) controllers.incomeSources.add.routes.AddBusinessNameController.submitAgent() else
-          controllers.incomeSources.add.routes.AddBusinessNameController.submit()
+        controllers.incomeSources.add.routes.AddBusinessNameController.submit(isChange)
       }
     }
 

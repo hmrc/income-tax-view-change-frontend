@@ -69,6 +69,18 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     }
   }
 
+  def showAgent(taxYear: String,
+           changeTo: String,
+           isAgent: Boolean,
+           incomeSourceType: IncomeSourceType
+          ): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
+    withSessionData(JourneyType(Manage, incomeSourceType), journeyState = AfterSubmissionPage) { sessionData =>
+      val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
+      val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
+      handleShowRequest(taxYear, changeTo, isAgent, incomeSourceType, incomeSourceIdOpt)
+    }
+  }
+
   def submit(taxYear: String,
              changeTo: String,
              isAgent: Boolean,
