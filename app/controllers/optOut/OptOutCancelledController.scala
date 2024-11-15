@@ -21,20 +21,21 @@ import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import models.admin.ReportingFrequencyPage
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.DateService
+import services.optout.OptOutService
+import views.html.errorPages.templates.ErrorTemplate
 import views.html.optOut.OptOutCancelledView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class OptOutCancelledController @Inject()(
                                            val authorisedFunctions: FrontendAuthorisedFunctions,
                                            val auth: AuthActions,
-                                           dateService: DateService,
-                                           view: OptOutCancelledView
+                                           optOutService: OptOutService,
+                                           view: OptOutCancelledView,
+                                           errorTemplate: ErrorTemplate
                                          )(
                                            implicit val appConfig: FrontendAppConfig,
                                            mcc: MessagesControllerComponents,
@@ -47,10 +48,35 @@ class OptOutCancelledController @Inject()(
 
   def show(): Action[AnyContent] =
     auth.individualOrAgentWithClient.async { implicit user =>
-      val currentTaxYearStart = dateService.getCurrentTaxYear.startYear.toString
-      val currentTaxYearEnd = dateService.getCurrentTaxYear.endYear.toString
-      Future(Ok(
-        view(user.isAgent(), currentTaxYearStart, currentTaxYearEnd)
-      ))
+      for {
+        proposition <- optOutService.fetchOptOutProposition()
+        availableOptOutYears = proposition.availableOptOutYears
+        isOneYearOptOut = proposition.isOneYearOptOut
+      } yield {
+        if (isOneYearOptOut) {
+          availableOptOutYears.headOption.map(_.taxYear) match {
+            case Some(taxYear) =>
+              Ok(view(user.isAgent(), taxYear.startYear.toString, taxYear.endYear.toString))
+            case _ =>
+              InternalServerError(
+                errorTemplate(
+                  pageTitle = "standardError.heading",
+                  heading = "standardError.heading",
+                  message = "standardError.message",
+                  isAgent = user.isAgent()
+                )
+              )
+          }
+        } else {
+          InternalServerError(
+            errorTemplate(
+              pageTitle = "standardError.heading",
+              heading = "standardError.heading",
+              message = "standardError.message",
+              isAgent = user.isAgent()
+            )
+          )
+        }
+      }
     }
 }

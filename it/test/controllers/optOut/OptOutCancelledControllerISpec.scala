@@ -20,12 +20,14 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import controllers.ControllerISpecBase
-import helpers.servicemocks.{AuthStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.{AuthStub, CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.admin.FeatureSwitchName.allFeatureSwitches
+import models.itsaStatus.ITSAStatus
 import org.jsoup.Jsoup
 import play.api.http.HeaderNames
-import play.api.http.Status.OK
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSessionId}
+import play.api.http.Status.{OK, INTERNAL_SERVER_ERROR}
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testNino, testSessionId}
+import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants.businessAndPropertyResponseWoMigration
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.HttpClientV2
@@ -55,24 +57,100 @@ class OptOutCancelledControllerISpec extends ControllerISpecBase with FeatureSwi
 
   "GET - /report-quarterly/income-and-expenses/view/optout/cancelled" when {
 
-    "the user is authorised" should {
+    "the user is authorised" when {
 
-      "return the OptOutCancelled page, OK - 200" in {
+      "only single tax year is voluntary, CY-1 = Mandated, CY = Voluntary, CY+1 = Mandated" should {
 
-        allFeatureSwitches.foreach(switch => disable(switch))
+        "return the OptOutCancelled page, OK - 200" in {
 
-        AuthStub.stubAuthorised()
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
-        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(dateService.getCurrentTaxYearEnd)
+          allFeatureSwitches.foreach(switch => disable(switch))
 
-        val res =
-          httpClient
-            .get(url"http://localhost:$port/report-quarterly/income-and-expenses/view/optout/cancelled")
-            .setHeader(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ clientDetailsWithConfirmation), "X-Session-ID" -> testSessionId)
-            .execute[HttpResponse]
+          val previousTaxYear = dateService.getCurrentTaxYearEnd - 1
 
-        res.futureValue.status shouldBe OK
-        Jsoup.parse(res.futureValue.body).title shouldBe "Opt out cancelled - Manage your Income Tax updates - GOV.UK"
+          AuthStub.stubAuthorised()
+
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+
+          CalculationListStub.stubGetLegacyCalculationList(testNino, previousTaxYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+
+          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
+            taxYear = dateService.getCurrentTaxYearEnd,
+            `itsaStatusCY-1` = ITSAStatus.Mandated,
+            itsaStatusCY = ITSAStatus.Voluntary,
+            `itsaStatusCY+1` = ITSAStatus.Mandated
+          )
+
+          val res =
+            httpClient
+              .get(url"http://localhost:$port/report-quarterly/income-and-expenses/view/optout/cancelled")
+              .setHeader(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ clientDetailsWithConfirmation), "X-Session-ID" -> testSessionId)
+              .execute[HttpResponse]
+
+          res.futureValue.status shouldBe OK
+          Jsoup.parse(res.futureValue.body).title shouldBe "Sorry, there is a problem with the service - Manage your Income Tax updates - GOV.UK"
+        }
+      }
+
+      "no tax year is voluntary, CY-1 = Mandated, CY = Mandated, CY+1 = Mandated" should {
+
+        "return the Error template page, OK - 500" in {
+
+          allFeatureSwitches.foreach(switch => disable(switch))
+
+          val previousTaxYear = dateService.getCurrentTaxYearEnd - 1
+
+          AuthStub.stubAuthorised()
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+
+          CalculationListStub.stubGetLegacyCalculationList(testNino, previousTaxYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+
+          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
+            taxYear = dateService.getCurrentTaxYearEnd,
+            `itsaStatusCY-1` = ITSAStatus.Mandated,
+            itsaStatusCY = ITSAStatus.Mandated,
+            `itsaStatusCY+1` = ITSAStatus.Mandated
+          )
+
+          val res =
+            httpClient
+              .get(url"http://localhost:$port/report-quarterly/income-and-expenses/view/optout/cancelled")
+              .setHeader(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ clientDetailsWithConfirmation), "X-Session-ID" -> testSessionId)
+              .execute[HttpResponse]
+
+          res.futureValue.status shouldBe INTERNAL_SERVER_ERROR
+          Jsoup.parse(res.futureValue.body).title shouldBe "Opt out cancelled - Manage your Income Tax updates - GOV.UK"
+        }
+      }
+
+      "multiple tax years are voluntary, CY-1 = Mandated, CY = Voluntary, CY+1 = Voluntary" should {
+
+        "return the Error template page, OK - 500" in {
+
+          allFeatureSwitches.foreach(switch => disable(switch))
+
+          val previousTaxYear = dateService.getCurrentTaxYearEnd - 1
+
+          AuthStub.stubAuthorised()
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+
+          CalculationListStub.stubGetLegacyCalculationList(testNino, previousTaxYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+
+          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
+            taxYear = dateService.getCurrentTaxYearEnd,
+            `itsaStatusCY-1` = ITSAStatus.Mandated,
+            itsaStatusCY = ITSAStatus.Voluntary,
+            `itsaStatusCY+1` = ITSAStatus.Voluntary
+          )
+
+          val res =
+            httpClient
+              .get(url"http://localhost:$port/report-quarterly/income-and-expenses/view/optout/cancelled")
+              .setHeader(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ clientDetailsWithConfirmation), "X-Session-ID" -> testSessionId)
+              .execute[HttpResponse]
+
+          res.futureValue.status shouldBe INTERNAL_SERVER_ERROR
+          Jsoup.parse(res.futureValue.body).title shouldBe "Sorry, there is a problem with the service - Manage your Income Tax updates - GOV.UK"
+        }
       }
     }
   }
