@@ -87,7 +87,7 @@ class OptOutCancelledControllerISpec extends ControllerISpecBase with FeatureSwi
               .execute[HttpResponse]
 
           res.futureValue.status shouldBe OK
-          Jsoup.parse(res.futureValue.body).title shouldBe "Sorry, there is a problem with the service - Manage your Income Tax updates - GOV.UK"
+          Jsoup.parse(res.futureValue.body).title shouldBe "Opt out cancelled - Manage your Income Tax updates - GOV.UK"
         }
       }
 
@@ -118,7 +118,7 @@ class OptOutCancelledControllerISpec extends ControllerISpecBase with FeatureSwi
               .execute[HttpResponse]
 
           res.futureValue.status shouldBe INTERNAL_SERVER_ERROR
-          Jsoup.parse(res.futureValue.body).title shouldBe "Opt out cancelled - Manage your Income Tax updates - GOV.UK"
+          Jsoup.parse(res.futureValue.body).title shouldBe "Sorry, there is a problem with the service - GOV.UK"
         }
       }
 
@@ -149,7 +149,7 @@ class OptOutCancelledControllerISpec extends ControllerISpecBase with FeatureSwi
               .execute[HttpResponse]
 
           res.futureValue.status shouldBe INTERNAL_SERVER_ERROR
-          Jsoup.parse(res.futureValue.body).title shouldBe "Sorry, there is a problem with the service - Manage your Income Tax updates - GOV.UK"
+          Jsoup.parse(res.futureValue.body).title shouldBe "Sorry, there is a problem with the service - GOV.UK"
         }
       }
     }
