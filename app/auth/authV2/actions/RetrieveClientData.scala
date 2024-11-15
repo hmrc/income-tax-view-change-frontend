@@ -16,7 +16,7 @@
 
 package auth.authV2.actions
 
-import config.AgentItvcErrorHandler
+import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.routes
 import controllers.agent.sessionUtils.SessionKeys
 import models.sessionData.SessionDataGetResponse.SessionDataNotFound
@@ -31,7 +31,9 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RetrieveClientData @Inject()(sessionDataService: SessionDataService,
-                                   errorHandler: AgentItvcErrorHandler)(implicit val executionContext: ExecutionContext) extends ActionRefiner[Request, ClientDataRequest] {
+                                   errorHandler: AgentItvcErrorHandler,
+                                   appConfig: FrontendAppConfig)
+                                  (implicit val executionContext: ExecutionContext) extends ActionRefiner[Request, ClientDataRequest] {
 
   lazy val logger: Logger = Logger(getClass)
 
@@ -44,7 +46,7 @@ class RetrieveClientData @Inject()(sessionDataService: SessionDataService,
       .fromRequestAndSession(request, request.session)
 
     //TODO: This one maybe
-    sessionDataService.getSessionData(useCookie = true).map {
+    sessionDataService.getSessionData(useCookie = appConfig.isSessionDataStorageEnabled).map {
       case Right(sessionData) => Right(ClientDataRequest(
         sessionData.mtditid,
         r.session.get(SessionKeys.clientFirstName),
