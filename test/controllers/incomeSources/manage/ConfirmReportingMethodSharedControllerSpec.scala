@@ -22,7 +22,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.JourneyType.{IncomeSourceJourneyType, JourneyType, Manage}
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import implicits.ImplicitDateFormatter
-import mocks.auth.MockFrontendAuthorisedFunctions
+import mocks.auth.{MockAuthActions, MockFrontendAuthorisedFunctions}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockIncomeSourceDetailsService, MockSessionService}
 import models.admin.IncomeSourcesFs
@@ -30,18 +30,20 @@ import models.updateIncomeSource.{UpdateIncomeSourceResponseError, UpdateIncomeS
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import org.scalatest.Assertion
+import play.api
+import play.api.Application
 import play.api.http.Status
 import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.{CalculationListService, UpdateIncomeSourceService}
+import services.{CalculationListService, SessionService, UpdateIncomeSourceService}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData, notCompletedUIJourneySessionData}
 import testUtils.TestSupport
 import views.html.incomeSources.manage.{ConfirmReportingMethod, ManageIncomeSources}
 
 import scala.concurrent.Future
 
-class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredicate
+class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
   with MockIncomeSourceDetailsPredicate
   with ImplicitDateFormatter
   with MockIncomeSourceDetailsService
@@ -51,23 +53,13 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
   with TestSupport
   with MockSessionService {
 
-  object TestConfirmReportingMethodSharedController
-    extends ConfirmReportingMethodSharedController(
-      manageIncomeSources = app.injector.instanceOf[ManageIncomeSources],
-      authorisedFunctions = mockAuthService,
-      updateIncomeSourceService = mock(classOf[UpdateIncomeSourceService]),
-      confirmReportingMethod = app.injector.instanceOf[ConfirmReportingMethod],
-      auditingService = mockAuditingService,
-      dateService = dateService,
-      sessionService = mockSessionService,
-      auth = testAuthenticator
-    )(
-      itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
-      itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
-      mcc = app.injector.instanceOf[MessagesControllerComponents],
-      appConfig = app.injector.instanceOf[FrontendAppConfig],
-      ec = ec
-    )
+  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+    .overrides(
+      api.inject.bind[SessionService].toInstance(mockSessionService)
+    ).build()
+
+  val testConfirmReportingMethodSharedController = fakeApplication().injector.instanceOf[ConfirmReportingMethodSharedController]
+
 
   "ConfirmReportingMethodSharedController.show" should {
     s"return ${Status.SEE_OTHER} and redirect to the home page" when {
@@ -138,10 +130,10 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         mockBothPropertyBothBusiness()
         setupMockCreateSession(true)
         setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
-        val result = if (isAgent) TestConfirmReportingMethodSharedController
-          .show(testTaxYear, testChangeToAnnual, isAgent, incomeSourceType)(fakeRequestConfirmedClient())
-        else TestConfirmReportingMethodSharedController
-          .show(testTaxYear, testChangeToAnnual, isAgent, incomeSourceType)(fakeRequestWithActiveSession)
+        val result = if (isAgent) testConfirmReportingMethodSharedController
+          .show(testTaxYear, testChangeToAnnual, incomeSourceType)(fakeRequestConfirmedClient())
+        else testConfirmReportingMethodSharedController
+          .show(testTaxYear, testChangeToAnnual, incomeSourceType)(fakeRequestWithActiveSession)
 
         val expectedRedirectUrl = routes.CannotGoBackErrorController.show(isAgent = isAgent, incomeSourceType).url
 
@@ -331,8 +323,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     if (emptyMongo) setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
     else setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
 
-    TestConfirmReportingMethodSharedController
-      .show(taxYear, changeTo, isAgent, incomeSourceType)(
+    testConfirmReportingMethodSharedController
+      .show(taxYear, changeTo, incomeSourceType)(
         if (isAgent)
           fakeRequestConfirmedClient()
         else
@@ -361,7 +353,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     setupMockSetMongoData(true)
 
     when(
-      TestConfirmReportingMethodSharedController
+      testConfirmReportingMethodSharedController
         .updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
       .thenReturn(
         Future(
@@ -372,8 +364,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         )
       )
 
-    TestConfirmReportingMethodSharedController
-      .submit(taxYear, changeTo, isAgent, incomeSourceType)(
+    testConfirmReportingMethodSharedController
+      .submit(taxYear, changeTo, incomeSourceType)(
         (if (isAgent)
           fakePostRequestConfirmedClient()
         else

@@ -87,7 +87,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
   // Set fixed date for DateService
   lazy val fixedDate: LocalDate = LocalDate.of(2023, 12, 15)
   
-  implicit val dateService: DateService = new DateService {
+  implicit lazy val dateService: DateService = new DateService {
 
     override def getCurrentDate: LocalDate = fixedDate
 

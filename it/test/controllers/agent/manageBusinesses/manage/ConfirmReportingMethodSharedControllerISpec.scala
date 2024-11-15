@@ -16,32 +16,33 @@
 
 package controllers.agent.manageBusinesses.manage
 
+import controllers.agent.ControllerISpecHelper
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.JourneyType.{JourneyType, Manage}
+import enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import auth.MtdItUser
 import models.admin.IncomeSourcesFs
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.JourneyType.Manage
 import forms.incomeSources.manage.ConfirmReportingMethodForm
-import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDAgentAuthStub}
+import models.admin.{IncomeSources, NavBarFs}
 import models.incomeSourceDetails.{LatencyDetails, ManageIncomeSourceData, UIJourneySessionData}
 import models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.Json
-import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import play.mvc.Http.Status
 import services.SessionService
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
-import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import java.time.LocalDate
 import java.time.Month.APRIL
 
-class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
+class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper {
 
   val annual = "Annual"
-  val quarterly = "Quarterly"
   val quarterlyIndicator: String = "Q"
   val annuallyIndicator: String = "A"
   val taxYear = "2023-2024"
@@ -49,9 +50,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
   val currentTaxYear: Int = dateService.getCurrentTaxYearEnd
   val taxYear1: Int = currentTaxYear
   val taxYear2: Int = currentTaxYear + 1
-  val taxYear1YYtoYY: String = s"${(taxYear1 - 1).toString.takeRight(2)}-${taxYear1.toString.takeRight(2)}"
-  val taxYear1YYYYtoYY: String = "20" + taxYear1YYtoYY
-  val taxYearYYYYtoYYYY = s"${taxYear1 - 1}-$taxYear1"
   val lastDayOfCurrentTaxYear: LocalDate = LocalDate.of(currentTaxYear, APRIL, 5)
   val latencyDetails: LatencyDetails =
     LatencyDetails(
@@ -62,31 +60,21 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
       latencyIndicator2 = annuallyIndicator
     )
 
+  val pathSE = "/agents/manage-your-businesses/manage/confirm-you-want-to-report"
+  val pathUK = "/agents/manage-your-businesses/manage/confirm-you-want-to-report-uk-property "
+  val pathOV = "/agents/manage-your-businesses/manage/confirm-you-want-to-report-foreign-property"
+
   private lazy val checkYourAnswersController = controllers.manageBusinesses.manage.routes
     .CheckYourAnswersController
   private lazy val confirmReportingMethodSharedController = controllers.manageBusinesses.manage.routes
     .ConfirmReportingMethodSharedController
 
-  val confirmReportingMethodShowUKPropertyUrl: String = confirmReportingMethodSharedController
-    .show(taxYear = testPropertyIncomeId, changeTo = annual, incomeSourceType = UkProperty, isAgent = true).url
-  val confirmReportingMethodShowForeignPropertyUrl: String = confirmReportingMethodSharedController
-    .show(taxYear = testPropertyIncomeId, changeTo = annual, incomeSourceType = ForeignProperty, isAgent = true).url
-  val confirmReportingMethodShowSoleTraderBusinessUrl: String = confirmReportingMethodSharedController
-    .show(taxYear = taxYear, changeTo = annual, incomeSourceType = SelfEmployment, isAgent = true).url
-
-  val confirmReportingMethodSubmitUKPropertyUrl: String = confirmReportingMethodSharedController
-    .submit(taxYear = taxYear, changeTo = annual, incomeSourceType = UkProperty, isAgent = true).url
-  val confirmReportingMethodSubmitForeignPropertyUrl: String = confirmReportingMethodSharedController
-    .submit(taxYear = taxYear, changeTo = annual, incomeSourceType = ForeignProperty, isAgent = true).url
-  val confirmReportingMethodSubmitSoleTraderBusinessUrl: String = confirmReportingMethodSharedController
-    .submit(taxYear = taxYear, changeTo = annual, incomeSourceType = SelfEmployment, isAgent = true).url
-
   val checkYourAnswersShowUKPropertyUrl: String = checkYourAnswersController
-    .show(isAgent = true, UkProperty).url
+    .show(isAgent = false, UkProperty).url
   val checkYourAnswersShowForeignPropertyUrl: String = checkYourAnswersController
-    .show(isAgent = true, ForeignProperty).url
+    .show(isAgent = false, ForeignProperty).url
   val checkYourAnswersShowSelfEmploymentUrl: String = checkYourAnswersController
-    .show(isAgent = true, SelfEmployment).url
+    .show(isAgent = false, SelfEmployment).url
 
   val prefix: String = "incomeSources.manage.propertyReportingMethod"
 
@@ -96,272 +84,439 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
 
-  val testUser: MtdItUser[_] = MtdItUser(
-    testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
-    None, Some("1234567890"), None, Some(Agent), None
-  )(FakeRequest())
+  def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
+    sessionId = testSessionId,
+    journeyType = JourneyType(Manage, incomeSourceType).toString,
+    manageIncomeSourceData = Some(ManageIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), reportingMethod = Some(annual), taxYear = Some(2024))))
 
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    await(sessionService.deleteSession(Manage))
-  }
 
-  s"calling GET $confirmReportingMethodShowUKPropertyUrl" should {
-    "render the Confirm Reporting Method page" when {
-      "all query parameters are valid" in {
+  s"GET $pathSE" when {
+    List(MTDPrimaryAgent, MTDSupportingAgent).foreach { case mtdUserRole =>
+      s"a user is a $mtdUserRole" that {
+        val isSupportingAgent = mtdUserRole == MTDSupportingAgent
+        val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, true)
+        " is authenticated, with a valid MTD enrolment" should {
+          "render the Confirm Reporting Method page" when {
+            "all query parameters are valid" in {
+              enable(IncomeSources)
+              disable(NavBarFs)
+              MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
 
-        stubAuthorisedAgentUser(authorised = true)
+              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
+                manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
 
-        Given("Income Sources FS is enabled")
-        enable(IncomeSourcesFs)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod(latencyDetails))
 
-        When(s"I call GET $confirmReportingMethodShowUKPropertyUrl")
+              IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-UK",
-          manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testMtditid), Some(annual), Some(2024))))))
+              val result = buildGETMTDClient(pathSE, additionalCookies).futureValue
+              verifyIncomeSourceDetailsCall(testMtditid)
 
-        And("API 1771  returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetails))
+              result should have(
+                httpStatus(OK),
+                pageTitleAgent(pageTitle),
+                elementTextByID("confirm-button")(continueButtonText)
+              )
+            }
+          }
 
-        And("API 1776 updateTaxYearSpecific returns a success response")
-        IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+          "redirect to home page" when {
+            "Income Sources FS is Disabled" in {
+              disable(IncomeSources)
+              disable(NavBarFs)
+              MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
 
-        val result = IncomeTaxViewChangeFrontend.getConfirmUKPropertyReportingMethod(taxYear, annual, clientDetailsWithConfirmation)
+              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
+                manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
 
-        verifyIncomeSourceDetailsCall(testMtditid)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-        result should have(
-          httpStatus(OK),
-          pageTitleAgent(pageTitle),
-          elementTextByID("confirm-button")(continueButtonText)
-        )
+              IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+
+              val result = buildGETMTDClient(pathSE, additionalCookies).futureValue
+              verifyIncomeSourceDetailsCall(testMtditid)
+              result should have(
+                httpStatus(SEE_OTHER),
+                redirectURI(controllers.routes.HomeController.show().url)
+              )
+            }
+          }
+
+        }
+        testAuthFailuresForMTDAgent(pathSE, isSupportingAgent)
       }
     }
   }
 
-  s"calling GET $confirmReportingMethodShowForeignPropertyUrl" should {
-    "render the Confirm Reporting Method page" when {
-      "all query parameters are valid" in {
+  s"GET $pathUK" when {
+    List(MTDPrimaryAgent, MTDSupportingAgent).foreach { case mtdUserRole =>
+      s"a user is a $mtdUserRole" that {
+        val isSupportingAgent = mtdUserRole == MTDSupportingAgent
+        val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, true)
+        " is authenticated, with a valid MTD enrolment" should {
+          "render the Confirm Reporting Method page" when {
+            "all query parameters are valid" in {
+              enable(IncomeSources)
+              disable(NavBarFs)
+              MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
 
-        stubAuthorisedAgentUser(authorised = true)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetails))
 
-        Given("Income Sources FS is enabled")
-        enable(IncomeSourcesFs)
+              IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
-        When(s"I call GET $confirmReportingMethodShowForeignPropertyUrl")
+              await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
 
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-FP",
-          manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testMtditid), Some(annual), Some(2024))))))
+              val result = buildGETMTDClient(pathUK, additionalCookies).futureValue
+              verifyIncomeSourceDetailsCall(testMtditid)
 
-        And("API 1771  returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails))
+              result should have(
+                httpStatus(OK),
+                pageTitleAgent(pageTitle),
+                elementTextByID("confirm-button")(continueButtonText)
+              )
+            }
+          }
 
-        And("API 1776 updateTaxYearSpecific returns a success response")
-        IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+          "redirect to home page" when {
+            "Income Sources FS is Disabled" in {
+              disable(IncomeSources)
+              disable(NavBarFs)
+              MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
 
-        val result = IncomeTaxViewChangeFrontend.getConfirmForeignPropertyReportingMethod(taxYear, annual, clientDetailsWithConfirmation)
-        verifyIncomeSourceDetailsCall(testMtditid)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetails))
 
-        result should have(
-          httpStatus(OK),
-          pageTitleAgent(pageTitle),
-          elementTextByID("confirm-button")(continueButtonText)
-        )
+              IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+
+              await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
+
+              val result = buildGETMTDClient(pathUK, additionalCookies).futureValue
+              verifyIncomeSourceDetailsCall(testMtditid)
+              result should have(
+                httpStatus(SEE_OTHER),
+                redirectURI(controllers.routes.HomeController.show().url)
+              )
+            }
+          }
+        }
+        testAuthFailuresForMTDAgent(pathUK, isSupportingAgent)
       }
     }
   }
 
-  s"calling GET $confirmReportingMethodShowSoleTraderBusinessUrl" should {
-    "render the Confirm Reporting Method page" when {
-      "all query parameters are valid" in {
+  s"GET $pathOV" when {
+    List(MTDPrimaryAgent, MTDSupportingAgent).foreach { case mtdUserRole =>
+      s"a user is a $mtdUserRole" that {
+        val isSupportingAgent = mtdUserRole == MTDSupportingAgent
+        val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, true)
+        " is authenticated, with a valid MTD enrolment" should {
+          "render the Confirm Reporting Method page" when {
+            "all query parameters are valid" in {
+              enable(IncomeSources)
+              disable(NavBarFs)
+              MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
 
-        stubAuthorisedAgentUser(authorised = true)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails))
 
-        Given("Income Sources FS is enabled")
-        enable(IncomeSourcesFs)
+              IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
-          manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
+              await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
 
-        And("API 1771  returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod(latencyDetails))
+              val result = buildGETMTDClient(pathOV, additionalCookies).futureValue
+              verifyIncomeSourceDetailsCall(testMtditid)
 
-        And("API 1776 updateTaxYearSpecific returns a success response")
-        IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+              result should have(
+                httpStatus(OK),
+                pageTitleAgent(pageTitle),
+                elementTextByID("confirm-button")(continueButtonText)
+              )
+            }
+          }
 
-        val result = IncomeTaxViewChangeFrontend.getConfirmSoleTraderBusinessReportingMethod(taxYear, annual, clientDetailsWithConfirmation)
-        verifyIncomeSourceDetailsCall(testMtditid)
+          "redirect to home page" when {
+            "Income Sources FS is Disabled" in {
+              disable(IncomeSources)
+              disable(NavBarFs)
+              MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
 
-        result should have(
-          httpStatus(OK),
-          pageTitleAgent(pageTitle),
-          elementTextByID("confirm-button")(continueButtonText)
-        )
-      }
-    }
-    "redirect to home page" when {
-      "Income Sources FS is Disabled" in {
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails))
 
-        stubAuthorisedAgentUser(authorised = true)
+              IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
-        Given("Income Sources FS is disabled")
-        disable(IncomeSourcesFs)
+              await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
 
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
-          manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
+              val result = buildGETMTDClient(pathOV, additionalCookies).futureValue
+              verifyIncomeSourceDetailsCall(testMtditid)
+              result should have(
+                httpStatus(SEE_OTHER),
+                redirectURI(controllers.routes.HomeController.show().url)
+              )
+            }
+          }
 
-        When(s"I call GET $confirmReportingMethodShowSoleTraderBusinessUrl")
-
-        And("API 1771  returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-        And("API 1776 updateTaxYearSpecific returns a success response")
-        IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
-
-        val result = IncomeTaxViewChangeFrontend.getConfirmSoleTraderBusinessReportingMethod(taxYear, annual, clientDetailsWithConfirmation)
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.HomeController.showAgent.url)
-        )
-      }
-    }
-  }
-
-  s"calling POST $confirmReportingMethodSubmitSoleTraderBusinessUrl" should {
-    s"redirect to $checkYourAnswersShowSelfEmploymentUrl" when {
-      "called with a valid form" in {
-
-        stubAuthorisedAgentUser(authorised = true)
-
-        Given("Income Sources FS is enabled")
-        enable(IncomeSourcesFs)
-
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
-          manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
-
-        And("API 1771  returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
-          manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId), Some(annual), Some(2024))))))
-
-        val result = IncomeTaxViewChangeFrontend.postConfirmSoleTraderBusinessReportingMethod(taxYear, annual, clientDetailsWithConfirmation)(
-          Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
-        )
-
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(checkYourAnswersShowSelfEmploymentUrl)
-        )
-      }
-    }
-    s"return ${Status.BAD_REQUEST}" when {
-      "called with a invalid form" in {
-
-        stubAuthorisedAgentUser(authorised = true)
-
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
-          manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
-
-        Given("Income Sources FS is enabled")
-        enable(IncomeSourcesFs)
-
-        And("API 1771  returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-        And("API 1776 updateTaxYearSpecific returns a success response")
-        IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
-
-        val result = IncomeTaxViewChangeFrontend.postConfirmSoleTraderBusinessReportingMethod(taxYear, annual, clientDetailsWithConfirmation)(
-          Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("RANDOM"))
-        )
-
-        result should have(
-          httpStatus(BAD_REQUEST)
-        )
-      }
-    }
-
-    "redirect to home page" when {
-      "Income Sources FS is disabled" in {
-
-        stubAuthorisedAgentUser(authorised = true)
-
-        disable(IncomeSourcesFs)
-
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
-          manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
-
-        And("API 1771  returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-        And("API 1776 updateTaxYearSpecific returns a success response")
-        IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
-
-        val result = IncomeTaxViewChangeFrontend.postConfirmSoleTraderBusinessReportingMethod(taxYear, annual, clientDetailsWithConfirmation)(
-          Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
-        )
-
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.HomeController.showAgent.url)
-        )
+        }
+        testAuthFailuresForMTDAgent(pathUK, isSupportingAgent)
       }
     }
   }
 
-  s"calling POST $confirmReportingMethodSubmitForeignPropertyUrl" should {
-    s"redirect to $checkYourAnswersShowForeignPropertyUrl" when {
-      "called with a valid form" in {
 
-        stubAuthorisedAgentUser(authorised = true)
+  s"POST $pathSE" when {
+    List(MTDPrimaryAgent, MTDSupportingAgent).foreach { case mtdUserRole =>
+      s"a user is a $mtdUserRole" that {
+        val isSupportingAgent = mtdUserRole == MTDSupportingAgent
+        val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, true)
+        " is authenticated, with a valid MTD enrolment" should {
+          s"redirect to $checkYourAnswersShowSelfEmploymentUrl" when {
+            "called with a valid form" in {
+              enable(IncomeSources)
+              disable(NavBarFs)
+              MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
 
-        Given("Income Sources FS is enabled")
-        enable(IncomeSourcesFs)
+              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
+                manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
 
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-FP",
-          manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testMtditid), Some(annual), Some(2024))))))
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-        And("API 1771  returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
+              await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
 
-        val result = IncomeTaxViewChangeFrontend.postConfirmForeignPropertyReportingMethod(taxYear, annual, clientDetailsWithConfirmation)(
-          Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
-        )
+              val formData = Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
 
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(checkYourAnswersShowForeignPropertyUrl)
-        )
+              val result = buildPOSTMTDPostClient(pathSE, additionalCookies, formData)
+
+              result should have(
+                httpStatus(SEE_OTHER),
+                redirectURI(checkYourAnswersShowSelfEmploymentUrl)
+              )
+
+              testAuthFailuresForMTDAgent(pathSE, isSupportingAgent, optBody = Some(Map
+              (ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
+              )))
+            }
+          }
+
+          s"return ${Status.BAD_REQUEST}" when {
+            "called with a invalid form" in {
+              enable(IncomeSources)
+              disable(NavBarFs)
+              MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+
+              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
+                manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
+
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+
+              IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+
+              val formData =  Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("RANDOM"))
+
+              val result = buildPOSTMTDPostClient(pathSE, additionalCookies, formData)
+
+              result should have(
+                httpStatus(BAD_REQUEST)
+              )
+
+              testAuthFailuresForMTDAgent(pathSE, isSupportingAgent, optBody = Some(Map
+              (ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
+              )))
+            }
+          }
+
+          "redirect to home page" when {
+            "Income Sources FS is disabled" in {
+              disable(IncomeSources)
+              disable(NavBarFs)
+              MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+
+              IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+
+              val formData =  Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("RANDOM"))
+
+              val result = buildPOSTMTDPostClient(pathSE, additionalCookies, formData)
+
+              result should have(
+                httpStatus(SEE_OTHER),
+                redirectURI(controllers.routes.HomeController.show().url)
+              )
+
+              testAuthFailuresForMTDAgent(pathSE, isSupportingAgent, optBody = Some(Map
+              (ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
+              )))
+            }
+          }
+
+        }
       }
     }
   }
 
-  s"calling POST $confirmReportingMethodSubmitUKPropertyUrl" should {
-    s"redirect to $checkYourAnswersShowUKPropertyUrl" when {
-      "called with a valid form" in {
+  s"POST $pathUK" when {
+    List(MTDPrimaryAgent, MTDSupportingAgent).foreach { case mtdUserRole =>
+      s"a user is a $mtdUserRole" that {
+        val isSupportingAgent = mtdUserRole == MTDSupportingAgent
+        val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, true)
+        " is authenticated, with a valid MTD enrolment" should {
+          s"redirect to $checkYourAnswersShowUKPropertyUrl" when {
+            "called with a valid form" in {
+              enable(IncomeSources)
+              disable(NavBarFs)
+              MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
 
-        stubAuthorisedAgentUser(authorised = true)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
-        Given("Income Sources FS is enabled")
-        enable(IncomeSourcesFs)
+              await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
 
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-UK",
-          manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testMtditid), Some(annual), Some(2024))))))
+              val formData =   Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
 
-        And("API 1771  returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
+              val result = buildPOSTMTDPostClient(pathUK, additionalCookies, formData)
 
-        val result = IncomeTaxViewChangeFrontend.postConfirmUKPropertyReportingMethod(taxYear, annual, clientDetailsWithConfirmation)(
-          Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
-        )
+              result should have(
+                httpStatus(SEE_OTHER),
+                redirectURI(checkYourAnswersShowUKPropertyUrl)
+              )
 
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(checkYourAnswersShowUKPropertyUrl)
-        )
+              testAuthFailuresForMTDAgent(pathUK, isSupportingAgent, optBody = Some(Map
+              (ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
+              )))
+            }
+          }
+
+          s"return ${Status.BAD_REQUEST}" when {
+            "called with a invalid form" in {
+              enable(IncomeSources)
+              disable(NavBarFs)
+              MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
+
+              await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
+
+              val formData =  Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("RANDOM"))
+
+              val result = buildPOSTMTDPostClient(pathUK, additionalCookies, formData)
+
+              result should have(
+                httpStatus(BAD_REQUEST)
+              )
+
+              testAuthFailuresForMTDAgent(pathUK, isSupportingAgent, optBody = Some(Map
+              (ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
+              )))
+            }
+          }
+
+          "redirect to home page" when {
+            "Income Sources FS is disabled" in {
+              disable(IncomeSources)
+              disable(NavBarFs)
+              MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
+
+              await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
+
+              val formData =   Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
+
+              val result = buildPOSTMTDPostClient(pathUK, additionalCookies, formData)
+
+              result should have(
+                httpStatus(SEE_OTHER),
+                redirectURI(controllers.routes.HomeController.show().url)
+              )
+
+              testAuthFailuresForMTDAgent(pathUK, isSupportingAgent, optBody = Some(Map
+              (ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
+              )))
+            }
+          }
+
+        }
+      }
+    }
+  }
+
+  s"POST $pathOV" when {
+    List(MTDPrimaryAgent, MTDSupportingAgent).foreach { case mtdUserRole =>
+      s"a user is a $mtdUserRole" that {
+        val isSupportingAgent = mtdUserRole == MTDSupportingAgent
+        val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, true)
+        " is authenticated, with a valid MTD enrolment" should {
+          s"redirect to $checkYourAnswersShowForeignPropertyUrl" when {
+            "called with a valid form" in {
+              enable(IncomeSources)
+              disable(NavBarFs)
+              MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
+
+              await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
+
+              val formData =   Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
+
+              val result = buildPOSTMTDPostClient(pathOV, additionalCookies, formData)
+
+              result should have(
+                httpStatus(SEE_OTHER),
+                redirectURI(checkYourAnswersShowForeignPropertyUrl)
+              )
+
+              testAuthFailuresForMTDAgent(pathOV, isSupportingAgent, optBody = Some(Map
+              (ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
+              )))
+            }
+          }
+
+          s"return ${Status.BAD_REQUEST}" when {
+            "called with a invalid form" in {
+              enable(IncomeSources)
+              disable(NavBarFs)
+              MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
+
+              await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
+
+              val formData =  Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("RANDOM"))
+
+              val result = buildPOSTMTDPostClient(pathOV, additionalCookies, formData)
+
+              result should have(
+                httpStatus(BAD_REQUEST)
+              )
+
+              testAuthFailuresForMTDAgent(pathOV, isSupportingAgent, optBody = Some(Map
+              (ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
+              )))
+            }
+          }
+
+          "redirect to home page" when {
+            "Income Sources FS is disabled" in {
+              disable(IncomeSources)
+              disable(NavBarFs)
+              MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
+
+              await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
+
+              val formData =   Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
+
+              val result = buildPOSTMTDPostClient(pathOV, additionalCookies, formData)
+
+              result should have(
+                httpStatus(SEE_OTHER),
+                redirectURI(controllers.routes.HomeController.show().url)
+              )
+
+              testAuthFailuresForMTDAgent(pathOV, isSupportingAgent, optBody = Some(Map
+              (ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
+              )))
+            }
+          }
+
+        }
       }
     }
   }
