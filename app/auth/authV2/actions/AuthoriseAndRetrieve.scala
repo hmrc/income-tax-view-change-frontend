@@ -27,6 +27,7 @@ import models.OriginEnum
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import play.api.{Configuration, Environment, Logger}
+import services.SessionDataService
 import uk.gov.hmrc.auth.core.AffinityGroup.{Individual, Organisation}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
@@ -45,13 +46,26 @@ class AuthoriseAndRetrieve @Inject()(val authorisedFunctions: FrontendAuthorised
                                      override val config: Configuration,
                                      override val env: Environment,
                                      mcc: MessagesControllerComponents,
-                                     val auditingService: AuditingService)
+                                     val auditingService: AuditingService,
+                                     sessionDataService: SessionDataService)
   extends AuthRedirects with ActionRefiner[Request, EnroledUser] with FeatureSwitching {
 
   val requireClientSelected: Boolean = true
 
   implicit val executionContext: ExecutionContext = mcc.executionContext
   val requiredConfidenceLevel: Int = appConfig.requiredConfidenceLevel
+
+  def requiredClientId(implicit request: Request[_], hc: HeaderCarrier): Future[Option[String]] = {
+    if (appConfig.isSessionDataStorageEnabled){
+      sessionDataService.getSessionData().map {
+        case Left(_) => request.session.get(SessionKeys.clientMTDID).filter(_ => requireClientSelected)
+        case Right(value) => Some(value.mtditid)
+      }
+    }
+    else {
+      Future.successful(request.session.get(SessionKeys.clientMTDID).filter(_ => requireClientSelected))
+    }
+  }
 
   override protected def refine[A](request: Request[A]): Future[Either[Result, EnroledUser[A]]] = {
 
@@ -84,13 +98,14 @@ class AuthoriseAndRetrieve @Inject()(val authorisedFunctions: FrontendAuthorised
     // Organisation affinity group
     val isIndividual: Predicate = Enrolment(appConfig.mtdItEnrolmentKey) and (AffinityGroup.Organisation or AffinityGroup.Individual)
 
-    val requiredClientId: Option[String] = request.session.get(SessionKeys.clientMTDID).filter(_ => requireClientSelected)
 
-    authorisedFunctions
-      .authorised(isIndividual or isAgent(requiredClientId))
-      .retrieve(allEnrolments and name and credentials and affinityGroup and confidenceLevel) {
-        redirectIfInsufficientConfidence() orElse constructEnroledUser()
-      }(hc, executionContext) recoverWith logAndRedirect
+    requiredClientId flatMap{ requiredId =>
+      authorisedFunctions
+        .authorised(isIndividual or isAgent(requiredId))
+        .retrieve(allEnrolments and name and credentials and affinityGroup and confidenceLevel) {
+          redirectIfInsufficientConfidence() orElse constructEnroledUser()
+        }(hc, executionContext) recoverWith logAndRedirect
+    }
   }
 
   // this URL is incorrect in live - the completion and failure URLs must be URL encoded
