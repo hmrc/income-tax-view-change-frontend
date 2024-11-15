@@ -18,6 +18,7 @@ package controllers.incomeSources.cease
 
 import audit.models.CeaseIncomeSourceAuditModel
 import auth.MtdItUser
+import controllers.ControllerISpecHelper
 import models.admin.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.JourneyType.Cease
@@ -40,7 +41,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate
 
-class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
+class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper {
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
   val repository = app.injector.instanceOf[UIJourneySessionDataRepository]
@@ -51,6 +52,10 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
   val changeLink = "Change"
   val testBusinessName = "business"
   val timestamp = "2023-01-31T09:26:17Z"
+
+  val selfEmploymentPath = "/business-check-details"
+  val ukPropertyPath = "/uk-property-check-details"
+  val foreignPropertyPath = "/foreign-property-check-details"
 
   val showCheckCeaseBusinessDetailsControllerUrl = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.show(SelfEmployment).url
   val formActionSE = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submit(SelfEmployment).url
