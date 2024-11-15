@@ -45,7 +45,7 @@ class AgentHasClientDetails @Inject()(implicit val executionContext: ExecutionCo
     implicit val hc: HeaderCarrier = HeaderCarrierConverter
       .fromRequestAndSession(request, request.session)
 
-    val cookiesHaveClientDetails: Boolean = {
+    lazy val cookiesHaveClientDetails: Boolean = {
       request.session.get(SessionKeys.clientMTDID).nonEmpty &&
         request.session.get(SessionKeys.clientFirstName).nonEmpty &&
         request.session.get(SessionKeys.clientLastName).nonEmpty &&
