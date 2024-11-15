@@ -123,7 +123,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     val (backCall, _) = getRedirectCalls(taxYearModel.toString, isAgent, changeTo, Some(id), incomeSourceType)
     val journeyType = JourneyType(Manage, incomeSourceType)
 
-    sessionService.getMongo(journeyType.toString).flatMap {
+    sessionService.getMongo(journeyType).flatMap {
       case Right(Some(sessionData)) =>
         val oldManageIncomeSourceSessionData = sessionData.manageIncomeSourceData.getOrElse(ManageIncomeSourceData())
         val updatedAddIncomeSourceSessionData = oldManageIncomeSourceSessionData.copy(reportingMethod = Some(reportingMethod.name), taxYear = Some(taxYearModel.endYear))

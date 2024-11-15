@@ -94,7 +94,7 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
     }) { sessionData =>
       if (!isChange && incomeSourceType.equals(UkProperty) || !isChange && incomeSourceType.equals(ForeignProperty)) {
         lazy val journeyType = JourneyType(Add, incomeSourceType)
-        sessionService.createSession(journeyType.toString)
+        sessionService.createSession(journeyType)
       }
 
       val dateStartedOpt = sessionData.addIncomeSourceData.flatMap(_.dateStarted)

@@ -94,14 +94,14 @@ trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils {
   def withSessionData(journeyType: JourneyType, journeyState: JourneyState)(codeBlock: UIJourneySessionData => Future[Result])
                      (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     withIncomeSourcesFS {
-      sessionService.getMongo(journeyType.toString).flatMap {
+      sessionService.getMongo(journeyType).flatMap {
         case Right(Some(data: UIJourneySessionData)) if showCannotGoBackErrorPage(data, journeyType, journeyState) =>
           redirectUrl(journeyType, useDefaultRedirect(data, journeyType, journeyState))(user)
         case Right(Some(data: UIJourneySessionData)) =>
           codeBlock(data)
         case Right(None) =>
           if (journeyState == InitialPage) {
-            sessionService.createSession(journeyType.toString).flatMap { _ =>
+            sessionService.createSession(journeyType).flatMap { _ =>
               val data = UIJourneySessionData(hc.sessionId.get.value, journeyType.toString)
               codeBlock(data)
             }

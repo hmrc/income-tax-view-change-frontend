@@ -34,13 +34,13 @@ class SessionService @Inject()(
 
   def getMongo(journeyType: JourneyType)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[UIJourneySessionData]]] = {
     if (config.encryptionIsEnabled)
-      sensitiveUIJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType.toString) map {
+      sensitiveUIJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType) map {
         case Some(data: UIJourneySessionData) =>
           Right(Some(data))
         case None => Right(None)
       }
     else
-      uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType.toString) map {
+      uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType) map {
         case Some(data: UIJourneySessionData) =>
           Right(Some(data))
         case None => Right(None)
@@ -68,7 +68,7 @@ class SessionService @Inject()(
 
   def getMongoKey(key: String, journeyType: JourneyType)
                  (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[String]]] = {
-    uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType.toString) map {
+    uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType) map {
       case Some(data: UIJourneySessionData) =>
         journeyType.operation match {
           case Add => getKeyFromObject[String](data.addIncomeSourceData, key)
@@ -81,7 +81,7 @@ class SessionService @Inject()(
 
   def getMongoKeyTyped[A](key: String, journeyType: JourneyType)
                          (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[A]]] = {
-    uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType.toString) map {
+    uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType) map {
       case Some(data: UIJourneySessionData) =>
         journeyType.operation match {
           case Add => getKeyFromObject[A](data.addIncomeSourceData, key)

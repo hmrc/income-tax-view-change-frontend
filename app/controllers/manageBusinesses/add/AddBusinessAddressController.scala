@@ -94,7 +94,7 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
     addressLookUpResult match {
       case Right(value) =>
         val journeyType = JourneyType(Add, SelfEmployment)
-        sessionService.getMongo(journeyType.toString).flatMap {
+        sessionService.getMongo(journeyType).flatMap {
           case Right(Some(sessionData)) =>
             val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
             val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(address = Some(value.address), countryCode = Some("GB"))

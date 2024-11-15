@@ -63,7 +63,7 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
 
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     withIncomeSourcesFS {
-      sessionService.getMongo(JourneyType(Add, incomeSourceType).toString).flatMap {
+      sessionService.getMongo(JourneyType(Add, incomeSourceType)).flatMap {
         case Right(Some(sessionData)) =>
           (for {
             incomeSourceIdModel <- sessionData.addIncomeSourceData.flatMap(_.incomeSourceId.map(IncomeSourceId(_)))
