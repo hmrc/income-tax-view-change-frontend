@@ -40,6 +40,8 @@ class AgentHasClientDetails @Inject()(implicit val executionContext: ExecutionCo
 
   override protected def refine[A](request: EnroledUser[A]): Future[Either[Result, EnroledUser[A]]] = {
 
+    val hasConfirmedClient: Boolean = request.session.get(SessionKeys.confirmedClient).nonEmpty
+
     implicit val hc: HeaderCarrier = HeaderCarrierConverter
       .fromRequestAndSession(request, request.session)
 
@@ -70,7 +72,7 @@ class AgentHasClientDetails @Inject()(implicit val executionContext: ExecutionCo
     hasClientDetails flatMap{ hasDetails =>
       if (!request.affinityGroup.contains(Agent)) {
         Future.successful(Right(request))
-      } else if (hasArn && hasDetails) {
+      } else if (hasArn && hasConfirmedClient && hasDetails) {
         Future.successful(Right(request))
       } else if (!hasArn) {
         throw new MissingAgentReferenceNumber

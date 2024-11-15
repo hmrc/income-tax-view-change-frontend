@@ -24,6 +24,7 @@ import mocks.services.MockIncomeSourceDetailsService
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.test.Helpers.stubMessagesControllerComponents
+import services.SessionDataService
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
 import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
@@ -40,7 +41,8 @@ trait MockOldAuthActions extends TestSupport with MockIncomeSourceDetailsService
     config = conf,
     env = environment,
     mcc = stubMessagesControllerComponents(),
-    auditingService = mockAuditingService
+    auditingService = mockAuditingService,
+    app.injector.instanceOf[SessionDataService]
   )
 
   private val authoriseAndRetrieveIndividual = new AuthoriseAndRetrieveIndividual(
