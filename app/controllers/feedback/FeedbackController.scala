@@ -25,7 +25,7 @@ import forms.FeedbackForm
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.IncomeSourceDetailsService
+import services.{IncomeSourceDetailsService, SessionDataService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.play.partials.HeaderCarrierForPartialsConverter
 import utils.AuthenticatorPredicate
@@ -35,7 +35,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
+class FeedbackController @Inject()(implicit val appConfig: FrontendAppConfig,
                                    implicit val ec: ExecutionContext,
                                    val checkSessionTimeout: SessionTimeoutPredicate,
                                    val authenticate: AuthenticationPredicate,
@@ -51,7 +51,8 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
                                    val agentItvcErrorHandler: AgentItvcErrorHandler,
                                    val auth: AuthenticatorPredicate,
                                    val feedbackConnector : FeedbackConnector,
-                                   val featureSwitchPredicate: FeatureSwitchPredicate
+                                   val featureSwitchPredicate: FeatureSwitchPredicate,
+                                   val sessionDataService: SessionDataService
                                   ) extends ClientConfirmedController with I18nSupport {
 
 
@@ -123,14 +124,14 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
   def thankYou: Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveNinoWithIncomeSources andThen featureSwitchPredicate andThen retrieveBtaNavBar) {
     implicit request =>
-      val referer = request.session.get(REFERER).getOrElse(config.baseUrl)
+      val referer = request.session.get(REFERER).getOrElse(appConfig.baseUrl)
       Ok(feedbackThankYouView(referer)).withSession(request.session - REFERER)
   }
 
   def thankYouAgent: Action[AnyContent] = Authenticated.asyncWithoutClientAuth(notAnAgentPredicate) {
     implicit request =>
       implicit user =>
-        val referer = request.session.get(REFERER).getOrElse(config.agentBaseUrl)
+        val referer = request.session.get(REFERER).getOrElse(appConfig.agentBaseUrl)
         Future.successful(Ok(feedbackThankYouView(referer, isAgent = true)).withSession(request.session - REFERER))
   }
 

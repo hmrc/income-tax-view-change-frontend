@@ -47,7 +47,9 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                                                     val dateService: DateService,
                                                     val calculationListService: CalculationListService,
                                                     val sessionService: SessionService,
-                                                    val auth: AuthenticatorPredicate)
+                                                    val auth: AuthenticatorPredicate,
+                                                    val sessionDataService: SessionDataService
+                                                   )
                                                    (implicit val ec: ExecutionContext,
                                                     implicit override val mcc: MessagesControllerComponents,
                                                     val appConfig: FrontendAppConfig)

@@ -26,7 +26,7 @@ import models.admin.IncomeSources
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
 import play.api.mvc._
-import services.{IncomeSourceDetailsService, SessionService}
+import services.{IncomeSourceDetailsService, SessionDataService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
 import views.html.incomeSources.add.AddIncomeSources
@@ -41,7 +41,8 @@ class AddIncomeSourceController @Inject()(
                                            val checkSessionTimeout: SessionTimeoutPredicate,
                                            val authorisedFunctions: AuthorisedFunctions,
                                            val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                           auth: AuthenticatorPredicate
+                                           auth: AuthenticatorPredicate,
+                                           val sessionDataService: SessionDataService
                                          )
                                          (implicit val appConfig: FrontendAppConfig,
                                           implicit val ec: ExecutionContext,

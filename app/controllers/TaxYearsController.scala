@@ -23,7 +23,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import models.admin.ITSASubmissionIntegration
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.DateServiceInterface
+import services.{DateServiceInterface, SessionDataService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.AuthenticatorPredicate
@@ -35,7 +35,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class TaxYearsController @Inject()(taxYearsView: TaxYears,
                                    val authorisedFunctions: AuthorisedFunctions,
                                    implicit val dateService: DateServiceInterface,
-                                   val auth: AuthenticatorPredicate)
+                                   val auth: AuthenticatorPredicate,
+                                   val sessionDataService: SessionDataService)
                                   (implicit val appConfig: FrontendAppConfig,
                                    mcc: MessagesControllerComponents,
                                    implicit val ec: ExecutionContext,

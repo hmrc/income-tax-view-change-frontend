@@ -23,6 +23,7 @@ import models.admin.{FeatureSwitch, FeatureSwitchName}
 import play.api.Logger
 import play.api.mvc.MessagesControllerComponents
 import repositories.admin.FeatureSwitchRepository
+import services.SessionDataService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 
 import javax.inject.{Inject, Singleton}
@@ -32,7 +33,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class FeatureSwitchService @Inject()(
                                       val featureSwitchRepository: FeatureSwitchRepository,
                                       val authorisedFunctions: AuthorisedFunctions,
-                                      val appConfig: FrontendAppConfig)
+                                      val appConfig: FrontendAppConfig,
+                                      val sessionDataService: SessionDataService)
                                     (implicit val ec: ExecutionContext,
                                      mcc: MessagesControllerComponents,
                                      implicit val itvcErrorHandler: ItvcErrorHandler,

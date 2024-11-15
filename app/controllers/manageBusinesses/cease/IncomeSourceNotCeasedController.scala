@@ -23,6 +23,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.IncomeSourceType
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import services.SessionDataService
 import utils.AuthenticatorPredicate
 import views.html.errorPages.templates.ErrorTemplateWithLink
 
@@ -31,7 +32,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class IncomeSourceNotCeasedController @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
                                                 val errorTemplate: ErrorTemplateWithLink,
-                                                val auth: AuthenticatorPredicate)
+                                                val auth: AuthenticatorPredicate,
+                                                val sessionDataService: SessionDataService)
                                                (implicit val appConfig: FrontendAppConfig,
                                                 implicit val itvcErrorHandler: ItvcErrorHandler,
                                                 implicit val agentItvcErrorHandler: AgentItvcErrorHandler,

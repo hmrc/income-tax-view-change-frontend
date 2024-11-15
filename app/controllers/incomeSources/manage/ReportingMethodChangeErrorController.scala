@@ -30,7 +30,7 @@ import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.ManageIncomeSourceData
 import play.api.Logger
 import play.api.mvc._
-import services.{IncomeSourceDetailsService, SessionService, UpdateIncomeSourceService}
+import services.{IncomeSourceDetailsService, SessionDataService, SessionService, UpdateIncomeSourceService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
 import views.html.incomeSources.manage.{ManageIncomeSources, ReportingMethodChangeError}
@@ -43,7 +43,8 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
                                                      val updateIncomeSourceService: UpdateIncomeSourceService,
                                                      val reportingMethodChangeError: ReportingMethodChangeError,
                                                      val sessionService: SessionService,
-                                                     val auth: AuthenticatorPredicate)
+                                                     val auth: AuthenticatorPredicate,
+                                                     val sessionDataService: SessionDataService)
                                                     (implicit val ec: ExecutionContext,
                                                      implicit val itvcErrorHandler: ItvcErrorHandler,
                                                      implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,

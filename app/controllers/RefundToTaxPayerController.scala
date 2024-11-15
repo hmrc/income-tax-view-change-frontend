@@ -19,7 +19,7 @@ package controllers
 import audit.AuditingService
 import audit.models.RefundToTaxPayerResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import connectors.RepaymentHistoryConnector
 import controllers.agent.predicates.ClientConfirmedController
@@ -30,7 +30,7 @@ import models.repaymentHistory.RepaymentHistoryModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.IncomeSourceDetailsService
+import services.{IncomeSourceDetailsService, SessionDataService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.AuthenticatorPredicate
@@ -45,7 +45,8 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
                                            val authorisedFunctions: AuthorisedFunctions,
                                            itvcErrorHandler: ItvcErrorHandler,
                                            auditingService: AuditingService,
-                                           val auth: AuthenticatorPredicate)
+                                           val auth: AuthenticatorPredicate,
+                                           val sessionDataService: SessionDataService)
                                           (implicit mcc: MessagesControllerComponents,
                                            val ec: ExecutionContext,
                                            val appConfig: FrontendAppConfig,

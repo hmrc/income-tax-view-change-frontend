@@ -21,7 +21,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.IncomeSourceType
 import play.api.mvc._
-import services.SessionService
+import services.{SessionDataService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.manageBusinesses.cease.IncomeSourceCeasedBackError
@@ -32,7 +32,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class IncomeSourceCeasedBackErrorController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                                       val sessionService: SessionService,
                                                       val cannotGoBackCeasedError: IncomeSourceCeasedBackError,
-                                                      val auth: AuthenticatorPredicate)
+                                                      val auth: AuthenticatorPredicate,
+                                                      val sessionDataService: SessionDataService)
                                                      (implicit val appConfig: FrontendAppConfig,
                                                       mcc: MessagesControllerComponents,
                                                       val ec: ExecutionContext,

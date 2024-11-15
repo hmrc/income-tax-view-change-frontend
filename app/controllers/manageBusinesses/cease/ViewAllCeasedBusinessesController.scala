@@ -24,7 +24,7 @@ import enums.JourneyType.Manage
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
 import play.api.mvc._
-import services.{IncomeSourceDetailsService, SessionService}
+import services.{IncomeSourceDetailsService, SessionDataService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
 import views.html.manageBusinesses.cease.ViewAllCeasedBusinesses
@@ -37,7 +37,8 @@ class ViewAllCeasedBusinessesController @Inject()(val viewAllCeasedBusinesses: V
                                                   val authorisedFunctions: AuthorisedFunctions,
                                                   val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                   val sessionService: SessionService,
-                                                  val auth: AuthenticatorPredicate)
+                                                  val auth: AuthenticatorPredicate,
+                                                  val sessionDataService: SessionDataService)
                                                  (implicit val ec: ExecutionContext,
                                              implicit override val mcc: MessagesControllerComponents,
                                              implicit val itvcErrorHandler: ItvcErrorHandler,

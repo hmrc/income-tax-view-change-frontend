@@ -29,7 +29,7 @@ import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, Che
 import models.incomeSourceDetails.{AddIncomeSourceData, BusinessDetailsModel, IncomeSourceDetailsModel, UIJourneySessionData}
 import play.api.Logger
 import play.api.mvc._
-import services.{CreateBusinessDetailsService, SessionService}
+import services.{CreateBusinessDetailsService, SessionDataService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.add.IncomeSourceCheckDetails
@@ -41,7 +41,8 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
                                                    val authorisedFunctions: AuthorisedFunctions,
                                                    val businessDetailsService: CreateBusinessDetailsService,
                                                    val auditingService: AuditingService,
-                                                   auth: AuthenticatorPredicate)
+                                                   auth: AuthenticatorPredicate,
+                                                   val sessionDataService: SessionDataService)
                                                   (implicit val ec: ExecutionContext,
                                                    implicit override val mcc: MessagesControllerComponents,
                                                    val appConfig: FrontendAppConfig,

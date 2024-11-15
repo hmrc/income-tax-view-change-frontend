@@ -28,7 +28,7 @@ import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.SessionService
+import services.{SessionDataService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.manageBusinesses.add.AddBusinessName
@@ -41,7 +41,8 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
                                           val addBusinessView: AddBusinessName,
                                           val itvcErrorHandler: ItvcErrorHandler,
                                           val sessionService: SessionService,
-                                          auth: AuthenticatorPredicate)
+                                          auth: AuthenticatorPredicate,
+                                          val sessionDataService: SessionDataService)
                                          (implicit val appConfig: FrontendAppConfig,
                                           implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                           implicit override val mcc: MessagesControllerComponents,

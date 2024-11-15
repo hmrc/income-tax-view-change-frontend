@@ -49,7 +49,8 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
                                                       val auditingService: AuditingService,
                                                       val view: IncomeSourceReportingMethod,
                                                       val sessionService: SessionService,
-                                                      val auth: AuthenticatorPredicate)
+                                                      val auth: AuthenticatorPredicate,
+                                                      val sessionDataService: SessionDataService)
                                                      (implicit val appConfig: FrontendAppConfig,
                                                       mcc: MessagesControllerComponents,
                                                       val ec: ExecutionContext,

@@ -25,6 +25,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel, PaymentJourneyResponse}
 import play.api.Logger
 import play.api.mvc._
+import services.SessionDataService
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import utils.AuthenticatorPredicate
@@ -36,7 +37,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class PaymentController @Inject()(payApiConnector: PayApiConnector,
                                   val auditingService: AuditingService,
                                   val authorisedFunctions: FrontendAuthorisedFunctions,
-                                  val auth: AuthenticatorPredicate
+                                  val auth: AuthenticatorPredicate,
+                                  val sessionDataService: SessionDataService
                                  )(implicit val appConfig: FrontendAppConfig,
                                    mcc: MessagesControllerComponents,
                                    implicit val ec: ExecutionContext,

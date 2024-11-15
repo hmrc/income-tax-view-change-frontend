@@ -26,7 +26,7 @@ import models.optin.ConfirmTaxYearViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.DateService
+import services.{DateService, SessionDataService}
 import services.optIn.OptInService
 import utils.AuthenticatorPredicate
 import views.html.optIn.ConfirmTaxYear
@@ -37,7 +37,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class ConfirmTaxYearController @Inject()(val view: ConfirmTaxYear,
                                          val optInService: OptInService,
                                          val authorisedFunctions: FrontendAuthorisedFunctions,
-                                         val auth: AuthenticatorPredicate)
+                                         val auth: AuthenticatorPredicate,
+                                         val sessionDataService: SessionDataService)
                                         (implicit val dateService: DateService,
                                          val appConfig: FrontendAppConfig,
                                          mcc: MessagesControllerComponents,
