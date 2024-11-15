@@ -505,6 +505,7 @@ taxCal_breakdown.table.ZRTHR                                        = Higher rat
 taxCal_breakdown.table.ZRTAR                                        = Additional rate band at nil rate ({0} at {1}%)
 taxCal_breakdown.table.transitional_profit                          = Transitional profit ({0})
 taxCal_breakdown.table.totalIncomeTaxAndNicsDue                     = Self Assessment tax amount
+taxCal_breakdown.table.nic2                                         = Class 2 National Insurance
 taxCal_breakdown.table.nic4                                         = Class 4 National Insurance ({0} at {1}%)
 taxCal_breakdown.national_insurance_contributions                   = National Insurance contributions
 
@@ -1131,6 +1132,7 @@ paymentHistory.button                                           = {0} payments
 
 paymentHistory.refund                                           = Refund issued
 paymentHistory.payment                                          = Payment you made to HMRC
+paymentHistory.paymentToHmrc                                    = Payment you made to HMRC
 paymentHistory.cutOver                                          = Credit from an earlier tax year
 paymentHistory.mfa                                              = Credit from HMRC adjustment
 paymentHistory.balancingCharge                                  = Credit from overpaid tax
@@ -1242,7 +1244,10 @@ credit-and-refund.upcoming-allocated-credit-3                     = for further 
 credit-and-refund.no-credit                                       = You have no money in your account.
 credit-and-refund.claim-refund-btn                                = Claim a refund
 credit-and-refund.check-refund-btn                                = Check refund status
+
 credit-and-refund.credit-from-hmrc-title                          = credit from HMRC adjustment
+credit-and-refund.credit-from-hmrc-title-prt-1                    = from a
+credit-and-refund.credit-from-hmrc-title-prt-2                    = Credit from HMRC adjustment
 
 credit-and-refund.subHeading-source                               = Where has this money come from?
 credit-and-refund.how-much-can-i-claim                            = How much can I claim back?
@@ -1506,6 +1511,7 @@ incomeSources.add.foreignProperty.startDate.hint                     = The date 
 incomeSources.add.foreignProperty.startDate.hint2                    = This is the date you first received rental income from this foreign property business, such as letting or renting out a property or land.
 incomeSources.add.foreignProperty.startDate.hintExample              = For example, 27 3 2020
 incomeSources.add.foreignProperty.startDate.error.required           = Enter the date your foreign property business started
+incomeSources.add.foreignProperty.startDate.error.empty              = Enter the date your foreign property business started trading
 incomeSources.add.foreignProperty.startDate.error.missingMonthYear   = The date must include a month and a year
 incomeSources.add.foreignProperty.startDate.error.missingDayYear     = The date must include a day and a year
 incomeSources.add.foreignProperty.startDate.error.missingDayMonth    = The date must include a day and a month
@@ -1594,7 +1600,9 @@ add-business-start-date.hint2                        = This is the date we’ll 
 add-business-start-date.day                          = Day
 add-business-start-date.month                        = Month
 add-business-start-date.year                         = Year
+add-business-start-date.form.error.emptyDateField    = Enter the date your business started trading
 add-business-start-date.error.future                 = The date your business started trading must be before {0}
+add-business-start-date.error.required.all           = Enter the date your business started trading
 add-business-start-date.error.invalid                = The date must be a real date
 
 # add Business start date check
@@ -1665,12 +1673,16 @@ check-details-uk.title                                  = Check your answers
 check-details-uk.heading                                = UK property
 check-details-uk.start-date                             = Start date
 check-details-uk.accounting-method                      = Accounting method
+check-details-uk.cash-accounting                        = Cash basis accounting
+check-details-uk.traditional-accounting                 = Traditional accounting
 check-details-uk.change                                 = Change
 
 check-details-fp.title                                  = Check your answers
 check-details-fp.heading                                = Foreign property
 check-details-fp.start-date                             = Start date
 check-details-fp.accounting-method                      = Accounting method
+check-details-fp.cash-accounting                        = Cash basis accounting
+check-details-fp.traditional-accounting                 = Traditional accounting
 check-details-fp.change                                 = Change
 
 check-business-details.title                            = Check your details
@@ -1680,6 +1692,7 @@ check-business-details.change                           = Change
 check-business-details.start-date                       = Business trading start date
 check-business-details.business-description             = Business description
 check-business-details.business-address                 = Business address
+check-business-details.confirm-button                   = Confirm and Continue
 check-business-details.accounting-method                = Accounting method for sole trader income
 check-business-details.cash-accounting                  = Cash basis accounting
 check-business-details.traditional-accounting           = Traditional accounting
@@ -1701,7 +1714,8 @@ incomeSources.add.foreign-property-check-details.change                     = Ch
 
 # business added page - h1 intentionally empty
 business-added.text                                     = What you must do
-business-added.to                                       =  to
+business-added.deadlines                                = Your revised deadlines
+business-added.to                                       = to
 
 # Foreign Property Added - Uses above keys as base also, intentionally empty field below.
 business-added.foreign-property.head                    =
@@ -1931,6 +1945,11 @@ incomeSources.manage.uKPropertyReportingMethodError.p2        = You can try to c
 
 incomeSources.manage.foreignPropertyReportingMethodError.p1   = We were unable to update your foreign property business reporting frequency.
 incomeSources.manage.foreignPropertyReportingMethodError.p2   = You can try to change your foreign property business reporting frequency again in
+
+incomeSources.manage.businessReportingMethodError.text          = We were unable to update your sole trader business reporting frequency.
+incomeSources.manage.foreignPropertyReportingMethodError.text   = We were unable to update your foreign property business reporting frequency.
+incomeSources.manage.uKPropertyReportingMethodError.text        = We were unable to update your UK property business reporting frequency.
+
 incomeSources.manage.reportingMethodError.hyperlink1            = manage your details
 incomeSources.manage.reportingMethodError.hyperlink2            = view and manage income sources
 incomeSources.manage.reportingMethodError.p3                    = Or go back to
@@ -2127,6 +2146,7 @@ claimToAdjustPoa.enterPoaAmount.amountPreviousHeading                 = Amount b
 claimToAdjustPoa.enterPoaAmount.adjustedAmount                        = Adjusted amount
 claimToAdjustPoa.enterPoaAmount.firstPayment                          = First payment on account
 claimToAdjustPoa.enterPoaAmount.secondPayment                         = Second payment on account
+claimToAdjustPoa.enterPoaAmount.warning                               = You may have to pay interest if you reduce your payments on account too much and underpay
 claimToAdjustPoa.enterPoaAmount.howMuch                               = How much should each payment on account be?
 claimToAdjustPoa.enterPoaAmount.howMuchHint                           = Enter half the amount you think your final tax bill will be
 claimToAdjustPoa.enterPoaAmount.cancel                                = Cancel

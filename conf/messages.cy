@@ -1908,7 +1908,6 @@ incomeSources.cease.error.notCeased.link.prefix                    = Yn ôl i
 incomeSources.cease.error.notCeased.link.text                     = ddod â ffynhonnell incwm i ben.
 
 incomeSources.manage.businessReportingMethodError.text          = Nid oedd modd i ni ddiweddaru’r manylion ynghylch amlder cyflwyno adroddiadau ar gyfer eich busnes unig fasnachwr.
-incomeSources.manage.uKPropertyReportingMethodError.text        = Nid oedd modd i ni ddiweddaru’r manylion ynghylch amlder cyflwyno adroddiadau ar gyfer eich busnes eiddo yn y DU.
 incomeSources.manage.foreignPropertyReportingMethodError.text   = Nid oedd modd i ni ddiweddaru’r manylion ynghylch amlder cyflwyno adroddiadau ar gyfer eich busnes eiddo tramor.
 
 incomeSources.manage.reportingMethodError.hyperlink1            = rheoli eich manylion
