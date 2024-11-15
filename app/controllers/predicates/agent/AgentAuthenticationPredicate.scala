@@ -46,6 +46,7 @@ object AgentAuthenticationPredicate extends Results {
     else Left(onMissingARN)
 
   // Redirects to Select Client Page if client details aren't in session
+  // TODO: This one
   val detailsPredicate: AuthPredicate[IncomeTaxAgentUser] = request => _ =>
     if (request.session.get(SessionKeys.clientFirstName).nonEmpty
       && request.session.get(SessionKeys.clientLastName).nonEmpty

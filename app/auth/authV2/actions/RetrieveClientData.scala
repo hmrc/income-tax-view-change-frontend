@@ -43,6 +43,7 @@ class RetrieveClientData @Inject()(sessionDataService: SessionDataService,
     implicit val hc: HeaderCarrier = HeaderCarrierConverter
       .fromRequestAndSession(request, request.session)
 
+    //TODO: This one maybe
     sessionDataService.getSessionData(useCookie = true).map {
       case Right(sessionData) => Right(ClientDataRequest(
         sessionData.mtditid,
