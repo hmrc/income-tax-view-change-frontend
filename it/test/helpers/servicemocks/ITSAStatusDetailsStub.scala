@@ -26,7 +26,7 @@ import testConstants.BaseIntegrationTestConstants.testNino
 
 
 object ITSAStatusDetailsStub extends ComponentSpecBase {
-  
+
   def getUrl(taxYearRange: String = "23-24", futureYears: Boolean = false): String =
     s"/income-tax-view-change/itsa-status/status/$testNino/$taxYearRange?futureYears=$futureYears&history=false"
 
@@ -65,26 +65,6 @@ object ITSAStatusDetailsStub extends ComponentSpecBase {
         s"${taxYear - 1}-${shortTaxYear(taxYear)}" -> itsaStatusCY.toString,
         s"${previousYear - 1}-${shortTaxYear(previousYear)}" -> `itsaStatusCY-1`.toString
       )
-
-    println(
-      taxYearToStatus.foldLeft(JsArray()) {
-        case (array, (taxYear, status)) =>
-          val itsaStatusObject =
-            Json.parse(
-              s"""{
-                 |  "taxYear": "$taxYear",
-                 |  "itsaStatusDetails": [
-                 |    {
-                 |      "submittedOn": "2023-06-01T10:19:00.303Z",
-                 |      "status": "$status",
-                 |      "statusReason": "Sign up - return available",
-                 |      "businessIncomePriorTo2Years": 99999999999.99
-                 |    }
-                 |  ]
-                 |}""".stripMargin)
-          array.append(itsaStatusObject)
-      }.toString()
-    )
 
     WiremockHelper.stubGet(
       url = getUrl(s"${shortTaxYear(previousYear) - 1}-${shortTaxYear(previousYear)}", futureYears = true),
