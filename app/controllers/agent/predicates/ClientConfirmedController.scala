@@ -38,7 +38,6 @@ trait ClientConfirmedController extends BaseAgentController {
 
   val mcc: MessagesControllerComponents
 
-  //TODO: This one, something to do, other AC
   def getClientUtr(implicit request: Request[_]): Option[String] = {
     request.session.get(SessionKeys.clientUTR)
   }
