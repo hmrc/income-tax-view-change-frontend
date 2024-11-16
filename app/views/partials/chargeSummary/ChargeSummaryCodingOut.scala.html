@@ -21,7 +21,6 @@
 
 @(
     chargeItem: models.financialDetails.ChargeItem,
-    codingOutEnabled: Boolean,
     taxYearFromCodingOut: String,
     taxYearToCodingOut: String,
     latePaymentInterestCharge: Boolean
@@ -38,7 +37,7 @@
 
 <p id = "codingOutRemainingToPay" class="govuk-body govuk-!-margin-bottom-6" style="color:#505a5f;">
     @{
-        if (codingOutEnabled && chargeItem.subTransactionType == Some(models.financialDetails.Accepted)) {
+        if (chargeItem.subTransactionType == Some(models.financialDetails.Accepted)) {
             messages("chargeSummary.codingOutRemainingToPay", taxYearFromCodingOut, taxYearToCodingOut)
         } else if (latePaymentInterestCharge) chargeItem.interestRemainingToPay.toCurrency
         else chargeItem.remainingToPay.toCurrency

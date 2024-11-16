@@ -76,7 +76,6 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
                    chargeItems: List[TaxYearSummaryChargeItem],
                    taxYear: Int,
                    obligations: ObligationsModel,
-                   codingOutEnabled: Boolean,
                    claimToAdjustViewModel: TYSClaimToAdjustViewModel,
                    backUrl: String,
                    origin: Option[String],
@@ -96,7 +95,6 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
           calculationSummary,
           chargeItems,
           obligations,
-          codingOutEnabled = codingOutEnabled,
           reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
           showForecastData = showForecast(calculationSummary),
           ctaViewModel = claimToAdjustViewModel
@@ -126,7 +124,6 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
           None,
           chargeItems,
           obligations,
-          codingOutEnabled,
           isEnabled(ReviewAndReconcilePoa),
           showForecastData = true,
           claimToAdjustViewModel)
@@ -163,7 +160,6 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
       case financialDetails@FinancialDetailsModel(_, documentDetails, _) =>
 
         val getChargeItem: DocumentDetail => Option[ChargeItem] = getChargeItemOpt(
-          codingOutEnabled = true,
           reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa)
         )(
           financialDetails = financialDetails.financialDetails
@@ -258,14 +254,13 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
 
     withTaxYearFinancials(taxYear, isAgent) { charges =>
       withObligationsModel(taxYear, isAgent) { obligationsModel =>
-        val codingOutEnabled: Boolean = true
         val mtdItId: String = if (isAgent) getClientMtditid else user.mtditid
         val nino: String = if (isAgent) getClientNino else user.nino
         for {
           viewModel <- claimToAdjustViewModel(Nino(value = user.nino), taxYear)
           liabilityCalcResponse <- calculationService.getLiabilityCalculationDetail(mtdItId, nino, taxYear)
         } yield {
-          view(liabilityCalcResponse, charges, taxYear, obligationsModel, codingOutEnabled, viewModel,
+          view(liabilityCalcResponse, charges, taxYear, obligationsModel, viewModel,
             backUrl = if (isAgent) getAgentBackURL(user.headers.get(REFERER)) else getBackURL(user.headers.get(REFERER), origin),
             origin = origin, isAgent = isAgent)
             .addingToSession(gatewayPage -> TaxYearSummaryPage.name)
