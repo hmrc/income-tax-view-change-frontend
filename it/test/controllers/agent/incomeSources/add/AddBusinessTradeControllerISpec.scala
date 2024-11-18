@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package controllers.agent.manageBusinesses.add
+package controllers.agent.incomeSources.add
 
 import controllers.agent.ControllerISpecHelper
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, JourneyType}
 import enums.{MTDPrimaryAgent, MTDSupportingAgent}
-import forms.manageBusinesses.add.BusinessTradeForm
+import forms.incomeSources.add.BusinessTradeForm
 import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDAgentAuthStub}
 import models.admin.{IncomeSources, NavBarFs}
 import models.incomeSourceDetails.AddIncomeSourceData.businessTradeField
@@ -34,9 +34,9 @@ import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesRes
 class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
 
 
-  val addBusinessAddressUrl = controllers.manageBusinesses.add.routes.AddBusinessAddressController.showAgent(isChange = false).url
+  val addBusinessAddressUrl = controllers.incomeSources.add.routes.AddBusinessAddressController.showAgent(isChange = false).url
   val incomeSourcesUrl: String = controllers.routes.HomeController.showAgent.url
-  val checkDetailsUrl: String = controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
+  val checkDetailsUrl: String = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
 
   val pageTitleMsgKey: String = messagesAPI("add-trade.heading")
   val pageHint: String = messagesAPI("add-trade.trade-info-1") + " " + messagesAPI("add-trade.trade-info-2")
@@ -51,8 +51,8 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
     await(sessionService.deleteSession(Add))
   }
 
-  val path = "/agents/manage-your-businesses/add-sole-trader/business-trade"
-  val changePath = "/agents/manage-your-businesses/add-sole-trader/business-trade"
+  val path = "/agents/income-sources/add-sole-trader/business-trade"
+  val changePath = "/agents/income-sources/add-sole-trader/business-trade"
 
   List(MTDPrimaryAgent, MTDSupportingAgent).foreach { case mtdUserRole =>
     s"GET $path" when {

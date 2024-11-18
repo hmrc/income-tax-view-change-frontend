@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,45 +14,48 @@
  * limitations under the License.
  */
 
-package controllers.agent.manageBusinesses.add
+package controllers.agent.incomeSources.add
 
 import controllers.agent.ControllerISpecHelper
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, JourneyType}
 import enums.{MTDPrimaryAgent, MTDSupportingAgent}
-import forms.manageBusinesses.add.BusinessTradeForm
+import forms.incomeSources.add.BusinessNameForm
 import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDAgentAuthStub}
 import models.admin.{IncomeSources, NavBarFs}
-import models.incomeSourceDetails.AddIncomeSourceData.businessTradeField
-import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
+import models.incomeSourceDetails.AddIncomeSourceData.businessNameField
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
-import testConstants.BaseIntegrationTestConstants.{getAgentClientDetailsForCookie, testMtditid, testSessionId}
-import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesResponse, noPropertyOrBusinessResponse}
+import testConstants.BaseIntegrationTestConstants.{getAgentClientDetailsForCookie, testMtditid}
+import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
 
-class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
+import scala.concurrent.ExecutionContext
 
+class AddBusinessNameControllerISpec extends ControllerISpecHelper {
 
-  val addBusinessAddressUrl = controllers.manageBusinesses.add.routes.AddBusinessAddressController.showAgent(isChange = false).url
+  val addBusinessStartDateUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = false).url
   val incomeSourcesUrl: String = controllers.routes.HomeController.showAgent.url
-  val checkDetailsUrl: String = controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
 
-  val pageTitleMsgKey: String = messagesAPI("add-trade.heading")
-  val pageHint: String = messagesAPI("add-trade.trade-info-1") + " " + messagesAPI("add-trade.trade-info-2")
-  val button: String = messagesAPI("base.continue")
-  val testBusinessName: String = "Test Business Name"
-  val testBusinessTrade: String = "Test Business Trade"
-
+  val formHint: String = messagesAPI("add-business-name.p1") + " " +
+    messagesAPI("add-business-name.p2")
+  val continueButtonText: String = messagesAPI("base.continue")
+  val testBusinessName: String = "Test Business"
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
+  override implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
+  val journeyType: JourneyType = JourneyType(Add, SelfEmployment)
 
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    await(sessionService.deleteSession(Add))
+  def backUrl(isChange: Boolean): String = {
+    if (isChange) {
+        controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
+    } else {
+      controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
+    }
   }
 
-  val path = "/agents/manage-your-businesses/add-sole-trader/business-trade"
-  val changePath = "/agents/manage-your-businesses/add-sole-trader/business-trade"
+  val path = "/agents/income-sources/add-sole-trader/business-name"
+  val changePath = "/agents/income-sources/add-sole-trader/change-business-name"
 
   List(MTDPrimaryAgent, MTDSupportingAgent).foreach { case mtdUserRole =>
     s"GET $path" when {
@@ -60,31 +63,31 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
         val isSupportingAgent = mtdUserRole == MTDSupportingAgent
         val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, true)
         "is authenticated, with a valid agent and client delegated enrolment" should {
-          "render the Add Business trade page for an Agent" when {
-            "Income Sources FS enabled" in {
+          "render the Add Business Name page" when {
+            "income sources feature is enabled" in {
               enable(IncomeSources)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
-              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
-                addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName))))))
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-              val res = buildGETMTDClient(path, additionalCookies).futureValue
-              verifyIncomeSourceDetailsCall(testMtditid)
+              val result = buildGETMTDClient(path, additionalCookies).futureValue
 
-              res should have(
+              lazy val document: Document = Jsoup.parse(result.body)
+              document.getElementsByClass("govuk-back-link").attr("href") shouldBe backUrl(isChange = false)
+
+              result should have(
                 httpStatus(OK),
-                pageTitleAgent(pageTitleMsgKey),
-                elementTextByID("business-trade-hint")(pageHint),
-                elementTextByID("continue-button")(button)
+                pageTitleAgent("add-business-name.heading"),
+                elementTextByID("business-name-hint > p")(formHint),
+                elementTextByID("continue-button")(continueButtonText)
               )
             }
           }
           "303 SEE_OTHER - redirect to home page" when {
             "Income Sources FS disabled" in {
-              disable(IncomeSources)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+              disable(IncomeSources)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
@@ -105,30 +108,31 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
         val isSupportingAgent = mtdUserRole == MTDSupportingAgent
         val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, true)
         "is authenticated, with a valid agent and client delegated enrolment" should {
-          "render the Add Business trade page for an Agent" when {
-            "Income Sources FS enabled" in {
-              enable(IncomeSources)
+          "render the Add Business Name page" when {
+            "User is authorised" in {
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
-              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
-                addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName))))))
-              val res = buildGETMTDClient(changePath, additionalCookies).futureValue
-              verifyIncomeSourceDetailsCall(testMtditid)
+              enable(IncomeSources)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-              res should have(
+              val result = buildGETMTDClient(changePath, additionalCookies).futureValue
+
+              lazy val document: Document = Jsoup.parse(result.body)
+              document.getElementsByClass("govuk-back-link").attr("href") shouldBe backUrl(isChange = false)
+
+              result should have(
                 httpStatus(OK),
-                pageTitleAgent(pageTitleMsgKey),
-                elementTextByID("business-trade-hint")(pageHint),
-                elementTextByID("continue-button")(button)
+                pageTitleAgent("add-business-name.heading"),
+                elementTextByID("business-name-hint > p")(formHint),
+                elementTextByID("continue-button")(continueButtonText)
               )
             }
           }
           "303 SEE_OTHER - redirect to home page" when {
             "Income Sources FS disabled" in {
-              disable(IncomeSources)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+              disable(IncomeSources)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
               val result = buildGETMTDClient(changePath, additionalCookies).futureValue
@@ -149,8 +153,8 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
         val isSupportingAgent = mtdUserRole == MTDSupportingAgent
         val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, true)
         "is authenticated, with a valid agent and client delegated enrolment" should {
-          s"303 SEE_OTHER and redirect to $addBusinessAddressUrl" when {
-            "User is authorised and business trade is valid" in {
+          s"303 SEE_OTHER and redirect to $addBusinessStartDateUrl" when {
+            "the income sources is enabled" in {
               enable(IncomeSources)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
@@ -158,35 +162,29 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
 
               val formData: Map[String, Seq[String]] = {
                 Map(
-                  BusinessTradeForm.businessTrade -> Seq(testBusinessTrade)
+                  BusinessNameForm.businessName -> Seq("Test Business")
                 )
               }
 
-              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
-                addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName))))))
-
               val result = buildPOSTMTDPostClient(path, additionalCookies, formData).futureValue
-
-              sessionService.getMongoKeyTyped[String](businessTradeField, JourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(testBusinessTrade))
-
               result should have(
                 httpStatus(SEE_OTHER),
-                redirectURI(addBusinessAddressUrl)
+                redirectURI(addBusinessStartDateUrl)
               )
+
+              sessionService.getMongoKeyTyped[String](businessNameField, journeyType).futureValue shouldBe Right(Some(testBusinessName))
             }
           }
           "show error when form is filled incorrectly" in {
             enable(IncomeSources)
             disable(NavBarFs)
             MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
 
-            await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
-              addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName))))))
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
             val formData: Map[String, Seq[String]] = {
               Map(
-                BusinessTradeForm.businessTrade -> Seq("")
+                BusinessNameForm.businessName -> Seq("£££")
               )
             }
 
@@ -194,15 +192,14 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
 
             result should have(
               httpStatus(BAD_REQUEST),
-              elementTextByID("business-trade-error")(messagesAPI("base.error-prefix") + " " +
-                messagesAPI("add-business-trade.form.error.empty"))
+              elementTextByID("business-name-error")(messagesAPI("base.error-prefix") + " " +
+                messagesAPI("add-business-name.form.error.invalidNameFormat"))
             )
           }
         }
-
         testAuthFailuresForMTDAgent(path, isSupportingAgent, optBody = Some(Map(
-            BusinessTradeForm.businessTrade -> Seq(testBusinessTrade)
-          )))
+          BusinessNameForm.businessName -> Seq("Test Business")
+        )))
       }
     }
 
@@ -211,60 +208,52 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
         val isSupportingAgent = mtdUserRole == MTDSupportingAgent
         val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, true)
         "is authenticated, with a valid agent and client delegated enrolment" should {
-          s"303 SEE_OTHER and redirect to $addBusinessAddressUrl" when {
-            "User is authorised and business trade is valid" in {
+          s"303 SEE_OTHER and redirect to $addBusinessStartDateUrl" when {
+            "the income sources is enabled" in {
               enable(IncomeSources)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-              val changedTrade = "Updated Business Trade"
               val formData: Map[String, Seq[String]] = {
                 Map(
-                  BusinessTradeForm.businessTrade -> Seq(changedTrade)
+                  BusinessNameForm.businessName -> Seq("Test Business")
                 )
               }
 
-              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
-                addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName), Some(testBusinessTrade))))))
-
-              val result = buildPOSTMTDPostClient(path, additionalCookies, formData).futureValue
-
-              sessionService.getMongoKeyTyped[String](businessTradeField, JourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(changedTrade))
-
+              val result = buildPOSTMTDPostClient(changePath, additionalCookies, formData).futureValue
               result should have(
                 httpStatus(SEE_OTHER),
-                redirectURI(checkDetailsUrl)
+                redirectURI(addBusinessStartDateUrl)
               )
+
+              sessionService.getMongoKeyTyped[String](businessNameField, journeyType).futureValue shouldBe Right(Some(testBusinessName))
             }
           }
           "show error when form is filled incorrectly" in {
-            disable(IncomeSources)
+            enable(IncomeSources)
             disable(NavBarFs)
             MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
 
-            await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
-              addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName), Some(testBusinessTrade))))))
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
             val formData: Map[String, Seq[String]] = {
               Map(
-                BusinessTradeForm.businessTrade -> Seq("")
+                BusinessNameForm.businessName -> Seq("£££")
               )
             }
 
-            val result = buildPOSTMTDPostClient(path, additionalCookies, formData).futureValue
+            val result = buildPOSTMTDPostClient(changePath, additionalCookies, formData).futureValue
 
             result should have(
               httpStatus(BAD_REQUEST),
-              elementTextByID("business-trade-error")(messagesAPI("base.error-prefix") + " " +
-                messagesAPI("add-business-trade.form.error.empty"))
+              elementTextByID("business-name-error")(messagesAPI("base.error-prefix") + " " +
+                messagesAPI("add-business-name.form.error.invalidNameFormat"))
             )
           }
         }
-
         testAuthFailuresForMTDAgent(changePath, isSupportingAgent, optBody = Some(Map(
-          BusinessTradeForm.businessTrade -> Seq(testBusinessTrade)
+          BusinessNameForm.businessName -> Seq("Test Business")
         )))
       }
     }
