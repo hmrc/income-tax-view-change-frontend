@@ -28,6 +28,7 @@ import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
 class SingleYearOptOutWarningControllerISpec extends ComponentSpecBase {
+
   private val isAgent: Boolean = true
   private val singleYearOptOutWarningPageGETUrl = controllers.optOut.routes.SingleYearOptOutWarningController.show(isAgent).url
   private val singleYearOptOutWarningPagePOSTUrl = controllers.optOut.routes.SingleYearOptOutWarningController.submit(isAgent).url
@@ -35,7 +36,9 @@ class SingleYearOptOutWarningControllerISpec extends ComponentSpecBase {
   private val validNoForm = ConfirmOptOutSingleTaxYearForm(Some(false), "")
   private val inValidForm = ConfirmOptOutSingleTaxYearForm(None, "")
   private val confirmOptOutPageUrl = controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url
-  private val optOutCancelledUrl = controllers.optOut.routes.OptOutCancelledController.show().url
+
+  private val optOutCancelledAgentUrl =
+    controllers.optOut.routes.OptOutCancelledController.showAgent().url
 
   private val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
   private val previousYear = currentTaxYear.addYears(-1)
@@ -150,7 +153,7 @@ class SingleYearOptOutWarningControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(optOutCancelledUrl)
+          redirectURI(optOutCancelledAgentUrl)
         )
       }
     }

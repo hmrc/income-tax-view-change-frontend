@@ -54,7 +54,14 @@ class SingleYearOptOutWarningControllerSpec
     val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
     val requestPOST = if (isAgent) fakePostRequestConfirmedClient() else fakePostRequestWithNinoAndOrigin("PTA")
     val confirmOptOutPage = Some(controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url)
-    val optOutCancelledUrl = controllers.optOut.routes.OptOutCancelledController.show().url
+
+    val optOutCancelledUrl =
+      if (isAgent) {
+        controllers.optOut.routes.OptOutCancelledController.showAgent().url
+      } else {
+        controllers.optOut.routes.OptOutCancelledController.show().url
+      }
+
     val taxYear = TaxYear.forYearEnd(2024)
     val eligibleTaxYearResponse = Future.successful(Some(OptOutOneYearViewModel(taxYear, None)))
     val noEligibleTaxYearResponse = Future.successful(None)
