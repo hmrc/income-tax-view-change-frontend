@@ -52,7 +52,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
   }
 
   val path = "/agents/manage-your-businesses/add-sole-trader/business-trade"
-  val changePath = "/agents/manage-your-businesses/add-sole-trader/business-trade"
+  val changePath = "/agents/manage-your-businesses/add-sole-trader/change-business-trade"
 
   List(MTDPrimaryAgent, MTDSupportingAgent).foreach { case mtdUserRole =>
     s"GET $path" when {
@@ -211,7 +211,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
         val isSupportingAgent = mtdUserRole == MTDSupportingAgent
         val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, true)
         "is authenticated, with a valid agent and client delegated enrolment" should {
-          s"303 SEE_OTHER and redirect to $addBusinessAddressUrl" when {
+          s"303 SEE_OTHER and redirect to $checkDetailsUrl" when {
             "User is authorised and business trade is valid" in {
               enable(IncomeSources)
               disable(NavBarFs)
@@ -228,7 +228,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
               await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
                 addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName), Some(testBusinessTrade))))))
 
-              val result = buildPOSTMTDPostClient(path, additionalCookies, formData).futureValue
+              val result = buildPOSTMTDPostClient(changePath, additionalCookies, formData).futureValue
 
               sessionService.getMongoKeyTyped[String](businessTradeField, JourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(changedTrade))
 
@@ -239,7 +239,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
             }
           }
           "show error when form is filled incorrectly" in {
-            disable(IncomeSources)
+            enable(IncomeSources)
             disable(NavBarFs)
             MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
@@ -253,7 +253,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
               )
             }
 
-            val result = buildPOSTMTDPostClient(path, additionalCookies, formData).futureValue
+            val result = buildPOSTMTDPostClient(changePath, additionalCookies, formData).futureValue
 
             result should have(
               httpStatus(BAD_REQUEST),

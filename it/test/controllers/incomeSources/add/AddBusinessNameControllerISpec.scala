@@ -38,7 +38,7 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
 
 
   val formHint: String = messagesAPI("add-business-name.p1") + " " +
-    messagesAPI("add-business-name.p2", "'")
+    messagesAPI("add-business-name.p2")
   val continueButtonText: String = messagesAPI("base.continue")
 
   val testBusinessName: String = "Test Business"
@@ -48,14 +48,14 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
 
   def backUrl(isChange: Boolean): String = {
     if (isChange) {
-      controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
+      controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
     } else {
-      controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+      controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
     }
   }
 
-  val path = "/income-sources/add-sole-trader/business-name"
-  val changePath = "/income-sources/add-sole-trader/change-business-name"
+  val path = "/income-sources/add/business-name"
+  val changePath = "/income-sources/add/change-business-name"
 
   s"GET $path" when {
     "the user is authenticated, with a valid MTD enrolment" should {
@@ -110,7 +110,7 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
           val result = buildGETMTDClient(changePath).futureValue
 
           lazy val document: Document = Jsoup.parse(result.body)
-          document.getElementsByClass("govuk-back-link").attr("href") shouldBe backUrl(isChange = false)
+          document.getElementsByClass("govuk-back-link").attr("href") shouldBe backUrl(isChange = true)
 
           result should have(
             httpStatus(OK),
@@ -192,7 +192,8 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
 
   s"POST $changePath" when {
     "the user is authenticated, with a valid MTD enrolment" should {
-      s"303 SEE_OTHER and redirect to $addBusinessStartDateUrl" when {
+      val expectedUrl = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
+      s"303 SEE_OTHER and redirect to $expectedUrl" when {
         "the income sources is enabled" in {
           enable(IncomeSources)
           disable(NavBarFs)
@@ -209,7 +210,7 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
 
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(addBusinessStartDateUrl)
+            redirectURI(expectedUrl)
           )
 
           sessionService.getMongoKeyTyped[String](businessNameField, journeyType).futureValue shouldBe Right(Some(testBusinessName))

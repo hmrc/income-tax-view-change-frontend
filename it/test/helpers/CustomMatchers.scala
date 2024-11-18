@@ -198,11 +198,6 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
         val body = Jsoup.parse(response.body)
         Then(s"the text of elementId '$id' should be '$expectedValue'")
 
-        println("$$$$$$$$$$$$$")
-        println(body.select(s"#$id").text)
-        println(expectedValue)
-
-
         HavePropertyMatchResult(
           body.select(s"#$id").text == expectedValue,
           s"elementByID($id)",

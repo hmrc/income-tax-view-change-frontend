@@ -110,7 +110,7 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
           val result = buildGETMTDClient(changePath).futureValue
 
           lazy val document: Document = Jsoup.parse(result.body)
-          document.getElementsByClass("govuk-back-link").attr("href") shouldBe backUrl(isChange = false)
+          document.getElementsByClass("govuk-back-link").attr("href") shouldBe backUrl(isChange = true)
 
           result should have(
             httpStatus(OK),
@@ -192,7 +192,8 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
 
   s"POST $changePath" when {
     "the user is authenticated, with a valid MTD enrolment" should {
-      s"303 SEE_OTHER and redirect to $addBusinessStartDateUrl" when {
+      val expectedUrl = controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
+      s"303 SEE_OTHER and redirect to $expectedUrl" when {
         "the income sources is enabled" in {
           enable(IncomeSources)
           disable(NavBarFs)
@@ -209,7 +210,7 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
 
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(addBusinessStartDateUrl)
+            redirectURI(expectedUrl)
           )
 
           sessionService.getMongoKeyTyped[String](businessNameField, journeyType).futureValue shouldBe Right(Some(testBusinessName))

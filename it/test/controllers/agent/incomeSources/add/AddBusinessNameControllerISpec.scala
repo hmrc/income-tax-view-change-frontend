@@ -54,8 +54,8 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
     }
   }
 
-  val path = "/agents/income-sources/add-sole-trader/business-name"
-  val changePath = "/agents/income-sources/add-sole-trader/change-business-name"
+  val path = "/agents/income-sources/add/business-name"
+  val changePath = "/agents/income-sources/add/change-business-name"
 
   List(MTDPrimaryAgent, MTDSupportingAgent).foreach { case mtdUserRole =>
     s"GET $path" when {
@@ -118,7 +118,7 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
               val result = buildGETMTDClient(changePath, additionalCookies).futureValue
 
               lazy val document: Document = Jsoup.parse(result.body)
-              document.getElementsByClass("govuk-back-link").attr("href") shouldBe backUrl(isChange = false)
+              document.getElementsByClass("govuk-back-link").attr("href") shouldBe backUrl(isChange = true)
 
               result should have(
                 httpStatus(OK),
@@ -208,7 +208,8 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
         val isSupportingAgent = mtdUserRole == MTDSupportingAgent
         val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, true)
         "is authenticated, with a valid agent and client delegated enrolment" should {
-          s"303 SEE_OTHER and redirect to $addBusinessStartDateUrl" when {
+          val expectedUrl = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
+          s"303 SEE_OTHER and redirect to $expectedUrl" when {
             "the income sources is enabled" in {
               enable(IncomeSources)
               disable(NavBarFs)
@@ -224,7 +225,7 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
               val result = buildPOSTMTDPostClient(changePath, additionalCookies, formData).futureValue
               result should have(
                 httpStatus(SEE_OTHER),
-                redirectURI(addBusinessStartDateUrl)
+                redirectURI(expectedUrl)
               )
 
               sessionService.getMongoKeyTyped[String](businessNameField, journeyType).futureValue shouldBe Right(Some(testBusinessName))
