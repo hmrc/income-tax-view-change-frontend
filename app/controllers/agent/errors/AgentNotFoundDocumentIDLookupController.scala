@@ -26,7 +26,7 @@ import views.html.errorPages.CustomNotFoundError
 @Singleton
 class AgentNotFoundDocumentIDLookupController @Inject()(val authActions: AuthActions,
                                                         customNotFoundError: CustomNotFoundError)
-                                                       (implicit mcc: MessagesControllerComponents,
+                                                       (implicit mcc: MessagesControllerComponents
                                                         ) extends FrontendController(mcc) with I18nSupport {
 
   val show: Action[AnyContent] = authActions.asAgent(false) {implicit user =>
