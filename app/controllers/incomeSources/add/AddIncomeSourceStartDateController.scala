@@ -104,8 +104,6 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
         case None => form(messagesPrefix)
       }
 
-      println(getBackUrl(incomeSourceType, isAgent, isChange))
-
       Future.successful {
         Ok(
           addIncomeSourceStartDate(
