@@ -216,8 +216,10 @@ tax-year-summary.payments.cancelledPayeSelfAssessment.text     = Hunanasesiad TW
 tax-year-summary.payments.hmrcAdjustment.text                  = Addasiad CThEF
 tax-year-summary.payments.overdue                              = Yn hwyr
 tax-year-summary.payments.no-payments                          = Dim taliadau’n ddyledus ar hyn o bryd.
-tax-year-summary.payments.reviewAndReconcilePoa1.text   = Taliad cyntaf ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
-tax-year-summary.payments.reviewAndReconcilePoa2.text   = Ail daliad ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
+tax-year-summary.payments.reviewAndReconcilePoa1.text          = Taliad cyntaf ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
+tax-year-summary.payments.reviewAndReconcilePoa2.text          = Ail daliad ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
+tax-year-summary.payments.lpi.reviewAndReconcilePoa1.text      = Llog ar gyfer taliad cyntaf ar gyfrif: swm ychwanegol
+tax-year-summary.payments.lpi.reviewAndReconcilePoa2.text      = Llog ar gyfer ail daliad ar gyfrif: swm ychwanegol
 tax-year-summary.forecast_tab.insetText                        = Amcangyfrif yw hwn o’ch bil treth ar gyfer y flwyddyn gyfan hyd at 5 Ebrill {0}. Bydd hyn yn cael ei ddiweddaru drwy gydol y flwyddyn wrth i ni gael rhagor o wybodaeth.
 tax-year-summary.forecast_total_title                          = Rhagolwg 6 Ebrill {0} i 5 Ebrill {1}
 tax-year-summary.forecast.tax-due                              = Rhagolwg o swm y dreth Hunanasesiad
@@ -2173,8 +2175,8 @@ optout.confirmedOptOut.reportQuarterly.reason1                   = gostyngodd CT
 optout.confirmedOptOut.reportQuarterly.reason2                   = gwnaethoch roi gwybod am gynnydd yn eich incwm cymwys mewn Ffurflen Dreth
 
 optOut.confirmSingleYearOptOut.title                        = Optio allan o gyflwyno adroddiadau am flwyddyn dreth unigol
-optOut.confirmSingleYearOptOut.detail.text                  = Gallwch ond optio allan a chyflwyno adroddiadau’n flynyddol ar gyfer blwyddyn dreth {0} i {1}.
-optOut.confirmSingleYearOptOut.inset.text                   = O 6 Ebrill {0} ymlaen, bydd angen i chi anfon diweddariadau chwarterol eto drwy feddalwedd.
+optOut.confirmSingleYearOptOut.detail.text                  = Gallwch opio allan ar gyfer blwyddyn dreth {0} i {1} yn unig.
+optOut.confirmSingleYearOptOut.inset.text                   = Os byddwch yn mynd yn eich blaen, o 6 Ebrill {0} ymlaen, bydd angen i chi anfon diweddariadau chwarterol eto drwy feddalwedd.
 optOut.confirmSingleYearOptOut.form.title                   = A ydych am optio allan o flwyddyn dreth {0} i {1} o hyd?
 optOut.confirmSingleYearOptOut.form.answer.one.hint         = Rwyf am optio allan a chyflwyno adroddiadau’n flynyddol.
 optOut.confirmSingleYearOptOut.form.answer.two.hint         = Rwyf am barhau i gyflwyno adroddiadau’n chwarterol.
@@ -2296,6 +2298,10 @@ optIn.confirmNextTaxYear.heading                    = Cadarnhau ac optio i mewn 
 optIn.confirmNextTaxYear.desc                       = Os byddwch yn optio i mewn ar gyfer y flwyddyn dreth nesaf, o {0} ymlaen, bydd angen i chi gyflwyno’ch adroddiadau chwarterol drwy ddefnyddio meddalwedd sy’n cydweddu.
 
 # Reporting Frequency Page
+
+reporting.frequency.title = Amlder eich adroddiadau
+
+reporting.frequency.h1 = Amlder eich adroddiadau
 
 reporting.frequency.h2 = Rheoli amlder eich adroddiadau ar gyfer eich holl fusnesau
 

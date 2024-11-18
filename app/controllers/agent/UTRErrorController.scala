@@ -16,13 +16,14 @@
 
 package controllers.agent
 
+import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
-import controllers.agent.predicates.BaseAgentController
 import controllers.agent.sessionUtils.SessionKeys
+import forms.agent.ClientsUTRForm
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.agent.errorPages.UTRError
 
 import javax.inject.{Inject, Singleton}
@@ -30,25 +31,23 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class UTRErrorController @Inject()(utrError: UTRError,
-                                   val authorisedFunctions: AuthorisedFunctions)
+                                   val authActions: AuthActions)
                                   (implicit mcc: MessagesControllerComponents,
                                    val appConfig: FrontendAppConfig,
                                    val itvcErrorHandler: AgentItvcErrorHandler,
                                    val ec: ExecutionContext)
-  extends BaseAgentController with FeatureSwitching with I18nSupport {
+  extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
 
-  def show: Action[AnyContent] = Authenticated.asyncWithoutClientAuth() { implicit request =>
-    implicit user =>
-      Future.successful(Ok(utrError(
+  def show: Action[AnyContent] = authActions.asAgent.async { implicit user =>
+    Future.successful(Ok(utrError(
         postAction = controllers.agent.routes.UTRErrorController.submit
       )))
   }
 
-
-  def submit: Action[AnyContent] = Authenticated.asyncWithoutClientAuth() { implicit request =>
-    implicit user =>
-      Future.successful(
+  def submit: Action[AnyContent] = authActions.asAgent.async { implicit user =>
+    Future.successful(
         Redirect(routes.EnterClientsUTRController.show.url).removingFromSession(SessionKeys.clientUTR)
       )
   }
+
 }

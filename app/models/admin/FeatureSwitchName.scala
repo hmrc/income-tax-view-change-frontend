@@ -66,8 +66,8 @@ object FeatureSwitchName {
       JsSuccess(FilterCodedOutPoas)
     case JsString(ReportingFrequencyPage.name) =>
       JsSuccess(ReportingFrequencyPage)
-    case _ =>
-      Logger("application").error(s"Invalid feature switch Json found")
+    case invalidName =>
+      Logger("application").error(s"Invalid feature switch Json found: $invalidName")
       JsSuccess(InvalidFS)
   }
 

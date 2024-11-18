@@ -244,9 +244,6 @@
                             @chargeItem.getDueDateForNonZeroBalancingCharge(codingOutEnabled).map(_.toLongDateShort).getOrElse(messages("tax-year-summary.na"))
                          </td>
                          <td class="govuk-table__cell govuk-table__cell--numeric">@chargeItem.originalAmount.toCurrencyString</td>
-                    } else if(Seq(PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile).contains(chargeItem.transactionType)) {
-                         <td class="govuk-table__cell">@chargeItem.dueDate.map(_.toLongDateShort).getOrElse(messages("tax-year-summary.na"))</td>
-                         <td class="govuk-table__cell govuk-table__cell--numeric">@chargeItem.outstandingAmount.toCurrencyString</td>
                     } else {
                         <td class="govuk-table__cell">@chargeItem.dueDate.map(_.toLongDateShort).getOrElse(messages("tax-year-summary.na"))</td>
                         <td class="govuk-table__cell govuk-table__cell--numeric">@chargeItem.originalAmount.toCurrencyString</td>

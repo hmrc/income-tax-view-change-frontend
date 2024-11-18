@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.agent.manageBusinesses.add
+package controllers.agent.incomeSources.add
 
 import controllers.agent.ControllerISpecHelper
 import enums.{MTDPrimaryAgent, MTDSupportingAgent}
@@ -26,8 +26,8 @@ import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
 
 class AddBusinessAddressControllerISpec extends ControllerISpecHelper {
 
-  val path = "/agents/manage-your-businesses/add-sole-trader/business-address"
-  val changePath = "/agents/manage-your-businesses/add-sole-trader/change-business-address-lookup"
+  val path = "/agents/income-sources/add/business-address"
+  val changePath = "/agents/income-sources/add/change-business-address-lookup"
 
   s"GET $path" when {
     List(MTDPrimaryAgent, MTDSupportingAgent).foreach { case mtdUserRole =>

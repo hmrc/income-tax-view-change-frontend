@@ -17,11 +17,10 @@
 package controllers.incomeSources.add
 
 import auth.MtdItUser
+import auth.authV2.AuthActions
 import com.google.inject.Singleton
 import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates._
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, JourneyType}
 import models.core.IncomeSourceId
@@ -30,39 +29,38 @@ import models.incomeSourceDetails.{AddIncomeSourceData, BusinessAddressModel, UI
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{AddressLookupService, IncomeSourceDetailsService, SessionService}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
+import services.{AddressLookupService, SessionService}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.IncomeSourcesUtils
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AddBusinessAddressController @Inject()(val authorisedFunctions: AuthorisedFunctions,
-                                             val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                                             val itvcErrorHandler: ItvcErrorHandler,
-                                             addressLookupService: AddressLookupService,
-                                             auth: AuthenticatorPredicate)
+class AddBusinessAddressController @Inject()(val authActions: AuthActions,
+                                             addressLookupService: AddressLookupService)
                                             (implicit
                                              val appConfig: FrontendAppConfig,
                                              val ec: ExecutionContext,
+                                             val itvcErrorHandler: ItvcErrorHandler,
                                              val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                              mcc: MessagesControllerComponents,
                                              val sessionService: SessionService
                                             )
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
+  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
 
-  def show(isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-    implicit user =>
-      handleRequest(isAgent = false, isChange = isChange)
+  def show(isChange: Boolean): Action[AnyContent] = authActions.asMTDIndividual.async { implicit user =>
+      handleRequest(isAgent = false, isChange = isChange)(implicitly, itvcErrorHandler)
   }
 
-  def showAgent(isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent(isChange: Boolean): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit mtdItUser =>
-      handleRequest(isAgent = true, isChange = isChange)
+      handleRequest(isAgent = true, isChange = isChange)(implicitly, itvcErrorHandlerAgent)
   }
 
-  def handleRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+  def handleRequest(isAgent: Boolean, isChange: Boolean)
+                   (implicit user: MtdItUser[_],
+                    errorHandler: ShowInternalServerError): Future[Result] = {
     withIncomeSourcesFS {
       addressLookupService.initialiseAddressJourney(
         isAgent = isAgent,
@@ -72,10 +70,10 @@ class AddBusinessAddressController @Inject()(val authorisedFunctions: Authorised
           Redirect(location)
         case Right(None) =>
           Logger("application").error("No redirect location returned from connector")
-          itvcErrorHandler.showInternalServerError()
+          errorHandler.showInternalServerError()
         case Left(_) =>
           Logger("application").error("Unexpected response")
-          itvcErrorHandler.showInternalServerError()
+          errorHandler.showInternalServerError()
       }
     }
   }
@@ -109,7 +107,8 @@ class AddBusinessAddressController @Inject()(val authorisedFunctions: Authorised
 
 
   def handleSubmitRequest(isAgent: Boolean, id: Option[IncomeSourceId], isChange: Boolean)
-                         (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+                         (implicit user: MtdItUser[_],
+                          errorHandler: ShowInternalServerError): Future[Result] = {
     val redirectUrl = getRedirectUrl(isAgent = isAgent, isChange = isChange)
     val redirect = Redirect(redirectUrl)
 
@@ -120,21 +119,20 @@ class AddBusinessAddressController @Inject()(val authorisedFunctions: Authorised
 
   }.recover {
     case ex =>
-      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
       Logger("application")
         .error(s"Unexpected response, status: - ${ex.getMessage} - ${ex.getCause} ")
       errorHandler.showInternalServerError()
   }
 
-  def submit(id: Option[String], isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def submit(id: Option[String], isChange: Boolean): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
       val incomeSourceIdMaybe = id.map(mkIncomeSourceId)
-      handleSubmitRequest(isAgent = false, incomeSourceIdMaybe, isChange = isChange)
+      handleSubmitRequest(isAgent = false, incomeSourceIdMaybe, isChange = isChange)(implicitly, itvcErrorHandler)
   }
 
-  def agentSubmit(id: Option[String], isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def agentSubmit(id: Option[String], isChange: Boolean): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit mtdItUser =>
       val incomeSourceIdMaybe = id.map(mkIncomeSourceId)
-      handleSubmitRequest(isAgent = true, incomeSourceIdMaybe, isChange = isChange)
+      handleSubmitRequest(isAgent = true, incomeSourceIdMaybe, isChange = isChange)(implicitly, itvcErrorHandlerAgent)
   }
 }
