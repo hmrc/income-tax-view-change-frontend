@@ -58,7 +58,7 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
       retrieveBtaNavBar
   }
 
-  def asAgent: ActionBuilder[AgentUser, AnyContent] = checkSessionTimeout andThen authoriseAndRetrieveAgent
+  def asAgent(arnRequired: Boolean = true): ActionBuilder[AgentUser, AnyContent] = checkSessionTimeout andThen authoriseAndRetrieveAgent.authorise(arnRequired)
 
   def asMTDAgentWithConfirmedClient: ActionBuilder[MtdItUser, AnyContent] = {
     checkSessionTimeout andThen
