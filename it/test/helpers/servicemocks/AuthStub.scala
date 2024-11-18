@@ -173,38 +173,6 @@ object AuthStub extends ComponentSpecBase {
     )
   }
 
-  def stubAuthorisedIndividual(mtdId: String = "mtdbsaId"): Unit = {
-    WiremockHelper.stubPost(
-      url = postAuthoriseUrl,
-      status = Status.OK,
-      responseBody = Json.stringify(Json.obj(
-        "allEnrolments" -> Json.arr(
-          Json.obj(
-            "key" -> s"$testSaUtrEnrolmentKey",
-            "identifiers" -> Json.arr(
-              Json.obj(
-                "key" -> s"$testSaUtrEnrolmentIdentifier",
-                "value" -> s"$testSaUtr"
-              )
-            )
-          ),
-          Json.obj(
-            "key" -> "HMRC-MTD-IT",
-            "identifiers" -> Json.arr(
-              Json.obj(
-                "key" -> "MTDITID",
-                "value" -> mtdId
-              )
-            ),
-            "delegatedAuthRule" -> "mtd-it-auth"
-          )
-        ),
-        "affinityGroup" -> "Individual",
-        "confidenceLevel" -> requiredConfidenceLevel
-      ))
-    )
-  }
-
   def stubAuthorisedAgentNoARN(): Unit = {
     WiremockHelper.stubPost(
       url = postAuthoriseUrl,
