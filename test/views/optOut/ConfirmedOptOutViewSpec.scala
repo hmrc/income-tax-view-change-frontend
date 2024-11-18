@@ -37,7 +37,13 @@ class ConfirmedOptOutViewSpec extends TestSupport {
   class Setup(isAgent: Boolean = true,
               state: OptOutState = OneYearOptOutFollowedByMandated) {
     private val viewModel = ConfirmedOptOutViewModel(optOutTaxYear = optOutTaxYear.taxYear, state = Some(state))
-    val pageDocument: Document = Jsoup.parse(contentAsString(confirmedOptOutView(viewModel, isAgent)))
+    val pageDocument: Document = Jsoup.parse(contentAsString(confirmedOptOutView(viewModel, isAgent, showReportingFrequencyContent = false)))
+  }
+
+  class SetupWithReportingFrequencyContent(isAgent: Boolean = true,
+              state: OptOutState = OneYearOptOutFollowedByMandated) {
+    private val viewModel = ConfirmedOptOutViewModel(optOutTaxYear = optOutTaxYear.taxYear, state = Some(state))
+    val pageDocument: Document = Jsoup.parse(contentAsString(confirmedOptOutView(viewModel, isAgent, showReportingFrequencyContent = true)))
   }
 
   object confirmOptOutMessages {
@@ -54,10 +60,11 @@ class ConfirmedOptOutViewSpec extends TestSupport {
     val panelBodyOneYear: String = s"You are reporting annually for the ${taxYear.startYear} to ${taxYear.endYear} tax year"
     val panelBodyMultiYear: String = s"You are reporting annually from the ${taxYear.startYear} to ${taxYear.endYear} tax year onwards"
     val submitTaxHeading: String = "Submit your tax return"
-    val submitTaxP1: String = "For any tax years where you chose to opt out and report annually, you can submit your tax return directly through your HMRC online account or software."
-    val submitTaxP2: String = "If you are still reporting quarterly for certain tax years, you are required to send those quarterly updates through compatible software."
-    val nextUpdatesDueHeading: String = "Your next updates due"
-    val nextUpdatesDueContent: String = "Check the next updates page for the current tax year’s deadlines. Deadlines for future years will not be visible until they become the current year."
+    val submitTaxP1: String = "When reporting annually, you can submit your tax return directly through your HMRC online account or software compatible."
+    val submitTaxP2: String = "However, compatible software is required for any tax years for which you are reporting quarterly."
+    val yourRevisedDeadlinesHeading: String = "Your revised deadlines"
+    val yourRevisedDeadlinesContentP1: String = s"Your tax return for the ${taxYear.startYear} to ${taxYear.endYear} tax year is due by 31 January ${taxYear.nextYear.endYear}."
+    val yourRevisedDeadlinesContentP2: String = "You can decide at any time to opt back in to reporting quarterly for all of your businesses on your reporting frequency page."
     val reportQuarterly: String = "You could be required to report quarterly again in the future if:"
     val multiYearReportingUpdatesHeading = "Reporting quarterly again in the future"
     val multiYearReportingUpdatesP1 = "You could be required to report quarterly again in the future if:"
@@ -97,18 +104,36 @@ class ConfirmedOptOutViewSpec extends TestSupport {
       submitTaxBlock.getElementById("submit-tax-p2").text() shouldBe confirmOptOutMessages.submitTaxP2
     }
 
-    "Individual - have the updates due content " in new Setup(isAgent = false) {
-      val updatesDueBlock: Element = pageDocument.getElementById("updates-due")
-      updatesDueBlock.getElementById("updates-due-heading").text() shouldBe confirmOptOutMessages.nextUpdatesDueHeading
-      updatesDueBlock.getElementById("updates-due-content").text() shouldBe confirmOptOutMessages.nextUpdatesDueContent
-      updatesDueBlock.getElementById("next-update-link").attr("href") shouldBe controllers.routes.NextUpdatesController.show().url
+    "Individual - revised deadlines content " in new Setup(isAgent = false) {
+      val revisedDeadlinesBlock: Element = pageDocument.getElementById("revised-deadlines")
+      revisedDeadlinesBlock.getElementById("revised-deadlines-heading").text() shouldBe confirmOptOutMessages.yourRevisedDeadlinesHeading
+      revisedDeadlinesBlock.getElementById("revised-deadlines-p1").text() shouldBe confirmOptOutMessages.yourRevisedDeadlinesContentP1
+      revisedDeadlinesBlock.getElementById("your-reporting-frequency-block").text shouldBe ""
+      revisedDeadlinesBlock.getElementById("view-upcoming-updates-link").attr("href") shouldBe controllers.routes.NextUpdatesController.show().url
     }
 
-    "Agent - have the updates due content" in new Setup(isAgent = true) {
-      val updatesDueBlock: Element = pageDocument.getElementById("updates-due")
-      updatesDueBlock.getElementById("updates-due-heading").text() shouldBe confirmOptOutMessages.nextUpdatesDueHeading
-      updatesDueBlock.getElementById("updates-due-content").text() shouldBe confirmOptOutMessages.nextUpdatesDueContent
-      updatesDueBlock.getElementById("next-update-link").attr("href") shouldBe controllers.routes.NextUpdatesController.showAgent.url
+    "Agent - revised deadlines content" in new Setup(isAgent = true) {
+      val revisedDeadlinesBlock: Element = pageDocument.getElementById("revised-deadlines")
+      revisedDeadlinesBlock.getElementById("revised-deadlines-heading").text() shouldBe confirmOptOutMessages.yourRevisedDeadlinesHeading
+      revisedDeadlinesBlock.getElementById("revised-deadlines-p1").text() shouldBe confirmOptOutMessages.yourRevisedDeadlinesContentP1
+      revisedDeadlinesBlock.getElementById("your-reporting-frequency-block").text() shouldBe ""
+      revisedDeadlinesBlock.getElementById("view-upcoming-updates-link").attr("href") shouldBe controllers.routes.NextUpdatesController.showAgent.url
+    }
+
+    "Individual - revised deadlines with reporting frequency content" in new SetupWithReportingFrequencyContent(isAgent = false) {
+      val revisedDeadlinesBlock: Element = pageDocument.getElementById("revised-deadlines")
+      revisedDeadlinesBlock.getElementById("revised-deadlines-heading").text() shouldBe confirmOptOutMessages.yourRevisedDeadlinesHeading
+      revisedDeadlinesBlock.getElementById("revised-deadlines-p1").text() shouldBe confirmOptOutMessages.yourRevisedDeadlinesContentP1
+      revisedDeadlinesBlock.getElementById("your-reporting-frequency-block").text() shouldBe confirmOptOutMessages.yourRevisedDeadlinesContentP2
+      revisedDeadlinesBlock.getElementById("view-upcoming-updates-link").attr("href") shouldBe controllers.routes.NextUpdatesController.show().url
+    }
+
+    "Agent - revised deadlines with reporting frequency content" in new SetupWithReportingFrequencyContent(isAgent = true) {
+      val revisedDeadlinesBlock: Element = pageDocument.getElementById("revised-deadlines")
+      revisedDeadlinesBlock.getElementById("revised-deadlines-heading").text() shouldBe confirmOptOutMessages.yourRevisedDeadlinesHeading
+      revisedDeadlinesBlock.getElementById("revised-deadlines-p1").text() shouldBe confirmOptOutMessages.yourRevisedDeadlinesContentP1
+      revisedDeadlinesBlock.getElementById("your-reporting-frequency-block").text() shouldBe confirmOptOutMessages.yourRevisedDeadlinesContentP2
+      revisedDeadlinesBlock.getElementById("view-upcoming-updates-link").attr("href") shouldBe controllers.routes.NextUpdatesController.showAgent.url
     }
 
     "have the correct reporting updates content" when {

@@ -20,6 +20,7 @@ import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
+import models.admin.ReportingFrequencyPage
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -30,10 +31,13 @@ import views.html.optOut.ConfirmedOptOut
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ConfirmedOptOutController @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
-                                          val view: ConfirmedOptOut,
-                                          val auth: AuthenticatorPredicate,
-                                          val optOutService: OptOutService)
+
+class ConfirmedOptOutController @Inject()(
+                                           val authorisedFunctions: FrontendAuthorisedFunctions,
+                                           val view: ConfirmedOptOut,
+                                           val auth: AuthenticatorPredicate,
+                                           val optOutService: OptOutService
+                                         )
                                          (implicit val appConfig: FrontendAppConfig,
                                           mcc: MessagesControllerComponents,
                                           val ec: ExecutionContext,
@@ -55,8 +59,9 @@ class ConfirmedOptOutController @Inject()(val authorisedFunctions: FrontendAutho
   def show(isAgent: Boolean = false): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       withRecover(isAgent) {
+        val showReportingFrequencyContent = isEnabled(ReportingFrequencyPage)
         optOutService.optOutConfirmedPageViewModel().map {
-          case Some(viewModel) => Ok(view(viewModel, isAgent))
+          case Some(viewModel) => Ok(view(viewModel, isAgent, showReportingFrequencyContent))
           case None =>
             Logger("application").error(s"error, invalid Opt-out journey")
             errorHandler(isAgent).showInternalServerError()
