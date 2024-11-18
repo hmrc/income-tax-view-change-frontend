@@ -92,7 +92,12 @@ class SingleYearOptOutWarningController @Inject()(auth: AuthenticatorPredicate,
               Logger("application").info(s"redirecting to : $nextPage")
               Redirect(nextPage)
             case ConfirmOptOutSingleTaxYearForm(Some(false), _) =>
-              val optOutCancelledUrl = controllers.optOut.routes.OptOutCancelledController.show().url
+              val optOutCancelledUrl =
+                if (isAgent) {
+                  controllers.optOut.routes.OptOutCancelledController.showAgent().url
+                } else {
+                  controllers.optOut.routes.OptOutCancelledController.show().url
+                }
               Logger("application").info(s"redirecting to : $optOutCancelledUrl")
               Redirect(optOutCancelledUrl)
             case _ =>

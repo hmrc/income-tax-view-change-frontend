@@ -56,14 +56,14 @@ class OptOutCancelledController @Inject()(
         if (isOneYearOptOut) {
           availableOptOutYears.headOption.map(_.taxYear) match {
             case Some(taxYear) =>
-              Ok(view(user.isAgent(), taxYear.startYear.toString, taxYear.endYear.toString))
+              Ok(view(false, taxYear.startYear.toString, taxYear.endYear.toString))
             case _ =>
               InternalServerError(
                 errorTemplate(
                   pageTitle = "standardError.heading",
                   heading = "standardError.heading",
                   message = "standardError.message",
-                  isAgent = user.isAgent()
+                  isAgent = false
                 )
               )
           }
@@ -73,7 +73,41 @@ class OptOutCancelledController @Inject()(
               pageTitle = "standardError.heading",
               heading = "standardError.heading",
               message = "standardError.message",
-              isAgent = user.isAgent()
+              isAgent = false
+            )
+          )
+        }
+      }
+    }
+
+  def showAgent(): Action[AnyContent] =
+    auth.asMTDAgentWithConfirmedClient.async { implicit user =>
+      for {
+        proposition <- optOutService.fetchOptOutProposition()
+        availableOptOutYears = proposition.availableOptOutYears
+        isOneYearOptOut = proposition.isOneYearOptOut
+      } yield {
+        if (isOneYearOptOut) {
+          availableOptOutYears.headOption.map(_.taxYear) match {
+            case Some(taxYear) =>
+              Ok(view(true, taxYear.startYear.toString, taxYear.endYear.toString))
+            case _ =>
+              InternalServerError(
+                errorTemplate(
+                  pageTitle = "standardError.heading",
+                  heading = "standardError.heading",
+                  message = "standardError.message",
+                  isAgent = true
+                )
+              )
+          }
+        } else {
+          InternalServerError(
+            errorTemplate(
+              pageTitle = "standardError.heading",
+              heading = "standardError.heading",
+              message = "standardError.message",
+              isAgent = true
             )
           )
         }
