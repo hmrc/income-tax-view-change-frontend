@@ -72,10 +72,9 @@ class OptOutCancelledControllerISpec extends ControllerISpecBase with FeatureSwi
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
 
           CalculationListStub.stubGetLegacyCalculationList(testNino, previousTaxYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
-
-          println(dateService.getCurrentTaxYearEnd)
+          
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
-            taxYear = dateService.getCurrentTaxYearEnd,
+            taxYear = dateService.getCurrentTaxYear,
             `itsaStatusCY-1` = ITSAStatus.Mandated,
             itsaStatusCY = ITSAStatus.Voluntary,
             `itsaStatusCY+1` = ITSAStatus.Mandated
@@ -106,7 +105,7 @@ class OptOutCancelledControllerISpec extends ControllerISpecBase with FeatureSwi
           CalculationListStub.stubGetLegacyCalculationList(testNino, previousTaxYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
 
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
-            taxYear = dateService.getCurrentTaxYearEnd,
+            taxYear = dateService.getCurrentTaxYear,
             `itsaStatusCY-1` = ITSAStatus.Mandated,
             itsaStatusCY = ITSAStatus.Mandated,
             `itsaStatusCY+1` = ITSAStatus.Mandated
@@ -137,7 +136,7 @@ class OptOutCancelledControllerISpec extends ControllerISpecBase with FeatureSwi
           CalculationListStub.stubGetLegacyCalculationList(testNino, previousTaxYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
 
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
-            taxYear = dateService.getCurrentTaxYearEnd,
+            taxYear = dateService.getCurrentTaxYear,
             `itsaStatusCY-1` = ITSAStatus.Mandated,
             itsaStatusCY = ITSAStatus.Voluntary,
             `itsaStatusCY+1` = ITSAStatus.Voluntary

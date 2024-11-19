@@ -18,6 +18,7 @@ package helpers.servicemocks
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import helpers.{ComponentSpecBase, WiremockHelper}
+import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
@@ -49,25 +50,23 @@ object ITSAStatusDetailsStub extends ComponentSpecBase {
   }
 
   def stubGetITSAStatusFutureYearsDetails(
-                                           taxYear: Int,
+                                           taxYear: TaxYear,
                                            `itsaStatusCY-1`: ITSAStatus = ITSAStatus.Mandated,
                                            itsaStatusCY: ITSAStatus = ITSAStatus.Mandated,
                                            `itsaStatusCY+1`: ITSAStatus = ITSAStatus.Mandated
                                          ): StubMapping = {
-    val previousYear = taxYear - 1
-    val futureYear = taxYear + 1
-
-    def shortTaxYear(taxYear: Int): Int = taxYear.toString.takeRight(2).toInt
+    val previousYear = taxYear.previousYear
+    val futureYear = taxYear.nextYear
 
     val taxYearToStatus: Map[String, String] =
       Map(
-        s"${futureYear - 1}-${shortTaxYear(futureYear)}" -> `itsaStatusCY+1`.toString,
-        s"${taxYear - 1}-${shortTaxYear(taxYear)}" -> itsaStatusCY.toString,
-        s"${previousYear - 1}-${shortTaxYear(previousYear)}" -> `itsaStatusCY-1`.toString
+        s"${futureYear.startYear}-${futureYear.shortenTaxYearEnd}" -> `itsaStatusCY+1`.toString,
+        s"${taxYear.startYear}-${taxYear.shortenTaxYearEnd}" -> itsaStatusCY.toString,
+        s"${previousYear.startYear}-${previousYear.shortenTaxYearEnd}" -> `itsaStatusCY-1`.toString
       )
 
     WiremockHelper.stubGet(
-      url = getUrl(s"${shortTaxYear(previousYear) - 1}-${shortTaxYear(previousYear)}", futureYears = true),
+      url = getUrl(s"${previousYear.`taxYearYY-YY`}", futureYears = true),
       status = OK,
       body = taxYearToStatus.foldLeft(JsArray()) {
         case (array, (taxYear, status)) =>
