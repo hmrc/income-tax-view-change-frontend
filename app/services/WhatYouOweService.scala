@@ -70,12 +70,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
         val balanceDetails = financialDetailsModelList.headOption
           .map(_.balanceDetails).getOrElse(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None))
         val codedOutChargeItem = if (isCodingOutEnabled) {
-
-          def chargeItemf: DocumentDetail => Option[ChargeItem] = getChargeItemOpt(isCodingOutEnabled, isReviewAndReconciledEnabled)(financialDetailsModelList
-              .flatMap(_.financialDetails))(_)
-
-          financialDetailsModelList.flatMap(_.documentDetails)
-            .flatMap(chargeItemf)
+          financialDetailsModelList.flatMap(_.toChargeItem(isCodingOutEnabled, isReviewAndReconciledEnabled))
             .filter(_.subTransactionType.contains(Accepted))
             .find(_.taxYear.endYear == (dateService.getCurrentTaxYearEnd - 1))
         } else None

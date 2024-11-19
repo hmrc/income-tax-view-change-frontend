@@ -41,7 +41,8 @@ case class ChargeItem (
                         interestRate: Option[BigDecimal],
                         lpiWithDunningLock: Option[BigDecimal],
                         amountCodedOut: Option[BigDecimal],
-                        dunningLock: Boolean) extends TransactionItem {
+                        dunningLock: Boolean,
+                        poaRelevantAmount: Option[BigDecimal]) extends TransactionItem {
 
   def isOverdue()(implicit dateService: DateServiceInterface): Boolean =
     dueDate.exists(_ isBefore dateService.getCurrentDate)
@@ -186,7 +187,8 @@ object ChargeItem {
       interestRate = documentDetail.interestRate,
       lpiWithDunningLock = documentDetail.lpiWithDunningLock,
       amountCodedOut = documentDetail.amountCodedOut,
-      dunningLock = dunningLockExists
+      dunningLock = dunningLockExists,
+      poaRelevantAmount = documentDetail.poaRelevantAmount
     )
   }
 

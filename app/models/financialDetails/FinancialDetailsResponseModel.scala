@@ -20,15 +20,20 @@ import auth.MtdItUser
 import enums.{Poa1Charge, Poa1ReconciliationDebit, Poa2Charge, Poa2ReconciliationDebit, TRMAmendCharge, TRMNewCharge}
 import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails.ReviewAndReconcileUtils.{isReviewAndReconcilePoaOne, isReviewAndReconcilePoaTwo}
+import models.incomeSourceDetails.TaxYear
+import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
+import play.api.Logger
 import play.api.libs.json.{Format, Json}
 import services.DateServiceInterface
+import services.claimToAdjustPoa.ClaimToAdjustHelper.poaDocumentDescriptions
 
 import java.time.LocalDate
+import scala.util.{Failure, Success, Try}
 
 sealed trait FinancialDetailsResponseModel
 
 case class FinancialDetailsModel(balanceDetails: BalanceDetails,
-                                 documentDetails: List[DocumentDetail],
+                                 private val documentDetails: List[DocumentDetail],
                                  financialDetails: List[FinancialDetail]) extends FinancialDetailsResponseModel {
 
   def getDueDateForFinancialDetail(financialDetail: FinancialDetail): Option[LocalDate] = {
@@ -214,6 +219,56 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
   def mergeLists(financialDetailsModel: FinancialDetailsModel): FinancialDetailsModel = {
     FinancialDetailsModel(balanceDetails, documentDetails ++ financialDetailsModel.documentDetails,
       financialDetails ++ financialDetailsModel.financialDetails)
+  }
+
+  def documentDetailsExist(id: String): Boolean = {
+    documentDetails.exists(_.transactionId == id)
+  }
+
+  def documentDetailsFilter(predicate: DocumentDetail => Boolean): Option[DocumentDetail] = {
+    this.documentDetails.find(predicate)
+  }
+
+  def documentDetailsWithTransactionId(id: String): Option[DocumentDetail] = {
+    documentDetails.find(_.transactionId == id)
+  }
+
+  def documentDetailsWithLpiId(chargeReference: Option[String]): Option[DocumentDetail] = {
+    documentDetails.find(_.latePaymentInterestId == chargeReference)
+  }
+
+  def arePoaPaymentsPresent(): Option[TaxYear] = {
+    documentDetails.filter(_.documentDescription.exists(description => poaDocumentDescriptions.contains(description)))
+      .sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
+  }
+
+  def toChargeItem(codingOut: Boolean, reviewReconcile: Boolean): List[ChargeItem] = {
+    Try {
+      this.documentDetails
+        .map(ChargeItem.fromDocumentPair(_, financialDetails, codingOut, reviewReconcile)
+        )
+    } match {
+      case Success(res) =>
+        res
+      case Failure(ex) =>
+        Logger("application").warn(ex.getMessage)
+        List[ChargeItem]()
+    }
+  }
+
+  def unpaidDocumentDetails(isCodingOutEnabled: Boolean): List[DocumentDetail] = {
+    this.documentDetails.collect {
+      case documentDetail: DocumentDetail if documentDetail.isCodingOutDocumentDetail(isCodingOutEnabled) => documentDetail
+      case documentDetail: DocumentDetail if documentDetail.latePaymentInterestAmount.isDefined && !documentDetail.interestIsPaid => documentDetail
+      case documentDetail: DocumentDetail if documentDetail.interestOutstandingAmount.isDefined && !documentDetail.interestIsPaid => documentDetail
+      case documentDetail: DocumentDetail if documentDetail.isNotCodingOutDocumentDetail && !documentDetail.isPaid => documentDetail
+    }
+  }
+
+  def docDetailsNotDueWithInterest(currentDate: LocalDate): List[DocumentDetail] = {
+    this.documentDetails.filter(
+      x => !x.isPaid && x.hasAccruingInterest && x.documentDueDate.getOrElse(LocalDate.MIN).isAfter(currentDate)
+    )
   }
 
 }

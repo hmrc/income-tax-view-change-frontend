@@ -93,7 +93,7 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
         case (year, response) if year == taxYear => response
       }
       matchingYear.headOption match {
-        case Some(fdmForTaxYear: FinancialDetailsModel) if fdmForTaxYear.documentDetails.exists(_.transactionId == id) =>
+        case Some(fdmForTaxYear: FinancialDetailsModel) if fdmForTaxYear.documentDetailsExist(id) =>
           doShowChargeSummary(taxYear, id, isInterestCharge, fdmForTaxYear, paymentsFromAllYears, isAgent, origin, isMFADebit(fdmForTaxYear, id))
         case Some(_: FinancialDetailsModel) =>
           Future.successful(onError(s"Transaction id not found for tax year $taxYear", isAgent, showInternalServerError = false))
@@ -158,10 +158,10 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
 
         val (poaOneChargeUrl, poaTwoChargeUrl) =
           (for {
-            poaOneTaxYearTo     <- chargeDetailsforTaxYear.documentDetails.filter(isPoaOne).map(_.taxYear).headOption
-            poaOneTransactionId <- chargeDetailsforTaxYear.documentDetails.filter(isPoaOne).map(_.transactionId).headOption
-            poaTwoTaxYearTo     <- chargeDetailsforTaxYear.documentDetails.filter(isPoaTwo).map(_.taxYear).headOption
-            poaTwoTransactionId <- chargeDetailsforTaxYear.documentDetails.filter(isPoaTwo).map(_.transactionId).headOption
+            poaOneTaxYearTo     <- chargeDetailsforTaxYear.documentDetailsFilter(isPoaOne).map(_.taxYear)
+            poaOneTransactionId <- chargeDetailsforTaxYear.documentDetailsFilter(isPoaOne).map(_.transactionId)
+            poaTwoTaxYearTo     <- chargeDetailsforTaxYear.documentDetailsFilter(isPoaTwo).map(_.taxYear)
+            poaTwoTransactionId <- chargeDetailsforTaxYear.documentDetailsFilter(isPoaTwo).map(_.transactionId)
           } yield
             if (isAgent)
               (routes.ChargeSummaryController.showAgent(poaOneTaxYearTo, poaOneTransactionId).url,
