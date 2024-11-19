@@ -55,8 +55,6 @@ class ReportingFrequencyPageControllerSpec extends MockOldAuthActions with MockI
   val errorTemplateView: ErrorTemplate = app.injector.instanceOf[ErrorTemplate]
   val reportingFrequencyView: ReportingFrequencyView = app.injector.instanceOf[ReportingFrequencyView]
 
-  val mockAuthoriseAndRetrieve: AuthoriseAndRetrieve = mock[AuthoriseAndRetrieve]
-
   val controller =
     new ReportingFrequencyPageController(
       optOutService = mockOptOutService,
@@ -125,6 +123,7 @@ class ReportingFrequencyPageControllerSpec extends MockOldAuthActions with MockI
 
           disableAllSwitches()
           disable(ReportingFrequencyPage)
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
           val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2017"), List(business1), Nil)
 

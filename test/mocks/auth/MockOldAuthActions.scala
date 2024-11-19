@@ -20,9 +20,11 @@ import audit.mocks.MockAuditingService
 import auth.authV2.AuthActions
 import auth.authV2.actions._
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import mocks.services.MockIncomeSourceDetailsService
+import mocks.services.{MockIncomeSourceDetailsService, MockSessionDataService}
+import models.sessionData.SessionDataGetResponse
+import models.sessionData.SessionDataGetResponse.{SessionDataGetSuccess, SessionDataNotFound}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{mock, when}
 import play.api.test.Helpers.stubMessagesControllerComponents
 import services.SessionDataService
 import testUtils.TestSupport
@@ -33,7 +35,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockOldAuthActions extends TestSupport with MockIncomeSourceDetailsService with MockFrontendAuthorisedFunctions  with MockAuditingService{
+trait MockOldAuthActions extends TestSupport with MockIncomeSourceDetailsService
+  with MockFrontendAuthorisedFunctions with MockAuditingService with MockSessionDataService {
 
   private val authoriseAndRetrieve = new AuthoriseAndRetrieve(
     authorisedFunctions = mockAuthService,
@@ -42,7 +45,7 @@ trait MockOldAuthActions extends TestSupport with MockIncomeSourceDetailsService
     env = environment,
     mcc = stubMessagesControllerComponents(),
     auditingService = mockAuditingService,
-    app.injector.instanceOf[SessionDataService]
+    mockSessionDataService
   )
 
   private val authoriseAndRetrieveIndividual = new AuthoriseAndRetrieveIndividual(
@@ -69,23 +72,42 @@ trait MockOldAuthActions extends TestSupport with MockIncomeSourceDetailsService
     app.injector.instanceOf[AgentItvcErrorHandler],
     stubMessagesControllerComponents())
 
+  private val agentHasClientDetails = new AgentHasClientDetails()(
+    executionContext = ec,
+    sessionDataService = mockSessionDataService,
+    appConfig = appConfig
+  )
+
+  private val asMtdUser = new AsMtdUser()(
+    executionContext = ec,
+    sessionDataService = mockSessionDataService,
+    appConfig = appConfig
+  )
+
+  private val retrieveClientData = new RetrieveClientData(
+    sessionDataService = mockSessionDataService,
+    appConfig = appConfig,
+    errorHandler = app.injector.instanceOf[AgentItvcErrorHandler]
+  )
+
   val mockAuthActions = new AuthActions(
     app.injector.instanceOf[SessionTimeoutAction],
     authoriseAndRetrieve,
     authoriseAndRetrieveIndividual,
     authoriseAndRetrieveAgent,
     app.injector.instanceOf[AuthoriseAndRetrieveMtdAgent],
-    app.injector.instanceOf[AgentHasClientDetails],
+    agentHasClientDetails,
     app.injector.instanceOf[AgentHasConfirmedClientAction],
     app.injector.instanceOf[AgentIsPrimaryAction],
-    app.injector.instanceOf[AsMtdUser],
+    asMtdUser,
     app.injector.instanceOf[NavBarRetrievalAction],
     incomeSourceRetrievalAction,
-    app.injector.instanceOf[RetrieveClientData],
+    retrieveClientData,
     app.injector.instanceOf[FeatureSwitchRetrievalAction]
   )
 
   override def setupMockAuthRetrievalSuccess[X, Y](retrievalValue: X ~ Y): Unit = {
+    setupMockGetSessionDataSuccess()
     when(mockAuthService.authorised(any()))
       .thenReturn(
         new mockAuthService.AuthorisedFunction(EmptyPredicate) {
@@ -96,7 +118,7 @@ trait MockOldAuthActions extends TestSupport with MockIncomeSourceDetailsService
   }
 
   override def setupMockAgentAuthorisationException(exception: AuthorisationException = new InvalidBearerToken, withClientPredicate: Boolean = true): Unit = {
-
+    setupMockGetSessionDataNotFound()
     when(mockAuthService.authorised(any()))
       .thenReturn(
         new mockAuthService.AuthorisedFunction(EmptyPredicate) {
