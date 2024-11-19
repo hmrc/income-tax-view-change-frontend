@@ -2270,13 +2270,13 @@ optout.optOutError.home-bullet-2                     = homepage
 
 optout.cancelled.title                              = Opt out cancelled
 optout.cancelled.h1                                 = Opt out cancelled
-optout.cancelled.p1                                 = You will continue to report quarterly for the {0} to {1} tax year
+optout.cancelled.p1                                 = You will continue to report quarterly for the {0} to {1} tax year.
 optout.cancelled.bullet1.link                       = View your upcoming updates
 optout.cancelled.bullet2.link                       = Go to home page
 optout.cancelled.h2                                 = Reporting annually for new businesses
-optout.cancelled.p2                                 = As you have one or more new businesses, you can choose to report annually for them for up to 2 tax years while still recording quarterly for your other businesses
+optout.cancelled.p2                                 = As you have one or more new businesses, you can choose to report annually for them for up to 2 tax years while still recording quarterly for your other businesses.
 optout.cancelled.p3.link                            = View and manage your businesses
-optout.cancelled.p3                                 = to change how often you want to report for your businesses
+optout.cancelled.p3                                 = to change how often you want to report for your businesses.
 
 
 #######################################################################################################################

@@ -22,12 +22,12 @@ object OptOutCancelledViewMessages {
   val titleAgentContent = "Opt out cancelled - Manage your client’s Income Tax updates - GOV.UK"
   
   val h1Content = "Opt out cancelled"
-  val p1Content = "You will continue to report quarterly for the 2023 to 2024 tax year"
+  val p1Content = "You will continue to report quarterly for the 2023 to 2024 tax year."
   val bullet1LinkContent = "View your upcoming updates"
   val bullet2LinkContent = "Go to home page"
   val h2Content = "Reporting annually for new businesses"
-  val p2Content = "As you have one or more new businesses, you can choose to report annually for them for up to 2 tax years while still recording quarterly for your other businesses"
+  val p2Content = "As you have one or more new businesses, you can choose to report annually for them for up to 2 tax years while still recording quarterly for your other businesses."
   val p3LinkContent = "View and manage your businesses"
-  val p3Content = "View and manage your businesses to change how often you want to report for your businesses"
+  val p3Content = "View and manage your businesses to change how often you want to report for your businesses."
 
 }
