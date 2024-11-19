@@ -24,12 +24,6 @@ back.paymentHistory = Yn ôl i Hanes taliadau
 back.taxYearSummary = Yn ôl i Crynodeb o’r flwyddyn dreth
 back.nomatch = Yn ôl
 
-# Agent - Client Relationship Failure
-agent.client_relationship_failure.heading                       = Nid ydych wedi’ch awdurdodi i fwrw golwg dros y cleient hwn
-agent.client_relationship_failure.info                          = Mae angen i’ch cleient {0}.
-agent.client_relationship_failure.info.link                     = eich awdurdodi fel ei asiant
-agent.client_relationship_failure.enter_different_details       = Gwirio cleient arall
-
 # Agent Base
 agent.base.service_name                                         = Treth Incwm fanylion eich cleient
 
@@ -44,6 +38,12 @@ htmlTitle.invalidInput                                          = Gwall: {0} - G
 htmlTitle.confirmClient                                         = {0} - GOV.UK
 htmlTitle.errorPage                                             = {0} - GOV.UK
 
+# Agent - Client Relationship Failure
+agent.client_relationship_failure.heading                       = Nid ydych wedi’ch awdurdodi i fwrw golwg dros y cleient hwn
+agent.client_relationship_failure.info                          = Mae angen i’ch cleient {0}.
+agent.client_relationship_failure.info.link                     = eich awdurdodi fel ei asiant
+agent.client_relationship_failure.enter_different_details       = Gwirio cleient arall
+
 ## Agent - UTR Error
 agent.utr_error.heading                                         = Ni allwch fwrw golwg dros y cleient hwn
 agent.utr_error.utr_wrong                                       = Gallai hyn fod oherwydd y canlynol:
@@ -57,6 +57,20 @@ agent-error.heading                                            = Ni allwch ddefn
 agent-error.note                                               = I ddefnyddio’r gwasanaeth hwn, mae’n rhaid i chi sefydlu
 agent-error.link                                               = cyfrif gwasanaethau asiant
 
+# Agent - Enter clients details
+agent.enter_clients_utr.heading                                 = Beth yw UTR eich cleient?
+agent.enter_clients_utr.info                                    = Dyma’r Cyfeirnod Unigryw y Trethdalwr (UTR) 10 digid a gafodd wrth gofrestru ar gyfer Hunanasesiad. Er enghraifft, 1234567890
+agent.error.enter_clients_utr.empty                             = Nodwch Gyfeirnod Unigryw y Trethdalwr eich cleient
+agent.error.enter_clients_utr.length                            = Mae’n rhaid i Gyfeirnod Unigryw y Trethdalwr eich cleient fod yn 10 digid
+agent.error.enter_clients_utr.non_numeric                       = Mae’n rhaid i Gyfeirnod Unigryw y Trethdalwr gynnwys rhifau yn unig
+
+## Agent - Confirm Client
+agent.confirmClient.heading                                     = Cadarnhau manylion eich cleient
+agent.confirmClient.clientName                                  = Enw’r cleient
+agent.confirmClient.clientUtr                                   = Cyfeirnod Unigryw y Trethdalwr (UTR) y cleient
+agent.confirmClient.changeClient                                = Newid cleient
+agent.confirmClient.confirmContinue                             = Cadarnhau ac yn eich blaen
+
 ## Unauthorised Agent Page ##
 agent-unauthorised.heading                                      = Nid ydych wedi’ch awdurdodi i gael mynediad at y dudalen hon
 agent-unauthorised.note                                         = Rydych yn asiant ategol ar gyfer y cleient hwn. Y prif asiant yn unig sy’n gallu cael mynediad at gofnodion sy’n dangos:
@@ -64,11 +78,6 @@ agent-unauthorised.note.b1                                      = taliadau, cred
 agent-unauthorised.note.b2                                      = Ffurflenni Treth
 agent-unauthorised.note.b3                                      = y ffioedd sy’n ddyledus nesaf
 agent-unauthorised.link                                         = Darllenwch ragor am y gwahaniaeth rhwng prif asiantau ac asiantau ategol ar GOV.UK.
-
-## Custom Error Page ##
-error.custom.heading                                          = Mae problem wedi codi
-error.custom.message                                          = Mae’r dudalen rydych yn ceisio’i gweld wedi newid
-error.custom.link                                             = Ewch yn ôl i ‘Troi Treth yn Ddigidol ar gyfer Treth Incwm’
 
 ## BTA Links ##
 bta.home                                                        = Treth Busnes – Hafan
@@ -137,13 +146,6 @@ home.paymentCreditHistory.view                                  = Hanes taliadau
 home.paymentCreditRefundHistory.view                            = Hanes taliadau, credyd ac ad-daliadau
 home.your-returns.updatesLink                                   = Diweddaru a chyflwyno’ch Ffurflen Dreth ar gyfer {0} i {1}
 home.returns.viewLink                                           = Bwrw golwg dros eich Ffurflen Dreth gyfredol ar gyfer {0} i {1}
-home.agent.overdue.message.dunningLock.true                     = Mae gan eich cleient daliadau sy’n hwyr ac mae un neu fwy o’i benderfyniadau treth yn cael eu hadolygu. Mae’n bosibl y codir llog arno ar y rhain hyd nes eu bod wedi’u talu’n llawn.
-home.agent.overdue.message.dunningLock.false                    = Mae arnoch daliadau am fod yn hwyr. Mae’n bosibl y codir llog arnoch ar y rhain hyd nes eu bod wedi’u talu’n llawn.
-home.overdue.message.dunningLock.true                           = Mae gennych daliadau sy’n hwyr ac mae un neu fwy o’ch penderfyniadau treth yn cael eu hadolygu. Mae’n bosibl y codir llog arnoch ar y rhain hyd nes eu bod wedi’u talu’n llawn.
-home.overdue.message.dunningLock.false                          = Mae arnoch daliadau am fod yn hwyr. Mae’n bosibl y codir llog arnoch ar y rhain hyd nes eu bod wedi’u talu’n llawn.
-home.updates.overdue.charges                                    = {0} TALIAD AM FOD YN HWYR
-home.interest-accruing                                          = Mae gennych daliadau gyda llog ychwanegol. Bydd y taliadau hyn yn cronni llog nes eu bod yn cael eu talu’n llawn.
-home.updates.overdue.updates                                    = {0} YN HWYR Diweddariadau
 home.self-assessment.description                                = Defnyddiwch y gwasanaeth hwn i fwrw golwg dros eich gwybodaeth am flynyddoedd treth cynharach cyn i chi gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm.
 home.credAndRefund.view                                         = Hawlio ad-daliad
 home.credAndRefund_howToClaim.view                              = Sut i hawlio ad-daliad
@@ -154,6 +156,15 @@ home.incomeSources.manageIncomeSource.view                      = Bwrw golwg dro
 home.incomeSources.ceaseIncomeSource.view                       = Dod â ffynhonnell incwm i ben
 home.incomeSources.newJourney.view                              = Ychwanegu, rheoli neu ddod â busnes neu ffynhonnell incwm i ben
 
+home.agent.overdue.message.dunningLock.true                     = Mae gan eich cleient daliadau sy’n hwyr ac mae un neu fwy o’i benderfyniadau treth yn cael eu hadolygu. Mae’n bosibl y codir llog arno ar y rhain hyd nes eu bod wedi’u talu’n llawn.
+home.agent.overdue.message.dunningLock.false                    = Mae arnoch daliadau am fod yn hwyr. Mae’n bosibl y codir llog arnoch ar y rhain hyd nes eu bod wedi’u talu’n llawn.
+home.overdue.message.dunningLock.true                           = Mae gennych daliadau sy’n hwyr ac mae un neu fwy o’ch penderfyniadau treth yn cael eu hadolygu. Mae’n bosibl y codir llog arnoch ar y rhain hyd nes eu bod wedi’u talu’n llawn.
+home.overdue.message.dunningLock.false                          = Mae arnoch daliadau am fod yn hwyr. Mae’n bosibl y codir llog arnoch ar y rhain hyd nes eu bod wedi’u talu’n llawn.
+home.interest-accruing                                          = Mae gennych daliadau gyda llog ychwanegol. Bydd y taliadau hyn yn cronni llog nes eu bod yn cael eu talu’n llawn.
+
+home.updates.overdue.charges                                    = {0} TALIAD AM FOD YN HWYR
+home.updates.overdue.updates                                    = {0} YN HWYR Diweddariadau
+
 home.agent.supporting.paymentAndReturns                         = Taliadau a Ffurflenni Treth
 home.agent.supporting.cannotAccess                              = Ni all asiantau ategol gael mynediad at gofnodion sy’n dangos:
 home.agent.supporting.cannotAccess.payments                     = taliadau, credydau ac ad-daliadau
@@ -161,6 +172,13 @@ home.agent.supporting.cannotAccess.returns                      = Ffurflenni Tre
 home.agent.supporting.cannotAccess.nextChargesDue               = y ffioedd sy’n ddyledus nesaf
 home.agent.supporting.readMore                                  = Darllenwch ragor am y gwahaniaeth rhwng prif asiantau ac asiantau ategol ar GOV.UK (yn agor tab newydd).
 
+## Custom Error Page ##
+error.custom.heading                                          = Mae problem wedi codi
+error.custom.message                                          = Mae’r dudalen rydych yn ceisio’i gweld wedi newid
+error.custom.link                                             = Ewch yn ôl i ‘Troi Treth yn Ddigidol ar gyfer Treth Incwm’
+
+##
+##
 
 ## Tax Years Page ##
 taxYears.heading                                               = Mlynyddoedd treth
@@ -180,18 +198,19 @@ taxYears.oldSa.agent.content.1								   = I fwrw golwg dros flynyddoedd treth e
 taxYears.oldSa.agent.content.2								   = cyfrif Hunanasesiad ar gyfer Asiantau
 taxYears.oldSa.agent.content.3								   = Bydd hyn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth sy’n wahanol i’ch cyfrif Gwasanaethau Asiant.
 
-## Tax Year Summary Page New##
+## Tax Year Summary Page New ##
 tax-year-summary.heading                                       = Crynodeb o’r flwyddyn dreth
 tax-year-summary.heading-secondary                             = 6 Ebrill {0} i 5 Ebrill {1}
 tax-year-summary.calculation-date                              = Dyddiad y cyfrifiad
-tax-year-summary.total-due                                     = Cyfanswm y bil treth
 tax-year-summary.calc-from-last-time                           = Nid dyma’ch bil treth terfynol – mae’n seiliedig ar ffigurau rydym eisoes wedi’u cael yn unig.
 tax-year-summary.agent.calc-from-last-time                     = Nid dyma fil treth terfynol eich cleient – mae’n seiliedig ar ffigurau rydym eisoes wedi’u cael yn unig.
 tax-year-summary.calc-estimate-info                            = Mae hyn yn amcangyfrif ar gyfer y flwyddyn hyd yn hyn sy’n seiliedig ar ffigurau sydd gennym eisoes.
+tax-year-summary.total-due                                     = Cyfanswm y bil treth
+tax-year-summary.tax-calculation.date                          = {0} i {1}
 tax-year-summary.tax-calculation                               = Cyfrifiad
-tax-year-summary.payments.paymentUnderReview                   = Taliad dan adolygiad
-tax-year-summary.section                                       = Adran
-tax-year-summary.amount                                        = Swm
+tax-year-summary.tax-calculation.no-calc                       = Dim cyfrifiad eto
+tax-year-summary.tax-calculation.no-calc.note                  = Byddwch yn gallu gweld eich cyfrifiad blwyddyn dreth ddiweddaraf yma unwaith y byddwch wedi anfon diweddariad.
+tax-year-summary.tax-calculation.unattended-calc               = Rydym wedi diweddaru’r cyfrifiad i chi. Gwiriwch eich meddalwedd cadw cofnodion am ragor o fanylion.
 tax-year-summary.payments                                      = Taliadau
 tax-year-summary.charges                                       = Costau
 tax-year-summary.forecast                                      = Rhagolwg
@@ -207,8 +226,6 @@ tax-year-summary.payments.amount                               = Swm
 tax-year-summary.payments.paymentOnAccount1.text               = Taliad cyntaf ar gyfrif
 tax-year-summary.payments.paymentOnAccount2.text               = Ail daliad ar gyfrif
 tax-year-summary.payments.balancingCharge.text                 = Taliad mantoli
-tax-year-summary.payments.class2Nic.text                       = Yswiriant Gwladol Dosbarth 2
-tax-year-summary.payments.codingOut.text                       = Taliad mantoli a gesglir drwy’r cod treth TWE
 tax-year-summary.payments.lpi.paymentOnAccount1.text           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o 2
 tax-year-summary.payments.lpi.paymentOnAccount2.text           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o 2
 tax-year-summary.payments.lpi.balancingCharge.text             = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli
@@ -216,14 +233,19 @@ tax-year-summary.payments.cancelledPayeSelfAssessment.text     = Hunanasesiad TW
 tax-year-summary.payments.hmrcAdjustment.text                  = Addasiad CThEF
 tax-year-summary.payments.overdue                              = Yn hwyr
 tax-year-summary.payments.no-payments                          = Dim taliadau’n ddyledus ar hyn o bryd.
+tax-year-summary.payments.paymentUnderReview                   = Taliad dan adolygiad
 tax-year-summary.payments.reviewAndReconcilePoa1.text          = Taliad cyntaf ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
 tax-year-summary.payments.reviewAndReconcilePoa2.text          = Ail daliad ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
 tax-year-summary.payments.lpi.reviewAndReconcilePoa1.text      = Llog ar gyfer taliad cyntaf ar gyfrif: swm ychwanegol
 tax-year-summary.payments.lpi.reviewAndReconcilePoa2.text      = Llog ar gyfer ail daliad ar gyfrif: swm ychwanegol
+tax-year-summary.section                                       = Adran
+tax-year-summary.amount                                        = Swm
+tax-year-summary.payments.class2Nic.text                       = Yswiriant Gwladol Dosbarth 2
+tax-year-summary.payments.codingOut.text                       = Taliad mantoli a gesglir drwy’r cod treth TWE
+tax-year-summary.na                                            = Amh
 tax-year-summary.forecast_tab.insetText                        = Amcangyfrif yw hwn o’ch bil treth ar gyfer y flwyddyn gyfan hyd at 5 Ebrill {0}. Bydd hyn yn cael ei ddiweddaru drwy gydol y flwyddyn wrth i ni gael rhagor o wybodaeth.
 tax-year-summary.forecast_total_title                          = Rhagolwg 6 Ebrill {0} i 5 Ebrill {1}
 tax-year-summary.forecast.tax-due                              = Rhagolwg o swm y dreth Hunanasesiad
-tax-year-summary.na                                            = Amh
 tax-year-summary.message.header                                = Ni allwn ddangos y cyfrifiad hwn:
 tax-year-summary.message.action                                = Mae angen i chi ddiwygio ac ailgyflwyno’ch Ffurflen Dreth.
 tax-year-summary.message.C15014                                = ni all diweddariad chwarterol ddod i ben ar ôl dyddiad dod i ben y cyfnod cyfrifyddu sef, {0}.
@@ -384,14 +406,6 @@ tax-year-summary.adjust-poa-paragraph                          = Gallwch ostwng 
 tax-year-summary.adjust-poa                                    = Addasu taliadau ar gyfrif
 
 
-## Tax Year Summary Page new ##
-tax-year-summary.tax-calculation.no-calc                       = Dim cyfrifiad eto
-tax-year-summary.tax-calculation.no-calc.note                  = Byddwch yn gallu gweld eich cyfrifiad blwyddyn dreth ddiweddaraf yma unwaith y byddwch wedi anfon diweddariad.
-tax-year-summary.tax-calculation.date                          = {0} i {1}
-tax-year-summary.tax-calculation.unattended-calc               = Rydym wedi diweddaru’r cyfrifiad i chi. Gwiriwch eich meddalwedd cadw cofnodion am ragor o fanylion.
-
-
-
 ## Income Breakdown Page ##
 income_breakdown.heading                                        = Incwm
 income_breakdown.table.header                                   = Math o incwm
@@ -453,6 +467,7 @@ forecast_income.source_types.21                                = Incwm nad yw’
 forecast_income.source_types.22                                = Enillion cyfalaf
 forecast_income.source_types.98                                = Rhodd Cymorth a Rhoi Trwy’r Gyflogres
 
+
 ## Deduction Breakdown Page ##
 deduction_breakdown.heading                                            = Lwfansau a didyniadau
 deduction_breakdown.dates                                              = 6 Ebrill {0} hyd at 5 Ebrill {1}
@@ -481,6 +496,7 @@ taxCal_breakdown.lumpSums                                           = Cyfandalia
 taxCal_breakdown.gains_life_policies                                = Enillion ar bolisïau bywyd
 taxCal_breakdown.class4_national_insurance                          = Yswiriant Gwladol Dosbarth 4
 taxCal_breakdown.additional_charges                                 = Taliadau ychwanegol
+taxCal_breakdown.table.capital_gains_tax                            = Treth Enillion Cyfalaf
 taxCal_breakdown.additional_deductions                              = Didyniadau ychwanegol
 taxCal_breakdown.table.ZRT                                          = Cyfradd sero ({0} ar {1}%)
 taxCal_breakdown.table.SSR                                          = Cyfradd gychwynnol ({0} ar {1}%)
@@ -497,15 +513,45 @@ taxCal_breakdown.table.ZRTAR                                        = Haen cyfra
 taxCal_breakdown.table.transitional_profit                          = Elw trosiannol ({0})
 taxCal_breakdown.table.totalIncomeTaxAndNicsDue                     = Swm y dreth Hunanasesiad
 taxCal_breakdown.table.nic4                                         = Yswiriant Gwladol Dosbarth 4 ({0} ar {1}%)
+taxCal_breakdown.national_insurance_contributions                   = Cyfraniadau Yswiriant Gwladol
+taxCal_breakdown.table.nic2.false                                   = Yswiriant Gwladol Dosbarth 2
+taxCal_breakdown.table.nic2.true                                    = Yswiriant Gwladol Dosbarth 2 Gwirfoddol
 taxCal_breakdown.table.nic2                                         = Yswiriant Gwladol Dosbarth 2
+
 taxCal_breakdown.table.banks_and_building_societies                 = Llog a gafwyd o fanciau a chymdeithasau adeiladu yn y DU
 taxCal_breakdown.table.taxTakenOffTradingIncome                     = Treth a ddidynnwyd ar incwm masnachu
-taxCal_breakdown.table.totalStudentLoansRepaymentAmount             = Ad-daliadau Benthyciad Myfyriwr
-taxCal_breakdown.table.other_charges                                = Taliadau eraill
+
+taxCal_breakdown.table.head.deduction                           = Math o ddidyniad
+taxCal_breakdown.table.head.charge_type                         = Math o gost
+taxCal_breakdown.table.head.reduction                           = Gostyngiad
+taxCal_breakdown.table.head.rate_band                           = Haen cyfradd
+taxCal_breakdown.table.head.cgt_type                            = Math o Dreth Enillion Cyfalaf
+taxCal_breakdown.table.head.national_insurance_type             = Math o Yswiriant Gwladol
+taxCal_breakdown.table.head.rates.uk                            = Cyfradd y DU ar gyfer Lloegr a Gogledd Iwerddon
+taxCal_breakdown.table.head.rates.scotland                      = Cyfradd ar gyfer yr Alban
+
+taxCal_breakdown.table.cgt.taxable_capital_gains                    = Enillion Cyfalaf trethadwy
+taxCal_breakdown.table.cgt.assets_or_investors_relief.band.single   = Enillion Rhyddhad Gwaredu Ased Busnes neu Ryddhad Buddsoddwyr (neu’r ddau) ({0} at {1}%)
+taxCal_breakdown.table.cgt.property_and_interest.band.lowerRate     = Eiddo preswyl a llog ar y gyfradd sylfaenol wedi’i gario ({0} at {1}%)
+taxCal_breakdown.table.cgt.property_and_interest.band.higherRate    = Eiddo preswyl a llog ar y gyfradd uwch wedi’i gario ({0} am {1}%)
+taxCal_breakdown.table.cgt.other_gains.band.lowerRate               = Enillion eraill cyfradd sylfaenol ({0} at {1}%)
+taxCal_breakdown.table.cgt.other_gains.band.higherRate              = Enillion eraill cyfradd uwch ({0} at {1}%)
+taxCal_breakdown.table.cgt.adjustment                               = Addasiad ar gyfer Treth Enillion Cyfalaf
+taxCal_breakdown.table.cgt.foreign_tax_credit_relief                = Rhyddhad Credyd Treth Dramor ar enillion cyfalaf
+taxCal_breakdown.table.cgt.already_paid                             = Treth ar enillion a dalwyd yn barod
+taxCal_breakdown.table.cgt.due                                      = Treth Enillion Cyfalaf sy’n ddyledus
+taxCal_breakdown.table.cgt.overpaid                                 = Treth Enillion Cyfalaf a gyfrifwyd fel gordaliad
+
 taxCal_breakdown.table.giftAidTax                                   = Tâl treth Rhodd Cymorth
 taxCal_breakdown.table.totalPensionSavingsTaxCharges                = Cyfanswm y taliadau a godir ar gynilion pensiwn
 taxCal_breakdown.table.statePensionLumpSumCharges                   = Cyfandaliad Pensiwn y Wladwriaeth
+taxCal_breakdown.table.other_charges                                = Taliadau eraill
+taxCal_breakdown.table.totalStudentLoansRepaymentAmount             = Ad-daliadau Benthyciad Myfyriwr
+taxCal_breakdown.table.payeUnderpaymentsCodedOut                    = Treth a dandalwyd ar gyfer blynyddoedd cynharach, sydd wedi’i chynnwys yn eich cod treth ar gyfer {0} i {1}
+taxCal_breakdown.table.saUnderpaymentsCodedOut                      = Treth a dandalwyd ar gyfer blynyddoedd cynharach, sydd wedi’i chynnwys yn eich Hunanasesiad ar gyfer {0} i {1}
 taxCal_breakdown.table.tax_reductions                               = Gostyngiadau treth
+taxCal_breakdown.table.marriage_allowance_transfer              = Trosglwyddo Lwfans Priodasol
+taxCal_breakdown.table.top_slicing_relief                       = Rhyddhad haenen uchaf
 taxCal_breakdown.table.deficiencyRelief                             = Rhyddhad am ddiffyg
 taxCal_breakdown.table.vctSubscriptions                             = Rhyddhad Ymddiriedolaeth Cyfalaf Menter
 taxCal_breakdown.table.eisSubscriptions                             = Rhyddhad Cynllun Buddsoddiad Menter
@@ -531,9 +577,9 @@ taxCal_breakdown.table.taxDeductedAtSource.ukLandAndProperty		= Tir ac eiddo yn 
 taxCal_breakdown.table.taxDeductedAtSource.specialWithholdingTax    = Treth ataliedig arbennig
 taxCal_breakdown.table.taxDeductedAtSource.voidISAs                 = ISAs di-rym
 taxCal_breakdown.table.taxDeductedAtSource.total					= Cyfanswm y dreth a ddidynnwyd
-taxCal_breakdown.table.nic2.false                                   = Yswiriant Gwladol Dosbarth 2
-taxCal_breakdown.table.nic2.true                                    = Yswiriant Gwladol Dosbarth 2 Gwirfoddol
-taxCal_breakdown.national_insurance_contributions                   = Cyfraniadau Yswiriant Gwladol
+taxCal_breakdown.table.amount                                   = Swm
+
+
 taxCal_breakdown.message.static1                                = Mae’r cyfrifiad hwn ond yn seiliedig ar yr wybodaeth y mae CThEF wedi’i chael am eich incwm a’ch treuliau hyd yma. Gallai hyn newid wrth i ni gael rhagor o wybodaeth amdanoch yn ystod y flwyddyn dreth.
 taxCal_breakdown.message.C22201                                 = Cynyddwyd eich terfyn ar gyfer y Gyfradd Sylfaenol gan {0} i {1} ar gyfer taliadau Rhodd Cymorth.
 taxCal_breakdown.message.C22202                                 = Mae’r dreth sy’n ddyledus ar daliadau Rhodd Cymorth yn fwy na’r Dreth Incwm a godwyd arnoch, felly rydych yn agored i dalu treth Rhodd Cymorth.
@@ -586,32 +632,6 @@ taxCal_breakdown.message.agent.C22225_Scottish                  = Mae eich treth
 taxCal_breakdown.message.agent.C22226_Scottish                  = Mae eich treth wedi cynyddu oherwydd cyfraniadau elusennol Rhodd Cymorth - mae Cyfradd Sylfaenol yr Alban o Dreth Incwm yn is na’r gyfradd y mae elusennau wedi cael rhyddhad arni.
 
 
-taxCal_breakdown.table.head.rate_band                           = Haen cyfradd
-taxCal_breakdown.table.head.reduction                           = Gostyngiad
-taxCal_breakdown.table.marriage_allowance_transfer              = Trosglwyddo Lwfans Priodasol
-taxCal_breakdown.table.top_slicing_relief                       = Rhyddhad haenen uchaf
-taxCal_breakdown.table.head.charge_type                         = Math o gost
-taxCal_breakdown.table.head.deduction                           = Math o ddidyniad
-taxCal_breakdown.table.amount                                   = Swm
-taxCal_breakdown.table.head.rates.uk                            = Cyfradd y DU ar gyfer Lloegr a Gogledd Iwerddon
-taxCal_breakdown.table.head.national_insurance_type             = Math o Yswiriant Gwladol
-taxCal_breakdown.table.head.rates.scotland                      = Cyfradd ar gyfer yr Alban
-
-taxCal_breakdown.table.capital_gains_tax                            = Treth Enillion Cyfalaf
-taxCal_breakdown.table.head.cgt_type                                = Math o Dreth Enillion Cyfalaf
-taxCal_breakdown.table.cgt.taxable_capital_gains                    = Enillion Cyfalaf trethadwy
-taxCal_breakdown.table.cgt.assets_or_investors_relief.band.single   = Enillion Rhyddhad Gwaredu Ased Busnes neu Ryddhad Buddsoddwyr (neu’r ddau) ({0} at {1}%)
-taxCal_breakdown.table.cgt.property_and_interest.band.lowerRate     = Eiddo preswyl a llog ar y gyfradd sylfaenol wedi’i gario ({0} at {1}%)
-taxCal_breakdown.table.cgt.property_and_interest.band.higherRate    = Eiddo preswyl a llog ar y gyfradd uwch wedi’i gario ({0} am {1}%)
-taxCal_breakdown.table.cgt.other_gains.band.lowerRate               = Enillion eraill cyfradd sylfaenol ({0} at {1}%)
-taxCal_breakdown.table.cgt.other_gains.band.higherRate              = Enillion eraill cyfradd uwch ({0} at {1}%)
-taxCal_breakdown.table.cgt.adjustment                               = Addasiad ar gyfer Treth Enillion Cyfalaf
-taxCal_breakdown.table.cgt.foreign_tax_credit_relief                = Rhyddhad Credyd Treth Dramor ar enillion cyfalaf
-taxCal_breakdown.table.cgt.already_paid                             = Treth ar enillion a dalwyd yn barod
-taxCal_breakdown.table.cgt.due                                      = Treth Enillion Cyfalaf sy’n ddyledus
-taxCal_breakdown.table.cgt.overpaid                                 = Treth Enillion Cyfalaf a gyfrifwyd fel gordaliad
-taxCal_breakdown.table.payeUnderpaymentsCodedOut                    = Treth a dandalwyd ar gyfer blynyddoedd cynharach, sydd wedi’i chynnwys yn eich cod treth ar gyfer {0} i {1}
-taxCal_breakdown.table.saUnderpaymentsCodedOut                      = Treth a dandalwyd ar gyfer blynyddoedd cynharach, sydd wedi’i chynnwys yn eich Hunanasesiad ar gyfer {0} i {1}
 taxCal_breakdown.table.studentLoanRepaymentsPlanType0X              = Ad-daliadau Benthyciad Myfyriwr (cynllun {0})
 taxCal_breakdown.table.studentLoanPostGraduatePlan                  = Ad-daliadau Benthyciad Ôl-raddedig
 taxCal_breakdown.table.totalAnnuityPaymentsTaxCharged               = Treth sy’n ddyledus ar daliadau blwydd-daliadau
@@ -1138,19 +1158,6 @@ paymentHistory.check-refund-1                                   = Gallwch
 paymentHistory.check-refund-2                                   = wirio cynnydd cais
 paymentHistory.check-refund-3                                   = a wnaethoch am ad-daliad ar unrhyw adeg.
 
-# Agent - Enter clients details
-agent.enter_clients_utr.heading                                 = Beth yw UTR eich cleient?
-agent.enter_clients_utr.info                                    = Dyma’r Cyfeirnod Unigryw y Trethdalwr (UTR) 10 digid a gafodd wrth gofrestru ar gyfer Hunanasesiad. Er enghraifft, 1234567890
-agent.error.enter_clients_utr.empty                             = Nodwch Gyfeirnod Unigryw y Trethdalwr eich cleient
-agent.error.enter_clients_utr.length                            = Mae’n rhaid i Gyfeirnod Unigryw y Trethdalwr eich cleient fod yn 10 digid
-agent.error.enter_clients_utr.non_numeric                       = Mae’n rhaid i Gyfeirnod Unigryw y Trethdalwr gynnwys rhifau yn unig
-
-## Agent - Confirm Client
-agent.confirmClient.heading                                     = Cadarnhau manylion eich cleient
-agent.confirmClient.clientName                                  = Enw’r cleient
-agent.confirmClient.clientUtr                                   = Cyfeirnod Unigryw y Trethdalwr (UTR) y cleient
-agent.confirmClient.changeClient                                = Newid cleient
-agent.confirmClient.confirmContinue                             = Cadarnhau ac yn eich blaen
 
 ##Tax Years Overview Update Tab##
 updateTab.due                                                   = Ddyledus {0}

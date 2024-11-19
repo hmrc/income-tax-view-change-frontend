@@ -36,22 +36,7 @@ htmlTitle                                           = {0} - Manage your Income T
 htmlTitle.agent                                     = {0} - Manage your client’s Income Tax updates - GOV.UK
 htmlTitle.errorPage                                 = {0} - GOV.UK
 htmlTitle.invalidInput                              = Error: {0} - GOV.UK
-htmlTitle.confirmClient                              = {0} - GOV.UK
-
-# Agent - Enter clients details
-agent.enter_clients_utr.heading                                 = What is your client’s UTR?
-agent.enter_clients_utr.info                                    = This is the 10 digit Unique Taxpayer Reference (UTR) they received when they registered for Self Assessment. For example, 1234567890
-
-agent.error.enter_clients_utr.empty                             = Enter your client’s Unique Taxpayer Reference
-agent.error.enter_clients_utr.length                            = Your client’s Unique Taxpayer Reference must be 10 digits long
-agent.error.enter_clients_utr.non_numeric                       = A Unique Taxpayer Reference must only contain numbers
-
-## Agent - Confirm Client
-agent.confirmClient.heading                                     = Confirm your client’s details
-agent.confirmClient.clientName                                  = Client’s name
-agent.confirmClient.clientUtr                                   = Client’s Unique Taxpayer Reference (UTR)
-agent.confirmClient.changeClient                                = Change client
-agent.confirmClient.confirmContinue                             = Confirm and continue
+htmlTitle.confirmClient                             = {0} - GOV.UK
 
 # Agent - Client Relationship Failure
 agent.client_relationship_failure.heading                       = You are not authorised to view this client
@@ -71,6 +56,20 @@ agent.utr_error.go_back                                         = Enter another 
 agent-error.heading                                            = You can’t use this service yet
 agent-error.note                                               = To use this service, you need to
 agent-error.link                                               = set up an agent services account
+
+# Agent - Enter clients details
+agent.enter_clients_utr.heading                                 = What is your client’s UTR?
+agent.enter_clients_utr.info                                    = This is the 10 digit Unique Taxpayer Reference (UTR) they received when they registered for Self Assessment. For example, 1234567890
+agent.error.enter_clients_utr.empty                             = Enter your client’s Unique Taxpayer Reference
+agent.error.enter_clients_utr.length                            = Your client’s Unique Taxpayer Reference must be 10 digits long
+agent.error.enter_clients_utr.non_numeric                       = A Unique Taxpayer Reference must only contain numbers
+
+## Agent - Confirm Client
+agent.confirmClient.heading                                     = Confirm your client’s details
+agent.confirmClient.clientName                                  = Client’s name
+agent.confirmClient.clientUtr                                   = Client’s Unique Taxpayer Reference (UTR)
+agent.confirmClient.changeClient                                = Change client
+agent.confirmClient.confirmContinue                             = Confirm and continue
 
 ## Unauthorised Agent Page ##
 agent-unauthorised.heading                                      = You are not authorised to access this page
@@ -172,6 +171,11 @@ home.agent.supporting.cannotAccess.payments                     = payments, cred
 home.agent.supporting.cannotAccess.returns                      = returns
 home.agent.supporting.cannotAccess.nextChargesDue               = next charges due
 home.agent.supporting.readMore                                  = Read more about the difference between main and supporting agents on GOV.UK (opens in new tab).
+
+## Custom Error Page ##
+error.custom.heading                                            = There is a problem
+error.custom.message                                            = The page you’re trying to view has changed
+error.custom.link                                               = Return to Making Tax Digital for Income Tax
 
 ## Tax Years Page ##
 taxYears.heading                                               = Tax years
@@ -508,13 +512,12 @@ taxCal_breakdown.table.totalIncomeTaxAndNicsDue                     = Self Asses
 taxCal_breakdown.table.nic2                                         = Class 2 National Insurance
 taxCal_breakdown.table.nic4                                         = Class 4 National Insurance ({0} at {1}%)
 taxCal_breakdown.national_insurance_contributions                   = National Insurance contributions
-
 taxCal_breakdown.table.nic2.false                                   = Class 2 National Insurance
 taxCal_breakdown.table.nic2.true                                    = Voluntary Class 2 National Insurance
+##
 
 taxCal_breakdown.table.banks_and_building_societies                 = Interest received from UK banks and building societies
 taxCal_breakdown.table.taxTakenOffTradingIncome                     = Tax deducted on trading income
-
 
 taxCal_breakdown.table.head.deduction                               = Deduction type
 taxCal_breakdown.table.head.charge_type                             = Charge type
@@ -537,7 +540,6 @@ taxCal_breakdown.table.cgt.already_paid                             = Tax on gai
 taxCal_breakdown.table.cgt.due                                      = Capital Gains Tax due
 taxCal_breakdown.table.cgt.overpaid                                 = Capital Gains Tax calculated as overpaid
 
-taxCal_breakdown.taxDeductedAtSource								= Tax deductions
 taxCal_breakdown.table.giftAidTax                                   = Gift Aid tax charge
 taxCal_breakdown.table.totalPensionSavingsTaxCharges                = Total pension saving charges
 taxCal_breakdown.table.statePensionLumpSumCharges                   = State pension lump sum
@@ -561,6 +563,7 @@ taxCal_breakdown.table.total_foreign_tax_credit_relief              = Foreign Ta
 taxCal_breakdown.table.qualifyingDistributionRedemptionOfSharesAndSecurities    = Relief claimed on a qualifying distribution
 taxCal_breakdown.table.nonDeductableLoanInterest                    = Non-deductible loan interest
 taxCal_breakdown.table.income_tax_due_after_tax_reductions          = Income Tax due after tax reductions
+taxCal_breakdown.taxDeductedAtSource								= Tax deductions
 taxCal_breakdown.table.taxDeductedAtSource.savings					= Interest received from UK banks and building societies
 taxCal_breakdown.table.taxDeductedAtSource.taxTakenOffTradingIncome	= Tax deducted on trading income
 taxCal_breakdown.table.taxDeductedAtSource.inYearAdjustment			= Outstanding debt collected through PAYE
@@ -742,11 +745,6 @@ standardError.message                                           = Try again late
 global.error.InternalServerError500.title                       = Sorry, there is a problem with the service
 global.error.InternalServerError500.heading                     = Sorry, there is a problem with the service
 global.error.InternalServerError500.message                     = Try again later.
-
-## Custom Error Page ##
-error.custom.heading                                            = There is a problem
-error.custom.message                                            = The page you’re trying to view has changed
-error.custom.link                                               = Return to Making Tax Digital for Income Tax
 
 ## Beta Banner ##
 betaBanner.beta                                                 = BETA
