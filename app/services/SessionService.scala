@@ -19,6 +19,8 @@ package services
 import config.FrontendAppConfig
 import enums.JourneyType._
 import models.incomeSourceDetails.{AddIncomeSourceData, CeaseIncomeSourceData, ManageIncomeSourceData, UIJourneySessionData}
+import models.optin.OptInSessionData
+import models.optout.OptOutSessionData
 import repositories.{SensitiveUIJourneySessionDataRepository, UIJourneySessionDataRepository}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -66,27 +68,33 @@ class SessionService @Inject()(
     }
   }
 
-  def getMongoKey(key: String, journeyType: JourneyType)
+  def getMongoKey(key: String, incomeSources: IncomeSources)
                  (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[String]]] = {
-    uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType) map {
+    uiJourneySessionDataRepository.get(hc.sessionId.get.value, incomeSources) map {
       case Some(data: UIJourneySessionData) =>
-        journeyType.operation match {
+        incomeSources.operation match {
           case Add => getKeyFromObject[String](data.addIncomeSourceData, key)
           case Manage => getKeyFromObject[String](data.manageIncomeSourceData, key)
           case Cease => getKeyFromObject[String](data.ceaseIncomeSourceData, key)
+          case In => getKeyFromObject[String](data.optInSessionData, key)
+          case Out => getKeyFromObject[String](data.optOutSessionData, key)
+//          case _ => Left(new Exception(S))
         }
       case None => Right(None)
     }
   }
 
-  def getMongoKeyTyped[A](key: String, journeyType: JourneyType)
+  def getMongoKeyTyped[A](key: String, incomeSources: IncomeSources)
                          (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[A]]] = {
-    uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType) map {
+    uiJourneySessionDataRepository.get(hc.sessionId.get.value, incomeSources) map {
       case Some(data: UIJourneySessionData) =>
-        journeyType.operation match {
+        incomeSources.operation match {
           case Add => getKeyFromObject[A](data.addIncomeSourceData, key)
           case Manage => getKeyFromObject[A](data.manageIncomeSourceData, key)
           case Cease => getKeyFromObject[A](data.ceaseIncomeSourceData, key)
+          case In => getKeyFromObject[A](data.optInSessionData, key)
+          case Out => getKeyFromObject[A](data.optOutSessionData, key)
+
         }
       case None => Right(None)
     }
@@ -100,14 +108,16 @@ class SessionService @Inject()(
       uiJourneySessionDataRepository.set(uiJourneySessionData)
   }
 
-  def setMultipleMongoData(keyAndValue: Map[String, String], journeyType: JourneyType)
+  def setMultipleMongoData(keyAndValue: Map[String, String], incomeSources: IncomeSources)
                           (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Boolean]] = {
-    val uiJourneySessionData = UIJourneySessionData(hc.sessionId.get.value, journeyType.toString)
+    val uiJourneySessionData = UIJourneySessionData(hc.sessionId.get.value, incomeSources.toString)
     val keyValueToUpdate = keyAndValue.map { case (key, value) =>
-      journeyType.operation match {
+      incomeSources.operation match {
         case Add => (AddIncomeSourceData.getJSONKeyPath(key), value)
         case Manage => (ManageIncomeSourceData.getJSONKeyPath(key), value)
         case Cease => (CeaseIncomeSourceData.getJSONKeyPath(key), value)
+        case In => (OptInSessionData.getJSONKeyPath(key), value)
+        case Out => (OptOutSessionData.getJSONKeyPath(key), value)
       }
     }
     uiJourneySessionDataRepository.updateMultipleData(uiJourneySessionData, keyValueToUpdate)
@@ -118,13 +128,15 @@ class SessionService @Inject()(
         })
   }
 
-  def setMongoKey(key: String, value: String, journeyType: JourneyType)
+  def setMongoKey(key: String, value: String, incomeSources: IncomeSources)
                  (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Boolean]] = {
-    val uiJourneySessionData = UIJourneySessionData(hc.sessionId.get.value, journeyType.toString)
-    val jsonAccessorPath = journeyType.operation match {
+    val uiJourneySessionData = UIJourneySessionData(hc.sessionId.get.value, incomeSources.toString)
+    val jsonAccessorPath = incomeSources.operation match {
       case Add => AddIncomeSourceData.getJSONKeyPath(key)
       case Manage => ManageIncomeSourceData.getJSONKeyPath(key)
       case Cease => CeaseIncomeSourceData.getJSONKeyPath(key)
+      case In => OptInSessionData.getJSONKeyPath(key)
+      case Out => OptOutSessionData.getJSONKeyPath(key)
     }
     uiJourneySessionDataRepository.updateData(uiJourneySessionData, jsonAccessorPath, value).map(
       result => result.wasAcknowledged() match {

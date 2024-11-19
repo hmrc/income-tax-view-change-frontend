@@ -17,6 +17,7 @@
 package utils
 
 import auth.MtdItUser
+import enums.JourneyType.{In, JourneyType, Opt, Out}
 import models.incomeSourceDetails.UIJourneySessionData
 import play.api.mvc.Result
 import services.SessionService
@@ -24,9 +25,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object OptInJourney {
-  val Name = "OPTIN"
-}
 
 trait OptInJourney {
   self =>
@@ -38,11 +36,11 @@ trait OptInJourney {
                       handleErrorCase: Throwable => Future[Result])
                      (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
-    sessionService.getMongo(OptInJourney.Name).flatMap {
+    sessionService.getMongo(Opt(In)).flatMap {
       case Right(Some(data: UIJourneySessionData)) => handleSessionData(data)
       case Right(None) =>
-        sessionService.createSession(OptOutJourney.Name).flatMap { _ =>
-          val data = UIJourneySessionData(hc.sessionId.get.value, OptInJourney.Name)
+        sessionService.createSession(Opt(Out)).flatMap { _ =>
+          val data = UIJourneySessionData(hc.sessionId.get.value, Opt(In).toString)
           handleSessionData(data)
         }
       case Left(ex) => handleErrorCase(ex)

@@ -18,8 +18,14 @@ package enums.JourneyType
 
 import enums.IncomeSourceJourney.IncomeSourceType
 
-case class JourneyType(operation: Operation, businessType: IncomeSourceType) {
+class JourneyType(operation: Operation)
+
+case class IncomeSources(operation: Operation, businessType: IncomeSourceType) extends JourneyType(operation) {
   override def toString: String = operation.operationType + "-" + businessType.key
+}
+
+case class Opt(operation: Operation) extends JourneyType(operation) {
+  override def toString: String = operation.operationType
 }
 
 sealed trait Operation {
@@ -36,4 +42,12 @@ case object Manage extends Operation {
 
 case object Cease extends Operation {
   override val operationType = "CEASE"
+}
+
+case object In extends Operation {
+  override val operationType = "OPTIN"
+}
+
+case object Out extends Operation {
+  override val operationType = "OPTOUT"
 }

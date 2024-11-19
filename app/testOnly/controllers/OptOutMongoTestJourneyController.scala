@@ -17,6 +17,7 @@
 package testOnly.controllers
 
 import config.FrontendAppConfig
+import enums.JourneyType.{Opt, Out}
 import models.incomeSourceDetails.UIJourneySessionData
 import models.optout.OptOutSessionData
 import play.api.i18n.I18nSupport
@@ -34,7 +35,7 @@ class OptOutMongoTestJourneyController @Inject()(
                                       )(implicit val executionContext: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
   def show: Action[AnyContent] = Action.async { implicit request =>
-    sessionService.getMongo(OptOutJourney.Name).map {
+    sessionService.getMongo(Opt(Out)).map {
       case Right(Some(sessionData)) =>
         sessionData.optOutSessionData.map(_.selectedOptOutYear) match {
           case Some(intent) => Ok(s"Intent = $intent")
@@ -56,7 +57,7 @@ class OptOutMongoTestJourneyController @Inject()(
       } yield (key, value)
       res match {
         case Some(_) =>
-          sessionService.getMongo("OPTOUT").flatMap {
+          sessionService.getMongo(Opt(Out)).flatMap {
             case Right(Some(sessionDataOption)) =>
                 val optOutUIJourneySessionData: UIJourneySessionData = sessionDataOption.copy(optOutSessionData = Some(OptOutSessionData(None, valueOpt)))
                 sessionService.setMongoData(optOutUIJourneySessionData).map { _ =>
@@ -68,7 +69,7 @@ class OptOutMongoTestJourneyController @Inject()(
                 journeyType = "OPTOUT",
                 optOutSessionData = Some(OptOutSessionData(None, valueOpt))
               )
-              sessionService.createSession("OPTOUT")
+              sessionService.createSession(Opt(Out))
               sessionService.setMongoData(newSessionData).map { _ =>
                 Redirect("/report-quarterly/income-and-expenses/view/test-only/showOptOutSession")
               }

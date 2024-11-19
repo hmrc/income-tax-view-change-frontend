@@ -17,7 +17,7 @@
 package services
 
 import enums.IncomeSourceJourney.SelfEmployment
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSources}
 import mocks.repositories.MockUIJourneySessionDataRepository
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import testUtils.TestSupport
@@ -39,7 +39,7 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
         "return the correct session value for given key" in {
           val sessionData = UIJourneySessionData("session-123456", "ADD-SE")
           mockRepositoryGet(Some(sessionData))
-          TestSessionService.getMongo(JourneyType(Add, SelfEmployment))(headerCarrier, ec).futureValue shouldBe Right(Some(sessionData))
+          TestSessionService.getMongo(IncomeSources(Add, SelfEmployment))(headerCarrier, ec).futureValue shouldBe Right(Some(sessionData))
         }
       }
 
@@ -47,7 +47,7 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
         "return the correct session value for given key" in {
           val sessionData = UIJourneySessionData("session-123456", "ADD-SE", Some(AddIncomeSourceData(Some("my business"))))
           mockRepositoryGet(Some(sessionData))
-          TestSessionService.getMongoKey("businessName", JourneyType(Add, SelfEmployment))(headerCarrier, ec).futureValue shouldBe Right(Some("my business"))
+          TestSessionService.getMongoKey("businessName", IncomeSources(Add, SelfEmployment))(headerCarrier, ec).futureValue shouldBe Right(Some("my business"))
         }
       }
 
@@ -55,14 +55,14 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
         "get string value" in {
           val sessionData = UIJourneySessionData("session-123456", "ADD-SE", Some(AddIncomeSourceData(Some("my business"))))
           mockRepositoryGet(Some(sessionData))
-          TestSessionService.getMongoKeyTyped[String]("businessName", JourneyType(Add, SelfEmployment))(headerCarrier, ec)
+          TestSessionService.getMongoKeyTyped[String]("businessName", IncomeSources(Add, SelfEmployment))(headerCarrier, ec)
             .futureValue shouldBe Right(Some("my business"))
         }
         "get LocalDate value" in {
           val sessionData = UIJourneySessionData("session-123456", "ADD-SE", Some(AddIncomeSourceData(
             Some("my business"), Some("plumbing"), Some(LocalDate.of(2023, 5, 23)))))
           mockRepositoryGet(Some(sessionData))
-          TestSessionService.getMongoKeyTyped[LocalDate]("dateStarted", JourneyType(Add, SelfEmployment))(headerCarrier, ec)
+          TestSessionService.getMongoKeyTyped[LocalDate]("dateStarted", IncomeSources(Add, SelfEmployment))(headerCarrier, ec)
             .futureValue shouldBe Right(Some(LocalDate.parse("2023-05-23")))
         }
       }
@@ -85,13 +85,13 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
         "return a future boolean value" in {
           updateMultipleData()
           val result: Either[Throwable, Boolean] = TestSessionService.setMultipleMongoData(Map("key" -> "value"),
-            JourneyType(Add, SelfEmployment))(headerCarrier, ec).futureValue
+            IncomeSources(Add, SelfEmployment))(headerCarrier, ec).futureValue
           result shouldBe Right(true)
         }
         "return a future error" in {
           updateMultipleData(false)
           val result = TestSessionService.setMultipleMongoData(Map("key" -> "value"),
-            JourneyType(Add, SelfEmployment))(headerCarrier, ec)
+            IncomeSources(Add, SelfEmployment))(headerCarrier, ec)
           result.failed.futureValue.leftSideValue.getMessage shouldBe "Error returned from mongoDb"
         }
       }
@@ -100,7 +100,7 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
         "return a future boolean value" in {
           mockRepositoryUpdateData()
           val result: Either[Throwable, Boolean] = TestSessionService.setMongoKey("key", "value",
-            JourneyType(Add, SelfEmployment))(headerCarrier, ec).futureValue
+            IncomeSources(Add, SelfEmployment))(headerCarrier, ec).futureValue
           result shouldBe Right(true)
         }
       }
@@ -108,7 +108,7 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
       "deleteMongoData method" should {
         "return a future boolean value" in {
           mockDeleteOne()
-          val result: Boolean = TestSessionService.deleteMongoData(JourneyType(Add, SelfEmployment))(headerCarrier).futureValue
+          val result: Boolean = TestSessionService.deleteMongoData(IncomeSources(Add, SelfEmployment))(headerCarrier).futureValue
           result shouldBe true
         }
       }
