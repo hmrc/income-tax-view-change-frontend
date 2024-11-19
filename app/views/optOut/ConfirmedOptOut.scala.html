@@ -93,7 +93,7 @@
 @revisedDeadlinesBlock = {
     <div id="revised-deadlines" class="govuk-!-margin-bottom-7 govuk-!-margin-top-8">
         <h2 id="revised-deadlines-heading" class="govuk-heading-m" >@messages("optout.confirmedOptOut.yourRevisedDeadlines.h2")</h2>
-        <p id="revised-deadlines-p1" class="govuk-body" >@messages("optout.confirmedOptOut.yourRevisedDeadlines.desc1", viewModel.startYear, viewModel.endYear, viewModel.nextYear)</p>
+        <p id="revised-deadlines-p1" class="govuk-body" >@Html(messages("optout.confirmedOptOut.yourRevisedDeadlines.desc1", viewModel.startYear, viewModel.endYear, viewModel.nextYear))</p>
         <p id="view-upcoming-updates">
             @link(
                 id = Some("view-upcoming-updates-link"),
