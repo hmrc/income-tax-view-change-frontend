@@ -221,8 +221,8 @@
     }
 }
 
-@reportingFrequencyURL = @{
-    controllers.routes.ReportingFrequencyPageController.show().url
+@reportingFrequencyURL(isAgent: Boolean) = @{
+    controllers.routes.ReportingFrequencyPageController.show(isAgent).url
 }
 
 @mainTemplate(
@@ -245,7 +245,7 @@
     }
 
     @p(id = Some("reportingFrequency")){
-        @link(link = reportingFrequencyURL,
+        @link(link = reportingFrequencyURL(isAgent),
             messageKey = getMessage("reportingFrequency"),
             id = Some("reportingFrequency-link"))
     }

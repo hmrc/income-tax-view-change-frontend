@@ -48,7 +48,7 @@ class SelectYourReasonController @Inject()(val authActions: AuthActions,
                                            val ec: ExecutionContext)
   extends FrontendBaseController with I18nSupport with ClaimToAdjustUtils with WithSessionAndPoa {
 
-  def show(isAgent: Boolean, mode: Mode): Action[AnyContent] = authActions.individualOrAgentWithClient async {
+  def show(isAgent: Boolean, mode: Mode): Action[AnyContent] = authActions.asIndividualOrAgent(isAgent) async {
     implicit user =>
       withSessionDataAndPoa() { (session, poa) =>
         session.newPoaAmount match {
@@ -66,7 +66,7 @@ class SelectYourReasonController @Inject()(val authActions: AuthActions,
       } recover logAndRedirect
   }
 
-  def submit(isAgent: Boolean, mode: Mode): Action[AnyContent] = authActions.individualOrAgentWithClient async {
+  def submit(isAgent: Boolean, mode: Mode): Action[AnyContent] = authActions.asIndividualOrAgent(isAgent) async {
     implicit user =>
       withSessionDataAndPoa() { (_, poa) =>
         formProvider.apply()

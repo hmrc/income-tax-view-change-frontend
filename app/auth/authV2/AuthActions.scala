@@ -37,19 +37,6 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
                             val retrieveClientData: RetrieveClientData,
                             val retrieveFeatureSwitches: FeatureSwitchRetrievalAction) {
 
-  def individualOrAgentWithClient: ActionBuilder[MtdItUser, AnyContent] = {
-      checkSessionTimeout andThen
-        authoriseAndRetrieve andThen
-        agentHasClientDetails andThen
-        // get MtdItUser from EnroledUser by requiring mtdId
-        asMtdUser andThen
-        // are income sources required on most pages? could this step
-        // be removed from here and added where required?
-        retrieveNinoWithIncomeSources andThen
-        retrieveFeatureSwitches andThen
-        retrieveBtaNavBar
-  }
-
   def asMTDIndividual: ActionBuilder[MtdItUser, AnyContent] = {
     checkSessionTimeout andThen
       authoriseAndRetrieveIndividual andThen
@@ -59,6 +46,11 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
   }
 
   def asAgent: ActionBuilder[AgentUser, AnyContent] = checkSessionTimeout andThen authoriseAndRetrieveAgent
+
+  def asIndividualOrAgent(isAgent: Boolean): ActionBuilder[MtdItUser, AnyContent] = {
+    if (isAgent) asMTDAgentWithConfirmedClient
+    else asMTDIndividual
+  }
 
   def asMTDAgentWithConfirmedClient: ActionBuilder[MtdItUser, AnyContent] = {
     checkSessionTimeout andThen

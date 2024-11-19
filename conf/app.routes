@@ -18,8 +18,8 @@ GET         /next-updates                                                 contro
 GET         /agents/next-updates                                          controllers.NextUpdatesController.showAgent
 
 #Reporting Frequency
-GET         /reporting-frequency                                          controllers.ReportingFrequencyPageController.show()
-GET         /agents/reporting-frequency                                   controllers.ReportingFrequencyPageController.show()
+GET         /reporting-frequency                                          controllers.ReportingFrequencyPageController.show(isAgent:Boolean = false)
+GET         /agents/reporting-frequency                                   controllers.ReportingFrequencyPageController.show(isAgent:Boolean = true)
 
 #OptOut
 GET         /optout/review-confirm-taxyear                                controllers.optOut.ConfirmOptOutController.show(isAgent:Boolean = false)

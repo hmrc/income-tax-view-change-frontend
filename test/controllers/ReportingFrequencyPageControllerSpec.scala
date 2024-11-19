@@ -102,7 +102,7 @@ class ReportingFrequencyPageControllerSpec extends MockOldAuthActions with MockI
             mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
           ).thenReturn(Future(singleBusinessIncome))
 
-          val result = controller.show()(fakeRequestWithActiveSession)
+          val result = controller.show(false)(fakeRequestWithActiveSession)
 
           status(result) shouldBe OK
           contentAsString(result) shouldBe
@@ -142,7 +142,7 @@ class ReportingFrequencyPageControllerSpec extends MockOldAuthActions with MockI
           when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
             .thenReturn(Future(singleBusinessIncome))
 
-          val result = controller.show()(fakeRequestWithActiveSession)
+          val result = controller.show(false)(fakeRequestWithActiveSession)
 
           status(result) shouldBe INTERNAL_SERVER_ERROR
           contentAsString(result).contains("Sorry, there is a problem with the service") shouldBe true

@@ -247,7 +247,7 @@ class OptInServiceSpec extends UnitSpec
       result.futureValue.get shouldBe MultiYearCheckYourAnswersViewModel(
         intentTaxYear = currentTaxYear,
         isAgent = isAgent,
-        cancelURL = routes.ReportingFrequencyPageController.show().url,
+        cancelURL = routes.ReportingFrequencyPageController.show(isAgent).url,
         intentIsNextYear = false
       )
     }
@@ -266,7 +266,7 @@ class OptInServiceSpec extends UnitSpec
       result.futureValue.get shouldBe MultiYearCheckYourAnswersViewModel(
         intentTaxYear = currentTaxYear.nextYear,
         isAgent = isAgent,
-        cancelURL = routes.ReportingFrequencyPageController.show().url,
+        cancelURL = routes.ReportingFrequencyPageController.show(isAgent).url,
         intentIsNextYear = true
       )
     }

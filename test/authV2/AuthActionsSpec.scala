@@ -424,7 +424,7 @@ class AuthActionsSpec extends TestSupport with ScalaFutures with MockOldAuthActi
 
     when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(Future.failed( authorisationException ))
 
-    val result = authActions.individualOrAgentWithClient.async(block)(request).futureValue
+    val result = authActions.asIndividualOrAgent(false).async(block)(request).futureValue
   }
 
   class ResultFixture(retrievals: RetrievalData,
@@ -433,7 +433,7 @@ class AuthActionsSpec extends TestSupport with ScalaFutures with MockOldAuthActi
                       block: MtdItUser[_] => Future[Result] = (_) => Future.successful(Ok("OK!")))
     extends Fixture(retrievals, request, incomeSources, block) {
 
-    val result = authActions.individualOrAgentWithClient.async(block)(request).futureValue
+    val result = authActions.asIndividualOrAgent(false).async(block)(request).futureValue
   }
 
   class ExceptionFixture(retrievals: RetrievalData,
@@ -444,7 +444,7 @@ class AuthActionsSpec extends TestSupport with ScalaFutures with MockOldAuthActi
     extends Fixture(retrievals, request, incomeSources, block) {
 
     val failedException: TestFailedException = intercept[TestFailedException] {
-      authActions.individualOrAgentWithClient.async(block)(request).futureValue
+      authActions.asIndividualOrAgent(false).async(block)(request).futureValue
     }
 
     failedException.getCause.getClass shouldBe expectedError.getClass
