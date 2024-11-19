@@ -16,11 +16,11 @@
 
 package authV2
 
-import auth.authV2.{AgentUser, AuthActions}
 import auth.authV2.AuthExceptions.{MissingAgentReferenceNumber, MissingMtdId}
 import auth.authV2.actions._
+import auth.authV2.{AgentUser, AuthActions}
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.FrontendAuthConnector
+import config.{FrontendAppConfig, FrontendAuthConnector}
 import controllers.agent.sessionUtils.SessionKeys
 import mocks.auth.MockOldAuthActions
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
@@ -37,6 +37,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Results.Ok
 import play.api.mvc.{AnyContent, Result}
 import play.api.test.FakeRequest
+import play.api.test.Helpers.stubMessagesControllerComponents
 import services.IncomeSourceDetailsService
 import sttp.model.HeaderNames.Location
 import testConstants.BaseTestConstants
@@ -395,13 +396,11 @@ class AuthActionsSpec extends TestSupport with ScalaFutures with MockOldAuthActi
     app.injector.instanceOf[RetrieveClientData],
     app.injector.instanceOf[FeatureSwitchRetrievalAction]
   )
-  //val authActions = mockAuthActions
 
   abstract class Fixture(retrievals: RetrievalData,
                          request: FakeRequest[AnyContent] = FakeRequest(),
                          incomeSources: IncomeSourceDetailsResponse = defaultIncomeSourcesData,
                          block: MtdItUser[_] => Future[Result] = (_) => Future.successful(Ok("OK!"))) {
-
     setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
     when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
@@ -423,8 +422,6 @@ class AuthActionsSpec extends TestSupport with ScalaFutures with MockOldAuthActi
                       authorisationException: AuthorisationException)
     extends Fixture(retrievals, request, incomeSources, block) {
 
-    setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-
     when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(Future.failed( authorisationException ))
 
     val result = authActions.individualOrAgentWithClient.async(block)(request).futureValue
@@ -436,8 +433,6 @@ class AuthActionsSpec extends TestSupport with ScalaFutures with MockOldAuthActi
                       block: MtdItUser[_] => Future[Result] = (_) => Future.successful(Ok("OK!")))
     extends Fixture(retrievals, request, incomeSources, block) {
 
-    setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-
     val result = authActions.individualOrAgentWithClient.async(block)(request).futureValue
   }
 
@@ -447,8 +442,6 @@ class AuthActionsSpec extends TestSupport with ScalaFutures with MockOldAuthActi
                          block: MtdItUser[_] => Future[Result] = (_) => Future.successful(Ok("OK!")),
                          expectedError: Throwable)
     extends Fixture(retrievals, request, incomeSources, block) {
-
-    setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
     val failedException: TestFailedException = intercept[TestFailedException] {
       authActions.individualOrAgentWithClient.async(block)(request).futureValue
