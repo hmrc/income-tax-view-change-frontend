@@ -27,7 +27,7 @@ trait FeatureSwitching {
   val FEATURE_SWITCH_ON = "true"
   val FEATURE_SWITCH_OFF = "false"
 
-  private def isEnabledFromConfig(featureSwitch: FeatureSwitchName): Boolean = {
+  def isEnabledFromConfig(featureSwitch: FeatureSwitchName): Boolean = {
     sys.props.get(featureSwitch.name) orElse
       appConfig.config.getOptional[String](s"feature-switch.enable-${featureSwitch.name}") contains FEATURE_SWITCH_ON
   }

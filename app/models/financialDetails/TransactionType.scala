@@ -41,11 +41,11 @@ case object PaymentOnAccountTwo extends ChargeType {
 }
 
 case object PaymentOnAccountOneReviewAndReconcileDebit extends ChargeType {
-  override val key = "POA1RR"
+  override val key = "POA1RR-debit"
 }
 
 case object PaymentOnAccountTwoReviewAndReconcileDebit extends ChargeType {
-  override val key = "POA2RR"
+  override val key = "POA2RR-debit"
 }
 
 case object PaymentOnAccountOneReviewAndReconcileCredit extends CreditType {
