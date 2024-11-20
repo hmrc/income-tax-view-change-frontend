@@ -117,20 +117,20 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
   }
 
 
-  def getAllDocumentDetailsWithDueDates(codingOutEnabled: Boolean = false, reviewAndReconcileEnabled: Boolean = false)(implicit dateService: DateServiceInterface): List[DocumentDetailWithDueDate] = {
+  def getAllDocumentDetailsWithDueDates(reviewAndReconcileEnabled: Boolean = false)(implicit dateService: DateServiceInterface): List[DocumentDetailWithDueDate] = {
     documentDetails.map(documentDetail =>
       DocumentDetailWithDueDate(documentDetail, documentDetail.getDueDate(),
         documentDetail.isLatePaymentInterest, dunningLockExists(documentDetail.transactionId),
-        codingOutEnabled = codingOutEnabled, isMFADebit = isMFADebit(documentDetail.transactionId),
+        isMFADebit = isMFADebit(documentDetail.transactionId),
         isReviewAndReconcilePoaOneDebit = isReviewAndReconcilePoaOneDebit(documentDetail.transactionId, reviewAndReconcileEnabled),
         isReviewAndReconcilePoaTwoDebit = isReviewAndReconcilePoaTwoDebit(documentDetail.transactionId, reviewAndReconcileEnabled)))
   }
 
-  def getAllDocumentDetailsWithDueDatesAndFinancialDetails(codingOutEnabled: Boolean = false)(implicit dateService: DateServiceInterface): List[(DocumentDetailWithDueDate, FinancialDetail)] = {
+  def getAllDocumentDetailsWithDueDatesAndFinancialDetails()(implicit dateService: DateServiceInterface): List[(DocumentDetailWithDueDate, FinancialDetail)] = {
     documentDetails.map(documentDetail =>
       (DocumentDetailWithDueDate(documentDetail, documentDetail.getDueDate(),
         documentDetail.isLatePaymentInterest, dunningLockExists(documentDetail.transactionId),
-        codingOutEnabled = codingOutEnabled, isMFADebit = isMFADebit(documentDetail.transactionId)),
+        isMFADebit = isMFADebit(documentDetail.transactionId)),
         financialDetails.find(_.transactionId.get == documentDetail.transactionId)
           .getOrElse(throw new Exception("no financialDetail found for documentDetail" + documentDetail)))
     )

@@ -47,17 +47,16 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
     }
   }
 
-  def getWhatYouOweChargesList(isCodingOutEnabled: Boolean, isReviewAndReconcile: Boolean, isFilterCodedOutPoasEnabled: Boolean)
+  def getWhatYouOweChargesList(isReviewAndReconcile: Boolean, isFilterCodedOutPoasEnabled: Boolean)
                               (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
     {
       for {
-        unpaidChanges <- financialDetailsService.getAllUnpaidFinancialDetails(isCodingOutEnabled)
-      } yield getWhatYouOweChargesList(unpaidChanges, isCodingOutEnabled, isReviewAndReconcile, isFilterCodedOutPoasEnabled)
+        unpaidChanges <- financialDetailsService.getAllUnpaidFinancialDetails()
+      } yield getWhatYouOweChargesList(unpaidChanges, isReviewAndReconcile, isFilterCodedOutPoasEnabled)
     }.flatten
   }
 
   def getWhatYouOweChargesList(unpaidCharges: List[FinancialDetailsResponseModel],
-                               isCodingOutEnabled: Boolean,
                                isReviewAndReconciledEnabled: Boolean,
                                isFilterCodedOutPoasEnabled: Boolean)
                               (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
@@ -69,15 +68,15 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
         val financialDetailsModelList = financialDetails.asInstanceOf[List[FinancialDetailsModel]]
         val balanceDetails = financialDetailsModelList.headOption
           .map(_.balanceDetails).getOrElse(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None))
-        val codedOutChargeItem = if (isCodingOutEnabled) {
-          financialDetailsModelList.flatMap(_.toChargeItem(isCodingOutEnabled, isReviewAndReconciledEnabled))
+        val codedOutChargeItem = {
+          financialDetailsModelList.flatMap(_.toChargeItem(isReviewAndReconciledEnabled))
             .filter(_.subTransactionType.contains(Accepted))
             .find(_.taxYear.endYear == (dateService.getCurrentTaxYearEnd - 1))
-        } else None
+        }
 
         val whatYouOweChargesList = WhatYouOweChargesList(
           balanceDetails = balanceDetails,
-          chargesList = getFilteredChargesList(financialDetailsModelList, isCodingOutEnabled, isReviewAndReconciledEnabled, isFilterCodedOutPoasEnabled),
+          chargesList = getFilteredChargesList(financialDetailsModelList, isReviewAndReconciledEnabled, isFilterCodedOutPoasEnabled),
           codedOutDocumentDetail = codedOutChargeItem)
 
         callOutstandingCharges(mtdUser.saUtr, mtdUser.incomeSources.yearOfMigration, dateService.getCurrentTaxYearEnd).map {
@@ -102,18 +101,17 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
   }
 
   private def getFilteredChargesList(financialDetailsList: List[FinancialDetailsModel],
-                                     isCodingOutEnabled: Boolean, isReviewAndReconciled: Boolean, isFilterCodedOutPoasEnabled: Boolean)
+                                     isReviewAndReconciled: Boolean, isFilterCodedOutPoasEnabled: Boolean)
                                     (implicit user: MtdItUser[_]): List[ChargeItem] = {
 
     def getChargeItem(financialDetails: List[FinancialDetail]): DocumentDetail => Option[ChargeItem] =
       getChargeItemOpt(
-        codingOutEnabled = isCodingOutEnabled,
         reviewAndReconcileEnabled = isReviewAndReconciled
       )(financialDetails)
 
     financialDetailsList
       .flatMap(financialDetails =>  {
-        financialDetails.getAllDocumentDetailsWithDueDates(isCodingOutEnabled)
+        financialDetails.getAllDocumentDetailsWithDueDates()
           .flatMap(dd => getChargeItem(financialDetails.financialDetails)(dd.documentDetail))})
       .filter(validChargeTypeCondition)
       .filterNot(_.subTransactionType.contains(Accepted))

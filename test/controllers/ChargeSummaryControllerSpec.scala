@@ -102,7 +102,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
     when(financialDetailsService.getAllFinancialDetails(any(), any(), any()))
       .thenReturn(Future.successful(List((2018, financialDetails))))
 
-    when(mockChargeHistoryService.chargeHistoryResponse(any(), any(), any(), any(), any())(any(), any(), any()))
+    when(mockChargeHistoryService.chargeHistoryResponse(any(), any(), any(), any())(any(), any(), any()))
       .thenReturn(Future.successful(chargeHistoryResponse))
 
     when(mockChargeHistoryService.getAdjustmentHistory(any(), any()))

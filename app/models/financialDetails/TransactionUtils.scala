@@ -22,19 +22,16 @@ import scala.util.{Failure, Success, Try}
 
 trait TransactionUtils {
 
-  def getChargeItemOpt(codingOutEnabled: Boolean, reviewAndReconcileEnabled: Boolean)
+  def getChargeItemOpt(reviewAndReconcileEnabled: Boolean)
                       (financialDetails: List[FinancialDetail])
                       (documentDetail: DocumentDetail): Option[ChargeItem] = {
     Try(ChargeItem.fromDocumentPair(
       documentDetail,
       financialDetails,
-      codingOutEnabled,
       reviewAndReconcileEnabled)
     ) match {
       case Failure(exception) =>
         Logger("application").warn(exception.getMessage)
-        None
-      case Success(value) if value.isCodingOut && !codingOutEnabled =>
         None
       case Success(value) =>
         Some(value)
