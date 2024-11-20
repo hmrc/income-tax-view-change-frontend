@@ -227,66 +227,66 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
   val testCTAModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled = true, poaTaxYear = Some(TaxYear(2023,2024)))
 
   def estimateView(chargeItems: List[TaxYearSummaryChargeItem] = testChargesList, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false, obligations: ObligationsModel = testObligationsModel): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), chargeItems, obligations, codingOutEnabled = false, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), chargeItems, obligations, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
 
-  def class2NicsView(codingOutEnabled: Boolean, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
+  def class2NicsView(reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
     testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), class2NicsChargesList
-      , testObligationsModel, codingOutEnabled = codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
+      , testObligationsModel, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
 
   def estimateViewWithNoCalcData(reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(None, testChargesList, testObligationsModel, codingOutEnabled = false, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
+    testYear, TaxYearSummaryViewModel(None, testChargesList, testObligationsModel, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
 
   def unattendedCalcView(reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false, unattendedCalc: Boolean): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false), unattendedCalc)), testChargesList, testObligationsModel, codingOutEnabled = false, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackUrl", isAgent, ctaLink = ctaLink)
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false), unattendedCalc)), testChargesList, testObligationsModel,reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackUrl", isAgent, ctaLink = ctaLink)
 
   def multipleDunningLockView(reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), testDunningLockChargesList, testObligationsModel, codingOutEnabled = false, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), testDunningLockChargesList, testObligationsModel, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
 
   def crystallisedView(reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(true))), testChargesList, testObligationsModel, codingOutEnabled = false, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(true))), testChargesList, testObligationsModel, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
 
-  def payeView(codingOutEnabled: Boolean, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), payeChargeList, testObligationsModel, codingOutEnabled = codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
+  def payeView(reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), payeChargeList, testObligationsModel, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
 
-  def testBalancingPaymentChargeWithZeroValueView(codingOutEnabled: Boolean, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), testBalancingPaymentChargeWithZeroValue, testObligationsModel, codingOutEnabled = codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
+  def testBalancingPaymentChargeWithZeroValueView(reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), testBalancingPaymentChargeWithZeroValue, testObligationsModel,reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
 
-  def immediatelyRejectedByNpsView(codingOutEnabled: Boolean, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), immediatelyRejectedByNps, testObligationsModel, codingOutEnabled = codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
+  def immediatelyRejectedByNpsView(reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), immediatelyRejectedByNps, testObligationsModel, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
 
-  def rejectedByNpsPartWayView(codingOutEnabled: Boolean, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), rejectedByNpsPartWay, testObligationsModel, codingOutEnabled = codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
+  def rejectedByNpsPartWayView(reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), rejectedByNpsPartWay, testObligationsModel, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
 
-  def codingOutPartiallyCollectedView(codingOutEnabled: Boolean, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), codingOutPartiallyCollected, testObligationsModel, codingOutEnabled = codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
+  def codingOutPartiallyCollectedView(reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), codingOutPartiallyCollected, testObligationsModel, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
 
-  def forecastCalcView(codingOutEnabled: Boolean = false, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), testChargesList, testObligationsModel, codingOutEnabled = codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, showForecastData = true, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
+  def forecastCalcView(reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), testChargesList, testObligationsModel, reviewAndReconcileEnabled = reviewAndReconcileEnabled, showForecastData = true, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
 
-  def forecastCalcViewCrystalised(codingOutEnabled: Boolean = false, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(true))), testChargesList, testObligationsModel, codingOutEnabled = codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, showForecastData = true, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
+  def forecastCalcViewCrystalised(reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(true))), testChargesList, testObligationsModel, reviewAndReconcileEnabled = reviewAndReconcileEnabled, showForecastData = true, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
 
-  def noForecastDataView(codingOutEnabled: Boolean = false, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), testChargesList, testObligationsModel, codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
+  def noForecastDataView(reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), testChargesList, testObligationsModel, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
 
-  def forecastWithNoCalcData(codingOutEnabled: Boolean = false, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(None, testChargesList, testObligationsModel, codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, showForecastData = true, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
+  def forecastWithNoCalcData(reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
+    testYear, TaxYearSummaryViewModel(None, testChargesList, testObligationsModel, reviewAndReconcileEnabled = reviewAndReconcileEnabled, showForecastData = true, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
 
 
 
-  def mfaDebitsView(codingOutEnabled: Boolean, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(true))), mfaCharges, testObligationsModel, codingOutEnabled, reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
+  def mfaDebitsView(reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean): Html = taxYearSummaryView(
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(true))), mfaCharges, testObligationsModel, reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
 
   def calculationMultipleErrorView(reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelWithMultipleErrorMessages), testChargesList, testObligationsModel, codingOutEnabled = false, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
+    testYear, TaxYearSummaryViewModel(Some(modelWithMultipleErrorMessages), testChargesList, testObligationsModel, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
 
   def calculationSingleErrorView(reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelWithErrorMessages), testChargesList, testObligationsModel, codingOutEnabled = false, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
+    testYear, TaxYearSummaryViewModel(Some(modelWithErrorMessages), testChargesList, testObligationsModel, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
 
   def poaView(reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = {
     val ctaLink = if (isAgent) "/report-quarterly/income-and-expenses/view/agents/adjust-poa/start" else "/report-quarterly/income-and-expenses/view/adjust-poa/start"
     taxYearSummaryView(
-      testYear, TaxYearSummaryViewModel(Some(modelWithErrorMessages), testChargesList, testObligationsModel, codingOutEnabled = false, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = testCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
+      testYear, TaxYearSummaryViewModel(Some(modelWithErrorMessages), testChargesList, testObligationsModel, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = testCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
   }
   implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
 
@@ -687,96 +687,82 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         layoutContent.doesNotHave("#payments-table tbody tr:nth-child(4) th:nth-child(1) div:nth-child(3)")
       }
 
-      "display the Class 2 National Insurance payment link on the payments table when coding out is enabled" in new Setup(class2NicsView(codingOutEnabled = true)) {
+      "display the Class 2 National Insurance payment link on the payments table when coding out is enabled" in new Setup(class2NicsView()) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe taxYearSummaryClass2Nic
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
-      "display the Balancing payment payment link on the payments table when coding out is disabled" in new Setup(class2NicsView(codingOutEnabled = false)) {
-        val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
-        paymentTypeLink.text shouldBe remainingBalance
-        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
-          testYear, fullDocumentDetailModel.transactionId).url
-      }
-
-      "display the PAYE Self Assessment link on the payments table when coding out is enabled" in new Setup(payeView(codingOutEnabled = true)) {
+      "display the PAYE Self Assessment link on the payments table when coding out is enabled" in new Setup(payeView()) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe payeSA
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
-      s"display the Due date in the Payments tab for PAYE Self Assessment as ${na}" in new Setup(payeView(codingOutEnabled = true)) {
+      s"display the Due date in the Payments tab for PAYE Self Assessment as ${na}" in new Setup(payeView()) {
         layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(2)").text shouldBe na
       }
 
-      "display the Amount in the payments tab for PAYE Self Assessment" in new Setup(payeView(codingOutEnabled = true)) {
+      "display the Amount in the payments tab for PAYE Self Assessment" in new Setup(payeView()) {
         layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(3)").text shouldBe "£1,400.00"
       }
 
-      "display the Due date in the Payments tab for Cancelled" in new Setup(rejectedByNpsPartWayView(codingOutEnabled = true)) {
+      "display the Due date in the Payments tab for Cancelled" in new Setup(rejectedByNpsPartWayView()) {
         layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(2)").text shouldBe "15 May 2019"
       }
 
-      "display Class 2 National Insurance - User has Coding out that is requested and immediately rejected by NPS" in new Setup(immediatelyRejectedByNpsView(codingOutEnabled = true)) {
+      "display Class 2 National Insurance - User has Coding out that is requested and immediately rejected by NPS" in new Setup(immediatelyRejectedByNpsView()) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe taxYearSummaryClass2Nic
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
-      "display Balancing payment - User has Coding out that is requested and immediately rejected by NPS" in new Setup(immediatelyRejectedByNpsView(codingOutEnabled = true)) {
+      "display Balancing payment - User has Coding out that is requested and immediately rejected by NPS" in new Setup(immediatelyRejectedByNpsView()) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-1")
         paymentTypeLink.text shouldBe remainingBalance
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
-      "display Class 2 Nics - User has Coding out that has been accepted and rejected by NPS part way through the year" in new Setup(rejectedByNpsPartWayView(codingOutEnabled = true)) {
+      "display Class 2 Nics - User has Coding out that has been accepted and rejected by NPS part way through the year" in new Setup(rejectedByNpsPartWayView()) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe taxYearSummaryClass2Nic
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
-      "display Cancelled Self Assessment payment - User has Coding out that has been accepted and rejected by NPS part way through the year" in new Setup(rejectedByNpsPartWayView(codingOutEnabled = true)) {
+      "display Cancelled Self Assessment payment - User has Coding out that has been accepted and rejected by NPS part way through the year" in new Setup(rejectedByNpsPartWayView()) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-1")
         paymentTypeLink.text shouldBe cancelledPaye
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
-      "display Class 2 National Insurance - At crystallization, the user has the coding out requested amount has not been fully collected (partially collected)" in new Setup(codingOutPartiallyCollectedView(codingOutEnabled = true)) {
+      "display Class 2 National Insurance - At crystallization, the user has the coding out requested amount has not been fully collected (partially collected)" in new Setup(codingOutPartiallyCollectedView()) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe taxYearSummaryClass2Nic
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
-      "display Balancing payment - At crystallization, the user has the coding out requested amount has not been fully collected (partially collected)" in new Setup(codingOutPartiallyCollectedView(codingOutEnabled = true)) {
+      "display Balancing payment - At crystallization, the user has the coding out requested amount has not been fully collected (partially collected)" in new Setup(codingOutPartiallyCollectedView()) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-1")
         paymentTypeLink.text shouldBe remainingBalance
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
-      "display Cancelled Self Assessment payment - At crystallization, the user has the coding out requested amount has not been fully collected (partially collected)" in new Setup(codingOutPartiallyCollectedView(codingOutEnabled = true)) {
+      "display Cancelled Self Assessment payment - At crystallization, the user has the coding out requested amount has not been fully collected (partially collected)" in new Setup(codingOutPartiallyCollectedView()) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-2")
         paymentTypeLink.text shouldBe cancelledPaye
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
-      "display the Balancing payment on the payments table when coding out is enabled" in new Setup(payeView(codingOutEnabled = false)) {
-        val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
-        paymentTypeLink.text shouldBe remainingBalance
-        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
-          testYear, fullDocumentDetailModel.transactionId).url
-      }
-
-      "display the Balancing payment on the payments table when coding out is enabled and a zero amount" in new Setup(testBalancingPaymentChargeWithZeroValueView(codingOutEnabled = false)) {
+      "display the Balancing payment on the payments table when coding out is enabled and a zero amount" in new Setup(testBalancingPaymentChargeWithZeroValueView()) {
         val paymentTypeText: Element = layoutContent.getElementById("paymentTypeText-0")
         val paymentTypeLinkOption: Option[Element] = Option(layoutContent.getElementById("paymentTypeLink-0"))
         val paymentTabRow: Element = layoutContent.getElementById("payments-table").getElementsByClass("govuk-table__row").get(1)
@@ -893,78 +879,78 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
           testYear, fullDocumentDetailModel.transactionId, true).url
       }
 
-      "display the Class 2 National Insurance payment link on the payments table when coding out is enabled" in new Setup(
-        class2NicsView(codingOutEnabled = true, isAgent = true)) {
+      "display the Class 2 National Insurance payment link on the payments table" in new Setup(
+        class2NicsView(isAgent = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe taxYearSummaryClass2Nic
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
-      "display the PAYE Self Assessment link on the payments table when coding out is enabled" in new Setup(payeView(codingOutEnabled = true, isAgent = true)) {
+      "display the PAYE Self Assessment link on the payments table" in new Setup(payeView(isAgent = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe payeSA
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
-      "display Class 2 National Insurance - User has Coding out that is requested and immediately rejected by NPS - Agent" in new Setup(immediatelyRejectedByNpsView(codingOutEnabled = true, isAgent = true)) {
+      "display Class 2 National Insurance - User has Coding out that is requested and immediately rejected by NPS - Agent" in new Setup(immediatelyRejectedByNpsView(isAgent = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe taxYearSummaryClass2Nic
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
-      "display Balancing payment - User has Coding out that is requested and immediately rejected by NPS - Agent" in new Setup(immediatelyRejectedByNpsView(codingOutEnabled = true, isAgent = true)) {
+      "display Balancing payment - User has Coding out that is requested and immediately rejected by NPS - Agent" in new Setup(immediatelyRejectedByNpsView(isAgent = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-1")
         paymentTypeLink.text shouldBe remainingBalance
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
-      "display Class 2 Nics - User has Coding out that has been accepted and rejected by NPS part way through the year - Agent" in new Setup(rejectedByNpsPartWayView(codingOutEnabled = true, isAgent = true)) {
+      "display Class 2 Nics - User has Coding out that has been accepted and rejected by NPS part way through the year - Agent" in new Setup(rejectedByNpsPartWayView(isAgent = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe taxYearSummaryClass2Nic
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
-      "display Cancelled Self Assessment payment - User has Coding out that has been accepted and rejected by NPS part way through the year - Agent" in new Setup(rejectedByNpsPartWayView(codingOutEnabled = true, isAgent = true)) {
+      "display Cancelled Self Assessment payment - User has Coding out that has been accepted and rejected by NPS part way through the year - Agent" in new Setup(rejectedByNpsPartWayView(isAgent = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-1")
         paymentTypeLink.text shouldBe cancelledPaye
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
-      "display Class 2 National Insurance - At crystallization, the user has the coding out requested amount has not been fully collected (partially collected) - Agent" in new Setup(codingOutPartiallyCollectedView(codingOutEnabled = true, isAgent = true)) {
+      "display Class 2 National Insurance - At crystallization, the user has the coding out requested amount has not been fully collected (partially collected) - Agent" in new Setup(codingOutPartiallyCollectedView(isAgent = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe taxYearSummaryClass2Nic
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
-      "display Balancing payment - At crystallization, the user has the coding out requested amount has not been fully collected (partially collected) - Agent" in new Setup(codingOutPartiallyCollectedView(codingOutEnabled = true, isAgent = true)) {
+      "display Balancing payment - At crystallization, the user has the coding out requested amount has not been fully collected (partially collected) - Agent" in new Setup(codingOutPartiallyCollectedView(isAgent = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-1")
         paymentTypeLink.text shouldBe remainingBalance
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
-      "display Cancelled Self Assessment payment - At crystallization, the user has the coding out requested amount has not been fully collected (partially collected) - Agent" in new Setup(codingOutPartiallyCollectedView(codingOutEnabled = true, isAgent = true)) {
+      "display Cancelled Self Assessment payment - At crystallization, the user has the coding out requested amount has not been fully collected (partially collected) - Agent" in new Setup(codingOutPartiallyCollectedView(isAgent = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-2")
         paymentTypeLink.text shouldBe cancelledPaye
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
-      "display MFA Debits - Individual" in new Setup(mfaDebitsView(codingOutEnabled = false, isAgent = false)) {
+      "display MFA Debits - Individual" in new Setup(mfaDebitsView(isAgent = false)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe hmrcAdjustment
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           testYear, MFADebitsDocumentDetailsWithDueDates.head.documentDetail.transactionId).url
       }
 
-      "display MFA Debits - Agent" in new Setup(mfaDebitsView(codingOutEnabled = false, isAgent = true)) {
+      "display MFA Debits - Agent" in new Setup(mfaDebitsView(isAgent = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe hmrcAdjustment
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(

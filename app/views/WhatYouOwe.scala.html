@@ -53,7 +53,6 @@
     backUrl: String,
     utr: Option[String],
     dunningLock: Boolean,
-    codingOutEnabled: Boolean,
     reviewAndReconcileEnabled: Boolean,
     isAgent: Boolean = false,
     isUserMigrated: Boolean = false,
@@ -161,7 +160,7 @@
 @paymentTypeEntry(chargeItem: ChargeItem, rowId: String, isInterest: Boolean,
     isMFADebit: Boolean, linkSuffix: String, index: Int) = @{
 
-    val chargeTypeKey = chargeItem.getChargeTypeKey(codingOutEnabled, reviewAndReconcileEnabled)
+    val chargeTypeKey = chargeItem.getChargeTypeKey(reviewAndReconcileEnabled)
     val lpi = if (isInterest) "lpi." else ""
     val linkText = getMessage(s"${lpi}${chargeTypeKey}")
     val taxYear = chargeItem.taxYear
@@ -425,7 +424,6 @@
 
             @getClaimToAdjustPoaSection
 
-            @if(codingOutEnabled) {
                 @whatYouOweChargesList.codedOutDocumentDetail.map { codedOutDocumentDetail =>
                     <div id="coding-out-wrapper">
                         @govukInsetText(InsetText(content = HtmlContent(codingOutInsetContent(codedOutDocumentDetail))))
@@ -434,7 +432,6 @@
                 @if(whatYouOweChargesList.isChargesListEmpty) {
                     @saNoteParagraph
                 }
-            }
 
         </div>
         @if(!whatYouOweChargesList.isChargesListEmpty) {

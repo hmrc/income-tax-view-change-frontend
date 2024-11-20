@@ -23,7 +23,6 @@ import models.taxyearsummary.TaxYearSummaryChargeItem
 case class TaxYearSummaryViewModel(calculationSummary: Option[CalculationSummary],
                                    charges: List[TaxYearSummaryChargeItem],
                                    obligations: ObligationsModel,
-                                   codingOutEnabled: Boolean,
                                    reviewAndReconcileEnabled: Boolean,
                                    showForecastData: Boolean = false,
                                    ctaViewModel: TYSClaimToAdjustViewModel
