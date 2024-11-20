@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.agent.manageBusinesses.add
+package controllers.agent.incomeSources.add
 
 import controllers.agent.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
@@ -23,13 +23,13 @@ import enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDAgentAuthStub}
 import models.admin.{IncomeSources, NavBarFs}
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
-import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.business1
-import testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyOnlyResponse, singleBusinessResponse, ukPropertyOnlyResponse}
+import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
+import testConstants.IncomeSourcesObligationsIntegrationTestConstants.testObligationsModel
 import testConstants.PropertyDetailsIntegrationTestConstants.ukProperty
 
 import java.time.LocalDate
@@ -37,31 +37,28 @@ import java.time.LocalDate
 class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
 
   val prefix: String = "business-added"
-  val viewAllBusinessesLinkText: String = messagesAPI(s"$prefix.view-all-businesses")
+  val continueButtonText: String = messagesAPI(s"$prefix.income-sources-button")
   val day: LocalDate = LocalDate.of(2023, 1, 1)
-  val testObligationsModel: ObligationsModel = ObligationsModel(Seq(GroupedObligationsModel("123", List(SingleObligationModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "EOPS", StatusFulfilled)))))
-
 
   val HomeControllerShowUrl: String = controllers.routes.HomeController.showAgent.url
-  val pageTitle: String = messagesAPI("htmlTitle.agent", {
-    s"${messagesAPI("business-added.uk-property.h1")} " +
-      s"${messagesAPI("business-added.uk-property.base")}".trim()
-  })
+  val pageTitle: String =
+    s"${messagesAPI("business-added.uk-property.h1")} " + s"${messagesAPI("business-added.uk-property.base")}".trim()
+
   val confirmationPanelContent: String = {
     s"${messagesAPI("business-added.uk-property.h1")} " +
       s"${messagesAPI("business-added.uk-property.base")}"
   }
 
-  val sessionService: SessionService = app.injector.instanceOf[SessionService]
-
-  val pathSEAdded = "/agents/manage-your-businesses/add-sole-trader/business-added"
-  val pathUKPropertyAdded = "/agents/manage-your-businesses/add-uk-property/uk-property-added"
-  val pathForeignPropertyAdded = "/agents/manage-your-businesses/add-foreign-property/foreign-property-added"
-
   override def beforeEach(): Unit = {
     super.beforeEach()
     await(sessionService.deleteSession(Add))
   }
+
+  val sessionService: SessionService = app.injector.instanceOf[SessionService]
+
+  val pathSEAdded = "/agents/income-sources/add/business-added"
+  val pathUKPropertyAdded = "/agents/income-sources/add/uk-property-added"
+  val pathForeignPropertyAdded = "/agents/income-sources/add/foreign-property-added"
 
   List(MTDPrimaryAgent, MTDSupportingAgent).foreach { case mtdUserRole =>
     val isSupportingAgent = mtdUserRole == MTDSupportingAgent
@@ -74,13 +71,11 @@ class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
               enable(IncomeSources)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
-
-              await(sessionService.createSession(JourneyType(Add, SelfEmployment).toString))
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+              IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
 
               await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
-                addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), dateStarted = Some(LocalDate.of(2024, 1, 1)))))))
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
-              IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
+                addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId))))))
 
               val result = buildGETMTDClient(pathSEAdded, additionalCookies).futureValue
               verifyIncomeSourceDetailsCall(testMtditid)
@@ -91,13 +86,12 @@ class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
               else {
                 business1.tradingName.getOrElse("") + " " + messagesAPI("business-added.sole-trader.base")
               }
-
               sessionService.getMongoKey(AddIncomeSourceData.journeyIsCompleteField, JourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(true))
 
               result should have(
                 httpStatus(OK),
                 pageTitleAgent(expectedText),
-                elementTextByID("view-all-businesses-link")(viewAllBusinessesLinkText)
+                elementTextByID("continue-button")(continueButtonText)
               )
             }
           }
@@ -106,7 +100,7 @@ class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
               disable(IncomeSources)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
               val result = buildGETMTDClient(pathSEAdded, additionalCookies).futureValue
 
@@ -121,6 +115,26 @@ class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
       }
     }
 
+    s"POST $pathSEAdded" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid agent and client delegated enrolment" should {
+          "redirect to add income source controller" in {
+            enable(IncomeSources)
+            disable(NavBarFs)
+            MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+
+            val result = buildGETMTDClient(pathSEAdded, additionalCookies).futureValue
+
+            result should have(
+              httpStatus(SEE_OTHER),
+              redirectURI("/report-quarterly/income-and-expenses/view/agents/income-sources/add/new-income-sources")
+            )
+          }
+        }
+      }
+    }
+
     s"GET $pathUKPropertyAdded" when {
       s"a user is a $mtdUserRole" that {
         "is authenticated, with a valid agent and client delegated enrolment" should {
@@ -130,18 +144,17 @@ class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
 
-              await(sessionService.createSession(JourneyType(Add, UkProperty).toString))
-              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-UK",
-                addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), dateStarted = Some(LocalDate.of(2024, 1, 1)))))))
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
               IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
+              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-UK",
+                addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId))))))
 
               val result = buildGETMTDClient(pathUKPropertyAdded, additionalCookies).futureValue
               sessionService.getMongoKey(AddIncomeSourceData.journeyIsCompleteField, JourneyType(Add, UkProperty)).futureValue shouldBe Right(Some(true))
 
               result should have(
                 httpStatus(OK),
-                pageTitleCustom(pageTitle),
+                pageTitleAgent(pageTitle),
                 elementTextBySelectorList(".govuk-panel.govuk-panel--confirmation")(confirmationPanelContent)
               )
             }
@@ -183,6 +196,26 @@ class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
       }
     }
 
+    s"POST $pathUKPropertyAdded" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid agent and client delegated enrolment" should {
+          "redirect to add income source controller" in {
+            enable(IncomeSources)
+            disable(NavBarFs)
+            MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
+
+            val result = buildGETMTDClient(pathUKPropertyAdded, additionalCookies).futureValue
+
+            result should have(
+              httpStatus(SEE_OTHER),
+              redirectURI("/report-quarterly/income-and-expenses/view/agents/income-sources/add/new-income-sources")
+            )
+          }
+        }
+      }
+    }
+
     s"GET $pathForeignPropertyAdded" when {
       s"a user is a $mtdUserRole" that {
         "is authenticated, with a valid agent and client delegated enrolment" should {
@@ -191,26 +224,22 @@ class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
               enable(IncomeSources)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
-
-              await(sessionService.createSession(JourneyType(Add, ForeignProperty).toString))
-              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-FP",
-                addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), dateStarted = Some(LocalDate.of(2024, 1, 1)))))))
-
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
               IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
 
+              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-FP",
+                addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId))))))
+
               val result = buildGETMTDClient(pathForeignPropertyAdded, additionalCookies).futureValue
               verifyIncomeSourceDetailsCall(testMtditid)
+              sessionService.getMongoKey(AddIncomeSourceData.journeyIsCompleteField, JourneyType(Add, ForeignProperty)).futureValue shouldBe Right(Some(true))
 
               val expectedText: String = messagesAPI("business-added.foreign-property.h1") + " " + messagesAPI("business-added.foreign-property.base")
-
-              And("Mongo storage is successfully set")
-              sessionService.getMongoKey(AddIncomeSourceData.journeyIsCompleteField, JourneyType(Add, ForeignProperty)).futureValue shouldBe Right(Some(true))
 
               result should have(
                 httpStatus(OK),
                 pageTitleAgent(expectedText),
-                elementTextByID("view-all-businesses-link")(viewAllBusinessesLinkText)
+                elementTextByID("continue-button")(continueButtonText)
               )
             }
           }
@@ -231,6 +260,26 @@ class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
           }
         }
         testAuthFailuresForMTDAgent(pathForeignPropertyAdded, isSupportingAgent)
+      }
+    }
+
+    s"POST $pathForeignPropertyAdded" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid agent and client delegated enrolment" should {
+          "redirect to add income source controller" in {
+            enable(IncomeSources)
+            disable(NavBarFs)
+            MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
+
+            val result = buildGETMTDClient(pathForeignPropertyAdded, additionalCookies).futureValue
+
+            result should have(
+              httpStatus(SEE_OTHER),
+              redirectURI("/report-quarterly/income-and-expenses/view/agents/income-sources/add/new-income-sources")
+            )
+          }
+        }
       }
     }
   }

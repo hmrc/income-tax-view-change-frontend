@@ -16,20 +16,21 @@
 
 package controllers.agent.manageBusinesses.add
 
-import models.admin.IncomeSources
+import controllers.agent.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
-import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import enums.{MTDPrimaryAgent, MTDSupportingAgent}
+import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDAgentAuthStub}
+import models.admin.{IncomeSources, NavBarFs}
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.UIJourneySessionDataRepository
 import services.SessionService
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSessionId}
+import testConstants.BaseIntegrationTestConstants.{getAgentClientDetailsForCookie, testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
 
-class IncomeSourceAddedBackErrorControllerISpec extends ComponentSpecBase{
+class IncomeSourceAddedBackErrorControllerISpec extends ControllerISpecHelper {
 
   private lazy val backErrorController = controllers.manageBusinesses.add.routes.IncomeSourceAddedBackErrorController
 
@@ -48,129 +49,146 @@ class IncomeSourceAddedBackErrorControllerISpec extends ComponentSpecBase{
     await(sessionService.deleteSession(Add))
   }
 
-  s"calling GET $selfEmploymentBackErrorUrl" should {
-    "render the self employment business not added error page" when {
-      "Income Sources FS is enabled" in {
-        enable(IncomeSources)
-        stubAuthorisedAgentUser(authorised = true)
+  val pathSE = "/agents/manage-your-businesses/add/cannot-go-back-business-reporting-method"
+  val pathUKProperty = "/agents/manage-your-businesses/add/cannot-go-back-uk-property-reporting-method"
+  val pathForeignProperty = "/agents/manage-your-businesses/add/cannot-go-back-foreign-property-reporting-method"
 
-        And("API 1771  returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+  List(MTDPrimaryAgent, MTDSupportingAgent).foreach { case mtdUserRole =>
+    val isSupportingAgent = mtdUserRole == MTDSupportingAgent
+    val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, true)
+    s"GET $pathSE" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid agent and client delegated enrolment" should {
+          "render the self employment business not added error page" when {
+            "Income Sources FS is enabled" in {
+              enable(IncomeSources)
+              disable(NavBarFs)
+              MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
-          addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some("1234"), incomeSourceAdded = Some(true), journeyIsComplete = None)))))
+              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
+                addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some("1234"), incomeSourceAdded = Some(true), journeyIsComplete = None)))))
 
-        val result = IncomeTaxViewChangeFrontend
-          .get("/manage-your-businesses/add/cannot-go-back-business-reporting-method", clientDetailsWithConfirmation)
+              val result = buildGETMTDClient(pathSE, additionalCookies).futureValue
 
-        verifyIncomeSourceDetailsCall(testMtditid)
+              verifyIncomeSourceDetailsCall(testMtditid)
 
-        result should have(
-          httpStatus(OK),
-          pageTitleAgent(s"$title")
-        )
+              result should have(
+                httpStatus(OK),
+                pageTitleAgent(s"$title")
+              )
+            }
+          }
+          "redirect to home page" when {
+            "Income Sources FS is disabled" in {
+              disable(IncomeSources)
+              disable(NavBarFs)
+              MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+
+              val result = buildGETMTDClient(pathSE, additionalCookies).futureValue
+
+              verifyIncomeSourceDetailsCall(testMtditid)
+
+              result should have(
+                httpStatus(SEE_OTHER)
+              )
+            }
+          }
+        }
+        testAuthFailuresForMTDAgent(pathSE, isSupportingAgent)
       }
-    }
-    "Income Sources FS is disabled" in {
-      Given("Income Sources FS is enabled")
-      disable(IncomeSources)
-      stubAuthorisedAgentUser(authorised = true)
 
-      And("API 1771  returns a success response")
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+      s"GET $pathUKProperty" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid agent and client delegated enrolment" should {
+            "render the self employment business not added error page" when {
+              "Income Sources FS is enabled" in {
+                enable(IncomeSources)
+                disable(NavBarFs)
+                MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-      val result = IncomeTaxViewChangeFrontend
-        .get("/manage-your-businesses/add/cannot-go-back-business-reporting-method", clientDetailsWithConfirmation)
+                await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-UK",
+                  addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some("1234"), incomeSourceAdded = Some(true), journeyIsComplete = None)))))
 
-      verifyIncomeSourceDetailsCall(testMtditid)
+                val result = buildGETMTDClient(pathUKProperty, additionalCookies).futureValue
 
-      result should have(
-        httpStatus(SEE_OTHER)
-      )
-    }
-  }
+                verifyIncomeSourceDetailsCall(testMtditid)
 
-  s"calling GET $ukPropertyBackErrorUrl" should {
-    "render the self employment business not added error page" when {
-      "Income Sources FS is enabled" in {
-        enable(IncomeSources)
-        stubAuthorisedAgentUser(authorised = true)
+                result should have(
+                  httpStatus(OK),
+                  pageTitleAgent(s"$title")
+                )
+              }
+            }
+            "redirect to home page" when {
+              "Income Sources FS is disabled" in {
+                disable(IncomeSources)
+                disable(NavBarFs)
+                MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-        And("API 1771  returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+                val result = buildGETMTDClient(pathUKProperty, additionalCookies).futureValue
 
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-UK",
-          addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some("1234"), incomeSourceAdded = Some(true), journeyIsComplete = None)))))
+                verifyIncomeSourceDetailsCall(testMtditid)
 
-        val result = IncomeTaxViewChangeFrontend
-          .get("/manage-your-businesses/add/cannot-go-back-uk-property-reporting-method", clientDetailsWithConfirmation)
+                result should have(
+                  httpStatus(SEE_OTHER)
+                )
+              }
+            }
+          }
+          testAuthFailuresForMTDAgent(pathUKProperty, isSupportingAgent)
 
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        result should have(
-          httpStatus(OK),
-          pageTitleAgent(s"$title")
-        )
+        }
       }
-    }
-    "Income Sources FS is disabled" in {
-      Given("Income Sources FS is enabled")
-      disable(IncomeSources)
-      stubAuthorisedAgentUser(authorised = true)
 
-      And("API 1771  returns a success response")
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+      s"GET $pathForeignProperty" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid agent and client delegated enrolment" should {
+            "render the self employment business not added error page" when {
+              "Income Sources FS is enabled" in {
+                enable(IncomeSources)
+                disable(NavBarFs)
+                MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-      val result = IncomeTaxViewChangeFrontend
-        .get(s"/manage-your-businesses/add/cannot-go-back-uk-property-reporting-method", clientDetailsWithConfirmation)
+                await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-FP",
+                  addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some("1234"), incomeSourceAdded = Some(true), journeyIsComplete = None)))))
 
-      verifyIncomeSourceDetailsCall(testMtditid)
+                val result = buildGETMTDClient(pathForeignProperty, additionalCookies).futureValue
 
-      result should have(
-        httpStatus(SEE_OTHER)
-      )
-    }
-  }
+                verifyIncomeSourceDetailsCall(testMtditid)
 
-  s"calling GET $foreignPropertyBackErrorUrl" should {
-    "render the self employment business not added error page" when {
-      "Income Sources FS is enabled" in {
-        enable(IncomeSources)
-        stubAuthorisedAgentUser(authorised = true)
+                result should have(
+                  httpStatus(OK),
+                  pageTitleAgent(s"$title")
+                )
+              }
+            }
+            "redirect to home page" when {
+              "Income Sources FS is disabled" in {
+                disable(IncomeSources)
+                disable(NavBarFs)
+                MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
 
-        And("API 1771  returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-FP",
-          addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some("1234"), incomeSourceAdded = Some(true), journeyIsComplete = None)))))
+                val result = buildGETMTDClient(pathForeignProperty, additionalCookies).futureValue
 
-        val result = IncomeTaxViewChangeFrontend
-          .get(s"/manage-your-businesses/add/cannot-go-back-foreign-property-reporting-method", clientDetailsWithConfirmation)
+                verifyIncomeSourceDetailsCall(testMtditid)
 
-        verifyIncomeSourceDetailsCall(testMtditid)
+                result should have(
+                  httpStatus(SEE_OTHER)
+                )
+              }
+            }
+          }
+          testAuthFailuresForMTDAgent(pathForeignProperty, isSupportingAgent)
 
-        result should have(
-          httpStatus(OK),
-          pageTitleAgent(s"$title")
-        )
+        }
       }
-    }
-    "Income Sources FS is disabled" in {
-      Given("Income Sources FS is enabled")
-      disable(IncomeSources)
-      stubAuthorisedAgentUser(authorised = true)
-
-      And("API 1771  returns a success response")
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-      val result = IncomeTaxViewChangeFrontend
-        .get(s"/manage-your-businesses/add/cannot-go-back-foreign-property-reporting-method", clientDetailsWithConfirmation)
-
-      verifyIncomeSourceDetailsCall(testMtditid)
-
-      result should have(
-        httpStatus(SEE_OTHER)
-      )
     }
   }
 

@@ -31,7 +31,8 @@ import play.api
 import play.api.Play
 import play.api.http.Status
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, AnyContentAsEmpty}
+import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{IncomeSourceDetailsService, SessionDataService}
 import testUtils.TestSupport
@@ -115,46 +116,57 @@ trait MockAuthActions extends
     setupMockAgentWithClientAuthException(exception, mtdId, isSupportingAgent)
   }
 
+  def testMTDAuthFailuresForRole(action: Action[AnyContent], userRole: MTDUserRole)(fakeRequest: FakeRequest[AnyContentAsEmpty.type]): Unit = {
+    userRole match {
+      case MTDIndividual => testMTDAuthFailuresForIndividual(action, userRole)(fakeRequest)
+      case _ => testMTDAuthFailuresForAgent(action, userRole)(fakeRequest)
+    }
+  }
+
   def testMTDIndividualAuthFailures(action: Action[AnyContent]): Unit = {
-    "the user is not authenticated" should {
+    testMTDAuthFailuresForIndividual(action, MTDIndividual)(fakeRequestWithActiveSession)
+  }
+
+  def testMTDAuthFailuresForIndividual(action: Action[AnyContent], userRole: MTDUserRole)(fakeRequest: FakeRequest[AnyContentAsEmpty.type]): Unit = {
+    s"the $userRole is not authenticated" should {
       "redirect to signin" in {
         setupMockUserAuthorisationException()
 
-        val result = action(fakeRequestWithActiveSession)
+        val result = action(fakeRequest)
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
       }
     }
 
-    "the user has a session that has timed out" should {
+    s"the $userRole has a session that has timed out" should {
       "redirect to timeout controller" in {
         setupMockUserAuthorisationException(new BearerTokenExpired)
 
-        val result = action(fakeRequestWithActiveSession)
+        val result = action(fakeRequest)
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
       }
     }
 
-    "the user is not enrolled into HMRC-MTD-IT" should {
+    s"the $userRole is not enrolled into HMRC-MTD-IT" should {
       "redirect to NotEnrolledController controller" in {
         setupMockUserAuthorisationException(InsufficientEnrolments("missing HMRC-MTD-IT enrolment"))
 
-        val result = action(fakeRequestWithActiveSession)
+        val result = action(fakeRequest)
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.errors.routes.NotEnrolledController.show.url)
       }
     }
 
-    "the user is not authenticated and enrolled into HMRC-MTD-IT but doesn't have income source" should {
+    s"the $userRole is not authenticated and enrolled into HMRC-MTD-IT but doesn't have income source" should {
       "render the internal error page" in {
         setupMockUserAuth
         mockErrorIncomeSource()
 
-        val result = action(fakeRequestWithActiveSession)
+        val result = action(fakeRequest)
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         val errorPage = Jsoup.parse(contentAsString(result))
@@ -165,6 +177,12 @@ trait MockAuthActions extends
 
   def testMTDAgentAuthFailures(action: Action[AnyContent], isSupportingAgent: Boolean): Unit = {
     val fakeRequest = fakeRequestConfirmedClient(isSupportingAgent = isSupportingAgent)
+    val mdtUserRole = if (isSupportingAgent) MTDSupportingAgent else MTDPrimaryAgent
+    testMTDAuthFailuresForAgent(action, mdtUserRole)(fakeRequest)
+  }
+
+  def testMTDAuthFailuresForAgent(action: Action[AnyContent], mtdUserRole: MTDUserRole)(fakeRequest: FakeRequest[AnyContentAsEmpty.type]): Unit = {
+    val isSupportingAgent = mtdUserRole == MTDSupportingAgent
     val userType = if(isSupportingAgent) "supporting agent" else "primary agent"
     s"the $userType is not authenticated" should {
       "redirect to signin" in {

@@ -16,11 +16,11 @@
 
 package controllers.manageBusinesses.add
 
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import controllers.ControllerISpecHelper
+import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
-import helpers.ComponentSpecBase
-import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.IncomeSources
+import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDIndividualAuthStub}
+import models.admin.{IncomeSources, NavBarFs}
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -33,19 +33,12 @@ import testConstants.PropertyDetailsIntegrationTestConstants.ukProperty
 
 import java.time.LocalDate
 
-class IncomeSourceAddedControllerISpec extends ComponentSpecBase {
+class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
 
-  val incomeSourceAddedSelfEmploymentShowUrl: String = controllers.manageBusinesses.add.routes.IncomeSourceAddedController.show(SelfEmployment).url
-
-  val addIncomeSourceUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceController.show().url
-
-  val testDate: String = "2020-11-10"
   val prefix: String = "business-added"
   val viewAllBusinessesLinkText: String = messagesAPI(s"$prefix.view-all-businesses")
-  val htmlTitle = " - Manage your Income Tax updates - GOV.UK"
   val day: LocalDate = LocalDate.of(2023, 1, 1)
 
-  val incomeSourceAddedUkPropertyShowUrl: String = controllers.manageBusinesses.add.routes.IncomeSourceAddedController.show(UkProperty).url
   val HomeControllerShowUrl: String = controllers.routes.HomeController.show().url
   val pageTitle: String = messagesAPI("htmlTitle", {
     s"${messagesAPI("business-added.uk-property.h1")} " +
@@ -61,163 +54,169 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase {
     await(sessionService.deleteSession(Add))
   }
 
-  val incomeSourceAddedForeignPropertyShowUrl: String = controllers.manageBusinesses.add.routes.IncomeSourceAddedController.show(ForeignProperty).url
-
-  val addIncomeSourceShowUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceController.show().url
-
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
 
-  def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
-    sessionId = testSessionId,
-    journeyType = JourneyType(Add, incomeSourceType).toString,
-    addIncomeSourceData = Some(AddIncomeSourceData()))
 
-  s"calling GET $incomeSourceAddedSelfEmploymentShowUrl" should {
-    "render the Business Added page" when {
-      "User is authorised" in {
-        Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+  val pathSEAdded = "/manage-your-businesses/add-sole-trader/business-added"
+  val pathUKPropertyAdded = "/manage-your-businesses/add-uk-property/uk-property-added"
+  val pathForeignPropertyAdded = "/manage-your-businesses/add-foreign-property/foreign-property-added"
 
-        When(s"I call GET $incomeSourceAddedSelfEmploymentShowUrl")
+  s"GET $pathSEAdded" when {
+    "the user is authenticated, with a valid MTD enrolment" should {
+      "render the Business Added page" when {
+        "income sources is enabled" in {
+          enable(IncomeSources)
+          disable(NavBarFs)
+          MTDIndividualAuthStub.stubAuthorised()
+          await(sessionService.createSession(JourneyType(Add, SelfEmployment).toString))
+          await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
+            addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), dateStarted = Some(LocalDate.of(2024, 1, 1)))))))
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+          IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
 
-        await(sessionService.createSession(JourneyType(Add, SelfEmployment).toString))
+          val result = buildGETMTDClient(pathSEAdded).futureValue
+          verifyIncomeSourceDetailsCall(testMtditid)
 
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
-          addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), dateStarted = Some(LocalDate.of(2024, 1, 1)))))))
+          val expectedText: String = if (messagesAPI("business-added.sole-trader.head").nonEmpty) {
+            messagesAPI("business-added.sole-trader.head") + " " + business1.tradingName.getOrElse("") + " " + messagesAPI("business-added.sole-trader.base")
+          }
+          else {
+            business1.tradingName.getOrElse("") + " " + messagesAPI("business-added.sole-trader.base")
+          }
+          sessionService.getMongoKey(AddIncomeSourceData.journeyIsCompleteField, JourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(true))
 
-        And("API 1771  returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-        And("API 1330 getNextUpdates returns a success response with a valid ObligationsModel")
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
-
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.getAddBusinessObligations
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        val expectedText: String = if (messagesAPI("business-added.sole-trader.head").nonEmpty) {
-          messagesAPI("business-added.sole-trader.head") + " " + business1.tradingName.getOrElse("") + " " + messagesAPI("business-added.sole-trader.base")
+          result should have(
+            httpStatus(OK),
+            pageTitleIndividual(expectedText),
+            elementTextByID("view-all-businesses-link")(viewAllBusinessesLinkText)
+          )
         }
-        else {
-          business1.tradingName.getOrElse("") + " " + messagesAPI("business-added.sole-trader.base")
+      }
+      s"redirect to $HomeControllerShowUrl" when {
+        "Income Sources Feature Switch is disabled" in {
+          disable(IncomeSources)
+          disable(NavBarFs)
+          MTDIndividualAuthStub.stubAuthorised()
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+
+          val result = buildGETMTDClient(pathSEAdded).futureValue
+
+          result should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(HomeControllerShowUrl)
+          )
         }
-
-        And("Mongo storage is successfully set")
-        sessionService.getMongoKey(AddIncomeSourceData.journeyIsCompleteField, JourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(true))
-
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual(expectedText),
-          elementTextByID("view-all-businesses-link")(viewAllBusinessesLinkText)
-        )
       }
     }
+    testAuthFailuresForMTDIndividual(pathSEAdded)
   }
 
-  s"calling GET $incomeSourceAddedUkPropertyShowUrl" should {
-    "render the UK Property Added Page" when {
-      "UK Property start date is provided" in {
-        Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+  s"GET $pathUKPropertyAdded" when {
+    "the user is authenticated, with a valid MTD enrolment" should {
+      "render the UK Property Added Page" when {
+        "UK Property start date is provided" in {
+          enable(IncomeSources)
+          disable(NavBarFs)
+          MTDIndividualAuthStub.stubAuthorised()
+          await(sessionService.createSession(JourneyType(Add, UkProperty).toString))
 
-        await(sessionService.createSession(JourneyType(Add, UkProperty).toString))
+          await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-UK",
+            addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), dateStarted = Some(LocalDate.of(2024, 1, 1)))))))
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
+          IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
 
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-UK",
-          addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), dateStarted = Some(LocalDate.of(2024, 1, 1)))))))
+          val result = buildGETMTDClient(pathUKPropertyAdded).futureValue
+          sessionService.getMongoKey(AddIncomeSourceData.journeyIsCompleteField, JourneyType(Add, UkProperty)).futureValue shouldBe Right(Some(true))
 
-        And("API 1171 getIncomeSourceDetails returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
+          result should have(
+            httpStatus(OK),
+            pageTitleCustom(pageTitle),
+            elementTextBySelectorList(".govuk-panel.govuk-panel--confirmation")(confirmationPanelContent)
+          )
+        }
+      }
 
-        And("API 1330 getNextUpdates return a success response")
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
+      s"redirect to $HomeControllerShowUrl" when {
+        "Income Sources Feature Switch is disabled" in {
+          disable(IncomeSources)
+          MTDIndividualAuthStub.stubAuthorised()
 
-        Then("user is shown UK property added page")
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/add-uk-property/uk-property-added")
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse.copy(properties = List(ukProperty.copy(tradingStartDate = None))))
 
-        And("Mongo storage is successfully set")
-        sessionService.getMongoKey(AddIncomeSourceData.journeyIsCompleteField, JourneyType(Add, UkProperty)).futureValue shouldBe Right(Some(true))
+          val result = buildGETMTDClient(pathUKPropertyAdded).futureValue
 
-        result should have(
-          httpStatus(OK),
-          pageTitleCustom(pageTitle),
-          elementTextBySelectorList(".govuk-panel.govuk-panel--confirmation")(confirmationPanelContent)
-        )
+          result should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(HomeControllerShowUrl)
+          )
+        }
+      }
+      "render error page" when {
+        "UK property income source is missing trading start date" in {
+          enable(IncomeSources)
+          MTDIndividualAuthStub.stubAuthorised()
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse.copy(properties = List(ukProperty.copy(tradingStartDate = None))))
 
+          await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-UK",
+            addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId))))))
+
+          val result = buildGETMTDClient(pathUKPropertyAdded).futureValue
+
+          result should have(
+            httpStatus(INTERNAL_SERVER_ERROR),
+            pageTitleIndividual("standardError.heading", isErrorPage = true)
+          )
+
+        }
       }
     }
-    "render error page" when {
-      "UK property income source is missing trading start date" in {
-        Given("Income Sources FS is enabled")
-        enable(IncomeSources)
-
-        And("API 1171 getIncomeSourceDetails returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse.copy(properties = List(ukProperty.copy(tradingStartDate = None))))
-
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-UK",
-          addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId))))))
-
-        Then("user is shown a error page")
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/add-uk-property/uk-property-added")
-
-        result should have(
-          httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitleIndividual("standardError.heading", isErrorPage = true)
-        )
-
-      }
-    }
-    s"redirect to $HomeControllerShowUrl" when {
-      "Income Sources Feature Switch is disabled" in {
-        Given("Income Sources FS is disabled")
-        disable(IncomeSources)
-
-        And("API 1171 getIncomeSourceDetails returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse.copy(properties = List(ukProperty.copy(tradingStartDate = None))))
-
-
-        Then(s"user is redirected to $HomeControllerShowUrl")
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/add-uk-property/uk-property-added")
-
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(HomeControllerShowUrl)
-        )
-      }
-    }
+    testAuthFailuresForMTDIndividual(pathUKPropertyAdded)
   }
 
-  s"calling GET $incomeSourceAddedForeignPropertyShowUrl" should {
-    "render the Foreign Property Added obligations page" when {
-      "User is authorised" in {
-        Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+  s"GET $pathForeignPropertyAdded" when {
+    "the user is authenticated, with a valid MTD enrolment" should {
+      "render the Foreign Property Added obligations page" when {
+        "income sources feature is enabled" in {
+          enable(IncomeSources)
+          disable(NavBarFs)
+          MTDIndividualAuthStub.stubAuthorised()
+          await(sessionService.createSession(JourneyType(Add, ForeignProperty).toString))
+          await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-FP",
+            addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), dateStarted = Some(LocalDate.of(2024, 1, 1)))))))
 
-        await(sessionService.createSession(JourneyType(Add, ForeignProperty).toString))
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
+          IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
 
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-FP",
-          addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), dateStarted = Some(LocalDate.of(2024, 1, 1)))))))
+          val result = buildGETMTDClient(pathForeignPropertyAdded).futureValue
+          verifyIncomeSourceDetailsCall(testMtditid)
 
-        When(s"I call GET $incomeSourceAddedForeignPropertyShowUrl")
+          sessionService.getMongoKey(AddIncomeSourceData.journeyIsCompleteField, JourneyType(Add, ForeignProperty)).futureValue shouldBe Right(Some(true))
 
-        And("API 1771 returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
+          val expectedText: String = messagesAPI("business-added.foreign-property.h1") + " " + messagesAPI("business-added.foreign-property.base")
 
-        And("API 1330 getNextUpdates returns a success response with a valid ObligationsModel")
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
+          result should have(
+            httpStatus(OK),
+            pageTitleIndividual(expectedText),
+            elementTextByID("view-all-businesses-link")(viewAllBusinessesLinkText)
+          )
+        }
+      }
+      s"redirect to $HomeControllerShowUrl" when {
+        "Income Sources Feature Switch is disabled" in {
+          disable(IncomeSources)
+          disable(NavBarFs)
+          MTDIndividualAuthStub.stubAuthorised()
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.getForeignPropertyAddedObligations
-        verifyIncomeSourceDetailsCall(testMtditid)
+          val result = buildGETMTDClient(pathForeignPropertyAdded).futureValue
 
-        And("Mongo storage is successfully set")
-        sessionService.getMongoKey(AddIncomeSourceData.journeyIsCompleteField, JourneyType(Add, ForeignProperty)).futureValue shouldBe Right(Some(true))
-
-        val expectedText: String = messagesAPI("business-added.foreign-property.h1") + " " + messagesAPI("business-added.foreign-property.base")
-
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual(expectedText),
-          elementTextByID("view-all-businesses-link")(viewAllBusinessesLinkText)
-        )
+          result should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(HomeControllerShowUrl)
+          )
+        }
       }
     }
+    testAuthFailuresForMTDIndividual(pathForeignPropertyAdded)
   }
 }

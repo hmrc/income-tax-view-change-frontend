@@ -16,64 +16,45 @@
 
 package controllers.incomeSources.add
 
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{Add, JourneyType}
-import mocks.MockItvcErrorHandler
-import mocks.auth.MockFrontendAuthorisedFunctions
-import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
-import mocks.services.{MockClientDetailsService, MockNextUpdatesService, MockSessionService}
+import enums.MTDIndividual
+import mocks.auth.MockAuthActions
+import mocks.services.{MockNextUpdatesService, MockSessionService}
 import models.admin.IncomeSources
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails._
-import models.obligations.{SingleObligationModel, GroupedObligationsModel, ObligationsModel, StatusFulfilled}
+import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
+import play.api
+import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
-import play.api.mvc.{MessagesControllerComponents, Result}
+import play.api.mvc.Result
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.DateService
-import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testNino, testSelfEmploymentId, testSessionId}
+import services.{DateService, NextUpdatesService, SessionService}
+import testConstants.BaseTestConstants.{testNino, testSelfEmploymentId, testSessionId}
 import testConstants.BusinessDetailsTestConstants.testIncomeSource
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, notCompletedUIJourneySessionData}
 import testConstants.incomeSources.IncomeSourcesObligationsTestConstants
-import testUtils.TestSupport
-import uk.gov.hmrc.auth.core.BearerTokenExpired
-import views.html.incomeSources.add.IncomeSourceAddedObligations
 
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class IncomeSourceAddedControllerSpec extends TestSupport
-  with MockFrontendAuthorisedFunctions
-  with MockIncomeSourceDetailsPredicate
-  with MockAuthenticationPredicate
-  with MockItvcErrorHandler
-  with MockNavBarEnumFsPredicate
-  with MockClientDetailsService
+class IncomeSourceAddedControllerSpec extends MockAuthActions
   with MockNextUpdatesService
-  with MockSessionService
-  with FeatureSwitching {
+  with MockSessionService {
 
-  val mockDateService: DateService = mock(classOf[DateService])
+  lazy val mockDateService: DateService = mock(classOf[DateService])
 
-  object TestIncomeSourceAddedController extends IncomeSourceAddedController(
-    authorisedFunctions = mockAuthService,
-    itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
-    incomeSourceDetailsService = mockIncomeSourceDetailsService,
-    obligationsView = app.injector.instanceOf[IncomeSourceAddedObligations],
-    mockNextUpdatesService,
-    testAuthenticator
-  )(
-    appConfig = app.injector.instanceOf[FrontendAppConfig],
-    itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
-    mcc = app.injector.instanceOf[MessagesControllerComponents],
-    mockSessionService,
-    ec = ec,
-    mockDateService
-  )
+  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+    .overrides(
+      api.inject.bind[SessionService].toInstance(mockSessionService),
+      api.inject.bind[DateService].toInstance(mockDateService),
+      api.inject.bind[NextUpdatesService].toInstance(mockNextUpdatesService)
+  ).build()
+
+  val testIncomeSourceAddedController = fakeApplication().injector.instanceOf[IncomeSourceAddedController]
 
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(
     GroupedObligationsModel(testSelfEmploymentId, List(SingleObligationModel(
@@ -143,27 +124,16 @@ class IncomeSourceAddedControllerSpec extends TestSupport
 
   def sessionDataCompletedJourney(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(journeyIsComplete = Some(true))))
 
-  "IncomeSourceAddedController" should {
-    "redirect a user back to the custom error page" when {
-      "the user is not authenticated" should {
-        "redirect them to sign in" in {
-          setupMockAuthorisationException()
-          val result = TestIncomeSourceAddedController.show(SelfEmployment)(fakeRequestWithActiveSession)
-          status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
-        }
-      }
-    }
-
-    for (incomeSourceType <- incomeSourceTypes) yield {
-      for (isAgent <- Seq(true, false)) yield {
-
-        s"IncomeSourceAddedController.show (${incomeSourceType.key}, ${if (isAgent) "Agent" else "Individual"})" should {
-          "return 200 OK" when {
+  incomeSourceTypes.foreach { incomeSourceType =>
+    mtdAllRoles.foreach { mtdRole =>
+      s"show${if (mtdRole != MTDIndividual) "Agent"}(incomeSourceType = ${incomeSourceType.key})" when {
+        val fakeRequest = getFakeRequestBasedOnMTDUserType(mtdRole)
+        val action = if (mtdRole == MTDIndividual) testIncomeSourceAddedController.show(incomeSourceType) else testIncomeSourceAddedController.showAgent(incomeSourceType)
+        s"the user is authenticated as a $mtdRole" should {
+          "render the income source added page" when {
             "FS enabled with newly added income source and obligations view model" in {
-              disableAllSwitches()
               enable(IncomeSources)
-              setupMockAuthorisationSuccess(isAgent)
+              setupMockSuccess(mtdRole)
               setupMockGetSessionKeyMongoTyped[String](Right(Some(testSelfEmploymentId)))
               mockIncomeSource(incomeSourceType)
               mockISDS(incomeSourceType)
@@ -180,59 +150,37 @@ class IncomeSourceAddedControllerSpec extends TestSupport
 
               setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.incomeSourceIdField, journeyType = JourneyType(Add, incomeSourceType), result = Right(Some(testSelfEmploymentId)))
 
-              val result = if (isAgent) TestIncomeSourceAddedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
-              else TestIncomeSourceAddedController.show(incomeSourceType)(fakeRequestWithActiveSession)
+              val result = action(fakeRequest)
               status(result) shouldBe OK
             }
           }
+
           "return 303 SEE_OTHER" when {
             "Income Sources FS is disabled" in {
               disable(IncomeSources)
-              setupMockAuthorisationSuccess(isAgent)
+              setupMockSuccess(mtdRole)
               mockIncomeSource(incomeSourceType)
 
-              val result = if (isAgent) TestIncomeSourceAddedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
-              else TestIncomeSourceAddedController.show(incomeSourceType)(fakeRequestWithActiveSession)
+              val result = action(fakeRequest)
               status(result) shouldBe SEE_OTHER
-              val redirectUrl = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+              val redirectUrl = if (mtdRole != MTDIndividual) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
               redirectLocation(result) shouldBe Some(redirectUrl)
-            }
-            "redirect to the session timeout page" when {
-              "the user has timed out" in {
-                if (isAgent) setupMockAgentAuthorisationException(exception = BearerTokenExpired()) else setupMockAuthorisationException()
-                val result = if (isAgent) TestIncomeSourceAddedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
-                else TestIncomeSourceAddedController.show(incomeSourceType)(fakeRequestWithTimeoutSession)
-                status(result) shouldBe SEE_OTHER
-                redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
-              }
-            }
-            "redirect a user back to the custom error page" when {
-              "the user is not authenticated" should {
-                "redirect them to sign in" in {
-                  if (isAgent) setupMockAgentAuthorisationException() else setupMockAuthorisationException()
-                  val result = if (isAgent) TestIncomeSourceAddedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
-                  else TestIncomeSourceAddedController.show(incomeSourceType)(fakeRequestWithActiveSession)
-                  status(result) shouldBe SEE_OTHER
-                  redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
-                }
-              }
             }
           }
           "return 500 ISE" when {
             "Income source start date was not retrieved" in {
               enable(IncomeSources)
-              setupMockAuthorisationSuccess(isAgent)
+              setupMockSuccess(mtdRole)
               mockIncomeSource(incomeSourceType)
               setupMockGetSessionKeyMongoTyped[String](Right(Some(testSelfEmploymentId)))
               mockFailure()
               mockMongo(incomeSourceType)
-              val result = if (isAgent) TestIncomeSourceAddedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
-              else TestIncomeSourceAddedController.show(incomeSourceType)(fakeRequestWithActiveSession)
+              val result = action(fakeRequest)
               status(result) shouldBe INTERNAL_SERVER_ERROR
             }
             "Income source id is invalid" in {
               enable(IncomeSources)
-              setupMockAuthorisationSuccess(isAgent)
+              setupMockSuccess(mtdRole)
               mockIncomeSource(incomeSourceType)
               setupMockGetSessionKeyMongoTyped[String](Right(Some(testSelfEmploymentId)))
               mockISDS(incomeSourceType)
@@ -240,16 +188,14 @@ class IncomeSourceAddedControllerSpec extends TestSupport
               when(mockNextUpdatesService.getOpenObligations()(any(), any())).
                 thenReturn(Future(testObligationsModel))
 
-              val result = if (isAgent) TestIncomeSourceAddedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
-              else TestIncomeSourceAddedController.show(incomeSourceType)(fakeRequestWithActiveSession)
+              val result = action(fakeRequest)
               status(result) shouldBe INTERNAL_SERVER_ERROR
             }
             if (incomeSourceType == SelfEmployment) {
               "Supplied business has no name" in {
-                disableAllSwitches()
                 enable(IncomeSources)
 
-                setupMockAuthorisationSuccess(isAgent)
+                setupMockSuccess(mtdRole)
                 val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel(testNino, "", Some("2022"), List(BusinessDetailsModel(
                   testSelfEmploymentId,
                   incomeSource = Some(testIncomeSource),
@@ -268,38 +214,36 @@ class IncomeSourceAddedControllerSpec extends TestSupport
                 mockMongo(incomeSourceType)
                 setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.incomeSourceIdField, journeyType = JourneyType(Add, incomeSourceType), result = Right(Some(testSelfEmploymentId)))
 
-                val result: Future[Result] = if (isAgent) TestIncomeSourceAddedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
-                else TestIncomeSourceAddedController.show(incomeSourceType)(fakeRequestWithActiveSession)
+                val result = action(fakeRequest)
                 status(result) shouldBe INTERNAL_SERVER_ERROR
               }
             }
           }
         }
+        testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
       }
-    }
 
-    ".submit" should {
-      "take the individual back to add income sources" in {
-        disableAllSwitches()
-        enable(IncomeSources)
+      s"submit${if (mtdRole != MTDIndividual) "Agent"}(incomeSourceType = $incomeSourceType)" when {
+        val action = if (mtdRole == MTDIndividual) testIncomeSourceAddedController.submit else testIncomeSourceAddedController.agentSubmit
+        val fakeRequest = getFakeRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
+        s"the user is authenticated as a $mtdRole" should {
+          "redirect to add income sources" in {
+            enable(IncomeSources)
+            setupMockSuccess(mtdRole)
 
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        val result: Future[Result] = TestIncomeSourceAddedController.submit(fakeRequestWithActiveSession)
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddIncomeSourceController.show().url)
-      }
-      "take the agent back to add income sources" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-
-        val result: Future[Result] = TestIncomeSourceAddedController.agentSubmit(fakeRequestConfirmedClient())
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url)
+            val result: Future[Result] = action(fakeRequest)
+            status(result) shouldBe SEE_OTHER
+            val expectedLocation = if(mtdRole == MTDIndividual) {
+              controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
+            } else {
+              controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
+            }
+            redirectLocation(result) shouldBe Some(expectedLocation)
+          }
+        }
+        testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
       }
     }
   }

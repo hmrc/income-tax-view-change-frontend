@@ -17,29 +17,30 @@
 package controllers.manageBusinesses.add
 
 import auth.MtdItUser
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
+import auth.authV2.AuthActions
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.IncomeSourceJourney.{CannotGoBackPage, IncomeSourceType}
 import enums.JourneyType.{Add, JourneyType}
 import play.api.Logger
+import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.SessionService
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.JourneyCheckerManageBusinesses
 import views.html.manageBusinesses.add.IncomeSourceAddedBackError
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeSourceAddedBackErrorController @Inject()(val authorisedFunctions: AuthorisedFunctions,
+class IncomeSourceAddedBackErrorController @Inject()(val authActions: AuthActions,
                                                      val cannotGoBackError: IncomeSourceAddedBackError,
-                                                     val sessionService: SessionService,
-                                                     auth: AuthenticatorPredicate)
+                                                     val sessionService: SessionService)
                                                     (implicit val appConfig: FrontendAppConfig,
                                                      mcc: MessagesControllerComponents,
                                                      val ec: ExecutionContext,
                                                      val itvcErrorHandler: ItvcErrorHandler,
-                                                     val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController with IncomeSourcesUtils with JourneyCheckerManageBusinesses{
+                                                     val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+  extends FrontendController(mcc) with JourneyCheckerManageBusinesses with I18nSupport {
 
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
@@ -56,7 +57,7 @@ class IncomeSourceAddedBackErrorController @Inject()(val authorisedFunctions: Au
     }
   }
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
       handleRequest(
         isAgent = false,
@@ -64,7 +65,7 @@ class IncomeSourceAddedBackErrorController @Inject()(val authorisedFunctions: Au
       )
   }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit mtdItUser =>
       handleRequest(
         isAgent = true,
@@ -72,18 +73,19 @@ class IncomeSourceAddedBackErrorController @Inject()(val authorisedFunctions: Au
       )
   }
 
-  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
-      handleSubmit(isAgent = false, incomeSourceType)
+      handleSubmit(isAgent = false, incomeSourceType)(implicitly, itvcErrorHandler)
   }
 
-  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit mtdItUser =>
-      handleSubmit(isAgent = true, incomeSourceType)
+      handleSubmit(isAgent = true, incomeSourceType)(implicitly, itvcErrorHandlerAgent)
 
   }
 
-  private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] =
+  private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)
+                          (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] =
     withSessionData(JourneyType(Add, incomeSourceType), CannotGoBackPage) {
       _.addIncomeSourceData.map(_.incomeSourceId) match {
         case Some(_) =>
@@ -93,7 +95,7 @@ class IncomeSourceAddedBackErrorController @Inject()(val authorisedFunctions: Au
         case None => Logger("application").error(
           "Error: Unable to find id in session")
           Future.successful {
-            (if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler).showInternalServerError()
+            errorHandler.showInternalServerError()
           }
       }
     }
