@@ -57,7 +57,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
         paymentOnAccountViewModelMaybe <- EitherT(
           Future.successful(financialDetailsMaybe
             .map { financialDetails =>
-              val charges = sortByTaxYearC(financialDetails.toChargeItem(codingOut = true, reviewReconcile = true))
+              val charges = sortByTaxYearC(financialDetails.toChargeItem(reviewReconcile = true))
               getPaymentOnAccountModel(charges)
             } match {
               case Some(x) => x
@@ -130,7 +130,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
       case Some(taxYear: TaxYear) =>
         financialDetailsConnector.getFinancialDetails(taxYear.endYear, nino.value).map {
           case financialDetails: FinancialDetailsModel =>
-            val charges = sortByTaxYearC(financialDetails.toChargeItem(codingOut = true, reviewReconcile = true))
+            val charges = sortByTaxYearC(financialDetails.toChargeItem(reviewReconcile = true))
             getPaymentOnAccountModel(charges) match {
               case Right(x) =>
                 Right(FinancialDetailsAndPoaModel(Some(financialDetails), x))

@@ -242,11 +242,11 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
       .sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
   }
 
-  def toChargeItem(codingOut: Boolean, reviewReconcile: Boolean): List[ChargeItem] = {
+  def toChargeItem(reviewReconcile: Boolean): List[ChargeItem] = {
     Try {
       this.documentDetails
         .map( x =>
-          ChargeItem.fromDocumentPair(x, financialDetails, codingOut, reviewReconcile)
+          ChargeItem.fromDocumentPair(x, financialDetails, reviewReconcile)
         )
     } match {
       case Success(res) =>
@@ -257,9 +257,9 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     }
   }
 
-  def unpaidDocumentDetails(isCodingOutEnabled: Boolean): List[DocumentDetail] = {
+  def unpaidDocumentDetails(): List[DocumentDetail] = {
     this.documentDetails.collect {
-      case documentDetail: DocumentDetail if documentDetail.isCodingOutDocumentDetail(isCodingOutEnabled) => documentDetail
+      case documentDetail: DocumentDetail if documentDetail.isCodingOutDocumentDetail => documentDetail
       case documentDetail: DocumentDetail if documentDetail.latePaymentInterestAmount.isDefined && !documentDetail.interestIsPaid => documentDetail
       case documentDetail: DocumentDetail if documentDetail.interestOutstandingAmount.isDefined && !documentDetail.interestIsPaid => documentDetail
       case documentDetail: DocumentDetail if documentDetail.isNotCodingOutDocumentDetail && !documentDetail.isPaid => documentDetail
