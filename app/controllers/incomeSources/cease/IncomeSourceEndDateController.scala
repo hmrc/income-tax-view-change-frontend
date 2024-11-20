@@ -21,7 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.{IncomeSourceType, InitialPage, SelfEmployment}
-import enums.JourneyType.{Cease, JourneyType}
+import enums.JourneyType.{Cease, IncomeSources, JourneyType}
 import forms.incomeSources.cease.CeaseIncomeSourceEndDateFormProvider
 import implicits.ImplicitDateFormatterImpl
 import models.admin.IncomeSourcesNewJourney
@@ -129,7 +129,7 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
 
   def handleRequest(id: Option[IncomeSourceIdHash], isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] =
-    withSessionData(JourneyType(Cease, incomeSourceType), journeyState = InitialPage) { sessionData =>
+    withSessionData(IncomeSources(Cease, incomeSourceType), journeyState = InitialPage) { sessionData =>
 
       val hashCompareResult: Option[Either[Throwable, IncomeSourceId]] = id.map(x => user.incomeSources.compareHashToQueryString(x))
 
@@ -223,7 +223,7 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
           CeaseIncomeSourceData.dateCeasedField -> validatedInput.toString,
           CeaseIncomeSourceData.incomeSourceIdField -> incomeSourceId.value
         )
-        sessionService.setMultipleMongoData(mongoSetValues, JourneyType(Cease, incomeSourceType)).flatMap {
+        sessionService.setMultipleMongoData(mongoSetValues, IncomeSources(Cease, incomeSourceType)).flatMap {
           case Right(_) => Future.successful(result)
           case Left(_) => Future.failed(new Error(
             s"Failed to set data in session storage. incomeSourceType: $incomeSourceType."))
