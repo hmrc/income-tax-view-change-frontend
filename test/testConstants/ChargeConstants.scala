@@ -45,7 +45,8 @@ trait ChargeConstants {
                       interestEndDate: Option[LocalDate] = Some(LocalDate.of(2018, 6, 15)),
                       lpiWithDunningLock: Option[BigDecimal] = Some(100.0),
                       isOverdue:Boolean = true,
-                      dunningLock:Boolean = false): ChargeItem = ChargeItem(
+                      dunningLock:Boolean = false,
+                      poaRelevantAmount: Option[BigDecimal] = None): ChargeItem = ChargeItem(
     transactionId = transactionId,
     taxYear = taxYear,
     transactionType = transactionType,
@@ -61,7 +62,8 @@ trait ChargeConstants {
     lpiWithDunningLock = lpiWithDunningLock,
     dunningLock = dunningLock,
     interestRate = interestRate,
-    amountCodedOut = amountCodedOut
+    amountCodedOut = amountCodedOut,
+    poaRelevantAmount = poaRelevantAmount
   )
 
   private def testFinancialDetailsChargeItems(dueDate: List[Option[LocalDate]],
@@ -81,7 +83,8 @@ trait ChargeConstants {
                                               interestEndDate: List[Option[LocalDate]] =
                                                 List(Some(LocalDate.of(2018, 6, 15)), Some(LocalDate.of(2018, 6, 15))),
                                               taxYear: String = fixedDate.getYear.toString,
-                                              overdue: List[Boolean] = List(true, true)): List[ChargeItem] = {
+                                              overdue: List[Boolean] = List(true, true),
+                                              poaRelevantAmount: Option[BigDecimal] = None): List[ChargeItem] = {
 
     List(
       ChargeItem(transactionId = transactionId.head,
@@ -99,7 +102,8 @@ trait ChargeConstants {
         interestRate = interestRate.head,
         lpiWithDunningLock = lpiWithDunningLock.head,
         amountCodedOut = None,
-        dunningLock = dunningLock.head.isDefined),
+        dunningLock = dunningLock.head.isDefined,
+        poaRelevantAmount = poaRelevantAmount),
       ChargeItem(transactionId = transactionId(1),
         taxYear = TaxYear.forYearEnd(taxYear.toInt),
         transactionType = transactionTypes(1),
@@ -115,7 +119,8 @@ trait ChargeConstants {
         interestRate = interestRate(1),
         lpiWithDunningLock = lpiWithDunningLock(1),
         amountCodedOut = None,
-        dunningLock = dunningLock(1).isDefined)
+        dunningLock = dunningLock(1).isDefined,
+        poaRelevantAmount = poaRelevantAmount)
     )
   }
 
@@ -129,8 +134,8 @@ trait ChargeConstants {
     interestRate = List(Some(2.6), Some(6.2)),
     interestFromDate = List(Some(LocalDate.of(2019, 5, 25)), Some(LocalDate.of(2019, 5, 25))),
     interestEndDate = List(Some(LocalDate.of(2019, 6, 25)), Some(LocalDate.of(2019, 6, 25))),
-
-  latePaymentInterestAmount = latePaymentInterest
+    latePaymentInterestAmount = latePaymentInterest,
+    poaRelevantAmount = None
   )
 
 
@@ -145,13 +150,15 @@ trait ChargeConstants {
       outstandingAmount = List(50.0, 75.0),
       taxYear = fixedDate.getYear.toString,
       interestRate = List(Some(2.6), Some(6.2)),
-      latePaymentInterestAmount = latePaymentInterest
+      latePaymentInterestAmount = latePaymentInterest,
+      poaRelevantAmount = None
     )
   def financialDetailsDueInMoreThan30DaysCi(dunningLocks: List[Option[String]] = noDunningLocks): List[ChargeItem] = testFinancialDetailsChargeItems(
     dueDate = dueDateMoreThan30Days,
     dunningLock = dunningLocks,
     interestFromDate = List(None, None),
-    interestEndDate = List(None, None)
+    interestEndDate = List(None, None),
+    poaRelevantAmount = None
   )
 
   def financialDetailsDueIn30DaysCi(dunningLocks: List[Option[String]] = noDunningLocks): List[ChargeItem] =
@@ -160,7 +167,8 @@ trait ChargeConstants {
       interestFromDate = List(None, None),
       interestEndDate = List(None, None),
       dunningLock = dunningLocks,
-      overdue = List(false, false)
+      overdue = List(false, false),
+      poaRelevantAmount = None
     )
 
   def outstandingChargesModelIt(dueDate: LocalDate): OutstandingChargesModel = OutstandingChargesModel(
@@ -189,7 +197,8 @@ trait ChargeConstants {
         latePaymentInterestAmount = Some(100),
         lpiWithDunningLock = None,
         amountCodedOut = None,
-        dueDate = Some(LocalDate.parse("2022-01-01")), dunningLock = false),
+        dueDate = Some(LocalDate.parse("2022-01-01")), dunningLock = false,
+        poaRelevantAmount = None),
       ChargeItem(
         taxYear = TaxYear.forYearEnd(2021),
         transactionId = "1040000124",
@@ -205,7 +214,8 @@ trait ChargeConstants {
         latePaymentInterestAmount = None,
         lpiWithDunningLock = None,
         amountCodedOut = None,
-        dueDate = Some(LocalDate.parse("2022-01-01")), dunningLock = false),
+        dueDate = Some(LocalDate.parse("2022-01-01")), dunningLock = false,
+        poaRelevantAmount = None),
       ChargeItem(
         taxYear = TaxYear.forYearEnd(2021),
         transactionId = "1040000125",
@@ -222,7 +232,8 @@ trait ChargeConstants {
         lpiWithDunningLock = None,
         amountCodedOut = None,
         dueDate = Some(LocalDate.parse("2022-01-01")),
-        dunningLock = false)
+        dunningLock = false,
+        poaRelevantAmount = None)
     ),
     outstandingChargesModel = Some(outstandingChargesOverdueDataIt)
   )
@@ -265,7 +276,8 @@ trait ChargeConstants {
           latePaymentInterestAmount = None,
           dueDate = Some(LocalDate.parse("2021-08-25")),
           lpiWithDunningLock = None, amountCodedOut = None,
-          dunningLock = false
+          dunningLock = false,
+          poaRelevantAmount = None
         )
 
   def chargeItemWithCodingOutCancelledPayeSaCi(): ChargeItem = ChargeItem(
@@ -282,7 +294,8 @@ trait ChargeConstants {
     latePaymentInterestAmount = None,
     dueDate = Some(LocalDate.parse("2021-08-25")),
     lpiWithDunningLock = None, amountCodedOut = None,
-    dunningLock = false
+    dunningLock = false,
+    poaRelevantAmount = None
   )
 
   val poa1WithCodedOut = ChargeItem(
@@ -301,7 +314,8 @@ trait ChargeConstants {
     lpiWithDunningLock = Some(100),
     interestRate = Some(100),
     amountCodedOut = Some(30),
-    dunningLock = false
+    dunningLock = false,
+    poaRelevantAmount = None
   )
   val poa2WithCodedOut = ChargeItem(
     transactionId = id1040000124,
@@ -319,7 +333,8 @@ trait ChargeConstants {
     lpiWithDunningLock = Some(100),
     interestRate = Some(100),
     amountCodedOut = Some(70),
-    dunningLock = false
+    dunningLock = false,
+    poaRelevantAmount = None
   )
 
   val poa2 = ChargeItem(
@@ -338,7 +353,8 @@ trait ChargeConstants {
       lpiWithDunningLock = Some(100.0),
       interestRate = Some(100.0),
       amountCodedOut = None,
-    dunningLock = false
+      dunningLock = false,
+      poaRelevantAmount = None
   )
 
   val balancingChargeNics2 = ChargeItem(
@@ -356,7 +372,8 @@ trait ChargeConstants {
     dueDate = Some(LocalDate.parse("2021-08-24")),
     lpiWithDunningLock = None,
     amountCodedOut = None,
-    dunningLock = false)
+    dunningLock = false,
+    poaRelevantAmount = None)
 
   val balancingChargeCancelled = ChargeItem(taxYear = TaxYear.forYearEnd(2021),
     transactionId = id1040000125,
@@ -373,7 +390,8 @@ trait ChargeConstants {
     dueDate = Some(LocalDate.parse("2021-08-25")),
     lpiWithDunningLock = None,
     amountCodedOut = None,
-    dunningLock = false)
+    dunningLock = false,
+    poaRelevantAmount = None)
 
   val  balancingChargePaye = balancingChargeNics2.copy(
     transactionId = id1040000126,
@@ -402,7 +420,8 @@ trait ChargeConstants {
         interestRate = Some(2.6),
         lpiWithDunningLock = lpiWithDunningLock,
         amountCodedOut = None,
-        dunningLock = dunningLock
+        dunningLock = dunningLock,
+        poaRelevantAmount = None
       ),
       ChargeItem(
         id1040000125,
@@ -420,7 +439,8 @@ trait ChargeConstants {
         interestRate = Some(6.2),
         lpiWithDunningLock = lpiWithDunningLock,
         amountCodedOut = None,
-        dunningLock = dunningLock
+        dunningLock = dunningLock,
+        poaRelevantAmount = None
       )
     )
 
@@ -448,7 +468,8 @@ trait ChargeConstants {
           lpiWithDunningLock = None,
           amountCodedOut = None,
           dueDate = Some(LocalDate.parse("2018-02-14")),
-          dunningLock = false),
+          dunningLock = false,
+          poaRelevantAmount = None),
         ChargeItem(
           taxYear = TaxYear.forYearEnd(2021),
           transactionId = "transId2",
@@ -465,7 +486,8 @@ trait ChargeConstants {
           lpiWithDunningLock = None,
           amountCodedOut = None,
           dueDate = Some(LocalDate.parse("2022-01-01").plusDays(1)),
-          dunningLock = false)),
+          dunningLock = false,
+          poaRelevantAmount = None)),
       outstandingChargesModel = Some(staticDateOutstandingChargesOverdueData)
     )
 
@@ -728,7 +750,8 @@ trait ChargeConstants {
     Some(5.0),
     None, None, Some(5.0),
     None, Some(2500.0),
-    false)
+    false,
+    None)
 
   val codedOutDocumentDetailCi: ChargeItem = ChargeItem(
     transactionId = "CODINGOUT02",
@@ -746,7 +769,8 @@ trait ChargeConstants {
     amountCodedOut = Some(43.21),
     lpiWithDunningLock = None,
     dunningLock = false,
-    dueDate = None)
+    dueDate = None,
+    poaRelevantAmount = None)
 
 
   val codedOutDocumentDetailPayeSACi: ChargeItem = ChargeItem(
@@ -765,7 +789,8 @@ trait ChargeConstants {
     amountCodedOut = Some(43.21),
     lpiWithDunningLock = None,
     dunningLock = false,
-    dueDate = None
+    dueDate = None,
+    poaRelevantAmount = None
   )
 
   val codedOutDocumentDetailFullyCollectedCi: ChargeItem = ChargeItem(
@@ -784,7 +809,8 @@ trait ChargeConstants {
     amountCodedOut = Some(0),
     dueDate = None,
     lpiWithDunningLock = None,
-    dunningLock = false
+    dunningLock = false,
+    poaRelevantAmount = None
   )
 
   def testFinancialDetailsModelOneItemInList(documentDescription: Option[String],

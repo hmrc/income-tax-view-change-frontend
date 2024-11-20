@@ -79,7 +79,8 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
           interestRate = None,
           lpiWithDunningLock = None,
           amountCodedOut = None,
-          dunningLock = false
+          dunningLock = false,
+          poaRelevantAmount = None
         )
       ))
 

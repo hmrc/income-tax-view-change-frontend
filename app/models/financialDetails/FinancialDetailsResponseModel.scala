@@ -245,7 +245,8 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
   def toChargeItem(codingOut: Boolean, reviewReconcile: Boolean): List[ChargeItem] = {
     Try {
       this.documentDetails
-        .map(ChargeItem.fromDocumentPair(_, financialDetails, codingOut, reviewReconcile)
+        .map( x =>
+          ChargeItem.fromDocumentPair(x, financialDetails, codingOut, reviewReconcile)
         )
     } match {
       case Success(res) =>

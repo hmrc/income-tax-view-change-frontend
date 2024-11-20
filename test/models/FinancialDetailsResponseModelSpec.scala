@@ -179,4 +179,16 @@ class FinancialDetailsResponseModelSpec extends UnitSpec with Matchers {
       testIsMFADebit(id1040000123, financialDetailsWithMixedData1) shouldBe false
     }
   }
+
+//  "toChargeModel" should {
+//
+//    "return ChargeItem model when successful" in {
+//
+//      def financialDetailsModelWithoutDunningLock: FinancialDetailsModel = financialDetailsModel()
+//      val documentDetail = fullDocumentDetailModel
+//
+//      val result = financialDetailsModelWithoutDunningLock.toChargeItem(true, true)
+//
+//    }
+//  }
 }
