@@ -16,7 +16,7 @@
 
 package controllers.manageBusinesses.manage
 
-import controllers.incomeSources.manage.ConfirmReportingMethodSharedController
+import controllers.manageBusinesses.manage.ConfirmReportingMethodSharedController
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{JourneyType, Manage}
 import enums.{MTDIndividual, MTDUserRole}
@@ -47,7 +47,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
   override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
-      api.inject.bind[DateService].toInstance(dateService),
+      api.inject.bind[DateService].toInstance(dateService)
     ).build()
 
   val testConfirmReportingMethodSharedController = fakeApplication().injector.instanceOf[ConfirmReportingMethodSharedController]
@@ -69,15 +69,15 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
     }
   }
 
-  Seq(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
-    mtdAllRoles.foreach { mtdRole =>
-      s"show${if (mtdRole != MTDIndividual) "Agent"}($incomeSourceType)" when {
-        val fakeRequest = getFakeRequestBasedOnMTDUserType(mtdRole).withMethod("GET")
-        s"the user is authenticated as s$mtdRole" should {
+  Seq(SelfEmployment, UkProperty, ForeignProperty).foreach { testIncomeSourceType =>
+    mtdAllRoles.foreach { testMtdRole =>
+      s"show${if (testMtdRole != MTDIndividual) "Agent"}($testIncomeSourceType)" when {
+        val fakeRequest = getFakeRequestBasedOnMTDUserType(testMtdRole).withMethod("GET")
+        s"the user is authenticated as s$testMtdRole" should {
           s"return ${Status.OK}" when {
             "all query parameters are valid" in new SetupGET {
-              override val incomeSourceType: IncomeSourceType = incomeSourceType
-              override val mtdRole: MTDUserRole = mtdRole
+              override val incomeSourceType: IncomeSourceType = testIncomeSourceType
+              override val mtdRole: MTDUserRole = testMtdRole
 
               setupMockSuccess(mtdRole)
               enable(IncomeSources)
@@ -94,8 +94,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
           }
           "redirect to the Cannot Go Back page" when {
             "Journey is complete" in new SetupGET {
-              override val incomeSourceType: IncomeSourceType = incomeSourceType
-              override val mtdRole: MTDUserRole = mtdRole
+              override val incomeSourceType: IncomeSourceType = testIncomeSourceType
+              override val mtdRole: MTDUserRole = testMtdRole
               setupMockSuccess(mtdRole)
               enable(IncomeSources)
               mockBothPropertyBothBusiness()
@@ -112,8 +112,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
           }
           s"return ${Status.SEE_OTHER} and redirect to the home page" when {
             "the IncomeSources FS is disabled" in new SetupGET {
-              override val incomeSourceType: IncomeSourceType = incomeSourceType
-              override val mtdRole: MTDUserRole = mtdRole
+              override val incomeSourceType: IncomeSourceType = testIncomeSourceType
+              override val mtdRole: MTDUserRole = testMtdRole
               setupMockSuccess(mtdRole)
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
@@ -127,13 +127,13 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
 
               status(result) shouldBe Status.SEE_OTHER
 
-              redirectLocation(result) shouldBe expectedEndpoint
+              redirectLocation(result) shouldBe Some(expectedEndpoint)
             }
           }
           s"return ${Status.INTERNAL_SERVER_ERROR}" when {
             "taxYear parameter has an invalid format " in new SetupGET {
-              override val incomeSourceType: IncomeSourceType = incomeSourceType
-              override val mtdRole: MTDUserRole = mtdRole
+              override val incomeSourceType: IncomeSourceType = testIncomeSourceType
+              override val mtdRole: MTDUserRole = testMtdRole
               override val taxYear: String = invalidTaxYear
 
               setupMockSuccess(mtdRole)
@@ -149,8 +149,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR
             }
             "taxYear parameter doesn't match latency details " in new SetupGET {
-              override val incomeSourceType: IncomeSourceType = incomeSourceType
-              override val mtdRole: MTDUserRole = mtdRole
+              override val incomeSourceType: IncomeSourceType = testIncomeSourceType
+              override val mtdRole: MTDUserRole = testMtdRole
               override val taxYear: String = invalidTaxYearLatency
 
               setupMockSuccess(mtdRole)
@@ -166,8 +166,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR
             }
             "changeTo parameter has an invalid format " in new SetupGET {
-              override val incomeSourceType: IncomeSourceType = incomeSourceType
-              override val mtdRole: MTDUserRole = mtdRole
+              override val incomeSourceType: IncomeSourceType = testIncomeSourceType
+              override val mtdRole: MTDUserRole = testMtdRole
               override val changeTo: String = invalidChangeTo
 
               setupMockSuccess(mtdRole)
@@ -182,23 +182,22 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
               val result = action(fakeRequest)
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR
             }
-            "the given incomeSourceId cannot be found in the user's Sole Trader business income sources" in new SetupGET {
-              override val incomeSourceType: IncomeSourceType = incomeSourceType
-              override val mtdRole: MTDUserRole = mtdRole
+            if (testIncomeSourceType == SelfEmployment) {
+              "the given incomeSourceId cannot be found in the user's Sole Trader business income sources" in new SetupGET {
+                override val incomeSourceType: IncomeSourceType = testIncomeSourceType
+                override val mtdRole: MTDUserRole = testMtdRole
 
-              setupMockSuccess(mtdRole)
-              enable(IncomeSources)
-              mockBothPropertyBothBusinessWithLatency()
+                setupMockSuccess(mtdRole)
+                enable(IncomeSources)
+                mockBothPropertyBothBusinessWithLatency()
 
-              setupMockCreateSession(true)
-              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, incomeSourceType)))))
+                setupMockCreateSession(true)
+                setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, incomeSourceType)))))
 
-              setupMockSetMongoData(true)
-
-              val result = action(fakeRequest)
-              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+                val result = action(fakeRequest)
+                status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+              }
             }
-
           }
         }
       }
@@ -219,21 +218,21 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
     }
   }
 
-  Seq(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
-    mtdAllRoles.foreach { mtdRole =>
-      s"submit${if (mtdRole != MTDIndividual) "Agent"}($incomeSourceType)" when {
-        val fakeRequest = getFakeRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
-        s"the user is authenticated as s$mtdRole" should {
+  Seq(SelfEmployment, UkProperty, ForeignProperty).foreach { testIncomeSourceType =>
+    mtdAllRoles.foreach { testMtdRole =>
+      s"submit${if (testMtdRole != MTDIndividual) "Agent"}($testIncomeSourceType)" when {
+        val fakeRequest = getFakeRequestBasedOnMTDUserType(testMtdRole).withMethod("POST")
+        s"the user is authenticated as s$testMtdRole" should {
           s"return ${Status.SEE_OTHER} and redirect to the Manage Obligations page for a property" when {
             "the user's property reporting method is updated to annual" in new SetupPOST {
-              override val incomeSourceType: IncomeSourceType = incomeSourceType
-              override val mtdRole: MTDUserRole = mtdRole
+              override val incomeSourceType: IncomeSourceType = testIncomeSourceType
+              override val mtdRole: MTDUserRole = testMtdRole
 
               setupMockSuccess(mtdRole)
               enable(IncomeSources)
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
-              setupMockGetMongo(Right(Some(completedUIJourneySessionData(JourneyType(Manage, incomeSourceType)))))
+              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Manage, incomeSourceType)))))
               setupMockSetMongoData(true)
               val result = action(fakeRequest.withFormUrlEncodedBody(validTestForm))
               val expectedEndpoint = if (mtdRole == MTDIndividual) {
@@ -246,17 +245,17 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
 
               status(result) shouldBe Status.SEE_OTHER
               redirectLocation(result) shouldBe
-                expectedEndpoint
+                Some(expectedEndpoint)
             }
             "the user's property reporting method is updated to quarterly" in new SetupPOST {
-              override val incomeSourceType: IncomeSourceType = incomeSourceType
-              override val mtdRole: MTDUserRole = mtdRole
+              override val incomeSourceType: IncomeSourceType = testIncomeSourceType
+              override val mtdRole: MTDUserRole = testMtdRole
               override val changeTo: String = "quarterly"
               setupMockSuccess(mtdRole)
               enable(IncomeSources)
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
-              setupMockGetMongo(Right(Some(completedUIJourneySessionData(JourneyType(Manage, incomeSourceType)))))
+              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Manage, incomeSourceType)))))
               setupMockSetMongoData(true)
               val result = action(fakeRequest.withFormUrlEncodedBody(validTestForm))
               val expectedEndpoint = if (mtdRole == MTDIndividual) {
@@ -269,14 +268,14 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
 
               status(result) shouldBe Status.SEE_OTHER
               redirectLocation(result) shouldBe
-                expectedEndpoint
+                Some(expectedEndpoint)
             }
 
           }
           s"return ${Status.SEE_OTHER} and redirect to the home page" when {
             "the IncomeSources FS is disabled" in new SetupPOST {
-              override val incomeSourceType: IncomeSourceType = incomeSourceType
-              override val mtdRole: MTDUserRole = mtdRole
+              override val incomeSourceType: IncomeSourceType = testIncomeSourceType
+              override val mtdRole: MTDUserRole = testMtdRole
               setupMockSuccess(mtdRole)
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
@@ -291,19 +290,19 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
 
               status(result) shouldBe Status.SEE_OTHER
 
-              redirectLocation(result) shouldBe expectedEndpoint
+              redirectLocation(result) shouldBe Some(expectedEndpoint)
             }
           }
           s"return ${Status.INTERNAL_SERVER_ERROR} " when {
             "The taxYear parameter has an invalid Tax Year format" in new SetupPOST {
-              override val incomeSourceType: IncomeSourceType = incomeSourceType
-              override val mtdRole: MTDUserRole = mtdRole
+              override val incomeSourceType: IncomeSourceType = testIncomeSourceType
+              override val mtdRole: MTDUserRole = testMtdRole
               override val taxYear: String = invalidTaxYear
               setupMockSuccess(mtdRole)
               enable(IncomeSources)
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
-              setupMockGetMongo(Right(Some(completedUIJourneySessionData(JourneyType(Manage, incomeSourceType)))))
+              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Manage, incomeSourceType)))))
               setupMockSetMongoData(true)
               val result = action(fakeRequest.withFormUrlEncodedBody(validTestForm))
 
@@ -312,8 +311,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
           }
           s"return ${Status.INTERNAL_SERVER_ERROR} " when {
             "The taxYear parameter has an invalid ChangeTo format" in new SetupPOST {
-              override val incomeSourceType: IncomeSourceType = incomeSourceType
-              override val mtdRole: MTDUserRole = mtdRole
+              override val incomeSourceType: IncomeSourceType = testIncomeSourceType
+              override val mtdRole: MTDUserRole = testMtdRole
               override val changeTo: String = invalidChangeTo
               setupMockSuccess(mtdRole)
               enable(IncomeSources)
@@ -328,13 +327,13 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
           }
           s"return ${Status.BAD_REQUEST}" when {
             "the form is empty " in new SetupPOST {
-              override val incomeSourceType: IncomeSourceType = incomeSourceType
-              override val mtdRole: MTDUserRole = mtdRole
+              override val incomeSourceType: IncomeSourceType = testIncomeSourceType
+              override val mtdRole: MTDUserRole = testMtdRole
               setupMockSuccess(mtdRole)
               enable(IncomeSources)
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
-              setupMockGetMongo(Right(Some(completedUIJourneySessionData(JourneyType(Manage, incomeSourceType)))))
+              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Manage, incomeSourceType)))))
               setupMockSetMongoData(true)
               val result = action(fakeRequest.withFormUrlEncodedBody(invalidTestForm))
 

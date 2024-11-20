@@ -146,6 +146,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
 
     sessionService.getMongo(journeyType).flatMap {
       case Right(Some(sessionData)) =>
+        println(sessionData)
         val oldManageIncomeSourceSessionData = sessionData.manageIncomeSourceData.getOrElse(ManageIncomeSourceData())
         val updatedAddIncomeSourceSessionData = oldManageIncomeSourceSessionData.copy(reportingMethod = Some(reportingMethod.name), taxYear = Some(taxYearModel.endYear))
         val uiJourneySessionData: UIJourneySessionData = sessionData.copy(manageIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
