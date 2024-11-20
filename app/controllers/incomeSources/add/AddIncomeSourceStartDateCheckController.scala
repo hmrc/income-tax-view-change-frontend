@@ -253,7 +253,8 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
                             isChange: Boolean): String = {
 
     ((isAgent, isChange, incomeSourceType) match {
-      case (_, false, SelfEmployment) => routes.AddBusinessTradeController.show(isAgent, isChange)
+      case (true, false, SelfEmployment) => routes.AddBusinessTradeController.showAgent(isChange)
+      case (_, false, SelfEmployment) => routes.AddBusinessTradeController.show(isChange)
       case (_, false, _) => routes.IncomeSourcesAccountingMethodController.show(incomeSourceType, isAgent)
       case (false, _, _) => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
       case (_, _, _) => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)

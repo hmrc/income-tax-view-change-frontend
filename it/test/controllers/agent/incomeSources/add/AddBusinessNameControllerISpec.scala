@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.agent.manageBusinesses.add
+package controllers.agent.incomeSources.add
 
 import controllers.agent.ControllerISpecHelper
 import enums.IncomeSourceJourney.SelfEmployment
@@ -35,11 +35,11 @@ import scala.concurrent.ExecutionContext
 
 class AddBusinessNameControllerISpec extends ControllerISpecHelper {
 
-  val addBusinessStartDateUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = false).url
+  val addBusinessStartDateUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = false).url
   val incomeSourcesUrl: String = controllers.routes.HomeController.showAgent.url
 
   val formHint: String = messagesAPI("add-business-name.p1") + " " +
-    messagesAPI("add-business-name.p2", "'")
+    messagesAPI("add-business-name.p2")
   val continueButtonText: String = messagesAPI("base.continue")
   val testBusinessName: String = "Test Business"
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
@@ -48,14 +48,14 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
 
   def backUrl(isChange: Boolean): String = {
     if (isChange) {
-        controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
+        controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
     } else {
-      controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+      controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
     }
   }
 
-  val path = "/agents/manage-your-businesses/add-sole-trader/business-name"
-  val changePath = "/agents/manage-your-businesses/add-sole-trader/change-business-name"
+  val path = "/agents/income-sources/add/business-name"
+  val changePath = "/agents/income-sources/add/change-business-name"
 
   List(MTDPrimaryAgent, MTDSupportingAgent).foreach { case mtdUserRole =>
     s"GET $path" when {
@@ -208,8 +208,8 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
         val isSupportingAgent = mtdUserRole == MTDSupportingAgent
         val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, true)
         "is authenticated, with a valid agent and client delegated enrolment" should {
-          val expectedRedirectUrl = controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
-          s"303 SEE_OTHER and redirect to $expectedRedirectUrl" when {
+          val expectedUrl = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
+          s"303 SEE_OTHER and redirect to $expectedUrl" when {
             "the income sources is enabled" in {
               enable(IncomeSources)
               disable(NavBarFs)
@@ -225,7 +225,7 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
               val result = buildPOSTMTDPostClient(changePath, additionalCookies, formData).futureValue
               result should have(
                 httpStatus(SEE_OTHER),
-                redirectURI(expectedRedirectUrl)
+                redirectURI(expectedUrl)
               )
 
               sessionService.getMongoKeyTyped[String](businessNameField, journeyType).futureValue shouldBe Right(Some(testBusinessName))

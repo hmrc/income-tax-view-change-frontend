@@ -17,9 +17,9 @@
 package controllers.manageBusinesses.add
 
 import auth.MtdItUser
+import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.IncomeSourceJourney.{InitialPage, SelfEmployment}
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessNameForm
@@ -29,24 +29,23 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.SessionService
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.manageBusinesses.add.AddBusinessName
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFunctions,
+class AddBusinessNameController @Inject()(val authActions: AuthActions,
                                           val addBusinessView: AddBusinessName,
-                                          val itvcErrorHandler: ItvcErrorHandler,
-                                          val sessionService: SessionService,
-                                          auth: AuthenticatorPredicate)
+                                          val sessionService: SessionService)
                                          (implicit val appConfig: FrontendAppConfig,
-                                          implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                          implicit override val mcc: MessagesControllerComponents,
+                                          val itvcErrorHandler: ItvcErrorHandler,
+                                          val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                          val mcc: MessagesControllerComponents,
                                           val ec: ExecutionContext)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
+  extends FrontendController(mcc) with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
 
   private def getBackUrl(isAgent: Boolean, isChange: Boolean): String = {
     ((isAgent, isChange) match {
@@ -58,7 +57,12 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
   }
 
   private def getPostAction(isAgent: Boolean, isChange: Boolean): Call = {
-    routes.AddBusinessNameController.submit(isAgent, isChange)
+    if(isAgent) {
+      routes.AddBusinessNameController.submitAgent(isChange)
+    } else {
+      routes.AddBusinessNameController.submit(isChange)
+
+    }
     }
 
   private def getRedirect(isAgent: Boolean, isChange: Boolean): Call = {
@@ -69,11 +73,20 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
     }
   }
 
-  def show(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def show(isChange: Boolean): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
       handleRequest(
-        isAgent = isAgent,
-        backUrl = getBackUrl(isAgent, isChange),
+        isAgent = false,
+        backUrl = getBackUrl(false, isChange),
+        isChange = isChange
+      )
+  }
+
+  def showAgent(isChange: Boolean): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
+    implicit user =>
+      handleRequest(
+        isAgent = true,
+        backUrl = getBackUrl(true, isChange),
         isChange = isChange
       )
   }
@@ -96,12 +109,17 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
       errorHandler.showInternalServerError()
   }
 
-  def submit(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def submit(isChange: Boolean): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit request =>
-      handleSubmitRequest(isAgent, isChange)
+      handleSubmitRequest(false, isChange)(implicitly, itvcErrorHandler)
   }
 
-  def handleSubmitRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+  def submitAgent(isChange: Boolean): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
+    implicit request =>
+      handleSubmitRequest(true, isChange)(implicitly, itvcErrorHandlerAgent)
+  }
+
+  def handleSubmitRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
     withSessionData(JourneyType(Add, SelfEmployment), InitialPage) { sessionData =>
 
       val businessTradeOpt: Option[String] = sessionData.addIncomeSourceData.flatMap(_.businessTrade)
@@ -147,7 +165,6 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
   case ex =>
     Logger("application")
       .error(s"${ex.getMessage} - ${ex.getCause}")
-    val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
     errorHandler.showInternalServerError()
 }
 
