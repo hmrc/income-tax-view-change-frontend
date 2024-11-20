@@ -123,7 +123,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
                   hasLpiWithDunningLock: Boolean = false,
                   dunningLock: Boolean = false,
                   migrationYear: Int = fixedDate.getYear - 1,
-                  codingOutEnabled: Boolean = true,
                   reviewAndReconcileEnabled: Boolean = false,
                   adjustPaymentsOnAccountFSEnabled: Boolean = false,
                   claimToAdjustViewModel: Option[WYOClaimToAdjustViewModel] = None
@@ -151,7 +150,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       backUrl = "testBackURL",
       utr = Some("1234567890"),
       dunningLock = dunningLock,
-      codingOutEnabled = codingOutEnabled,
       reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       creditAndRefundEnabled = true,
       claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel))(FakeRequest(), individualUser, implicitly, dateService)
@@ -172,7 +170,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   class AgentTestSetup(charges: WhatYouOweChargesList,
                        currentTaxYear: Int = fixedDate.getYear,
                        migrationYear: Int = fixedDate.getYear - 1,
-                       codingOutEnabled: Boolean = true,
                        reviewAndReconcileEnabled: Boolean = false,
                        dunningLock: Boolean = false,
                        hasLpiWithDunningLock: Boolean = false,
@@ -209,7 +206,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       backUrl = "testBackURL",
       utr = Some("1234567890"),
       dunningLock = dunningLock,
-      codingOutEnabled = codingOutEnabled,
       reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       creditAndRefundEnabled = true,
       isAgent = true,
@@ -1121,13 +1117,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     }
 
     "codingOut is enabled" should {
-      "have coding out message displayed at the bottom of the page" in new TestSetup(charges = whatYouOweDataWithCodingOutNics2, codingOutEnabled = true) {
+      "have coding out message displayed at the bottom of the page" in new TestSetup(charges = whatYouOweDataWithCodingOutNics2) {
         Option(pageDocument.getElementById("coding-out-summary-link")).isDefined shouldBe true
         pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe
           "/report-quarterly/income-and-expenses/view/tax-years/2021/charge?id=CODINGOUT02"
         pageDocument.getElementById("coding-out-notice").text().contains(codingOutAmount.toString)
       }
-      "have a class 2 Nics overdue entry" in new TestSetup(charges = whatYouOweDataWithCodingOutNics2, codingOutEnabled = true) {
+      "have a class 2 Nics overdue entry" in new TestSetup(charges = whatYouOweDataWithCodingOutNics2) {
         Option(pageDocument.getElementById("due-0")).isDefined shouldBe true
         pageDocument.getElementById("due-0").text().contains(CODING_OUT_CLASS2_NICS) shouldBe true
         pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
@@ -1144,7 +1140,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
       }
 
-      "have a cancelled paye self assessment entry" in new TestSetup(charges = whatYouOweDataWithCancelledPayeSa, codingOutEnabled = true) {
+      "have a cancelled paye self assessment entry" in new TestSetup(charges = whatYouOweDataWithCancelledPayeSa) {
         findElementById("coding-out-notice") shouldBe None
         pageDocument.getElementById("due-0").text().contains(cancelledPayeSelfAssessment) shouldBe true
         pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
@@ -1152,64 +1148,12 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
     }
 
-    "codingOut is disabled" should {
-      "have no coding out message displayed" in new TestSetup(charges = whatYouOweDataWithCodingOutNics2, codingOutEnabled = false) {
-        findElementById("coding-out-notice") shouldBe None
-      }
-      "have a balancing charge overdue entry" in new TestSetup(charges = whatYouOweDataWithCodingOutNics2, codingOutEnabled = false) {
-        pageDocument.select("#due-0 a").get(0).text() shouldBe "Balancing payment 1"
-        pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
-      }
-
-      "have a cancelled paye self assessment entry" in new TestSetup(charges = whatYouOweDataWithCancelledPayeSa, codingOutEnabled = false) {
-        Option(pageDocument.getElementById("coding-out-notice")).isDefined shouldBe false
-        Option(pageDocument.getElementById("due-0")).isDefined shouldBe true
-        //        pageDocument.getElementById("due-0").text().contains(cancelledPayeSelfAssessment) shouldBe true
-        pageDocument.getElementById("due-0").text() shouldBe "25 Aug 2021 OVERDUE Balancing payment 1 2020 to 2021 Tax year £12.34"
-        pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
-        findElementById("coding-out-summary-link") shouldBe None
-      }
-
-      "show only SA note and payment bullet points" in new TestSetup(charges = whatYouOweDataWithPayeSA, codingOutEnabled = false) {
-        pageDocument.title() shouldBe whatYouOweTitle
-        pageDocument.selectFirst("h1").text shouldBe whatYouOweHeading
-        findElementById("coding-out-notice") shouldBe None
-        pageDocument.getElementById("sa-note-migrated").text shouldBe saNote
-        pageDocument.getElementById("outstanding-charges-note-migrated").text shouldBe osChargesNote
-        pageDocument.getElementById("payments-made").text shouldBe paymentsMade
-        val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
-        paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
-        paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-        pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
-      }
-
-
-      "should have payment processing bullets" in new TestSetup(charges = whatYouOweDataWithCodingOutNics2, codingOutEnabled = false) {
-
-        pageDocument.getElementById("payments-made").text shouldBe paymentsMade
-        val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
-        paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
-        paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-        pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
-        pageDocument.getElementById("sa-note-migrated").text shouldBe saNote
-
-      }
-    }
-
-    "When codingOut is enabled - At crystallization, the user has the coding out requested amount fully collected" should {
-      "only show coding out content under header" in new TestSetup(charges = whatYouOweDataWithCodingOutFullyCollected, codingOutEnabled = true) {
+    "At crystallization, the user has the coding out requested amount fully collected" should {
+      "only show coding out content under header" in new TestSetup(charges = whatYouOweDataWithCodingOutFullyCollected) {
         pageDocument.getElementById("coding-out-notice").text() shouldBe codingOutNoticeFullyCollected
         pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe
           "/report-quarterly/income-and-expenses/view/tax-years/2021/charge?id=CODINGOUT02"
         pageDocument.getElementById("coding-out-notice").text().contains(codingOutAmount.toString)
-      }
-      "show no payments due content when coding out is disabled" in new TestSetup(charges = noChargesModel, codingOutEnabled = false) {
-        pageDocument.title() shouldBe whatYouOweTitle
-        pageDocument.selectFirst("h1").text shouldBe whatYouOweHeading
-        pageDocument.getElementById("no-payments-due").text shouldBe noPaymentsDue
-        pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote)
-        pageDocument.getElementById("outstanding-charges-note-migrated").text shouldBe osChargesNote
-
       }
     }
   }

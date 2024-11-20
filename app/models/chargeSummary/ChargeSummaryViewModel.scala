@@ -32,7 +32,6 @@ case class ChargeSummaryViewModel(
                                    payments: FinancialDetailsModel,
                                    chargeHistoryEnabled: Boolean,
                                    latePaymentInterestCharge: Boolean,
-                                   codingOutEnabled: Boolean,
                                    reviewAndReconcileEnabled: Boolean,
                                    reviewAndReconcileCredit: Option[ChargeItem],
                                    isAgent: Boolean = false,
@@ -70,21 +69,21 @@ case class ChargeSummaryViewModel(
   val messagePrefix = if(latePaymentInterestCharge)"lpi."
   else ""
   val pageTitle: String =
-    s"chargeSummary.$messagePrefix${chargeItem.getChargeTypeKey(codingOutEnabled, reviewAndReconcileEnabled)}"
+    s"chargeSummary.$messagePrefix${chargeItem.getChargeTypeKey(reviewAndReconcileEnabled)}"
 
   val isBalancingChargeZero: Boolean = chargeItem.transactionType match {
-    case _ if codingOutEnabled && chargeItem.subTransactionType.isDefined => false
+    case _ if chargeItem.subTransactionType.isDefined => false
     case BalancingCharge if chargeItem.originalAmount == 0 => true
     case _ => false
   }
 
   val codingOutEnabledAndIsClass2NicWithNoIsPayeSelfAssessment: Boolean =
-    codingOutEnabled && chargeItem.subTransactionType.contains(Nics2)
+    chargeItem.subTransactionType.contains(Nics2)
 
   val chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZeroAndIsNotCredit: Boolean =
     (chargeHistoryEnabled || paymentAllocations.nonEmpty) && !isBalancingChargeZero && !isCredit
 
-  val noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment: Boolean = !latePaymentInterestCharge && !(codingOutEnabled && chargeItem.subTransactionType.contains(Accepted))
+  val noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment: Boolean = !latePaymentInterestCharge && !chargeItem.subTransactionType.contains(Accepted)
 
 }
 
