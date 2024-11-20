@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.agent.manageBusinesses.cease
+package controllers.agent.incomeSources.cease
 
 import audit.models.CeaseIncomeSourceAuditModel
 import auth.MtdItUser
@@ -25,7 +25,7 @@ import enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub, MTDAgentAuthStub}
 import models.admin.{IncomeSources, NavBarFs}
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.{CeaseIncomeSourceData, UIJourneySessionData}
+import models.incomeSourceDetails.{CeaseIncomeSourceData, IncomeSourceDetailsModel, UIJourneySessionData}
 import models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
@@ -46,39 +46,36 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
   val changeLink = "Change"
   val testBusinessName = "business"
   val timestamp = "2023-01-31T09:26:17Z"
-  val businessAddressAsString = "8 Test New Court New Town New City NE12 6CI United Kingdom"
 
-  val selfEmploymentPath = "/agents/manage-your-businesses/cease/business-check-answers"
-  val ukPropertyPath = "/agents/manage-your-businesses/cease/uk-property-check-answers"
-  val foreignPropertyPath = "/agents/manage-your-businesses/cease/foreign-property-check-answers"
+  val selfEmploymentPath = "/agents/income-sources/cease/business-check-details"
+  val ukPropertyPath = "/agents/income-sources/cease/uk-property-check-details"
+  val foreignPropertyPath = "/agents/income-sources/cease/foreign-property-check-details"
 
-  val businessAddressLabel = messagesAPI("cease-check-answers.address")
-  val pageTitleMsgKey = messagesAPI("cease-check-answers.title")
-  val redirectUriSE = controllers.manageBusinesses.cease.routes.IncomeSourceCeasedObligationsController.showAgent(SelfEmployment).url
-  val formActionSE = controllers.manageBusinesses.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(SelfEmployment).url
+  val showCheckCeaseBusinessDetailsControllerUrl = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(SelfEmployment).url
+  val formActionSE = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(SelfEmployment).url
 
+  val businessAddressLabel = messagesAPI("incomeSources.ceaseBusiness.checkDetails.businessAddress")
+  val pageTitleMsgKey = messagesAPI("incomeSources.ceaseBusiness.checkDetails.heading")
+  val unknown: String = messagesAPI("incomeSources.ceaseBusiness.checkDetails.unknown")
 
-  val pageTitleMsgKeyUK = messagesAPI("cease-check-answers.title")
-  val redirectUriUK = controllers.manageBusinesses.cease.routes.IncomeSourceCeasedObligationsController.showAgent(UkProperty).url
-  val formActionUK = controllers.manageBusinesses.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(UkProperty).url
+  val redirectUriSE = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(SelfEmployment).url
 
+  val formActionUK = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(UkProperty).url
+  val pageTitleMsgKeyUK = messagesAPI("incomeSources.ceaseUKProperty.checkDetails.heading")
+  val redirectUriUK = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(UkProperty).url
 
+  val formActionFP = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(ForeignProperty).url
+  val redirectUriFP = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(ForeignProperty).url
 
-  val pageTitleMsgKeyFP = messagesAPI("cease-check-answers.title")
-  val redirectUriFP = controllers.manageBusinesses.cease.routes.IncomeSourceCeasedObligationsController.showAgent(ForeignProperty).url
-  val formActionFP = controllers.manageBusinesses.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(ForeignProperty).url
-
-
+  def testUser(incomeSourceDetails: IncomeSourceDetailsModel): MtdItUser[_] = MtdItUser(
+    testMtditid, testNino, None, incomeSourceDetails,
+    None, Some("1234567890"), Some("12345-credId"), Some(Agent), Some("1")
+  )(FakeRequest())
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     await(sessionService.deleteSession(Cease))
   }
-
-  val testUser: MtdItUser[_] = MtdItUser(
-    testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
-    None, Some("1234567890"), None, Some(Agent), None
-  )(FakeRequest())
 
   s"GET $selfEmploymentPath" when {
     List(MTDPrimaryAgent, MTDSupportingAgent).foreach { case mtdUserRole =>
@@ -105,18 +102,12 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
               result should have(
                 httpStatus(OK),
                 pageTitleAgent(pageTitleMsgKey),
-                elementTextBySelectorList(".govuk-summary-list__key", "dt:nth-of-type(1)")(messagesAPI("cease-check-answers.cease-date")),
+                elementTextBySelectorList(".govuk-summary-list__key", "dt:nth-of-type(1)")(messagesAPI("incomeSources.ceaseBusiness.checkDetails.dateStopped")),
                 elementTextBySelectorList(".govuk-summary-list__value", "dd:nth-of-type(1)")(testLongEndDate2022),
                 elementTextByID("change")(changeLink),
 
-                elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(2) dt:nth-of-type(1)")(messagesAPI("cease-check-answers.business-name")),
+                elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(2) dt:nth-of-type(1)")(messagesAPI("incomeSources.ceaseBusiness.checkDetails.businessName")),
                 elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(2) dd:nth-of-type(1)")(testBusinessName),
-
-                elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(3) dt:nth-of-type(1)")(messagesAPI("cease-check-answers.trade")),
-                elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(3) dd:nth-of-type(1)")(testIncomeSource),
-
-                elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(4) dt:nth-of-type(1)")(businessAddressLabel),
-                elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(4) dd:nth-of-type(1)")(businessAddressAsString),
                 elementAttributeBySelector("form", "action")(formActionSE)
               )
             }
@@ -143,13 +134,11 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
               )
             }
           }
-
         }
         testAuthFailuresForMTDAgent(selfEmploymentPath, isSupportingAgent)
       }
     }
   }
-
 
   s"GET $ukPropertyPath" when {
     List(MTDPrimaryAgent, MTDSupportingAgent).foreach { case mtdUserRole =>
@@ -205,7 +194,6 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
               )
             }
           }
-
         }
         testAuthFailuresForMTDAgent(ukPropertyPath, isSupportingAgent)
       }
@@ -227,6 +215,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
                 status = OK,
                 response = foreignPropertyOnlyResponse
               )
+
               await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP", ceaseIncomeSourceData =
                 Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
 
@@ -235,8 +224,8 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
 
               result should have(
                 httpStatus(OK),
-                pageTitleAgent(pageTitleMsgKeyFP),
-                elementTextBySelectorList(".govuk-summary-list__key", "dt:nth-of-type(1)")(messagesAPI("cease-check-answers.cease-date")),
+                pageTitleAgent(pageTitleMsgKeyUK),
+                elementTextBySelectorList(".govuk-summary-list__key", "dt:nth-of-type(1)")(messagesAPI("incomeSources.ceaseForeignProperty.checkDetails.dateStopped")),
                 elementTextBySelectorList(".govuk-summary-list__value", "dd:nth-of-type(1)")(testLongEndDate2022),
                 elementTextByID("change")(changeLink),
                 elementAttributeBySelector("form", "action")(formActionFP)
@@ -252,6 +241,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
                 status = OK,
                 response = foreignPropertyOnlyResponse
               )
+
               await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP", ceaseIncomeSourceData =
                 Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
 
@@ -294,7 +284,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
                 httpStatus(SEE_OTHER),
                 redirectURI(redirectUriSE),
               )
-              AuditStub.verifyAuditContainsDetail(CeaseIncomeSourceAuditModel(SelfEmployment, testEndDate2022, mkIncomeSourceId(testSelfEmploymentId), None)(testUser, hc).detail)
+              AuditStub.verifyAuditContainsDetail(CeaseIncomeSourceAuditModel(SelfEmployment, testEndDate2022, mkIncomeSourceId(testSelfEmploymentId), None)(testUser(businessOnlyResponse), hc).detail)
             }
           }
           testAuthFailuresForMTDAgent(selfEmploymentPath, isSupportingAgent)
@@ -309,7 +299,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
         val isSupportingAgent = mtdUserRole == MTDSupportingAgent
         val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, true)
         "is authenticated, with a valid agent and client delegated enrolment" should {
-          s"redirect to $redirectUriSE" when {
+          s"redirect to $redirectUriUK" when {
             "Income source is enabled" in {
               enable(IncomeSources)
               disable(NavBarFs)
@@ -327,7 +317,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
                 httpStatus(SEE_OTHER),
                 redirectURI(redirectUriUK),
               )
-              AuditStub.verifyAuditContainsDetail(CeaseIncomeSourceAuditModel(UkProperty, testEndDate2022, mkIncomeSourceId(testPropertyIncomeId), None)(testUser, hc).detail)
+              AuditStub.verifyAuditContainsDetail(CeaseIncomeSourceAuditModel(UkProperty, testEndDate2022, mkIncomeSourceId(testPropertyIncomeId), None)(testUser(ukPropertyOnlyResponse), hc).detail)
             }
           }
           testAuthFailuresForMTDAgent(ukPropertyPath, isSupportingAgent)
@@ -342,7 +332,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
         val isSupportingAgent = mtdUserRole == MTDSupportingAgent
         val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, true)
         "is authenticated, with a valid agent and client delegated enrolment" should {
-          s"redirect to $redirectUriSE" when {
+          s"redirect to $redirectUriFP" when {
             "Income source is enabled" in {
               enable(IncomeSources)
               disable(NavBarFs)
@@ -360,7 +350,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
                 httpStatus(SEE_OTHER),
                 redirectURI(redirectUriFP),
               )
-              AuditStub.verifyAuditContainsDetail(CeaseIncomeSourceAuditModel(ForeignProperty, testEndDate2022, mkIncomeSourceId(testPropertyIncomeId), None)(testUser, hc).detail)
+              AuditStub.verifyAuditContainsDetail(CeaseIncomeSourceAuditModel(ForeignProperty, testEndDate2022, mkIncomeSourceId(testPropertyIncomeId), None)(testUser(foreignPropertyOnlyResponse), hc).detail)
             }
           }
           testAuthFailuresForMTDAgent(foreignPropertyPath, isSupportingAgent)
@@ -368,4 +358,5 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
       }
     }
   }
+
 }
