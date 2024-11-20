@@ -787,39 +787,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         latePaymentInterestCharge = true) {
         document.select("h1").text() shouldBe balancingChargeInterestHeading(2019)
       }
-
-//       Commented these 4 out as history. They only pass for the old codedOutEnabled false journey
-//      "display only the charge creation item for a new balancing charge late interest charge" in new TestSetup(
-//        chargeItem = baseBalancingAccepted.copy(outstandingAmount = 0),
-//        latePaymentInterestCharge = true
-//      ) {
-//        document.select("tbody tr").size() shouldBe 1
-//        document.select("tbody tr td:nth-child(2)").text() shouldBe balancingChargeInterestCreated
-//      }
-//
-//      "display only the charge creation item when no history found for a new balancing charge" in new TestSetup(
-//        chargeItem = baseBalancingAccepted.copy(outstandingAmount = 0.0),
-//      ) {
-//        document.select("tbody tr").size() shouldBe 1
-//        document.select("tbody tr td:nth-child(2)").text() shouldBe balancingChargeCreated
-//      }
-//
-//      "display the correct message for an amended charge for a balancing charge" in new TestSetup(
-//        baseBalancingAccepted.copy(outstandingAmount = 0.0),
-//        adjustmentHistory = adjustmentHistoryWithBalancingCharge
-//      ) {
-//        document.select("tbody tr").size() shouldBe 2
-//        document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe balancingChargeAmended
-//      }
-//
-//      "display the correct message for a customer requested change for a balancing charge" in new TestSetup(
-//        baseBalancingAccepted.copy(outstandingAmount = 0.0),
-//        adjustmentHistory = customerRequestAdjustmentHistory
-//      ) {
-//        document.select("tbody tr").size() shouldBe 2
-//        document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe balancingChargeRequest
-//      }
-
+      
       "display balancing charge due date as N/A and hide sections - Payment Breakdown," +
         "Any payments you make, Payment History when balancing charge is 0" in new TestSetup(
           baseBalancing.copy(
