@@ -561,13 +561,13 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       }
     }
 
-    "charge is a POA 1 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PaymentOnAccountOneReviewAndReconcile), reviewAndReconcileEnabled = true) {
+    "charge is a POA 1 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PaymentOnAccountOneReviewAndReconcileDebit), reviewAndReconcileEnabled = true) {
       document.select("h1").text() shouldBe poa1ReconcileHeading(2018)
     }
-    "charge is a POA 2 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PaymentOnAccountTwoReviewAndReconcile), reviewAndReconcileEnabled = true) {
+    "charge is a POA 2 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PaymentOnAccountTwoReviewAndReconcileDebit), reviewAndReconcileEnabled = true) {
       document.select("h1").text() shouldBe poa2ReconcileHeading(2018)
     }
-    "charge is interest for a POA 1 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PaymentOnAccountOneReviewAndReconcile), reviewAndReconcileEnabled = true, latePaymentInterestCharge = true) {
+    "charge is interest for a POA 1 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PaymentOnAccountOneReviewAndReconcileDebit), reviewAndReconcileEnabled = true, latePaymentInterestCharge = true) {
       document.select("h1").text() shouldBe poa1ReconcileInterestHeading(2018)
 
       document.selectById("poa1-extra-charge-p1").text() shouldBe poa1ReconciliationInterestP1
@@ -584,7 +584,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       document.select("tbody tr td:nth-child(2)").text() shouldBe hmrcCreated
       document.select("tbody tr td:nth-child(3)").text() shouldBe "£100.00"
     }
-    "charge is interest for a POA 2 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PaymentOnAccountTwoReviewAndReconcile), reviewAndReconcileEnabled = true, latePaymentInterestCharge = true) {
+    "charge is interest for a POA 2 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PaymentOnAccountTwoReviewAndReconcileDebit), reviewAndReconcileEnabled = true, latePaymentInterestCharge = true) {
       document.select("h1").text() shouldBe poa2ReconcileInterestHeading(2018)
 
       document.selectById("poa2-extra-charge-p1").text() shouldBe poa2ReconciliationInterestP1

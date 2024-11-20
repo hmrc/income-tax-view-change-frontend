@@ -22,14 +22,13 @@ import scala.util.{Failure, Success, Try}
 
 trait TransactionUtils {
 
-  def getChargeItemOpt(codingOutEnabled: Boolean, reviewAndReconcileEnabled: Boolean)
+  def getChargeItemOpt(codingOutEnabled: Boolean)
                       (financialDetails: List[FinancialDetail])
                       (documentDetail: DocumentDetail): Option[ChargeItem] = {
     Try(ChargeItem.fromDocumentPair(
       documentDetail,
       financialDetails,
-      codingOutEnabled,
-      reviewAndReconcileEnabled)
+      codingOutEnabled)
     ) match {
       case Failure(exception) =>
         Logger("application").warn(exception.getMessage)

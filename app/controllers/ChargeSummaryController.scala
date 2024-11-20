@@ -131,8 +131,7 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
     val chargeItem = ChargeItem.fromDocumentPair(
       documentDetailWithDueDate.documentDetail,
       financialDetailsForCharge,
-      codingOut = true,
-      reviewAndReconcile = isEnabledFromConfig(ReviewAndReconcilePoa))
+      codingOut = true)
 
     val chargeReference: Option[String] = financialDetailsForCharge.headOption match {
       case Some(value) => value.chargeReference
@@ -207,7 +206,7 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
   }
 
   private def checkForPoaExtraChargeLink(chargeDetailsForTaxYear: FinancialDetailsModel, documentDetailWithDueDate: DocumentDetailWithDueDate, isAgent: Boolean)(implicit user: MtdItUser[_]): Option[String] = {
-    val chargeItem: Option[ChargeItem] = getChargeItemOpt(codingOutEnabled = true, reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa))(
+    val chargeItem: Option[ChargeItem] = getChargeItemOpt(codingOutEnabled = true)(
       chargeDetailsForTaxYear.financialDetails)(documentDetailWithDueDate.documentDetail)
 
    chargeItem match {

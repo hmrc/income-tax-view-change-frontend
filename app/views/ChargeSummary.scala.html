@@ -18,7 +18,7 @@
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import models.financialDetails.ChargeType
 @import models.chargeSummary.ChargeSummaryViewModel
-@import models.financialDetails.{Accepted, BalancingCharge, Cancelled, MfaDebitCharge, PaymentOnAccountOne, PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountOneReviewAndReconcileCredit, PaymentOnAccountTwo, PaymentOnAccountTwoReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcileCredit, TransactionType}
+@import models.financialDetails.{Accepted, BalancingCharge, Cancelled, MfaDebitCharge, PaymentOnAccountOne, PaymentOnAccountOneReviewAndReconcileDebit, PaymentOnAccountOneReviewAndReconcileCredit, PaymentOnAccountTwo, PaymentOnAccountTwoReviewAndReconcileDebit, PaymentOnAccountTwoReviewAndReconcileCredit, TransactionType}
 @import services.DateServiceInterface
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
@@ -178,18 +178,18 @@
 }
 
 @getExplanationContent = @{(viewModel.chargeItem.transactionType, viewModel.chargeItem.subTransactionType) match {
-    case (MfaDebitCharge, _)                                                                     => hmrcAdjustmentExplanation
-    case (PaymentOnAccountOneReviewAndReconcile, _)  if !viewModel.latePaymentInterestCharge           => reviewAndReconcilePoaOneDebitExplanation
-    case (PaymentOnAccountTwoReviewAndReconcile, _)  if !viewModel.latePaymentInterestCharge           => reviewAndReconcilePoaTwoDebitExplanation
-    case (PaymentOnAccountOneReviewAndReconcile, _)                                              => getPoa1ExtraChargeInterestExplanationContent
-    case (PaymentOnAccountTwoReviewAndReconcile, _)                                              => getPoa2ExtraChargeInterestExplanationContent
-    case (PaymentOnAccountOne | PaymentOnAccountTwo, _) if !viewModel.latePaymentInterestCharge  => paymentOnAccountExplanation
-    case (PaymentOnAccountOne | PaymentOnAccountTwo, _)                                          => getLpiPoaExplanationContent
-    case (PaymentOnAccountOneReviewAndReconcileCredit, _)                                        => reviewAndReconcilePoaCreditExplanation(PaymentOnAccountOne)
-    case (PaymentOnAccountTwoReviewAndReconcileCredit, _)                                        => reviewAndReconcilePoaCreditExplanation(PaymentOnAccountTwo)
-    case (BalancingCharge, None) if !viewModel.latePaymentInterestCharge                         => balancingChargeExplanation
-    case (BalancingCharge, None)                                                                 => getBalancingPaymentsExplanationContent
-    case _                                                                                       =>
+    case (MfaDebitCharge, _)                                                                                => hmrcAdjustmentExplanation
+    case (PaymentOnAccountOneReviewAndReconcileDebit, _)  if !viewModel.latePaymentInterestCharge           => reviewAndReconcilePoaOneDebitExplanation
+    case (PaymentOnAccountTwoReviewAndReconcileDebit, _)  if !viewModel.latePaymentInterestCharge           => reviewAndReconcilePoaTwoDebitExplanation
+    case (PaymentOnAccountOneReviewAndReconcileDebit, _)                                                    => getPoa1ExtraChargeInterestExplanationContent
+    case (PaymentOnAccountTwoReviewAndReconcileDebit, _)                                                    => getPoa2ExtraChargeInterestExplanationContent
+    case (PaymentOnAccountOne | PaymentOnAccountTwo, _) if !viewModel.latePaymentInterestCharge             => paymentOnAccountExplanation
+    case (PaymentOnAccountOne | PaymentOnAccountTwo, _)                                                     => getLpiPoaExplanationContent
+    case (PaymentOnAccountOneReviewAndReconcileCredit, _)                                                   => reviewAndReconcilePoaCreditExplanation(PaymentOnAccountOne)
+    case (PaymentOnAccountTwoReviewAndReconcileCredit, _)                                                   => reviewAndReconcilePoaCreditExplanation(PaymentOnAccountTwo)
+    case (BalancingCharge, None) if !viewModel.latePaymentInterestCharge                                    => balancingChargeExplanation
+    case (BalancingCharge, None)                                                                            => getBalancingPaymentsExplanationContent
+    case _                                                                                                  =>
 }
 }
 
@@ -266,7 +266,7 @@
     </h1>
 
 
-    @if(Seq(PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile).contains(viewModel.chargeItem.transactionType) && !viewModel.latePaymentInterestCharge) {
+    @if(Seq(PaymentOnAccountOneReviewAndReconcileDebit, PaymentOnAccountTwoReviewAndReconcileDebit).contains(viewModel.chargeItem.transactionType) && !viewModel.latePaymentInterestCharge) {
         @govukWarningText(WarningText(content = Text(messages("chargeSummary.reviewAndReconcilePoa.warning"))))
     }
 

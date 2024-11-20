@@ -88,8 +88,7 @@ class ChargeHistoryService @Inject()(chargeHistoryConnector: ChargeHistoryConnec
       ChargeItem.fromDocumentPair(
         documentDetailForRarCredit,
         List(financialDetailForRarCredit),
-        codingOut = true,
-        reviewAndReconcileEnabled
+        codingOut = true
       )
     }
   }

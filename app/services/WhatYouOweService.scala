@@ -41,8 +41,8 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
   val validChargeTypeCondition: ChargeItem => Boolean = chargeItem => {
     (chargeItem.transactionType, chargeItem.subTransactionType) match {
       case (_, Some(Nics2)) => true
-      case (PaymentOnAccountOne | PaymentOnAccountTwo | PaymentOnAccountOneReviewAndReconcile
-            | PaymentOnAccountTwoReviewAndReconcile | BalancingCharge | MfaDebitCharge, _) => true
+      case (PaymentOnAccountOne | PaymentOnAccountTwo | PaymentOnAccountOneReviewAndReconcileDebit
+            | PaymentOnAccountTwoReviewAndReconcileDebit | BalancingCharge | MfaDebitCharge, _) => true
       case (_, _) => false
     }
   }
@@ -71,7 +71,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
           .map(_.balanceDetails).getOrElse(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None))
         val codedOutChargeItem = if (isCodingOutEnabled) {
 
-          def chargeItemf: DocumentDetail => Option[ChargeItem] = getChargeItemOpt(isCodingOutEnabled, isReviewAndReconciledEnabled)(financialDetailsModelList
+          def chargeItemf: DocumentDetail => Option[ChargeItem] = getChargeItemOpt(isCodingOutEnabled)(financialDetailsModelList
               .flatMap(_.financialDetails))(_)
 
           financialDetailsModelList.flatMap(_.documentDetails)
@@ -107,21 +107,22 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
   }
 
   private def getFilteredChargesList(financialDetailsList: List[FinancialDetailsModel],
-                                     isCodingOutEnabled: Boolean, isReviewAndReconciled: Boolean, isFilterCodedOutPoasEnabled: Boolean)
+                                     isCodingOutEnabled: Boolean, isReviewAndReconcileEnabled: Boolean, isFilterCodedOutPoasEnabled: Boolean)
                                     (implicit user: MtdItUser[_]): List[ChargeItem] = {
 
     def getChargeItem(financialDetails: List[FinancialDetail]): DocumentDetail => Option[ChargeItem] =
       getChargeItemOpt(
-        codingOutEnabled = isCodingOutEnabled,
-        reviewAndReconcileEnabled = isReviewAndReconciled
+        codingOutEnabled = isCodingOutEnabled
       )(financialDetails)
 
     financialDetailsList
       .flatMap(financialDetails =>  {
-        financialDetails.getAllDocumentDetailsWithDueDates(isCodingOutEnabled)
+        financialDetails
+          .getAllDocumentDetailsWithDueDates(isCodingOutEnabled)
           .flatMap(dd => getChargeItem(financialDetails.financialDetails)(dd.documentDetail))})
       .filter(validChargeTypeCondition)
       .filterNot(_.subTransactionType.contains(Accepted))
+      .filterNot(_.isReviewAndReconcileCharge && !isReviewAndReconcileEnabled)
       .filter(_.remainingToPayByChargeOrInterest > 0)
       .filter(_.notCodedOutPoa(isFilterCodedOutPoasEnabled))
       .sortBy(_.dueDate.get)

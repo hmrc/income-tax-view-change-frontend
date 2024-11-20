@@ -56,8 +56,8 @@ trait TransactionItem {
       case (BalancingCharge, Some(Accepted)) if codedOutEnabled => "codingOut.text"
       case (BalancingCharge, Some(Cancelled)) if codedOutEnabled => "cancelledPayeSelfAssessment.text"
       case (BalancingCharge, _) => "balancingCharge.text"
-      case (PaymentOnAccountOneReviewAndReconcile, _) if reviewAndReconcileEnabled => "reviewAndReconcilePoa1.text"
-      case (PaymentOnAccountTwoReviewAndReconcile, _) if reviewAndReconcileEnabled => "reviewAndReconcilePoa2.text"
+      case (PaymentOnAccountOneReviewAndReconcileDebit, _) if reviewAndReconcileEnabled => "reviewAndReconcilePoa1.text"
+      case (PaymentOnAccountTwoReviewAndReconcileDebit, _) if reviewAndReconcileEnabled => "reviewAndReconcilePoa2.text"
       case (PaymentOnAccountOneReviewAndReconcileCredit, _) if reviewAndReconcileEnabled => "reviewAndReconcilePoa1Credit.text"
       case (PaymentOnAccountTwoReviewAndReconcileCredit, _) if reviewAndReconcileEnabled => "reviewAndReconcilePoa2Credit.text"
       case error =>

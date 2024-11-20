@@ -163,8 +163,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
       case financialDetails@FinancialDetailsModel(_, documentDetails, _) =>
 
         val getChargeItem: DocumentDetail => Option[ChargeItem] = getChargeItemOpt(
-          codingOutEnabled = true,
-          reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa)
+          codingOutEnabled = true
         )(
           financialDetails = financialDetails.financialDetails
         )
@@ -185,7 +184,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
             .filterNot(_.originalAmount < 0)
             .filter(_.notCodedOutPoa(isEnabled(FilterCodedOutPoas)))
             .filter(ChargeItem.filterAllowedCharges(isEnabled(ReviewAndReconcilePoa),
-              PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile))
+              PaymentOnAccountOneReviewAndReconcileDebit, PaymentOnAccountTwoReviewAndReconcileDebit))
         }
 
         val chargeItemsLpi: List[TaxYearSummaryChargeItem] = {

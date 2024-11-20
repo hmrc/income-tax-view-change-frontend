@@ -372,11 +372,11 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
       "relevant FS is disabled" in {
         val chargesListWithRandR: List[ChargeItem] = List(
           chargeItemModel(transactionType = BalancingCharge),
-          chargeItemModel(transactionType = PaymentOnAccountOneReviewAndReconcile),
+          chargeItemModel(transactionType = PaymentOnAccountOneReviewAndReconcileDebit),
           chargeItemModel(transactionType = PaymentOnAccountTwo),
-          chargeItemModel(transactionType = PaymentOnAccountTwoReviewAndReconcile)
+          chargeItemModel(transactionType = PaymentOnAccountTwoReviewAndReconcileDebit)
         )
-        val filtered = chargesListWithRandR.map(filterAllowedCharges(false, PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile))
+        val filtered = chargesListWithRandR.map(filterAllowedCharges(false, PaymentOnAccountOneReviewAndReconcileDebit, PaymentOnAccountTwoReviewAndReconcileDebit))
         filtered shouldBe List(true, false, true, false)
       }
     }
@@ -384,18 +384,18 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
       "FS is enabled" in {
         val chargesListWithRandR: List[ChargeItem] = List(
           chargeItemModel(transactionType = BalancingCharge),
-          chargeItemModel(transactionType = PaymentOnAccountOneReviewAndReconcile),
+          chargeItemModel(transactionType = PaymentOnAccountOneReviewAndReconcileDebit),
           chargeItemModel(transactionType = PaymentOnAccountTwo),
-          chargeItemModel(transactionType = PaymentOnAccountTwoReviewAndReconcile)
+          chargeItemModel(transactionType = PaymentOnAccountTwoReviewAndReconcileDebit)
         )
-        val filtered = chargesListWithRandR.map(filterAllowedCharges(true, PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile))
+        val filtered = chargesListWithRandR.map(filterAllowedCharges(true, PaymentOnAccountOneReviewAndReconcileDebit, PaymentOnAccountTwoReviewAndReconcileDebit))
         filtered shouldBe List(true, true, true, true)
       }
     }
     "return empty list" when {
       "fed an empty list" in {
         val chargesList = List()
-        val filtered = chargesList.map(filterAllowedCharges(true, PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile))
+        val filtered = chargesList.map(filterAllowedCharges(true, PaymentOnAccountOneReviewAndReconcileDebit, PaymentOnAccountTwoReviewAndReconcileDebit))
         filtered shouldBe List()
       }
     }
