@@ -62,8 +62,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
   private lazy val checkYourAnswersController = controllers.manageBusinesses.manage.routes
     .CheckYourAnswersController
-  private lazy val confirmReportingMethodSharedController = controllers.manageBusinesses.manage.routes
-    .ConfirmReportingMethodSharedController
 
   val checkYourAnswersShowUKPropertyUrl: String = checkYourAnswersController
     .show(isAgent = false, UkProperty).url
@@ -257,7 +255,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
           val formData = Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
 
-          val result = buildPOSTMTDPostClient(pathSE, body = formData)
+          val result = buildPOSTMTDPostClient(pathSE, body = formData).futureValue
 
           result should have(
             httpStatus(SEE_OTHER),
@@ -285,7 +283,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
           val formData = Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("RANDOM"))
 
-          val result = buildPOSTMTDPostClient(pathSE, body = formData)
+          val result = buildPOSTMTDPostClient(pathSE, body = formData).futureValue
 
           result should have(
             httpStatus(BAD_REQUEST)
@@ -309,7 +307,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
           val formData = Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("RANDOM"))
 
-          val result = buildPOSTMTDPostClient(pathSE, body = formData)
+          val result = buildPOSTMTDPostClient(pathSE, body = formData).futureValue
 
           result should have(
             httpStatus(SEE_OTHER),
@@ -339,7 +337,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
           val formData = Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
 
-          val result = buildPOSTMTDPostClient(pathUK, body = formData)
+          val result = buildPOSTMTDPostClient(pathUK, body = formData).futureValue
 
           result should have(
             httpStatus(SEE_OTHER),
@@ -364,7 +362,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
           val formData = Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("RANDOM"))
 
-          val result = buildPOSTMTDPostClient(pathUK, body = formData)
+          val result = buildPOSTMTDPostClient(pathUK, body = formData).futureValue
 
           result should have(
             httpStatus(BAD_REQUEST)
@@ -388,7 +386,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
           val formData = Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
 
-          val result = buildPOSTMTDPostClient(pathUK, body = formData)
+          val result = buildPOSTMTDPostClient(pathUK, body = formData).futureValue
 
           result should have(
             httpStatus(SEE_OTHER),
@@ -418,7 +416,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
           val formData = Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
 
-          val result = buildPOSTMTDPostClient(pathOV, body = formData)
+          val result = buildPOSTMTDPostClient(pathOV, body = formData).futureValue
 
           result should have(
             httpStatus(SEE_OTHER),
@@ -443,7 +441,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
           val formData = Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("RANDOM"))
 
-          val result = buildPOSTMTDPostClient(pathOV, body = formData)
+          val result = buildPOSTMTDPostClient(pathOV, body = formData).futureValue
 
           result should have(
             httpStatus(BAD_REQUEST)
@@ -467,7 +465,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
           val formData = Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
 
-          val result = buildPOSTMTDPostClient(pathOV, body = formData)
+          val result = buildPOSTMTDPostClient(pathOV, body = formData).futureValue
 
           result should have(
             httpStatus(SEE_OTHER),

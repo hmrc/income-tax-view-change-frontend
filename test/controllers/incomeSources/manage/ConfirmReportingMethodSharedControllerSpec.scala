@@ -18,6 +18,7 @@ package controllers.incomeSources.manage
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{JourneyType, Manage}
+import enums.{MTDIndividual, MTDPrimaryAgent, MTDUserRole}
 import enums.{MTDIndividual, MTDUserRole}
 import enums.JourneyType.{IncomeSourceJourneyType, JourneyType, Manage}
 import forms.incomeSources.manage.ConfirmReportingMethodForm
@@ -37,12 +38,14 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.http.Status.SEE_OTHER
-import play.api.mvc.Result
+import play.api.mvc.{Call, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.{DateService, SessionService}
+import testConstants.BaseTestConstants.testMtdItUser.isAgent
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData, notCompletedUIJourneySessionData}
 
 import scala.concurrent.Future
+import scala.reflect.ClassManifestFactory.Null
 
 class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
   with ImplicitDateFormatter
@@ -216,6 +219,17 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
     val incomeSourceType: IncomeSourceType
     val mtdRole: MTDUserRole
 
+    def createEndpoint (testMtd:MTDUserRole, incomeSourceType: IncomeSourceType): Unit = {
+      (testMtd, incomeSourceType)match {
+        case (MTDIndividual, SelfEmployment) => controllers.incomeSources.manage.routes.ManageObligationsController.showSelfEmployment(changeTo, taxYear)
+        case (MTDIndividual, UkProperty) => controllers.incomeSources.manage.routes.ManageObligationsController.showUKProperty(changeTo, taxYear)
+        case (MTDIndividual, ForeignProperty) => controllers.incomeSources.manage.routes.ManageObligationsController.showForeignProperty(changeTo, taxYear)
+        case (_, SelfEmployment) => controllers.incomeSources.manage.routes.ManageObligationsController.showAgentSelfEmployment(changeTo, taxYear)
+        case (_, UkProperty) => controllers.incomeSources.manage.routes.ManageObligationsController.showAgentUKProperty(changeTo, taxYear)
+        case (_, ForeignProperty) => controllers.incomeSources.manage.routes.ManageObligationsController.showAgentForeignProperty(changeTo, taxYear)
+      }
+    }
+
     lazy val action = if (mtdRole == MTDIndividual) {
       testConfirmReportingMethodSharedController.submit(taxYear, changeTo, incomeSourceType)
     } else {
@@ -240,13 +254,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Manage, incomeSourceType)))))
               setupMockSetMongoData(true)
               val result = action(fakeRequest.withFormUrlEncodedBody(validTestForm))
-              val expectedEndpoint = if (mtdRole == MTDIndividual) {
-                controllers.manageBusinesses.manage.routes
-                  .CheckYourAnswersController.show(isAgent = false, incomeSourceType).url
-              } else {
-                controllers.manageBusinesses.manage.routes
-                  .CheckYourAnswersController.show(isAgent = true, incomeSourceType).url
-              }
+              val expectedEndpoint = createEndpoint(mtdRole, incomeSourceType)
 
               status(result) shouldBe Status.SEE_OTHER
               redirectLocation(result) shouldBe
@@ -263,13 +271,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Manage, incomeSourceType)))))
               setupMockSetMongoData(true)
               val result = action(fakeRequest.withFormUrlEncodedBody(validTestForm))
-              val expectedEndpoint = if (mtdRole == MTDIndividual) {
-                controllers.manageBusinesses.manage.routes
-                  .CheckYourAnswersController.show(isAgent = false, incomeSourceType).url
-              } else {
-                controllers.manageBusinesses.manage.routes
-                  .CheckYourAnswersController.show(isAgent = true, incomeSourceType).url
-              }
+              val expectedEndpoint = createEndpoint(mtdRole, incomeSourceType)
 
               status(result) shouldBe Status.SEE_OTHER
               redirectLocation(result) shouldBe
@@ -284,7 +286,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
               setupMockSuccess(mtdRole)
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
-              setupMockGetMongo(Right(Some(completedUIJourneySessionData(JourneyType(Manage, incomeSourceType)))))
+              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Manage, incomeSourceType)))))
               setupMockSetMongoData(true)
               val result = action(fakeRequest.withFormUrlEncodedBody(validTestForm))
               val expectedEndpoint = if (mtdRole == MTDIndividual) {

@@ -69,18 +69,18 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
     .ConfirmReportingMethodSharedController
 
   val confirmReportingMethodShowUKPropertyUrl: String = confirmReportingMethodSharedController
-    .show(taxYear = testPropertyIncomeId, changeTo = annual, incomeSourceType = UkProperty, isAgent = false).url
+    .show(taxYear = testPropertyIncomeId, changeTo = annual, incomeSourceType = UkProperty).url
   val confirmReportingMethodShowForeignPropertyUrl: String = confirmReportingMethodSharedController
-    .show(taxYear = testPropertyIncomeId, changeTo = annual, incomeSourceType = ForeignProperty, isAgent = false).url
+    .show(taxYear = testPropertyIncomeId, changeTo = annual, incomeSourceType = ForeignProperty).url
   val confirmReportingMethodShowSoleTraderBusinessUrl: String = confirmReportingMethodSharedController
-    .show(taxYear = taxYear, changeTo = annual, incomeSourceType = SelfEmployment, isAgent = false).url
+    .show(taxYear = taxYear, changeTo = annual, incomeSourceType = SelfEmployment).url
 
   val confirmReportingMethodSubmitUKPropertyUrl: String = confirmReportingMethodSharedController
-    .submit(taxYear = taxYear, changeTo = annual, incomeSourceType = UkProperty, isAgent = false).url
+    .submit(taxYear = taxYear, changeTo = annual, incomeSourceType = UkProperty).url
   val confirmReportingMethodSubmitForeignPropertyUrl: String = confirmReportingMethodSharedController
-    .submit(taxYear = taxYear, changeTo = annual, incomeSourceType = ForeignProperty, isAgent = false).url
+    .submit(taxYear = taxYear, changeTo = annual, incomeSourceType = ForeignProperty).url
   val confirmReportingMethodSubmitSoleTraderBusinessUrl: String = confirmReportingMethodSharedController
-    .submit(taxYear = taxYear, changeTo = annual, incomeSourceType = SelfEmployment, isAgent = false).url
+    .submit(taxYear = taxYear, changeTo = annual, incomeSourceType = SelfEmployment).url
 
   val manageObligationsShowUKPropertyUrl: String = manageObligationsController
     .showUKProperty(changeTo = annual, taxYear = taxYear).url
