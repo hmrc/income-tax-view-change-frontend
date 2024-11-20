@@ -16,16 +16,17 @@
 
 package controllers.incomeSources.add
 
-import models.admin.IncomeSources
-import helpers.ComponentSpecBase
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import controllers.ControllerISpecHelper
+import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDIndividualAuthStub}
+import models.admin.{IncomeSources, NavBarFs}
 import play.api.http.Status.OK
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesResponse
 
-class AddIncomeSourcesControllerISpec extends ComponentSpecBase {
+class AddIncomeSourcesControllerISpec extends ControllerISpecHelper {
 
-  val showIndividualAddIncomeSourceControllerUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
+  val path = "/income-sources/add/new-income-sources"
+
   val pageTitleMsgKey = "incomeSources.add.addIncomeSources.heading"
   val soleTraderBusinessName1: String = "business"
   val soleTraderBusinessName2: String = "secondBusiness"
@@ -36,15 +37,14 @@ class AddIncomeSourcesControllerISpec extends ComponentSpecBase {
   val foreignPropertyHeading: String = messagesAPI("incomeSources.add.addIncomeSources.foreignProperty.heading")
   val foreignPropertyLink: String = messagesAPI("incomeSources.add.addIncomeSources.foreignProperty.link")
 
-
-  s"calling GET $showIndividualAddIncomeSourceControllerUrl" should {
-    "render the Add Income Source page for an Individual" when {
-      "User is authorised" in {
-        Given("I wiremock stub a successful Income Source Details response with multiple businesses and a uk property")
+  s"GET $path" when {
+    "the user is authenticated, with a valid MTD enrolment" should {
+      "render the Add Income Source page for an Individual" in {
         enable(IncomeSources)
+        disable(NavBarFs)
+        MTDIndividualAuthStub.stubAuthorised()
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
-        When(s"I call GET $showIndividualAddIncomeSourceControllerUrl")
-        val res = IncomeTaxViewChangeFrontend.getAddIncomeSource()
+        val res = buildGETMTDClient(path).futureValue
         verifyIncomeSourceDetailsCall(testMtditid)
 
         res should have(
@@ -61,5 +61,6 @@ class AddIncomeSourcesControllerISpec extends ComponentSpecBase {
         )
       }
     }
+    testAuthFailuresForMTDIndividual(path)
   }
 }
