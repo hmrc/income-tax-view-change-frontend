@@ -34,7 +34,7 @@ import java.time.LocalDate
 class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
   val testDate: String = "2020-11-1"
   val addBusinessStartDateCheckShowUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = false).url
-  val addBusinessTradeShowUrl: String = controllers.manageBusinesses.add.routes.AddBusinessTradeController.show(isAgent = false, isChange = false).url
+  val addBusinessTradeShowUrl: String = controllers.manageBusinesses.add.routes.AddBusinessTradeController.show(isChange = false).url
   val addBusinessStartDateShowUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = false).url
   val addBusinessStartDateCheckSubmitUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateCheckController.submit(incomeSourceType = SelfEmployment, isAgent = false, isChange = false).url
   val continueButtonText: String = messagesAPI("base.continue")

@@ -38,7 +38,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
   val addBusinessStartDateCheckShowUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = false).url
   val addBusinessStartDateCheckChangeShowUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = true).url
   val addBusinessStartDateCheckChangeSubmitUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateCheckController.submit(incomeSourceType = SelfEmployment, isAgent = true, isChange = true).url
-  val addBusinessTradeShowUrl: String = controllers.manageBusinesses.add.routes.AddBusinessTradeController.show(isAgent = true, isChange = false).url
+  val addBusinessTradeShowUrl: String = controllers.manageBusinesses.add.routes.AddBusinessTradeController.showAgent(isChange = false).url
   val addBusinessStartDateShowUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = false).url
   val addBusinessStartDateCheckSubmitUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateCheckController.submit(incomeSourceType = SelfEmployment, isAgent = true, isChange = false).url
   val continueButtonText: String = messagesAPI("base.continue")
