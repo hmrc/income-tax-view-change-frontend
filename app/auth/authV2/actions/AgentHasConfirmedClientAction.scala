@@ -28,9 +28,11 @@ class AgentHasConfirmedClientAction @Inject()(implicit val executionContext: Exe
   extends ActionRefiner[MtdItUserOptionNino, MtdItUserOptionNino] {
 
   override protected def refine[A](request: MtdItUserOptionNino[A]): Future[Either[Result, MtdItUserOptionNino[A]]] = {
+    println("BEEP4")
     if(request.clientConfirmed) {
       Future.successful(Right(request))
     } else {
+      println("BEEP5")
       Future.successful(Left(Redirect(routes.ConfirmClientUTRController.show)))
     }
   }
