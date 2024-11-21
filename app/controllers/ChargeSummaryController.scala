@@ -204,8 +204,7 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
   }
 
   private def checkForPoaExtraChargeLink(chargeDetailsForTaxYear: FinancialDetailsModel, documentDetailWithDueDate: DocumentDetailWithDueDate, isAgent: Boolean)(implicit user: MtdItUser[_]): Option[String] = {
-    val chargeItem: Option[ChargeItem] = getChargeItemOpt()(
-      chargeDetailsForTaxYear.financialDetails)(documentDetailWithDueDate.documentDetail)
+    val chargeItem: Option[ChargeItem] = getChargeItemOpt(chargeDetailsForTaxYear.financialDetails)(documentDetailWithDueDate.documentDetail)
 
    chargeItem match {
       case Some(value) =>

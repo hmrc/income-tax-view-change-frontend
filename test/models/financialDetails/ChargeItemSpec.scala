@@ -67,8 +67,6 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
   "fromDocumentPair" when {
 
-      val reviewAndReconcileEnabled = false
-
       "from Payment on Account 1" in {
 
         val chargeItem = ChargeItem.fromDocumentPair(

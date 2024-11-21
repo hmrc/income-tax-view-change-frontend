@@ -153,8 +153,7 @@ object ChargeItem {
     }
   }
 
-  def fromDocumentPair(documentDetail: DocumentDetail, financialDetails: List[FinancialDetail],
-                       reviewAndReconcile: Boolean): ChargeItem = {
+  def fromDocumentPair(documentDetail: DocumentDetail, financialDetails: List[FinancialDetail]): ChargeItem = {
 
     val financialDetail = financialDetails.find(_.transactionId.contains(documentDetail.transactionId)) match {
       case Some(fd) => fd

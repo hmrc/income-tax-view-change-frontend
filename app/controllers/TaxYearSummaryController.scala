@@ -159,9 +159,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
     financialDetailsService.getFinancialDetails(taxYear, user.nino) flatMap {
       case financialDetails@FinancialDetailsModel(_, documentDetails, _) =>
 
-        val getChargeItem: DocumentDetail => Option[ChargeItem] = getChargeItemOpt()(
-          financialDetails = financialDetails.financialDetails
-        )
+        val getChargeItem: DocumentDetail => Option[ChargeItem] = getChargeItemOpt(financialDetails = financialDetails.financialDetails)
 
         val chargeItemsNoPayments = documentDetails
           .filter(_.paymentLot.isEmpty)
