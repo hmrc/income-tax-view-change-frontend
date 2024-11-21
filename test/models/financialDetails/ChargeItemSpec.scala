@@ -76,7 +76,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
           financialDetails = List(poa1FinancialDetails),
           reviewAndReconcile = reviewAndReconcileEnabled)
 
-        chargeItem.transactionType shouldBe PaymentOnAccountOne
+        chargeItem.transactionType shouldBe PoaOneDebit
         chargeItem.subTransactionType shouldBe None
 
       }
@@ -88,7 +88,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
           financialDetails = List(poa2FinancialDetails),
           reviewAndReconcile = reviewAndReconcileEnabled)
 
-        chargeItem.transactionType shouldBe PaymentOnAccountTwo
+        chargeItem.transactionType shouldBe PoaTwoDebit
         chargeItem.subTransactionType shouldBe None
       }
 
@@ -180,13 +180,13 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
     "getChargeKey" when {
 
         "charge is a POA 1" in {
-          val poa1 = chargeItemModel(transactionType = PaymentOnAccountOne, subTransactionType = None)
+          val poa1 = chargeItemModel(transactionType = PoaOneDebit, subTransactionType = None)
           val key = poa1.getChargeTypeKey()
           key shouldBe "paymentOnAccount1.text"
         }
 
         "charge is a POA 2" in {
-          val poa1 = chargeItemModel(transactionType = PaymentOnAccountTwo, subTransactionType = None)
+          val poa1 = chargeItemModel(transactionType = PoaTwoDebit, subTransactionType = None)
           val key = poa1.getChargeTypeKey()
           key shouldBe "paymentOnAccount2.text"
         }
@@ -228,11 +228,11 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
       "relevant FS is disabled" in {
         val chargesListWithRandR: List[ChargeItem] = List(
           chargeItemModel(transactionType = BalancingCharge),
-          chargeItemModel(transactionType = PaymentOnAccountOneReviewAndReconcile),
-          chargeItemModel(transactionType = PaymentOnAccountTwo),
-          chargeItemModel(transactionType = PaymentOnAccountTwoReviewAndReconcile)
+          chargeItemModel(transactionType = PoaOneReconciliationDebit),
+          chargeItemModel(transactionType = PoaTwoDebit),
+          chargeItemModel(transactionType = PoaTwoReconciliationDebit)
         )
-        val filtered = chargesListWithRandR.map(filterAllowedCharges(false, PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile))
+        val filtered = chargesListWithRandR.map(filterAllowedCharges(false, PoaOneReconciliationDebit, PoaTwoReconciliationDebit))
         filtered shouldBe List(true, false, true, false)
       }
     }
@@ -240,18 +240,18 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
       "FS is enabled" in {
         val chargesListWithRandR: List[ChargeItem] = List(
           chargeItemModel(transactionType = BalancingCharge),
-          chargeItemModel(transactionType = PaymentOnAccountOneReviewAndReconcile),
-          chargeItemModel(transactionType = PaymentOnAccountTwo),
-          chargeItemModel(transactionType = PaymentOnAccountTwoReviewAndReconcile)
+          chargeItemModel(transactionType = PoaOneReconciliationDebit),
+          chargeItemModel(transactionType = PoaTwoDebit),
+          chargeItemModel(transactionType = PoaTwoReconciliationDebit)
         )
-        val filtered = chargesListWithRandR.map(filterAllowedCharges(true, PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile))
+        val filtered = chargesListWithRandR.map(filterAllowedCharges(true, PoaOneReconciliationDebit, PoaTwoReconciliationDebit))
         filtered shouldBe List(true, true, true, true)
       }
     }
     "return empty list" when {
       "fed an empty list" in {
         val chargesList = List()
-        val filtered = chargesList.map(filterAllowedCharges(true, PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile))
+        val filtered = chargesList.map(filterAllowedCharges(true, PoaOneReconciliationDebit, PoaTwoReconciliationDebit))
         filtered shouldBe List()
       }
     }

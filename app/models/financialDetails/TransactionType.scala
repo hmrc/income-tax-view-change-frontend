@@ -32,27 +32,27 @@ sealed trait CreditType extends TransactionType {
 
 // Charge Types
 
-case object PaymentOnAccountOne extends ChargeType {
+case object PoaOneDebit extends ChargeType {
   override val key = "POA1"
 }
 
-case object PaymentOnAccountTwo extends ChargeType {
+case object PoaTwoDebit extends ChargeType {
   override val key = "POA2"
 }
 
-case object PaymentOnAccountOneReviewAndReconcile extends ChargeType {
+case object PoaOneReconciliationDebit extends ChargeType {
   override val key = "POA1RR"
 }
 
-case object PaymentOnAccountTwoReviewAndReconcile extends ChargeType {
+case object PoaTwoReconciliationDebit extends ChargeType {
   override val key = "POA2RR"
 }
 
-case object PaymentOnAccountOneReviewAndReconcileCredit extends CreditType {
+case object PoaOneReconciliationCredit extends CreditType {
   override val key = "POA1RR-credit"
 }
 
-case object PaymentOnAccountTwoReviewAndReconcileCredit extends CreditType {
+case object PoaTwoReconciliationCredit extends CreditType {
   override val key = "POA2RR-credit"
 }
 
@@ -102,14 +102,14 @@ object TransactionType {
     case CutOverCreditType.key => CutOverCreditType
     case BalancingChargeCreditType.key => BalancingChargeCreditType
     case RepaymentInterest.key => RepaymentInterest
-    case PaymentOnAccountOneReviewAndReconcileCredit.key => PaymentOnAccountOneReviewAndReconcileCredit
-    case PaymentOnAccountTwoReviewAndReconcileCredit.key => PaymentOnAccountTwoReviewAndReconcileCredit
+    case PoaOneReconciliationCredit.key => PoaOneReconciliationCredit
+    case PoaTwoReconciliationCredit.key => PoaTwoReconciliationCredit
     case PaymentType.key => PaymentType
     case Repayment.key => Repayment
-    case PaymentOnAccountOne.key => PaymentOnAccountOne
-    case PaymentOnAccountTwo.key => PaymentOnAccountTwo
-    case PaymentOnAccountOneReviewAndReconcile.key => PaymentOnAccountOneReviewAndReconcile
-    case PaymentOnAccountTwoReviewAndReconcile.key => PaymentOnAccountTwoReviewAndReconcile
+    case PoaOneDebit.key => PoaOneDebit
+    case PoaTwoDebit.key => PoaTwoDebit
+    case PoaOneReconciliationDebit.key => PoaOneReconciliationDebit
+    case PoaTwoReconciliationDebit.key => PoaTwoReconciliationDebit
     case BalancingCharge.key => BalancingCharge
     case MfaDebitCharge.key => MfaDebitCharge
   }
@@ -123,11 +123,11 @@ object ChargeType {
   // values come from EPID #1138
   private val balancingCharge = "4910"
 
-  lazy val paymentOnAccountOneReviewAndReconcileDebit = "4911"
-  lazy val paymentOnAccountTwoReviewAndReconcileDebit = "4913"
+  lazy val poaOneReconciliationDebit = "4911"
+  lazy val poaTwoReconciliationDebit = "4913"
 
-  lazy val paymentOnAccountOneReviewAndReconcileCredit = "4912"
-  lazy val paymentOnAccountTwoReviewAndReconcileCredit = "4914"
+  lazy val poaOneReconciliationCredit = "4912"
+  lazy val poaTwoReconciliationCredit = "4914"
 
   private val paymentOnAccountOne = "4920"
   private val paymentOnAccountTwo = "4930"
@@ -139,19 +139,19 @@ object ChargeType {
 
     (mainTransaction, reviewAndReconcileEnabled) match {
       case (ChargeType.paymentOnAccountOne, _) =>
-        Some(PaymentOnAccountOne)
+        Some(PoaOneDebit)
       case (ChargeType.paymentOnAccountTwo, _) =>
-        Some(PaymentOnAccountTwo)
+        Some(PoaTwoDebit)
       case (ChargeType.balancingCharge, _) =>
         Some(BalancingCharge)
-      case (ChargeType.paymentOnAccountOneReviewAndReconcileDebit, true) =>
-        Some(PaymentOnAccountOneReviewAndReconcile)
-      case (ChargeType.paymentOnAccountTwoReviewAndReconcileDebit, true) =>
-        Some(PaymentOnAccountTwoReviewAndReconcile)
-      case (ChargeType.paymentOnAccountOneReviewAndReconcileCredit, true) =>
-        Some(PaymentOnAccountOneReviewAndReconcileCredit)
-      case (ChargeType.paymentOnAccountTwoReviewAndReconcileCredit, true) =>
-        Some(PaymentOnAccountTwoReviewAndReconcileCredit)
+      case (ChargeType.poaOneReconciliationDebit, true) =>
+        Some(PoaOneReconciliationDebit)
+      case (ChargeType.poaTwoReconciliationDebit, true) =>
+        Some(PoaTwoReconciliationDebit)
+      case (ChargeType.poaOneReconciliationCredit, true) =>
+        Some(PoaOneReconciliationCredit)
+      case (ChargeType.poaTwoReconciliationCredit, true) =>
+        Some(PoaTwoReconciliationCredit)
       case (x, _) if ChargeType.mfaDebit.contains(x) =>
         Some(MfaDebitCharge)
       case _ => None
@@ -165,10 +165,10 @@ object ChargeType {
   }
 
   val read: Reads[ChargeType] = (JsPath).read[String].collect(JsonValidationError("Could not parse transactionType")) {
-    case PaymentOnAccountOne.key => PaymentOnAccountOne
-    case PaymentOnAccountTwo.key => PaymentOnAccountTwo
-    case PaymentOnAccountOneReviewAndReconcile.key => PaymentOnAccountOneReviewAndReconcile
-    case PaymentOnAccountTwoReviewAndReconcile.key => PaymentOnAccountTwoReviewAndReconcile
+    case PoaOneDebit.key => PoaOneDebit
+    case PoaTwoDebit.key => PoaTwoDebit
+    case PoaOneReconciliationDebit.key => PoaOneReconciliationDebit
+    case PoaTwoReconciliationDebit.key => PoaTwoReconciliationDebit
     case BalancingCharge.key => BalancingCharge
     case MfaDebitCharge.key => MfaDebitCharge
   }
@@ -186,8 +186,8 @@ object CreditType {
   private val mfaCredit = Range.inclusive(4004, 4025)
     .filterNot(_ == 4010).filterNot(_ == 4020).map(_.toString)
     .toList
-  private val paymentOnAccountOneReviewAndReconcileCredit = "4912"
-  private val paymentOnAccountTwoReviewAndReconcileCredit = "4914"
+  private val poaOneReconciliationCredit = "4912"
+  private val poaTwoReconciliationCredit = "4914"
 
   private val payment = List("0060")
 
@@ -199,10 +199,10 @@ object CreditType {
         Some(BalancingChargeCreditType)
       case CreditType.repaymentInterest =>
         Some(RepaymentInterest)
-      case CreditType.paymentOnAccountOneReviewAndReconcileCredit =>
-        Some(PaymentOnAccountOneReviewAndReconcileCredit)
-      case CreditType.paymentOnAccountTwoReviewAndReconcileCredit =>
-        Some(PaymentOnAccountTwoReviewAndReconcileCredit)
+      case CreditType.poaOneReconciliationCredit =>
+        Some(PoaOneReconciliationCredit)
+      case CreditType.poaTwoReconciliationCredit =>
+        Some(PoaTwoReconciliationCredit)
       case x if mfaCredit.contains(x) =>
         Some(MfaCreditType)
       case x if payment.contains(x) =>
@@ -222,8 +222,8 @@ object CreditType {
     case CutOverCreditType.key => CutOverCreditType
     case BalancingChargeCreditType.key => BalancingChargeCreditType
     case RepaymentInterest.key => RepaymentInterest
-    case PaymentOnAccountOneReviewAndReconcileCredit.key => PaymentOnAccountOneReviewAndReconcileCredit
-    case PaymentOnAccountTwoReviewAndReconcileCredit.key => PaymentOnAccountTwoReviewAndReconcileCredit
+    case PoaOneReconciliationCredit.key => PoaOneReconciliationCredit
+    case PoaTwoReconciliationCredit.key => PoaTwoReconciliationCredit
     case PaymentType.key => PaymentType
     case Repayment.key => Repayment
   }

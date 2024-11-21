@@ -98,7 +98,7 @@ case class TaxYearSummaryChargeItem(
     interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0
 
   def isAccruingInterest()(implicit dateService: DateServiceInterface): Boolean = {
-    Seq(PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile).contains(transactionType) && !isPaid && !isOverdue()
+    Seq(PoaOneReconciliationDebit, PoaTwoReconciliationDebit).contains(transactionType) && !isPaid && !isOverdue()
   }
 
   def getDueDateForNonZeroBalancingCharge: Option[LocalDate] = {

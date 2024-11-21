@@ -41,8 +41,8 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
   val validChargeTypeCondition: ChargeItem => Boolean = chargeItem => {
     (chargeItem.transactionType, chargeItem.subTransactionType) match {
       case (_, Some(Nics2)) => true
-      case (PaymentOnAccountOne | PaymentOnAccountTwo | PaymentOnAccountOneReviewAndReconcile
-            | PaymentOnAccountTwoReviewAndReconcile | BalancingCharge | MfaDebitCharge, _) => true
+      case (PoaOneDebit | PoaTwoDebit | PoaOneReconciliationDebit
+            | PoaTwoReconciliationDebit | BalancingCharge | MfaDebitCharge, _) => true
       case (_, _) => false
     }
   }

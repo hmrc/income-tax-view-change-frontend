@@ -381,7 +381,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
     "render the row for the charge" should {
       "charge is a Review and Reconcile credit for Payment on Account 1" in new TestSetup(
-        reviewAndReconcileCredit = reviewAndReconcileCreditChargeItem(PaymentOnAccountOneReviewAndReconcileCredit)
+        reviewAndReconcileCredit = reviewAndReconcileCreditChargeItem(PoaOneReconciliationCredit)
       ) {
         document.selectById("rar-due-date").text() shouldBe("6 Aug 2018")
         document.selectById("rar-charge-link").text() shouldBe "First payment on account: credit from your tax return"
@@ -389,7 +389,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         document.selectById("rar-total-amount").text() shouldBe "£1,000.00"
       }
       "charge is a Review and Reconcile credit for Payment on Account 2" in new TestSetup(
-        reviewAndReconcileCredit = reviewAndReconcileCreditChargeItem(PaymentOnAccountTwoReviewAndReconcileCredit)
+        reviewAndReconcileCredit = reviewAndReconcileCreditChargeItem(PoaTwoReconciliationCredit)
       ) {
         document.selectById("rar-due-date").text() shouldBe ("6 Aug 2018")
         document.selectById("rar-charge-link").text() shouldBe "Second payment on account: credit from your tax return"
@@ -400,7 +400,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
     "charge is a POA1" when {
 
-      val basePaymentOnAccountOne = chargeItemModel(transactionType = PaymentOnAccountOne)
+      val basePaymentOnAccountOne = chargeItemModel(transactionType = PoaOneDebit)
 
       "no late payment interest" should {
 
@@ -481,7 +481,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
     "charge is a POA2" when {
 
-      val basePaymentOnAccountTwo = chargeItemModel(transactionType = PaymentOnAccountTwo)
+      val basePaymentOnAccountTwo = chargeItemModel(transactionType = PoaTwoDebit)
 
       "no late payment interest" should {
         "have the correct heading for a POA 2" in new TestSetup(
@@ -499,14 +499,14 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         }
 
         "display only the charge creation item when no history found for a payment on account 2 of 2" in new TestSetup(
-          chargeItem = chargeItemModel(transactionType = PaymentOnAccountTwo, outstandingAmount = 0)
+          chargeItem = chargeItemModel(transactionType = PoaTwoDebit, outstandingAmount = 0)
         ) {
           document.select("tbody tr").size() shouldBe 1
           document.select("tbody tr td:nth-child(2)").text() shouldBe paymentOnAccountCreated(2)
         }
 
         "display the correct message for an amended charge for a payment on account 2 of 2" in new TestSetup(
-          chargeItem = chargeItemModel(transactionType = PaymentOnAccountTwo, outstandingAmount = 0),
+          chargeItem = chargeItemModel(transactionType = PoaTwoDebit, outstandingAmount = 0),
           adjustmentHistory = amendedAdjustmentHistory
         ) {
           document.select("tbody tr").size() shouldBe 2
@@ -514,7 +514,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         }
 
         "display the correct message for a customer requested change for a payment on account 2 of 2" in new TestSetup(
-          chargeItem = chargeItemModel(transactionType = PaymentOnAccountTwo, outstandingAmount = 0),
+          chargeItem = chargeItemModel(transactionType = PoaTwoDebit, outstandingAmount = 0),
           adjustmentHistory = customerRequestAdjustmentHistory
         ) {
           document.select("tbody tr").size() shouldBe 2
@@ -559,13 +559,13 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       }
     }
 
-    "charge is a POA 1 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PaymentOnAccountOneReviewAndReconcile), reviewAndReconcileEnabled = true) {
+    "charge is a POA 1 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PoaOneReconciliationDebit), reviewAndReconcileEnabled = true) {
       document.select("h1").text() shouldBe poa1ReconcileHeading(2018)
     }
-    "charge is a POA 2 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PaymentOnAccountTwoReviewAndReconcile), reviewAndReconcileEnabled = true) {
+    "charge is a POA 2 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PoaTwoReconciliationDebit), reviewAndReconcileEnabled = true) {
       document.select("h1").text() shouldBe poa2ReconcileHeading(2018)
     }
-    "charge is interest for a POA 1 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PaymentOnAccountOneReviewAndReconcile), reviewAndReconcileEnabled = true, latePaymentInterestCharge = true) {
+    "charge is interest for a POA 1 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PoaOneReconciliationDebit), reviewAndReconcileEnabled = true, latePaymentInterestCharge = true) {
       document.select("h1").text() shouldBe poa1ReconcileInterestHeading(2018)
 
       document.selectById("poa1-extra-charge-p1").text() shouldBe poa1ReconciliationInterestP1
@@ -582,7 +582,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       document.select("tbody tr td:nth-child(2)").text() shouldBe hmrcCreated
       document.select("tbody tr td:nth-child(3)").text() shouldBe "£100.00"
     }
-    "charge is interest for a POA 2 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PaymentOnAccountTwoReviewAndReconcile), reviewAndReconcileEnabled = true, latePaymentInterestCharge = true) {
+    "charge is interest for a POA 2 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PoaTwoReconciliationDebit), reviewAndReconcileEnabled = true, latePaymentInterestCharge = true) {
       document.select("h1").text() shouldBe poa2ReconcileInterestHeading(2018)
 
       document.selectById("poa2-extra-charge-p1").text() shouldBe poa2ReconciliationInterestP1
@@ -600,7 +600,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       document.select("tbody tr td:nth-child(3)").text() shouldBe "£100.00"
     }
 
-    "charge is a POA 1 reconciliation credit" in new TestSetup(chargeItem = chargeItemModel(transactionType = PaymentOnAccountOneReviewAndReconcileCredit, originalAmount = -100), reviewAndReconcileEnabled = true) {
+    "charge is a POA 1 reconciliation credit" in new TestSetup(chargeItem = chargeItemModel(transactionType = PoaOneReconciliationCredit, originalAmount = -100), reviewAndReconcileEnabled = true) {
       document.select("h1").text() shouldBe poa1ReconciliationCreditHeading(2018)
 
       document.selectById("rar-credit-explanation").text shouldBe "HMRC has added a credit to your account because your tax return shows that your adjusted first payment on account was too high."
@@ -612,7 +612,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
       document.selectById("poa-allocation-link").attr("href") shouldBe "testUrl1"
     }
-    "charge is a POA 2 reconciliation credit" in new TestSetup(chargeItem = chargeItemModel(transactionType = PaymentOnAccountTwoReviewAndReconcileCredit, originalAmount = -100), reviewAndReconcileEnabled = true) {
+    "charge is a POA 2 reconciliation credit" in new TestSetup(chargeItem = chargeItemModel(transactionType = PoaTwoReconciliationCredit, originalAmount = -100), reviewAndReconcileEnabled = true) {
       document.select("h1").text() shouldBe poa2ReconciliationCreditHeading(2018)
 
       document.selectById("rar-credit-explanation").text shouldBe "HMRC has added a credit to your account because your tax return shows that your adjusted second payment on account was too high."
@@ -1112,7 +1112,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       }
 
       "display charge history heading as poa2 heading when charge is a poa2" in new TestSetup(
-        chargeItem = chargeItemModel(transactionType = PaymentOnAccountTwo),
+        chargeItem = chargeItemModel(transactionType = PoaTwoDebit),
         paymentBreakdown = paymentBreakdown
       ){
         document.select("main h3").text shouldBe chargeHistoryHeadingPoa2
@@ -1126,7 +1126,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       }
 
       "display charge history heading as late payment interest history when charge is a late payment interest" in new TestSetup(
-        chargeItem = chargeItemModel(transactionType = PaymentOnAccountTwo),
+        chargeItem = chargeItemModel(transactionType = PoaTwoDebit),
         paymentBreakdown = paymentBreakdown,
         latePaymentInterestCharge = true
       ){
@@ -1231,7 +1231,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     "render the row for the charge" should {
       "charge is a Review and Reconcile credit for Payment on Account 1" in new TestSetup(
         isAgent = true,
-        reviewAndReconcileCredit = reviewAndReconcileCreditChargeItem(PaymentOnAccountOneReviewAndReconcileCredit)
+        reviewAndReconcileCredit = reviewAndReconcileCreditChargeItem(PoaOneReconciliationCredit)
       ) {
         document.selectById("rar-due-date").text() shouldBe ("6 Aug 2018")
         document.selectById("rar-charge-link").text() shouldBe "First payment on account: credit from your tax return"
@@ -1240,7 +1240,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       }
       "charge is a Review and Reconcile credit for Payment on Account 2" in new TestSetup(
         isAgent = true,
-        reviewAndReconcileCredit = reviewAndReconcileCreditChargeItem(PaymentOnAccountTwoReviewAndReconcileCredit)
+        reviewAndReconcileCredit = reviewAndReconcileCreditChargeItem(PoaTwoReconciliationCredit)
       ) {
         document.selectById("rar-due-date").text() shouldBe ("6 Aug 2018")
         document.selectById("rar-charge-link").text() shouldBe "Second payment on account: credit from your tax return"

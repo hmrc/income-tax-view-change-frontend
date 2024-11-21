@@ -181,7 +181,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
             .filterNot(_.originalAmount < 0)
             .filter(_.notCodedOutPoa(isEnabled(FilterCodedOutPoas)))
             .filter(ChargeItem.filterAllowedCharges(isEnabled(ReviewAndReconcilePoa),
-              PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile))
+              PoaOneReconciliationDebit, PoaTwoReconciliationDebit))
         }
 
         val chargeItemsLpi: List[TaxYearSummaryChargeItem] = {

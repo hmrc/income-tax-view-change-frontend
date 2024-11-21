@@ -55,7 +55,7 @@ case class ChargeItem (
     interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0 && !isPaid
 
   def isAccruingInterest()(implicit dateService: DateServiceInterface): Boolean = {
-    Seq(PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile).contains(transactionType) && !isPaid && !isOverdue()
+    Seq(PoaOneReconciliationDebit, PoaTwoReconciliationDebit).contains(transactionType) && !isPaid && !isOverdue()
   }
 
   def getDueDateForNonZeroBalancingCharge: Option[LocalDate] = {
@@ -105,8 +105,8 @@ case class ChargeItem (
 
   val interestIsPartPaid: Boolean = interestOutstandingAmount.getOrElse[BigDecimal](0) != latePaymentInterestAmount.getOrElse[BigDecimal](0)
 
-  val isPoaReconciliationCredit: Boolean = transactionType == PaymentOnAccountOneReviewAndReconcileCredit||
-    transactionType == PaymentOnAccountTwoReviewAndReconcileCredit
+  val isPoaReconciliationCredit: Boolean = transactionType == PoaOneReconciliationCredit||
+    transactionType == PoaTwoReconciliationCredit
 
   def getInterestPaidStatus: String = {
     if (interestIsPaid) "paid"
@@ -130,8 +130,8 @@ case class ChargeItem (
   }
 
   def poaLinkForDrilldownPage: String = transactionType match {
-    case PaymentOnAccountOne => "4911"
-    case PaymentOnAccountTwo => "4913"
+    case PoaOneDebit => "4911"
+    case PoaTwoDebit => "4913"
     case _ => "no valid case"
   }
 }

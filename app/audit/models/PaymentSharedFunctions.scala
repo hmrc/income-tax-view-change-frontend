@@ -16,7 +16,7 @@
 
 package audit.models
 
-import models.financialDetails.{Accepted, BalancingCharge, Cancelled, MfaDebitCharge, Nics2, PaymentOnAccountOne, PaymentOnAccountTwo, TransactionItem}
+import models.financialDetails.{Accepted, BalancingCharge, Cancelled, MfaDebitCharge, Nics2, PoaOneDebit, PoaTwoDebit, TransactionItem}
 import services.DateServiceInterface
 
 trait PaymentSharedFunctions {
@@ -31,8 +31,8 @@ trait PaymentSharedFunctions {
       case (_, Some(Nics2))           => Some("Class 2 National Insurance")
       case (_, Some(Cancelled))       => Some("Cancelled PAYE Self Assessment (through your PAYE tax code)")
       case (_, Some(Accepted))        => Some("Balancing payment collected through PAYE tax code")
-      case (PaymentOnAccountOne,  _)  => if (latePaymentCharge) Some("Late payment interest on first payment on account") else Some("First payment on account")
-      case (PaymentOnAccountTwo,  _)  => if (latePaymentCharge) Some("Late payment interest on second payment on account") else Some("Second payment on account")
+      case (PoaOneDebit,  _)  => if (latePaymentCharge) Some("Late payment interest on first payment on account") else Some("First payment on account")
+      case (PoaTwoDebit,  _)  => if (latePaymentCharge) Some("Late payment interest on second payment on account") else Some("Second payment on account")
       case (BalancingCharge, None )   => if (latePaymentCharge) Some("Late payment interest for remaining balance") else Some("Remaining balance")
       case (_, _)                     => Some(docDetail.transactionType.key)
     }
