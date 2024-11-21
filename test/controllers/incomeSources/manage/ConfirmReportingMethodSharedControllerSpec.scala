@@ -33,13 +33,14 @@ import mocks.services.{MockIncomeSourceDetailsService, MockSessionService}
 import models.admin.IncomeSourcesFs
 import models.updateIncomeSource.{UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{mock, when}
 import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.http.Status.SEE_OTHER
+import play.api.mvc.Call
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.{DateService, SessionService}
+import services.{DateService, SessionService, UpdateIncomeSourceService}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData, notCompletedUIJourneySessionData}
 
 import scala.concurrent.Future
@@ -48,10 +49,13 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
   with ImplicitDateFormatter
   with MockSessionService {
 
+  lazy val mockUpdateIncomeSourceService = mock(classOf[UpdateIncomeSourceService])
+
   override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
-        api.inject.bind[DateService].toInstance(dateService)
+      api.inject.bind[DateService].toInstance(dateService),
+      api.inject.bind[UpdateIncomeSourceService].toInstance(mockUpdateIncomeSourceService)
     ).build()
 
   val testConfirmReportingMethodSharedController = fakeApplication().injector.instanceOf[ConfirmReportingMethodSharedController]
@@ -72,17 +76,16 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
       testConfirmReportingMethodSharedController.showAgent(taxYear, changeTo, incomeSourceType)
     }
 
-//    when(
-//      testConfirmReportingMethodSharedController
-//        .updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
-//      .thenReturn(
-//        Future(
-//          if (withUpdateIncomeSourceResponseError)
-//            UpdateIncomeSourceResponseError("INTERNAL_SERVER_ERROR", "Dummy message")
-//          else
-//            UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")
-//        )
-//      )
+    when(
+        mockUpdateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
+      .thenReturn(
+        Future(
+          if (withUpdateIncomeSourceResponseError)
+            UpdateIncomeSourceResponseError("INTERNAL_SERVER_ERROR", "Dummy message")
+          else
+            UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")
+        )
+      )
   }
 
   Seq(SelfEmployment, UkProperty, ForeignProperty).foreach { testIncomeSourceType =>
@@ -228,15 +231,18 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
     val incomeSourceType: IncomeSourceType
     val mtdRole: MTDUserRole
 
-    def createEndpoint (testMtd:MTDUserRole, incomeSourceType: IncomeSourceType): Unit = {
-      (testMtd, incomeSourceType)match {
+    def createEndpoint (testMtd:MTDUserRole, incomeSourceType: IncomeSourceType): String = {
+      val endpointCall = {
+      (testMtd, incomeSourceType) match {
         case (MTDIndividual, SelfEmployment) => controllers.incomeSources.manage.routes.ManageObligationsController.showSelfEmployment(changeTo, taxYear)
         case (MTDIndividual, UkProperty) => controllers.incomeSources.manage.routes.ManageObligationsController.showUKProperty(changeTo, taxYear)
         case (MTDIndividual, ForeignProperty) => controllers.incomeSources.manage.routes.ManageObligationsController.showForeignProperty(changeTo, taxYear)
         case (_, SelfEmployment) => controllers.incomeSources.manage.routes.ManageObligationsController.showAgentSelfEmployment(changeTo, taxYear)
         case (_, UkProperty) => controllers.incomeSources.manage.routes.ManageObligationsController.showAgentUKProperty(changeTo, taxYear)
         case (_, ForeignProperty) => controllers.incomeSources.manage.routes.ManageObligationsController.showAgentForeignProperty(changeTo, taxYear)
+        }
       }
+      endpointCall.url
     }
 
     lazy val action = if (mtdRole == MTDIndividual) {
@@ -290,6 +296,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
           }
           s"return ${Status.SEE_OTHER} and redirect to the home page" when {
             "the IncomeSources FS is disabled" in new SetupPOST {
+              disable(IncomeSources)
               override val incomeSourceType: IncomeSourceType = testIncomeSourceType
               override val mtdRole: MTDUserRole = testMtdRole
               setupMockSuccess(mtdRole)
