@@ -63,7 +63,7 @@ class TaxYearSummaryViewModelSpec extends UnitSpec with ChargeConstants with Moc
         val thrown = the[IllegalArgumentException] thrownBy TaxYearSummaryViewModel.apply(
           Some(testCalculationSummary.copy(forecastIncomeTaxAndNics = None)),
           testWithMissingOriginalAmountChargesList,
-          testObligationsModel, codingOutEnabled = true, reviewAndReconcileEnabled = true, showForecastData = true, ctaViewModel = testCTAViewModel
+          testObligationsModel, reviewAndReconcileEnabled = true, showForecastData = true, ctaViewModel = testCTAViewModel
         )
 
         thrown.getMessage shouldBe "requirement failed: missing Forecast Tax Due"
@@ -75,7 +75,7 @@ class TaxYearSummaryViewModelSpec extends UnitSpec with ChargeConstants with Moc
         val thrown = the[IllegalArgumentException] thrownBy TaxYearSummaryViewModel(
           Some(testCalculationSummary.copy(timestamp = None)),
           testWithMissingOriginalAmountChargesList,
-          testObligationsModel, codingOutEnabled = true, reviewAndReconcileEnabled = true, showForecastData = true, ctaViewModel = testCTAViewModel
+          testObligationsModel, reviewAndReconcileEnabled = true, showForecastData = true, ctaViewModel = testCTAViewModel
         )
 
         thrown.getMessage shouldBe "requirement failed: missing Calculation timestamp"

@@ -67,87 +67,13 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
   "fromDocumentPair" when {
 
-    "coding out is enabled" when {
-
-      val codingOutEnabled = true
+      val reviewAndReconcileEnabled = false
 
       "from Payment on Account 1" in {
 
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
-          financialDetails = List(poa1FinancialDetails),
-          codingOut = codingOutEnabled)
-
-        chargeItem.transactionType shouldBe PaymentOnAccountOne
-        chargeItem.subTransactionType shouldBe None
-
-      }
-
-      "from Payment on Account 2" in {
-
-        val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = defaultDocDetails,
-          financialDetails = List(poa2FinancialDetails),
-          codingOut = codingOutEnabled)
-
-        chargeItem.transactionType shouldBe PaymentOnAccountTwo
-        chargeItem.subTransactionType shouldBe None
-      }
-
-      "from Balancing Payment Nics2" in {
-
-        val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = balancingNics2DocumentDetails,
-          financialDetails = List(balancingNics2FinancialDetails),
-          codingOut = codingOutEnabled)
-
-        chargeItem.transactionType shouldBe BalancingCharge
-        chargeItem.subTransactionType shouldBe Some(Nics2)
-      }
-
-      "from Balancing Payment Accepted" in {
-
-        val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = balancingAcceptedDocumentDetails,
-          financialDetails = List(balancingAcceptedFinancialDetails),
-          codingOut = codingOutEnabled)
-
-        chargeItem.transactionType shouldBe BalancingCharge
-        chargeItem.subTransactionType shouldBe Some(Accepted)
-      }
-
-      "from Balancing Payment Cancelled" in {
-
-        val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = balancingCancelledDocumentDetails,
-          financialDetails = List(balancingCancelledFinancialDetails),
-          codingOut = codingOutEnabled)
-
-        chargeItem.transactionType shouldBe BalancingCharge
-        chargeItem.subTransactionType shouldBe Some(Cancelled)
-      }
-
-      "from MFA" in {
-        val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = defaultDocDetails,
-          financialDetails = List(mfaFinancialDetails),
-          codingOut = codingOutEnabled)
-
-        chargeItem.transactionType shouldBe MfaDebitCharge
-        chargeItem.subTransactionType shouldBe None
-      }
-    }
-
-    "coding out is disabled" when {
-
-      val codingOutEnabled = false
-
-      "from Payment on Account 1" in {
-
-        val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = defaultDocDetails,
-          financialDetails = List(poa1FinancialDetails),
-          codingOut = codingOutEnabled)
+          financialDetails = List(poa1FinancialDetails))
 
         chargeItem.transactionType shouldBe PaymentOnAccountOne
         chargeItem.subTransactionType shouldBe None
@@ -157,8 +83,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
-          financialDetails = List(poa2FinancialDetails),
-          codingOut = codingOutEnabled)
+          financialDetails = List(poa2FinancialDetails))
 
         chargeItem.transactionType shouldBe PaymentOnAccountTwo
         chargeItem.subTransactionType shouldBe None
@@ -168,8 +93,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = balancingNics2DocumentDetails,
-          financialDetails = List(balancingNics2FinancialDetails),
-          codingOut = codingOutEnabled)
+          financialDetails = List(balancingNics2FinancialDetails))
 
         chargeItem.transactionType shouldBe BalancingCharge
         chargeItem.subTransactionType shouldBe Some(Nics2)
@@ -179,8 +103,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = balancingAcceptedDocumentDetails,
-          financialDetails = List(balancingAcceptedFinancialDetails),
-          codingOut = codingOutEnabled)
+          financialDetails = List(balancingAcceptedFinancialDetails))
 
         chargeItem.transactionType shouldBe BalancingCharge
         chargeItem.subTransactionType shouldBe Some(Accepted)
@@ -190,8 +113,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = balancingCancelledDocumentDetails,
-          financialDetails = List(balancingCancelledFinancialDetails),
-          codingOut = codingOutEnabled)
+          financialDetails = List(balancingCancelledFinancialDetails))
 
         chargeItem.transactionType shouldBe BalancingCharge
         chargeItem.subTransactionType shouldBe Some(Cancelled)
@@ -200,13 +122,11 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
       "from MFA" in {
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
-          financialDetails = List(mfaFinancialDetails),
-          codingOut = codingOutEnabled)
+          financialDetails = List(mfaFinancialDetails))
 
         chargeItem.transactionType shouldBe MfaDebitCharge
         chargeItem.subTransactionType shouldBe None
       }
-    }
 
     "isOverdue calculated correctly" when {
 
@@ -216,8 +136,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
-          financialDetails = List(poa1FinancialDetails),
-          codingOut = true)
+          financialDetails = List(poa1FinancialDetails))
 
         chargeItem.isOverdue()(dateServiceBeforeDueDate) shouldBe false
       }
@@ -228,8 +147,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
-          financialDetails = List(poa1FinancialDetails),
-          codingOut = true)
+          financialDetails = List(poa1FinancialDetails))
 
         chargeItem.isOverdue()(dateServiceOnDueDate) shouldBe false
       }
@@ -240,8 +158,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
-          financialDetails = List(poa1FinancialDetails),
-          codingOut = true)
+          financialDetails = List(poa1FinancialDetails))
 
         chargeItem.isOverdue()(dateServiceAfterDueDate) shouldBe true
       }
@@ -250,102 +167,48 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
     "getChargeKey" when {
 
-      "coding out is enabled" when {
-
-        val codingOutEnabled = true
-
         "charge is a POA 1" in {
           val poa1 = chargeItemModel(transactionType = PaymentOnAccountOne, subTransactionType = None)
-          val key = poa1.getChargeTypeKey(codingOutEnabled)
+          val key = poa1.getChargeTypeKey()
           key shouldBe "paymentOnAccount1.text"
         }
 
         "charge is a POA 2" in {
           val poa1 = chargeItemModel(transactionType = PaymentOnAccountTwo, subTransactionType = None)
-          val key = poa1.getChargeTypeKey(codingOutEnabled)
+          val key = poa1.getChargeTypeKey()
           key shouldBe "paymentOnAccount2.text"
         }
 
 
         "charge is a HMRC adjustment" in {
           val poa1 = chargeItemModel(transactionType = MfaDebitCharge, subTransactionType = None)
-          val key = poa1.getChargeTypeKey(codingOutEnabled)
+          val key = poa1.getChargeTypeKey()
           key shouldBe "hmrcAdjustment.text"
         }
 
         "charge is a Class 2 National Insurance Balancing Charge" in {
           val poa1 = chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Nics2))
-          val key = poa1.getChargeTypeKey(codingOutEnabled)
+          val key = poa1.getChargeTypeKey()
           key shouldBe "class2Nic.text"
         }
 
         "charge is a PAYE payment" in {
           val poa1 = chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Accepted))
-          val key = poa1.getChargeTypeKey(codingOutEnabled)
+          val key = poa1.getChargeTypeKey()
           key shouldBe "codingOut.text"
         }
 
         "charge is a cancelled PAYE SA payment" in {
           val poa1 = chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Cancelled))
-          val key = poa1.getChargeTypeKey(codingOutEnabled)
+          val key = poa1.getChargeTypeKey()
           key shouldBe "cancelledPayeSelfAssessment.text"
         }
 
         "charge is a balancing charge" in {
           val poa1 = chargeItemModel(transactionType = BalancingCharge, subTransactionType = None)
-          val key = poa1.getChargeTypeKey(codingOutEnabled)
+          val key = poa1.getChargeTypeKey()
           key shouldBe "balancingCharge.text"
         }
-      }
-
-
-      "coding out is disabled" when {
-
-        val codingOutEnabled = false
-
-        "charge is a POA 1" in {
-          val poa1 = chargeItemModel(transactionType = PaymentOnAccountOne, subTransactionType = None)
-          val key = poa1.getChargeTypeKey(codingOutEnabled)
-          key shouldBe "paymentOnAccount1.text"
-        }
-
-        "charge is a POA 2" in {
-          val poa1 = chargeItemModel(transactionType = PaymentOnAccountTwo, subTransactionType = None)
-          val key = poa1.getChargeTypeKey(codingOutEnabled)
-          key shouldBe "paymentOnAccount2.text"
-        }
-
-
-        "charge is a HMRC adjustment" in {
-          val poa1 = chargeItemModel(transactionType = MfaDebitCharge, subTransactionType = None)
-          val key = poa1.getChargeTypeKey(codingOutEnabled)
-          key shouldBe "hmrcAdjustment.text"
-        }
-
-        "charge is a Class 2 National Insurance Balancing Charge" in {
-          val poa1 = chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Nics2))
-          val key = poa1.getChargeTypeKey(codingOutEnabled)
-          key shouldBe "balancingCharge.text"
-        }
-
-        "charge is a PAYE payment" in {
-          val poa1 = chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Accepted))
-          val key = poa1.getChargeTypeKey(codingOutEnabled)
-          key shouldBe "balancingCharge.text"
-        }
-
-        "charge is a cancelled PAYE SA payment" in {
-          val poa1 = chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Cancelled))
-          val key = poa1.getChargeTypeKey(codingOutEnabled)
-          key shouldBe "balancingCharge.text"
-        }
-
-        "charge is a balancing charge" in {
-          val poa1 = chargeItemModel(transactionType = BalancingCharge, subTransactionType = None)
-          val key = poa1.getChargeTypeKey(codingOutEnabled)
-          key shouldBe "balancingCharge.text"
-        }
-      }
   }
 
   "filterAllowedCharges" should {

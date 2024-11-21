@@ -59,8 +59,7 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
     for {
-      whatYouOweChargesList <- whatYouOweService.getWhatYouOweChargesList(isCodingOutEnabled = true,
-        isEnabled(ReviewAndReconcilePoa), isEnabled(FilterCodedOutPoas))
+      whatYouOweChargesList <- whatYouOweService.getWhatYouOweChargesList(isEnabled(ReviewAndReconcilePoa), isEnabled(FilterCodedOutPoas))
       ctaViewModel <- claimToAdjustViewModel(Nino(user.nino))
     } yield {
 
@@ -75,7 +74,6 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
         whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
         currentTaxYear = dateService.getCurrentTaxYearEnd, backUrl = backUrl, utr = user.saUtr,
         dunningLock = whatYouOweChargesList.hasDunningLock,
-        codingOutEnabled = true,
         reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
         isAgent = isAgent,
         isUserMigrated = user.incomeSources.yearOfMigration.isDefined,

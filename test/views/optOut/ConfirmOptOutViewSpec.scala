@@ -25,87 +25,89 @@ import play.api.test.Helpers._
 import services.optout.OneYearOptOutFollowedByAnnual
 import testUtils.TestSupport
 import views.html.optOut.ConfirmOptOut
+import views.messages.ConfirmOptOutMessages
 
 class ConfirmOptOutViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val confirmOptOutView: ConfirmOptOut = app.injector.instanceOf[ConfirmOptOut]
+
   val expectedQuarterlyUpdates = 4
 
+  val confirmedOptOutUrl: Boolean => String = (isAgent: Boolean) => controllers.optOut.routes.ConfirmOptOutController.submit(isAgent).url
+  val cancelLinkUrl: String = controllers.optOut.routes.OptOutCancelledController.show().url
+
   class Setup(isAgent: Boolean = true, infoMessage: Boolean = false, quarterlyUpdates: Int = 0) {
-    val cancelURL = if (isAgent) controllers.routes.NextUpdatesController.showAgent.url else controllers.routes.NextUpdatesController.show().url
-    val pageDocument: Document =
-      Jsoup.parse(contentAsString(
-        confirmOptOutView(
-          OneYearOptOutCheckpointViewModel(
-            intent = TaxYear.forYearEnd(2022),
-            state = Some(OneYearOptOutFollowedByAnnual),
-            quarterlyUpdates = Some(quarterlyUpdates)
-          ),
-          isAgent = isAgent,
-          cancelURL))
+
+    val pageDocument: Document = {
+      Jsoup.parse(
+        contentAsString(
+          confirmOptOutView(
+            viewModel =
+              OneYearOptOutCheckpointViewModel(
+                intent = TaxYear.forYearEnd(2022),
+                state = Some(OneYearOptOutFollowedByAnnual),
+                quarterlyUpdates = Some(quarterlyUpdates)
+              ),
+            isAgent = isAgent,
+            cancelURL = cancelLinkUrl
+          )
+        )
       )
+    }
   }
 
-  object confirmOptOutMessages {
-    val heading: String = "Confirm and opt out for the 2021 to 2022 tax year"
-    val title: String = s"$heading - Manage your Income Tax updates - GOV.UK"
-    val summary: String = "If you opt out, you can submit your tax return through your HMRC online account or compatible software."
-    val infoMessage: String = "In future, you could be required to report quarterly again if, for example, your income increases or the threshold for reporting quarterly changes. If this happens, we’ll write to you to let you know."
-    val confirmButton: String = "Confirm and save"
-    val confirmedOptOutURL: String = controllers.optOut.routes.ConfirmOptOutController.submit(false).url
-    val confirmedOptOutURLAgent: String = controllers.optOut.routes.ConfirmOptOutController.submit(true).url
-    val cancelButton: String = "Cancel"
-    val cancelButtonHref: String = controllers.routes.NextUpdatesController.show().url
-    val cancelButtonAgentHref: String = controllers.routes.NextUpdatesController.showAgent.url
-  }
+  "Opt-out confirm view" when {
 
-  "Opt-out confirm page" should {
+    "infoMessage == false, not show the info message when " should {
 
-    "have the correct title" in new Setup(false) {
-      pageDocument.title() shouldBe confirmOptOutMessages.title
+      "have the correct title" in new Setup(false) {
+        pageDocument.title() shouldBe ConfirmOptOutMessages.title
+      }
+
+      "have the correct heading" in new Setup(false) {
+        pageDocument.select("h1").text() shouldBe ConfirmOptOutMessages.heading
+      }
+
+      "have the correct summary heading and page contents" in new Setup(false) {
+        pageDocument.getElementById("summary").text() shouldBe ConfirmOptOutMessages.summary
+        pageDocument.getElementById("cancel-button").text() shouldBe ConfirmOptOutMessages.cancelLink
+      }
+
+      "have the correct summary heading and page contents for Agents" in new Setup(true) {
+        pageDocument.getElementById("summary").text() shouldBe ConfirmOptOutMessages.summary
+        pageDocument.getElementById("cancel-button").text() shouldBe ConfirmOptOutMessages.cancelLink
+      }
+
+      "with quarterly updates as zero count" in new Setup(false) {
+        pageDocument.select("#warning-inset").size() shouldBe 0
+      }
+
+      "with quarterly updates as 4 count" in new Setup(isAgent = false, quarterlyUpdates = expectedQuarterlyUpdates) {
+        pageDocument.getElementById("warning-inset")
+          .text().startsWith("You have 4 quarterly updates submitted") shouldBe true
+      }
     }
 
-    "have the correct heading" in new Setup(false) {
-      pageDocument.select("h1").text() shouldBe confirmOptOutMessages.heading
-    }
+    "infoMessage == true, show the info message" should {
 
-    "have the correct summary heading and page contents" in new Setup(false) {
-      pageDocument.getElementById("summary").text() shouldBe confirmOptOutMessages.summary
-      pageDocument.getElementById("cancel-button").text() shouldBe confirmOptOutMessages.cancelButton
-    }
+      "have the correct summary heading and page contents with info message" in new Setup(isAgent = false, infoMessage = true) {
+        pageDocument.getElementById("summary").text() shouldBe ConfirmOptOutMessages.summary
+        pageDocument.getElementById("info-message").text() shouldBe ConfirmOptOutMessages.infoMessage
+        pageDocument.getElementById("confirm-button").text() shouldBe ConfirmOptOutMessages.confirmButton
+        pageDocument.getElementById("cancel-button").text() shouldBe ConfirmOptOutMessages.cancelLink
+        pageDocument.getElementById("cancel-button").attr("href") shouldBe cancelLinkUrl
+        pageDocument.getElementById("confirm-optout-form").attr("action") shouldBe confirmedOptOutUrl(false)
+      }
 
-    "have the correct summary heading and page contents for Agents" in new Setup(true) {
-      pageDocument.getElementById("summary").text() shouldBe confirmOptOutMessages.summary
-      pageDocument.getElementById("cancel-button").text() shouldBe confirmOptOutMessages.cancelButton
-    }
-
-
-    "have the correct summary heading and page contents with info message" in new Setup(isAgent = false, infoMessage = true) {
-      pageDocument.getElementById("summary").text() shouldBe confirmOptOutMessages.summary
-      pageDocument.getElementById("info-message").text() shouldBe confirmOptOutMessages.infoMessage
-      pageDocument.getElementById("confirm-button").text() shouldBe confirmOptOutMessages.confirmButton
-      pageDocument.getElementById("cancel-button").text() shouldBe confirmOptOutMessages.cancelButton
-      pageDocument.getElementById("cancel-button").attr("href") shouldBe confirmOptOutMessages.cancelButtonHref
-      pageDocument.getElementById("confirm-optout-form").attr("action") shouldBe confirmOptOutMessages.confirmedOptOutURL
-    }
-
-    "have the correct summary heading and page contents for Agents with info message" in new Setup(isAgent = true, infoMessage = true) {
-      pageDocument.getElementById("summary").text() shouldBe confirmOptOutMessages.summary
-      pageDocument.getElementById("info-message").text() shouldBe confirmOptOutMessages.infoMessage
-      pageDocument.getElementById("confirm-button").text() shouldBe confirmOptOutMessages.confirmButton
-      pageDocument.getElementById("cancel-button").text() shouldBe confirmOptOutMessages.cancelButton
-      pageDocument.getElementById("cancel-button").attr("href") shouldBe confirmOptOutMessages.cancelButtonAgentHref
-      pageDocument.getElementById("confirm-optout-form").attr("action") shouldBe confirmOptOutMessages.confirmedOptOutURLAgent
-    }
-
-    "with quarterly updates as zero count" in new Setup(false) {
-      pageDocument.select("#warning-inset").size() shouldBe 0
-    }
-
-    "with quarterly updates as 4 count" in new Setup(isAgent = false, quarterlyUpdates = expectedQuarterlyUpdates) {
-      pageDocument.getElementById("warning-inset")
-        .text().startsWith("You have 4 quarterly updates submitted") shouldBe true
+      "have the correct summary heading and page contents for Agents with info message" in new Setup(isAgent = true, infoMessage = true) {
+        pageDocument.getElementById("summary").text() shouldBe ConfirmOptOutMessages.summary
+        pageDocument.getElementById("info-message").text() shouldBe ConfirmOptOutMessages.infoMessage
+        pageDocument.getElementById("confirm-button").text() shouldBe ConfirmOptOutMessages.confirmButton
+        pageDocument.getElementById("cancel-button").text() shouldBe ConfirmOptOutMessages.cancelLink
+        pageDocument.getElementById("cancel-button").attr("href") shouldBe cancelLinkUrl
+        pageDocument.getElementById("confirm-optout-form").attr("action") shouldBe confirmedOptOutUrl(true)
+      }
     }
   }
 }

@@ -583,7 +583,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           )(FakeRequest()),
           messagesAPI, TaxYearSummaryViewModel(Some(CalculationSummary(liabilityCalculationModelSuccessfulExpected)),
             financialDetailsDunningLockSuccess.documentDetails.map(dd => ChargeItem.fromDocumentPair(dd, financialDetailsDunningLockSuccess.financialDetails, codingOut = true)).map(TaxYearSummaryChargeItem.fromChargeItem),
-            allObligations, codingOutEnabled = true, reviewAndReconcileEnabled = true, showForecastData = true, ctaViewModel = emptyCTAModel)))
+            allObligations, reviewAndReconcileEnabled = true, showForecastData = true, ctaViewModel = emptyCTAModel)))
       }
 
 
@@ -802,7 +802,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
             Some(CalculationSummary(liabilityCalculationModelSuccessful)),
             emptyPaymentsList,
             allObligations,
-            codingOutEnabled = true, reviewAndReconcileEnabled = true, showForecastData = true, ctaViewModel = emptyCTAModel
+            reviewAndReconcileEnabled = true, showForecastData = true, ctaViewModel = emptyCTAModel
           )))
       }
 
@@ -1132,8 +1132,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           messagesAPI, TaxYearSummaryViewModel(
             Some(CalculationSummary(liabilityCalculationModelSuccessful)),
 
-            auditDD.map(dd => ChargeItem.fromDocumentPair(dd.documentDetail, financialDetailsMFADebits.financialDetails, codingOut = true)).map(TaxYearSummaryChargeItem.fromChargeItem), allObligations,
-            codingOutEnabled = true,
+            auditDD.map(dd => ChargeItem.fromDocumentPair(dd.documentDetail, financialDetailsMFADebits.financialDetails, true)).map(TaxYearSummaryChargeItem.fromChargeItem), allObligations,
             reviewAndReconcileEnabled = true,
             showForecastData = true, ctaViewModel = emptyCTAModel)))
 

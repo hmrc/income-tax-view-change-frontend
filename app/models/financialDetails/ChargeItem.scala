@@ -58,8 +58,8 @@ case class ChargeItem (
     Seq(PaymentOnAccountOneReviewAndReconcileDebit, PaymentOnAccountTwoReviewAndReconcileDebit).contains(transactionType) && !isPaid && !isOverdue()
   }
 
-  def getDueDateForNonZeroBalancingCharge(codedOutEnabled: Boolean = false): Option[LocalDate] = {
-    if(transactionType == BalancingCharge && (!codedOutEnabled || subTransactionType.isEmpty) && originalAmount == 0.0) {
+  def getDueDateForNonZeroBalancingCharge: Option[LocalDate] = {
+    if(transactionType == BalancingCharge && (subTransactionType.isEmpty) && originalAmount == 0.0) {
       None
     } else {
       dueDate
@@ -154,7 +154,7 @@ object ChargeItem {
   }
 
   def fromDocumentPair(documentDetail: DocumentDetail, financialDetails: List[FinancialDetail],
-                       codingOut: Boolean): ChargeItem = {
+                       reviewAndReconcile: Boolean): ChargeItem = {
 
     val financialDetail = financialDetails.find(_.transactionId.contains(documentDetail.transactionId)) match {
       case Some(fd) => fd

@@ -130,8 +130,7 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
 
     val chargeItem = ChargeItem.fromDocumentPair(
       documentDetailWithDueDate.documentDetail,
-      financialDetailsForCharge,
-      codingOut = true)
+      financialDetailsForCharge)
 
     val chargeReference: Option[String] = financialDetailsForCharge.headOption match {
       case Some(value) => value.chargeReference
@@ -149,7 +148,7 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
 
 
     chargeHistoryService.chargeHistoryResponse(isInterestCharge, documentDetailWithDueDate.documentDetail.isPayeSelfAssessment,
-      chargeReference, isEnabled(ChargeHistory), isCodingOutEnabled = true).map {
+      chargeReference, isEnabled(ChargeHistory)).map {
       case Right(chargeHistory) =>
         auditChargeSummary(chargeItem, paymentBreakdown, chargeHistory, paymentAllocations,
           isInterestCharge, isMFADebit, taxYear)
@@ -185,7 +184,6 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
           payments = paymentsForAllYears,
           chargeHistoryEnabled = isEnabled(ChargeHistory),
           latePaymentInterestCharge = isInterestCharge,
-          codingOutEnabled = true,
           reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
           reviewAndReconcileCredit = chargeHistoryService.getReviewAndReconcileCredit(chargeItem, chargeDetailsforTaxYear, isEnabled(ReviewAndReconcilePoa)),
           btaNavPartial = user.btaNavPartial,
@@ -206,7 +204,7 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
   }
 
   private def checkForPoaExtraChargeLink(chargeDetailsForTaxYear: FinancialDetailsModel, documentDetailWithDueDate: DocumentDetailWithDueDate, isAgent: Boolean)(implicit user: MtdItUser[_]): Option[String] = {
-    val chargeItem: Option[ChargeItem] = getChargeItemOpt(codingOutEnabled = true)(
+    val chargeItem: Option[ChargeItem] = getChargeItemOpt()(
       chargeDetailsForTaxYear.financialDetails)(documentDetailWithDueDate.documentDetail)
 
    chargeItem match {

@@ -16,32 +16,27 @@
 
 package controllers.incomeSources.add
 
-import models.admin.IncomeSources
+import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessNameForm
-import helpers.ComponentSpecBase
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDIndividualAuthStub}
+import models.admin.{IncomeSources, NavBarFs}
 import models.incomeSourceDetails.AddIncomeSourceData.businessNameField
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import services.SessionService
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
 
-class AddBusinessNameControllerISpec extends ComponentSpecBase {
+class AddBusinessNameControllerISpec extends ControllerISpecHelper {
 
-  val addBusinessNameShowUrl: String = controllers.incomeSources.add.routes.AddBusinessNameController.show().url
-  val addBusinessNameSubmitUrl: String = controllers.incomeSources.add.routes.AddBusinessNameController.submit().url
-  val changeBusinessNameShowUrl: String = controllers.incomeSources.add.routes.AddBusinessNameController.changeBusinessName().url
-  val changeBusinessNameSubmitUrl: String = controllers.incomeSources.add.routes.AddBusinessNameController.submitChange().url
   val addBusinessStartDateUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = false).url
-  val checkBusinessDetailsUrl: String = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
   val addIncomeSourceUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
   val incomeSourcesUrl: String = controllers.routes.HomeController.show().url
 
 
-  val prefix: String = "add-business-name"
-  val htmlTitle = messagesAPI("htmlTitle")
   val formHint: String = messagesAPI("add-business-name.p1") + " " +
     messagesAPI("add-business-name.p2")
   val continueButtonText: String = messagesAPI("base.continue")
@@ -49,158 +44,204 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
   val testBusinessName: String = "Test Business"
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
 
-  val journeyTypeSE: JourneyType = JourneyType(Add, SelfEmployment)
+  val journeyType: JourneyType = JourneyType(Add, SelfEmployment)
 
-  s"calling GET $addBusinessNameShowUrl" should {
-    "render the Add Business Name page" when {
-      "User is authorised" in {
-        Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
-        enable(IncomeSources)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-
-        When(s"I call GET $addBusinessNameShowUrl")
-        val result = IncomeTaxViewChangeFrontend.getAddBusinessName
-
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual("add-business-name.heading"),
-          elementTextByID("business-name-hint > p")(formHint),
-          elementTextByID("continue-button")(continueButtonText)
-        )
-      }
-    }
-    "303 SEE_OTHER - redirect to home page" when {
-      "Income Sources FS disabled" in {
-        Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
-        disable(IncomeSources)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-
-        When(s"I call GET ${addBusinessNameShowUrl}")
-        val result = IncomeTaxViewChangeFrontend.getAddBusinessName
-
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(incomeSourcesUrl)
-        )
-      }
+  def backUrl(isChange: Boolean): String = {
+    if (isChange) {
+      controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
+    } else {
+      controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
     }
   }
 
-  s"calling POST ${addBusinessNameSubmitUrl}" should {
-    s"303 SEE_OTHER and redirect to $addBusinessStartDateUrl" when {
-      "User is authorised and business name is valid" in {
+  val path = "/income-sources/add/business-name"
+  val changePath = "/income-sources/add/change-business-name"
+
+  s"GET $path" when {
+    "the user is authenticated, with a valid MTD enrolment" should {
+      "render the Add Business Name page" when {
+        "income sources feature is enabled" in {
+          enable(IncomeSources)
+          disable(NavBarFs)
+          MTDIndividualAuthStub.stubAuthorised()
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
+          val result = buildGETMTDClient(path).futureValue
+
+          lazy val document: Document = Jsoup.parse(result.body)
+          document.getElementsByClass("govuk-back-link").attr("href") shouldBe backUrl(isChange = false)
+
+          result should have(
+            httpStatus(OK),
+            pageTitleIndividual("add-business-name.heading"),
+            elementTextByID("business-name-hint > p")(formHint),
+            elementTextByID("continue-button")(continueButtonText)
+          )
+        }
+      }
+      "303 SEE_OTHER - redirect to home page" when {
+        "Income Sources FS disabled" in {
+          disable(NavBarFs)
+          MTDIndividualAuthStub.stubAuthorised()
+          disable(IncomeSources)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
+          val result = buildGETMTDClient(path).futureValue
+
+          result should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(incomeSourcesUrl)
+          )
+        }
+      }
+    }
+    testAuthFailuresForMTDIndividual(path)
+  }
+
+  s"GET $changePath" when {
+    "the user is authenticated, with a valid MTD enrolment" should {
+      "render the Add Business Name page" when {
+        "User is authorised" in {
+          disable(NavBarFs)
+          MTDIndividualAuthStub.stubAuthorised()
+          enable(IncomeSources)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
+          val result = buildGETMTDClient(changePath).futureValue
+
+          lazy val document: Document = Jsoup.parse(result.body)
+          document.getElementsByClass("govuk-back-link").attr("href") shouldBe backUrl(isChange = true)
+
+          result should have(
+            httpStatus(OK),
+            pageTitleIndividual("add-business-name.heading"),
+            elementTextByID("business-name-hint > p")(formHint),
+            elementTextByID("continue-button")(continueButtonText)
+          )
+        }
+      }
+      "303 SEE_OTHER - redirect to home page" when {
+        "Income Sources FS disabled" in {
+          disable(NavBarFs)
+          MTDIndividualAuthStub.stubAuthorised()
+          disable(IncomeSources)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
+          val result = buildGETMTDClient(changePath).futureValue
+
+          result should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(incomeSourcesUrl)
+          )
+        }
+      }
+    }
+    testAuthFailuresForMTDIndividual(changePath)
+  }
+
+  s"POST $path" when {
+    "the user is authenticated, with a valid MTD enrolment" should {
+      s"303 SEE_OTHER and redirect to $addBusinessStartDateUrl" when {
+        "the income sources is enabled" in {
+          enable(IncomeSources)
+          disable(NavBarFs)
+          MTDIndividualAuthStub.stubAuthorised()
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
+          val formData: Map[String, Seq[String]] = {
+            Map(
+              BusinessNameForm.businessName -> Seq("Test Business")
+            )
+          }
+
+          val result = buildPOSTMTDPostClient(path, body = formData).futureValue
+          result should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(addBusinessStartDateUrl)
+          )
+
+          sessionService.getMongoKeyTyped[String](businessNameField, journeyType).futureValue shouldBe Right(Some(testBusinessName))
+        }
+      }
+      "show error when form is filled incorrectly" in {
         enable(IncomeSources)
+        disable(NavBarFs)
+        MTDIndividualAuthStub.stubAuthorised()
+
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         val formData: Map[String, Seq[String]] = {
           Map(
-            BusinessNameForm.businessName -> Seq("Test Business")
+            BusinessNameForm.businessName -> Seq("£££")
           )
         }
 
-        When(s"I call POST ${addBusinessNameSubmitUrl}")
-        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/business-name")(formData)
+        val result = buildPOSTMTDPostClient(path, body = formData).futureValue
+
         result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(addBusinessStartDateUrl)
-        )
-        sessionService.getMongoKeyTyped[String](businessNameField, journeyTypeSE).futureValue shouldBe Right(Some(testBusinessName))
-      }
-    }
-    "show error when form is filled incorrectly" in {
-      enable(IncomeSources)
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-
-      val formData: Map[String, Seq[String]] = {
-        Map(
-          BusinessNameForm.businessName -> Seq("£££")
+          httpStatus(BAD_REQUEST),
+          elementTextByID("business-name-error")(messagesAPI("base.error-prefix") + " " +
+            messagesAPI("add-business-name.form.error.invalidNameFormat"))
         )
       }
-
-      val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/business-name")(formData)
-      result should have(
-        httpStatus(BAD_REQUEST),
-        elementTextByID("business-name-error")(messagesAPI("base.error-prefix") + " " +
-          messagesAPI("add-business-name.form.error.invalidNameFormat"))
-      )
     }
+    testAuthFailuresForMTDIndividual(path, Some(Map(
+      BusinessNameForm.businessName -> Seq("Test Business")
+    )))
   }
 
+  s"POST $changePath" when {
+    "the user is authenticated, with a valid MTD enrolment" should {
+      val expectedUrl = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
+      s"303 SEE_OTHER and redirect to $expectedUrl" when {
+        "the income sources is enabled" in {
+          enable(IncomeSources)
+          disable(NavBarFs)
+          MTDIndividualAuthStub.stubAuthorised()
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-  s"calling GET $changeBusinessNameShowUrl" should {
-    "render the Add Business Name page" when {
-      "User is authorised" in {
-        Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
-        enable(IncomeSources)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+          val formData: Map[String, Seq[String]] = {
+            Map(
+              BusinessNameForm.businessName -> Seq("Test Business")
+            )
+          }
 
-        When(s"I call GET $changeBusinessNameShowUrl")
-        val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/change-business-name")
+          val result = buildPOSTMTDPostClient(changePath, body = formData).futureValue
 
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual("add-business-name.heading"),
-          elementTextByID("business-name-hint > p")(formHint),
-          elementTextByID("continue-button")(continueButtonText)
-        )
+          result should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(expectedUrl)
+          )
 
-        sessionService.getMongoKeyTyped[String](businessNameField, journeyTypeSE).futureValue shouldBe Right(Some(testBusinessName))
+          sessionService.getMongoKeyTyped[String](businessNameField, journeyType).futureValue shouldBe Right(Some(testBusinessName))
+        }
       }
-    }
-    "303 SEE_OTHER - redirect to home page" when {
-      "Income Sources FS disabled" in {
-        Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
-        disable(IncomeSources)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-
-        When(s"I call GET ${changeBusinessNameShowUrl}")
-        val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/change-business-name")
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(incomeSourcesUrl)
-        )
-      }
-    }
-  }
-
-  s"calling POST ${changeBusinessNameSubmitUrl}" should {
-    s"303 SEE_OTHER and redirect to $checkBusinessDetailsUrl" when {
-      "User is authorised and business name is valid" in {
+      "show error when form is filled incorrectly" in {
         enable(IncomeSources)
+        disable(NavBarFs)
+        MTDIndividualAuthStub.stubAuthorised()
+
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         val formData: Map[String, Seq[String]] = {
           Map(
-            BusinessNameForm.businessName -> Seq("Test Business")
+            BusinessNameForm.businessName -> Seq("£££")
           )
         }
 
-        When(s"I call POST ${changeBusinessNameSubmitUrl}")
-        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/change-business-name")(formData)
+        val result = buildPOSTMTDPostClient(changePath, body = formData).futureValue
+
         result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(checkBusinessDetailsUrl)
-        )
-
-        sessionService.getMongoKeyTyped[String](businessNameField, journeyTypeSE).futureValue shouldBe Right(Some(testBusinessName))
-      }
-    }
-    "show error when form is filled incorrectly" in {
-      enable(IncomeSources)
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-
-      val formData: Map[String, Seq[String]] = {
-        Map(
-          BusinessNameForm.businessName -> Seq("£££")
+          httpStatus(BAD_REQUEST),
+          elementTextByID("business-name-error")(messagesAPI("base.error-prefix") + " " +
+            messagesAPI("add-business-name.form.error.invalidNameFormat"))
         )
       }
-
-      val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/change-business-name")(formData)
-      result should have(
-        httpStatus(BAD_REQUEST),
-        elementTextByID("business-name-error")(messagesAPI("base.error-prefix") + " " +
-          messagesAPI("add-business-name.form.error.invalidNameFormat"))
-      )
     }
+    testAuthFailuresForMTDIndividual(changePath, Some(Map(
+      BusinessNameForm.businessName -> Seq("Test Business")
+    )))
   }
+
+
 }

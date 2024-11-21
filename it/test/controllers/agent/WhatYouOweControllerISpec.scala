@@ -74,7 +74,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase  with ChargeConstants 
   )(FakeRequest())
 
   val configuredChargeItemGetter: List[FinancialDetail] => DocumentDetail => Option[ChargeItem] =
-    getChargeItemOpt(codingOutEnabled = true)
+    getChargeItemOpt
 
   val testValidOutStandingChargeResponseJsonWithAciAndBcdCharges: JsValue = Json.parse(
     s"""

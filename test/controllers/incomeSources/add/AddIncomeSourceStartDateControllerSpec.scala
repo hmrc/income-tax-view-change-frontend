@@ -89,8 +89,8 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
   }
 
   def getBackUrl(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType): String = ((isAgent, isChange, incomeSourceType) match {
-    case (false, false, SelfEmployment) => routes.AddBusinessNameController.show()
-    case (_, false, SelfEmployment) => routes.AddBusinessNameController.showAgent()
+    case (false, false, SelfEmployment) => routes.AddBusinessNameController.show(false)
+    case (_, false, SelfEmployment) => routes.AddBusinessNameController.showAgent(false)
     case (false, _, SelfEmployment) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
     case (_, _, SelfEmployment) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
     case (false, false, _) => routes.AddIncomeSourceController.show()
