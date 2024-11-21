@@ -60,19 +60,19 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
       latencyIndicator2 = annuallyIndicator
     )
 
-  val pathSE = "/agents/manage-your-businesses/manage/confirm-you-want-to-report"
-  val pathUK = "/agents/manage-your-businesses/manage/confirm-you-want-to-report-uk-property "
-  val pathOV = "/agents/manage-your-businesses/manage/confirm-you-want-to-report-foreign-property"
+  val pathSE = "/agents/manage-your-businesses/manage/confirm-you-want-to-report" + s"?taxYear=$taxYear&changeTo=$annual"
+  val pathUK = "/agents/manage-your-businesses/manage/confirm-you-want-to-report-uk-property" + s"?taxYear=$taxYear&changeTo=$annual"
+  val pathOV = "/agents/manage-your-businesses/manage/confirm-you-want-to-report-foreign-property" + s"?taxYear=$taxYear&changeTo=$annual"
 
   private lazy val checkYourAnswersController = controllers.manageBusinesses.manage.routes
     .CheckYourAnswersController
 
   val checkYourAnswersShowUKPropertyUrl: String = checkYourAnswersController
-    .show(isAgent = false, UkProperty).url
+    .show(isAgent = true, UkProperty).url
   val checkYourAnswersShowForeignPropertyUrl: String = checkYourAnswersController
-    .show(isAgent = false, ForeignProperty).url
+    .show(isAgent = true, ForeignProperty).url
   val checkYourAnswersShowSelfEmploymentUrl: String = checkYourAnswersController
-    .show(isAgent = false, SelfEmployment).url
+    .show(isAgent = true, SelfEmployment).url
 
   val prefix: String = "incomeSources.manage.propertyReportingMethod"
 
@@ -135,7 +135,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
               verifyIncomeSourceDetailsCall(testMtditid)
               result should have(
                 httpStatus(SEE_OTHER),
-                redirectURI(controllers.routes.HomeController.show().url)
+                redirectURI(controllers.routes.HomeController.showAgent.url)
               )
             }
           }
@@ -191,7 +191,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
               verifyIncomeSourceDetailsCall(testMtditid)
               result should have(
                 httpStatus(SEE_OTHER),
-                redirectURI(controllers.routes.HomeController.show().url)
+                redirectURI(controllers.routes.HomeController.showAgent.url)
               )
             }
           }
@@ -246,7 +246,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
               verifyIncomeSourceDetailsCall(testMtditid)
               result should have(
                 httpStatus(SEE_OTHER),
-                redirectURI(controllers.routes.HomeController.show().url)
+                redirectURI(controllers.routes.HomeController.showAgent.url)
               )
             }
           }
@@ -285,10 +285,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
                 httpStatus(SEE_OTHER),
                 redirectURI(checkYourAnswersShowSelfEmploymentUrl)
               )
-
-              testAuthFailuresForMTDAgent(pathSE, isSupportingAgent, optBody = Some(Map
-              (ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
-              )))
             }
           }
 
@@ -312,10 +308,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
               result should have(
                 httpStatus(BAD_REQUEST)
               )
-
-              testAuthFailuresForMTDAgent(pathSE, isSupportingAgent, optBody = Some(Map
-              (ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
-              )))
             }
           }
 
@@ -335,16 +327,17 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
               result should have(
                 httpStatus(SEE_OTHER),
-                redirectURI(controllers.routes.HomeController.show().url)
+                redirectURI(controllers.routes.HomeController.showAgent.url)
               )
 
-              testAuthFailuresForMTDAgent(pathSE, isSupportingAgent, optBody = Some(Map
-              (ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
-              )))
             }
           }
 
         }
+
+        testAuthFailuresForMTDAgent(pathSE, isSupportingAgent, optBody = Some(Map
+        (ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
+        )))
       }
     }
   }
@@ -373,10 +366,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
                 httpStatus(SEE_OTHER),
                 redirectURI(checkYourAnswersShowUKPropertyUrl)
               )
-
-              testAuthFailuresForMTDAgent(pathUK, isSupportingAgent, optBody = Some(Map
-              (ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
-              )))
             }
           }
 
@@ -397,10 +386,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
               result should have(
                 httpStatus(BAD_REQUEST)
               )
-
-              testAuthFailuresForMTDAgent(pathUK, isSupportingAgent, optBody = Some(Map
-              (ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
-              )))
             }
           }
 
@@ -420,16 +405,17 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
               result should have(
                 httpStatus(SEE_OTHER),
-                redirectURI(controllers.routes.HomeController.show().url)
+                redirectURI(controllers.routes.HomeController.showAgent.url)
               )
 
-              testAuthFailuresForMTDAgent(pathUK, isSupportingAgent, optBody = Some(Map
-              (ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
-              )))
             }
           }
 
         }
+
+        testAuthFailuresForMTDAgent(pathUK, isSupportingAgent, optBody = Some(Map
+        (ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
+        )))
       }
     }
   }
@@ -458,10 +444,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
                 httpStatus(SEE_OTHER),
                 redirectURI(checkYourAnswersShowForeignPropertyUrl)
               )
-
-              testAuthFailuresForMTDAgent(pathOV, isSupportingAgent, optBody = Some(Map
-              (ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
-              )))
             }
           }
 
@@ -482,10 +464,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
               result should have(
                 httpStatus(BAD_REQUEST)
               )
-
-              testAuthFailuresForMTDAgent(pathOV, isSupportingAgent, optBody = Some(Map
-              (ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
-              )))
             }
           }
 
@@ -505,16 +483,16 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
               result should have(
                 httpStatus(SEE_OTHER),
-                redirectURI(controllers.routes.HomeController.show().url)
+                redirectURI(controllers.routes.HomeController.showAgent.url)
               )
-
-              testAuthFailuresForMTDAgent(pathOV, isSupportingAgent, optBody = Some(Map
-              (ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
-              )))
             }
           }
 
         }
+
+        testAuthFailuresForMTDAgent(pathSE, isSupportingAgent, optBody = Some(Map
+        (ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
+        )))
       }
     }
   }

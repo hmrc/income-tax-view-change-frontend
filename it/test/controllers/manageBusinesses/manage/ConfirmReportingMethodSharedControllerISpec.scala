@@ -56,9 +56,9 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
       latencyIndicator2 = annuallyIndicator
     )
 
-  val pathSE = "/manage-your-businesses/manage/confirm-you-want-to-report"
-  val pathUK = "/manage-your-businesses/manage/confirm-you-want-to-report-uk-property "
-  val pathOV = "/manage-your-businesses/manage/confirm-you-want-to-report-foreign-property"
+  val pathSE = "/manage-your-businesses/manage/confirm-you-want-to-report" + s"?taxYear=$taxYear&changeTo=$annual"
+  val pathUK = "/manage-your-businesses/manage/confirm-you-want-to-report-uk-property" + s"?taxYear=$taxYear&changeTo=$annual"
+  val pathOV = "/manage-your-businesses/manage/confirm-you-want-to-report-foreign-property" + s"?taxYear=$taxYear&changeTo=$annual"
 
   private lazy val checkYourAnswersController = controllers.manageBusinesses.manage.routes
     .CheckYourAnswersController
@@ -261,10 +261,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             httpStatus(SEE_OTHER),
             redirectURI(checkYourAnswersShowSelfEmploymentUrl)
           )
-
-          testAuthFailuresForMTDIndividual(pathSE, optBody = Some(Map
-          (ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
-          )))
         }
       }
 
@@ -289,9 +285,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             httpStatus(BAD_REQUEST)
           )
 
-          testAuthFailuresForMTDIndividual(pathSE, optBody = Some(Map
-          (ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
-          )))
         }
       }
 
@@ -313,14 +306,14 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             httpStatus(SEE_OTHER),
             redirectURI(controllers.routes.HomeController.show().url)
           )
-
-          testAuthFailuresForMTDIndividual(pathSE, optBody = Some(Map
-          (ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
-          )))
         }
       }
 
     }
+
+    testAuthFailuresForMTDIndividual(pathSE, optBody = Some(Map
+    (ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
+    )))
   }
 
   s"POST $pathUK" when {
@@ -344,9 +337,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             redirectURI(checkYourAnswersShowUKPropertyUrl)
           )
 
-          testAuthFailuresForMTDIndividual(pathUK, optBody = Some(Map
-          (ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
-          )))
         }
       }
 
@@ -368,9 +358,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             httpStatus(BAD_REQUEST)
           )
 
-          testAuthFailuresForMTDIndividual(pathUK, optBody = Some(Map
-          (ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
-          )))
         }
       }
 
@@ -393,12 +380,13 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             redirectURI(controllers.routes.HomeController.show().url)
           )
 
-          testAuthFailuresForMTDIndividual(pathUK, optBody = Some(Map
-          (ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
-          )))
+
         }
       }
 
+      testAuthFailuresForMTDIndividual(pathUK, optBody = Some(Map
+      (ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
+      )))
     }
   }
 
@@ -422,10 +410,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             httpStatus(SEE_OTHER),
             redirectURI(checkYourAnswersShowForeignPropertyUrl)
           )
-
-          testAuthFailuresForMTDIndividual(pathOV, optBody = Some(Map
-          (ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
-          )))
         }
       }
 
@@ -447,9 +431,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             httpStatus(BAD_REQUEST)
           )
 
-          testAuthFailuresForMTDIndividual(pathOV, optBody = Some(Map
-          (ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
-          )))
         }
       }
 
@@ -471,13 +452,12 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             httpStatus(SEE_OTHER),
             redirectURI(controllers.routes.HomeController.show().url)
           )
-
-          testAuthFailuresForMTDIndividual(pathOV, optBody = Some(Map
-          (ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
-          )))
         }
       }
 
+      testAuthFailuresForMTDIndividual(pathOV, optBody = Some(Map
+      (ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
+      )))
     }
   }
 
