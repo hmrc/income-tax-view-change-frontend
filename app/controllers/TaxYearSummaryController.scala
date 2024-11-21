@@ -159,11 +159,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
     financialDetailsService.getFinancialDetails(taxYear, user.nino) flatMap {
       case financialDetails@FinancialDetailsModel(_, documentDetails, _) =>
 
-        val getChargeItem: DocumentDetail => Option[ChargeItem] = getChargeItemOpt(
-          reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa)
-        )(
-          financialDetails = financialDetails.financialDetails
-        )
+        val getChargeItem: DocumentDetail => Option[ChargeItem] = getChargeItemOpt(financialDetails = financialDetails.financialDetails)
 
         val chargeItemsNoPayments = documentDetails
           .filter(_.paymentLot.isEmpty)
@@ -181,7 +177,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
             .filterNot(_.originalAmount < 0)
             .filter(_.notCodedOutPoa(isEnabled(FilterCodedOutPoas)))
             .filter(ChargeItem.filterAllowedCharges(isEnabled(ReviewAndReconcilePoa),
-              PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile))
+              PaymentOnAccountOneReviewAndReconcileDebit, PaymentOnAccountTwoReviewAndReconcileDebit))
         }
 
         val chargeItemsLpi: List[TaxYearSummaryChargeItem] = {

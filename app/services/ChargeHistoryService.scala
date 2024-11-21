@@ -87,8 +87,7 @@ class ChargeHistoryService @Inject()(chargeHistoryConnector: ChargeHistoryConnec
     } yield {
       ChargeItem.fromDocumentPair(
         documentDetailForRarCredit,
-        List(financialDetailForRarCredit),
-        reviewAndReconcileEnabled
+        List(financialDetailForRarCredit)
       )
     }
   }

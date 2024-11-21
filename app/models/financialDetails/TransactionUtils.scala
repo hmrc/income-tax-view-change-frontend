@@ -22,13 +22,11 @@ import scala.util.{Failure, Success, Try}
 
 trait TransactionUtils {
 
-  def getChargeItemOpt(reviewAndReconcileEnabled: Boolean)
-                      (financialDetails: List[FinancialDetail])
+  def getChargeItemOpt(financialDetails: List[FinancialDetail])
                       (documentDetail: DocumentDetail): Option[ChargeItem] = {
     Try(ChargeItem.fromDocumentPair(
       documentDetail,
-      financialDetails,
-      reviewAndReconcileEnabled)
+      financialDetails)
     ) match {
       case Failure(exception) =>
         Logger("application").warn(exception.getMessage)

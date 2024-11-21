@@ -97,7 +97,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
     BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     financialDetailsOverdueCharges,
     Some(OutstandingChargesModel(List(
-      OutstandingChargeModel("POA1RR", Some(LocalDate.parse("2010-12-31")), 10.23, 1234), OutstandingChargeModel("POA1RR", Some(LocalDate.parse("2010-12-31")), 1.23, 1234))
+      OutstandingChargeModel("POA1RR-debit", Some(LocalDate.parse("2010-12-31")), 10.23, 1234), OutstandingChargeModel("POA1RR-debit", Some(LocalDate.parse("2010-12-31")), 1.23, 1234))
     ))
   )
 

@@ -20,7 +20,7 @@ import audit.models.WhatYouOweResponseAuditModel
 import auth.MtdItUser
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
-import models.admin.{AdjustPaymentsOnAccount, CreditsRefundsRepay, ReviewAndReconcilePoa}
+import models.admin.{AdjustPaymentsOnAccount, CreditsRefundsRepay}
 import models.core.AccountingPeriodModel
 import models.financialDetails._
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
@@ -74,7 +74,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase  with ChargeConstants 
   )(FakeRequest())
 
   val configuredChargeItemGetter: List[FinancialDetail] => DocumentDetail => Option[ChargeItem] =
-    getChargeItemOpt(reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa))
+    getChargeItemOpt
 
   val testValidOutStandingChargeResponseJsonWithAciAndBcdCharges: JsValue = Json.parse(
     s"""
