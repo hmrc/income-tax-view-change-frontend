@@ -146,6 +146,8 @@ user.incomeSources.getLatencyDetails(incomeSourceType, id.value) match {
 
 
   private def logAndShowError(isAgent: Boolean, errorMessage: String)(implicit user: MtdItUser[_]): Result = {
+    println(isAgent)
+    println(errorMessage)
     Logger("application").error("[ConfirmReportingMethodSharedController]" + errorMessage)
     (if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler).showInternalServerError()
   }
