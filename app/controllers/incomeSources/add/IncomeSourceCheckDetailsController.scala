@@ -19,65 +19,62 @@ package controllers.incomeSources.add
 import audit.AuditingService
 import audit.models.CreateIncomeSourceAuditModel
 import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
+import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.{BeforeSubmissionPage, IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import models.createIncomeSource.CreateIncomeSourceResponse
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
-import models.incomeSourceDetails.{AddIncomeSourceData, BusinessDetailsModel, IncomeSourceDetailsModel, UIJourneySessionData}
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, UIJourneySessionData}
 import play.api.Logger
+import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{CreateBusinessDetailsService, SessionService}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.JourneyChecker
 import views.html.incomeSources.add.IncomeSourceCheckDetails
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeSourceCheckDetails,
-                                                   val authorisedFunctions: AuthorisedFunctions,
+                                                   val authActions: AuthActions,
                                                    val businessDetailsService: CreateBusinessDetailsService,
                                                    val auditingService: AuditingService,
-                                                   auth: AuthenticatorPredicate)
+                                                   val sessionService: SessionService,
+                                                   val itvcErrorHandler: ItvcErrorHandler,
+                                                   val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                                   (implicit val ec: ExecutionContext,
-                                                   implicit override val mcc: MessagesControllerComponents,
-                                                   val appConfig: FrontendAppConfig,
-                                                   implicit val sessionService: SessionService,
-                                                   implicit val itvcErrorHandler: ItvcErrorHandler,
-                                                   implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController
-  with IncomeSourcesUtils with FeatureSwitching with JourneyChecker {
-
-  private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+                                                   val mcc: MessagesControllerComponents,
+                                                   val appConfig: FrontendAppConfig) extends FrontendController(mcc)
+  with JourneyChecker with I18nSupport {
 
   private lazy val errorRedirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
     if (isAgent) routes.IncomeSourceNotAddedController.showAgent(incomeSourceType).url
     else routes.IncomeSourceNotAddedController.show(incomeSourceType).url
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
       handleRequest(
         sources = user.incomeSources,
         isAgent = false,
         incomeSourceType
-      )
+      )(implicitly, itvcErrorHandler)
   }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit mtdItUser =>
       handleRequest(
         sources = mtdItUser.incomeSources,
         isAgent = true,
         incomeSourceType
-      )
+      )(implicitly, itvcErrorHandlerAgent)
   }
 
   private def handleRequest(sources: IncomeSourceDetailsModel,
                             isAgent: Boolean,
                             incomeSourceType: IncomeSourceType)
-                           (implicit user: MtdItUser[_]): Future[Result] = withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
+                           (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
     val backUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(incomeSourceType, isAgent).url
     val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.submitAgent(incomeSourceType) else {
       controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.submit(incomeSourceType)
@@ -97,7 +94,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
         Logger("application").error(agentPrefix +
           s"Unable to construct view model for $incomeSourceType")
         Future.successful {
-          errorHandler(isAgent).showInternalServerError()
+          errorHandler.showInternalServerError()
         }
     }
   }.recover {
@@ -105,7 +102,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
       val agentPrefix = if (isAgent) "[Agent]" else ""
       Logger("application").error(agentPrefix +
         s"Unexpected exception ${ex.getMessage} - ${ex.getCause}")
-      errorHandler(isAgent).showInternalServerError()
+      errorHandler.showInternalServerError()
   }
 
   private def getViewModel(incomeSourceType: IncomeSourceType, sessionData: UIJourneySessionData)
@@ -158,12 +155,12 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
   }
 
 
-  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
       handleSubmit(isAgent = false, incomeSourceType)
   }
 
-  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit mtdItUser =>
       handleSubmit(isAgent = true, incomeSourceType)
   }
