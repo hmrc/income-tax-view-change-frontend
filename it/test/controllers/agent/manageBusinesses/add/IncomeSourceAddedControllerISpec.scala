@@ -20,7 +20,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.JourneyType.{Add, JourneyType}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
@@ -68,7 +68,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase {
 
   def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
-    journeyType = JourneyType(Add, incomeSourceType).toString,
+    journeyType = IncomeSources(Add, incomeSourceType).toString,
     addIncomeSourceData = Some(AddIncomeSourceData()))
 
   s"calling GET $incomeSourceAddedSelfEmploymentShowAgentUrl" should {
@@ -77,11 +77,11 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         When(s"I call GET $incomeSourceAddedSelfEmploymentShowAgentUrl")
 
-        await(sessionService.createSession(JourneyType(Add, SelfEmployment).toString))
+        await(sessionService.createSession(IncomeSources(Add, SelfEmployment)))
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
           addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), dateStarted = Some(LocalDate.of(2024, 1, 1)))))))
@@ -104,7 +104,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase {
         }
 
         And("Mongo storage is successfully set")
-        sessionService.getMongoKey(AddIncomeSourceData.journeyIsCompleteField, JourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(true))
+        sessionService.getMongoKey(AddIncomeSourceData.journeyIsCompleteField, IncomeSources(Add, SelfEmployment)).futureValue shouldBe Right(Some(true))
 
         result should have(
           httpStatus(OK),
@@ -121,11 +121,11 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         When(s"I call GET $incomeSourceAddedForeignPropertyShowAgentUrl")
 
-        await(sessionService.createSession(JourneyType(Add, ForeignProperty).toString))
+        await(sessionService.createSession(IncomeSources(Add, ForeignProperty)))
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-FP",
           addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), dateStarted = Some(LocalDate.of(2024, 1, 1)))))))
@@ -142,7 +142,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase {
         val expectedText: String = messagesAPI("business-added.foreign-property.h1") + " " + messagesAPI("business-added.foreign-property.base")
 
         And("Mongo storage is successfully set")
-        sessionService.getMongoKey(AddIncomeSourceData.journeyIsCompleteField, JourneyType(Add, ForeignProperty)).futureValue shouldBe Right(Some(true))
+        sessionService.getMongoKey(AddIncomeSourceData.journeyIsCompleteField, IncomeSources(Add, ForeignProperty)).futureValue shouldBe Right(Some(true))
 
         result should have(
           httpStatus(OK),
@@ -157,10 +157,10 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase {
     "render the UK Property Added Page" when {
       "UK Property start date is provided" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         stubAuthorisedAgentUser(authorised = true)
 
-        await(sessionService.createSession(JourneyType(Add, UkProperty).toString))
+        await(sessionService.createSession(IncomeSources(Add, UkProperty)))
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-UK",
           addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), dateStarted = Some(LocalDate.of(2024, 1, 1)))))))
@@ -174,7 +174,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase {
         Then("user is shown UK property added page")
         val result = IncomeTaxViewChangeFrontend.get(s"/manage-your-businesses/add-uk-property/uk-property-added", clientDetailsWithConfirmation)
         And("Mongo storage is successfully set")
-        sessionService.getMongoKey(AddIncomeSourceData.journeyIsCompleteField, JourneyType(Add, UkProperty)).futureValue shouldBe Right(Some(true))
+        sessionService.getMongoKey(AddIncomeSourceData.journeyIsCompleteField, IncomeSources(Add, UkProperty)).futureValue shouldBe Right(Some(true))
 
         result should have(
           httpStatus(OK),
@@ -187,7 +187,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase {
     "render error page" when {
       "UK property income source is missing trading start date" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         stubAuthorisedAgentUser(authorised = true)
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse.copy(properties = List(ukProperty.copy(tradingStartDate = None))))
@@ -208,7 +208,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase {
     s"redirect to $HomeControllerShowUrl" when {
       "Income Sources Feature Switch is disabled" in {
         Given("Income Sources FS is disabled")
-        disable(IncomeSources)
+        disable(IncomeSourcesFs)
         stubAuthorisedAgentUser(authorised = true)
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse.copy(properties = List(ukProperty.copy(tradingStartDate = None))))

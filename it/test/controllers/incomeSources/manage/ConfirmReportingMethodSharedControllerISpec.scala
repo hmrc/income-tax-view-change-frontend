@@ -18,7 +18,7 @@ package controllers.incomeSources.manage
 
 import audit.models.IncomeSourceReportingMethodAuditModel
 import auth.MtdItUser
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{JourneyType, Manage}
 import forms.incomeSources.manage.ConfirmReportingMethodForm
@@ -104,7 +104,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
 
   def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
-    journeyType = JourneyType(Manage, incomeSourceType).toString,
+    journeyType = IncomeSources(Manage, incomeSourceType).toString,
     manageIncomeSourceData = Some(ManageIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), reportingMethod = Some(annual), taxYear = Some(2024))))
 
   s"calling GET $confirmReportingMethodShowUKPropertyUrl" should {
@@ -112,7 +112,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
       "all query parameters are valid" in {
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         When(s"I call GET $confirmReportingMethodShowUKPropertyUrl")
 
@@ -142,7 +142,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
       "all query parameters are valid" in {
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         When(s"I call GET $confirmReportingMethodShowForeignPropertyUrl")
 
@@ -171,7 +171,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
       "all query parameters are valid" in {
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
@@ -197,7 +197,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
       "Income Sources FS is Disabled" in {
 
         Given("Income Sources FS is disabled")
-        disable(IncomeSources)
+        disable(IncomeSourcesFs)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
@@ -225,7 +225,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
       "called with a valid form" in {
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
@@ -254,7 +254,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
       "called with a valid form" in {
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
@@ -283,7 +283,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
       "called with a valid form" in {
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
@@ -312,7 +312,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
       "called with a invalid form" in {
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
@@ -336,7 +336,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
     "redirect to home page" when {
       "Income Sources FS is disabled" in {
 
-        disable(IncomeSources)
+        disable(IncomeSourcesFs)
 
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)

@@ -19,13 +19,13 @@ package controllers.manageBusinesses.add
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.SelfEmployment
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSources, JourneyType}
 import forms.incomeSources.add.BusinessNameForm
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockSessionService}
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import models.incomeSourceDetails.AddIncomeSourceData
 import models.incomeSourceDetails.AddIncomeSourceData.{businessNameField, businessTradeField}
 import org.jsoup.Jsoup
@@ -72,7 +72,7 @@ class AddBusinessNameControllerSpec extends TestSupport
     )
 
   val validBusinessName: String = "Test Business Name"
-  val journeyType: JourneyType = JourneyType(Add, SelfEmployment)
+  val journeyType: JourneyType = IncomeSources(Add, SelfEmployment)
 
   def getValidationErrorTabTitle(): String = {
     s"${messages("htmlTitle.invalidInput", messages("add-business-name.heading"))}"
@@ -84,17 +84,17 @@ class AddBusinessNameControllerSpec extends TestSupport
         "return 200 OK" when {
           "the user is authenticated" in {
             disableAllSwitches()
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             setupMockAuthorisationSuccess(isAgent)
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
             if (isChange) {
-              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Add, SelfEmployment)))))
+              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSources(Add, SelfEmployment)))))
               setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
               setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some("Test Business Trade")))
             }
             else {
               setupMockCreateSession(true)
-              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Add, SelfEmployment)))))
+              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSources(Add, SelfEmployment)))))
             }
 
             val result: Future[Result] = (isChange, isAgent) match {
@@ -159,11 +159,11 @@ class AddBusinessNameControllerSpec extends TestSupport
         s"return ${Status.SEE_OTHER}: redirect to the relevant You Cannot Go Back page" when {
           "user has already completed the journey" in {
             disableAllSwitches()
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
 
             mockNoIncomeSources()
             setupMockAuthorisationSuccess(isAgent)
-            setupMockGetMongo(Right(Some(completedUIJourneySessionData(JourneyType(Add, SelfEmployment)))))
+            setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSources(Add, SelfEmployment)))))
 
             val result: Future[Result] = (isChange, isAgent) match {
               case (false, false) => TestAddBusinessNameController.show(isAgent = false, isChange = false)(fakeRequestWithActiveSession)
@@ -178,7 +178,7 @@ class AddBusinessNameControllerSpec extends TestSupport
           }
           "user has already added their income source" in {
             disableAllSwitches()
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
 
             mockNoIncomeSources()
             setupMockAuthorisationSuccess(isAgent)
@@ -202,13 +202,13 @@ class AddBusinessNameControllerSpec extends TestSupport
         "return 303 and redirect to add business start date" when {
           "the individual is authenticated and the business name entered is valid" in {
             disableAllSwitches()
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
 
             setupMockAuthorisationSuccess(isAgent)
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
             setupMockCreateSession(true)
             setupMockSetMongoData(true)
-            setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Add, SelfEmployment)))))
+            setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSources(Add, SelfEmployment)))))
 
             val (result, redirectUrl) = (isChange, isAgent) match {
               case (false, false) => (TestAddBusinessNameController.submit(isAgent = false, isChange = false)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
@@ -228,12 +228,12 @@ class AddBusinessNameControllerSpec extends TestSupport
           "show AddBusinessName with error" when {
             "Business name is empty" in {
               disableAllSwitches()
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
 
               val invalidBusinessNameEmpty: String = ""
               setupMockAuthorisationSuccess(isAgent)
               setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Add, SelfEmployment)))))
+              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSources(Add, SelfEmployment)))))
 
               val result: Future[Result] = (isChange, isAgent) match {
                 case (false, false) => TestAddBusinessNameController.submit(isAgent = false, isChange = false)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
@@ -255,13 +255,13 @@ class AddBusinessNameControllerSpec extends TestSupport
 
             "Business name is too long" in {
               disableAllSwitches()
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
 
               val invalidBusinessNameLength: String = "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ"
               setupMockAuthorisationSuccess(isAgent)
               setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
               setupMockCreateSession(true)
-              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Add, SelfEmployment)))))
+              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSources(Add, SelfEmployment)))))
 
               val result: Future[Result] = (isChange, isAgent) match {
                 case (false, false) => TestAddBusinessNameController.submit(isAgent = false, isChange = false)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
@@ -280,12 +280,12 @@ class AddBusinessNameControllerSpec extends TestSupport
 
             "Business name has invalid characters" in {
               disableAllSwitches()
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               val invalidBusinessNameEmpty: String = "££"
               setupMockAuthorisationSuccess(isAgent)
               setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
               setupMockCreateSession(true)
-              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Add, SelfEmployment)))))
+              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSources(Add, SelfEmployment)))))
 
               val result: Future[Result] = (isChange, isAgent) match {
                 case (false, false) => TestAddBusinessNameController.submit(isAgent = false, isChange = false)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
@@ -304,12 +304,12 @@ class AddBusinessNameControllerSpec extends TestSupport
             if (isChange) {
               "show invalid error when business name is same as business trade name" in {
                 disableAllSwitches()
-                enable(IncomeSources)
+                enable(IncomeSourcesFs)
                 setupMockAuthorisationSuccess(isAgent)
                 setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
                 setupMockCreateSession(true)
                 val businessName: String = "Plumbing"
-                setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Add, SelfEmployment))
+                setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSources(Add, SelfEmployment))
                   .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(businessName),
                     businessTrade = Some(businessName)))))))
 

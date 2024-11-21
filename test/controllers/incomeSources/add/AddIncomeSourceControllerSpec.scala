@@ -24,7 +24,7 @@ import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockIncomeSourceDetailsService, MockSessionService}
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import models.incomeSourceDetails.viewmodels.AddIncomeSourcesViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -95,7 +95,7 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
       s"redirect an ${if (isAgent) "agent" else "individual"} to the add income source page" when {
         "user has a Sole Trader Business, a UK property and a Foreign Property" in {
           disableAllSwitches()
-          enable(IncomeSources)
+          enable(IncomeSourcesFs)
           ukPlusForeignPropertyWithSoleTraderIncomeSource()
           authenticate(isAgent)
           setupMockDeleteSession(true)
@@ -117,7 +117,7 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
     "redirect a user to the add income source page with no tables or table paragraph text" when {
       "user has no businesses or properties" in {
         disableAllSwitches()
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
@@ -150,7 +150,7 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
     "redirect a user to the add income source page with all tables showing" when {
       "user has a ceased business, sole trader business and uk/foreign property" in {
         disableAllSwitches()
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         mockBothPropertyBothBusiness()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
@@ -189,7 +189,7 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
     def failReturnTest(isAgent: Boolean): Unit = {
       s"failed to return incomeSourceViewModel for ${if (isAgent) "agent" else "individual"}" in {
         disableAllSwitches()
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         mockUkPropertyWithSoleTraderBusiness()
         authenticate(isAgent)
 

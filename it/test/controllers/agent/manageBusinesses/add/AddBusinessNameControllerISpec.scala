@@ -16,7 +16,7 @@
 
 package controllers.agent.manageBusinesses.add
 
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessNameForm
@@ -51,7 +51,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
   val testBusinessName: String = "Test Business"
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
   override implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
-  val journeyType: JourneyType = JourneyType(Add, SelfEmployment)
+  val journeyType: JourneyType = IncomeSources(Add, SelfEmployment)
 
   def backUrl(isChange: Boolean): String = {
     if (isChange) {
@@ -68,7 +68,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(true)
 
         Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         When(s"I call GET $addBusinessNameShowUrl")
@@ -90,7 +90,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(true)
 
         Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
-        disable(IncomeSources)
+        disable(IncomeSourcesFs)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         When(s"I call GET ${addBusinessNameShowUrl}")
@@ -109,7 +109,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
       "User is authorised and business name is valid" in {
         stubAuthorisedAgentUser(true)
 
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         val formData: Map[String, Seq[String]] = {
@@ -131,7 +131,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
     "show error when form is filled incorrectly" in {
       stubAuthorisedAgentUser(true)
 
-      enable(IncomeSources)
+      enable(IncomeSourcesFs)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
       val formData: Map[String, Seq[String]] = {
@@ -157,7 +157,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(true)
 
         Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         When(s"I call GET $changeBusinessNameShowUrl")
@@ -179,7 +179,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(true)
 
         Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
-        disable(IncomeSources)
+        disable(IncomeSourcesFs)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         When(s"I call GET ${changeBusinessNameShowUrl}")
@@ -197,7 +197,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
       "User is authorised and business name is valid" in {
         stubAuthorisedAgentUser(true)
 
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         val formData: Map[String, Seq[String]] = {
@@ -218,7 +218,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
     }
     "show error when form is filled incorrectly" in {
       stubAuthorisedAgentUser(true)
-      enable(IncomeSources)
+      enable(IncomeSourcesFs)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
       val formData: Map[String, Seq[String]] = {

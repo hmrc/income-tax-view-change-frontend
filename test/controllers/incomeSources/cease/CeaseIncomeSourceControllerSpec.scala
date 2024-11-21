@@ -19,13 +19,13 @@ package controllers.incomeSources.cease
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.SelfEmployment
-import enums.JourneyType.{Cease, JourneyType}
+import enums.JourneyType.{Cease, IncomeSources, JourneyType}
 import exceptions.MissingFieldException
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockIncomeSourceDetailsService, MockSessionService}
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -87,10 +87,10 @@ class CeaseIncomeSourceControllerSpec extends MockAuthenticationPredicate with M
     "redirect user to the cease an income source page" when {
       def testCeaseIncomeSourcePage(isAgent: Boolean): Unit = {
         disableAllSwitches()
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         mockBothIncomeSources()
         setupMockCreateSession(true)
-        setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Cease, SelfEmployment)))))
+        setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSources(Cease, SelfEmployment)))))
         setupMockDeleteSession(true)
 
         when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any()))
@@ -124,7 +124,7 @@ class CeaseIncomeSourceControllerSpec extends MockAuthenticationPredicate with M
     "show error page" when {
       def testErrorResponse(isAgent: Boolean): Unit = {
         disableAllSwitches()
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         mockBothIncomeSources()
 
         when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any()))

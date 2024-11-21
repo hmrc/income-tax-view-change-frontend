@@ -54,8 +54,8 @@ object FeatureSwitchName {
       JsSuccess(PaymentHistoryRefunds)
     case JsString(IncomeSourcesNewJourney.name) =>
       JsSuccess(IncomeSourcesNewJourney)
-    case JsString(IncomeSources.name) =>
-      JsSuccess(IncomeSources)
+    case JsString(IncomeSourcesFs.name) =>
+      JsSuccess(IncomeSourcesFs)
     case JsString(OptOut.name) =>
       JsSuccess(OptOut)
     case JsString(AdjustPaymentsOnAccount.name) =>
@@ -97,7 +97,7 @@ object FeatureSwitchName {
       CreditsRefundsRepay,
       PaymentHistoryRefunds,
       IncomeSourcesNewJourney,
-      IncomeSources,
+      IncomeSourcesFs,
       OptOut,
       AdjustPaymentsOnAccount,
       ReviewAndReconcilePoa,
@@ -143,7 +143,7 @@ case object IncomeSourcesNewJourney extends FeatureSwitchName {
   override val toString = "Income Sources New Journey"
 }
 
-case object IncomeSources extends FeatureSwitchName {
+case object IncomeSourcesFs extends FeatureSwitchName {
   override val name = "income-sources"
   override val toString = "Income Sources"
 }

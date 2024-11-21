@@ -232,7 +232,7 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
         val propertyEndDate = validatedInput.toString
         val result = Redirect(redirectAction)
         sessionService.setMongoKey(key = CeaseIncomeSourceData.dateCeasedField, value = propertyEndDate,
-          journeyType = JourneyType(Cease, incomeSourceType)).flatMap {
+          incomeSources = IncomeSources(Cease, incomeSourceType)).flatMap {
           case Right(_) => Future.successful(result)
           case Left(exception) => Future.failed(exception)
         }

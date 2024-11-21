@@ -124,7 +124,7 @@ class DeclareIncomeSourceCeasedController @Inject()(val authorisedFunctions: Fro
           ))
         },
       _ => {
-        sessionService.setMongoKey(key = CeaseIncomeSourceData.ceaseIncomeSourceDeclare, value = "true", journeyType = JourneyType(Cease, incomeSourceType))
+        sessionService.setMongoKey(key = CeaseIncomeSourceData.ceaseIncomeSourceDeclare, value = "true", incomeSources = IncomeSources(Cease, incomeSourceType))
           .flatMap {
             case Right(_) => Future.successful(Redirect(redirectAction(id, isAgent, isChange, incomeSourceType)))
             case Left(exception) => Future.failed(exception)

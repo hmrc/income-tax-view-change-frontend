@@ -21,10 +21,10 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import connectors.UpdateIncomeSourceConnector
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Cease, JourneyType}
+import enums.JourneyType.{Cease, IncomeSources, JourneyType}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
 import org.jsoup.Jsoup
@@ -98,14 +98,14 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends TestSupport with MockA
       def stage(isAgent: Boolean): Unit = {
         setupMockAuthorisationSuccess(isAgent)
         disableAllSwitches()
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         mockBothPropertyBothBusiness()
       }
 
       def testCheckCeaseIncomeSourcePage(isAgent: Boolean, incomeSourceType: IncomeSourceType): Unit = {
         stage(isAgent)
         setupMockCreateSession(true)
-        setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+        setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSources(Cease, incomeSourceType)))))
 
         incomeSourceType match {
           case SelfEmployment =>
@@ -161,7 +161,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends TestSupport with MockA
     "return 303 SEE_OTHER and redirect to Home page" when {
       "navigating to the page with FS Disabled" when {
         "user is an Individual" in {
-          disable(IncomeSources)
+          disable(IncomeSourcesFs)
           setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
           mockPropertyIncomeSource()
           val result: Future[Result] = TestCeaseCheckIncomeSourceDetailsController.show(SelfEmployment)(fakeRequestWithNinoAndOrigin("BTA"))
@@ -169,7 +169,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends TestSupport with MockA
           redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
         }
         "user is an Agent" in {
-          disable(IncomeSources)
+          disable(IncomeSourcesFs)
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
           mockPropertyIncomeSource()
           val result: Future[Result] = TestCeaseCheckIncomeSourceDetailsController.showAgent(SelfEmployment)(fakeRequestConfirmedClient())
@@ -195,10 +195,10 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends TestSupport with MockA
       def setupCompletedCeaseJourney(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
         setupMockAuthorisationSuccess(isAgent)
         disableAllSwitches()
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         mockBothPropertyBothBusiness()
         setupMockCreateSession(true)
-        setupMockGetMongo(Right(Some(completedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+        setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSources(Cease, incomeSourceType)))))
 
         val result = if (isAgent) {
           TestCeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
@@ -241,13 +241,13 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends TestSupport with MockA
     def stage(isAgent: Boolean): Unit = {
       setupMockAuthorisationSuccess(isAgent)
       disableAllSwitches()
-      enable(IncomeSources)
+      enable(IncomeSourcesFs)
       mockBothPropertyBothBusiness()
     }
 
     def testSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType, hasIncomeSourceUpdateFailed: Boolean = false): Unit = {
       stage(isAgent)
-      setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+      setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSources(Cease, incomeSourceType)))))
 
       if (hasIncomeSourceUpdateFailed) {
         when(mockUpdateIncomeSourceService.updateCessationDate(any(), any(), any())(any(), any()))
@@ -284,9 +284,9 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends TestSupport with MockA
     }
 
     def testMissingIncomeSourceOnSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType): Unit = {
-      enable(IncomeSources)
+      enable(IncomeSourcesFs)
       mockNoIncomeSources()
-      setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+      setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSources(Cease, incomeSourceType)))))
 
       lazy val result: Future[Result] = {
         if (isAgent) {

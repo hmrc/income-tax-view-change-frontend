@@ -16,7 +16,7 @@
 
 package controllers.agent.manageBusinesses.cease
 
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
 import helpers.agent.ComponentSpecBase
@@ -72,7 +72,7 @@ class DeclareIncomeSourceCeasedControllerISpec extends ComponentSpecBase {
     s"return status: ${Status.OK}: render the UK Property Page" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
         When(s"I call GET $showDeclareUKPropertyCeasedUrl")
@@ -91,7 +91,7 @@ class DeclareIncomeSourceCeasedControllerISpec extends ComponentSpecBase {
   s"calling POST $submitDeclareUKPropertyCeasedUrl" should {
     s"redirect to $showUKPropertyEndDateUrl" when {
       "form is filled correctly" in {
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -104,13 +104,13 @@ class DeclareIncomeSourceCeasedControllerISpec extends ComponentSpecBase {
           redirectURI(showUKPropertyEndDateUrl)
         )
 
-        sessionService.getMongoKey(ceaseIncomeSourceDeclare, JourneyType(Cease, UkProperty)).futureValue shouldBe Right(Some(stringTrue))
+        sessionService.getMongoKey(ceaseIncomeSourceDeclare, IncomeSources(Cease, UkProperty)).futureValue shouldBe Right(Some(stringTrue))
 
       }
     }
     s"return status: ${Status.BAD_REQUEST}" when {
       "form is filled incorrectly" in {
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -129,7 +129,7 @@ class DeclareIncomeSourceCeasedControllerISpec extends ComponentSpecBase {
     s"return status: ${Status.OK}: render the Foreign Property Page" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
         When(s"I call GET $showDeclareForeignPropertyCeasedUrl")
@@ -148,7 +148,7 @@ class DeclareIncomeSourceCeasedControllerISpec extends ComponentSpecBase {
   s"calling POST $submitDeclareForeignPropertyCeasedUrl" should {
     s"return status: ${Status.SEE_OTHER}: redirect to $showForeignPropertyEndDateUrl" when {
       "form is filled correctly" in {
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -161,13 +161,13 @@ class DeclareIncomeSourceCeasedControllerISpec extends ComponentSpecBase {
           redirectURI(showForeignPropertyEndDateUrl)
         )
 
-        sessionService.getMongoKey(ceaseIncomeSourceDeclare, JourneyType(Cease, ForeignProperty)).futureValue shouldBe Right(Some(stringTrue))
+        sessionService.getMongoKey(ceaseIncomeSourceDeclare, IncomeSources(Cease, ForeignProperty)).futureValue shouldBe Right(Some(stringTrue))
 
       }
     }
     s"return status: ${Status.BAD_REQUEST}" when {
       "form is filled incorrectly" in {
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -187,7 +187,7 @@ class DeclareIncomeSourceCeasedControllerISpec extends ComponentSpecBase {
     s"return status: ${Status.OK}: render the Cease Sole Trader Business Page" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
         When(s"I call GET $showDeclareSelfEmploymentCeasedUrl")
@@ -206,7 +206,7 @@ class DeclareIncomeSourceCeasedControllerISpec extends ComponentSpecBase {
   s"calling POST $submitDeclareSelfEmploymentCeasedUrl" should {
     s"return status: ${Status.SEE_OTHER}: redirect to $showSelfEmploymentEndDateUrl" when {
       "form is filled correctly" in {
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -219,13 +219,13 @@ class DeclareIncomeSourceCeasedControllerISpec extends ComponentSpecBase {
           redirectURI(showSelfEmploymentEndDateUrl)
         )
 
-        sessionService.getMongoKey(ceaseIncomeSourceDeclare, JourneyType(Cease, SelfEmployment)).futureValue shouldBe Right(Some(stringTrue))
+        sessionService.getMongoKey(ceaseIncomeSourceDeclare, IncomeSources(Cease, SelfEmployment)).futureValue shouldBe Right(Some(stringTrue))
 
       }
     }
     s"return status: ${Status.BAD_REQUEST}" when {
       "form is filled incorrectly" in {
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 

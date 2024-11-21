@@ -18,7 +18,7 @@ package controllers.agent.manageBusinesses.manage
 
 import audit.models.ManageIncomeSourceCheckYourAnswersAuditModel
 import auth.MtdItUser
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{JourneyType, Manage}
 import helpers.agent.ComponentSpecBase
@@ -99,7 +99,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
 
   def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
-    journeyType = JourneyType(Manage, incomeSourceType).toString,
+    journeyType = IncomeSources(Manage, incomeSourceType).toString,
     manageIncomeSourceData = Some(ManageIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), reportingMethod = Some(annual), taxYear = Some(2024))))
 
   s"calling GET $checkYourAnswersShowUKPropertyUrl" should {
@@ -107,7 +107,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
       "all session parameters are valid" in {
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         stubAuthorisedAgentUser(authorised = true)
 
@@ -139,7 +139,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
       "all session parameters are valid" in {
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         stubAuthorisedAgentUser(authorised = true)
 
@@ -170,7 +170,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
       "all session parameters are valid" in {
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         stubAuthorisedAgentUser(authorised = true)
 
@@ -200,7 +200,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
       "submitted with valid session data" in {
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         stubAuthorisedAgentUser(authorised = true)
 
@@ -230,7 +230,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
       "submitted with valid session data" in {
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         stubAuthorisedAgentUser(authorised = true)
 
@@ -259,7 +259,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
       "submitted with valid session data" in {
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         stubAuthorisedAgentUser(authorised = true)
 

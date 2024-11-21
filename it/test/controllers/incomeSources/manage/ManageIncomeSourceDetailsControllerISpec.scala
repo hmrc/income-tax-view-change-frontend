@@ -20,7 +20,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.JourneyType.{JourneyType, Manage}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.ManageIncomeSourceData.incomeSourceIdField
 import models.incomeSourceDetails.{LatencyDetails, UIJourneySessionData}
@@ -74,13 +74,13 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
   def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
-    journeyType = JourneyType(Manage, incomeSourceType).toString)
+    journeyType = IncomeSources(Manage, incomeSourceType).toString)
 
   s"calling GET $manageSelfEmploymentShowUrl" should {
     "render the Manage Self Employment business page" when {
       "URL contains a valid income source ID and authorised user has no latency information" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse2)
@@ -93,7 +93,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details?id=$thisTestSelfEmploymentIdHashed")
 
         And("Mongo storage is successfully set")
-        sessionService.getMongoKey(incomeSourceIdField, JourneyType(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
+        sessionService.getMongoKey(incomeSourceIdField, IncomeSources(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
 
         result should have(
           httpStatus(OK),
@@ -110,7 +110,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
       }
       "URL contains a valid income source ID and authorised user has latency information, itsa status mandatory/voluntary and two tax years crystallised" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         //enable(TimeMachineAddYear)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
@@ -129,7 +129,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details?id=$thisTestSelfEmploymentIdHashed")
 
         And("Mongo storage is successfully set")
-        sessionService.getMongoKey(incomeSourceIdField, JourneyType(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
+        sessionService.getMongoKey(incomeSourceIdField, IncomeSources(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
 
         result should have(
           httpStatus(OK),
@@ -152,7 +152,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
       }
       "URL contains a valid income source ID and authorised user has latency information, itsa status mandatory/voluntary and 2 tax years not crystallised" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetails2))
@@ -169,7 +169,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details?id=$thisTestSelfEmploymentIdHashed")
 
         And("Mongo storage is successfully set")
-        sessionService.getMongoKey(incomeSourceIdField, JourneyType(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
+        sessionService.getMongoKey(incomeSourceIdField, IncomeSources(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
 
         result should have(
           httpStatus(OK),
@@ -192,7 +192,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
       }
       "URL contains a valid income source ID and authorised user has latency information, but itsa status is not mandatory or voluntary" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWithUnknownsInLatencyPeriod(latencyDetails))
@@ -205,7 +205,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details?id=$thisTestSelfEmploymentIdHashed")
 
         And("Mongo storage is successfully set")
-        sessionService.getMongoKey(incomeSourceIdField, JourneyType(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
+        sessionService.getMongoKey(incomeSourceIdField, IncomeSources(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
 
         result should have(
           httpStatus(OK),
@@ -227,7 +227,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
     "render the Manage UK Property page" when {
       "URL contains a valid income source ID and authorised user has no latency information" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
@@ -250,7 +250,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
       }
       "URL contains a valid income source ID and authorised user has latency information, itsa status mandatory/voluntary and two tax years crystallised" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         //enable(TimeMachineAddYear)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
@@ -281,7 +281,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
       }
       "URL contains a valid income source ID and authorised user has latency information, itsa status mandatory/voluntary and 2 tax years not crystallised" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetails2))
@@ -310,7 +310,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
       }
       "URL contains a valid income source ID and authorised user has latency information, but itsa status is not mandatory or voluntary" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseWithUnknownsInLatencyPeriod(latencyDetails))
@@ -338,7 +338,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
     "render the Manage Foreign Property page" when {
       "URL contains a valid income source ID and authorised user has no latency information" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
@@ -361,7 +361,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
       }
       "URL contains a valid income source ID and authorised user has latency information, itsa status mandatory/voluntary and two tax years crystallised" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         //enable(TimeMachineAddYear)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
@@ -392,7 +392,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
       }
       "URL contains a valid income source ID and authorised user has latency information, itsa status mandatory/voluntary and 2 tax years not crystallised" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails2))
@@ -421,7 +421,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
       }
       "URL contains a valid income source ID and authorised user has latency information, but itsa status is not mandatory or voluntary" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseWithUnknownsInLatencyPeriod(latencyDetails))

@@ -19,7 +19,7 @@ package controllers.agent.manageBusinesses.add
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import play.api.http.Status.OK
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid}
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
@@ -48,7 +48,7 @@ class IncomeSourceReportingMethodNotSavedControllerISpec extends ComponentSpecBa
     "render the reporting method not saved page" when {
       "User is authorised" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         stubAuthorisedAgentUser(authorised = true)
         When(s"I call GET $selfEmploymentReportingMethodNotSavedShowAgentUrl")
 
@@ -73,7 +73,7 @@ class IncomeSourceReportingMethodNotSavedControllerISpec extends ComponentSpecBa
     "render the reporting method not saved page" when {
       "User is authorised" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         stubAuthorisedAgentUser(authorised = true)
         When(s"I call GET $ukPropertyReportingMethodNotSavedShowAgentUrl")
 
@@ -98,7 +98,7 @@ class IncomeSourceReportingMethodNotSavedControllerISpec extends ComponentSpecBa
     "render the reporting method not saved page" when {
       "User is authorised" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         stubAuthorisedAgentUser(authorised = true)
         When(s"I call GET $foreignPropertyReportingMethodNotSavedShowAgentUrl")
 

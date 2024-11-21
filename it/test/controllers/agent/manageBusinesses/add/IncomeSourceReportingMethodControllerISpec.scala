@@ -23,7 +23,7 @@ import enums.JourneyType.{Add, JourneyType}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.ITSAStatusDetailsStub.stubGetITSAStatusDetailsError
 import helpers.servicemocks.{AuditStub, CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import models.incomeSourceDetails.{AddIncomeSourceData, IncomeSourceDetailsError, LatencyDetails, UIJourneySessionData}
 import models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import org.scalatest.Assertion
@@ -137,13 +137,13 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
 
   def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
-    journeyType = JourneyType(Add, incomeSourceType).toString,
+    journeyType = IncomeSources(Add, incomeSourceType).toString,
     addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId))))
 
   def setupStubCalls(incomeSourceType: IncomeSourceType, scenario: ReportingMethodScenario): Unit = {
     Given("Income Sources FS is enabled")
     //disable(TimeMachineAddYear)
-    enable(IncomeSources)
+    enable(IncomeSourcesFs)
     stubAuthorisedAgentUser(authorised = true)
 
     await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
@@ -183,7 +183,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
 
   def setupStubErrorCall(scenario: APIErrorScenario, incomeSourceType: IncomeSourceType): Unit = {
     Given("Income Sources FS is enabled")
-    enable(IncomeSources)
+    enable(IncomeSourcesFs)
     //enable(TimeMachineAddYear)
     stubAuthorisedAgentUser(authorised = true)
 
@@ -237,7 +237,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
       elementCountBySelector("#add-uk-property-reporting-method-form > legend:nth-of-type(2)")(0))
 
     And("Mongo storage is successfully set")
-    sessionService.getMongoKey(AddIncomeSourceData.incomeSourceAddedField, JourneyType(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
+    sessionService.getMongoKey(AddIncomeSourceData.incomeSourceAddedField, IncomeSources(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
 
     if (scenario.isLegacy) {
       result should have(
@@ -262,7 +262,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
       pageTitleAgent("incomeSources.add.incomeSourceReportingMethod.heading"))
 
     And("Mongo storage is successfully set")
-    sessionService.getMongoKey(AddIncomeSourceData.incomeSourceAddedField, JourneyType(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
+    sessionService.getMongoKey(AddIncomeSourceData.incomeSourceAddedField, IncomeSources(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
 
     val currentTaxYear = dateService.getCurrentTaxYearEnd
     val taxYear1: Int = currentTaxYear

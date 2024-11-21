@@ -16,7 +16,7 @@
 
 package controllers.incomeSources.add
 
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
 import helpers.ComponentSpecBase
@@ -70,14 +70,14 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
 
   def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
-    journeyType = JourneyType(Add, incomeSourceType).toString,
+    journeyType = IncomeSources(Add, incomeSourceType).toString,
     addIncomeSourceData = Some(AddIncomeSourceData()))
 
   s"calling GET $incomeSourceAddedSelfEmploymentShowUrl" should {
     "render the Business Added page" when {
       "User is authorised" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         When(s"I call GET $incomeSourceAddedSelfEmploymentShowUrl")
 
@@ -101,7 +101,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
         }
 
         And("Mongo storage is successfully set")
-        sessionService.getMongoKey(AddIncomeSourceData.journeyIsCompleteField, JourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(true))
+        sessionService.getMongoKey(AddIncomeSourceData.journeyIsCompleteField, IncomeSources(Add, SelfEmployment)).futureValue shouldBe Right(Some(true))
 
         result should have(
           httpStatus(OK),
@@ -116,7 +116,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
     s"redirect to $addIncomeSourceUrl" when {
       "called" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
@@ -133,7 +133,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
     "render the UK Property Added Page" when {
       "UK Property start date is provided" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
@@ -148,7 +148,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-added")
 
         And("Mongo storage is successfully set")
-        sessionService.getMongoKey(AddIncomeSourceData.journeyIsCompleteField, JourneyType(Add, UkProperty)).futureValue shouldBe Right(Some(true))
+        sessionService.getMongoKey(AddIncomeSourceData.journeyIsCompleteField, IncomeSources(Add, UkProperty)).futureValue shouldBe Right(Some(true))
 
         result should have(
           httpStatus(OK),
@@ -161,7 +161,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
     "render error page" when {
       "UK property income source is missing trading start date" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse.copy(properties = List(ukProperty.copy(tradingStartDate = None))))
@@ -182,7 +182,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
     s"redirect to $HomeControllerShowUrl" when {
       "Income Sources Feature Switch is disabled" in {
         Given("Income Sources FS is disabled")
-        disable(IncomeSources)
+        disable(IncomeSourcesFs)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse.copy(properties = List(ukProperty.copy(tradingStartDate = None))))
@@ -203,7 +203,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
     "render the Foreign Property Added obligations page" when {
       "User is authorised" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         When(s"I call GET $incomeSourceAddedForeignPropertyShowUrl")
 
@@ -220,7 +220,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
         verifyIncomeSourceDetailsCall(testMtditid)
 
         And("Mongo storage is successfully set")
-        sessionService.getMongoKey(AddIncomeSourceData.journeyIsCompleteField, JourneyType(Add, ForeignProperty)).futureValue shouldBe Right(Some(true))
+        sessionService.getMongoKey(AddIncomeSourceData.journeyIsCompleteField, IncomeSources(Add, ForeignProperty)).futureValue shouldBe Right(Some(true))
 
         val expectedText: String = messagesAPI("business-added.foreign-property.h1") + " " + messagesAPI("business-added.foreign-property.base")
 
@@ -237,7 +237,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
     s"redirect to $addIncomeSourceShowUrl" when {
       "called" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 

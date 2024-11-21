@@ -27,7 +27,7 @@ import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockSessionService}
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.jsoup.Jsoup
@@ -67,11 +67,11 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
   val responseYes: String = AddIncomeSourceStartDateCheckForm.responseYes
 
   val mockHttpClient: HttpClient = mock(classOf[HttpClient])
-  val journeyTypeSE = JourneyType(Add, SelfEmployment)
-  val journeyTypeUK = JourneyType(Add, UkProperty)
-  val journeyTypeFP = JourneyType(Add, ForeignProperty)
+  val journeyTypeSE = IncomeSources(Add, SelfEmployment)
+  val journeyTypeUK = IncomeSources(Add, UkProperty)
+  val journeyTypeFP = IncomeSources(Add, ForeignProperty)
 
-  def journeyType(sourceType: IncomeSourceType) = sourceType match {
+  def IncomeSources(sourceType: IncomeSourceType) = sourceType match {
     case SelfEmployment => journeyTypeSE
     case UkProperty => journeyTypeUK
     case ForeignProperty => journeyTypeFP
@@ -140,7 +140,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
   def sessionDataWithDate(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(dateStarted = Some(LocalDate.parse("2022-11-11")))))
 
   def getInitialMongo(sourceType: IncomeSourceType): Option[UIJourneySessionData] = {
-    Some(sessionData(JourneyType(Add, sourceType)))
+    Some(sessionData(IncomeSources(Add, sourceType)))
   }
 
   def verifyMongoDatesRemoved(): Unit = {
@@ -206,7 +206,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
     }
 
     def showISDisabledTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
-      disable(IncomeSources)
+      disable(IncomeSourcesFs)
 
       mockNoIncomeSources()
       authenticate(isAgent)
@@ -234,11 +234,11 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
 
     def showCompletedBackTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
       disableAllSwitches()
-      enable(IncomeSources)
+      enable(IncomeSourcesFs)
 
       mockNoIncomeSources()
       authenticate(isAgent)
-      setupMockGetMongo(Right(Some(sessionDataCompletedJourney(journeyType(incomeSourceType)))))
+      setupMockGetMongo(Right(Some(sessionDataCompletedJourney(IncomeSources(incomeSourceType)))))
 
       val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = false)(
         {
@@ -252,11 +252,11 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
 
     def showAddedBackTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
       disableAllSwitches()
-      enable(IncomeSources)
+      enable(IncomeSourcesFs)
 
       mockNoIncomeSources()
       authenticate(isAgent)
-      setupMockGetMongo(Right(Some(sessionDataISAdded(journeyType(incomeSourceType)))))
+      setupMockGetMongo(Right(Some(sessionDataISAdded(IncomeSources(incomeSourceType)))))
 
       val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = false)(
         {
@@ -270,11 +270,11 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
 
     def showSessionMissingTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
       disableAllSwitches()
-      enable(IncomeSources)
+      enable(IncomeSourcesFs)
 
       mockNoIncomeSources()
       authenticate(isAgent)
-      setupMockGetMongo(Right(Some(sessionData(journeyType(incomeSourceType)))))
+      setupMockGetMongo(Right(Some(sessionData(IncomeSources(incomeSourceType)))))
 
       val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = false)(
         {
@@ -286,11 +286,11 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
 
     def showSuccessTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
       disableAllSwitches()
-      enable(IncomeSources)
+      enable(IncomeSourcesFs)
 
       mockNoIncomeSources()
       authenticate(isAgent)
-      setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType(incomeSourceType), Right(Some(testStartDate)))
+      setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, IncomeSources(incomeSourceType), Right(Some(testStartDate)))
       setupMockGetMongo(Right(Some(dataWithAccSD(incomeSourceType))))
 
       val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = false)(
@@ -307,12 +307,12 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
 
     def showChangeTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
       disableAllSwitches()
-      enable(IncomeSources)
+      enable(IncomeSourcesFs)
 
       mockNoIncomeSources()
       authenticate(isAgent)
-      setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType(incomeSourceType), Right(Some(testStartDate)))
-      setupMockGetMongo(Right(Some(sessionDataWithDate(journeyType(incomeSourceType)))))
+      setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, IncomeSources(incomeSourceType), Right(Some(testStartDate)))
+      setupMockGetMongo(Right(Some(sessionDataWithDate(IncomeSources(incomeSourceType)))))
 
       val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = true)(
         {
@@ -383,12 +383,12 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
 
     def submitNoOptionsTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
       disableAllSwitches()
-      enable(IncomeSources)
+      enable(IncomeSourcesFs)
 
       mockNoIncomeSources()
       authenticate((isAgent))
-      setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType(incomeSourceType), Right(Some(testStartDate)))
-      setupMockGetMongo(Right(Some(sessionDataWithDate(JourneyType(Add, incomeSourceType)))))
+      setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, IncomeSources(incomeSourceType), Right(Some(testStartDate)))
+      setupMockGetMongo(Right(Some(sessionDataWithDate(IncomeSources(Add, incomeSourceType)))))
 
       val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = false)(
         {
@@ -402,12 +402,12 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
 
     def submitInvalidResponseTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
       disableAllSwitches()
-      enable(IncomeSources)
+      enable(IncomeSourcesFs)
 
       mockNoIncomeSources()
       authenticate(isAgent)
-      setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType(incomeSourceType), Right(Some(testStartDate)))
-      setupMockGetMongo(Right(Some(sessionDataWithDate(JourneyType(Add, incomeSourceType)))))
+      setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, IncomeSources(incomeSourceType), Right(Some(testStartDate)))
+      setupMockGetMongo(Right(Some(sessionDataWithDate(IncomeSources(Add, incomeSourceType)))))
       setupMockGetMongo(Right(Some(uiJourneySessionDataFP)))
 
       val invalidResponse: String = "£££"
@@ -430,11 +430,11 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
 
     def submitRedirectWithAccPeriodRemovedTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
       disableAllSwitches()
-      enable(IncomeSources)
+      enable(IncomeSourcesFs)
 
       mockNoIncomeSources()
       authenticate(isAgent)
-      setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType(incomeSourceType), Right(Some(testStartDate)))
+      setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, IncomeSources(incomeSourceType), Right(Some(testStartDate)))
       setupMockGetMongo(Right(Some(uiJourneySessionData(incomeSourceType))))
       setupMockSetMongoData(result = true)
 
@@ -453,13 +453,13 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
 
     def submitRedirectAccMethodTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
       disableAllSwitches()
-      enable(IncomeSources)
+      enable(IncomeSourcesFs)
 
       mockNoIncomeSources()
       authenticate(isAgent)
-      setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType(incomeSourceType), Right(Some(testStartDate)))
+      setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, IncomeSources(incomeSourceType), Right(Some(testStartDate)))
       setupMockSetMongoData(result = true)
-      setupMockGetMongo(Right(Some(sessionDataWithDate(JourneyType(Add, incomeSourceType)))))
+      setupMockGetMongo(Right(Some(sessionDataWithDate(IncomeSources(Add, incomeSourceType)))))
 
       val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = false)(
         {
@@ -483,12 +483,12 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
 
     def submitRedirectCheckDetailsTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
       disableAllSwitches()
-      enable(IncomeSources)
+      enable(IncomeSourcesFs)
       authenticate(isAgent)
       mockNoIncomeSources()
 
-      setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType(incomeSourceType), Right(Some(testStartDate)))
-      setupMockGetMongo(Right(Some(sessionDataWithDate(JourneyType(Add, incomeSourceType)))))
+      setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, IncomeSources(incomeSourceType), Right(Some(testStartDate)))
+      setupMockGetMongo(Right(Some(sessionDataWithDate(IncomeSources(Add, incomeSourceType)))))
       setupMockSetMongoData(result = true)
 
       val result = TestAddIncomeSourceStartDateCheckController.submit(isAgent, isChange = true, incomeSourceType)(

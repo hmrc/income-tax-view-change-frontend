@@ -19,11 +19,11 @@ package controllers.manageBusinesses.cease
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Cease, JourneyType}
+import enums.JourneyType.{Cease, IncomeSources, JourneyType}
 import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -119,11 +119,11 @@ class DeclareIncomeSourceCeasedControllerSpec extends TestSupport with MockAuthe
     "return 200 OK" when {
       def testViewReturnsOKWithCorrectContent(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
         setupMockAuthorisationSuccess(isAgent)
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         mockBothPropertyBothBusiness()
 
         setupMockCreateSession(true)
-        setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+        setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSources(Cease, incomeSourceType)))))
 
         val result = showCall(isAgent, incomeSourceType)
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -176,7 +176,7 @@ class DeclareIncomeSourceCeasedControllerSpec extends TestSupport with MockAuthe
       def testFeatureSwitchRedirectsToHomePage(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
         setupMockAuthorisationSuccess(isAgent)
 
-        disable(IncomeSources)
+        disable(IncomeSourcesFs)
         mockBothPropertyBothBusiness()
 
         val result: Future[Result] = showCall(isAgent, incomeSourceType)
@@ -243,10 +243,10 @@ class DeclareIncomeSourceCeasedControllerSpec extends TestSupport with MockAuthe
       def setupCompletedCeaseJourney(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
         setupMockAuthorisationSuccess(isAgent)
         disableAllSwitches()
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         mockBothPropertyBothBusiness()
         setupMockCreateSession(true)
-        setupMockGetMongo(Right(Some(completedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+        setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSources(Cease, incomeSourceType)))))
 
         val result = if (isAgent) {
           TestDeclareIncomeSourceCeasedController.showAgent(None, incomeSourceType)(fakeRequestConfirmedClient())
@@ -290,11 +290,11 @@ class DeclareIncomeSourceCeasedControllerSpec extends TestSupport with MockAuthe
     "return 200 OK" when {
       def testSubmitReturnsOKAndSetsMongoData(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType): Unit = {
         setupMockAuthorisationSuccess(isAgent)
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         mockBothPropertyBothBusiness()
         setupMockSetSessionKeyMongo(Right(true))
 
-        val journeyType = JourneyType(Cease, incomeSourceType)
+        val journeyType = IncomeSources(Cease, incomeSourceType)
         val redirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
           (isAgent, incomeSourceType) match {
             case (true, _) => controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.show(None, incomeSourceType, isAgent, isChange).url
@@ -332,7 +332,7 @@ class DeclareIncomeSourceCeasedControllerSpec extends TestSupport with MockAuthe
       def testFeatureSwitchRedirectsToHomePage(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
         setupMockAuthorisationSuccess(isAgent)
 
-        disable(IncomeSources)
+        disable(IncomeSourcesFs)
         mockBothPropertyBothBusiness()
 
         lazy val result: Future[Result] = submitCall(isAgent, incomeSourceType)
@@ -366,7 +366,7 @@ class DeclareIncomeSourceCeasedControllerSpec extends TestSupport with MockAuthe
     "return 400 BAD_REQUEST" when {
       def testInvalidForm(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
         setupMockAuthorisationSuccess(isAgent)
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         mockBothPropertyBothBusiness()
         setupMockSetSessionKeyMongo(Right(true))
         val invalidForm = Map(DeclareIncomeSourceCeasedForm.declaration -> "invalid")
@@ -399,7 +399,7 @@ class DeclareIncomeSourceCeasedControllerSpec extends TestSupport with MockAuthe
     "return 500 INTERNAL_SERVER_ERROR" when {
       def testMongoException(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
         setupMockAuthorisationSuccess(isAgent)
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         mockBothPropertyBothBusiness()
         setupMockSetSessionKeyMongo(Left(new Exception))
 

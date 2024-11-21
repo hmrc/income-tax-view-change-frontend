@@ -19,12 +19,12 @@ package controllers.manageBusinesses.add
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney._
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSources, JourneyType}
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockITSAStatusService, MockNextUpdatesService, MockSessionService}
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails._
 import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
@@ -128,8 +128,8 @@ class IncomeSourceAddedControllerSpec extends TestSupport
 
   def mockMongo(incomeSourceType: IncomeSourceType, reportingMethodTaxYear1: Option[String], reportingMethodTaxYear2: Option[String]): Unit = {
     setupMockGetMongo(Right(Some(
-      notCompletedUIJourneySessionData(JourneyType(Add, incomeSourceType))
-        .copy(addIncomeSourceData = notCompletedUIJourneySessionData(JourneyType(Add, incomeSourceType)).addIncomeSourceData.map(data =>
+      notCompletedUIJourneySessionData(IncomeSources(Add, incomeSourceType))
+        .copy(addIncomeSourceData = notCompletedUIJourneySessionData(IncomeSources(Add, incomeSourceType)).addIncomeSourceData.map(data =>
           data.copy(reportingMethodTaxYear1 = reportingMethodTaxYear1, reportingMethodTaxYear2 = reportingMethodTaxYear2)
         ))
     )))
@@ -168,7 +168,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
         "return 200 OK" when {
           "FS enabled with newly added income source and obligations view model without choosing reporting methods" in {
             disableAllSwitches()
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             setupMockAuthorisationSuccess(isAgent)
             mockIncomeSource(incomeSourceType)
             mockISDS(incomeSourceType)
@@ -192,7 +192,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
 
           "FS enabled with newly added income source and obligations view model with an overall annual chosen reporting method" in {
             disableAllSwitches()
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             setupMockAuthorisationSuccess(isAgent)
             mockIncomeSource(incomeSourceType)
             mockISDS(incomeSourceType)
@@ -216,7 +216,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
 
           "FS enabled with newly added income source and obligations view model with an overall quarterly chosen reporting method" in {
             disableAllSwitches()
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             setupMockAuthorisationSuccess(isAgent)
             mockIncomeSource(incomeSourceType)
             mockISDS(incomeSourceType)
@@ -240,7 +240,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
 
           "FS enabled with newly added income source and obligations view model with an overall hybrid chosen reporting method" in {
             disableAllSwitches()
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             setupMockAuthorisationSuccess(isAgent)
             mockIncomeSource(incomeSourceType)
             mockISDS(incomeSourceType)
@@ -264,7 +264,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
         }
         "return 303 SEE_OTHER" when {
           "Income Sources FS is disabled" in {
-            disable(IncomeSources)
+            disable(IncomeSourcesFs)
             setupMockAuthorisationSuccess(isAgent)
             mockIncomeSource(incomeSourceType)
 
@@ -297,7 +297,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
         }
         "return 500 ISE" when {
           "Income source start date was not retrieved" in {
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             setupMockAuthorisationSuccess(isAgent)
             mockIncomeSource(incomeSourceType)
             setupMockGetSessionKeyMongoTyped[String](Right(Some(testSelfEmploymentId)))
@@ -308,7 +308,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
             status(result) shouldBe INTERNAL_SERVER_ERROR
           }
           "Income source id is invalid" in {
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             setupMockAuthorisationSuccess(isAgent)
             mockIncomeSource(incomeSourceType)
             setupMockGetSessionKeyMongoTyped[String](Right(Some(testSelfEmploymentId)))
@@ -324,7 +324,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           if (incomeSourceType == SelfEmployment) {
             "Supplied business has no name" in {
               disableAllSwitches()
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
 
               setupMockAuthorisationSuccess(isAgent)
               val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel(testNino, "", Some("2022"), List(BusinessDetailsModel(
@@ -343,7 +343,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
                 thenReturn(Future(testObligationsModel))
               mockProperty()
               mockMongo(incomeSourceType, None, None)
-              setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.incomeSourceIdField, journeyType = JourneyType(Add, incomeSourceType), result = Right(Some(testSelfEmploymentId)))
+              setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.incomeSourceIdField, journeyType = IncomeSources(Add, incomeSourceType), result = Right(Some(testSelfEmploymentId)))
 
               val result: Future[Result] = if (isAgent) TestIncomeSourceAddedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
               else TestIncomeSourceAddedController.show(incomeSourceType)(fakeRequestWithActiveSession)
@@ -353,7 +353,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
 
           "FS enabled with newly added income source and obligations view model with an overall unknown chosen reporting method" in {
             disableAllSwitches()
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             setupMockAuthorisationSuccess(isAgent)
             mockIncomeSource(incomeSourceType)
             mockISDS(incomeSourceType)

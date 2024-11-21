@@ -21,7 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney._
-import enums.JourneyType.{JourneyType, Manage}
+import enums.JourneyType.{IncomeSources, JourneyType, Manage}
 import enums.{AnnualReportingMethod, QuarterlyReportingMethod}
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
@@ -53,7 +53,7 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
 
   def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
-      withSessionData(JourneyType(Manage, incomeSourceType), journeyState = CannotGoBackPage) { sessionData =>
+      withSessionData(IncomeSources(Manage, incomeSourceType), journeyState = CannotGoBackPage) { sessionData =>
         val (reportingMethodOpt, taxYearOpt, incomeSourceIdStringOpt) = (
           sessionData.manageIncomeSourceData.flatMap(_.reportingMethod),
           sessionData.manageIncomeSourceData.flatMap(_.taxYear),

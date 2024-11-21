@@ -16,7 +16,7 @@
 
 package controllers.manageBusinesses.add
 
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.OK
@@ -41,7 +41,7 @@ class AddIncomeSourcesControllerISpec extends ComponentSpecBase {
     "render the Add Income Source page for an Individual" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with multiple businesses and a uk property")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
         When(s"I call GET $showIndividualAddIncomeSourceControllerUrl")
         val res = IncomeTaxViewChangeFrontendManageBusinesses.getAddIncomeSource()

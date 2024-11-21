@@ -16,7 +16,7 @@
 
 package controllers.agent.manageBusinesses.cease
 
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
 import helpers.agent.ComponentSpecBase
@@ -58,7 +58,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
       "User is authorised" in {
         Given("Income Sources FS is enabled")
         stubAuthorisedAgentUser(authorised = true)
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         When(s"I call GET $businessCeasedObligationsShowUrl")
 
@@ -74,7 +74,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontend.getBusinessCeasedObligations(clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
 
-        sessionService.getMongoKey(CeaseIncomeSourceData.journeyIsCompleteField, JourneyType(Cease, SelfEmployment)).futureValue shouldBe Right(Some(true))
+        sessionService.getMongoKey(CeaseIncomeSourceData.journeyIsCompleteField, IncomeSources(Cease, SelfEmployment)).futureValue shouldBe Right(Some(true))
 
         val expectedText: String = b1TradingName + " " + messagesAPI(s"$prefix.heading1.base")
 
@@ -91,7 +91,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
       "User is authorised" in {
         Given("Income Sources FS is enabled")
         stubAuthorisedAgentUser(authorised = true)
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         When(s"I call GET $ukPropertyCeasedObligationsShowUrl")
 
@@ -109,7 +109,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
 
         val expectedText: String = messagesAPI("business-ceased.obligation.heading1.uk-property.part2") + " " + messagesAPI("business-ceased.obligation.heading1.base")
 
-        sessionService.getMongoKey(CeaseIncomeSourceData.journeyIsCompleteField, JourneyType(Cease, UkProperty)).futureValue shouldBe Right(Some(true))
+        sessionService.getMongoKey(CeaseIncomeSourceData.journeyIsCompleteField, IncomeSources(Cease, UkProperty)).futureValue shouldBe Right(Some(true))
 
         result should have(
           httpStatus(OK),
@@ -124,7 +124,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
       "User is authorised" in {
         Given("Income Sources FS is enabled")
         stubAuthorisedAgentUser(authorised = true)
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         When(s"I call GET $foreignPropertyCeasedObligationsShowUrl")
 
@@ -143,7 +143,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
 
         val expectedText: String = messagesAPI("business-ceased.obligation.heading1.foreign-property.part2") + " " + messagesAPI("business-ceased.obligation.heading1.base")
 
-        sessionService.getMongoKey(CeaseIncomeSourceData.journeyIsCompleteField, JourneyType(Cease, ForeignProperty)).futureValue shouldBe Right(Some(true))
+        sessionService.getMongoKey(CeaseIncomeSourceData.journeyIsCompleteField, IncomeSources(Cease, ForeignProperty)).futureValue shouldBe Right(Some(true))
 
         result should have(
           httpStatus(OK),

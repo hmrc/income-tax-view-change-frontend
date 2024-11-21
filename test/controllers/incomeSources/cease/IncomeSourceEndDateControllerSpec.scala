@@ -19,12 +19,12 @@ package controllers.incomeSources.cease
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Cease, JourneyType}
+import enums.JourneyType.{Cease, IncomeSources, JourneyType}
 import forms.incomeSources.cease.CeaseIncomeSourceEndDateFormProvider
 import implicits.ImplicitDateFormatterImpl
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import org.jsoup.Jsoup
@@ -142,12 +142,12 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
 
         setupMockAuthorisationSuccess(isAgent)
         disableAllSwitches()
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         mockBothPropertyBothBusiness()
         if (isChange) {
-          setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+          setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSources(Cease, incomeSourceType)))))
         } else {
-          setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+          setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSources(Cease, incomeSourceType)))))
         }
 
 
@@ -254,7 +254,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         def testFSDisabled(isAgent: Boolean, isChange: Boolean): Unit = {
           if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
           else setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-          disable(IncomeSources)
+          disable(IncomeSourcesFs)
           mockBusinessIncomeSource()
 
           val incomeSourceType = SelfEmployment
@@ -337,11 +337,11 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         else setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         disableAllSwitches()
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         mockBothPropertyBothBusiness()
 
         setupMockCreateSession(true)
-        setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+        setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSources(Cease, incomeSourceType)))))
 
 
         val result: Future[Result] = if (isChange && !isAgent) {
@@ -377,7 +377,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         setupMockAuthorisationSuccess(isAgent)
         mockBothPropertyBothBusiness()
         setupMockCreateSession(true)
-        setupMockGetMongo(Right(Some(completedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+        setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSources(Cease, incomeSourceType)))))
 
         val result = if (isAgent) {
           TestIncomeSourceEndDateController.showAgent(id, incomeSourceType)(fakeRequestConfirmedClient())
@@ -428,7 +428,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
 
         setupMockAuthorisationSuccess(isAgent)
         disableAllSwitches()
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         mockBothPropertyBothBusiness()
         setupMockCreateSession(true)
 
@@ -438,9 +438,9 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
           setupMockSetSessionKeyMongo(Right(true))
         }
         if (isChange) {
-          setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+          setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSources(Cease, incomeSourceType)))))
         } else {
-          setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+          setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSources(Cease, incomeSourceType)))))
         }
 
         val result: Future[Result] = (isAgent, isChange) match {
@@ -545,7 +545,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         val incomeSourceType = SelfEmployment
         if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         else setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         mockBusinessIncomeSource()
 
         val result: Future[Result] = (isAgent, isChange) match {
@@ -596,7 +596,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
 
         setupMockAuthorisationSuccess(isAgent)
         disableAllSwitches()
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         mockBothPropertyBothBusiness()
 
 

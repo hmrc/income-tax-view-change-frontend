@@ -19,11 +19,11 @@ package controllers.manageBusinesses.add
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSources, JourneyType}
 import forms.incomeSources.add.IncomeSourceReportingMethodForm._
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import models.incomeSourceDetails.AddIncomeSourceData
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import org.jsoup.Jsoup
@@ -195,14 +195,14 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
   def setupMockCalls(isAgent: Boolean, incomeSourceType: IncomeSourceType, scenario: Scenario): Unit = {
     disableAllSwitches()
     setupMockAuthorisationSuccess(isAgent)
-    enable(IncomeSources)
+    enable(IncomeSourcesFs)
     setupMockIncomeSourceDetailsCall(scenario, incomeSourceType)
     setupMockDateServiceCall(scenario)
     setupMockITSAStatusCall(scenario)
     setupMockIsTaxYearCrystallisedCall(scenario)
-    setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Add, incomeSourceType)))))
+    setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSources(Add, incomeSourceType)))))
     setupMockSetMongoData(true)
-    setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.incomeSourceIdField, journeyType = JourneyType(Add, incomeSourceType), result = Right(Some(testSelfEmploymentId)))
+    setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.incomeSourceIdField, journeyType = IncomeSources(Add, incomeSourceType), result = Right(Some(testSelfEmploymentId)))
   }
 
   def getTestTitleIncomeSourceType(incomeSourceType: IncomeSourceType): String = {
@@ -323,7 +323,7 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
         "return 303 SEE_OTHER and redirect to home page" when {
           s"navigating to the ${getTestTitleIncomeSourceType(incomeSourceType)} page with FS disabled" in {
             setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-            disable(IncomeSources)
+            disable(IncomeSourcesFs)
 
             val expectedRedirectUrl = if (isAgent) controllers.routes.HomeController.showAgent.url
             else controllers.routes.HomeController.show().url
@@ -335,7 +335,7 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
         "return 303 SEE_OTHER and redirect to the You Cannot Go Back Page" when {
           s"user has already visited the obligations page for ${getTestTitleIncomeSourceType(incomeSourceType)}" in {
             setupMockCalls(isAgent = isAgent, incomeSourceType, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-            setupMockGetMongo(Right(Some(completedUIJourneySessionData(JourneyType(Add, incomeSourceType)))))
+            setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSources(Add, incomeSourceType)))))
             val expectedBackErrorRedirectUrl = if (isAgent)
               controllers.manageBusinesses.add.routes.ReportingMethodSetBackErrorController.showAgent(incomeSourceType).url
             else
@@ -403,7 +403,7 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
         "return 303 SEE_OTHER and redirect to home page" when {
           s"POST request to the ${getTestTitleIncomeSourceType(incomeSourceType)} page with FS disabled" in {
             setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-            disable(IncomeSources)
+            disable(IncomeSourcesFs)
 
             val expectedRedirectUrl = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
 

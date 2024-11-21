@@ -18,7 +18,7 @@ package controllers.manageBusinesses.add
 
 import controllers.ControllerISpecHelper
 import helpers.servicemocks.{AddressLookupStub, IncomeTaxViewChangeStub, MTDIndividualAuthStub}
-import models.admin.{IncomeSources, NavBarFs}
+import models.admin.{IncomeSourcesFs, NavBarFs}
 import play.api.http.Status.{OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
@@ -31,7 +31,7 @@ class AddBusinessAddressControllerISpec extends ControllerISpecHelper {
   s"GET $path" when {
     "the user is authenticated, with a valid MTD enrolment" should {
       "redirect to address lookup" in {
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         disable(NavBarFs)
         MTDIndividualAuthStub.stubAuthorised()
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
@@ -52,7 +52,7 @@ class AddBusinessAddressControllerISpec extends ControllerISpecHelper {
   s"GET $changePath" when {
     "the user is authenticated, with a valid MTD enrolment" should {
       "redirect to address lookup" in {
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         disable(NavBarFs)
         MTDIndividualAuthStub.stubAuthorised()
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)

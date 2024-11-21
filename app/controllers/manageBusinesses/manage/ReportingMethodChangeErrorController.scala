@@ -21,7 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
-import enums.JourneyType.{JourneyType, Manage}
+import enums.JourneyType.{IncomeSources, JourneyType, Manage}
 import exceptions.MissingSessionKey
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
@@ -54,7 +54,7 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
           ): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
     withIncomeSourcesFS {
       if (incomeSourceType == SelfEmployment) {
-        sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, incomeSourceType)).flatMap {
+        sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, IncomeSources(Manage, incomeSourceType)).flatMap {
           case Right(Some(incomeSourceId)) => handleShowRequest(Some(mkIncomeSourceId(incomeSourceId)), incomeSourceType, isAgent)
           case _ => Future.failed(MissingSessionKey(ManageIncomeSourceData.incomeSourceIdField))
         }

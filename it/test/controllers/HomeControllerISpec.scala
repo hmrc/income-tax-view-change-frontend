@@ -21,7 +21,7 @@ import auth.MtdItUser
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDIndividualAuthStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import models.admin.{IncomeSources, IncomeSourcesNewJourney, NavBarFs}
+import models.admin.{IncomeSourcesFs, IncomeSourcesNewJourney, NavBarFs}
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.financialDetails._
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
@@ -447,7 +447,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
           "IncomeSources feature switch is enabled" in {
             disable(NavBarFs)
             MTDIndividualAuthStub.stubAuthorised()
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
 
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
               status = OK,
@@ -517,7 +517,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
           "IncomeSources and IncomeSourcesNewJourney feature switches are enabled" in {
             disable(NavBarFs)
             MTDIndividualAuthStub.stubAuthorised()
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             enable(IncomeSourcesNewJourney)
 
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -649,7 +649,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
       }
       "retrieving the income sources was unsuccessful" in {
         disable(NavBarFs)
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         MTDIndividualAuthStub.stubAuthorised()
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsErrorResponse(testMtditid)(

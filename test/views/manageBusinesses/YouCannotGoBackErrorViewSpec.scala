@@ -17,7 +17,7 @@
 package views.manageBusinesses
 
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, JourneyType, Manage}
+import enums.JourneyType.{Add, IncomeSources, JourneyType, Manage}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.Assertion
@@ -58,7 +58,7 @@ class YouCannotGoBackErrorViewSpec extends TestSupport {
   }
 
   "YouCannotGoBackError - Individual" should {
-    "render self employment error page" in new Setup(isAgent = false, JourneyType(Add, SelfEmployment)) {
+    "render self employment error page" in new Setup(isAgent = false, IncomeSources(Add, SelfEmployment)) {
       document.getElementById("title").text() shouldBe messages("cannotGoBack.heading")
       document.getElementById("subheading").text() shouldBe subheadingContent
       document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manageLink")
@@ -66,7 +66,7 @@ class YouCannotGoBackErrorViewSpec extends TestSupport {
       document.getElementById("home-link").text() shouldBe messages("cannotGoBack.homeLink")
       Option(document.getElementById("back")).isDefined shouldBe false
     }
-    "render UK property - error page" in new Setup(isAgent = false, JourneyType(Add, UkProperty)) {
+    "render UK property - error page" in new Setup(isAgent = false, IncomeSources(Add, UkProperty)) {
       document.getElementById("title").text() shouldBe messages("cannotGoBack.heading")
       document.getElementById("subheading").text() shouldBe subheadingContent
       document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manageLink")
@@ -74,7 +74,7 @@ class YouCannotGoBackErrorViewSpec extends TestSupport {
       document.getElementById("home-link").text() shouldBe messages("cannotGoBack.homeLink")
       Option(document.getElementById("back")).isDefined shouldBe false
     }
-    "render Foreign property - error page" in new Setup(isAgent = false, JourneyType(Add, ForeignProperty)) {
+    "render Foreign property - error page" in new Setup(isAgent = false, IncomeSources(Add, ForeignProperty)) {
       document.getElementById("title").text() shouldBe messages("cannotGoBack.heading")
       document.getElementById("subheading").text() shouldBe subheadingContent
       document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manageLink")
@@ -85,7 +85,7 @@ class YouCannotGoBackErrorViewSpec extends TestSupport {
   }
 
   "YouCannotGoBackError - Agent" should {
-    "render self employment error page" in new Setup(isAgent = true, JourneyType(Add, SelfEmployment)) {
+    "render self employment error page" in new Setup(isAgent = true, IncomeSources(Add, SelfEmployment)) {
       document.getElementById("title").text() shouldBe messages("cannotGoBack.heading")
       document.getElementById("subheading").text() shouldBe subheadingContent
       document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manageLink")
@@ -93,7 +93,7 @@ class YouCannotGoBackErrorViewSpec extends TestSupport {
       document.getElementById("home-link").text() shouldBe messages("cannotGoBack.homeLink")
       Option(document.getElementById("back")).isDefined shouldBe false
     }
-    "render UK property - error page" in new Setup(isAgent = true, JourneyType(Add, UkProperty)) {
+    "render UK property - error page" in new Setup(isAgent = true, IncomeSources(Add, UkProperty)) {
       document.getElementById("title").text() shouldBe messages("cannotGoBack.heading")
       document.getElementById("subheading").text() shouldBe subheadingContent
       document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manageLink")
@@ -101,7 +101,7 @@ class YouCannotGoBackErrorViewSpec extends TestSupport {
       document.getElementById("home-link").text() shouldBe messages("cannotGoBack.homeLink")
       Option(document.getElementById("back")).isDefined shouldBe false
     }
-    "render Foreign property - error page" in new Setup(isAgent = true, JourneyType(Add, ForeignProperty)) {
+    "render Foreign property - error page" in new Setup(isAgent = true, IncomeSources(Add, ForeignProperty)) {
       document.getElementById("title").text() shouldBe messages("cannotGoBack.heading")
       document.getElementById("subheading").text() shouldBe subheadingContent
       document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manageLink")
@@ -112,22 +112,22 @@ class YouCannotGoBackErrorViewSpec extends TestSupport {
   }
 
   "Manage Journey" should {
-    "display the correct content - Self Employment - Individual" in new Setup(isAgent = false, JourneyType(Manage, SelfEmployment)) {
+    "display the correct content - Self Employment - Individual" in new Setup(isAgent = false, IncomeSources(Manage, SelfEmployment)) {
       checkManageContent
     }
-    "display the correct content - Self Employment - Agent" in new Setup(isAgent = true, JourneyType(Manage, SelfEmployment)) {
+    "display the correct content - Self Employment - Agent" in new Setup(isAgent = true, IncomeSources(Manage, SelfEmployment)) {
       checkManageContent
     }
-    "display the correct content - UK Property - Individual" in new Setup(isAgent = false, JourneyType(Manage, UkProperty)) {
+    "display the correct content - UK Property - Individual" in new Setup(isAgent = false, IncomeSources(Manage, UkProperty)) {
       checkManageContent
     }
-    "display the correct content - UK Property - Agent" in new Setup(isAgent = true, JourneyType(Manage, UkProperty)) {
+    "display the correct content - UK Property - Agent" in new Setup(isAgent = true, IncomeSources(Manage, UkProperty)) {
       checkManageContent
     }
-    "display the correct content - Foreign Property - Individual" in new Setup(isAgent = false, JourneyType(Manage, ForeignProperty)) {
+    "display the correct content - Foreign Property - Individual" in new Setup(isAgent = false, IncomeSources(Manage, ForeignProperty)) {
       checkManageContent
     }
-    "display the correct content - Foreign Property - Agent" in new Setup(isAgent = true, JourneyType(Manage, ForeignProperty)) {
+    "display the correct content - Foreign Property - Agent" in new Setup(isAgent = true, IncomeSources(Manage, ForeignProperty)) {
       checkManageContent
     }
   }

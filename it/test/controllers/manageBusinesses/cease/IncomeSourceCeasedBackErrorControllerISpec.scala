@@ -16,7 +16,7 @@
 
 package controllers.manageBusinesses.cease
 
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
 import helpers.ComponentSpecBase
@@ -47,10 +47,10 @@ class IncomeSourceCeasedBackErrorControllerISpec extends ComponentSpecBase {
     controllers.manageBusinesses.cease.routes.IncomeSourceCeasedBackErrorController.show(incomeSourceType).url
 
   def runOKTest(incomeSourceType: IncomeSourceType): Assertion = {
-    enable(IncomeSources)
+    enable(IncomeSourcesFs)
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-    await(sessionService.setMongoData(completedUIJourneySessionData(JourneyType(Cease, incomeSourceType))))
+    await(sessionService.setMongoData(completedUIJourneySessionData(IncomeSources(Cease, incomeSourceType))))
 
     val specificHeading = incomeSourceType match {
       case SelfEmployment => headingSE
@@ -73,7 +73,7 @@ class IncomeSourceCeasedBackErrorControllerISpec extends ComponentSpecBase {
   }
 
   def runRedirectTest(incomeSourceType: IncomeSourceType): Assertion = {
-    disable(IncomeSources)
+    disable(IncomeSourcesFs)
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
     val result: WSResponse = incomeSourceType match {

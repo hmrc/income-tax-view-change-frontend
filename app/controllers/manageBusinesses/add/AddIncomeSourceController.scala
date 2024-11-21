@@ -22,7 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.JourneyType.Add
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
 import play.api.mvc._
@@ -78,7 +78,7 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
                     isAgent: Boolean,
                     backUrl: String)
                    (implicit user: MtdItUser[_]): Future[Result] = {
-    if (!isEnabled(IncomeSources)) {
+    if (!isEnabled(IncomeSourcesFs)) {
       Future.successful(Redirect(homePageCall))
     } else {
       incomeSourceDetailsService.getAddIncomeSourceViewModel(sources) match {

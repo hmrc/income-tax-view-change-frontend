@@ -17,7 +17,7 @@
 package testConstants.incomeSources
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSources, JourneyType}
 import models.core.{AddressModel, IncomeSourceId}
 import models.incomeSourceDetails._
 import models.incomeSourceDetails.viewmodels.{CeaseIncomeSourcesViewModel, CheckCeaseIncomeSourceDetailsViewModel}
@@ -204,7 +204,7 @@ object IncomeSourceDetailsTestConstants {
   }
 
   val addedIncomeSourceUIJourneySessionData: IncomeSourceType => UIJourneySessionData = (incomeSourceType: IncomeSourceType) =>
-    UIJourneySessionData(testSessionId, JourneyType(Add, incomeSourceType).toString,
+    UIJourneySessionData(testSessionId, IncomeSources(Add, incomeSourceType).toString,
       addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceAdded = Some(true))))
 
   val completedUIJourneySessionData: JourneyType => UIJourneySessionData = (journeyType: JourneyType) => {

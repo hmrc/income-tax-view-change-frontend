@@ -16,7 +16,7 @@
 
 package controllers.incomeSources.cease
 
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.JourneyType.Cease
 import helpers.ComponentSpecBase
@@ -56,7 +56,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
     "render the Business Ceased obligations page" when {
       "User is authorised" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         When(s"I call GET $businessCeasedObligationsShowUrl")
 
@@ -87,7 +87,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
     "render the UK Property Ceased obligations page" when {
       "User is authorised" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         When(s"I call GET $ukPropertyCeasedObligationsShowUrl")
 
@@ -115,7 +115,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
     "render the Foreign Property Ceased obligations page" when {
       "User is authorised" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         When(s"I call GET $foreignPropertyCeasedObligationsShowUrl")
 

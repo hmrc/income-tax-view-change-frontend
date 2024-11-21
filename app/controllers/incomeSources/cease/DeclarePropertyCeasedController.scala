@@ -115,7 +115,7 @@ class DeclarePropertyCeasedController @Inject()(val authorisedFunctions: Fronten
         },
       _ => {
         val result = Redirect(redirectAction)
-        sessionService.setMongoKey(key = CeaseIncomeSourceData.ceaseIncomeSourceDeclare, value = "true", journeyType = IncomeSources(Cease, incomeSourceType))
+        sessionService.setMongoKey(key = CeaseIncomeSourceData.ceaseIncomeSourceDeclare, value = "true", incomeSources = IncomeSources(Cease, incomeSourceType))
           .flatMap {
             case Right(_) => Future.successful(result)
             case Left(exception) => Future.failed(exception)
