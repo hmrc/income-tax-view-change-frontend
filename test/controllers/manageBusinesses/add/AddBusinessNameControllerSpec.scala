@@ -72,7 +72,7 @@ class AddBusinessNameControllerSpec extends TestSupport
     )
 
   val validBusinessName: String = "Test Business Name"
-  val journeyType: JourneyType = IncomeSources(Add, SelfEmployment)
+  val journeyType: IncomeSources = IncomeSources(Add, SelfEmployment)
 
   def getValidationErrorTabTitle(): String = {
     s"${messages("htmlTitle.invalidInput", messages("add-business-name.heading"))}"

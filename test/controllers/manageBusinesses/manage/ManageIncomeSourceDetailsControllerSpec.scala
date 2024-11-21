@@ -820,7 +820,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
       }
       "FS is enabled and the .showAgent method is called with a valid id parameter, valid latency information and two tax years crystallised" in {
         mockAndBasicSetup(FIRST_AND_SECOND_YEAR_CRYSTALLIZED, isAgent = true)
-        setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, ForeignProperty)))))
+        setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSources(Manage, ForeignProperty)))))
 
         val result: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = true, ForeignProperty, None)(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -838,7 +838,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
       }
       "FS is enabled and the .showAgent method is called with a valid id parameter, but non eligable itsa status" in {
         mockAndBasicSetup(NON_ELIGIBLE_ITSA_STATUS, isAgent = true)
-        setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, ForeignProperty)))))
+        setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSources(Manage, ForeignProperty)))))
 
         val result: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = true, ForeignProperty, None)(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -857,7 +857,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
       }
       "FS is enabled and the .showAgent method is called with a valid id parameter, latency expired" in {
         mockAndBasicSetup(EXPIRED_LATENCY, isAgent = true)
-        setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, ForeignProperty)))))
+        setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSources(Manage, ForeignProperty)))))
 
         val result: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = true, ForeignProperty, None)(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))

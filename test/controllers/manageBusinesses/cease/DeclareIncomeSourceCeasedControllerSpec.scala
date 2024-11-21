@@ -107,7 +107,7 @@ class DeclareIncomeSourceCeasedControllerSpec extends TestSupport with MockAuthe
   def verifySetMongoKey(key: String, value: String, journeyType: JourneyType): Unit = {
     val argumentKey: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
     val argumentValue: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-    val argumentJourneyType: ArgumentCaptor[JourneyType] = ArgumentCaptor.forClass(classOf[JourneyType])
+    val argumentJourneyType: ArgumentCaptor[IncomeSources] = ArgumentCaptor.forClass(classOf[IncomeSources])
 
     verify(mockSessionService).setMongoKey(argumentKey.capture(), argumentValue.capture(), argumentJourneyType.capture())(any(), any())
     argumentKey.getValue shouldBe key

@@ -136,7 +136,7 @@ object IncomeSourceDetailsTestConstants {
     else currentDate.getYear + 1
   }
 
-  val emptyUIJourneySessionData: JourneyType => UIJourneySessionData = journeyType => {
+  val emptyUIJourneySessionData: IncomeSources => UIJourneySessionData = journeyType => {
     journeyType.operation.operationType match {
       case "ADD" =>
         UIJourneySessionData(
@@ -159,7 +159,7 @@ object IncomeSourceDetailsTestConstants {
     }
   }
 
-  val notCompletedUIJourneySessionData: JourneyType => UIJourneySessionData = journeyType => {
+  val notCompletedUIJourneySessionData: IncomeSources => UIJourneySessionData = journeyType => {
     journeyType.operation.operationType match {
       case "ADD" =>
         UIJourneySessionData(
@@ -207,7 +207,7 @@ object IncomeSourceDetailsTestConstants {
     UIJourneySessionData(testSessionId, IncomeSources(Add, incomeSourceType).toString,
       addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceAdded = Some(true))))
 
-  val completedUIJourneySessionData: JourneyType => UIJourneySessionData = (journeyType: JourneyType) => {
+  val completedUIJourneySessionData: IncomeSources => UIJourneySessionData = (journeyType: IncomeSources) => {
     journeyType.operation.operationType match {
       case "ADD" => UIJourneySessionData(testSessionId, journeyType.toString,
         addIncomeSourceData = Some(notCompletedUIJourneySessionData(journeyType).addIncomeSourceData.get.copy(journeyIsComplete = Some(true))))

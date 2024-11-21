@@ -28,7 +28,7 @@ import views.html.incomeSources.YouCannotGoBackError
 
 class YouCannotGoBackErrorViewSpec extends TestSupport {
 
-  class Setup(isAgent: Boolean, journeyType: JourneyType) {
+  class Setup(isAgent: Boolean, journeyType: IncomeSources) {
     val errorView: YouCannotGoBackError = app.injector.instanceOf[YouCannotGoBackError]
     val manageSubheadingContent: String = s"${messages(s"cannotGoBack.manage.${journeyType.businessType.key}", "2022", "2023")} " +
       s"${messages("cannotGoBack.reportingMethod")} ${messages("cannotGoBack.annual")}"
