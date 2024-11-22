@@ -16,7 +16,7 @@
 
 package models.repaymentHistory
 
-import models.financialDetails.{BalancingChargeCreditType, CreditType, CutOverCreditType, MfaCreditType, PaymentOnAccountOneReviewAndReconcileCredit, PaymentOnAccountTwoReviewAndReconcileCredit, RepaymentInterest}
+import models.financialDetails.{BalancingChargeCreditType, CreditType, CutOverCreditType, MfaCreditType, PoaOneReconciliationCredit, PoaTwoReconciliationCredit, RepaymentInterest}
 import models.incomeSourceDetails.TaxYear
 import services.DateServiceInterface
 
@@ -39,8 +39,8 @@ case class PaymentHistoryEntry(date: LocalDate,
     CutOverCreditType,
     MfaCreditType,
     RepaymentInterest,
-    PaymentOnAccountOneReviewAndReconcileCredit,
-    PaymentOnAccountTwoReviewAndReconcileCredit
+    PoaOneReconciliationCredit,
+    PoaTwoReconciliationCredit
   )
 
   def isCredit: Boolean = creditTypes.contains(creditType)
