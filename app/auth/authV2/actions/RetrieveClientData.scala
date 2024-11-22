@@ -39,8 +39,6 @@ class RetrieveClientData @Inject()(sessionDataService: SessionDataService,
 
   lazy val noClientDetailsRoute: Result = Redirect(routes.EnterClientsUTRController.show)
 
-  println("BEEP2")
-
   override protected def refine[A](request: Request[A]): Future[Either[Result, ClientDataRequest[A]]] = {
 
     implicit val r: Request[A] = request

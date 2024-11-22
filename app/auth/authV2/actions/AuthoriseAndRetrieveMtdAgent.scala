@@ -50,8 +50,6 @@ case class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: FrontendA
     implicit val hc: HeaderCarrier = HeaderCarrierConverter
       .fromRequestAndSession(request, request.session)
 
-    println("BEEP3")
-
     implicit val req: ClientDataRequest[A] = request
 
     val isAgent: Predicate = Enrolment("HMRC-AS-AGENT") and AffinityGroup.Agent
