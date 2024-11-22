@@ -13,7 +13,7 @@ base.backToHome                                                 = Yn ôl i hafan
 base.continue                                                   = Yn eich blaen
 base.govUk                                                      = GOV.UK
 base.confirm-and-continue                                       = Cadarnhau ac yn eich blaen
-base.confirm-this-change                                         = Cadarnhau’r newid hwn
+base.confirm-this-change                                        = Cadarnhau’r newid hwn
 
 ## Accessibility ##
 accessibility.this-section-is                                   = Teitl yr adran hon yw
@@ -1048,7 +1048,7 @@ chargeSummary.codingOutMessage                                     = This is the
 chargeSummary.codingOutRemainingToPay                              = (Collected through your PAYE tax code for {0} to {1} tax year)
 chargeSummary.codingOutInset-1                                     = If this tax cannot be collected
 chargeSummary.codingOutInset-2                                     = through your PAYE tax code (opens in new tab)
-chargeSummary.codingOutInset-3                                     = for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may charged interest and penalties.
+chargeSummary.codingOutInset-3                                     = for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may be charged interest and penalties.
 chargeSummary.codingOutPayHistoryAmount                            = Amount collected through your PAYE tax code for {0} to {1} tax year
 chargeSummary.check-paye-tax-code-1                                = Check if your
 chargeSummary.check-paye-tax-code-2                                = PAYE tax code
@@ -1156,8 +1156,6 @@ updateTab.obligationType.business                               = Busnes
 updateTab.obligationType.crystallised                           = Pob ffynhonnell incwm
 updateTab.updateType.quarterly                                  = Diweddariad bob chwarter
 updateTab.updateType.crystallised                               = Datganiad terfynol
-updateTab.noUpdates                                             = No updates but in Welsh
-
 
 ## Final Tax Overview (Individual/Common Content)
 final-tax-overview.individual.heading                            = Eich trosolwg treth terfynol
