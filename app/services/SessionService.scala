@@ -19,8 +19,6 @@ package services
 import config.FrontendAppConfig
 import enums.JourneyType._
 import models.incomeSourceDetails.{AddIncomeSourceData, CeaseIncomeSourceData, ManageIncomeSourceData, UIJourneySessionData}
-import models.optin.OptInSessionData
-import models.optout.OptOutSessionData
 import repositories.{SensitiveUIJourneySessionDataRepository, UIJourneySessionDataRepository}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -76,9 +74,6 @@ class SessionService @Inject()(
           case Add => getKeyFromObject[String](data.addIncomeSourceData, key)
           case Manage => getKeyFromObject[String](data.manageIncomeSourceData, key)
           case Cease => getKeyFromObject[String](data.ceaseIncomeSourceData, key)
-          case In => getKeyFromObject[String](data.optInSessionData, key)
-          case Out => getKeyFromObject[String](data.optOutSessionData, key)
-//          case _ => Left(new Exception(S))
         }
       case None => Right(None)
     }
@@ -92,8 +87,6 @@ class SessionService @Inject()(
           case Add => getKeyFromObject[A](data.addIncomeSourceData, key)
           case Manage => getKeyFromObject[A](data.manageIncomeSourceData, key)
           case Cease => getKeyFromObject[A](data.ceaseIncomeSourceData, key)
-          case In => getKeyFromObject[A](data.optInSessionData, key)
-          case Out => getKeyFromObject[A](data.optOutSessionData, key)
 
         }
       case None => Right(None)
@@ -116,8 +109,6 @@ class SessionService @Inject()(
         case Add => (AddIncomeSourceData.getJSONKeyPath(key), value)
         case Manage => (ManageIncomeSourceData.getJSONKeyPath(key), value)
         case Cease => (CeaseIncomeSourceData.getJSONKeyPath(key), value)
-        case In => (OptInSessionData.getJSONKeyPath(key), value)
-        case Out => (OptOutSessionData.getJSONKeyPath(key), value)
       }
     }
     uiJourneySessionDataRepository.updateMultipleData(uiJourneySessionData, keyValueToUpdate)
@@ -135,8 +126,6 @@ class SessionService @Inject()(
       case Add => AddIncomeSourceData.getJSONKeyPath(key)
       case Manage => ManageIncomeSourceData.getJSONKeyPath(key)
       case Cease => CeaseIncomeSourceData.getJSONKeyPath(key)
-      case In => OptInSessionData.getJSONKeyPath(key)
-      case Out => OptOutSessionData.getJSONKeyPath(key)
     }
     uiJourneySessionDataRepository.updateData(uiJourneySessionData, jsonAccessorPath, value).map(
       result => result.wasAcknowledged() match {
