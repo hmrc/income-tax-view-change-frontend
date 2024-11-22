@@ -56,7 +56,7 @@ case class ChargeItem (
     interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0 && !isPaid
 
   def isAccruingInterest()(implicit dateService: DateServiceInterface): Boolean = {
-    Seq(PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile).contains(transactionType) && !isPaid && !isOverdue()
+    Seq(PaymentOnAccountOneReviewAndReconcileDebit, PaymentOnAccountTwoReviewAndReconcileDebit).contains(transactionType) && !isPaid && !isOverdue()
   }
 
   def getDueDateForNonZeroBalancingCharge: Option[LocalDate] = {
@@ -106,8 +106,13 @@ case class ChargeItem (
 
   val interestIsPartPaid: Boolean = interestOutstandingAmount.getOrElse[BigDecimal](0) != latePaymentInterestAmount.getOrElse[BigDecimal](0)
 
-  val isPoaReconciliationCredit: Boolean = transactionType == PaymentOnAccountOneReviewAndReconcileCredit||
+  val isPoaReconciliationCredit: Boolean = transactionType == PaymentOnAccountOneReviewAndReconcileCredit ||
     transactionType == PaymentOnAccountTwoReviewAndReconcileCredit
+
+  val isPoaReconciliationDebit: Boolean = transactionType == PaymentOnAccountOneReviewAndReconcileDebit ||
+    transactionType == PaymentOnAccountTwoReviewAndReconcileDebit
+
+  val isReviewAndReconcileCharge: Boolean = isPoaReconciliationCredit || isPoaReconciliationDebit
 
   def getInterestPaidStatus: String = {
     if (interestIsPaid) "paid"
@@ -149,8 +154,7 @@ object ChargeItem {
     }
   }
 
-  def fromDocumentPair(documentDetail: DocumentDetail, financialDetails: List[FinancialDetail],
-                       reviewAndReconcile: Boolean): ChargeItem = {
+  def fromDocumentPair(documentDetail: DocumentDetail, financialDetails: List[FinancialDetail]): ChargeItem = {
 
     val financialDetail = financialDetails.find(_.transactionId.contains(documentDetail.transactionId)) match {
       case Some(fd) => fd
@@ -162,7 +166,7 @@ object ChargeItem {
       case _ => throw CouldNotCreateChargeItemException(s"Main transaction is not defined for charge ${documentDetail.transactionId}")
     }
 
-    val chargeType = ChargeType.fromCode(mainTransaction, reviewAndReconcile) match {
+    val chargeType = ChargeType.fromCode(mainTransaction) match {
       case Some(ct) => ct
       case _ => throw CouldNotCreateChargeItemException(s"Could not identify charge type from $mainTransaction for charge ${documentDetail.transactionId}")
     }

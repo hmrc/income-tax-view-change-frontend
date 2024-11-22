@@ -535,7 +535,7 @@ trait ChargeConstants {
 
   val financialDetailsReviewAndReconcileCi: List[ChargeItem] = testFinancialDetailsChargeItems(
     transactionId = List(id1040000123, id1040000124),
-    transactionTypes = List(PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwo),
+    transactionTypes = List(PaymentOnAccountOneReviewAndReconcileDebit, PaymentOnAccountTwo),
     dueDate = List(Some(fixedDate.plusYears(100).minusDays(1)), Some(fixedDate.plusYears(100).plusDays(30))),
     outstandingAmount = List(50, 75),
     taxYear = fixedDate.getYear.toString,
@@ -545,7 +545,7 @@ trait ChargeConstants {
 
   val financialDetailsOverdueCharges: List[ChargeItem] = testFinancialDetailsChargeItems(
     transactionId = List(id1040000123, id1040000124),
-    transactionTypes = List(PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile),
+    transactionTypes = List(PaymentOnAccountOneReviewAndReconcileDebit, PaymentOnAccountTwoReviewAndReconcileDebit),
     dueDate = List(Some(fixedDate.plusDays(1)), Some(fixedDate.plusDays(1))),
     outstandingAmount = List(50, 75),
     taxYear = fixedDate.getYear.toString,
@@ -555,7 +555,7 @@ trait ChargeConstants {
 
   val financialDetailsReviewAndReconcileNotYetDueCi: List[ChargeItem] = testFinancialDetailsChargeItems(
     transactionId = List(id1040000123, id1040000124),
-    transactionTypes = List(PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile),
+    transactionTypes = List(PaymentOnAccountOneReviewAndReconcileDebit, PaymentOnAccountTwoReviewAndReconcileDebit),
     dueDate = List(Some(fixedDate.plusYears(100).minusDays(1)), Some(fixedDate.plusYears(100).plusDays(30))),
     outstandingAmount = List(50, 75),
     taxYear = fixedDate.getYear.toString,
@@ -565,7 +565,7 @@ trait ChargeConstants {
 
   val financialDetailsReviewAndReconcileInterest: List[ChargeItem] = testFinancialDetailsChargeItems(
     transactionId = List(id1040000123, id1040000124),
-    transactionTypes = List(PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile),
+    transactionTypes = List(PaymentOnAccountOneReviewAndReconcileDebit, PaymentOnAccountTwoReviewAndReconcileDebit),
     dueDate = List(Some(fixedDate.plusYears(100).minusDays(1)), Some(fixedDate.plusYears(100).plusDays(30))),
     outstandingAmount = List(0, 0),
     taxYear = fixedDate.getYear.toString,
@@ -611,7 +611,7 @@ trait ChargeConstants {
 
   val financialDetailsWithMixedData4Ci: List[ChargeItem] = testFinancialDetailsChargeItems(
     transactionId = List(id1040000123, id1040000124),
-    transactionTypes = List(PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwo),
+    transactionTypes = List(PaymentOnAccountOneReviewAndReconcileDebit, PaymentOnAccountTwo),
     dueDate = List(Some(fixedDate.plusDays(30)), Some(fixedDate.minusDays(1))),
     outstandingAmount = List(50, 75),
     outstandingInterest  = List(Some(100.0), Some(100.0)),

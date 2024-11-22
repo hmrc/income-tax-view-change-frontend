@@ -43,6 +43,10 @@ GET         /agents/optout/choose-taxyear                                 contro
 POST        /optout/choose-taxyear                                        controllers.optOut.OptOutChooseTaxYearController.submit(isAgent: Boolean = false)
 POST        /agents/optout/choose-taxyear                                 controllers.optOut.OptOutChooseTaxYearController.submit(isAgent: Boolean = true)
 
+GET         /optout/cancelled                                             controllers.optOut.OptOutCancelledController.show()
+GET         /agents/optout/cancelled                                      controllers.optOut.OptOutCancelledController.showAgent()
+
+# Opt In
 GET         /opt-in/start                                                 controllers.optIn.BeforeYouStartController.show(isAgent: Boolean = false)
 GET         /agents/opt-in/start                                          controllers.optIn.BeforeYouStartController.show(isAgent: Boolean = true)
 

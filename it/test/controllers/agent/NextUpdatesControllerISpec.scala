@@ -161,7 +161,9 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
               nino = testNino,
               deadlines = currentObligations
             )
-            ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(dateService.getCurrentTaxYearEnd)
+            ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
+              taxYear = dateService.getCurrentTaxYear
+            )
             CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
 

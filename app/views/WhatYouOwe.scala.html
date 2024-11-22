@@ -202,8 +202,8 @@
 }
 
 @getInterestMessage(chargeItem: ChargeItem): String = @{
-    if(chargeItem.transactionType == PaymentOnAccountOneReviewAndReconcile) getMessage("over-due.reviewAndReconcileOne.line1")
-    else if(chargeItem.transactionType == PaymentOnAccountTwoReviewAndReconcile) getMessage("over-due.reviewAndReconcileTwo.line1")
+    if(chargeItem.transactionType == PaymentOnAccountOneReviewAndReconcileDebit) getMessage("over-due.reviewAndReconcileOne.line1")
+    else if(chargeItem.transactionType == PaymentOnAccountTwoReviewAndReconcileDebit) getMessage("over-due.reviewAndReconcileTwo.line1")
     else getMessage("over-due.interest.line1")
     }
 

@@ -115,12 +115,14 @@ trait MockAuthActions extends
     setupMockAgentWithClientAuthException(exception, mtdId, isSupportingAgent)
   }
 
-  def testMTDIndividualAuthFailures(action: Action[AnyContent]): Unit = {
+  def testMTDIndividualAuthFailures(action: Action[AnyContent], isPost: Boolean = false): Unit = {
+    val fakeRequest = if(isPost) {fakeRequestWithActiveSession.withMethod("POST") }
+    else { fakeRequestWithActiveSession}
     "the user is not authenticated" should {
       "redirect to signin" in {
         setupMockUserAuthorisationException()
 
-        val result = action(fakeRequestWithActiveSession)
+        val result = action(fakeRequest)
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
@@ -131,7 +133,7 @@ trait MockAuthActions extends
       "redirect to timeout controller" in {
         setupMockUserAuthorisationException(new BearerTokenExpired)
 
-        val result = action(fakeRequestWithActiveSession)
+        val result = action(fakeRequest)
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
@@ -142,7 +144,7 @@ trait MockAuthActions extends
       "redirect to NotEnrolledController controller" in {
         setupMockUserAuthorisationException(InsufficientEnrolments("missing HMRC-MTD-IT enrolment"))
 
-        val result = action(fakeRequestWithActiveSession)
+        val result = action(fakeRequest)
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.errors.routes.NotEnrolledController.show.url)
@@ -154,7 +156,7 @@ trait MockAuthActions extends
         setupMockUserAuth
         mockErrorIncomeSource()
 
-        val result = action(fakeRequestWithActiveSession)
+        val result = action(fakeRequest)
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         val errorPage = Jsoup.parse(contentAsString(result))
@@ -163,8 +165,9 @@ trait MockAuthActions extends
     }
   }
 
-  def testMTDAgentAuthFailures(action: Action[AnyContent], isSupportingAgent: Boolean): Unit = {
-    val fakeRequest = fakeRequestConfirmedClient(isSupportingAgent = isSupportingAgent)
+  def testMTDAgentAuthFailures(action: Action[AnyContent], isSupportingAgent: Boolean, isPost: Boolean = false): Unit = {
+    val fakeRequest = if(isPost) {fakeRequestConfirmedClient(isSupportingAgent = isSupportingAgent).withMethod("POST") }
+    else { fakeRequestConfirmedClient(isSupportingAgent = isSupportingAgent)}
     val userType = if(isSupportingAgent) "supporting agent" else "primary agent"
     s"the $userType is not authenticated" should {
       "redirect to signin" in {

@@ -20,7 +20,6 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import connectors.FinancialDetailsConnector
-import models.admin.FilterCodedOutPoas
 import models.financialDetails._
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -41,8 +40,8 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
   val validChargeTypeCondition: ChargeItem => Boolean = chargeItem => {
     (chargeItem.transactionType, chargeItem.subTransactionType) match {
       case (_, Some(Nics2)) => true
-      case (PaymentOnAccountOne | PaymentOnAccountTwo | PaymentOnAccountOneReviewAndReconcile
-            | PaymentOnAccountTwoReviewAndReconcile | BalancingCharge | MfaDebitCharge, _) => true
+      case (PaymentOnAccountOne | PaymentOnAccountTwo | PaymentOnAccountOneReviewAndReconcileDebit
+            | PaymentOnAccountTwoReviewAndReconcileDebit | BalancingCharge | MfaDebitCharge, _) => true
       case (_, _) => false
     }
   }
@@ -101,20 +100,21 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
   }
 
   private def getFilteredChargesList(financialDetailsList: List[FinancialDetailsModel],
-                                     isReviewAndReconciled: Boolean, isFilterCodedOutPoasEnabled: Boolean)
+                                     isReviewAndReconcileEnabled: Boolean,
+                                     isFilterCodedOutPoasEnabled: Boolean)
                                     (implicit user: MtdItUser[_]): List[ChargeItem] = {
 
     def getChargeItem(financialDetails: List[FinancialDetail]): DocumentDetail => Option[ChargeItem] =
-      getChargeItemOpt(
-        reviewAndReconcileEnabled = isReviewAndReconciled
-      )(financialDetails)
+      getChargeItemOpt(financialDetails)
 
     financialDetailsList
       .flatMap(financialDetails =>  {
-        financialDetails.getAllDocumentDetailsWithDueDates()
+        financialDetails
+          .getAllDocumentDetailsWithDueDates()
           .flatMap(dd => getChargeItem(financialDetails.financialDetails)(dd.documentDetail))})
       .filter(validChargeTypeCondition)
       .filterNot(_.subTransactionType.contains(Accepted))
+      .filterNot(_.isReviewAndReconcileCharge && !isReviewAndReconcileEnabled)
       .filter(_.remainingToPayByChargeOrInterest > 0)
       .filter(_.notCodedOutPoa(isFilterCodedOutPoasEnabled))
       .sortBy(_.dueDate.get)

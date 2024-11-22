@@ -32,8 +32,9 @@ class OptOutSessionRepositoryHelper(repository: UIJourneySessionDataRepository) 
                              currentYearStatus: ITSAStatus.Value,
                              nextYearStatus: ITSAStatus.Value): Unit = {
     repository.set(
-        UIJourneySessionData(testSessionId,
-          OptOutJourney.Name,
+        UIJourneySessionData(
+          sessionId = testSessionId,
+          journeyType = OptOutJourney.Name,
           optOutSessionData =
             Some(OptOutSessionData(
               Some(OptOutContextData(

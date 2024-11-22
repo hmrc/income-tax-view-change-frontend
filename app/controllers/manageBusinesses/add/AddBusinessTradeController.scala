@@ -17,9 +17,9 @@
 package controllers.manageBusinesses.add
 
 import auth.MtdItUser
+import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.predicates._
 import enums.IncomeSourceJourney.{BeforeSubmissionPage, SelfEmployment}
 import enums.JourneyType.{Add, JourneyType}
@@ -28,8 +28,8 @@ import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.SessionService
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.manageBusinesses.add.AddBusinessTrade
 
 import javax.inject.{Inject, Singleton}
@@ -37,17 +37,16 @@ import scala.concurrent.{ExecutionContext, Future}
 
 
 @Singleton
-class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFunctions,
+class AddBusinessTradeController @Inject()(val authActions: AuthActions,
                                            val addBusinessTradeView: AddBusinessTrade,
                                            val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                                           val sessionService: SessionService,
-                                           auth: AuthenticatorPredicate)
+                                           val sessionService: SessionService)
                                           (implicit val appConfig: FrontendAppConfig,
-                                           implicit val itvcErrorHandler: ItvcErrorHandler,
-                                           implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                           implicit override val mcc: MessagesControllerComponents,
+                                           val itvcErrorHandler: ItvcErrorHandler,
+                                           val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                           val mcc: MessagesControllerComponents,
                                            val ec: ExecutionContext)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
+  extends FrontendController(mcc) with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
 
   private def getBackURL(isAgent: Boolean, isChange: Boolean): String = {
     ((isAgent, isChange) match {
@@ -66,18 +65,29 @@ class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFu
     }).url
   }
 
-  def show(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
-    implicit user =>
-      handleRequest(isAgent, isChange)
+  def getPostAction(isAgent: Boolean, isChange: Boolean) = if(isAgent) {
+    controllers.manageBusinesses.add.routes.AddBusinessTradeController.submitAgent(isChange)
+  } else {
+    controllers.manageBusinesses.add.routes.AddBusinessTradeController.submit(isChange)
   }
 
-  def handleRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+  def show(isChange: Boolean): Action[AnyContent] = authActions.asMTDIndividual.async {
+    implicit user =>
+      handleRequest(false, isChange)
+  }
+
+  def showAgent(isChange: Boolean): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
+    implicit user =>
+      handleRequest(true, isChange)
+  }
+
+  def handleRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
     withSessionData(JourneyType(Add, SelfEmployment), BeforeSubmissionPage) { sessionData =>
       val businessTradeOpt = sessionData.addIncomeSourceData.flatMap(_.businessTrade)
       val filledForm = businessTradeOpt.fold(BusinessTradeForm.form)(businessTrade =>
         BusinessTradeForm.form.fill(BusinessTradeForm(businessTrade)))
       val backURL = getBackURL(isAgent, isChange)
-      val postAction = controllers.manageBusinesses.add.routes.AddBusinessTradeController.submit(isAgent, isChange)
+      val postAction = getPostAction(isAgent, isChange)
 
       Future.successful {
         Ok(addBusinessTradeView(filledForm, postAction, isAgent, backURL))
@@ -90,12 +100,17 @@ class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFu
       errorHandler.showInternalServerError()
   }
 
-  def submit(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def submit(isChange: Boolean): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit request =>
-      handleSubmitRequest(isAgent, isChange)
+      handleSubmitRequest(false, isChange)(implicitly, itvcErrorHandler)
   }
 
-  def handleSubmitRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+  def submitAgent(isChange: Boolean): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
+    implicit request =>
+      handleSubmitRequest(true, isChange)(implicitly, itvcErrorHandlerAgent)
+  }
+
+  def handleSubmitRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
     withSessionData(JourneyType(Add, SelfEmployment), BeforeSubmissionPage) { sessionData =>
       val businessNameOpt = sessionData.addIncomeSourceData.flatMap(_.businessName)
 
@@ -106,7 +121,7 @@ class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFu
               BadRequest(
                 addBusinessTradeView(
                   businessTradeForm = formWithErrors,
-                  postAction = routes.AddBusinessTradeController.submit(isAgent, isChange),
+                  postAction = getPostAction(isAgent, isChange),
                   isAgent = isAgent,
                   backURL = getBackURL(isAgent, isChange)
                 )
@@ -131,7 +146,6 @@ class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFu
   }.recover {
     case ex =>
       Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
-      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
       errorHandler.showInternalServerError()
   }
 }

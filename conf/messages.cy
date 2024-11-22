@@ -2225,6 +2225,17 @@ optout.optOutError.nextUpdates-bullet-2              = a rhoi cynnig arall arni
 optout.optOutError.home-bullet-1                     = mynd yn ôl i’r
 optout.optOutError.home-bullet-2                     = hafan
 
+# Opt out cancelled page
+
+optout.cancelled.title                              = Y dewis i optio allan wedi’i ganslo
+optout.cancelled.h1                                 = Y dewis i optio allan wedi’i ganslo
+optout.cancelled.p1                                 = Byddwch yn parhau i adrodd yn chwarterol ar gyfer blwyddyn dreth {0} i {1}.
+optout.cancelled.bullet1.link                       = Bwrw golwg dros eich diweddariadau sydd ar y gweill
+optout.cancelled.bullet2.link                       = Ewch i’r hafan
+optout.cancelled.h2                                 = Adrodd yn flynyddol ar gyfer busnes newydd
+optout.cancelled.p2                                 = Gan fod gennych un neu fwy o fusnesau newydd, gallwch ddewis i adrodd yn flynyddol ar eu cyfer am hyd at 2 o flynyddoedd treth tra’n parhau i adrodd yn chwarterol ar gyfer eich busnesau eraill.
+optout.cancelled.p3.link                            = Gallwch fwrw golwg dros eich busnesau a’u rheoli
+optout.cancelled.p3                                 = i newid pa mor aml rydych yn cyflwyno adroddiadau ar gyfer eich busnesau.
 
 #######################################################################################################################
 ## Opt In ##

@@ -67,26 +67,21 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
   "fromDocumentPair" when {
 
-      val reviewAndReconcileEnabled = false
-
       "from Payment on Account 1" in {
 
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
-          financialDetails = List(poa1FinancialDetails),
-          reviewAndReconcile = reviewAndReconcileEnabled)
+          financialDetails = List(poa1FinancialDetails))
 
         chargeItem.transactionType shouldBe PaymentOnAccountOne
         chargeItem.subTransactionType shouldBe None
-
       }
 
       "from Payment on Account 2" in {
 
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
-          financialDetails = List(poa2FinancialDetails),
-          reviewAndReconcile = reviewAndReconcileEnabled)
+          financialDetails = List(poa2FinancialDetails))
 
         chargeItem.transactionType shouldBe PaymentOnAccountTwo
         chargeItem.subTransactionType shouldBe None
@@ -96,8 +91,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = balancingNics2DocumentDetails,
-          financialDetails = List(balancingNics2FinancialDetails),
-          reviewAndReconcile = reviewAndReconcileEnabled)
+          financialDetails = List(balancingNics2FinancialDetails))
 
         chargeItem.transactionType shouldBe BalancingCharge
         chargeItem.subTransactionType shouldBe Some(Nics2)
@@ -107,8 +101,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = balancingAcceptedDocumentDetails,
-          financialDetails = List(balancingAcceptedFinancialDetails),
-          reviewAndReconcile = reviewAndReconcileEnabled)
+          financialDetails = List(balancingAcceptedFinancialDetails))
 
         chargeItem.transactionType shouldBe BalancingCharge
         chargeItem.subTransactionType shouldBe Some(Accepted)
@@ -118,8 +111,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = balancingCancelledDocumentDetails,
-          financialDetails = List(balancingCancelledFinancialDetails),
-          reviewAndReconcile = reviewAndReconcileEnabled)
+          financialDetails = List(balancingCancelledFinancialDetails))
 
         chargeItem.transactionType shouldBe BalancingCharge
         chargeItem.subTransactionType shouldBe Some(Cancelled)
@@ -128,8 +120,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
       "from MFA" in {
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
-          financialDetails = List(mfaFinancialDetails),
-          reviewAndReconcile = reviewAndReconcileEnabled)
+          financialDetails = List(mfaFinancialDetails))
 
         chargeItem.transactionType shouldBe MfaDebitCharge
         chargeItem.subTransactionType shouldBe None
@@ -137,16 +128,13 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
     "isOverdue calculated correctly" when {
 
-      val reviewAndReconcileEnabled = false
-
       "date is before due date" in {
 
         val dateServiceBeforeDueDate = dateService(dueDate.minusDays(1))
 
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
-          financialDetails = List(poa1FinancialDetails),
-          reviewAndReconcile = reviewAndReconcileEnabled)
+          financialDetails = List(poa1FinancialDetails))
 
         chargeItem.isOverdue()(dateServiceBeforeDueDate) shouldBe false
       }
@@ -157,8 +145,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
-          financialDetails = List(poa1FinancialDetails),
-          reviewAndReconcile = reviewAndReconcileEnabled)
+          financialDetails = List(poa1FinancialDetails))
 
         chargeItem.isOverdue()(dateServiceOnDueDate) shouldBe false
       }
@@ -169,8 +156,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
-          financialDetails = List(poa1FinancialDetails),
-          reviewAndReconcile = reviewAndReconcileEnabled)
+          financialDetails = List(poa1FinancialDetails))
 
         chargeItem.isOverdue()(dateServiceAfterDueDate) shouldBe true
       }
@@ -228,11 +214,11 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
       "relevant FS is disabled" in {
         val chargesListWithRandR: List[ChargeItem] = List(
           chargeItemModel(transactionType = BalancingCharge),
-          chargeItemModel(transactionType = PaymentOnAccountOneReviewAndReconcile),
+          chargeItemModel(transactionType = PaymentOnAccountOneReviewAndReconcileDebit),
           chargeItemModel(transactionType = PaymentOnAccountTwo),
-          chargeItemModel(transactionType = PaymentOnAccountTwoReviewAndReconcile)
+          chargeItemModel(transactionType = PaymentOnAccountTwoReviewAndReconcileDebit)
         )
-        val filtered = chargesListWithRandR.map(filterAllowedCharges(false, PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile))
+        val filtered = chargesListWithRandR.map(filterAllowedCharges(false, PaymentOnAccountOneReviewAndReconcileDebit, PaymentOnAccountTwoReviewAndReconcileDebit))
         filtered shouldBe List(true, false, true, false)
       }
     }
@@ -240,18 +226,18 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
       "FS is enabled" in {
         val chargesListWithRandR: List[ChargeItem] = List(
           chargeItemModel(transactionType = BalancingCharge),
-          chargeItemModel(transactionType = PaymentOnAccountOneReviewAndReconcile),
+          chargeItemModel(transactionType = PaymentOnAccountOneReviewAndReconcileDebit),
           chargeItemModel(transactionType = PaymentOnAccountTwo),
-          chargeItemModel(transactionType = PaymentOnAccountTwoReviewAndReconcile)
+          chargeItemModel(transactionType = PaymentOnAccountTwoReviewAndReconcileDebit)
         )
-        val filtered = chargesListWithRandR.map(filterAllowedCharges(true, PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile))
+        val filtered = chargesListWithRandR.map(filterAllowedCharges(true, PaymentOnAccountOneReviewAndReconcileDebit, PaymentOnAccountTwoReviewAndReconcileDebit))
         filtered shouldBe List(true, true, true, true)
       }
     }
     "return empty list" when {
       "fed an empty list" in {
         val chargesList = List()
-        val filtered = chargesList.map(filterAllowedCharges(true, PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile))
+        val filtered = chargesList.map(filterAllowedCharges(true, PaymentOnAccountOneReviewAndReconcileDebit, PaymentOnAccountTwoReviewAndReconcileDebit))
         filtered shouldBe List()
       }
     }
