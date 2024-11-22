@@ -16,24 +16,22 @@
 
 package controllers.errors
 
-import helpers.agent.ComponentSpecBase
+import controllers.agent.ControllerISpecHelper
+import helpers.servicemocks.MTDAgentAuthStub
 import play.api.http.Status._
 
-class AgentErrorControllerISpec extends ComponentSpecBase {
+class AgentErrorControllerISpec extends ControllerISpecHelper {
 
-  val agentErrorUri: String = "/agent-error"
+  val agentErrorUri: String = "/agents/agent-error"
 
   "Calling the AgentErrorController.show()" when {
 
     "user is authorised" should {
       "respond with the correct page" in {
-        When(s"I call GET $agentErrorUri")
+        MTDAgentAuthStub.stubNoAgentEnrolmentRequiredSuccess()
 
-        stubAuthorisedAgentUser(true)
+        val res = buildGETMTDClient(agentErrorUri).futureValue
 
-        val res = IncomeTaxViewChangeFrontend.getAgentError
-
-        Then("I can see the correct page")
         res should have(
           httpStatus(OK),
           pageTitleAgent("agent-error.heading", isErrorPage = true)

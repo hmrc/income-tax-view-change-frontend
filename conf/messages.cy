@@ -1117,6 +1117,7 @@ paymentHistory.textLink1                                        = gwasanaeth Hun
 paymentHistory.button                                           = Taliadau {0}
 paymentsHistory.CardRef                                         = Cyfeirnod ar gyfer taliad a wnaed drwy gerdyn debyd:
 paymentHistory.refund                                           = Anfonwyd yr ad-daliad
+paymentHistory.payment                                          = Taliad roeddech wedi’i wneud i CThEF
 paymentHistory.paymentToHmrc                                    = Taliad roeddech wedi’i wneud i CThEF
 paymentHistory.cutOver                                          = Credyd o flwyddyn dreth gynharach
 paymentHistory.mfa                                              = Credyd o ganlyniad i addasiad gan CThEF
@@ -1259,6 +1260,7 @@ credit-and-refund.no-credit                                       = Nid oes genn
 credit-and-refund.claim-refund-btn                                = Hawlio ad-daliad
 credit-and-refund.check-refund-btn                                = Gwirio statws ad-daliad
 
+credit-and-refund.credit-from-hmrc-title                          = credyd o ganlyniad i addasiad gan CThEF
 credit-and-refund.credit-from-hmrc-title-prt-1                    = yn sgil
 credit-and-refund.credit-from-hmrc-title-prt-2                    = credyd o ganlyniad i addasiad gan CThEF
 
@@ -1281,6 +1283,7 @@ credit-and-refund.credit-from-adjustment-prt-2                    = o ganlyniad 
 
 credit-and-refund.credit-from-earlier-tax-year                    = credyd o flwyddyn dreth gynharach
 credit-and-refund.credit-from-earlier-tax-year                    = o flwyddyn dreth gynharach -
+credit-and-refund.credit-from-earlier-tax-year-2                  = credyd o flwyddyn dreth gynharach
 
 credit-and-refund.payment                                         = o daliad roeddech wedi’i wneud i CThEF ar
 
@@ -1435,6 +1438,11 @@ incomeSources.add.UKPropertyStartDate.heading                   = Pryd y dechreu
 incomeSources.add.UKPropertyStartDate.hint                      = Gall y dyddiad y dechreuodd eich busnes fasnachu fod heddiw, yn y gorffennol neu hyd at 7 diwrnod yn y dyfodol.
 incomeSources.add.UKPropertyStartDate.hint2                     = Dyma’r dyddiad cyntaf y cawsoch incwm rhent o’r busnes eiddo yn y DU hwn, megis rhoi unrhyw eiddo neu dir ar osod.
 incomeSources.add.UKPropertyStartDate.required.all              = Nodwch y dyddiad y dechreuodd eich busnes eiddo yn y DU
+incomeSources.add.UKPropertyStartDate.required.two              = Mae’n rhaid i’r dyddiad gynnwys {0} a {1}
+incomeSources.add.UKPropertyStartDate.required                  = Mae’n rhaid i’r dyddiad gynnwys {0}
+incomeSources.add.UKPropertyStartDate.invalid                   = Mae’n rhaid i’r dyddiad fod yn ddyddiad go iawn
+incomeSources.add.UKPropertyStartDate.future                    = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo yn y DU fod cyn {0}
+incomeSources.add.UKPropertyStartDate.error.required            = Nodwch y dyddiad y dechreuodd eich busnes eiddo yn y DU
 incomeSources.add.UKPropertyStartDate.error.future              = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo yn y DU fod cyn {0}
 incomeSources.add.UKPropertyStartDate.error.invalid             = Mae’n rhaid i’r dyddiad fod yn ddyddiad go iawn
 add-uk-property-start-date-check.error                          = Dewiswch ‘Iawn’ os yw dyddiad dechrau’r busnes eiddo yn y DU yn gywir
@@ -1522,6 +1530,12 @@ incomeSources.add.foreignProperty.startDate.heading                  = Pryd y de
 incomeSources.add.foreignProperty.startDate.hint                     = Gall y dyddiad y dechreuodd eich busnes fasnachu fod heddiw, yn y gorffennol neu hyd at 7 diwrnod yn y dyfodol.
 incomeSources.add.foreignProperty.startDate.hint2                    = Dyma’r dyddiad cyntaf y cawsoch incwm rhent o’r busnes eiddo tramor hwn, megis rhoi unrhyw eiddo neu dir ar osod.
 incomeSources.add.foreignProperty.startDate.hintExample              = Er enghraifft, 27 3 2020
+incomeSources.add.foreignProperty.startDate.invalid                  = Mae’n rhaid i’r dyddiad fod yn ddyddiad go iawn
+incomeSources.add.foreignProperty.startDate.required.all             = Nodwch y dyddiad y dechreuodd eich busnes eiddo tramor
+incomeSources.add.foreignProperty.startDate.required.two             = Mae’n rhaid i’r dyddiad gynnwys {0} a {1}
+incomeSources.add.foreignProperty.startDate.required                 = Mae’n rhaid i’r dyddiad gynnwys {0}
+incomeSources.add.foreignProperty.startDate.future                   = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo tramor fod cyn {0}
+incomeSources.add.foreignProperty.startDate.error.required           = Nodwch y dyddiad y dechreuodd eich busnes eiddo tramor
 incomeSources.add.foreignProperty.startDate.error.empty              = Nodwch y dyddiad y dechreuodd eich busnes eiddo tramor fasnachu
 incomeSources.add.foreignProperty.startDate.error.missingMonthYear   = Mae’n rhaid i’r dyddiad gynnwys mis a blwyddyn
 incomeSources.add.foreignProperty.startDate.error.missingDayYear     = Mae’n rhaid i’r dyddiad gynnwys diwrnod a blwyddyn
@@ -1565,6 +1579,11 @@ add-business-start-date.form.error.emptyDateField    = Nodwch y dyddiad y dechre
 add-business-start-date.error.future                 = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo tramor fod cyn {0}
 add-business-start-date.error.required.all           = Nodwch y dyddiad y dechreuodd eich busnes fasnachu
 add-business-start-date.error.invalid                = Mae’n rhaid i’r dyddiad fod yn ddyddiad go iawn
+add-business-start-date.invalid                      = Mae’n rhaid i’r dyddiad fod yn ddyddiad go iawn
+add-business-start-date.required.all                 = Nodwch y dyddiad y dechreuodd eich busnes fasnachu
+add-business-start-date.required.two                 = Mae’n rhaid i’r dyddiad gynnwys {0} a {1}
+add-business-start-date.required                     = Mae’n rhaid i’r dyddiad gynnwys {0}
+add-business-start-date.future                       = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes fasnachu fod cyn {0}
 
 # add business accounting method
 incomeSources.add.SE.AccountingMethod.heading                 = Pa ddull cyfrifyddu yr ydych yn ei ddefnyddio ar gyfer eich busnes unig fasnachwr?
@@ -1889,7 +1908,6 @@ incomeSources.cease.error.notCeased.link.prefix                    = Yn ôl i
 incomeSources.cease.error.notCeased.link.text                     = ddod â ffynhonnell incwm i ben.
 
 incomeSources.manage.businessReportingMethodError.text          = Nid oedd modd i ni ddiweddaru’r manylion ynghylch amlder cyflwyno adroddiadau ar gyfer eich busnes unig fasnachwr.
-incomeSources.manage.uKPropertyReportingMethodError.text        = Nid oedd modd i ni ddiweddaru’r manylion ynghylch amlder cyflwyno adroddiadau ar gyfer eich busnes eiddo yn y DU.
 incomeSources.manage.foreignPropertyReportingMethodError.text   = Nid oedd modd i ni ddiweddaru’r manylion ynghylch amlder cyflwyno adroddiadau ar gyfer eich busnes eiddo tramor.
 
 incomeSources.manage.reportingMethodError.hyperlink1            = rheoli eich manylion
@@ -2151,9 +2169,14 @@ optout.checkAnswers.cancel              = Canslo
 optout.confirmedOptOut.heading                                   = Optio allan wedi’i gwblhau
 optout.confirmedOptOut.taxYear                                   = Rydych yn cyflwyno adroddiadau’n flynyddol o flwyddyn dreth {0} i {1} ymlaen
 optout.confirmedOptOut.one-year                                  = Rydych yn cyflwyno adroddiadau’n flynyddol ar gyfer blwyddyn dreth {0} i {1}
+optout.confirmedOptOut.yourRevisedDeadlines.h2                   = Eich dyddiadau cau sydd wedi’u haddasu
+optout.confirmedOptOut.yourRevisedDeadlines.desc1                = Mae’n rhaid i chi gyflwyno’ch Ffurflen Dreth ar gyfer blwyddyn dreth {0} i {1} erbyn <b>31 Ionawr {2}</b>.
+optout.confirmedOptOut.viewUpcomingUpdates.text                  = Bwrw golwg dros eich diweddariadau sydd ar y gweill
+optout.confirmedOptOut.yourRevisedDeadlines.desc2                = Gallwch, ar unrhyw adeg, optio’n ôl i mewn i adrodd yn chwarterol ar gyfer pob un o’ch busnesau. Gallwch wneud hyn drwy fynd i’r dudalen ynghylch {0}
+optout.confirmedOptOut.yourReportingFrequency.text               = amlder eich adroddiadau.
 optout.confirmedOptOut.submitTax                                 = Cyflwyno’ch Ffurflen Dreth
-optout.confirmedOptOut.submitTax.desc1                           = Ar gyfer unrhyw flynyddoedd treth lle byddwch yn dewis optio allan a chyflwyno adroddiadau yn flynyddol, gallwch gyflwyno eich Ffurflen Dreth yn uniongyrchol drwy eich cyfrif neu feddalwedd CThEF ar-lein.
-optout.confirmedOptOut.submitTax.desc2                           = Os ydych yn dal i gyflwyno adroddiadau yn chwarterol ar gyfer blynyddoedd penodol, gofynnir i chi anfon y diweddariadau chwarterol hynny drwy feddalwedd sy’n cydweddu.
+optout.confirmedOptOut.submitTax.desc1                           = Wrth adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth yn uniongyrchol drwy’ch cyfrif ar-lein CThEF neu drwy ddefnyddio meddalwedd sy’n cydweddu.
+optout.confirmedOptOut.submitTax.desc2                           = Fodd bynnag, mae’n rhaid i chi ddefnyddio meddalwedd sy’n cydweddu ar gyfer unrhyw flynyddoedd yr ydych yn adrodd amdanynt yn chwarterol.
 optout.confirmedOptOut.updatesDue                                = Eich diweddariadau nesaf sy’n ddyledus
 optout.confirmedOptOut.updatesDue.desc                           = Gwiriwch y dudalen {0} ar gyfer dyddiadau cau y flwyddyn dreth bresennol. Ni fydd dyddiadau cau ar gyfer blynyddoedd yn y dyfodol i’w gweld hyd nes eu bod yn newid i’r flwyddyn dreth bresennol.
 optout.confirmedOptOut.next-updates                              = diweddariadau nesaf
@@ -2202,6 +2225,17 @@ optout.optOutError.nextUpdates-bullet-2              = a rhoi cynnig arall arni
 optout.optOutError.home-bullet-1                     = mynd yn ôl i’r
 optout.optOutError.home-bullet-2                     = hafan
 
+# Opt out cancelled page
+
+optout.cancelled.title                              = Y dewis i optio allan wedi’i ganslo
+optout.cancelled.h1                                 = Y dewis i optio allan wedi’i ganslo
+optout.cancelled.p1                                 = Byddwch yn parhau i adrodd yn chwarterol ar gyfer blwyddyn dreth {0} i {1}.
+optout.cancelled.bullet1.link                       = Bwrw golwg dros eich diweddariadau sydd ar y gweill
+optout.cancelled.bullet2.link                       = Ewch i’r hafan
+optout.cancelled.h2                                 = Adrodd yn flynyddol ar gyfer busnes newydd
+optout.cancelled.p2                                 = Gan fod gennych un neu fwy o fusnesau newydd, gallwch ddewis i adrodd yn flynyddol ar eu cyfer am hyd at 2 o flynyddoedd treth tra’n parhau i adrodd yn chwarterol ar gyfer eich busnesau eraill.
+optout.cancelled.p3.link                            = Gallwch fwrw golwg dros eich busnesau a’u rheoli
+optout.cancelled.p3                                 = i newid pa mor aml rydych yn cyflwyno adroddiadau ar gyfer eich busnesau.
 
 #######################################################################################################################
 ## Opt In ##
@@ -2219,23 +2253,23 @@ optIn.beforeYouStart.voluntaryStatus.text      = Gan y byddech yn optio i mewn y
 optIn.beforeYouStart.button.start              = Dechrau
 
 # opt in choose tax year
-optin.chooseOptInTaxYear.heading                     = Optio i mewn yn wirfoddol i adrodd yn chwarterol
-optin.chooseOptInTaxYear.desc1                       = Os byddwch yn optio i mewn ar gyfer y flwyddyn dreth nesaf, ni fydd yn rhaid i chi gyflwyno diweddariad chwarterol tan hynny.
-optin.chooseOptInTaxYear.whichTaxYear                = O ba flwyddyn dreth ymlaen rydych eisiau optio i mewn?
-optin.chooseOptInTaxYear.taxYearOnwards              = {0} i {1} ymlaen
-optin.chooseOptInTaxYear.continue                    = Yn eich blaen
-optin.confirmOptIn.cancel                            = Canslo
+optin.chooseOptInTaxYear.heading                          = Optio i mewn yn wirfoddol i adrodd yn chwarterol
+optin.chooseOptInTaxYear.desc1                            = Os byddwch yn optio i mewn ar gyfer y flwyddyn dreth nesaf, ni fydd yn rhaid i chi gyflwyno diweddariad chwarterol tan hynny.
+optin.chooseOptInTaxYear.whichTaxYear                     = O ba flwyddyn dreth ymlaen rydych eisiau optio i mewn?
+optin.chooseOptInTaxYear.taxYearOnwards                   = {0} i {1} ymlaen
+optin.chooseOptInTaxYear.continue                         = Yn eich blaen
+optin.confirmOptIn.cancel                                 = Canslo
 optIn.ConfirmOptInMultiTaxYearChoice.form.no-select.error = Dewiswch y flwyddyn dreth yr hoffech ddechrau cyflwyno yn chwarterol
 
 # opt in check your answers
-optin.checkAnswers.taxYears = flwyddyn dreth {0} i {1} ymlaen
-optin.checkAnswers.heading = Gwirio’ch atebion
-optin.checkAnswers.optin = Optio i mewn o
-optin.checkAnswers.change = Newid
-optin.checkAnswers.cy = Os byddwch yn optio i mewn, bydd angen i chi gyflwyno’ch diweddariadau chwarterol drwy feddalwedd sy’n cydweddu.
-optin.checkAnswers.ny = Os byddwch yn optio i mewn o’r flwyddyn dreth nesaf ymlaen, sef o 6 Ebrill {0} ymlaen, bydd angen i chi gyflwyno’ch adroddiadau chwarterol drwy ddefnyddio meddalwedd sy’n cydweddu.
-optin.checkAnswers.confirm = Cadarnhau a chadw
-optin.checkAnswers.cancel = Canslo
+optin.checkAnswers.taxYears        = flwyddyn dreth {0} i {1} ymlaen
+optin.checkAnswers.heading         = Gwirio’ch atebion
+optin.checkAnswers.optin           = Optio i mewn o
+optin.checkAnswers.change          = Newid
+optin.checkAnswers.cy              = Os byddwch yn optio i mewn, bydd angen i chi gyflwyno’ch diweddariadau chwarterol drwy feddalwedd sy’n cydweddu.
+optin.checkAnswers.ny              = Os byddwch yn optio i mewn o’r flwyddyn dreth nesaf ymlaen, sef o 6 Ebrill {0} ymlaen, bydd angen i chi gyflwyno’ch adroddiadau chwarterol drwy ddefnyddio meddalwedd sy’n cydweddu.
+optin.checkAnswers.confirm         = Cadarnhau a chadw
+optin.checkAnswers.cancel          = Canslo
 optin.checkAnswers.submissionsMade = Os ydych wedi cyflwyno unrhyw incwm a threuliau i CThEF ar gyfer y flwyddyn dreth hon, byddant yn cael eu dileu o’n cofnodion. Gwnewch yn siŵr eich bod yn cadw’r wybodaeth hon yn ddiogel oherwydd y bydd angen i chi ei chynnwys yn eich diweddariadau chwarterol.
 
 # opt in error page
@@ -2247,23 +2281,22 @@ optin.optInError.nextUpdates-bullet-2              = a rhoi cynnig arall arni
 optin.optInError.home-bullet-1                     = mynd yn ôl i’r
 optin.optInError.home-bullet-2                     = hafan
 
-
 # opt-in completed
-optin.completedOptIn.heading                    = Optio i mewn wedi’i gwblhau
+optin.completedOptIn.heading = Optio i mewn wedi’i gwblhau
 
 optin.completedOptIn.cy.heading.desc                     = Rydych bellach yn cyflwyno adroddiadau’n chwarterol o flwyddyn dreth {0} i {1} ymlaen
 optin.completedOptIn.ny.heading.desc                     = Gwnaethoch optio i mewn i adrodd yn chwarterol o flwyddyn dreth {0} i {1} ymlaen
-optin.completedOptIn.followingVoluntary.heading.des      = Rydych bellach yn cyflwyno adroddiadau’n chwarterol o flwyddyn dreth {0} i {1} ymlaen
+optin.completedOptIn.followingVoluntary.heading.desc     = Rydych bellach yn cyflwyno adroddiadau’n chwarterol o’r flwyddyn dreth {0} i {1}
 
 optin.completedOptIn.yourRevisedDeadline.inset = Bydd eich dyddiadau cau diwygiedig ar gael yn y munudau nesaf.
 
-optin.completedOptIn.yourRevisedDeadline.h2 = Eich dyddiadau cau sydd wedi’u haddasu
-optin.completedOptIn.yourRevisedDeadline.p1.a = Hyd yn oed os nad ydynt yn cael eu harddangos ar unwaith ar y dudalen
-optin.completedOptIn.yourRevisedDeadline.p1.b = mae’ch cyfrif wedi’i ddiweddaru.
+optin.completedOptIn.yourRevisedDeadline.h2      = Eich dyddiadau cau sydd wedi’u haddasu
+optin.completedOptIn.yourRevisedDeadline.p1.a    = Hyd yn oed os nad ydynt yn cael eu harddangos ar unwaith ar y dudalen
+optin.completedOptIn.yourRevisedDeadline.p1.b    = mae’ch cyfrif wedi’i ddiweddaru.
 optin.completedOptIn.yourRevisedDeadline.p1.link = diweddariadau a dyddiadau cau,
 
-optin.completedOptIn.yourRevisedDeadline.p2.a = Gallwch, ar unrhyw adeg, optio allan o adrodd yn chwarterol ar gyfer pob un o’ch busnesau. Gallwch wneud hyn drwy fynd i’r dudalen ynghylch
-optin.completedOptIn.yourRevisedDeadline.p2.b =  .
+optin.completedOptIn.yourRevisedDeadline.p2.a    = Gallwch, ar unrhyw adeg, optio allan o adrodd yn chwarterol ar gyfer pob un o’ch busnesau. Gallwch wneud hyn drwy fynd i’r dudalen ynghylch
+optin.completedOptIn.yourRevisedDeadline.p2.b    =  .
 optin.completedOptIn.yourRevisedDeadline.p2.link = amlder eich adroddiadau
 
 optin.completedOptIn.submitUpdates              = Cyflwyno diweddariadau drwy ddefnyddio meddalwedd
@@ -2273,13 +2306,19 @@ optin.completedOptIn.submitUpdates.desc1.b.url  = https://www.gov.uk/guidance/fi
 
 optin.completedOptIn.submitUpdates.annualReportingAdvice     = Wrth adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth yn uniongyrchol drwy’ch cyfrif ar-lein CThEF neu drwy ddefnyddio meddalwedd sy’n cydweddu.
 
-optin.completedOptIn.futureReporting            = Adrodd yn y dyfodol
-optin.completedOptIn.cy.futureReporting.desc1   = Rydych newydd ddewis adrodd yn chwarterol o flwyddyn dreth {0} i {1} ymlaen yn wirfoddol. Fodd bynnag, yn y dyfodol gallai fod yn orfodol i chi adrodd yn chwarterol os bydd y canlynol yn wir:
-optin.completedOptIn.ny.futureReporting.desc1   = Rydych wedi optio i mewn i adrodd yn chwarterol o’r flwyddyn dreth nesaf ymlaen yn wirfoddol. Fodd bynnag, yn y dyfodol gallai fod yn orfodol i chi adrodd yn chwarterol os bydd y canlynol yn wir:
-optin.completedOptIn.futureReporting.p1         = mae CThEF yn gostwng y trothwy incwm ar gyfer Troi Treth yn Ddigidol ar gyfer Treth Incwm
-optin.completedOptIn.futureReporting.p2         = rydych yn adrodd am gynnydd yn eich incwm cymhwysol mewn Ffurflen Dreth
-optin.completedOptIn.futureReporting.scenario   = Er enghraifft, pe bai eich incwm o hunangyflogaeth neu eiddo, neu o’r ddau, yn uwch na’r trothwy ym mlwyddyn dreth {0} i {1}, byddai’n rhaid i chi gyflwyno adroddiadau’n chwarterol o 6 Ebrill {2} ymlaen.
-optin.completedOptIn.futureReporting.desc2      = Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
+optin.completedOptIn.futureReporting                        = Adrodd yn y dyfodol
+optin.completedOptIn.nymandated.futureReporting             = Cyflwyno adroddiadau’n chwarterol o’r flwyddyn dreth nesaf ymlaen
+optin.completedOptIn.cy.futureReporting.desc1               = Rydych newydd ddewis adrodd yn chwarterol o flwyddyn dreth {0} i {1} ymlaen yn wirfoddol. Fodd bynnag, yn y dyfodol gallai fod yn orfodol i chi adrodd yn chwarterol os bydd y canlynol yn wir:
+optin.completedOptIn.ny.futureReporting.desc1               = Rydych wedi optio i mewn i adrodd yn chwarterol o’r flwyddyn dreth nesaf ymlaen yn wirfoddol. Fodd bynnag, yn y dyfodol gallai fod yn orfodol i chi adrodd yn chwarterol os bydd y canlynol yn wir:
+optin.completedOptIn.nymandated.futureReporting.desc1       = Rydych wedi dewis adrodd yn chwarterol yn wirfoddol o’r flwyddyn dreth {0} i {1}.
+optin.completedOptIn.nymandated.futureReporting.desc2       = Gallai hyn fod oherwydd y canlynol:
+optin.completedOptIn.nymandated.futureReporting.bullet.p1   = Mae CThEF yn gostwng y trothwy incwm ar gyfer Troi Treth yn Ddigidol ar gyfer Treth Incwm
+optin.completedOptIn.nymandated.futureReporting.bullet.p2   = gwnaethoch adrodd am gynnydd yn eich incwm cymhwysol mewn Ffurflen Dreth
+optin.completedOptIn.nymandated.inset                       = O {0} ymlaen, bydd angen i chi anfon diweddariadau chwarterol gan ddefnyddio meddalwedd sy’n cydweddu.
+optin.completedOptIn.futureReporting.p1                     = mae CThEF yn gostwng y trothwy incwm ar gyfer Troi Treth yn Ddigidol ar gyfer Treth Incwm
+optin.completedOptIn.futureReporting.p2                     = rydych yn adrodd am gynnydd yn eich incwm cymhwysol mewn Ffurflen Dreth
+optin.completedOptIn.futureReporting.scenario               = Er enghraifft, pe bai eich incwm o hunangyflogaeth neu eiddo, neu o’r ddau, yn uwch na’r trothwy ym mlwyddyn dreth {0} i {1}, byddai’n rhaid i chi gyflwyno adroddiadau’n chwarterol o 6 Ebrill {2} ymlaen.
+optin.completedOptIn.futureReporting.desc2                  = Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
 
 optin.completedOptIn.incomeThreshold.desc.a     = Gallwch wirio’r trothwy ar gyfer incwm cymhwysol yn y
 optin.completedOptIn.incomeThreshold.desc.b     = meini prawf ar gyfer pobl y bydd angen iddynt gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd).

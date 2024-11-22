@@ -582,8 +582,8 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
             None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
           )(FakeRequest()),
           messagesAPI, TaxYearSummaryViewModel(Some(CalculationSummary(liabilityCalculationModelSuccessfulExpected)),
-            financialDetailsDunningLockSuccess.documentDetails.map(dd => ChargeItem.fromDocumentPair(dd, financialDetailsDunningLockSuccess.financialDetails, true, true)).map(TaxYearSummaryChargeItem.fromChargeItem),
-            allObligations, codingOutEnabled = true, reviewAndReconcileEnabled = true, showForecastData = true, ctaViewModel = emptyCTAModel)))
+            financialDetailsDunningLockSuccess.documentDetails.map(dd => ChargeItem.fromDocumentPair(dd, financialDetailsDunningLockSuccess.financialDetails)).map(TaxYearSummaryChargeItem.fromChargeItem),
+            allObligations, reviewAndReconcileEnabled = true, showForecastData = true, ctaViewModel = emptyCTAModel)))
       }
 
 
@@ -802,7 +802,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
             Some(CalculationSummary(liabilityCalculationModelSuccessful)),
             emptyPaymentsList,
             allObligations,
-            codingOutEnabled = true, reviewAndReconcileEnabled = true, showForecastData = true, ctaViewModel = emptyCTAModel
+            reviewAndReconcileEnabled = true, showForecastData = true, ctaViewModel = emptyCTAModel
           )))
       }
 
@@ -1132,8 +1132,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           messagesAPI, TaxYearSummaryViewModel(
             Some(CalculationSummary(liabilityCalculationModelSuccessful)),
 
-            auditDD.map(dd => ChargeItem.fromDocumentPair(dd.documentDetail, financialDetailsMFADebits.financialDetails, true, true)).map(TaxYearSummaryChargeItem.fromChargeItem), allObligations,
-            codingOutEnabled = true,
+            auditDD.map(dd => ChargeItem.fromDocumentPair(dd.documentDetail, financialDetailsMFADebits.financialDetails)).map(TaxYearSummaryChargeItem.fromChargeItem), allObligations,
             reviewAndReconcileEnabled = true,
             showForecastData = true, ctaViewModel = emptyCTAModel)))
 

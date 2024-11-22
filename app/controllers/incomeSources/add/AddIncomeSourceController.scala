@@ -17,18 +17,17 @@
 package controllers.incomeSources.add
 
 import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates._
+import auth.authV2.AuthActions
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.JourneyType.Add
 import models.admin.IncomeSources
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
+import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.IncomeSourcesUtils
 import views.html.incomeSources.add.AddIncomeSources
 
 import javax.inject.{Inject, Singleton}
@@ -36,42 +35,38 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
 @Singleton
-class AddIncomeSourceController @Inject()(
-                                           val addIncomeSources: AddIncomeSources,
-                                           val checkSessionTimeout: SessionTimeoutPredicate,
-                                           val authorisedFunctions: AuthorisedFunctions,
-                                           val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                           auth: AuthenticatorPredicate
-                                         )
+class AddIncomeSourceController @Inject()(val authActions: AuthActions,
+                                          val addIncomeSources: AddIncomeSources,
+                                          val incomeSourceDetailsService: IncomeSourceDetailsService)
                                          (implicit val appConfig: FrontendAppConfig,
-                                          implicit val ec: ExecutionContext,
-                                          implicit val itvcErrorHandler: ItvcErrorHandler,
-                                          implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                          implicit val sessionService: SessionService,
-                                          implicit override val mcc: MessagesControllerComponents) extends ClientConfirmedController
-  with FeatureSwitching with IncomeSourcesUtils {
+                                          val ec: ExecutionContext,
+                                          val itvcErrorHandler: ItvcErrorHandler,
+                                          val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                          val sessionService: SessionService,
+                                          val mcc: MessagesControllerComponents) extends FrontendController(mcc)
+  with I18nSupport with IncomeSourcesUtils {
 
   lazy val homePageCall: Call = controllers.routes.HomeController.show()
   lazy val homePageCallAgent: Call = controllers.routes.HomeController.showAgent
 
-  def show(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
       handleRequest(
         isAgent = false,
         homePageCall = homePageCall,
         sources = user.incomeSources,
         backUrl = controllers.routes.HomeController.show().url
-      )
+      )(implicitly, itvcErrorHandler)
   }
 
-  def showAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent(): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit mtdItUser =>
       handleRequest(
         isAgent = true,
         homePageCall = homePageCallAgent,
         sources = mtdItUser.incomeSources,
         backUrl = controllers.routes.HomeController.showAgent.url
-      )
+      )(implicitly, itvcErrorHandlerAgent)
 
   }
 
@@ -79,7 +74,7 @@ class AddIncomeSourceController @Inject()(
                     homePageCall: Call,
                     isAgent: Boolean,
                     backUrl: String)
-                   (implicit user: MtdItUser[_]): Future[Result] = {
+                   (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
     if (!isEnabled(IncomeSources)) {
       Future.successful(Redirect(homePageCall))
     } else {
@@ -94,16 +89,12 @@ class AddIncomeSourceController @Inject()(
           } recover {
             case ex: Exception =>
               Logger("application").error(s"Session Error: ${ex.getMessage} - ${ex.getCause}")
-              showInternalServerError(isAgent)
+              errorHandler.showInternalServerError()
           }
         case Failure(ex) =>
           Logger("application").error(s"Error: ${ex.getMessage} - ${ex.getCause}")
-          Future(showInternalServerError(isAgent))
+          Future(errorHandler.showInternalServerError())
       }
     }
-  }
-
-  private def showInternalServerError(isAgent: Boolean)(implicit user: MtdItUser[_]): Result = {
-    (if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler).showInternalServerError()
   }
 }

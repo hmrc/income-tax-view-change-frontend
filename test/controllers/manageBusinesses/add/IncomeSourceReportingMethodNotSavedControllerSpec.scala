@@ -50,7 +50,6 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
   with MockSessionService {
 
   val view: IncomeSourceReportingMethodNotSaved = app.injector.instanceOf[IncomeSourceReportingMethodNotSaved]
-  val postAction: Call = controllers.manageBusinesses.add.routes.AddBusinessNameController.submit(isAgent = false, isChange = false)
 
   def authenticate(isAgent: Boolean): Unit = {
     if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)

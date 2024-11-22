@@ -55,11 +55,11 @@ case class ChargeItem (
     interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0 && !isPaid
 
   def isAccruingInterest()(implicit dateService: DateServiceInterface): Boolean = {
-    Seq(PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile).contains(transactionType) && !isPaid && !isOverdue()
+    Seq(PoaOneReconciliationDebit, PoaTwoReconciliationDebit).contains(transactionType) && !isPaid && !isOverdue()
   }
 
-  def getDueDateForNonZeroBalancingCharge(codedOutEnabled: Boolean = false): Option[LocalDate] = {
-    if(transactionType == BalancingCharge && (!codedOutEnabled || subTransactionType.isEmpty) && originalAmount == 0.0) {
+  def getDueDateForNonZeroBalancingCharge: Option[LocalDate] = {
+    if(transactionType == BalancingCharge && (subTransactionType.isEmpty) && originalAmount == 0.0) {
       None
     } else {
       dueDate
@@ -105,8 +105,13 @@ case class ChargeItem (
 
   val interestIsPartPaid: Boolean = interestOutstandingAmount.getOrElse[BigDecimal](0) != latePaymentInterestAmount.getOrElse[BigDecimal](0)
 
-  val isPoaReconciliationCredit: Boolean = transactionType == PaymentOnAccountOneReviewAndReconcileCredit||
-    transactionType == PaymentOnAccountTwoReviewAndReconcileCredit
+  val isPoaReconciliationCredit: Boolean = transactionType == PoaOneReconciliationCredit ||
+    transactionType == PoaTwoReconciliationCredit
+
+  val isPoaReconciliationDebit: Boolean = transactionType == PoaOneReconciliationDebit ||
+    transactionType == PoaTwoReconciliationDebit
+
+  val isReviewAndReconcileCharge: Boolean = isPoaReconciliationCredit || isPoaReconciliationDebit
 
   def getInterestPaidStatus: String = {
     if (interestIsPaid) "paid"
@@ -130,8 +135,8 @@ case class ChargeItem (
   }
 
   def poaLinkForDrilldownPage: String = transactionType match {
-    case PaymentOnAccountOne => "4911"
-    case PaymentOnAccountTwo => "4913"
+    case PoaOneDebit => "4911"
+    case PoaTwoDebit => "4913"
     case _ => "no valid case"
   }
 }
@@ -148,8 +153,7 @@ object ChargeItem {
     }
   }
 
-  def fromDocumentPair(documentDetail: DocumentDetail, financialDetails: List[FinancialDetail],
-                       codingOut: Boolean, reviewAndReconcile: Boolean): ChargeItem = {
+  def fromDocumentPair(documentDetail: DocumentDetail, financialDetails: List[FinancialDetail]): ChargeItem = {
 
     val financialDetail = financialDetails.find(_.transactionId.contains(documentDetail.transactionId)) match {
       case Some(fd) => fd
@@ -161,7 +165,7 @@ object ChargeItem {
       case _ => throw CouldNotCreateChargeItemException(s"Main transaction is not defined for charge ${documentDetail.transactionId}")
     }
 
-    val chargeType = ChargeType.fromCode(mainTransaction, reviewAndReconcile) match {
+    val chargeType = ChargeType.fromCode(mainTransaction) match {
       case Some(ct) => ct
       case _ => throw CouldNotCreateChargeItemException(s"Could not identify charge type from $mainTransaction for charge ${documentDetail.transactionId}")
     }

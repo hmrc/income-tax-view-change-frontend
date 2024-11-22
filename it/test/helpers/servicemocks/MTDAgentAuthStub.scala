@@ -20,6 +20,7 @@ import controllers.agent.AuthUtils._
 import helpers.WiremockHelper._
 import play.api.http.Status
 import play.api.libs.json.{JsString, JsValue, Json}
+import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
 import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolment}
 
 object MTDAgentAuthStub {
@@ -49,7 +50,17 @@ object MTDAgentAuthStub {
     )
   }
 
-  def stubNoAgentEnrolment(mtdItId: String = "mtdbsaId", isSupportingAgent: Boolean): Unit = {
+  def stubNoAgentEnrolmentRequiredSuccess(mtdItId: String = "mtdbsaId"): Unit = {
+    val jsonRequest = emptyPredicateRequest
+    stubPostWithRequest(
+      url = postAuthoriseUrl,
+      requestBody = jsonRequest,
+      status = Status.OK,
+      responseBody = mtdAgentSuccessResponse(mtdItId = mtdItId, isSupportingAgent = false)
+    )
+  }
+
+  def stubNoAgentEnrolmentError(mtdItId: String = "mtdbsaId", isSupportingAgent: Boolean): Unit = {
     val jsonRequest = getMTDAgentAuthRequest(mtdItId, isSupportingAgent)
     val responseHeaders = Map("WWW-Authenticate" -> "MDTP detail=\"InsufficientEnrolments\"",
       "Failing-Enrolment" -> "no arn enrolment")
@@ -115,6 +126,22 @@ object MTDAgentAuthStub {
       requestBody = jsonRequest,
       status = Status.UNAUTHORIZED,
       responseHeaders = responseHeaders
+    )
+  }
+
+  lazy val emptyPredicateRequest: JsValue = {
+    val predicateJson = {
+      EmptyPredicate.toJson
+    }
+
+    Json.obj(
+      "authorise" -> predicateJson,
+      "retrieve" -> Json.arr(
+        JsString("allEnrolments"),
+        JsString("optionalCredentials"),
+        JsString("affinityGroup"),
+        JsString("confidenceLevel")
+      )
     )
   }
 

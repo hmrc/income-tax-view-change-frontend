@@ -113,7 +113,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
   val chargeItemWithNoInterest: ChargeItem = ChargeItem(
     transactionId = "1040000124",
     taxYear = TaxYear.forYearEnd(taxYear),
-    transactionType = PaymentOnAccountOne,
+    transactionType = PoaOneDebit,
     subTransactionType = None,
     documentDate = LocalDate.of(2018, 3, 29),
     dueDate = Some(fixedDate),
@@ -360,12 +360,12 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
             "chargeHistory" -> Json.arr(
               Json.obj(
                 "date" -> "2018-07-06",
-                "description" -> "Remaining balance reduced due to amended return",
+                "description" -> "Remaining balance reduced due to amended return with coding out",
                 "amount" -> 1500
               ),
               Json.obj(
                 "date" -> "2018-07-06",
-                "description" -> "Remaining balance reduced by taxpayer request",
+                "description" -> "Remaining balance reduced by taxpayer request with coding out",
                 "amount" -> 1500
               )
             ),
@@ -435,12 +435,12 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
             "chargeHistory" -> Json.arr(
               Json.obj(
                 "date" -> "2018-07-06",
-                "description" -> "Remaining balance reduced due to amended return",
+                "description" -> "Remaining balance reduced due to amended return with cancelledPayeSelfAssessment",
                 "amount" -> 1500
               ),
               Json.obj(
                 "date" -> "2018-07-06",
-                "description" -> "Remaining balance reduced by taxpayer request",
+                "description" -> "Remaining balance reduced by taxpayer request with cancelledPayeSelfAssessment",
                 "amount" -> 1500
               )
             ),

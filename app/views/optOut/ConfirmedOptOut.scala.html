@@ -31,8 +31,7 @@
     govukInsetText : GovukInsetText
 )
 
-@(viewModel: ConfirmedOptOutViewModel, isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
-
+@(viewModel: ConfirmedOptOutViewModel, isAgent: Boolean = false, showReportingFrequencyContent: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 
 @panelBody = @{
@@ -51,15 +50,6 @@
             @messages(panelBody, viewModel.startYear, viewModel.endYear)
         </div>
     </div>
-}
-
-@nextUpdatePageAnchor = @{
-    val nexUpdatePageRef = if(isAgent) controllers.routes.NextUpdatesController.showAgent.url
-                           else controllers.routes.NextUpdatesController.show().url
-
-    link(id = Some("next-update-link"),
-         link = nexUpdatePageRef,
-         messageKey = "optout.confirmedOptOut.next-updates").toString
 }
 
 @optOutYearFollowedByMandatedContent = {
@@ -88,18 +78,42 @@
     </ul>
 }
 
+
+@yourReportingFrequencyBlock = @{
+    val reportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show().url
+    val reportingFrequencyLink = link(
+        id = Some("your-reporting-frequency-link"),
+        link = reportingFrequencyUrl,
+        messageKey = "optout.confirmedOptOut.yourReportingFrequency.text"
+    )
+
+    Html(messages("optout.confirmedOptOut.yourRevisedDeadlines.desc2", reportingFrequencyLink.toString()))
+}
+
+@revisedDeadlinesBlock = {
+    <div id="revised-deadlines" class="govuk-!-margin-bottom-7 govuk-!-margin-top-8">
+        <h2 id="revised-deadlines-heading" class="govuk-heading-m" >@messages("optout.confirmedOptOut.yourRevisedDeadlines.h2")</h2>
+        <p id="revised-deadlines-p1" class="govuk-body" >@Html(messages("optout.confirmedOptOut.yourRevisedDeadlines.desc1", viewModel.startYear, viewModel.endYear, viewModel.nextYear))</p>
+        <p id="view-upcoming-updates">
+            @link(
+                id = Some("view-upcoming-updates-link"),
+                link = if(isAgent) controllers.routes.NextUpdatesController.showAgent.url else controllers.routes.NextUpdatesController.show().url,
+                messageKey = "optout.confirmedOptOut.viewUpcomingUpdates.text"
+            )
+        </p>
+        <p id="your-reporting-frequency-block" class="govuk-body">
+            @if(showReportingFrequencyContent) {
+                @yourReportingFrequencyBlock
+            }
+        </p>
+    </div>
+}
+
 @submitYourTaxReturnBlock = {
     <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
         <h2 id="submit-tax-heading" class="govuk-heading-m" >@messages("optout.confirmedOptOut.submitTax")</h2>
         <p id="submit-tax-p1" class="govuk-body" >@messages("optout.confirmedOptOut.submitTax.desc1")</p>
         <p id="submit-tax-p2" class="govuk-body" >@messages("optout.confirmedOptOut.submitTax.desc2")</p>
-    </div>
-}
-
-@nextUpdateDueBlock = {
-    <div id="updates-due" class="govuk-!-margin-bottom-7">
-        <h2 id="updates-due-heading" class="govuk-heading-m" >@messages("optout.confirmedOptOut.updatesDue")</h2>
-        <p id="updates-due-content" class="govuk-body">@Html(messages("optout.confirmedOptOut.updatesDue.desc", nextUpdatePageAnchor))</p>
     </div>
 }
 
@@ -138,7 +152,7 @@
     btaNavPartial = user.btaNavPartial,
 ) {
     @panel
+    @revisedDeadlinesBlock
     @submitYourTaxReturnBlock
-    @nextUpdateDueBlock
     @reportingUpdatesBlock
 }

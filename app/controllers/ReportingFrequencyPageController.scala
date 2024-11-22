@@ -27,7 +27,6 @@ import models.optout.{OptOutMultiYearViewModel, OptOutOneYearViewModel}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.DateService
-import services.optIn.OptInService
 import services.optout.OptOutService
 import views.html.ReportingFrequencyView
 import views.html.errorPages.templates.ErrorTemplate

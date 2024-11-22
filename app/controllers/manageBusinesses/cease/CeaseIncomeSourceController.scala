@@ -17,16 +17,16 @@
 package controllers.manageBusinesses.cease
 
 import auth.MtdItUser
+import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
 import enums.JourneyType.Cease
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{IncomeSourceDetailsService, SessionService}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
 import views.html.manageBusinesses.cease.CeaseIncomeSources
 
@@ -34,18 +34,18 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeSources,
-                                            val authorisedFunctions: AuthorisedFunctions,
+                                            val authActions: AuthActions,
                                             val itvcErrorHandler: ItvcErrorHandler,
-                                            implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                            val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                             val incomeSourceDetailsService: IncomeSourceDetailsService,
                                             val sessionService: SessionService,
                                             val auth: AuthenticatorPredicate)
                                            (implicit val ec: ExecutionContext,
-                                            implicit override val mcc: MessagesControllerComponents,
+                                            val mcc: MessagesControllerComponents,
                                             val appConfig: FrontendAppConfig)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
+  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
 
-  def show(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
       handleRequest(
         sources = user.incomeSources,
@@ -54,7 +54,7 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
       )
   }
 
-  def showAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent(): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit mtdItUser =>
       handleRequest(
         sources = mtdItUser.incomeSources,

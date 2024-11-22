@@ -473,9 +473,9 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       status(result) shouldBe SEE_OTHER
       if (incomeSourceType == SelfEmployment) verifySetMongoData(SelfEmployment)
       redirectLocation(result) shouldBe Some({
-        (isAgent, incomeSourceType) match {
-          case (false, SelfEmployment) => controllers.manageBusinesses.add.routes.AddBusinessTradeController.show(isAgent, isChange = false)
-          case (true, SelfEmployment) => controllers.manageBusinesses.add.routes.AddBusinessTradeController.show(isAgent, isChange = false)
+        incomeSourceType match {
+          case SelfEmployment if !isAgent => controllers.manageBusinesses.add.routes.AddBusinessTradeController.show(isChange = false)
+          case SelfEmployment => controllers.manageBusinesses.add.routes.AddBusinessTradeController.showAgent(isChange = false)
           case _ => routes.IncomeSourcesAccountingMethodController.show(incomeSourceType, isAgent)
         }
       }.url)

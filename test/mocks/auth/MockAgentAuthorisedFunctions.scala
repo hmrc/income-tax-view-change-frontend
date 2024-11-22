@@ -59,6 +59,16 @@ trait MockAgentAuthorisedFunctions extends BeforeAndAfterEach {
         })
   }
 
+  def setupMockAgentWithoutARNAuthSuccess[X, Y](retrievalValue: X ~ Y): Unit = {
+    when(mockAuthService.authorised(any()))
+      .thenReturn(
+        new mockAuthService.AuthorisedFunction(EmptyPredicate) {
+          override def retrieve[A](retrieval: Retrieval[A]) = new mockAuthService.AuthorisedFunctionWithResult[A](EmptyPredicate, retrieval) {
+            override def apply[B](body: A => Future[B])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[B] = body.apply(retrievalValue.asInstanceOf[A])
+          }
+        })
+  }
+
   def setupMockAgentWithClientAuthSuccess[X, Y](retrievalValue: X ~ Y, mtdItId: String, isSupportingAgent: Boolean = false): Unit = {
     val predicate = (isAgentPredicate and delegatedEnrolmentPredicate(mtdItId, isSupportingAgent)) or isNotAgentPredicate
     when(mockAuthService.authorised(predicate))

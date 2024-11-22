@@ -29,9 +29,9 @@ import scala.concurrent.{ExecutionContext, Future}
 class ChargeHistoryService @Inject()(chargeHistoryConnector: ChargeHistoryConnector) {
 
   def chargeHistoryResponse(isLatePaymentCharge: Boolean, isPayeSelfAssessment: Boolean, chargeReference: Option[String],
-                                    isChargeHistoryEnabled: Boolean, isCodingOutEnabled: Boolean)
+                                    isChargeHistoryEnabled: Boolean)
                                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ChargesHistoryErrorModel, List[ChargeHistoryModel]]] = {
-    if (!isLatePaymentCharge && isChargeHistoryEnabled && !(isCodingOutEnabled && isPayeSelfAssessment)) {
+    if (!isLatePaymentCharge && isChargeHistoryEnabled && !isPayeSelfAssessment) {
       chargeHistoryConnector.getChargeHistory(user.nino, chargeReference).map {
         case chargesHistory: ChargesHistoryModel => Right(chargesHistory.chargeHistoryDetails.getOrElse(Nil))
         case errorResponse: ChargesHistoryErrorModel => Left(errorResponse)
@@ -77,8 +77,8 @@ class ChargeHistoryService @Inject()(chargeHistoryConnector: ChargeHistoryConnec
     for {
       financialDetailForRarCredit <- chargeDetailsforTaxYear.financialDetails.find(
         chargeItem.transactionType match {
-          case PaymentOnAccountOne => (fd: FinancialDetail) => reviewAndReconcileEnabled && fd.isReconcilePoaOneCredit
-          case PaymentOnAccountTwo => (fd: FinancialDetail) => reviewAndReconcileEnabled && fd.isReconcilePoaTwoCredit
+          case PoaOneDebit => (fd: FinancialDetail) => reviewAndReconcileEnabled && fd.isReconcilePoaOneCredit
+          case PoaTwoDebit => (fd: FinancialDetail) => reviewAndReconcileEnabled && fd.isReconcilePoaTwoCredit
           case _                   => (_:  FinancialDetail) => false
         }
       )
@@ -87,9 +87,7 @@ class ChargeHistoryService @Inject()(chargeHistoryConnector: ChargeHistoryConnec
     } yield {
       ChargeItem.fromDocumentPair(
         documentDetailForRarCredit,
-        List(financialDetailForRarCredit),
-        codingOut = true,
-        reviewAndReconcileEnabled
+        List(financialDetailForRarCredit)
       )
     }
   }

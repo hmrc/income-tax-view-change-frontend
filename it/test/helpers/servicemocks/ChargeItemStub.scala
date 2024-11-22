@@ -42,8 +42,8 @@ object ChargeItemStub {
     dunningLock = false
   )
 
-  def chargeItemWithInterest( chargeType: ChargeType = PaymentOnAccountOne,
-                              subTransactionType: Option[SubTransactionType] = None): ChargeItem = ChargeItem(
+  def chargeItemWithInterest(chargeType: ChargeType = PoaOneDebit,
+                             subTransactionType: Option[SubTransactionType] = None): ChargeItem = ChargeItem(
     transactionId = "1040000124",
     taxYear = TaxYear.forYearEnd(testTaxYear),
     transactionType = chargeType,
@@ -62,9 +62,9 @@ object ChargeItemStub {
     dunningLock = false
   )
 
-  def chargeItemWithInterestAndOverdue( chargeType: ChargeType = PaymentOnAccountOne,
-                              subTransactionType: Option[SubTransactionType] = None,
-                               dueDate: Option[LocalDate] = Some(LocalDate.of(2017, 7, 1))): ChargeItem = ChargeItem(
+  def chargeItemWithInterestAndOverdue(chargeType: ChargeType = PoaOneDebit,
+                                       subTransactionType: Option[SubTransactionType] = None,
+                                       dueDate: Option[LocalDate] = Some(LocalDate.of(2017, 7, 1))): ChargeItem = ChargeItem(
     transactionId = "1040000124",
     taxYear = TaxYear.forYearEnd(testTaxYear),
     transactionType = chargeType,

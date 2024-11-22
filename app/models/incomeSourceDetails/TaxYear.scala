@@ -65,6 +65,10 @@ case class TaxYear(startYear: Int, endYear: Int) {
     s"$startYear-${endYear.toString.toSeq.drop(2)}"
   }
 
+  def `taxYearYY-YY`: String = {
+    s"${startYear.toString.toSeq.drop(2)}-${endYear.toString.toSeq.drop(2)}"
+  }
+
 }
 
 object TaxYear {

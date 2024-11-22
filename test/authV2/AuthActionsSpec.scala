@@ -502,7 +502,7 @@ class AuthActionsSpec extends TestSupport with ScalaFutures with MockOldAuthActi
 
     when(mockAuthConnector.authorise[AuthAgentRetrievals](any(), any())(any(), any())).thenReturn(Future.failed( authorisationException ))
 
-    val result = authActions.asAgent.async(block)(request).futureValue
+    val result = authActions.asAgent().async(block)(request).futureValue
   }
 
   class AgentResultFixture(retrievals: RetrievalData,
@@ -515,7 +515,7 @@ class AuthActionsSpec extends TestSupport with ScalaFutures with MockOldAuthActi
       )
     )
 
-    val result = authActions.asAgent.async(block)(request).futureValue
+    val result = authActions.asAgent().async(block)(request).futureValue
   }
 
 }
