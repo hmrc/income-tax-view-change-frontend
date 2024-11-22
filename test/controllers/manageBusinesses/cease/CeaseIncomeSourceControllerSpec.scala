@@ -66,7 +66,7 @@ class CeaseIncomeSourceControllerSpec extends MockAuthActions
               controllers.routes.HomeController.showAgent.url
             }
 
-            status(result) shouldBE Status.SEE_OTHER
+            status(result) shouldBe Status.SEE_OTHER
             redirectLocation(result) shouldBe Some(expectedRedirectUrl)
           }
         }
