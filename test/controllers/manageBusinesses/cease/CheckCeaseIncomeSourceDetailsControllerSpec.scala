@@ -202,7 +202,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
               setupMockSuccess(mtdRole)
               enable(IncomeSourcesFs)
               mockBothPropertyBothBusiness()
-              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSources(Cease, incomeSourceType)))))
 
               when(mockUpdateIncomeSourceService.updateCessationDate(any(), any(), any())(any(), any()))
                 .thenReturn(Future.successful(Left(UpdateIncomeSourceTestConstants.failureResponse)))

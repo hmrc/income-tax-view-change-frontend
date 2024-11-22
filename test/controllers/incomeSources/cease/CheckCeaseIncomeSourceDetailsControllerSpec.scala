@@ -103,7 +103,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
               enable(IncomeSourcesFs)
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
-              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSources(Cease, incomeSourceType)))))
               mockGetCeaseIncomeSourceDetails(incomeSourceType)
 
               val result: Future[Result] = action(fakeRequest)
@@ -142,7 +142,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
               enable(IncomeSourcesFs)
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
-              setupMockGetMongo(Right(Some(completedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+              setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSources(Cease, incomeSourceType)))))
               mockGetCeaseIncomeSourceDetails(incomeSourceType)
 
               val result = action(fakeRequest)
@@ -178,9 +178,9 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
           s"return 303 SEE_OTHER and redirect to $expectedRedirectUrl" when {
             s"submitted and Income Source Type = $incomeSourceType" in {
               setupMockSuccess(mtdRole)
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               mockBothPropertyBothBusiness()
-              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSources(Cease, incomeSourceType)))))
               when(mockUpdateIncomeSourceService.updateCessationDate(any(), any(), any())(any(), any()))
                 .thenReturn(Future.successful(Right(UpdateIncomeSourceSuccess(testMtditid))))
 
@@ -195,7 +195,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
               setupMockSuccess(mtdRole)
               enable(IncomeSourcesFs)
               mockBothPropertyBothBusiness()
-              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSources(Cease, incomeSourceType)))))
 
               when(mockUpdateIncomeSourceService.updateCessationDate(any(), any(), any())(any(), any()))
                 .thenReturn(Future.successful(Left(UpdateIncomeSourceTestConstants.failureResponse)))
@@ -213,7 +213,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
               setupMockSuccess(mtdRole)
               enable(IncomeSourcesFs)
               mockNoIncomeSources()
-              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSources(Cease, incomeSourceType)))))
 
               val result = action(fakePostRequest)
 

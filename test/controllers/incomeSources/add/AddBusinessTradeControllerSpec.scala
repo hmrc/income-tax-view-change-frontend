@@ -73,7 +73,7 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
               setupMockSuccess(mtdRole)
               setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
               setupMockCreateSession(true)
-              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Add, SelfEmployment))
+              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSources(Add, SelfEmployment))
                 .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName)))))))
 
               val result: Future[Result] = action(fakeRequest)
@@ -104,7 +104,7 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
               enable(IncomeSourcesFs)
               mockNoIncomeSources()
               setupMockSuccess(mtdRole)
-              setupMockGetMongo(Right(Some(completedUIJourneySessionData(JourneyType(Add, SelfEmployment)))))
+              setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSources(Add, SelfEmployment)))))
 
               val result: Future[Result] = action(fakeRequest)
               status(result) shouldBe SEE_OTHER
@@ -148,11 +148,11 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
           if(isChange) {
             "redirect to the IncomeSourceCheckDetailsController page" when {
               "the business trade entered is valid" in {
-                enable(IncomeSources)
+                enable(IncomeSourcesFs)
                 setupMockSuccess(mtdRole)
                 setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
                 setupMockCreateSession(true)
-                setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Add, SelfEmployment))
+                setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSources(Add, SelfEmployment))
                   .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(validBusinessTrade)))))))
                 setupMockSetMongoData(true)
 
@@ -171,11 +171,11 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
           } else {
             "redirect to the add business address page" when {
               "the individual is authenticated and the business trade entered is valid" in {
-                enable(IncomeSources)
+                enable(IncomeSourcesFs)
                 setupMockSuccess(mtdRole)
                 setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
                 setupMockCreateSession(true)
-                setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Add, SelfEmployment))
+                setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSources(Add, SelfEmployment))
                   .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(validBusinessTrade)))))))
                 setupMockSetMongoData(true)
 
