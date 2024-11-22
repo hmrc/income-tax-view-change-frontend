@@ -443,7 +443,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
           result should have(
             httpStatus(BAD_REQUEST)
           )
-
         }
       }
 
