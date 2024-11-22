@@ -18,7 +18,7 @@ package controllers.manageBusinesses.cease
 
 import controllers.ControllerISpecHelper
 import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDIndividualAuthStub}
-import models.admin.IncomeSources
+import models.admin.{IncomeSources, NavBarFs}
 import play.api.http.Status.OK
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyAndCeasedBusiness, multipleBusinessesAndUkProperty}
@@ -43,6 +43,7 @@ class CeaseIncomeSourcesControllerISpec extends ControllerISpecHelper {
       "render the Cease Income Source page for an Individual" when {
         "Income source details are enabled for UK property" in {
           MTDIndividualAuthStub.stubAuthorised()
+          disable(NavBarFs)
           enable(IncomeSources)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
           When(s"I call GET ${ceaseIncomeSourcesPath}")

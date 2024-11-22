@@ -48,7 +48,7 @@ class CeaseIncomeSourceControllerSpec extends MockAuthActions
 
   override def fakeApplication() = applicationBuilderWithAuthBindings()
     .overrides(
-      api.inject.bind[SessionService].toInstance(mockSessionService),
+      api.inject.bind[SessionService].toInstance(mockSessionService)
     ).build()
 
   val testCeaseIncomeSourceController = fakeApplication().injector.instanceOf[CeaseIncomeSourceController]
@@ -72,10 +72,11 @@ class CeaseIncomeSourceControllerSpec extends MockAuthActions
               controllers.routes.HomeController.showAgent.url
             }
 
+            status(result) shouldBe Status.SEE_OTHER
             redirectLocation(result) shouldBe Some(expectedRedirectUrl)
           }
         }
-        "redirect user to the cease an income source page" when {
+        "render the cease an income source page" when {
           "income source is enabled" in {
             setupMockSuccess(mtdRole)
             enable(IncomeSources)
@@ -94,9 +95,6 @@ class CeaseIncomeSourceControllerSpec extends MockAuthActions
             val result = action(fakeRequest)
 
             status(result) shouldBe Status.OK
-            //No redirect, cause it says redirect?
-            //Agent ->  val result = controller.showAgent()(fakeRequestConfirmedClient("AB123456C"))
-            //Individual -> val result = controller.show()(fakeRequestWithActiveSession)
           }
         }
         "show error page" when {
@@ -111,9 +109,6 @@ class CeaseIncomeSourceControllerSpec extends MockAuthActions
             val result: Future[Result] = action(fakeRequest)
 
             status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-            //No redirect, cause it says redirect?
-            //Agent -> val result: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient("AB123456C"))
-            //Individual -> val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
           }
         }
       }

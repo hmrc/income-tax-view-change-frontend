@@ -38,7 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeSources,
                                             val authActions: AuthActions,
                                             val itvcErrorHandler: ItvcErrorHandler,
-                                            implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                            val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                             val incomeSourceDetailsService: IncomeSourceDetailsService,
                                             val sessionService: SessionService,
                                             val auth: AuthenticatorPredicate)

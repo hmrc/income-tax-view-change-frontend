@@ -46,23 +46,9 @@ import scala.concurrent.Future
 class CeaseIncomeSourceControllerSpec extends MockAuthActions
   with MockSessionService {
 
-//  val controller = new CeaseIncomeSourceController(
-//    app.injector.instanceOf[views.html.manageBusinesses.cease.CeaseIncomeSources],
-//    mockAuthService,
-//    app.injector.instanceOf[ItvcErrorHandler],
-//    app.injector.instanceOf[AgentItvcErrorHandler],
-//    mockIncomeSourceDetailsService,
-//    sessionService = mockSessionService,
-//    testAuthenticator
-//  )(
-//    ec,
-//    app.injector.instanceOf[MessagesControllerComponents],
-//    app.injector.instanceOf[FrontendAppConfig]
-//  )
-
   override def fakeApplication() = applicationBuilderWithAuthBindings()
     .overrides(
-      api.inject.bind[SessionService].toInstance(mockSessionService),
+      api.inject.bind[SessionService].toInstance(mockSessionService)
     ).build()
 
   val testCeaseIncomeSourceController = fakeApplication().injector.instanceOf[CeaseIncomeSourceController]
@@ -86,10 +72,11 @@ class CeaseIncomeSourceControllerSpec extends MockAuthActions
               controllers.routes.HomeController.showAgent.url
             }
 
+            status(result) shouldBE Status.SEE_OTHER
             redirectLocation(result) shouldBe Some(expectedRedirectUrl)
           }
         }
-        "redirect user to the cease an income source page" when {
+        "Render the cease an income source page" when {
           "income source is enabled" in {
             setupMockSuccess(mtdRole)
             enable(IncomeSources)
