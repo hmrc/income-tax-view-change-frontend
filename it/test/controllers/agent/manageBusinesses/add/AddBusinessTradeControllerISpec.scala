@@ -18,15 +18,11 @@ package controllers.agent.manageBusinesses.add
 
 import controllers.agent.ControllerISpecHelper
 import enums.IncomeSourceJourney.SelfEmployment
-import enums.JourneyType.{Add, JourneyType}
 import enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import forms.manageBusinesses.add.BusinessTradeForm
 import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDAgentAuthStub}
 import models.admin.{IncomeSourcesFs, NavBarFs}
-import enums.JourneyType.{Add, IncomeSources, JourneyType}
-import forms.incomeSources.add.BusinessTradeForm
-import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import enums.JourneyType.{Add, IncomeSources}
 import models.incomeSourceDetails.AddIncomeSourceData.businessTradeField
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}

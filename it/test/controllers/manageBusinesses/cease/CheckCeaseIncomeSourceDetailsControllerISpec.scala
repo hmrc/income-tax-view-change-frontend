@@ -297,7 +297,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
   s"calling POST ${ukPropertyPath}" should {
     s"redirect to $redirectUriUK" when {
       "User is authorised" in {
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         disable(NavBarFs)
         MTDIndividualAuthStub.stubAuthorised()
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)

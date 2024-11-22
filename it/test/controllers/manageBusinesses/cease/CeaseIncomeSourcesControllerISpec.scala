@@ -19,8 +19,6 @@ package controllers.manageBusinesses.cease
 import controllers.ControllerISpecHelper
 import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDIndividualAuthStub}
 import models.admin.{IncomeSourcesFs, NavBarFs}
-import helpers.ComponentSpecBase
-import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.OK
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyAndCeasedBusiness, multipleBusinessesAndUkProperty}

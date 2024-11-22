@@ -117,7 +117,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
       }
       "303 SEE_OTHER - redirect to home page" when {
         "Income Sources FS disabled" in {
-          disable(IncomeSources)
+          disable(IncomeSourcesFs)
           disable(NavBarFs)
           MTDIndividualAuthStub.stubAuthorised()
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)

@@ -19,7 +19,7 @@ package controllers.agent.manageBusinesses.cease
 import controllers.agent.ControllerISpecHelper
 import enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDAgentAuthStub}
-import models.admin.{IncomeSources, NavBarFs}
+import models.admin.{IncomeSourcesFs, NavBarFs}
 import play.api.http.Status.OK
 import testConstants.BaseIntegrationTestConstants.{getAgentClientDetailsForCookie, testMtditid}
 import testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyAndCeasedBusiness, multipleBusinessesAndUkProperty}
@@ -46,7 +46,7 @@ class CeaseIncomeSourcesControllerISpec extends ControllerISpecHelper {
         "render the Cease Income Source page for an Agent" when {
           "Income source details are enabled for UK property" in {
             disable(NavBarFs)
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
 
@@ -69,7 +69,7 @@ class CeaseIncomeSourcesControllerISpec extends ControllerISpecHelper {
 
           "Income source details are enabled for for foreign property" in {
             disable(NavBarFs)
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)
 

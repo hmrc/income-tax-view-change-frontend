@@ -18,7 +18,7 @@ package controllers.agent.manageBusinesses.add
 
 import controllers.agent.ControllerISpecHelper
 import enums.IncomeSourceJourney.SelfEmployment
-import enums.JourneyType.{Add, IncomeSources, JourneyType}
+import enums.JourneyType.{Add, IncomeSources}
 import enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import forms.incomeSources.add.BusinessNameForm
 import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDAgentAuthStub}
@@ -87,7 +87,7 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
             "Income Sources FS disabled" in {
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
-              disable(IncomeSources)
+              disable(IncomeSourcesFs)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue

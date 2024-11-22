@@ -61,7 +61,7 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
     "the user is authenticated, with a valid MTD enrolment" should {
       "render the Add Business Name page" when {
         "income sources feature is enabled" in {
-          enable(IncomeSources)
+          enable(IncomeSourcesFs)
           disable(NavBarFs)
           MTDIndividualAuthStub.stubAuthorised()
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -83,7 +83,7 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
         "Income Sources FS disabled" in {
           disable(NavBarFs)
           MTDIndividualAuthStub.stubAuthorised()
-          disable(IncomeSources)
+          disable(IncomeSourcesFs)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
           val result = buildGETMTDClient(path).futureValue
@@ -104,7 +104,7 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
         "User is authorised" in {
           disable(NavBarFs)
           MTDIndividualAuthStub.stubAuthorised()
-          enable(IncomeSources)
+          enable(IncomeSourcesFs)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
           val result = buildGETMTDClient(changePath).futureValue

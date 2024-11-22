@@ -18,11 +18,11 @@ package controllers.agent.incomeSources.add
 
 import controllers.agent.ControllerISpecHelper
 import enums.IncomeSourceJourney.SelfEmployment
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSources}
 import enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import forms.incomeSources.add.BusinessTradeForm
 import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDAgentAuthStub}
-import models.admin.{IncomeSources, NavBarFs}
+import models.admin.{IncomeSourcesFs, NavBarFs}
 import models.incomeSourceDetails.AddIncomeSourceData.businessTradeField
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -62,7 +62,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid agent and client delegated enrolment" should {
           "render the Add Business trade page for an Agent" when {
             "Income Sources FS enabled" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
@@ -82,7 +82,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
           }
           "303 SEE_OTHER - redirect to home page" when {
             "Income Sources FS disabled" in {
-              disable(IncomeSources)
+              disable(IncomeSourcesFs)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -107,7 +107,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid agent and client delegated enrolment" should {
           "render the Add Business trade page for an Agent" when {
             "Income Sources FS enabled" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
@@ -126,7 +126,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
           }
           "303 SEE_OTHER - redirect to home page" when {
             "Income Sources FS disabled" in {
-              disable(IncomeSources)
+              disable(IncomeSourcesFs)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -151,7 +151,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid agent and client delegated enrolment" should {
           s"303 SEE_OTHER and redirect to $addBusinessAddressUrl" when {
             "User is authorised and business trade is valid" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -167,7 +167,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
 
               val result = buildPOSTMTDPostClient(path, additionalCookies, formData).futureValue
 
-              sessionService.getMongoKeyTyped[String](businessTradeField, JourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(testBusinessTrade))
+              sessionService.getMongoKeyTyped[String](businessTradeField, IncomeSources(Add, SelfEmployment)).futureValue shouldBe Right(Some(testBusinessTrade))
 
               result should have(
                 httpStatus(SEE_OTHER),
@@ -176,7 +176,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
             }
           }
           "show error when form is filled incorrectly" in {
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             disable(NavBarFs)
             MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
@@ -213,7 +213,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid agent and client delegated enrolment" should {
           s"303 SEE_OTHER and redirect to $checkDetailsUrl" when {
             "User is authorised and business trade is valid" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -230,7 +230,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
 
               val result = buildPOSTMTDPostClient(changePath, additionalCookies, formData).futureValue
 
-              sessionService.getMongoKeyTyped[String](businessTradeField, JourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(changedTrade))
+              sessionService.getMongoKeyTyped[String](businessTradeField, IncomeSources(Add, SelfEmployment)).futureValue shouldBe Right(Some(changedTrade))
 
               result should have(
                 httpStatus(SEE_OTHER),
@@ -239,7 +239,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
             }
           }
           "show error when form is filled incorrectly" in {
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             disable(NavBarFs)
             MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)

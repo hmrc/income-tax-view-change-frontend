@@ -124,7 +124,7 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
         "Income Sources FS disabled" in {
           disable(NavBarFs)
           MTDIndividualAuthStub.stubAuthorised()
-          disable(IncomeSources)
+          disable(IncomeSourcesFs)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
           val result = buildGETMTDClient(changePath).futureValue
