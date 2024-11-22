@@ -62,7 +62,6 @@ trait ClaimToAdjustHelper {
         poaOneDocDetail <- charges.find(_.transactionType == PaymentOnAccountOne)
         poaTwoDocDetail <- charges.find(_.transactionType == PaymentOnAccountTwo)
         latestDocumentDetail = poaTwoDocDetail
-//        poaTwoDueDate <- poaTwoDocDetail.documentDueDate
         taxReturnDeadline = getTaxReturnDeadline(poaTwoDocDetail.documentDate)
         poasAreBeforeDeadline = poaTwoDocDetail.documentDate isBefore taxReturnDeadline
         if poasAreBeforeDeadline
