@@ -16,8 +16,8 @@
 
 package auth.authV2.actions
 
+import auth.MtdItUserOptionNino
 import auth.authV2.AuthExceptions._
-import auth.authV2.EnroledUser
 import config.FrontendAppConfig
 import controllers.agent.routes
 import controllers.agent.sessionUtils.SessionKeys
@@ -34,11 +34,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AgentHasClientDetails @Inject()(implicit val executionContext: ExecutionContext,
                                       sessionDataService: SessionDataService, appConfig: FrontendAppConfig)
-  extends ActionRefiner[EnroledUser, EnroledUser] {
+  extends ActionRefiner[MtdItUserOptionNino, MtdItUserOptionNino] {
 
   lazy val noClientDetailsRoute: Result = Redirect(routes.EnterClientsUTRController.show)
 
-  override protected def refine[A](request: EnroledUser[A]): Future[Either[Result, EnroledUser[A]]] = {
+  override protected def refine[A](request: MtdItUserOptionNino[A]): Future[Either[Result, MtdItUserOptionNino[A]]] = {
 
     val hasConfirmedClient: Boolean = request.session.get(SessionKeys.confirmedClient).nonEmpty
 
@@ -70,7 +70,7 @@ class AgentHasClientDetails @Inject()(implicit val executionContext: ExecutionCo
     val hasArn: Boolean = request.arn.nonEmpty
 
     hasClientDetails flatMap{ hasDetails =>
-      if (!request.affinityGroup.contains(Agent)) {
+      if (!request.userType.contains(Agent)) {
         Future.successful(Right(request))
       } else if (hasArn && hasConfirmedClient && hasDetails) {
         Future.successful(Right(request))

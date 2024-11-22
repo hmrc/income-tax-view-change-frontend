@@ -20,11 +20,11 @@ import auth.authV2.AuthExceptions.{MissingAgentReferenceNumber, MissingMtdId}
 import auth.authV2.actions._
 import auth.authV2.{AgentUser, AuthActions}
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.{AgentItvcErrorHandler, FrontendAppConfig, FrontendAuthConnector}
+import config.{AgentItvcErrorHandler, FrontendAuthConnector}
 import controllers.agent.sessionUtils.SessionKeys
 import mocks.auth.MockOldAuthActions
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
-import org.mockito.ArgumentMatchers.{any, isA}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
@@ -37,7 +37,6 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Results.Ok
 import play.api.mvc.{AnyContent, Result}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.stubMessagesControllerComponents
 import services.IncomeSourceDetailsService
 import sttp.model.HeaderNames.Location
 import testConstants.BaseTestConstants
@@ -102,11 +101,15 @@ class AuthActionsSpec extends TestSupport with ScalaFutures with MockOldAuthActi
         result.header.status shouldBe OK
       }
 
-      "throw exception if no HMRC-MTD-ID in enrolments" in new ExceptionFixture(
+      "redirect to not enrolled page if no HMRC-MTD-ID in enrolments" in new ResultFixture(
         retrievals = individualRetrievalData.copy(enrolments = Enrolments(Set.empty)),
-        request = fakeRequestWithActiveSession.withSession(("origin", "PTA")),
-        expectedError = new MissingMtdId,
-        isAgent = true) { }
+        request = fakeRequestWithActiveSession.withSession(("origin", "PTA"), (SessionKeys.clientMTDID, mtdId)),
+        isAgent = false) {
+
+        val notEnrolledUrl: String = controllers.errors.routes.NotEnrolledController.show.url
+        result.header.status shouldBe SEE_OTHER
+        result.header.headers(Location) shouldBe notEnrolledUrl
+      }
 
       s"show internal error when $INTERNAL_SERVER_ERROR returned from income sources" in new ResultFixture(
         retrievals = individualRetrievalData,
@@ -250,7 +253,9 @@ class AuthActionsSpec extends TestSupport with ScalaFutures with MockOldAuthActi
       "redirect to /agents/client-utr when confirmed client is missing" in new ResultFixture(
         retrievals = agentRetrievalData,
         request = agentRequestMissingConfirmedClient,
-        isAgent = true) {
+        isAgent = true,
+        sessionDataFailure = true
+        ) {
         result.header.status shouldBe SEE_OTHER
         result.header.headers(Location) shouldBe "/report-quarterly/income-and-expenses/view/agents/client-utr"
       }
@@ -258,7 +263,8 @@ class AuthActionsSpec extends TestSupport with ScalaFutures with MockOldAuthActi
       "redirect to /agents/client-utr when client id is missing from session" in new ResultFixture(
         retrievals = agentRetrievalData,
         request = agentRequestMissingClientMtdId,
-        isAgent = true) {
+        isAgent = true,
+        sessionDataFailure = true) {
         result.header.status shouldBe SEE_OTHER
         result.header.headers(Location) shouldBe "/report-quarterly/income-and-expenses/view/agents/client-utr"
       }
@@ -427,11 +433,12 @@ class AuthActionsSpec extends TestSupport with ScalaFutures with MockOldAuthActi
                          request: FakeRequest[AnyContent] = FakeRequest(),
                          incomeSources: IncomeSourceDetailsResponse = defaultIncomeSourcesData,
                          block: MtdItUser[_] => Future[Result] = (_) => Future.successful(Ok("OK!")),
-                         isAgent: Boolean) {
+                         isAgent: Boolean,
+                         sessionDataFailure: Boolean) {
     val testConstant = if (isAgent) BaseTestConstants.testAgentAuthRetrievalSuccess else BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse()
     setupMockAuthRetrievalSuccess(testConstant)
 
-    setupMockGetSessionDataSuccess()
+    if (sessionDataFailure) setupMockGetSessionDataNotFound() else setupMockGetSessionDataSuccess()
 
     when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
       .thenReturn(Future.successful(incomeSources))
@@ -450,8 +457,9 @@ class AuthActionsSpec extends TestSupport with ScalaFutures with MockOldAuthActi
                       incomeSources: IncomeSourceDetailsResponse = defaultIncomeSourcesData,
                       block: MtdItUser[_] => Future[Result] = (_) => Future.successful(Ok("OK!")),
                       authorisationException: AuthorisationException,
-                                   isAgent: Boolean)
-    extends Fixture(retrievals, request, incomeSources, block, isAgent) {
+                                   isAgent: Boolean,
+                                   sessionDataFailure: Boolean = false)
+    extends Fixture(retrievals, request, incomeSources, block, isAgent, sessionDataFailure) {
 
     when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(Future.failed( authorisationException ))
 
@@ -462,8 +470,9 @@ class AuthActionsSpec extends TestSupport with ScalaFutures with MockOldAuthActi
                       request: FakeRequest[AnyContent] = FakeRequest(),
                       incomeSources: IncomeSourceDetailsResponse = defaultIncomeSourcesData,
                       block: MtdItUser[_] => Future[Result] = (_) => Future.successful(Ok("OK!")),
-                      isAgent: Boolean)
-    extends Fixture(retrievals, request, incomeSources, block, isAgent) {
+                      isAgent: Boolean,
+                      sessionDataFailure: Boolean = false)
+    extends Fixture(retrievals, request, incomeSources, block, isAgent, sessionDataFailure) {
 
     val result = authActions.asIndividualOrAgent(isAgent).async(block)(request).futureValue
   }
@@ -473,8 +482,9 @@ class AuthActionsSpec extends TestSupport with ScalaFutures with MockOldAuthActi
                          incomeSources: IncomeSourceDetailsResponse = defaultIncomeSourcesData,
                          block: MtdItUser[_] => Future[Result] = (_) => Future.successful(Ok("OK!")),
                          expectedError: Throwable,
-                         isAgent: Boolean)
-    extends Fixture(retrievals, request, incomeSources, block, isAgent) {
+                         isAgent: Boolean,
+                         sessionDataFailure: Boolean = false)
+    extends Fixture(retrievals, request, incomeSources, block, isAgent, sessionDataFailure) {
 
     val failedException: TestFailedException = intercept[TestFailedException] {
       authActions.asIndividualOrAgent(isAgent).async(block)(request).futureValue

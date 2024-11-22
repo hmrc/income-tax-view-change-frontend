@@ -47,7 +47,9 @@ class RetrieveClientData @Inject()(sessionDataService: SessionDataService,
     implicit val hc: HeaderCarrier = HeaderCarrierConverter
       .fromRequestAndSession(request, request.session)
 
-    sessionDataService.getSessionData(useCookie = !appConfig.isSessionDataStorageEnabled).map {
+    val useSessionDataService = appConfig.isSessionDataStorageEnabled
+
+    sessionDataService.getSessionData(useCookie = !useSessionDataService).map {
       case Right(sessionData) => Right(ClientDataRequest(
         sessionData.mtditid,
         r.session.get(SessionKeys.clientFirstName),
@@ -55,8 +57,13 @@ class RetrieveClientData @Inject()(sessionDataService: SessionDataService,
         sessionData.nino,
         sessionData.utr,
         getBooleanFromSession(SessionKeys.isSupportingAgent),
-        getBooleanFromSession(SessionKeys.confirmedClient))
-      )
+        confirmed = {
+          r.session.get(SessionKeys.confirmedClient) match {
+            case Some(value) if value != "" => value.toBoolean
+            case _ => useSessionDataService
+          }
+        }
+      ))
       case Left(_: SessionDataNotFound) => Left(Redirect(routes.EnterClientsUTRController.show))
       case Left(_) => Left(errorHandler.showInternalServerError())
     }
