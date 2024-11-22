@@ -67,7 +67,6 @@ abstract class BaseFrontendController(implicit val mcc: MessagesControllerCompon
 
     def async: AuthenticatedAction[User]
 
-    //TODO: This one
     protected def asyncInternal(predicate: AuthPredicate[User], requireClientSelected: Boolean)(action: ActionBody[User]): Action[AnyContent] =
       Action.async { implicit request =>
         val clientMtd: Option[String] = if (requireClientSelected) request.session.get(SessionKeys.clientMTDID) else None

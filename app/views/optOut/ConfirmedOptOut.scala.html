@@ -80,7 +80,7 @@
 
 
 @yourReportingFrequencyBlock = @{
-    val reportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show().url
+    val reportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(isAgent).url
     val reportingFrequencyLink = link(
         id = Some("your-reporting-frequency-link"),
         link = reportingFrequencyUrl,
