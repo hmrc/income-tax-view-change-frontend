@@ -177,8 +177,8 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
         }
         s"display Review and Reconcile Credits" in new PaymentHistorySetup(List(
           (2020, List(
-            entry.copy(date = "2020-12-23", creditType = PaymentOnAccountTwoReviewAndReconcileCredit)(dateServiceInterface),
-            entry.copy(date = "2020-12-23", creditType = PaymentOnAccountOneReviewAndReconcileCredit)(dateServiceInterface))))) {
+            entry.copy(date = "2020-12-23", creditType = PoaTwoReconciliationCredit)(dateServiceInterface),
+            entry.copy(date = "2020-12-23", creditType = PoaOneReconciliationCredit)(dateServiceInterface))))) {
 
           getContent(0) shouldBe "First payment on account: credit from your tax return"
           getContent(1) shouldBe "Second payment on account: credit from your tax return"
@@ -283,8 +283,8 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
 
       s"display Review and Reconcile Credits" in new PaymentHistorySetup(isAgent = true, testPayments = List(
         (2020, List(
-          entry.copy(date = "2020-12-23", creditType = PaymentOnAccountTwoReviewAndReconcileCredit)(dateServiceInterface),
-          entry.copy(date = "2020-12-23", creditType = PaymentOnAccountOneReviewAndReconcileCredit)(dateServiceInterface))))) {
+          entry.copy(date = "2020-12-23", creditType = PoaTwoReconciliationCredit)(dateServiceInterface),
+          entry.copy(date = "2020-12-23", creditType = PoaOneReconciliationCredit)(dateServiceInterface))))) {
 
         getContent(0) shouldBe "First payment on account: credit from your tax return"
         getContent(1) shouldBe "Second payment on account: credit from your tax return"
