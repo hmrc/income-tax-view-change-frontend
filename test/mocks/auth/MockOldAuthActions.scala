@@ -90,12 +90,20 @@ trait MockOldAuthActions extends TestSupport with MockIncomeSourceDetailsService
     errorHandler = app.injector.instanceOf[AgentItvcErrorHandler]
   )
 
+  private val authoriseAndRetrieveMtdAgent = new AuthoriseAndRetrieveMtdAgent(
+    authorisedFunctions = mockAuthService,
+    appConfig = appConfig,
+    config = conf,
+    env = environment,
+    mcc = stubMessagesControllerComponents()
+  )
+
   val mockAuthActions = new AuthActions(
     app.injector.instanceOf[SessionTimeoutAction],
     authoriseAndRetrieve,
     authoriseAndRetrieveIndividual,
     authoriseAndRetrieveAgent,
-    app.injector.instanceOf[AuthoriseAndRetrieveMtdAgent],
+    authoriseAndRetrieveMtdAgent,
     agentHasClientDetails,
     app.injector.instanceOf[AgentHasConfirmedClientAction],
     app.injector.instanceOf[AgentIsPrimaryAction],
