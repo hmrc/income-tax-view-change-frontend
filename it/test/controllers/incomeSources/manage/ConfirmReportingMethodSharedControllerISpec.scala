@@ -20,7 +20,7 @@ import audit.models.IncomeSourceReportingMethodAuditModel
 import auth.MtdItUser
 import models.admin.IncomeSourcesFs
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{JourneyType, Manage}
+import enums.JourneyType.{IncomeSources, Manage}
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}

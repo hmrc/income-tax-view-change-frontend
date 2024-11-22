@@ -18,11 +18,11 @@ package controllers.agent.manageBusinesses.cease
 
 import models.admin.IncomeSourcesFs
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import enums.JourneyType.{Cease, JourneyType}
+import enums.JourneyType.{Cease, IncomeSources}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.{CeaseIncomeSourceData, UIJourneySessionData}
-import models.obligations.{SingleObligationModel, GroupedObligationsModel, ObligationsModel, StatusFulfilled}
+import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.UIJourneySessionDataRepository

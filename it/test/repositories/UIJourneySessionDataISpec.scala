@@ -17,6 +17,8 @@
 package repositories
 
 
+import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
+import enums.JourneyType.{Add, IncomeSources}
 import helpers.ComponentSpecBase
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.mongodb.scala.bson.BsonDocument
@@ -31,37 +33,37 @@ class UIJourneySessionDataISpec extends ComponentSpecBase {
 
   "UI Journey Session Data" should {
     "set some data" in {
-      val acknowledged = await(repository.set(UIJourneySessionData("session-12345", "ADD-UKPROP", Some(AddIncomeSourceData(Some("business1"))))))
+      val acknowledged = await(repository.set(UIJourneySessionData("session-12345", IncomeSources(Add, UkProperty).toString, Some(AddIncomeSourceData(Some("business1"))))))
       acknowledged shouldBe true
     }
     "get some data" in {
-      await(repository.set(UIJourneySessionData("session-12345", "ADD-UKPROP", Some(AddIncomeSourceData(Some("business1"))))))
-      val sessionData = await(repository.get("session-12345", "ADD-UKPROP")).get
+      await(repository.set(UIJourneySessionData("session-12345", IncomeSources(Add, UkProperty).toString, Some(AddIncomeSourceData(Some("business1"))))))
+      val sessionData = await(repository.get("session-12345", IncomeSources(Add, UkProperty))).get
       sessionData.addIncomeSourceData.get shouldBe AddIncomeSourceData(Some("business1"), None, None)
     }
     "updateDate should set a data field correctly" in {
-      await(repository.set(UIJourneySessionData("session-12345", "ADD-UKPROP", Some(AddIncomeSourceData(Some("business1"))))))
+      await(repository.set(UIJourneySessionData("session-12345", IncomeSources(Add, UkProperty).toString, Some(AddIncomeSourceData(Some("business1"))))))
 
-      val updateResult = await(repository.updateData(UIJourneySessionData("session-12345", "ADD-UKPROP"), "addIncomeSourceData.businessName", "business2"))
+      val updateResult = await(repository.updateData(UIJourneySessionData("session-12345", IncomeSources(Add, UkProperty).toString), "addIncomeSourceData.businessName", "business2"))
       updateResult.wasAcknowledged() shouldBe true
-      val sessionData = await(repository.get("session-12345", "ADD-UKPROP")).get
+      val sessionData = await(repository.get("session-12345", IncomeSources(Add, UkProperty))).get
       sessionData.addIncomeSourceData.get shouldBe AddIncomeSourceData(Some("business2"), None, None)
     }
     "deleteOne should remove a sessionData item" in {
-      await(repository.set(UIJourneySessionData("session-12345", "ADD-UKPROP", Some(AddIncomeSourceData(Some("business1"))))))
-      val result = await(repository.deleteOne(UIJourneySessionData("session-12345", "ADD-UKPROP")))
+      await(repository.set(UIJourneySessionData("session-12345", IncomeSources(Add, UkProperty).toString, Some(AddIncomeSourceData(Some("business1"))))))
+      val result = await(repository.deleteOne(UIJourneySessionData("session-12345", IncomeSources(Add, UkProperty).toString)))
       result shouldBe true
-      val sessionData = await(repository.get("session-12345", "ADD-UKPROP"))
+      val sessionData = await(repository.get("session-12345", IncomeSources(Add, UkProperty)))
       sessionData shouldBe None
     }
 
     "clearSession should remove all session data with a session ID" in {
-      await(repository.set(UIJourneySessionData("session-12345", "ADD-UKPROP", Some(AddIncomeSourceData(Some("business1"))))))
-      await(repository.set(UIJourneySessionData("session-12345", "ADD-FPPROP", Some(AddIncomeSourceData(Some("business1"))))))
+      await(repository.set(UIJourneySessionData("session-12345", IncomeSources(Add, UkProperty).toString, Some(AddIncomeSourceData(Some("business1"))))))
+      await(repository.set(UIJourneySessionData("session-12345", IncomeSources(Add, ForeignProperty).toString, Some(AddIncomeSourceData(Some("business1"))))))
       val result = await(repository.clearSession("session-12345"))
       result shouldBe true
-      val sessionData1 = await(repository.get("session-12345", "ADD-UKPROP"))
-      val sessionData2 = await(repository.get("session-12345", "ADD-FPPROP"))
+      val sessionData1 = await(repository.get("session-12345", IncomeSources(Add, UkProperty)))
+      val sessionData2 = await(repository.get("session-12345", IncomeSources(Add, ForeignProperty)))
       sessionData1 shouldBe None
       sessionData2 shouldBe None
     }

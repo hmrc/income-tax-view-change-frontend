@@ -18,7 +18,7 @@ package controllers.manageBusinesses.manage
 
 import auth.MtdItUser
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{JourneyType, Manage}
+import enums.JourneyType.{IncomeSources, Manage}
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub

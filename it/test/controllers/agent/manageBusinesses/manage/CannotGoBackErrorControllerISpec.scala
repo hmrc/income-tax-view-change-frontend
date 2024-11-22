@@ -18,7 +18,7 @@ package controllers.agent.manageBusinesses.manage
 
 import models.admin.IncomeSourcesFs
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{JourneyType, Manage}
+import enums.JourneyType.{IncomeSources, Manage}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import org.scalatest.Assertion

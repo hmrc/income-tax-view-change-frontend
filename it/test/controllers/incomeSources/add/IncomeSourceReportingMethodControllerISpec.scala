@@ -19,7 +19,7 @@ package controllers.incomeSources.add
 import audit.models.IncomeSourceReportingMethodAuditModel
 import auth.MtdItUser
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSources}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.ITSAStatusDetailsStub.stubGetITSAStatusDetailsError
 import helpers.servicemocks.{AuditStub, CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}

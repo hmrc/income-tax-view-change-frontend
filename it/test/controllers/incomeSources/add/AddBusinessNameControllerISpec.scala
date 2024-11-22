@@ -18,7 +18,7 @@ package controllers.incomeSources.add
 
 import models.admin.IncomeSourcesFs
 import enums.IncomeSourceJourney.SelfEmployment
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSources}
 import forms.incomeSources.add.BusinessNameForm
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -49,7 +49,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
   val testBusinessName: String = "Test Business"
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
 
-  val journeyTypeSE: JourneyType = IncomeSources(Add, SelfEmployment)
+  val journeyTypeSE: IncomeSources = IncomeSources(Add, SelfEmployment)
 
   s"calling GET $addBusinessNameShowUrl" should {
     "render the Add Business Name page" when {

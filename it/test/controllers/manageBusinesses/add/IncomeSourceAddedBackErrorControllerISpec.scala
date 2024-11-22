@@ -18,7 +18,7 @@ package controllers.manageBusinesses.add
 
 import models.admin.IncomeSourcesFs
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSources, JourneyType}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}

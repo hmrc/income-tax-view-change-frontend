@@ -18,7 +18,7 @@ package controllers.incomeSources.add
 
 import models.admin.IncomeSourcesFs
 import enums.IncomeSourceJourney.SelfEmployment
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSources, JourneyType}
 import forms.incomeSources.add.BusinessTradeForm
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -159,7 +159,7 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontend.getChangeAddBusinessTrade
         verifyIncomeSourceDetailsCall(testMtditid)
 
-        sessionService.getMongo(journeyType.toString)
+        sessionService.getMongo(journeyType)
 
         result should have(
           httpStatus(OK),

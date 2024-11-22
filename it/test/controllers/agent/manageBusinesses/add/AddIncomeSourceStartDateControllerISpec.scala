@@ -18,7 +18,7 @@ package controllers.agent.manageBusinesses.add
 
 import models.admin.IncomeSourcesFs
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSources}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
@@ -65,9 +65,9 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
     messagesAPI("dateForm.hint")
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
-  val journeyTypeSE: JourneyType = IncomeSources(Add, SelfEmployment)
-  val journeyTypeUK: JourneyType = IncomeSources(Add, UkProperty)
-  val journeyTypeFP: JourneyType = IncomeSources(Add, ForeignProperty)
+  val journeyTypeSE: IncomeSources = IncomeSources(Add, SelfEmployment)
+  val journeyTypeUK: IncomeSources = IncomeSources(Add, UkProperty)
+  val journeyTypeFP: IncomeSources = IncomeSources(Add, ForeignProperty)
   val testBusinessStartDate: LocalDate = LocalDate.of(2022, 10, 10)
   val testBusinessName: String = "Test Business"
   val testBusinessTrade: String = "Plumbing"

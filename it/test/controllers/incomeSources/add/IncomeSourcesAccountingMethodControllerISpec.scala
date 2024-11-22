@@ -18,7 +18,7 @@ package controllers.incomeSources.add
 
 import models.admin.IncomeSourcesFs
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSources}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
@@ -96,7 +96,7 @@ class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
 
     await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType, accountingMethod)))
 
-    val session = sessionService.getMongo(IncomeSources(Add, incomeSourceType).toString)(hc, ec).futureValue
+    val session = sessionService.getMongo(IncomeSources(Add, incomeSourceType))(hc, ec).futureValue
 
     val resultAccountingMethod = session match {
       case Right(Some(uiJourneySessionData)) =>

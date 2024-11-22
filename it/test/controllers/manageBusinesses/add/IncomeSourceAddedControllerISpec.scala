@@ -17,7 +17,7 @@
 package controllers.manageBusinesses.add
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSources}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.IncomeSourcesFs
@@ -80,7 +80,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase {
 
         When(s"I call GET $incomeSourceAddedSelfEmploymentShowUrl")
 
-        await(sessionService.createSession(IncomeSources(Add, SelfEmployment).toString))
+        await(sessionService.createSession(IncomeSources(Add, SelfEmployment)))
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
           addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), dateStarted = Some(LocalDate.of(2024, 1, 1)))))))
@@ -119,7 +119,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         enable(IncomeSourcesFs)
 
-        await(sessionService.createSession(IncomeSources(Add, UkProperty).toString))
+        await(sessionService.createSession(IncomeSources(Add, UkProperty)))
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-UK",
           addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), dateStarted = Some(LocalDate.of(2024, 1, 1)))))))
@@ -191,7 +191,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         enable(IncomeSourcesFs)
 
-        await(sessionService.createSession(IncomeSources(Add, ForeignProperty).toString))
+        await(sessionService.createSession(IncomeSources(Add, ForeignProperty)))
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-FP",
           addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), dateStarted = Some(LocalDate.of(2024, 1, 1)))))))

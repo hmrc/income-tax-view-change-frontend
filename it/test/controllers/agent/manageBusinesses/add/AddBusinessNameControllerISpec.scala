@@ -18,7 +18,7 @@ package controllers.agent.manageBusinesses.add
 
 import models.admin.IncomeSourcesFs
 import enums.IncomeSourceJourney.SelfEmployment
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSources}
 import forms.incomeSources.add.BusinessNameForm
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -51,7 +51,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
   val testBusinessName: String = "Test Business"
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
   override implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
-  val journeyType: JourneyType = IncomeSources(Add, SelfEmployment)
+  val journeyType: IncomeSources = IncomeSources(Add, SelfEmployment)
 
   def backUrl(isChange: Boolean): String = {
     if (isChange) {

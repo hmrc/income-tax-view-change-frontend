@@ -19,7 +19,7 @@ package testConstants
 import enums.ChargeType.{ITSA_NI, NIC4_SCOTLAND}
 import enums.CodingOutType._
 import enums.IncomeSourceJourney.SelfEmployment
-import enums.JourneyType.JourneyType
+import enums.JourneyType.IncomeSources
 import models.incomeSourceDetails._
 import play.api.libs.json.{JsObject, JsValue, Json}
 import testConstants.BaseIntegrationTestConstants._
@@ -1679,39 +1679,39 @@ object IncomeSourceIntegrationTestConstants {
     yearOfMigration = Some("2018")
   )
 
-  lazy val completedUIJourneySessionData: JourneyType => UIJourneySessionData = (journeyType: JourneyType) => {
-    journeyType.operation.operationType match {
-      case "ADD" => UIJourneySessionData(testSessionId, journeyType.toString,
+  lazy val completedUIJourneySessionData: IncomeSources => UIJourneySessionData = (incomeSources: IncomeSources) => {
+    incomeSources.operation.operationType match {
+      case "ADD" => UIJourneySessionData(testSessionId, incomeSources.toString,
         addIncomeSourceData = Some(AddIncomeSourceData(journeyIsComplete = Some(true))))
-      case "MANAGE" => if (journeyType.businessType == SelfEmployment) UIJourneySessionData(testSessionId, journeyType.toString,
+      case "MANAGE" => if (incomeSources.businessType == SelfEmployment) UIJourneySessionData(testSessionId, incomeSources.toString,
         manageIncomeSourceData = Some(ManageIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId),
           taxYear = Some(2024), reportingMethod = Some("annual"), journeyIsComplete = Some(true))))
-      else UIJourneySessionData(testSessionId, journeyType.toString,
+      else UIJourneySessionData(testSessionId, incomeSources.toString,
         manageIncomeSourceData = Some(ManageIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId),
           taxYear = Some(2024), reportingMethod = Some("annual"), journeyIsComplete = Some(true))))
-      case "CEASE" => UIJourneySessionData(testSessionId, journeyType.toString,
+      case "CEASE" => UIJourneySessionData(testSessionId, incomeSources.toString,
         ceaseIncomeSourceData = Some(CeaseIncomeSourceData(journeyIsComplete = Some(true))))
     }
   }
 
-  val emptyUIJourneySessionData: JourneyType => UIJourneySessionData = journeyType => {
-    journeyType.operation.operationType match {
+  val emptyUIJourneySessionData: IncomeSources => UIJourneySessionData = incomeSources => {
+    incomeSources.operation.operationType match {
       case "ADD" =>
         UIJourneySessionData(
           sessionId = testSessionId,
-          journeyType = journeyType.toString,
+          journeyType = incomeSources.toString,
           addIncomeSourceData = Some(AddIncomeSourceData())
         )
       case "MANAGE" =>
         UIJourneySessionData(
           sessionId = testSessionId,
-          journeyType = journeyType.toString,
+          journeyType = incomeSources.toString,
           manageIncomeSourceData = Some(ManageIncomeSourceData())
         )
       case "CEASE" =>
         UIJourneySessionData(
           sessionId = testSessionId,
-          journeyType = journeyType.toString,
+          journeyType = incomeSources.toString,
           ceaseIncomeSourceData = Some(CeaseIncomeSourceData())
         )
     }

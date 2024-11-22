@@ -18,7 +18,7 @@ package controllers.agent.manageBusinesses.add
 
 import models.admin.IncomeSourcesFs
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSources}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
@@ -41,7 +41,7 @@ class IncomeSourceAddedBackErrorControllerISpec extends ComponentSpecBase{
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
   val UIJourneySessionDataRepository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
-  val journeyType: JourneyType = IncomeSources(Add, SelfEmployment)
+  val journeyType: IncomeSources = IncomeSources(Add, SelfEmployment)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
