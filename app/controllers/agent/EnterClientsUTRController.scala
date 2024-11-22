@@ -59,14 +59,14 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
                                           val ec: ExecutionContext)
   extends BaseAgentController with I18nSupport with FeatureSwitching with SessionCookieUtil {
 
-  def show: Action[AnyContent] = authActions.asAgent.async {implicit user =>
+  def show: Action[AnyContent] = authActions.asAgent().async {implicit user =>
     Future.successful(Ok(enterClientsUTR(
       clientUTRForm = ClientsUTRForm.form,
       postAction = routes.EnterClientsUTRController.submit
     )))
   }
 
-  def showWithUtr(utr: String): Action[AnyContent] = authActions.asAgent.async {implicit user =>
+  def showWithUtr(utr: String): Action[AnyContent] = authActions.asAgent().async {implicit user =>
     val utrSafe = utr.filter(_.isDigit).take(10)
     Future.successful(Ok(enterClientsUTR(
       clientUTRForm = ClientsUTRForm.form.fill(utrSafe),
@@ -75,7 +75,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
   }
 
 
-  def submit: Action[AnyContent] = authActions.asAgent.async { implicit user =>
+  def submit: Action[AnyContent] = authActions.asAgent().async { implicit user =>
     ClientsUTRForm.form.bindFromRequest().fold(
       hasErrors => Future.successful(BadRequest(enterClientsUTR(
         clientUTRForm = hasErrors,

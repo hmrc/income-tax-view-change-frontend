@@ -16,16 +16,18 @@
 
 package controllers.agent.manageBusinesses.add
 
-import models.admin.IncomeSourcesFs
-import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import controllers.agent.ControllerISpecHelper
+import enums.{MTDPrimaryAgent, MTDSupportingAgent}
+import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDAgentAuthStub}
+import models.admin.{IncomeSourcesFs, NavBarFs}
 import play.api.http.Status.OK
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithStartDate, testMtditid}
+import testConstants.BaseIntegrationTestConstants.{getAgentClientDetailsForCookie, testMtditid}
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesResponse
 
-class AddIncomeSourcesControllerISpec extends ComponentSpecBase {
+class AddIncomeSourcesControllerISpec extends ControllerISpecHelper {
 
-  val showAgentAddIncomeSourceControllerUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceController.showAgent().url
+  val path = "/agents/manage-your-businesses/add/new-income-sources"
+
   val pageTitleMsgKey = "incomeSources.add.addIncomeSources.heading"
   val soleTraderBusinessName1: String = "business"
   val soleTraderBusinessName2: String = "secondBusiness"
@@ -36,30 +38,35 @@ class AddIncomeSourcesControllerISpec extends ComponentSpecBase {
   val foreignPropertyHeading: String = messagesAPI("incomeSources.add.addIncomeSources.foreignProperty.heading")
   val foreignPropertyLink: String = messagesAPI("incomeSources.add.addIncomeSources.foreignProperty.link")
 
+  s"GET $path" when {
+    List(MTDPrimaryAgent, MTDSupportingAgent).foreach { case mtdUserRole =>
+      s"a user is a $mtdUserRole" that {
+        val isSupportingAgent = mtdUserRole == MTDSupportingAgent
+        val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, true)
+        "is authenticated, with a valid agent and client delegated enrolment" should {
+          "render the Add Income Source page" in {
+            enable(IncomeSourcesFs)
+            disable(NavBarFs)
+            MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
+            val res = buildGETMTDClient(path, additionalCookies).futureValue
+            verifyIncomeSourceDetailsCall(testMtditid)
 
-  s"calling GET $showAgentAddIncomeSourceControllerUrl" should {
-    "render the Add Income Source page for an Agent" when {
-      "User is authorised" in {
-        Given("I wiremock stub a successful Income Source Details response with multiple businesses and a uk property")
-        enable(IncomeSourcesFs)
-        stubAuthorisedAgentUser(authorised = true)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
-        When(s"I call GET ${showAgentAddIncomeSourceControllerUrl}")
-        val res = IncomeTaxViewChangeFrontend.getAddIncomeSource(session = clientDetailsWithStartDate)
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        res should have(
-          httpStatus(OK),
-          pageTitleAgent(pageTitleMsgKey),
-          elementTextByID("self-employment-h2")(businessNameMessage),
-          elementTextByID("table-row-trading-name-0")(soleTraderBusinessName1),
-          elementTextByID("table-row-trading-name-1")(soleTraderBusinessName2),
-          elementTextByID("self-employment-link")(addBusinessLink),
-          elementTextByID("uk-property-h2")(ukPropertyHeading),
-          elementTextByID("uk-property-link")(addUKPropertyLink),
-          elementTextByID("foreign-property-h2")(foreignPropertyHeading),
-          elementTextByID("foreign-property-link")(foreignPropertyLink),
-        )
+            res should have(
+              httpStatus(OK),
+              pageTitleAgent(pageTitleMsgKey),
+              elementTextByID("self-employment-h2")(businessNameMessage),
+              elementTextByID("table-row-trading-name-0")(soleTraderBusinessName1),
+              elementTextByID("table-row-trading-name-1")(soleTraderBusinessName2),
+              elementTextByID("self-employment-link")(addBusinessLink),
+              elementTextByID("uk-property-h2")(ukPropertyHeading),
+              elementTextByID("uk-property-link")(addUKPropertyLink),
+              elementTextByID("foreign-property-h2")(foreignPropertyHeading),
+              elementTextByID("foreign-property-link")(foreignPropertyLink),
+            )
+          }
+        }
+        testAuthFailuresForMTDAgent(path, mtdUserRole == MTDSupportingAgent)
       }
     }
   }

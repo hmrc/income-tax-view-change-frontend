@@ -16,10 +16,10 @@
 
 package controllers.incomeSources.add
 
-import config.featureswitch._
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates.SessionTimeoutPredicate
+import enums.{MTDIndividual, MTDSupportingAgent}
 import implicits.ImplicitDateFormatter
+import mocks.auth.MockAuthActions
+import mocks.services.MockSessionService
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
@@ -30,179 +30,146 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import play.api
+import play.api.Application
 import play.api.http.Status
-import play.api.mvc.{MessagesControllerComponents, Result}
+import play.api.mvc.Result
 import play.api.test.Helpers._
-import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse}
+import services.SessionService
 import testConstants.BusinessDetailsTestConstants.{businessDetailsViewModel, businessDetailsViewModel2, ceasedBusinessDetailsViewModel}
 import testConstants.PropertyDetailsTestConstants.{foreignPropertyDetailsViewModel, ukPropertyDetailsViewModel}
-import testUtils.TestSupport
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
-class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
-  with MockIncomeSourceDetailsPredicate
+class AddIncomeSourceControllerSpec extends MockAuthActions
   with ImplicitDateFormatter
-  with MockIncomeSourceDetailsService
-  with MockNavBarEnumFsPredicate
-  with MockItvcErrorHandler
-  with MockFrontendAuthorisedFunctions
-  with FeatureSwitching
-  with MockSessionService
-  with TestSupport {
+  with MockSessionService {
 
-  val controller = new AddIncomeSourceController(
-    app.injector.instanceOf[views.html.incomeSources.add.AddIncomeSources],
-    app.injector.instanceOf[SessionTimeoutPredicate],
-    mockAuthService,
-    mockIncomeSourceDetailsService,
-    testAuthenticator
-  )(app.injector.instanceOf[FrontendAppConfig],
-    ec,
-    app.injector.instanceOf[ItvcErrorHandler],
-    app.injector.instanceOf[AgentItvcErrorHandler],
-    sessionService = mockSessionService,
-    app.injector.instanceOf[MessagesControllerComponents]
-  )
+  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+    .overrides(
+      api.inject.bind[SessionService].toInstance(mockSessionService)
+    ).build()
 
-  def authenticate(isAgent: Boolean): Unit = {
-    if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-    else setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-  }
+  val controller = fakeApplication().injector.instanceOf[AddIncomeSourceController]
 
+  mtdAllRoles.foreach { mtdRole =>
+    val fakeRequest = getFakeRequestBasedOnMTDUserType(mtdRole)
+    s"show${if (mtdRole != MTDIndividual) "Agent"}" when {
+      val action = if (mtdRole == MTDIndividual) controller.show() else controller.showAgent()
+      s"the user is authenticated as a $mtdRole" should {
+        s"render the add income source page" when {
+          "the user has a Sole Trader Business, a UK property and a Foreign Property" in {
+            enable(IncomeSourcesFs)
+            ukPlusForeignPropertyWithSoleTraderIncomeSource()
+            setupMockSuccess(mtdRole)
+            setupMockDeleteSession(true)
+            when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any()))
+              .thenReturn(Success(AddIncomeSourcesViewModel(
+                soleTraderBusinesses = List(businessDetailsViewModel, businessDetailsViewModel2),
+                ukProperty = Some(ukPropertyDetailsViewModel),
+                foreignProperty = None,
+                ceasedBusinesses = Nil)))
 
-  "The AddIncomeSourcesController" should {
-    def homePageTest(isAgent: Boolean): Unit = {
-      s"redirect an ${if (isAgent) "agent" else "individual"} back to the home page" when {
-        "the IncomeSources FS is disabled" in {
-          disableAllSwitches()
-          mockSingleBISWithCurrentYearAsMigrationYear()
-          authenticate(isAgent)
-          val result: Future[Result] = if (isAgent) controller.showAgent()(fakeRequestConfirmedClient()) else controller.show()(fakeRequestWithActiveSession)
-          status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe {
-            if (isAgent) Some(controllers.routes.HomeController.showAgent.url) else Some(controllers.routes.HomeController.show().url)
+            val result = action(fakeRequest)
+            status(result) shouldBe Status.OK
+          }
+        }
+
+        "render the add income source page with no tables or table paragraph text" when {
+          "user has no businesses or properties" in {
+            disableAllSwitches()
+            enable(IncomeSourcesFs)
+            mockNoIncomeSources()
+            setupMockSuccess(mtdRole)
+            setupMockDeleteSession(true)
+            when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any()))
+              .thenReturn(Success(AddIncomeSourcesViewModel(Nil, None, None, Nil)))
+
+            val result = action(fakeRequest)
+
+            val doc: Document = Jsoup.parse(contentAsString(result))
+
+            Option(doc.getElementById("sole-trader-businesses-table")).isDefined shouldBe false
+
+            Option(doc.getElementById("uk-property-table")).isDefined shouldBe false
+
+            Option(doc.getElementById("foreign-property-table")).isDefined shouldBe false
+
+            Option(doc.getElementById("ceased-businesses-table")).isDefined shouldBe false
+
+            Option(doc.getElementById("uk-property-p1")).isDefined shouldBe false
+            Option(doc.getElementById("foreign-property-p1")).isDefined shouldBe false
+          }
+        }
+        "render the add income source page with all tables showing" when {
+          "user has a ceased business, sole trader business and uk/foreign property" in {
+            enable(IncomeSourcesFs)
+            mockBothPropertyBothBusiness()
+            setupMockSuccess(mtdRole)
+
+            setupMockDeleteSession(true)
+            when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any()))
+              .thenReturn(Success(AddIncomeSourcesViewModel(
+                soleTraderBusinesses = List(businessDetailsViewModel),
+                ukProperty = Some(ukPropertyDetailsViewModel),
+                foreignProperty = Some(foreignPropertyDetailsViewModel),
+                ceasedBusinesses = List(ceasedBusinessDetailsViewModel))))
+
+            val result = action(fakeRequest)
+
+            val doc: Document = Jsoup.parse(contentAsString(result))
+
+            Option(doc.getElementById("sole-trader-businesses-table")).isDefined shouldBe true
+
+            Option(doc.getElementById("uk-property-table")).isDefined shouldBe true
+
+            Option(doc.getElementById("foreign-property-table")).isDefined shouldBe true
+
+            Option(doc.getElementById("ceased-businesses-table")).isDefined shouldBe true
+
+            Option(doc.getElementById("uk-property-p1")).isDefined shouldBe true
+            Option(doc.getElementById("foreign-property-p1")).isDefined shouldBe true
+          }
+        }
+
+        "redirect to the homepage" when {
+          "incomeSource feature is disabled" in {
+            setupMockSuccess(mtdRole)
+            mockBothPropertyBothBusiness()
+
+            val result: Future[Result] = action(fakeRequest)
+            status(result) shouldBe SEE_OTHER
+            val homeUrl = if (mtdRole == MTDIndividual) {
+              controllers.routes.HomeController.show().url
+            } else {
+              controllers.routes.HomeController.showAgent.url
+            }
+            redirectLocation(result) shouldBe Some(homeUrl)
+          }
+        }
+
+        "show error page" when {
+          s"failed to return incomeSourceViewModel" in {
+            enable(IncomeSourcesFs)
+            mockUkPropertyWithSoleTraderBusiness()
+            setupMockSuccess(mtdRole)
+
+            when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any()))
+              .thenReturn(Failure(new Exception("UnknownError")))
+
+            val result = action(fakeRequest)
+            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
           }
         }
       }
-    }
-    homePageTest(false)
-    homePageTest(true)
 
-    def successTest(isAgent: Boolean): Unit = {
-      s"redirect an ${if (isAgent) "agent" else "individual"} to the add income source page" when {
-        "user has a Sole Trader Business, a UK property and a Foreign Property" in {
-          disableAllSwitches()
-          enable(IncomeSourcesFs)
-          ukPlusForeignPropertyWithSoleTraderIncomeSource()
-          authenticate(isAgent)
-          setupMockDeleteSession(true)
-          when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any()))
-            .thenReturn(Success(AddIncomeSourcesViewModel(
-              soleTraderBusinesses = List(businessDetailsViewModel, businessDetailsViewModel2),
-              ukProperty = Some(ukPropertyDetailsViewModel),
-              foreignProperty = None,
-              ceasedBusinesses = Nil)))
-
-          val result = if(isAgent) controller.showAgent()(fakeRequestConfirmedClient("AB123456C")) else controller.show()(fakeRequestWithActiveSession)
-          status(result) shouldBe Status.OK
-        }
+      if (mtdRole == MTDIndividual) {
+        testMTDIndividualAuthFailures(action)
+      } else {
+        testMTDAgentAuthFailures(action, mtdRole == MTDSupportingAgent)
       }
     }
-    successTest(false)
-    successTest(true)
-
-    "redirect a user to the add income source page with no tables or table paragraph text" when {
-      "user has no businesses or properties" in {
-        disableAllSwitches()
-        enable(IncomeSourcesFs)
-        mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockDeleteSession(true)
-        when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any()))
-          .thenReturn(Success(AddIncomeSourcesViewModel(Nil, None, None, Nil)))
-
-        val result = controller.show()(fakeRequestWithActiveSession)
-        val resultAgent = controller.showAgent()(fakeRequestConfirmedClient("AB123456C"))
-
-        val doc: Document = Jsoup.parse(contentAsString(result))
-        val docAgent: Document = Jsoup.parse(contentAsString(resultAgent))
-
-        Option(doc.getElementById("sole-trader-businesses-table")).isDefined shouldBe false
-        Option(docAgent.getElementById("sole-trader-businesses-table")).isDefined shouldBe false
-
-        Option(doc.getElementById("uk-property-table")).isDefined shouldBe false
-        Option(docAgent.getElementById("uk-property-table")).isDefined shouldBe false
-
-        Option(doc.getElementById("foreign-property-table")).isDefined shouldBe false
-        Option(docAgent.getElementById("foreign-property-table")).isDefined shouldBe false
-
-        Option(doc.getElementById("ceased-businesses-table")).isDefined shouldBe false
-        Option(docAgent.getElementById("ceased-businesses-table")).isDefined shouldBe false
-
-        Option(doc.getElementById("uk-property-p1")).isDefined shouldBe false
-        Option(doc.getElementById("foreign-property-p1")).isDefined shouldBe false
-      }
-    }
-    "redirect a user to the add income source page with all tables showing" when {
-      "user has a ceased business, sole trader business and uk/foreign property" in {
-        disableAllSwitches()
-        enable(IncomeSourcesFs)
-        mockBothPropertyBothBusiness()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockDeleteSession(true)
-        when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any()))
-          .thenReturn(Success(AddIncomeSourcesViewModel(
-            soleTraderBusinesses = List(businessDetailsViewModel),
-            ukProperty = Some(ukPropertyDetailsViewModel),
-            foreignProperty = Some(foreignPropertyDetailsViewModel),
-            ceasedBusinesses = List(ceasedBusinessDetailsViewModel))))
-
-        val result = controller.show()(fakeRequestWithActiveSession)
-        val resultAgent = controller.showAgent()(fakeRequestConfirmedClient("AB123456C"))
-
-        val doc: Document = Jsoup.parse(contentAsString(result))
-        val docAgent: Document = Jsoup.parse(contentAsString(resultAgent))
-
-        Option(doc.getElementById("sole-trader-businesses-table")).isDefined shouldBe true
-        Option(docAgent.getElementById("sole-trader-businesses-table")).isDefined shouldBe true
-
-        Option(doc.getElementById("uk-property-table")).isDefined shouldBe true
-        Option(docAgent.getElementById("uk-property-table")).isDefined shouldBe true
-
-        Option(doc.getElementById("foreign-property-table")).isDefined shouldBe true
-        Option(docAgent.getElementById("foreign-property-table")).isDefined shouldBe true
-
-        Option(doc.getElementById("ceased-businesses-table")).isDefined shouldBe true
-        Option(docAgent.getElementById("ceased-businesses-table")).isDefined shouldBe true
-
-        Option(doc.getElementById("uk-property-p1")).isDefined shouldBe true
-        Option(doc.getElementById("foreign-property-p1")).isDefined shouldBe true
-      }
-    }
-
-  "show error page" when {
-    def failReturnTest(isAgent: Boolean): Unit = {
-      s"failed to return incomeSourceViewModel for ${if (isAgent) "agent" else "individual"}" in {
-        disableAllSwitches()
-        enable(IncomeSourcesFs)
-        mockUkPropertyWithSoleTraderBusiness()
-        authenticate(isAgent)
-
-        when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any()))
-          .thenReturn(Failure(new Exception("UnknownError")))
-
-        val result = if (isAgent) controller.showAgent()(fakeRequestConfirmedClient("AB123456C")) else controller.show()(fakeRequestWithActiveSession)
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-    }
-
-    failReturnTest(false)
-    failReturnTest(true)
   }
-}
 }

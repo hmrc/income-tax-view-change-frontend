@@ -16,16 +16,17 @@
 
 package controllers.manageBusinesses.add
 
-import models.admin.IncomeSourcesFs
-import helpers.ComponentSpecBase
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import controllers.ControllerISpecHelper
+import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDIndividualAuthStub}
+import models.admin.{IncomeSourcesFs, NavBarFs}
 import play.api.http.Status.OK
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesResponse
 
-class AddIncomeSourcesControllerISpec extends ComponentSpecBase {
+class AddIncomeSourcesControllerISpec extends ControllerISpecHelper {
 
-  val showIndividualAddIncomeSourceControllerUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceController.show().url
+  val path = "/manage-your-businesses/add/new-income-sources"
+
   val pageTitleMsgKey = "incomeSources.add.addIncomeSources.heading"
   val soleTraderBusinessName1: String = "business"
   val soleTraderBusinessName2: String = "secondBusiness"
@@ -36,30 +37,30 @@ class AddIncomeSourcesControllerISpec extends ComponentSpecBase {
   val foreignPropertyHeading: String = messagesAPI("incomeSources.add.addIncomeSources.foreignProperty.heading")
   val foreignPropertyLink: String = messagesAPI("incomeSources.add.addIncomeSources.foreignProperty.link")
 
+  s"GET $path" when {
+    "the user is authenticated, with a valid MTD enrolment" should {
+      "render the Add Income Source page for an Individual" in {
+          enable(IncomeSourcesFs)
+          disable(NavBarFs)
+          MTDIndividualAuthStub.stubAuthorised()
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
+          val res = buildGETMTDClient(path).futureValue
+          verifyIncomeSourceDetailsCall(testMtditid)
 
-  s"calling GET $showIndividualAddIncomeSourceControllerUrl" should {
-    "render the Add Income Source page for an Individual" when {
-      "User is authorised" in {
-        Given("I wiremock stub a successful Income Source Details response with multiple businesses and a uk property")
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
-        When(s"I call GET $showIndividualAddIncomeSourceControllerUrl")
-        val res = IncomeTaxViewChangeFrontendManageBusinesses.getAddIncomeSource()
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        res should have(
-          httpStatus(OK),
-          pageTitleIndividual(pageTitleMsgKey),
-          elementTextByID("self-employment-h2")(businessNameMessage),
-          elementTextByID("table-row-trading-name-0")(soleTraderBusinessName1),
-          elementTextByID("table-row-trading-name-1")(soleTraderBusinessName2),
-          elementTextByID("self-employment-link")(addBusinessLink),
-          elementTextByID("uk-property-h2")(ukPropertyHeading),
-          elementTextByID("uk-property-link")(addUKPropertyLink),
-          elementTextByID("foreign-property-h2")(foreignPropertyHeading),
-          elementTextByID("foreign-property-link")(foreignPropertyLink),
-        )
+          res should have(
+            httpStatus(OK),
+            pageTitleIndividual(pageTitleMsgKey),
+            elementTextByID("self-employment-h2")(businessNameMessage),
+            elementTextByID("table-row-trading-name-0")(soleTraderBusinessName1),
+            elementTextByID("table-row-trading-name-1")(soleTraderBusinessName2),
+            elementTextByID("self-employment-link")(addBusinessLink),
+            elementTextByID("uk-property-h2")(ukPropertyHeading),
+            elementTextByID("uk-property-link")(addUKPropertyLink),
+            elementTextByID("foreign-property-h2")(foreignPropertyHeading),
+            elementTextByID("foreign-property-link")(foreignPropertyLink)
+          )
+        }
       }
-    }
+    testAuthFailuresForMTDIndividual(path)
   }
 }

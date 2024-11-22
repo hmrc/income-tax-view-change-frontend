@@ -62,7 +62,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             setupMockUserAuth
             mockSingleBusinessIncomeSource()
             mockGetDueDates(Right(futureDueDates))
-            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
+            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
               .thenReturn(Future.successful(List(FinancialDetailsModel(
                 balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
                 documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", Some("ITSA- POA 1"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
@@ -83,9 +83,9 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             setupMockUserAuth
             mockSingleBusinessIncomeSource()
             mockGetDueDates(Right(futureDueDates))
-            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
+            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
               .thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
-            when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+            when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
               .thenReturn(Future.successful(oneOverdueBCDPaymentInWhatYouOweChargesList))
 
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
@@ -102,7 +102,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             setupMockUserAuth
             mockSingleBusinessIncomeSource()
             mockGetDueDates(Right(futureDueDates))
-            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
+            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
               .thenReturn(Future.successful(List(
                 FinancialDetailsModel(
                   balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
@@ -139,7 +139,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             setupMockUserAuth
             mockSingleBusinessIncomeSource()
             mockGetDueDates(Right(futureDueDates))
-            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
+            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
               .thenReturn(Future.successful(List(
                 FinancialDetailsModel(
                   balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
@@ -186,7 +186,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             mockGetDueDates(Right(futureDueDates))
             enable(ReviewAndReconcilePoa)
 
-            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
+            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
               .thenReturn(Future.successful(List(
                 FinancialDetailsModel(
                   balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
@@ -223,7 +223,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             mockGetDueDates(Right(futureDueDates))
             enable(ReviewAndReconcilePoa)
 
-            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
+            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
               .thenReturn(Future.successful(List(
                 FinancialDetailsModel(
                   balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
@@ -258,9 +258,9 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
           mockSingleBusinessIncomeSource()
           mockGetDueDates(Right(futureDueDates))
 
-          when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
+          when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
-          when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+          when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
 
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
@@ -276,9 +276,9 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
           setupMockUserAuth
           mockSingleBusinessIncomeSource()
           mockGetDueDates(Right(futureDueDates))
-          when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
+          when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None), List(), List()))))
-          when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+          when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
 
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
@@ -294,14 +294,14 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
           setupMockUserAuth
           mockSingleBusinessIncomeSource()
           mockGetDueDates(Right(futureDueDates))
-          when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
+          when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
               documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", None, None, 0, 0, LocalDate.of(2018, 3, 29))),
               financialDetails = List(FinancialDetail(nextPaymentYear, transactionId = Some("testId"),
                 items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
             ))))
-          when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+          when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
 
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
@@ -373,7 +373,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             enable(IncomeSourcesFs)
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
             mockGetDueDates(Right(futureDueDates))
-            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
+            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
               .thenReturn(Future.successful(List(FinancialDetailsModel(
                 balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
                 documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", None, None, 1000.00, 0, LocalDate.of(2018, 3, 29))),
@@ -401,7 +401,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             enable(IncomeSourcesFs)
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncomeCeased)
             mockGetDueDates(Right(futureDueDates))
-            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
+            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
               .thenReturn(Future.successful(List(FinancialDetailsModel(
                 balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
                 documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", None, None, 1000.00, 0, LocalDate.of(2018, 3, 29))),
@@ -431,7 +431,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
           enable(IncomeSourcesNewJourney)
           mockGetDueDates(Right(futureDueDates))
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-          when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
+          when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
               documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", None, None, 1000.00, 0, LocalDate.of(2018, 3, 29))),
@@ -456,7 +456,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             enable(CreditsRefundsRepay)
             mockGetDueDates(Right(Seq.empty))
             mockSingleBusinessIncomeSource()
-            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
+            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
               .thenReturn(Future.successful(List(FinancialDetailsModel(
                 balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(786), None, None, None, None),
                 documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", Some("ITSA- POA 1"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
@@ -479,7 +479,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             enable(CreditsRefundsRepay)
             mockGetDueDates(Right(Seq.empty))
             mockSingleBusinessIncomeSource()
-            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
+            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
               .thenReturn(Future.successful(List(FinancialDetailsModel(
                 balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
                 documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", Some("ITSA- POA 1"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
@@ -504,7 +504,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             setupMockUserAuth
             mockGetDueDates(Right(Seq.empty))
             mockSingleBusinessIncomeSource()
-            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
+            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
               .thenReturn(Future.successful(List(FinancialDetailsModel(
                 balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(786), None, None, None, None),
                 documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", Some("ITSA- POA 1"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),

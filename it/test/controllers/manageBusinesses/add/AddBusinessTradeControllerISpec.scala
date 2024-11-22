@@ -16,12 +16,12 @@
 
 package controllers.manageBusinesses.add
 
-import models.admin.IncomeSourcesFs
+import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, IncomeSources, JourneyType}
 import forms.manageBusinesses.add.BusinessTradeForm
-import helpers.ComponentSpecBase
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDIndividualAuthStub}
+import models.admin.{IncomeSourcesFs, NavBarFs}
 import models.incomeSourceDetails.AddIncomeSourceData.businessTradeField
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -30,12 +30,7 @@ import services.SessionService
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesResponse, noPropertyOrBusinessResponse}
 
-class AddBusinessTradeControllerISpec extends ComponentSpecBase {
-
-  val addBusinessTradeControllerShowUrl: String = controllers.manageBusinesses.add.routes.AddBusinessTradeController.show(isAgent = false, isChange = false).url
-  val addBusinessTradeSubmitUrl: String = controllers.manageBusinesses.add.routes.AddBusinessTradeController.submit(isAgent = false, isChange = false).url
-  val changeBusinessTradeUrl: String = controllers.manageBusinesses.add.routes.AddBusinessTradeController.show(isAgent = false, isChange = true).url
-  val submitChangeBusinessTradeUrl: String = controllers.manageBusinesses.add.routes.AddBusinessTradeController.submit(isAgent = false, isChange = true).url
+class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
 
   val addBusinessAddressUrl: String = controllers.manageBusinesses.add.routes.AddBusinessAddressController.show(isChange = false).url
   val incomeSourcesUrl: String = controllers.routes.HomeController.show().url
@@ -55,184 +50,202 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
     await(sessionService.deleteSession(Add))
   }
 
-  s"calling GET $addBusinessTradeControllerShowUrl" should {
-    "render the Add Business trade page for an Individual" when {
-      "User is authorised" in {
-        Given("I wiremock stub a successful Income Source Details response with multiple businesses and a uk property")
+  val path = "/manage-your-businesses/add-sole-trader/business-trade"
+  val changePath = "/manage-your-businesses/add-sole-trader/change-business-trade"
+
+  s"GET $path" when {
+    "the user is authenticated, with a valid MTD enrolment" should {
+      "render the Add Business trade page for an Agent" when {
+        "Income Sources FS enabled" in {
+          enable(IncomeSourcesFs)
+          disable(NavBarFs)
+          MTDIndividualAuthStub.stubAuthorised()
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
+          await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
+            addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName))))))
+
+          val res = buildGETMTDClient(path).futureValue
+          verifyIncomeSourceDetailsCall(testMtditid)
+
+          res should have(
+            httpStatus(OK),
+            pageTitleIndividual(pageTitleMsgKey),
+            elementTextByID("business-trade-hint")(pageHint),
+            elementTextByID("continue-button")(button)
+          )
+        }
+      }
+      "303 SEE_OTHER - redirect to home page" when {
+        "Income Sources FS disabled" in {
+          disable(IncomeSourcesFs)
+          disable(NavBarFs)
+          MTDIndividualAuthStub.stubAuthorised()
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
+          val result = buildGETMTDClient(path).futureValue
+
+          result should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(incomeSourcesUrl)
+          )
+        }
+      }
+    }
+    testAuthFailuresForMTDIndividual(path)
+  }
+
+  s"GET $changePath" when {
+    "the user is authenticated, with a valid MTD enrolment" should {
+      "render the Add Business trade page for an Agent" when {
+        "Income Sources FS enabled" in {
+          enable(IncomeSourcesFs)
+          disable(NavBarFs)
+          MTDIndividualAuthStub.stubAuthorised()
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
+          await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
+            addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName))))))
+          val res = buildGETMTDClient(changePath).futureValue
+          verifyIncomeSourceDetailsCall(testMtditid)
+
+          res should have(
+            httpStatus(OK),
+            pageTitleIndividual(pageTitleMsgKey),
+            elementTextByID("business-trade-hint")(pageHint),
+            elementTextByID("continue-button")(button)
+          )
+        }
+      }
+      "303 SEE_OTHER - redirect to home page" when {
+        "Income Sources FS disabled" in {
+          disable(IncomeSources)
+          disable(NavBarFs)
+          MTDIndividualAuthStub.stubAuthorised()
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
+          val result = buildGETMTDClient(changePath).futureValue
+
+          result should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(incomeSourcesUrl)
+          )
+        }
+      }
+    }
+    testAuthFailuresForMTDIndividual(changePath)
+  }
+
+  s"POST $path" when {
+    "the user is authenticated, with a valid MTD enrolment" should {
+      s"303 SEE_OTHER and redirect to $addBusinessAddressUrl" when {
+        "User is authorised and business trade is valid" in {
+          enable(IncomeSourcesFs)
+          disable(NavBarFs)
+          MTDIndividualAuthStub.stubAuthorised()
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
+          val formData: Map[String, Seq[String]] = {
+            Map(
+              BusinessTradeForm.businessTrade -> Seq(testBusinessTrade)
+            )
+          }
+
+          await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
+            addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName))))))
+
+          val result = buildPOSTMTDPostClient(path, body = formData).futureValue
+
+          sessionService.getMongoKeyTyped[String](businessTradeField, IncomeSources(Add, SelfEmployment)).futureValue shouldBe Right(Some(testBusinessTrade))
+
+          result should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(addBusinessAddressUrl)
+          )
+        }
+      }
+      "show error when form is filled incorrectly" in {
         enable(IncomeSourcesFs)
+        disable(NavBarFs)
+        MTDIndividualAuthStub.stubAuthorised()
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
           addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName))))))
 
-        When(s"I call GET $addBusinessTradeControllerShowUrl")
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.getAddBusinessTrade
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual(pageTitleMsgKey),
-          elementTextByID("business-trade-hint")(pageHint),
-          elementTextByID("continue-button")(button)
-        )
-      }
-    }
-    "303 SEE_OTHER - redirect to home page" when {
-      "Income Sources FS disabled" in {
-
-        Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
-        disable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-
-        When(s"I call GET ${addBusinessTradeControllerShowUrl}")
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.getAddBusinessTrade
-
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(incomeSourcesUrl)
-        )
-      }
-    }
-  }
-
-  s"calling POST ${addBusinessTradeSubmitUrl}" should {
-    s"303 SEE_OTHER and redirect to $addBusinessAddressUrl" when {
-      "User is authorised and business trade is valid" in {
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-
         val formData: Map[String, Seq[String]] = {
           Map(
-            BusinessTradeForm.businessTrade -> Seq(testBusinessTrade)
+            BusinessTradeForm.businessTrade -> Seq("")
           )
         }
 
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
-          addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName))))))
-
-        And("Mongo storage is successfully set")
-        When(s"I call POST ${addBusinessTradeSubmitUrl}")
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add-sole-trader/business-trade")(formData)
-
-        sessionService.getMongoKeyTyped[String](businessTradeField, IncomeSources(Add, SelfEmployment)).futureValue shouldBe Right(Some(testBusinessTrade))
+        val result = buildPOSTMTDPostClient(path, body = formData).futureValue
 
         result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(addBusinessAddressUrl)
+          httpStatus(BAD_REQUEST),
+          elementTextByID("business-trade-error")(messagesAPI("base.error-prefix") + " " +
+            messagesAPI("add-business-trade.form.error.empty"))
         )
       }
     }
-    "show error when form is filled incorrectly" in {
-      enable(IncomeSourcesFs)
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-
-      await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
-        addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName))))))
-
-      val formData: Map[String, Seq[String]] = {
-        Map(
-          BusinessTradeForm.businessTrade -> Seq("")
-        )
-      }
-
-      val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add-sole-trader/business-trade")(formData)
-      result should have(
-        httpStatus(BAD_REQUEST),
-        elementTextByID("business-trade-error")(messagesAPI("base.error-prefix") + " " +
-          messagesAPI("add-business-trade.form.error.empty"))
-      )
-    }
+    testAuthFailuresForMTDIndividual(path, optBody = Some(Map(
+      BusinessTradeForm.businessTrade -> Seq(testBusinessTrade)
+    )))
   }
 
+  s"POST $changePath" when {
+    "the user is authenticated, with a valid MTD enrolment" should {
+      s"303 SEE_OTHER and redirect to $checkDetailsUrl" when {
+        "User is authorised and business trade is valid" in {
+          enable(IncomeSourcesFs)
+          disable(NavBarFs)
+          MTDIndividualAuthStub.stubAuthorised()
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-  s"calling GET $changeBusinessTradeUrl" should {
-    "render the Change Business Trade page" when {
-      "User is authorised" in {
-        Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
+          val changedTrade = "Updated Business Trade"
+          val formData: Map[String, Seq[String]] = {
+            Map(
+              BusinessTradeForm.businessTrade -> Seq(changedTrade)
+            )
+          }
 
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
-          addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName), Some(testBusinessTrade))))))
+          await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
+            addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName), Some(testBusinessTrade))))))
 
-        When(s"I call GET $changeBusinessTradeUrl")
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.getChangeAddBusinessTrade
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        sessionService.getMongo(journeyType)
-
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual(pageTitleMsgKey),
-          printSelector("#business-trade"),
-          elementValueByID("business-trade")(testBusinessTrade),
-          elementTextByID("business-trade-hint")(pageHint),
-          elementTextByID("continue-button")(button)
-        )
-      }
-    }
-    "303 SEE_OTHER - redirect to home page" when {
-      "Income Sources FS disabled" in {
-        Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
-        disable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-
-        When(s"I call GET ${changeBusinessTradeUrl}")
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.get("/manage-your-businesses/add-sole-trader/change-business-trade")
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(incomeSourcesUrl)
-        )
-      }
-    }
-  }
-
-  s"calling POST ${submitChangeBusinessTradeUrl}" should {
-    s"303 SEE_OTHER and redirect to $addBusinessAddressUrl" when {
-      "User is authorised and business trade is valid" in {
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
-          addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName), Some(testBusinessTrade))))))
-
-        val changedTrade = "Updated Business Trade"
-        val formData: Map[String, Seq[String]] = {
-          Map(
-            BusinessTradeForm.businessTrade -> Seq(changedTrade)
-          )
-        }
-
-        When(s"I call POST ${submitChangeBusinessTradeUrl}")
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add-sole-trader/change-business-trade")(formData)
+          val result = buildPOSTMTDPostClient(changePath, body = formData).futureValue
 
         sessionService.getMongoKeyTyped[String](businessTradeField, IncomeSources(Add, SelfEmployment)).futureValue shouldBe Right(Some(changedTrade))
 
+          result should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(checkDetailsUrl)
+          )
+        }
+      }
+      "show error when form is filled incorrectly" in {
+        enable(IncomeSourcesFs)
+        disable(NavBarFs)
+        MTDIndividualAuthStub.stubAuthorised()
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
+
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
+          addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName), Some(testBusinessTrade))))))
+
+        val formData: Map[String, Seq[String]] = {
+          Map(
+            BusinessTradeForm.businessTrade -> Seq("")
+          )
+        }
+
+        val result = buildPOSTMTDPostClient(changePath, body = formData).futureValue
+
         result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(checkDetailsUrl)
+          httpStatus(BAD_REQUEST),
+          elementTextByID("business-trade-error")(messagesAPI("base.error-prefix") + " " +
+            messagesAPI("add-business-trade.form.error.empty"))
         )
       }
     }
-    "show error when form is filled incorrectly" in {
-      enable(IncomeSourcesFs)
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
-
-      await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
-        addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName))))))
-
-      val formData: Map[String, Seq[String]] = {
-        Map(
-          BusinessTradeForm.businessTrade -> Seq("")
-        )
-      }
-
-      val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add-sole-trader/change-business-trade")(formData)
-      result should have(
-        httpStatus(BAD_REQUEST),
-        elementTextByID("business-trade-error")(messagesAPI("base.error-prefix") + " " +
-          messagesAPI("add-business-trade.form.error.empty"))
-      )
-    }
+    testAuthFailuresForMTDIndividual(changePath, optBody = Some(Map(
+      BusinessTradeForm.businessTrade -> Seq(testBusinessTrade)
+    )))
   }
 }

@@ -16,47 +16,35 @@
 
 package controllers.agent.errors
 
-import mocks.MockItvcErrorHandler
-import mocks.auth.MockFrontendAuthorisedFunctions
+import mocks.auth.MockAuthActions
 import org.jsoup.Jsoup
-import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
-import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
-import testUtils.TestSupport
-import views.html.agent.errorPages.AgentError
+import testConstants.BaseTestConstants.agentAuthRetrievalSuccess
 
-class AgentErrorControllerSpec extends TestSupport
-  with MockFrontendAuthorisedFunctions
-  with MockItvcErrorHandler {
+class AgentErrorControllerSpec extends MockAuthActions {
 
-  val TestAgentErrorController = new AgentErrorController(
-    mockAuthService,
-    app.injector.instanceOf[AgentError]
-  )(
-    app.injector.instanceOf[MessagesControllerComponents],
-    appConfig,
-    mockItvcErrorHandler,
-    ec
-  )
+  override def fakeApplication() = applicationBuilderWithAuthBindings().build()
+
+  val testAgentErrorController = fakeApplication().injector.instanceOf[AgentErrorController]
 
   "Calling the show action of the AgentErrorController" should {
 
-    lazy val result = TestAgentErrorController.show(fakeRequestWithActiveSession)
+    lazy val result = testAgentErrorController.show(fakeRequestWithActiveSession)
     lazy val document = Jsoup.parse(contentAsString(result))
 
     "return OK (200)" in {
-      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+      setupMockAgentWithoutARNAuthSuccess(agentAuthRetrievalSuccess)
       status(result) shouldBe OK
     }
 
     "return HTML" in {
-      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+      setupMockAgentWithoutARNAuthSuccess(agentAuthRetrievalSuccess)
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
     }
 
     s"have the title ${messages("htmlTitle.agent", messages("agent-error.heading"))}" in {
-      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+      setupMockAgentWithoutARNAuthSuccess(agentAuthRetrievalSuccess)
       document.title() shouldBe messages("htmlTitle.errorPage", messages("agent-error.heading"))
     }
   }

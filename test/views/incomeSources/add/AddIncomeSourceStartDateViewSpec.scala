@@ -99,8 +99,8 @@ class AddIncomeSourceStartDateViewSpec extends TestSupport {
       case (true, UkProperty) => controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent()
       case (false, ForeignProperty) => controllers.incomeSources.add.routes.AddIncomeSourceController.show()
       case (true, ForeignProperty) => controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent()
-      case (false, SelfEmployment) => controllers.incomeSources.add.routes.AddBusinessNameController.show()
-      case (true, SelfEmployment) => controllers.incomeSources.add.routes.AddBusinessNameController.showAgent()
+      case (false, SelfEmployment) => controllers.incomeSources.add.routes.AddBusinessNameController.show(false)
+      case (true, SelfEmployment) => controllers.incomeSources.add.routes.AddBusinessNameController.showAgent(false)
     }).url
   }
 

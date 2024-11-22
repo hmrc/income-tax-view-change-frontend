@@ -19,6 +19,7 @@ package helpers.agent
 import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
+//import controllers.agent.sessionUtils.SessionKeys
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import forms.agent.ClientsUTRForm
 import forms.incomeSources.add.{AddIncomeSourceStartDateCheckForm, IncomeSourceReportingMethodForm}
@@ -250,7 +251,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       val formData: Map[String, Seq[String]] = Map(
         ConfirmOptOutSingleTaxYearForm.confirmOptOutField -> Seq(if (form.confirmOptOut.isDefined) form.confirmOptOut.get.toString else ""),
         ConfirmOptOutSingleTaxYearForm.csrfToken -> Seq(""))
-      post(s"/optout/single-taxyear-warning", additionalCookies)(formData)
+      post("/optout/single-taxyear-warning", additionalCookies)(formData)
     }
 
     def getConfirmOptOut(additionalCookies: Map[String, String] = Map.empty): WSResponse = {

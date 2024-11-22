@@ -55,7 +55,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
                   payments: FinancialDetailsModel = payments,
                   chargeHistoryEnabled: Boolean = true,
                   latePaymentInterestCharge: Boolean = false,
-                  codingOutEnabled: Boolean = false,
                   reviewAndReconcileEnabled: Boolean = false,
                   isAgent: Boolean = false,
                   adjustmentHistory: AdjustmentHistoryModel = defaultAdjustmentHistory,
@@ -76,7 +75,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       payments = payments,
       chargeHistoryEnabled = chargeHistoryEnabled,
       latePaymentInterestCharge = latePaymentInterestCharge,
-      codingOutEnabled = codingOutEnabled,
       reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       isAgent = isAgent,
       poaOneChargeUrl = "testUrl1",
@@ -561,13 +559,13 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       }
     }
 
-    "charge is a POA 1 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PaymentOnAccountOneReviewAndReconcile), reviewAndReconcileEnabled = true) {
+    "charge is a POA 1 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PaymentOnAccountOneReviewAndReconcileDebit), reviewAndReconcileEnabled = true) {
       document.select("h1").text() shouldBe poa1ReconcileHeading(2018)
     }
-    "charge is a POA 2 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PaymentOnAccountTwoReviewAndReconcile), reviewAndReconcileEnabled = true) {
+    "charge is a POA 2 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PaymentOnAccountTwoReviewAndReconcileDebit), reviewAndReconcileEnabled = true) {
       document.select("h1").text() shouldBe poa2ReconcileHeading(2018)
     }
-    "charge is interest for a POA 1 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PaymentOnAccountOneReviewAndReconcile), reviewAndReconcileEnabled = true, latePaymentInterestCharge = true) {
+    "charge is interest for a POA 1 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PaymentOnAccountOneReviewAndReconcileDebit), reviewAndReconcileEnabled = true, latePaymentInterestCharge = true) {
       document.select("h1").text() shouldBe poa1ReconcileInterestHeading(2018)
 
       document.selectById("poa1-extra-charge-p1").text() shouldBe poa1ReconciliationInterestP1
@@ -584,7 +582,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       document.select("tbody tr td:nth-child(2)").text() shouldBe hmrcCreated
       document.select("tbody tr td:nth-child(3)").text() shouldBe "£100.00"
     }
-    "charge is interest for a POA 2 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PaymentOnAccountTwoReviewAndReconcile), reviewAndReconcileEnabled = true, latePaymentInterestCharge = true) {
+    "charge is interest for a POA 2 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PaymentOnAccountTwoReviewAndReconcileDebit), reviewAndReconcileEnabled = true, latePaymentInterestCharge = true) {
       document.select("h1").text() shouldBe poa2ReconcileInterestHeading(2018)
 
       document.selectById("poa2-extra-charge-p1").text() shouldBe poa2ReconciliationInterestP1
@@ -636,30 +634,26 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
       "is Nics2" should {
 
-        s"have the correct heading for a $paymentBreakdownNic2 charge when coding out FS is enabled" in new TestSetup(
-          chargeItem = baseBalancingNics2,
-          codingOutEnabled = true
+        s"have the correct heading for a $paymentBreakdownNic2 charge with a sub-transaction type" in new TestSetup(
+          chargeItem = baseBalancingNics2
         ) {
           document.select("h1").text() shouldBe class2NicHeading(2018)
         }
 
-        s"have the correct heading for a $paymentBreakdownNic2 charge when coding out FS is disabled" in new TestSetup(
-          chargeItem = chargeItemModel(transactionType = BalancingCharge),
-          codingOutEnabled = false
+        s"have the correct heading for a $paymentBreakdownNic2 charge with no sub-transaction type" in new TestSetup(
+          chargeItem = chargeItemModel(transactionType = BalancingCharge)
         ) {
           document.select("h1").text() shouldBe balancingChargeHeading(2018)
         }
 
         "have a paragraph explaining which tax year the Class 2 NIC is for" in new TestSetup(
-          chargeItem = baseBalancingNics2.copy(lpiWithDunningLock = None),
-          codingOutEnabled = true
+          chargeItem = baseBalancingNics2.copy(lpiWithDunningLock = None)
         ) {
           document.select("#nic2TaxYear").text() shouldBe class2NicTaxYear(2018)
         }
 
         s"display only the charge creation item for a $paymentBreakdownNic2 charge" in new TestSetup(
-          chargeItem = baseBalancingNics2,
-          codingOutEnabled = true
+          chargeItem = baseBalancingNics2
         ) {
           document.select("tbody tr").size() shouldBe 1
           document.select("tbody tr td:nth-child(2)").text() shouldBe class2NicChargeCreated
@@ -674,8 +668,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
         "display the coded out details" when {
 
-          "Coding Out is Enabled" in new TestSetup(creditItemCodingOut,
-              codingOutEnabled = true) {
+          "Coding Out is Enabled" in new TestSetup(creditItemCodingOut) {
             document.select("h1").text() shouldBe chargeSummaryCodingOutHeading2017To2018
             document.select("#check-paye-para").text() shouldBe payeTaxCodeTextWithStringMessage(2018)
             document.select("#paye-tax-code-link").attr("href") shouldBe payeTaxCodeLink
@@ -691,8 +684,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         "Scenario were Class2 NICs has been paid and only coding out information needs to be displayed" when {
 
           "Coding Out is Enabled" in new TestSetup(
-            creditItemCodingOut,
-            codingOutEnabled = true
+            creditItemCodingOut
           ) {
             document.select("h1").text() shouldBe chargeSummaryCodingOutHeading2017To2018
             document.select("#coding-out-notice").text() shouldBe insetPara
@@ -708,8 +700,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
               taxYear = TaxYear.forYearEnd(2019),
               subTransactionType = None,
               outstandingAmount = 2500.00,
-              originalAmount = 2500.00),
-            codingOutEnabled = false
+              originalAmount = 2500.00)
           ) {
             document.select("h1").text() shouldBe s"2018 to 2019 tax year $balancingCharge"
             verifySummaryListRowNumeric(1, dueDate, "OVERDUE 15 May 2019")
@@ -726,15 +717,13 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
       "is cancelled" should {
         "have the correct heading for a Cancelled PAYE Self Assessment" in new TestSetup(
-          chargeItem = baseBalancingCancelled,
-          codingOutEnabled = true
+          chargeItem = baseBalancingCancelled
         ) {
           document.select("h1").text() shouldBe cancelledSaPayeHeading(2018)
         }
 
         "have a paragraphs explaining Cancelled PAYE self assessment" in new TestSetup(
-          chargeItem = baseBalancingCancelled.copy(lpiWithDunningLock = None),
-          codingOutEnabled = true
+          chargeItem = baseBalancingCancelled.copy(lpiWithDunningLock = None)
         ) {
           document.select("#check-paye-para").text() shouldBe payeTaxCodeTextWithStringMessage(2018)
           document.select("#paye-tax-code-link").attr("href") shouldBe payeTaxCodeLink
@@ -751,15 +740,13 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
         "display a payment history" in new TestSetup(
           chargeItem = baseBalancingCancelled.copy(lpiWithDunningLock = None),
-          paymentBreakdown = paymentBreakdown,
-          codingOutEnabled = true
+          paymentBreakdown = paymentBreakdown
         ) {
           document.select("main h2").text shouldBe chargeHistoryHeadingGeneric
          }
 
         "display only the charge creation item when no history found for cancelled PAYE self assessment" in new TestSetup(
-          chargeItem = baseBalancingCancelled.copy(lpiWithDunningLock = None),
-          codingOutEnabled = true
+          chargeItem = baseBalancingCancelled.copy(lpiWithDunningLock = None)
         ) {
           document.select("tbody tr").size() shouldBe 1
           document.select("tbody tr td:nth-child(1)").text() shouldBe "29 Mar 2018"
@@ -800,38 +787,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         latePaymentInterestCharge = true) {
         document.select("h1").text() shouldBe balancingChargeInterestHeading(2019)
       }
-
-      "display only the charge creation item for a new balancing charge late interest charge" in new TestSetup(
-        chargeItem = baseBalancingAccepted.copy(outstandingAmount = 0),
-        latePaymentInterestCharge = true
-      ) {
-        document.select("tbody tr").size() shouldBe 1
-        document.select("tbody tr td:nth-child(2)").text() shouldBe balancingChargeInterestCreated
-      }
-
-      "display only the charge creation item when no history found for a new balancing charge" in new TestSetup(
-        chargeItem = baseBalancingAccepted.copy(outstandingAmount = 0.0),
-      ) {
-        document.select("tbody tr").size() shouldBe 1
-        document.select("tbody tr td:nth-child(2)").text() shouldBe balancingChargeCreated
-      }
-
-      "display the correct message for an amended charge for a balancing charge" in new TestSetup(
-        baseBalancingAccepted.copy(outstandingAmount = 0.0),
-        adjustmentHistory = adjustmentHistoryWithBalancingCharge
-      ) {
-        document.select("tbody tr").size() shouldBe 2
-        document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe balancingChargeAmended
-      }
-
-      "display the correct message for a customer requested change for a balancing charge" in new TestSetup(
-        baseBalancingAccepted.copy(outstandingAmount = 0.0),
-        adjustmentHistory = customerRequestAdjustmentHistory
-      ) {
-        document.select("tbody tr").size() shouldBe 2
-        document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe balancingChargeRequest
-      }
-
+      
       "display balancing charge due date as N/A and hide sections - Payment Breakdown," +
         "Any payments you make, Payment History when balancing charge is 0" in new TestSetup(
           baseBalancing.copy(
@@ -840,7 +796,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
               originalAmount = BigDecimal(0),
               documentDate = LocalDate.of(2018, 3, 29),
               lpiWithDunningLock = None
-            ), codingOutEnabled = false) {
+            )) {
           document.select(".govuk-summary-list").text() shouldBe "Due date N/A Amount £0.00 Still to pay £0.00"
           print( document.select("p"))
           document.select("p").get(3).text shouldBe "View what you owe to check if you have any other charges to pay."
@@ -1256,7 +1212,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         payments = payments,
         chargeHistoryEnabled = true,
         latePaymentInterestCharge = false,
-        codingOutEnabled = false,
         reviewAndReconcileCredit = None,
         reviewAndReconcileEnabled = false,
         isAgent = false,

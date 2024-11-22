@@ -173,10 +173,6 @@ home.agent.supporting.cannotAccess.returns                      = returns
 home.agent.supporting.cannotAccess.nextChargesDue               = next charges due
 home.agent.supporting.readMore                                  = Read more about the difference between main and supporting agents on GOV.UK (opens in new tab).
 
-
-## List UTRs ##
-listUTRs.heading                                               = List UTRs
-
 ## Tax Years Page ##
 taxYears.heading                                               = Tax years
 taxYears.viewSummary                                            = View summary
@@ -233,6 +229,8 @@ tax-year-summary.payments.no-payments                              = No payments
 tax-year-summary.payments.paymentUnderReview                       = Payment under review
 tax-year-summary.payments.reviewAndReconcilePoa1.text              = First payment on account: extra amount from your tax return
 tax-year-summary.payments.reviewAndReconcilePoa2.text              = Second payment on account: extra amount from your tax return
+tax-year-summary.payments.lpi.reviewAndReconcilePoa1.text          = Interest for first payment on account: extra amount
+tax-year-summary.payments.lpi.reviewAndReconcilePoa2.text          = Interest for second payment on account: extra amount
 tax-year-summary.section                                           = Section
 tax-year-summary.amount                                            = Amount
 tax-year-summary.payments.class2Nic.text                           = Class 2 National Insurance
@@ -507,6 +505,7 @@ taxCal_breakdown.table.ZRTHR                                        = Higher rat
 taxCal_breakdown.table.ZRTAR                                        = Additional rate band at nil rate ({0} at {1}%)
 taxCal_breakdown.table.transitional_profit                          = Transitional profit ({0})
 taxCal_breakdown.table.totalIncomeTaxAndNicsDue                     = Self Assessment tax amount
+taxCal_breakdown.table.nic2                                         = Class 2 National Insurance
 taxCal_breakdown.table.nic4                                         = Class 4 National Insurance ({0} at {1}%)
 taxCal_breakdown.national_insurance_contributions                   = National Insurance contributions
 
@@ -1085,8 +1084,6 @@ chargeSummary.paymentAllocations.bcd.nic4                          = Payment all
 chargeSummary.paymentAllocations.bcd.sl                            = Payment allocated to Student Loans for Balancing payment
 chargeSummary.paymentAllocations.bcd.cgt                           = Payment allocated to Capital Gains Tax for Balancing payment
 chargeSummary.paymentAllocations.mfaDebit                          = Payment put towards HMRC adjustment
-chargeSummary.paymentAllocations.bcd.cancelled                     = Cancelled PAYE Self Assessment (through your PAYE tax code)
-chargeSummary.paymentAllocations.bcd.accepted                      = Amount collected through your PAYE tax code for {0} to {1} tax year
 
 chargeSummary.codingOutHeader                                      = Self Assessment payment (through your PAYE tax code)
 chargeSummary.codingOutMessage                                     = This is the remaining tax you owe for the {0} to {1} tax year.
@@ -1135,6 +1132,7 @@ paymentHistory.button                                           = {0} payments
 
 paymentHistory.refund                                           = Refund issued
 paymentHistory.payment                                          = Payment you made to HMRC
+paymentHistory.paymentToHmrc                                    = Payment you made to HMRC
 paymentHistory.cutOver                                          = Credit from an earlier tax year
 paymentHistory.mfa                                              = Credit from HMRC adjustment
 paymentHistory.balancingCharge                                  = Credit from overpaid tax
@@ -1238,8 +1236,6 @@ credit-and-refund.heading                                         = Claim a refu
 
 credit-and-refund.available-to-claim                              = {0} available to claim
 
-credit-and-refund.subHeading.has-no-credits                       = has been requested as a refund and is in progress.
-
 credit-and-refund.upcoming-allocated-credit-1                     = HMRC has reserved {0} of this to cover your upcoming tax bill.
 credit-and-refund.upcoming-allocated-credit-1-all                 = HMRC has reserved all {0} to cover your upcoming tax bill.
 credit-and-refund.upcoming-allocated-credit-2                     = Check what you owe
@@ -1248,7 +1244,10 @@ credit-and-refund.upcoming-allocated-credit-3                     = for further 
 credit-and-refund.no-credit                                       = You have no money in your account.
 credit-and-refund.claim-refund-btn                                = Claim a refund
 credit-and-refund.check-refund-btn                                = Check refund status
+
 credit-and-refund.credit-from-hmrc-title                          = credit from HMRC adjustment
+credit-and-refund.credit-from-hmrc-title-prt-1                    = from a
+credit-and-refund.credit-from-hmrc-title-prt-2                    = Credit from HMRC adjustment
 
 credit-and-refund.subHeading-source                               = Where has this money come from?
 credit-and-refund.how-much-can-i-claim                            = How much can I claim back?
@@ -1512,6 +1511,7 @@ incomeSources.add.foreignProperty.startDate.hint                     = The date 
 incomeSources.add.foreignProperty.startDate.hint2                    = This is the date you first received rental income from this foreign property business, such as letting or renting out a property or land.
 incomeSources.add.foreignProperty.startDate.hintExample              = For example, 27 3 2020
 incomeSources.add.foreignProperty.startDate.error.required           = Enter the date your foreign property business started
+incomeSources.add.foreignProperty.startDate.error.empty              = Enter the date your foreign property business started trading
 incomeSources.add.foreignProperty.startDate.error.missingMonthYear   = The date must include a month and a year
 incomeSources.add.foreignProperty.startDate.error.missingDayYear     = The date must include a day and a year
 incomeSources.add.foreignProperty.startDate.error.missingDayMonth    = The date must include a day and a month
@@ -1598,9 +1598,11 @@ add-business-start-date.heading                      = When did your business st
 add-business-start-date.hint                         = The date your business started trading can be today, in the past or up to 7 days in the future.
 add-business-start-date.hint2                        = This is the date we’ll use to calculate your Class 2 National Insurance charge, if appropriate.
 add-business-start-date.day                          = Day
-add-business-start-date.form.month                   = Month
-add-business-start-date.form.year                    = Year
+add-business-start-date.month                        = Month
+add-business-start-date.year                         = Year
+add-business-start-date.form.error.emptyDateField    = Enter the date your business started trading
 add-business-start-date.error.future                 = The date your business started trading must be before {0}
+add-business-start-date.error.required.all           = Enter the date your business started trading
 add-business-start-date.error.invalid                = The date must be a real date
 
 # add Business start date check
@@ -1671,12 +1673,16 @@ check-details-uk.title                                  = Check your answers
 check-details-uk.heading                                = UK property
 check-details-uk.start-date                             = Start date
 check-details-uk.accounting-method                      = Accounting method
+check-details-uk.cash-accounting                        = Cash basis accounting
+check-details-uk.traditional-accounting                 = Traditional accounting
 check-details-uk.change                                 = Change
 
 check-details-fp.title                                  = Check your answers
 check-details-fp.heading                                = Foreign property
 check-details-fp.start-date                             = Start date
 check-details-fp.accounting-method                      = Accounting method
+check-details-fp.cash-accounting                        = Cash basis accounting
+check-details-fp.traditional-accounting                 = Traditional accounting
 check-details-fp.change                                 = Change
 
 check-business-details.title                            = Check your details
@@ -1686,6 +1692,7 @@ check-business-details.change                           = Change
 check-business-details.start-date                       = Business trading start date
 check-business-details.business-description             = Business description
 check-business-details.business-address                 = Business address
+check-business-details.confirm-button                   = Confirm and Continue
 check-business-details.accounting-method                = Accounting method for sole trader income
 check-business-details.cash-accounting                  = Cash basis accounting
 check-business-details.traditional-accounting           = Traditional accounting
@@ -1707,7 +1714,8 @@ incomeSources.add.foreign-property-check-details.change                     = Ch
 
 # business added page - h1 intentionally empty
 business-added.text                                     = What you must do
-business-added.to                                       =  to
+business-added.deadlines                                = Your revised deadlines
+business-added.to                                       = to
 
 # Foreign Property Added - Uses above keys as base also, intentionally empty field below.
 business-added.foreign-property.head                    =
@@ -1828,20 +1836,6 @@ business-ceased.obligation.previous-tax-years-heading               = Previous t
 business-ceased.obligation.previous-tax-years-t1                    = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
 business-ceased.obligation.to                                       =  to
 
-incomeSources.add.businessReportingMethod.heading                   =   Choose a reporting method
-incomeSources.add.businessReportingMethod.description1              =   Your business qualifies for a grace period available up until April {0} where you can report annually.
-incomeSources.add.businessReportingMethod.description2              =   This involves a single update no later than 31 January.
-incomeSources.add.businessReportingMethod.description3              =   This grace period is not affected by either:
-incomeSources.add.businessReportingMethod.description4.bullet1      =   your level of income from other sources
-incomeSources.add.businessReportingMethod.description4.bullet2      =   the turnover you expect your new business to make
-incomeSources.add.businessReportingMethod.description4.bullet3      =   how you report with any existing income sources
-incomeSources.add.businessReportingMethod.chooseReport              =   Choose how you want to report
-incomeSources.add.businessReportingMethod.taxYear                   =   Tax year {0}-{1}
-incomeSources.add.businessReportingMethod.chooseAnnualReport        =   Choose annual reporting
-incomeSources.add.businessReportingMethod.chooseQuarterlyReport     =   Choose quarterly reporting
-incomeSources.add.businessReportingMethod.error                     =   Select if you want to report annually or quarterly for tax year {0} to {1}
-
-
 # add uk property business accounting method
 incomeSources.add.UK.AccountingMethod.heading                 = What accounting method do you use for your UK property business?
 incomeSources.add.UK.AccountingMethod.example                 = Show me an example
@@ -1951,6 +1945,11 @@ incomeSources.manage.uKPropertyReportingMethodError.p2        = You can try to c
 
 incomeSources.manage.foreignPropertyReportingMethodError.p1   = We were unable to update your foreign property business reporting frequency.
 incomeSources.manage.foreignPropertyReportingMethodError.p2   = You can try to change your foreign property business reporting frequency again in
+
+incomeSources.manage.businessReportingMethodError.text          = We were unable to update your sole trader business reporting frequency.
+incomeSources.manage.foreignPropertyReportingMethodError.text   = We were unable to update your foreign property business reporting frequency.
+incomeSources.manage.uKPropertyReportingMethodError.text        = We were unable to update your UK property business reporting frequency.
+
 incomeSources.manage.reportingMethodError.hyperlink1            = manage your details
 incomeSources.manage.reportingMethodError.hyperlink2            = view and manage income sources
 incomeSources.manage.reportingMethodError.p3                    = Or go back to
@@ -2147,6 +2146,7 @@ claimToAdjustPoa.enterPoaAmount.amountPreviousHeading                 = Amount b
 claimToAdjustPoa.enterPoaAmount.adjustedAmount                        = Adjusted amount
 claimToAdjustPoa.enterPoaAmount.firstPayment                          = First payment on account
 claimToAdjustPoa.enterPoaAmount.secondPayment                         = Second payment on account
+claimToAdjustPoa.enterPoaAmount.warning                               = You may have to pay interest if you reduce your payments on account too much and underpay
 claimToAdjustPoa.enterPoaAmount.howMuch                               = How much should each payment on account be?
 claimToAdjustPoa.enterPoaAmount.howMuchHint                           = Enter half the amount you think your final tax bill will be
 claimToAdjustPoa.enterPoaAmount.cancel                                = Cancel
@@ -2210,9 +2210,14 @@ optout.checkAnswers.cancel              = Cancel
 optout.confirmedOptOut.heading                                   = Opt out completed
 optout.confirmedOptOut.taxYear                                   = You are reporting annually from the {0} to {1} tax year onwards
 optout.confirmedOptOut.one-year                                  = You are reporting annually for the {0} to {1} tax year
+optout.confirmedOptOut.yourRevisedDeadlines.h2                   = Your revised deadlines
+optout.confirmedOptOut.yourRevisedDeadlines.desc1                = Your tax return for the {0} to {1} tax year is due by <b>31 January {2}</b>.
+optout.confirmedOptOut.viewUpcomingUpdates.text                  = View your upcoming updates
+optout.confirmedOptOut.yourRevisedDeadlines.desc2                = You can decide at any time to opt back in to reporting quarterly for all of your businesses on {0} page.
+optout.confirmedOptOut.yourReportingFrequency.text               = your reporting frequency
 optout.confirmedOptOut.submitTax                                 = Submit your tax return
-optout.confirmedOptOut.submitTax.desc1                           = For any tax years where you chose to opt out and report annually, you can submit your tax return directly through your HMRC online account or software.
-optout.confirmedOptOut.submitTax.desc2                           = If you are still reporting quarterly for certain tax years, you are required to send those quarterly updates through compatible software.
+optout.confirmedOptOut.submitTax.desc1                           = When reporting annually, you can submit your tax return directly through your HMRC online account or software compatible.
+optout.confirmedOptOut.submitTax.desc2                           = However, compatible software is required for any tax years for which you are reporting quarterly.
 optout.confirmedOptOut.updatesDue                                = Your next updates due
 optout.confirmedOptOut.updatesDue.desc                           = Check the {0} page for the current tax year’s deadlines. Deadlines for future years will not be visible until they become the current year.
 optout.confirmedOptOut.next-updates                              = next updates
@@ -2260,6 +2265,19 @@ optout.optOutError.nextUpdates-link                  = next updates
 optout.optOutError.nextUpdates-bullet-2              = and try again
 optout.optOutError.home-bullet-1                     = go back to the
 optout.optOutError.home-bullet-2                     = homepage
+
+# Opt out cancelled page
+
+optout.cancelled.title                              = Opt out cancelled
+optout.cancelled.h1                                 = Opt out cancelled
+optout.cancelled.p1                                 = You will continue to report quarterly for the {0} to {1} tax year.
+optout.cancelled.bullet1.link                       = View your upcoming updates
+optout.cancelled.bullet2.link                       = Go to home page
+optout.cancelled.h2                                 = Reporting annually for new businesses
+optout.cancelled.p2                                 = As you have one or more new businesses, you can choose to report annually for them for up to 2 tax years while still recording quarterly for your other businesses.
+optout.cancelled.p3.link                            = View and manage your businesses
+optout.cancelled.p3                                 = to change how often you want to report for your businesses.
+
 
 #######################################################################################################################
 ## Opt In ##

@@ -25,7 +25,7 @@ import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Request, Resul
 import play.api.{Configuration, Environment, Logger}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Individual, Organisation}
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.authorise.Predicate
+import uk.gov.hmrc.auth.core.authorise.{EmptyPredicate, Predicate}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -40,26 +40,33 @@ class AuthoriseAndRetrieveAgent @Inject()(val authorisedFunctions: FrontendAutho
                                           override val config: Configuration,
                                           override val env: Environment,
                                           mcc: MessagesControllerComponents)
-  extends  AuthRedirects with ActionRefiner[Request, AgentUser] with FeatureSwitching {
+  extends AuthRedirects with FeatureSwitching {
 
   lazy val logger: Logger = Logger(getClass)
 
-  implicit val executionContext: ExecutionContext = mcc.executionContext
+  def authorise(arnRequired: Boolean = true): ActionRefiner[Request, AgentUser] = new ActionRefiner[Request, AgentUser] {
 
-  override protected def refine[A](request: Request[A]): Future[Either[Result, AgentUser[A]]] = {
+    implicit val executionContext: ExecutionContext = mcc.executionContext
 
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter
-      .fromRequestAndSession(request, request.session)
+    override protected def refine[A](request: Request[A]): Future[Either[Result, AgentUser[A]]] = {
 
-    implicit val req: Request[A] = request
+      implicit val hc: HeaderCarrier = HeaderCarrierConverter
+        .fromRequestAndSession(request, request.session)
 
-    val isAgent: Predicate = Enrolment("HMRC-AS-AGENT") and AffinityGroup.Agent
-    val isNotAgent: Predicate = AffinityGroup.Individual or AffinityGroup.Organisation
+      implicit val req: Request[A] = request
 
-    authorisedFunctions.authorised( isAgent or isNotAgent)
-      .retrieve(allEnrolments and credentials and affinityGroup and confidenceLevel) {
-        redirectIfNotAgent() orElse constructAgentUser()
-      }(hc, executionContext) recoverWith logAndRedirect
+      val isAgent: Predicate = Enrolment("HMRC-AS-AGENT") and AffinityGroup.Agent
+      val isNotAgent: Predicate = AffinityGroup.Individual or AffinityGroup.Organisation
+
+      val predicate = if(arnRequired) {
+        isAgent or isNotAgent
+      } else EmptyPredicate
+
+      authorisedFunctions.authorised(predicate)
+        .retrieve(allEnrolments and credentials and affinityGroup and confidenceLevel) {
+          redirectIfNotAgent() orElse constructAgentUser()
+        }(hc, executionContext) recoverWith logAndRedirect
+    }
   }
 
   def logAndRedirect[A]: PartialFunction[Throwable, Future[Either[Result, AgentUser[A]]]] = {

@@ -97,7 +97,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
     BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     financialDetailsOverdueCharges,
     Some(OutstandingChargesModel(List(
-      OutstandingChargeModel("POA1RR", Some(LocalDate.parse("2010-12-31")), 10.23, 1234), OutstandingChargeModel("POA1RR", Some(LocalDate.parse("2010-12-31")), 1.23, 1234))
+      OutstandingChargeModel("POA1RR-debit", Some(LocalDate.parse("2010-12-31")), 10.23, 1234), OutstandingChargeModel("POA1RR-debit", Some(LocalDate.parse("2010-12-31")), 1.23, 1234))
     ))
   )
 
@@ -123,7 +123,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
           .thenReturn(Future.successful(whatYouOweChargesListFull))
 
         val result: Future[Result] = controller.show()(fakeRequestWithNinoAndOrigin("PTA"))
@@ -141,7 +141,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
           .thenReturn(Future.successful(whatYouOweChargesListEmpty))
 
         val result: Future[Result] = controller.show()(fakeRequestWithNinoAndOrigin("PTA"))
@@ -159,7 +159,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
           .thenReturn(Future.failed(new Exception("failed to retrieve data")))
 
         val result: Future[Result] = controller.show()(fakeRequestWithNinoAndOrigin("PTA"))
@@ -187,7 +187,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
 
-        when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
           .thenReturn(Future.successful(whatYouOweWithAvailableCredits))
 
         val result: Future[Result] = controller.show()(fakeRequestWithNinoAndOrigin("PTA"))
@@ -214,7 +214,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
           .thenReturn(Future.successful(whatYouOweWithZeroAvailableCredits))
 
         val result: Future[Result] = controller.show()(fakeRequestWithNinoAndOrigin("PTA"))
@@ -239,7 +239,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
           .thenReturn(Future.successful(whatYouOweChargesListFull))
 
         val result: Future[Result] = controller.show()(fakeRequestWithNinoAndOrigin("PTA"))
@@ -259,7 +259,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
 
-        when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
           .thenReturn(Future.successful(whatYouOweChargesListFull))
 
         val result: Future[Result] = controller.show()(fakeRequestWithNinoAndOrigin("PTA"))
@@ -277,7 +277,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetPoaTaxYearForEntryPointCall(Right(None))
 
-        when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
           .thenReturn(Future.successful(whatYouOweChargesListFull))
 
         val result: Future[Result] = controller.show()(fakeRequestWithNinoAndOrigin("PTA"))
@@ -295,7 +295,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetPoaTaxYearForEntryPointCall(Left(new Exception("")))
 
-        when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
           .thenReturn(Future.successful(whatYouOweChargesListFull))
 
         val result: Future[Result] = controller.show()(fakeRequestWithNinoAndOrigin("PTA"))
@@ -313,7 +313,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
 
-        when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
           .thenReturn(Future.successful(whatYouOweChargesListWithReviewReconcile))
 
         val result: Future[Result] = controller.show()(fakeRequestWithNinoAndOrigin("PTA"))
@@ -330,7 +330,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
           .thenReturn(Future.successful(whatYouOweChargesListWithOverdueCharge))
 
         val result: Future[Result] = controller.show()(fakeRequestWithNinoAndOrigin("PTA"))
@@ -347,7 +347,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
           .thenReturn(Future.successful(whatYouOweChargesListWithOverdueCharge))
 
         val result: Future[Result] = controller.show()(fakeRequestWithNinoAndOrigin("PTA"))
@@ -364,7 +364,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
           .thenReturn(Future.successful(whatYouOweChargesListWithBalancingChargeNotOverdue))
 
         val result: Future[Result] = controller.show()(fakeRequestWithNinoAndOrigin("PTA"))

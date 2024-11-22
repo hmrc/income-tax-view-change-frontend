@@ -18,6 +18,7 @@ package auth.authV2
 
 import auth.MtdItUser
 import auth.authV2.actions._
+import enums.MTDUserRole
 import play.api.mvc._
 
 import javax.inject.{Inject, Singleton}
@@ -58,7 +59,7 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
       retrieveBtaNavBar
   }
 
-  def asAgent: ActionBuilder[AgentUser, AnyContent] = checkSessionTimeout andThen authoriseAndRetrieveAgent
+  def asAgent(arnRequired: Boolean = true): ActionBuilder[AgentUser, AnyContent] = checkSessionTimeout andThen authoriseAndRetrieveAgent.authorise(arnRequired)
 
   def asMTDAgentWithConfirmedClient: ActionBuilder[MtdItUser, AnyContent] = {
     checkSessionTimeout andThen
@@ -85,6 +86,22 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
       agentIsPrimaryAction andThen
       retrieveNinoWithIncomeSources andThen
       retrieveFeatureSwitches
+  }
+
+  def asMDTIndividualOrAgentWithClient(isAgent: Boolean): ActionBuilder[MtdItUser, AnyContent] = {
+    if(isAgent) {
+      asMTDAgentWithConfirmedClient
+    } else {
+      asMTDIndividual
+    }
+  }
+
+  def asMDTIndividualOrPrimaryAgentWithClient(isAgent: Boolean): ActionBuilder[MtdItUser, AnyContent] = {
+    if(isAgent) {
+      asMTDPrimaryAgent
+    } else {
+      asMTDIndividual
+    }
   }
 }
 
