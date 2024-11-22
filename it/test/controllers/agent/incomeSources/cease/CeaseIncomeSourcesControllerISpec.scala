@@ -19,8 +19,8 @@ package controllers.agent.incomeSources.cease
 import controllers.agent.ControllerISpecHelper
 import enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDAgentAuthStub}
-import play.api.http.Status.OK
 import models.admin.{IncomeSources, NavBarFs}
+import play.api.http.Status.OK
 import testConstants.BaseIntegrationTestConstants.{getAgentClientDetailsForCookie, testMtditid}
 import testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyAndCeasedBusiness, multipleBusinessesAndUkProperty}
 
