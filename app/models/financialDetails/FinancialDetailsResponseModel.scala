@@ -242,11 +242,11 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
       .sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
   }
 
-  def toChargeItem(reviewReconcile: Boolean): List[ChargeItem] = {
+  def toChargeItem(): List[ChargeItem] = {
     Try {
       this.documentDetails
-        .map( x =>
-          ChargeItem.fromDocumentPair(x, financialDetails, reviewReconcile)
+        .map( documentDetail =>
+          ChargeItem.fromDocumentPair(documentDetail, financialDetails)
         )
     } match {
       case Success(res) =>
