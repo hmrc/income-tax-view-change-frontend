@@ -19,7 +19,7 @@ package controllers.incomeSources.cease
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Cease, IncomeSources, JourneyType}
+import enums.JourneyType.{Cease, IncomeSourceJourneyType, JourneyType}
 import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
@@ -97,7 +97,7 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
   def verifySetMongoKey(key: String, value: String, journeyType: JourneyType): Unit = {
     val argumentKey: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
     val argumentValue: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-    val argumentJourneyType: ArgumentCaptor[IncomeSources] = ArgumentCaptor.forClass(classOf[IncomeSources])
+    val argumentJourneyType: ArgumentCaptor[IncomeSourceJourneyType] = ArgumentCaptor.forClass(classOf[IncomeSourceJourneyType])
 
     verify(mockSessionService).setMongoKey(argumentKey.capture(), argumentValue.capture(), argumentJourneyType.capture())(any(), any())
     argumentKey.getValue shouldBe key
@@ -113,7 +113,7 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
         mockPropertyIncomeSource()
 
         setupMockCreateSession(true)
-        setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSources(Cease, incomeSourceType)))))
+        setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
 
         val result = showCall(isAgent, incomeSourceType)
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -212,7 +212,7 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
         enable(IncomeSourcesFs)
         mockBothPropertyBothBusiness()
         setupMockCreateSession(true)
-        setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSources(Cease, incomeSourceType)))))
+        setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
 
         val result = if (isAgent) {
           TestDeclarePropertyCeasedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
@@ -260,7 +260,7 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
         mockPropertyIncomeSource()
         setupMockSetSessionKeyMongo(Right(true))
 
-        val journeyType = IncomeSources(Cease, incomeSourceType)
+        val journeyType = IncomeSourceJourneyType(Cease, incomeSourceType)
         val redirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
           (isAgent, incomeSourceType) match {
             case (true, _) => controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(None, incomeSourceType).url

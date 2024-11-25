@@ -18,7 +18,7 @@ package controllers.incomeSources.add
 
 import models.admin.IncomeSourcesFs
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, IncomeSources}
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.AddIncomeSourceData.{accountingPeriodEndDateField, accountingPeriodStartDateField, dateStartedField}
@@ -66,9 +66,9 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
   val addUKPropertyStartDateCheckDetailsShowUrl: String = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(UkProperty).url
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
-  val journeyTypeSE: IncomeSources = IncomeSources(Add, SelfEmployment)
-  val journeyTypeUK: IncomeSources = IncomeSources(Add, UkProperty)
-  val journeyTypeFP: IncomeSources = IncomeSources(Add, ForeignProperty)
+  val journeyTypeSE: IncomeSourceJourneyType = IncomeSourceJourneyType(Add, SelfEmployment)
+  val journeyTypeUK: IncomeSourceJourneyType = IncomeSourceJourneyType(Add, UkProperty)
+  val journeyTypeFP: IncomeSourceJourneyType = IncomeSourceJourneyType(Add, ForeignProperty)
   val testBusinessStartDate: LocalDate = LocalDate.of(2022, 10, 10)
   val testAccountingPeriodStartDate: LocalDate = LocalDate.of(2022, 10, 10)
   val testAccountingPeriodEndDate: LocalDate = LocalDate.of(2023, 4, 5)
@@ -93,7 +93,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
 
   def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
-    journeyType = IncomeSources(Add, incomeSourceType).toString,
+    journeyType = IncomeSourceJourneyType(Add, incomeSourceType).toString,
     addIncomeSourceData = Some(testAddIncomeSourceDataWithStartDate(incomeSourceType)))
 
   override def beforeEach(): Unit = {

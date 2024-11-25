@@ -19,7 +19,7 @@ package controllers.manageBusinesses.manage
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{IncomeSources, JourneyType, Manage}
+import enums.JourneyType.{IncomeSourceJourneyType, JourneyType, Manage}
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -135,7 +135,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         setupMockAuthorisationSuccess(isAgent)
         mockBothPropertyBothBusiness()
         setupMockCreateSession(true)
-        setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSources(Manage, incomeSourceType)))))
+        setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
         val result = if (isAgent) TestConfirmReportingMethodSharedController
           .show(testTaxYear, testChangeToAnnual, isAgent, incomeSourceType)(fakeRequestConfirmedClient())
         else TestConfirmReportingMethodSharedController
@@ -303,8 +303,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     setupMockAuthorisationSuccess(isAgent)
 
     setupMockCreateSession(true)
-    if (emptyMongo) setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSources(Manage, incomeSourceType)))))
-    else setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSources(Manage, incomeSourceType)))))
+    if (emptyMongo) setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
+    else setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
 
     setupMockSetMongoData(true)
 
@@ -334,7 +334,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     setupMockAuthorisationSuccess(isAgent)
 
     setupMockCreateSession(true)
-    setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSources(Manage, incomeSourceType)))))
+    setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
     setupMockSetMongoData(true)
 
     TestConfirmReportingMethodSharedController

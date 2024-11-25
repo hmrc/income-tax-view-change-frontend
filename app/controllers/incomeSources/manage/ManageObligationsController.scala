@@ -21,7 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney._
-import enums.JourneyType.{IncomeSources, JourneyType, Manage}
+import enums.JourneyType.{IncomeSourceJourneyType, JourneyType, Manage}
 import enums.{AnnualReportingMethod, QuarterlyReportingMethod}
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.ManageIncomeSourceData
@@ -55,7 +55,7 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
   def showSelfEmployment(changeTo: String, taxYear: String): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       withIncomeSourcesFS {
-        sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, IncomeSources(Manage, SelfEmployment)).flatMap {
+        sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, IncomeSourceJourneyType(Manage, SelfEmployment)).flatMap {
           case Right(incomeSourceIdMaybe) =>
             val incomeSourceIdOption: Option[IncomeSourceId] = incomeSourceIdMaybe.map(id => IncomeSourceId(id))
             handleRequest(
@@ -77,7 +77,7 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
   def showAgentSelfEmployment(changeTo: String, taxYear: String): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
     implicit user =>
       withIncomeSourcesFS {
-        sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, IncomeSources(Manage, SelfEmployment)).flatMap {
+        sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, IncomeSourceJourneyType(Manage, SelfEmployment)).flatMap {
           case Right(incomeSourceIdMaybe) =>
             val incomeSourceIdOption: Option[IncomeSourceId] = incomeSourceIdMaybe.map(id => IncomeSourceId(id))
             handleRequest(

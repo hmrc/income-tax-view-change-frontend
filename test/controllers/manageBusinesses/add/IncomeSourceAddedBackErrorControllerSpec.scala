@@ -19,7 +19,7 @@ package controllers.manageBusinesses.add
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, IncomeSources, JourneyType}
+import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
 import models.admin.IncomeSourcesFs
@@ -112,7 +112,7 @@ class IncomeSourceAddedBackErrorControllerSpec extends TestSupport with MockAuth
 
             authenticate(isAgent)
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-            mockMongo(IncomeSources(Add, SelfEmployment))
+            mockMongo(IncomeSourceJourneyType(Add, SelfEmployment))
 
             val result = if (isAgent) TestIncomeSourceAddedBackErrorController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
             else TestIncomeSourceAddedBackErrorController.show(incomeSourceType)(fakeRequestWithActiveSession)
@@ -136,7 +136,7 @@ class IncomeSourceAddedBackErrorControllerSpec extends TestSupport with MockAuth
             mockNoIncomeSources()
             authenticate(isAgent)
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-            mockMongo(IncomeSources(Add, incomeSourceType))
+            mockMongo(IncomeSourceJourneyType(Add, incomeSourceType))
 
             val result = if (isAgent) TestIncomeSourceAddedBackErrorController.submitAgent(incomeSourceType)(postRequest(isAgent))
             else TestIncomeSourceAddedBackErrorController.submit(incomeSourceType)(postRequest(isAgent))

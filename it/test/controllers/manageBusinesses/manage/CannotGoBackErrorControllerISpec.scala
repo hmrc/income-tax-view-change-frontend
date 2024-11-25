@@ -17,7 +17,7 @@
 package controllers.manageBusinesses.manage
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{IncomeSources, Manage}
+import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.IncomeSourcesFs
@@ -44,7 +44,7 @@ class CannotGoBackErrorControllerISpec extends ComponentSpecBase {
     enable(IncomeSourcesFs)
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-    await(sessionService.setMongoData(completedUIJourneySessionData(IncomeSources(Manage, incomeSourceType))))
+    await(sessionService.setMongoData(completedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType))))
 
     lazy val result: WSResponse = incomeSourceType match {
       case SelfEmployment => IncomeTaxViewChangeFrontendManageBusinesses.getManageSECannotGoBack
@@ -80,7 +80,7 @@ class CannotGoBackErrorControllerISpec extends ComponentSpecBase {
     enable(IncomeSourcesFs)
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-    await(sessionService.setMongoData(emptyUIJourneySessionData(IncomeSources(Manage, incomeSourceType))))
+    await(sessionService.setMongoData(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType))))
 
     val result: WSResponse = incomeSourceType match {
       case SelfEmployment => IncomeTaxViewChangeFrontendManageBusinesses.getManageSECannotGoBack
@@ -98,7 +98,7 @@ class CannotGoBackErrorControllerISpec extends ComponentSpecBase {
       "FS enabled - UK Property" in {
         enable(IncomeSourcesFs)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-        await(sessionService.setMongoData(completedUIJourneySessionData(IncomeSources(Manage, UkProperty))))
+        await(sessionService.setMongoData(completedUIJourneySessionData(IncomeSourceJourneyType(Manage, UkProperty))))
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses.getManageUKPropertyCannotGoBack
 
@@ -123,7 +123,7 @@ class CannotGoBackErrorControllerISpec extends ComponentSpecBase {
       "FS enabled - Foreign Property" in {
         enable(IncomeSourcesFs)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-        await(sessionService.setMongoData(completedUIJourneySessionData(IncomeSources(Manage, ForeignProperty))))
+        await(sessionService.setMongoData(completedUIJourneySessionData(IncomeSourceJourneyType(Manage, ForeignProperty))))
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses.getManageForeignPropertyCannotGoBack
 

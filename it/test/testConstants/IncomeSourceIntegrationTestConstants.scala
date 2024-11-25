@@ -19,7 +19,7 @@ package testConstants
 import enums.ChargeType.{ITSA_NI, NIC4_SCOTLAND}
 import enums.CodingOutType._
 import enums.IncomeSourceJourney.SelfEmployment
-import enums.JourneyType.IncomeSources
+import enums.JourneyType.IncomeSourceJourneyType
 import models.incomeSourceDetails._
 import play.api.libs.json.{JsObject, JsValue, Json}
 import testConstants.BaseIntegrationTestConstants._
@@ -1679,7 +1679,7 @@ object IncomeSourceIntegrationTestConstants {
     yearOfMigration = Some("2018")
   )
 
-  lazy val completedUIJourneySessionData: IncomeSources => UIJourneySessionData = (incomeSources: IncomeSources) => {
+  lazy val completedUIJourneySessionData: IncomeSourceJourneyType => UIJourneySessionData = (incomeSources: IncomeSourceJourneyType) => {
     incomeSources.operation.operationType match {
       case "ADD" => UIJourneySessionData(testSessionId, incomeSources.toString,
         addIncomeSourceData = Some(AddIncomeSourceData(journeyIsComplete = Some(true))))
@@ -1694,7 +1694,7 @@ object IncomeSourceIntegrationTestConstants {
     }
   }
 
-  val emptyUIJourneySessionData: IncomeSources => UIJourneySessionData = incomeSources => {
+  val emptyUIJourneySessionData: IncomeSourceJourneyType => UIJourneySessionData = incomeSources => {
     incomeSources.operation.operationType match {
       case "ADD" =>
         UIJourneySessionData(

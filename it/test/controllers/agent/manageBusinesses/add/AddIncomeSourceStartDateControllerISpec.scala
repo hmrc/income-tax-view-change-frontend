@@ -18,7 +18,7 @@ package controllers.agent.manageBusinesses.add
 
 import models.admin.IncomeSourcesFs
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, IncomeSources}
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
@@ -65,9 +65,9 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
     messagesAPI("dateForm.hint")
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
-  val journeyTypeSE: IncomeSources = IncomeSources(Add, SelfEmployment)
-  val journeyTypeUK: IncomeSources = IncomeSources(Add, UkProperty)
-  val journeyTypeFP: IncomeSources = IncomeSources(Add, ForeignProperty)
+  val journeyTypeSE: IncomeSourceJourneyType = IncomeSourceJourneyType(Add, SelfEmployment)
+  val journeyTypeUK: IncomeSourceJourneyType = IncomeSourceJourneyType(Add, UkProperty)
+  val journeyTypeFP: IncomeSourceJourneyType = IncomeSourceJourneyType(Add, ForeignProperty)
   val testBusinessStartDate: LocalDate = LocalDate.of(2022, 10, 10)
   val testBusinessName: String = "Test Business"
   val testBusinessTrade: String = "Plumbing"
@@ -87,7 +87,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
 
   def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
-    journeyType = IncomeSources(Add, incomeSourceType).toString,
+    journeyType = IncomeSourceJourneyType(Add, incomeSourceType).toString,
     addIncomeSourceData = Some(testAddIncomeSourceData(incomeSourceType)))
 
   val testAddIncomeSourceDataWithStartDate: IncomeSourceType => AddIncomeSourceData = (incomeSourceType: IncomeSourceType) =>
@@ -95,7 +95,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
 
   def testUIJourneySessionDataWithStartDate(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
-    journeyType = IncomeSources(Add, incomeSourceType).toString,
+    journeyType = IncomeSourceJourneyType(Add, incomeSourceType).toString,
     addIncomeSourceData = Some(testAddIncomeSourceDataWithStartDate(incomeSourceType)))
 
   override def beforeEach(): Unit = {

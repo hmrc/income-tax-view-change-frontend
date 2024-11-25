@@ -21,7 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney._
-import enums.JourneyType.{Cease, IncomeSources, JourneyType}
+import enums.JourneyType.{Cease, IncomeSourceJourneyType, JourneyType}
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels.IncomeSourceCeasedObligationsViewModel
@@ -60,7 +60,7 @@ class IncomeSourceCeasedObligationsController @Inject()(val authorisedFunctions:
 
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     withIncomeSourcesFS {
-      withSessionData(IncomeSources(Cease, incomeSourceType), CannotGoBackPage) { sessionData =>
+      withSessionData(IncomeSourceJourneyType(Cease, incomeSourceType), CannotGoBackPage) { sessionData =>
 
         updateMongoCeased(incomeSourceType)
 
@@ -114,7 +114,7 @@ class IncomeSourceCeasedObligationsController @Inject()(val authorisedFunctions:
   }
 
   private def updateMongoCeased(incomeSourceType: IncomeSourceType)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    sessionService.getMongo(IncomeSources(Cease, incomeSourceType)).flatMap {
+    sessionService.getMongo(IncomeSourceJourneyType(Cease, incomeSourceType)).flatMap {
       case Right(Some(sessionData)) =>
         val oldCeaseIncomeSourceSessionData = sessionData.ceaseIncomeSourceData.getOrElse(CeaseIncomeSourceData(incomeSourceId = Some(CeaseIncomeSourceData.incomeSourceIdField), endDate = None, ceaseIncomeSourceDeclare = None, journeyIsComplete = None))
         val updatedCeaseIncomeSourceSessionData = oldCeaseIncomeSourceSessionData.copy(journeyIsComplete = Some(true))

@@ -21,7 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.{BeforeSubmissionPage, IncomeSourceType, SelfEmployment}
-import enums.JourneyType.{Cease, IncomeSources, JourneyType}
+import enums.JourneyType.{Cease, IncomeSourceJourneyType, JourneyType}
 import forms.incomeSources.cease.CeaseIncomeSourceEndDateFormProvider
 import models.admin.IncomeSourcesNewJourney
 import models.core.IncomeSourceIdHash.mkFromQueryString
@@ -91,7 +91,7 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
 
   def handleRequest(id: Option[IncomeSourceIdHash], isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] =
-    withSessionData(IncomeSources(Cease, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
+    withSessionData(IncomeSourceJourneyType(Cease, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
 
       val hashCompareResult: Option[Either[Throwable, IncomeSourceId]] = id.map(x => user.incomeSources.compareHashToQueryString(x))
 
@@ -153,7 +153,7 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
           CeaseIncomeSourceData.dateCeasedField -> validatedInput.toString,
           CeaseIncomeSourceData.incomeSourceIdField -> incomeSourceId.value
         )
-        sessionService.setMultipleMongoData(mongoSetValues, IncomeSources(Cease, incomeSourceType)).flatMap {
+        sessionService.setMultipleMongoData(mongoSetValues, IncomeSourceJourneyType(Cease, incomeSourceType)).flatMap {
           case Right(_) => Future.successful(result)
           case Left(_) => Future.failed(new Error(
             s"Failed to set data in session storage. incomeSourceType: $incomeSourceType."))
@@ -163,7 +163,7 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
         val propertyEndDate = validatedInput.toString
         val result = Redirect(redirectAction)
         sessionService.setMongoKey(key = CeaseIncomeSourceData.dateCeasedField, value = propertyEndDate,
-          incomeSources = IncomeSources(Cease, incomeSourceType)).flatMap {
+          incomeSources = IncomeSourceJourneyType(Cease, incomeSourceType)).flatMap {
           case Right(_) => Future.successful(result)
           case Left(exception) => Future.failed(exception)
         }

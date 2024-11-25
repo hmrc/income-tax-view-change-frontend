@@ -19,7 +19,7 @@ package controllers.incomeSources.add
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, IncomeSources, JourneyType}
+import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
 import enums.{AccrualsAsAccountingMethod, CashAsAccountingMethod}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
@@ -136,7 +136,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
         disableAllSwitches()
         enable(IncomeSourcesFs)
         mockNoIncomeSources()
-        val journeyType = IncomeSources(Add, incomeSourceType)
+        val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
         setupMockGetMongo(Right(Some(sessionData(journeyType))))
 
         val result: Future[Result] = showResult(incomeSourceType, isAgent)
@@ -155,7 +155,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
           mockBusinessIncomeSourceWithAccruals()
           reset(mockSessionService)
           setupMockSetMongoData(true)
-          val journeyType = IncomeSources(Add, incomeSourceType)
+          val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
           setupMockGetMongo(Right(Some(sessionDataWithAccMethodAccruals(journeyType))))
 
           val result: Future[Result] = showResult(incomeSourceType, isAgent)
@@ -168,7 +168,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
           enable(IncomeSourcesFs)
           mockBusinessIncomeSource()
           setupMockSetMongoData(true)
-          val journeyType = IncomeSources(Add, incomeSourceType)
+          val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
           setupMockGetMongo(Right(Some(sessionDataWithAccMethodCash(journeyType))))
 
           val result: Future[Result] = showResult(incomeSourceType, isAgent)
@@ -181,7 +181,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
           enable(IncomeSourcesFs)
           mockBusinessIncomeSourceWithCashAndAccruals()
           setupMockSetMongoData(true)
-          val journeyType = IncomeSources(Add, incomeSourceType)
+          val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
           setupMockGetMongo(Right(Some(sessionData(journeyType))))
 
           val result: Future[Result] = showResult(incomeSourceType, isAgent)
@@ -197,7 +197,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
         disable(IncomeSourcesFs)
         mockBusinessIncomeSource()
         setupMockSetMongoData(true)
-        val journeyType = IncomeSources(Add, incomeSourceType)
+        val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
         setupMockGetMongo(Right(Some(sessionData(journeyType))))
 
         val result: Future[Result] = showResult(incomeSourceType, isAgent)
@@ -221,7 +221,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
         mockBusinessIncomeSource()
         setupMockAuth(isAgent)
         setupMockSetMongoData(true)
-        setupMockGetMongo(Right(Some(sessionDataCompletedJourney(IncomeSources(Add, incomeSourceType)))))
+        setupMockGetMongo(Right(Some(sessionDataCompletedJourney(IncomeSourceJourneyType(Add, incomeSourceType)))))
 
         val result: Future[Result] = showResult(incomeSourceType, isAgent)
         status(result) shouldBe SEE_OTHER
@@ -236,7 +236,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
         mockBusinessIncomeSource()
         setupMockAuth(isAgent)
         setupMockSetMongoData(true)
-        setupMockGetMongo(Right(Some(sessionDataISAdded(IncomeSources(Add, incomeSourceType)))))
+        setupMockGetMongo(Right(Some(sessionDataISAdded(IncomeSourceJourneyType(Add, incomeSourceType)))))
 
         val result: Future[Result] = showResult(incomeSourceType, isAgent)
         status(result) shouldBe SEE_OTHER
@@ -259,7 +259,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
           .thenReturn(Future.successful(HttpResponse(OK, "valid")))
 
         setupMockSetMongoData(true)
-        setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSources(Add, incomeSourceType)))))
+        setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Add, incomeSourceType)))))
 
         lazy val result: Future[Result] = submitResult(incomeSourceType, accountingMethod, isAgent)
 
@@ -274,7 +274,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
         when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any()))
           .thenReturn(Future.successful(HttpResponse(OK, "valid")))
 
-        setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSources(Add, incomeSourceType)))))
+        setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Add, incomeSourceType)))))
         setupMockSetMongoData(true)
 
         lazy val result: Future[Result] = submitResult(incomeSourceType, "traditional", isAgent)
@@ -293,7 +293,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
         when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any()))
           .thenReturn(Future.successful(HttpResponse(OK, "valid")))
 
-        setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSources(Add, incomeSourceType)))))
+        setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Add, incomeSourceType)))))
         setupMockSetMongoData(true)
 
         lazy val result: Future[Result] = submitResult(incomeSourceType, "", isAgent)
@@ -315,7 +315,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
         enable(IncomeSourcesFs)
         mockNoIncomeSources()
 
-        val journeyType = IncomeSources(Add, incomeSourceType)
+        val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
         setupMockGetMongo(Right(Some(UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(incomeSourcesAccountingMethod = cashOrAccrualsFlag))))))
         setupMockSetMongoData(true)
 

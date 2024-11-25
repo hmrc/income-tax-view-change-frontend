@@ -18,7 +18,7 @@ package controllers.manageBusinesses.manage
 
 import auth.MtdItUser
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{IncomeSources, Manage}
+import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -103,7 +103,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
 
   def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
-    journeyType = IncomeSources(Manage, incomeSourceType).toString,
+    journeyType = IncomeSourceJourneyType(Manage, incomeSourceType).toString,
     manageIncomeSourceData = Some(ManageIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), reportingMethod = Some(annual), taxYear = Some(2024))))
 
   s"calling GET $confirmReportingMethodShowUKPropertyUrl" should {

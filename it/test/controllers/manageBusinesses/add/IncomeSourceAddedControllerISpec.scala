@@ -17,7 +17,7 @@
 package controllers.manageBusinesses.add
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, IncomeSources}
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.IncomeSourcesFs
@@ -69,7 +69,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase {
 
   def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
-    journeyType = IncomeSources(Add, incomeSourceType).toString,
+    journeyType = IncomeSourceJourneyType(Add, incomeSourceType).toString,
     addIncomeSourceData = Some(AddIncomeSourceData()))
 
   s"calling GET $incomeSourceAddedSelfEmploymentShowUrl" should {
@@ -80,7 +80,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase {
 
         When(s"I call GET $incomeSourceAddedSelfEmploymentShowUrl")
 
-        await(sessionService.createSession(IncomeSources(Add, SelfEmployment)))
+        await(sessionService.createSession(IncomeSourceJourneyType(Add, SelfEmployment)))
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
           addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), dateStarted = Some(LocalDate.of(2024, 1, 1)))))))
@@ -102,7 +102,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase {
         }
 
         And("Mongo storage is successfully set")
-        sessionService.getMongoKey(AddIncomeSourceData.journeyIsCompleteField, IncomeSources(Add, SelfEmployment)).futureValue shouldBe Right(Some(true))
+        sessionService.getMongoKey(AddIncomeSourceData.journeyIsCompleteField, IncomeSourceJourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(true))
 
         result should have(
           httpStatus(OK),
@@ -119,7 +119,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         enable(IncomeSourcesFs)
 
-        await(sessionService.createSession(IncomeSources(Add, UkProperty)))
+        await(sessionService.createSession(IncomeSourceJourneyType(Add, UkProperty)))
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-UK",
           addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), dateStarted = Some(LocalDate.of(2024, 1, 1)))))))
@@ -134,7 +134,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/add-uk-property/uk-property-added")
 
         And("Mongo storage is successfully set")
-        sessionService.getMongoKey(AddIncomeSourceData.journeyIsCompleteField, IncomeSources(Add, UkProperty)).futureValue shouldBe Right(Some(true))
+        sessionService.getMongoKey(AddIncomeSourceData.journeyIsCompleteField, IncomeSourceJourneyType(Add, UkProperty)).futureValue shouldBe Right(Some(true))
 
         result should have(
           httpStatus(OK),
@@ -191,7 +191,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         enable(IncomeSourcesFs)
 
-        await(sessionService.createSession(IncomeSources(Add, ForeignProperty)))
+        await(sessionService.createSession(IncomeSourceJourneyType(Add, ForeignProperty)))
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-FP",
           addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), dateStarted = Some(LocalDate.of(2024, 1, 1)))))))
@@ -208,7 +208,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase {
         verifyIncomeSourceDetailsCall(testMtditid)
 
         And("Mongo storage is successfully set")
-        sessionService.getMongoKey(AddIncomeSourceData.journeyIsCompleteField, IncomeSources(Add, ForeignProperty)).futureValue shouldBe Right(Some(true))
+        sessionService.getMongoKey(AddIncomeSourceData.journeyIsCompleteField, IncomeSourceJourneyType(Add, ForeignProperty)).futureValue shouldBe Right(Some(true))
 
         val expectedText: String = messagesAPI("business-added.foreign-property.h1") + " " + messagesAPI("business-added.foreign-property.base")
 

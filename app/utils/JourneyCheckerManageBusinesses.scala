@@ -18,7 +18,7 @@ package utils
 
 import auth.MtdItUser
 import enums.IncomeSourceJourney.{BeforeSubmissionPage, CannotGoBackPage, InitialPage, JourneyState}
-import enums.JourneyType.{Add, Cease, IncomeSources, Manage}
+import enums.JourneyType.{Add, Cease, IncomeSourceJourneyType, Manage}
 import models.incomeSourceDetails.UIJourneySessionData
 import play.api.Logger
 import play.api.mvc.Result
@@ -38,8 +38,8 @@ trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils {
 
   private lazy val isAgent: MtdItUser[_] => Boolean = (user: MtdItUser[_]) => user.userType.contains(Agent)
 
-  private lazy val redirectUrl: (IncomeSources, Boolean) => MtdItUser[_] => Future[Result] =
-    (incomeSources: IncomeSources, useDefault: Boolean) => user => {
+  private lazy val redirectUrl: (IncomeSourceJourneyType, Boolean) => MtdItUser[_] => Future[Result] =
+    (incomeSources: IncomeSourceJourneyType, useDefault: Boolean) => user => {
       (incomeSources.operation, isAgent(user), useDefault) match {
         case (Add, true, true) =>
           Future.successful {
@@ -86,14 +86,14 @@ trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils {
       }
     }
 
-  private def useDefaultRedirect(data: UIJourneySessionData, incomeSources: IncomeSources, journeyState: JourneyState): Boolean = {
+  private def useDefaultRedirect(data: UIJourneySessionData, incomeSources: IncomeSourceJourneyType, journeyState: JourneyState): Boolean = {
     incomeSources.operation match {
       case Add => !((journeyState == BeforeSubmissionPage || journeyState == InitialPage) && data.addIncomeSourceData.flatMap(_.incomeSourceAdded).getOrElse(false))
       case _ => true
     }
   }
 
-  def withSessionData(incomeSources: IncomeSources, journeyState: JourneyState)(codeBlock: UIJourneySessionData => Future[Result])
+  def withSessionData(incomeSources: IncomeSourceJourneyType, journeyState: JourneyState)(codeBlock: UIJourneySessionData => Future[Result])
                      (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     withIncomeSourcesFS {
       sessionService.getMongo(incomeSources).flatMap {
@@ -118,7 +118,7 @@ trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils {
     }
   }
 
-  private def showCannotGoBackErrorPage(data: UIJourneySessionData, incomeSources: IncomeSources, journeyState: JourneyState): Boolean = {
+  private def showCannotGoBackErrorPage(data: UIJourneySessionData, incomeSources: IncomeSourceJourneyType, journeyState: JourneyState): Boolean = {
     (incomeSources.operation, journeyState) match {
       case (_, CannotGoBackPage) => false
       case (Add, BeforeSubmissionPage) | (Add, InitialPage) =>

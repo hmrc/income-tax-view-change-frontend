@@ -18,7 +18,7 @@ package controllers.manageBusinesses.cease
 
 import models.admin.IncomeSourcesFs
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Cease, IncomeSources}
+import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.CeaseIncomeSourceData.{dateCeasedField, incomeSourceIdField}
@@ -136,8 +136,8 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
           redirectURI(checkCeaseBusinessDetailsShowUrl)
         )
 
-        sessionService.getMongoKey(dateCeasedField, IncomeSources(Cease, SelfEmployment)).futureValue shouldBe Right(Some(LocalDate.parse(testEndDate2022)))
-        sessionService.getMongoKey(incomeSourceIdField, IncomeSources(Cease, SelfEmployment)).futureValue shouldBe Right(Some(testSelfEmploymentId))
+        sessionService.getMongoKey(dateCeasedField, IncomeSourceJourneyType(Cease, SelfEmployment)).futureValue shouldBe Right(Some(LocalDate.parse(testEndDate2022)))
+        sessionService.getMongoKey(incomeSourceIdField, IncomeSourceJourneyType(Cease, SelfEmployment)).futureValue shouldBe Right(Some(testSelfEmploymentId))
 
       }
       "form is filled incorrectly" in {
@@ -155,8 +155,8 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
             messagesAPI("incomeSources.cease.endDate.selfEmployment.error.invalid"))
         )
 
-        sessionService.getMongoKey(dateCeasedField, IncomeSources(Cease, SelfEmployment)).futureValue shouldBe Right(None)
-        sessionService.getMongoKey(incomeSourceIdField, IncomeSources(Cease, SelfEmployment)).futureValue shouldBe Right(None)
+        sessionService.getMongoKey(dateCeasedField, IncomeSourceJourneyType(Cease, SelfEmployment)).futureValue shouldBe Right(None)
+        sessionService.getMongoKey(incomeSourceIdField, IncomeSourceJourneyType(Cease, SelfEmployment)).futureValue shouldBe Right(None)
 
       }
     }
@@ -208,8 +208,8 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
           redirectURI(checkCeaseBusinessDetailsShowUrl)
         )
 
-        sessionService.getMongoKey(dateCeasedField, IncomeSources(Cease, SelfEmployment)).futureValue shouldBe Right(Some(LocalDate.parse(testEndDate2022)))
-        sessionService.getMongoKey(incomeSourceIdField, IncomeSources(Cease, SelfEmployment)).futureValue shouldBe Right(Some(testSelfEmploymentId))
+        sessionService.getMongoKey(dateCeasedField, IncomeSourceJourneyType(Cease, SelfEmployment)).futureValue shouldBe Right(Some(LocalDate.parse(testEndDate2022)))
+        sessionService.getMongoKey(incomeSourceIdField, IncomeSourceJourneyType(Cease, SelfEmployment)).futureValue shouldBe Right(Some(testSelfEmploymentId))
 
       }
       "form is filled incorrectly" in {
@@ -227,8 +227,8 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
             messagesAPI("incomeSources.cease.endDate.selfEmployment.error.invalid"))
         )
 
-        sessionService.getMongoKey(dateCeasedField, IncomeSources(Cease, SelfEmployment)).futureValue shouldBe Right(None)
-        sessionService.getMongoKey(incomeSourceIdField, IncomeSources(Cease, SelfEmployment)).futureValue shouldBe Right(None)
+        sessionService.getMongoKey(dateCeasedField, IncomeSourceJourneyType(Cease, SelfEmployment)).futureValue shouldBe Right(None)
+        sessionService.getMongoKey(incomeSourceIdField, IncomeSourceJourneyType(Cease, SelfEmployment)).futureValue shouldBe Right(None)
 
       }
     }
@@ -293,7 +293,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
           redirectURI(checkYourCeaseDetailsUkPropertyShowUrl)
         )
 
-        sessionService.getMongoKey(dateCeasedField, IncomeSources(Cease, UkProperty)).futureValue shouldBe Right(Some(LocalDate.parse(testEndDate2022)))
+        sessionService.getMongoKey(dateCeasedField, IncomeSourceJourneyType(Cease, UkProperty)).futureValue shouldBe Right(Some(LocalDate.parse(testEndDate2022)))
       }
       "form is filled incorrectly" in {
         val formData: Map[String, Seq[String]] = {
@@ -310,7 +310,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
             messagesAPI("incomeSources.cease.endDate.ukProperty.error.invalid"))
         )
 
-        sessionService.getMongoKey(dateCeasedField, IncomeSources(Cease, UkProperty)).futureValue shouldBe Right(None)
+        sessionService.getMongoKey(dateCeasedField, IncomeSourceJourneyType(Cease, UkProperty)).futureValue shouldBe Right(None)
 
       }
     }
@@ -360,7 +360,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
           redirectURI(checkYourCeaseDetailsUkPropertyShowUrl)
         )
 
-        sessionService.getMongoKey(dateCeasedField, IncomeSources(Cease, UkProperty)).futureValue shouldBe Right(Some(LocalDate.parse(testEndDate2022)))
+        sessionService.getMongoKey(dateCeasedField, IncomeSourceJourneyType(Cease, UkProperty)).futureValue shouldBe Right(Some(LocalDate.parse(testEndDate2022)))
 
       }
       "form is filled incorrectly" in {
@@ -378,7 +378,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
             messagesAPI("incomeSources.cease.endDate.ukProperty.error.invalid"))
         )
 
-        sessionService.getMongoKey(dateCeasedField, IncomeSources(Cease, UkProperty)).futureValue shouldBe Right(None)
+        sessionService.getMongoKey(dateCeasedField, IncomeSourceJourneyType(Cease, UkProperty)).futureValue shouldBe Right(None)
 
       }
     }
@@ -442,7 +442,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
           redirectURI(checkYourCeaseDetailsForeignPropertyShowUrl)
         )
 
-        sessionService.getMongoKey(dateCeasedField, IncomeSources(Cease, ForeignProperty)).futureValue shouldBe Right(Some(LocalDate.parse(testEndDate2022)))
+        sessionService.getMongoKey(dateCeasedField, IncomeSourceJourneyType(Cease, ForeignProperty)).futureValue shouldBe Right(Some(LocalDate.parse(testEndDate2022)))
 
       }
       "form is filled incorrectly" in {
@@ -460,7 +460,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
             messagesAPI("incomeSources.cease.endDate.foreignProperty.error.invalid"))
         )
 
-        sessionService.getMongoKey(dateCeasedField, IncomeSources(Cease, ForeignProperty)).futureValue shouldBe Right(None)
+        sessionService.getMongoKey(dateCeasedField, IncomeSourceJourneyType(Cease, ForeignProperty)).futureValue shouldBe Right(None)
 
       }
     }
@@ -511,7 +511,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
           redirectURI(checkYourCeaseDetailsForeignPropertyShowUrl)
         )
 
-        sessionService.getMongoKey(dateCeasedField, IncomeSources(Cease, ForeignProperty)).futureValue shouldBe Right(Some(LocalDate.parse(testEndDate2022)))
+        sessionService.getMongoKey(dateCeasedField, IncomeSourceJourneyType(Cease, ForeignProperty)).futureValue shouldBe Right(Some(LocalDate.parse(testEndDate2022)))
 
       }
       "form is filled incorrectly" in {
@@ -529,7 +529,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
             messagesAPI("incomeSources.cease.endDate.foreignProperty.error.invalid"))
         )
 
-        sessionService.getMongoKey(dateCeasedField, IncomeSources(Cease, ForeignProperty)).futureValue shouldBe Right(None)
+        sessionService.getMongoKey(dateCeasedField, IncomeSourceJourneyType(Cease, ForeignProperty)).futureValue shouldBe Right(None)
 
       }
     }

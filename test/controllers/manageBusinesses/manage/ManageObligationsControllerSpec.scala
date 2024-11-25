@@ -19,7 +19,7 @@ package controllers.manageBusinesses.manage
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney._
-import enums.JourneyType.{IncomeSources, JourneyType, Manage}
+import enums.JourneyType.{IncomeSourceJourneyType, JourneyType, Manage}
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
@@ -76,7 +76,7 @@ class ManageObligationsControllerSpec extends TestSupport
 
   private def setMongoSessionData(incomeSourceId: String, reportingMethod: String, taxYear: String, incomeSourceType: IncomeSourceType): Unit = {
     setupMockCreateSession(true)
-    setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSources(Manage, incomeSourceType))
+    setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType))
       .copy(manageIncomeSourceData = Some(ManageIncomeSourceData(incomeSourceId = Some(incomeSourceId), reportingMethod = Some(reportingMethod), taxYear = Some(taxYear.toInt)))))))
   }
 

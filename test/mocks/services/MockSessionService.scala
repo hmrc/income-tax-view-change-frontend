@@ -16,7 +16,7 @@
 
 package mocks.services
 
-import enums.JourneyType.{IncomeSources, JourneyType}
+import enums.JourneyType.{IncomeSourceJourneyType, JourneyType}
 import models.incomeSourceDetails.UIJourneySessionData
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
@@ -54,7 +54,7 @@ trait MockSessionService extends UnitSpec with BeforeAndAfterEach {
     ).thenReturn(Future.successful(result))
   }
 
-  def setupMockGetSessionKeyMongoTyped[A](key: String, journeyType: IncomeSources, result: Either[Throwable, Option[A]]): Unit = {
+  def setupMockGetSessionKeyMongoTyped[A](key: String, journeyType: IncomeSourceJourneyType, result: Either[Throwable, Option[A]]): Unit = {
     when(
       mockSessionService.getMongoKeyTyped[A](ArgumentMatchers.eq(key), ArgumentMatchers.eq(journeyType))(ArgumentMatchers.any(), ArgumentMatchers.any())
     ).thenReturn(Future.successful(result))
@@ -97,7 +97,7 @@ trait MockSessionService extends UnitSpec with BeforeAndAfterEach {
 
   def setupMockSetSessionKeyMongo(expectedKey: String,
                                   expectedValue: String,
-                                  expectedJourneyType: IncomeSources,
+                                  expectedJourneyType: IncomeSourceJourneyType,
                                   result: Either[Throwable, Boolean]): Unit = {
     when(mockSessionService.setMongoKey(
       ArgumentMatchers.eq(expectedKey),

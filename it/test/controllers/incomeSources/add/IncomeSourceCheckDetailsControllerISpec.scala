@@ -20,7 +20,7 @@ import audit.models.CreateIncomeSourceAuditModel
 import auth.MtdItUser
 import models.admin.IncomeSourcesFs
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, IncomeSources}
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
@@ -137,12 +137,12 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
 
   def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
-    journeyType = IncomeSources(Add, incomeSourceType).toString,
+    journeyType = IncomeSourceJourneyType(Add, incomeSourceType).toString,
     addIncomeSourceData = Some(if (incomeSourceType == SelfEmployment) testAddBusinessData else testAddPropertyData))
 
   def testUIJourneySessionDataError(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
-    journeyType = IncomeSources(Add, incomeSourceType).toString,
+    journeyType = IncomeSourceJourneyType(Add, incomeSourceType).toString,
     addIncomeSourceData = Some(if (incomeSourceType == SelfEmployment) testAddBusinessDataError else testAddPropertyData))
 
   def testUIJourneySessionDataNoAccountingMethod(incomeSourceType: IncomeSourceType): UIJourneySessionData =
@@ -289,7 +289,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
         enable(IncomeSourcesFs)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-        await(sessionService.setMongoData(emptyUIJourneySessionData(IncomeSources(Add, incomeSourceType))))
+        await(sessionService.setMongoData(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, incomeSourceType))))
 
         val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/add/${uriSegment(incomeSourceType)}-check-details")(Map.empty)
 

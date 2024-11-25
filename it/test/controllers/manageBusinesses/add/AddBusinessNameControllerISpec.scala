@@ -18,7 +18,7 @@ package controllers.manageBusinesses.add
 
 import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.SelfEmployment
-import enums.JourneyType.{Add, IncomeSources}
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import forms.incomeSources.add.BusinessNameForm
 import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDIndividualAuthStub}
 import models.admin.{IncomeSourcesFs, NavBarFs}
@@ -44,7 +44,7 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
   val testBusinessName: String = "Test Business"
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
 
-  val journeyType: IncomeSources = IncomeSources(Add, SelfEmployment)
+  val journeyType: IncomeSourceJourneyType = IncomeSourceJourneyType(Add, SelfEmployment)
 
   def backUrl(isChange: Boolean): String = {
     if (isChange) {

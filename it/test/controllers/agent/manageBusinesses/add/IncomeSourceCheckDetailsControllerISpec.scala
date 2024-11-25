@@ -20,7 +20,7 @@ import audit.models.CreateIncomeSourceAuditModel
 import auth.MtdItUser
 import models.admin.IncomeSourcesFs
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, IncomeSources}
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
@@ -131,7 +131,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
 
   def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
-    journeyType = IncomeSources(Add, incomeSourceType).toString,
+    journeyType = IncomeSourceJourneyType(Add, incomeSourceType).toString,
     addIncomeSourceData = Some(if (incomeSourceType == SelfEmployment) testAddBusinessData else testAddPropertyData))
 
   def testUIJourneySessionDataNoAccountingMethod(incomeSourceType: IncomeSourceType): UIJourneySessionData =
@@ -287,7 +287,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-        await(sessionService.setMongoData(emptyUIJourneySessionData(IncomeSources(Add, incomeSourceType))))
+        await(sessionService.setMongoData(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, incomeSourceType))))
 
         val result = IncomeTaxViewChangeFrontend.post(s"/manage-your-businesses/add-${uriSegment(incomeSourceType)}/${uriDetailsSegment(incomeSourceType)}check-answers", clientDetailsWithConfirmation)(Map.empty)
 

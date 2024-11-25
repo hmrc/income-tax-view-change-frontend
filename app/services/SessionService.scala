@@ -66,7 +66,7 @@ class SessionService @Inject()(
     }
   }
 
-  def getMongoKey(key: String, incomeSources: IncomeSources)
+  def getMongoKey(key: String, incomeSources: IncomeSourceJourneyType)
                  (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[String]]] = {
     uiJourneySessionDataRepository.get(hc.sessionId.get.value, incomeSources) map {
       case Some(data: UIJourneySessionData) =>
@@ -79,7 +79,7 @@ class SessionService @Inject()(
     }
   }
 
-  def getMongoKeyTyped[A](key: String, incomeSources: IncomeSources)
+  def getMongoKeyTyped[A](key: String, incomeSources: IncomeSourceJourneyType)
                          (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[A]]] = {
     uiJourneySessionDataRepository.get(hc.sessionId.get.value, incomeSources) map {
       case Some(data: UIJourneySessionData) =>
@@ -101,7 +101,7 @@ class SessionService @Inject()(
       uiJourneySessionDataRepository.set(uiJourneySessionData)
   }
 
-  def setMultipleMongoData(keyAndValue: Map[String, String], incomeSources: IncomeSources)
+  def setMultipleMongoData(keyAndValue: Map[String, String], incomeSources: IncomeSourceJourneyType)
                           (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Boolean]] = {
     val uiJourneySessionData = UIJourneySessionData(hc.sessionId.get.value, incomeSources.toString)
     val keyValueToUpdate = keyAndValue.map { case (key, value) =>
@@ -119,7 +119,7 @@ class SessionService @Inject()(
         })
   }
 
-  def setMongoKey(key: String, value: String, incomeSources: IncomeSources)
+  def setMongoKey(key: String, value: String, incomeSources: IncomeSourceJourneyType)
                  (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Boolean]] = {
     val uiJourneySessionData = UIJourneySessionData(hc.sessionId.get.value, incomeSources.toString)
     val jsonAccessorPath = incomeSources.operation match {

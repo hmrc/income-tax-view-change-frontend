@@ -20,7 +20,7 @@ import enums.IncomeSourceJourney.IncomeSourceType
 
 sealed trait JourneyType
 
-case class IncomeSources(operation: Operation, businessType: IncomeSourceType) extends JourneyType {
+case class IncomeSourceJourneyType(operation: Operation, businessType: IncomeSourceType) extends JourneyType {
   override def toString: String = operation.operationType + "-" + businessType.key
 }
 

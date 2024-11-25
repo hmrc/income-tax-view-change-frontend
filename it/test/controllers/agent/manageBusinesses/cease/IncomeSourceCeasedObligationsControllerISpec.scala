@@ -18,7 +18,7 @@ package controllers.agent.manageBusinesses.cease
 
 import models.admin.IncomeSourcesFs
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import enums.JourneyType.{Cease, IncomeSources}
+import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.{CeaseIncomeSourceData, UIJourneySessionData}
@@ -74,7 +74,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontend.getBusinessCeasedObligations(clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
 
-        sessionService.getMongoKey(CeaseIncomeSourceData.journeyIsCompleteField, IncomeSources(Cease, SelfEmployment)).futureValue shouldBe Right(Some(true))
+        sessionService.getMongoKey(CeaseIncomeSourceData.journeyIsCompleteField, IncomeSourceJourneyType(Cease, SelfEmployment)).futureValue shouldBe Right(Some(true))
 
         val expectedText: String = b1TradingName + " " + messagesAPI(s"$prefix.heading1.base")
 
@@ -109,7 +109,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
 
         val expectedText: String = messagesAPI("business-ceased.obligation.heading1.uk-property.part2") + " " + messagesAPI("business-ceased.obligation.heading1.base")
 
-        sessionService.getMongoKey(CeaseIncomeSourceData.journeyIsCompleteField, IncomeSources(Cease, UkProperty)).futureValue shouldBe Right(Some(true))
+        sessionService.getMongoKey(CeaseIncomeSourceData.journeyIsCompleteField, IncomeSourceJourneyType(Cease, UkProperty)).futureValue shouldBe Right(Some(true))
 
         result should have(
           httpStatus(OK),
@@ -143,7 +143,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
 
         val expectedText: String = messagesAPI("business-ceased.obligation.heading1.foreign-property.part2") + " " + messagesAPI("business-ceased.obligation.heading1.base")
 
-        sessionService.getMongoKey(CeaseIncomeSourceData.journeyIsCompleteField, IncomeSources(Cease, ForeignProperty)).futureValue shouldBe Right(Some(true))
+        sessionService.getMongoKey(CeaseIncomeSourceData.journeyIsCompleteField, IncomeSourceJourneyType(Cease, ForeignProperty)).futureValue shouldBe Right(Some(true))
 
         result should have(
           httpStatus(OK),

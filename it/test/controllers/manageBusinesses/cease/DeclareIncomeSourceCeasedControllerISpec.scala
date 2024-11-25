@@ -18,7 +18,7 @@ package controllers.manageBusinesses.cease
 
 import models.admin.IncomeSourcesFs
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import enums.JourneyType.{Cease, IncomeSources}
+import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.CeaseIncomeSourceData.ceaseIncomeSourceDeclare
@@ -102,7 +102,7 @@ class DeclareIncomeSourceCeasedControllerISpec extends ComponentSpecBase {
           redirectURI(showUKPropertyEndDateUrl)
         )
 
-        sessionService.getMongoKey(ceaseIncomeSourceDeclare, IncomeSources(Cease, UkProperty)).futureValue shouldBe Right(Some(stringTrue))
+        sessionService.getMongoKey(ceaseIncomeSourceDeclare, IncomeSourceJourneyType(Cease, UkProperty)).futureValue shouldBe Right(Some(stringTrue))
 
       }
     }
@@ -156,7 +156,7 @@ class DeclareIncomeSourceCeasedControllerISpec extends ComponentSpecBase {
           redirectURI(showForeignPropertyEndDateUrl)
         )
 
-        sessionService.getMongoKey(ceaseIncomeSourceDeclare, IncomeSources(Cease, ForeignProperty)).futureValue shouldBe Right(Some(stringTrue))
+        sessionService.getMongoKey(ceaseIncomeSourceDeclare, IncomeSourceJourneyType(Cease, ForeignProperty)).futureValue shouldBe Right(Some(stringTrue))
 
       }
     }
@@ -211,7 +211,7 @@ class DeclareIncomeSourceCeasedControllerISpec extends ComponentSpecBase {
           redirectURI(showSelfEmploymentEndDateUrl)
         )
 
-        sessionService.getMongoKey(ceaseIncomeSourceDeclare, IncomeSources(Cease, SelfEmployment)).futureValue shouldBe Right(Some(stringTrue))
+        sessionService.getMongoKey(ceaseIncomeSourceDeclare, IncomeSourceJourneyType(Cease, SelfEmployment)).futureValue shouldBe Right(Some(stringTrue))
 
       }
     }

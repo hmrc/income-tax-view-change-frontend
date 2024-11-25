@@ -24,7 +24,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.SelfEmployment
-import enums.JourneyType.{Add, IncomeSources, JourneyType}
+import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.{AddIncomeSourceData, BusinessAddressModel, UIJourneySessionData}
@@ -93,7 +93,7 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
                           (implicit request: Request[_]): Future[Boolean] = {
     addressLookUpResult match {
       case Right(value) =>
-        val journeyType = IncomeSources(Add, SelfEmployment)
+        val journeyType = IncomeSourceJourneyType(Add, SelfEmployment)
         sessionService.getMongo(journeyType).flatMap {
           case Right(Some(sessionData)) =>
             val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())

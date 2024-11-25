@@ -19,7 +19,7 @@ package controllers.incomeSources.cease
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Cease, JourneyType}
 import enums.MTDIndividual
-import enums.JourneyType.{Cease, IncomeSources, JourneyType}
+import enums.JourneyType.{Cease, IncomeSourceJourneyType, JourneyType}
 import exceptions.MissingFieldException
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
@@ -81,7 +81,7 @@ class CeaseIncomeSourceControllerSpec extends MockAuthActions
             enable(IncomeSourcesFs)
             mockBothIncomeSources()
             setupMockCreateSession(true)
-            setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSources(Cease, SelfEmployment)))))
+            setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Cease, SelfEmployment)))))
             setupMockDeleteSession(true)
 
             when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any()))

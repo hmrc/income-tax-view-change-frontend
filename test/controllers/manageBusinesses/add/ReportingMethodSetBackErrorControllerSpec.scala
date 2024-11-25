@@ -19,7 +19,7 @@ package controllers.manageBusinesses.add
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, IncomeSources, JourneyType}
+import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
 import models.admin.IncomeSourcesFs
@@ -123,7 +123,7 @@ class ReportingMethodSetBackErrorControllerSpec extends TestSupport with MockAut
             authenticate(isAgent)
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-            mockMongo(IncomeSources(Add, incomeSourceType))
+            mockMongo(IncomeSourceJourneyType(Add, incomeSourceType))
 
             val result = if (isAgent) TestReportingMethodSetBackController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
             else TestReportingMethodSetBackController.show(incomeSourceType)(fakeRequestWithActiveSession)

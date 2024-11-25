@@ -19,7 +19,7 @@ package controllers.manageBusinesses.add
 import audit.models.IncomeSourceReportingMethodAuditModel
 import auth.MtdItUser
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, IncomeSources}
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.ITSAStatusDetailsStub.stubGetITSAStatusDetailsError
 import helpers.servicemocks.{AuditStub, CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
@@ -133,7 +133,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
   }
   def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
-    journeyType = IncomeSources(Add, incomeSourceType).toString,
+    journeyType = IncomeSourceJourneyType(Add, incomeSourceType).toString,
     addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId))))
 
 
@@ -227,7 +227,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
       elementCountBySelector("#add-uk-property-reporting-method-form > legend:nth-of-type(2)")(0))
 
     And("Mongo storage is successfully set")
-    sessionService.getMongoKey(AddIncomeSourceData.incomeSourceAddedField, IncomeSources(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
+    sessionService.getMongoKey(AddIncomeSourceData.incomeSourceAddedField, IncomeSourceJourneyType(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
 
     if (scenario.isLegacy) {
       result should have(
@@ -252,7 +252,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
       pageTitleIndividual("incomeSources.add.incomeSourceReportingMethod.heading"))
 
     And("Mongo storage is successfully set")
-    sessionService.getMongoKey(AddIncomeSourceData.incomeSourceAddedField, IncomeSources(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
+    sessionService.getMongoKey(AddIncomeSourceData.incomeSourceAddedField, IncomeSourceJourneyType(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
 
     val currentTaxYear = dateService.getCurrentTaxYearEnd
     val taxYear1: Int = currentTaxYear

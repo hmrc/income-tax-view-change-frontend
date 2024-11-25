@@ -20,7 +20,7 @@ import connectors.UpdateIncomeSourceConnector
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
-import enums.JourneyType.{Cease, IncomeSources, JourneyType}
+import enums.JourneyType.{Cease, IncomeSourceJourneyType, JourneyType}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
 import models.admin.IncomeSourcesFs
@@ -103,7 +103,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
               enable(IncomeSourcesFs)
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
-              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSources(Cease, incomeSourceType)))))
+              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
               mockGetCeaseIncomeSourceDetails(incomeSourceType)
 
               val result: Future[Result] = action(fakeRequest)
@@ -142,7 +142,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
               enable(IncomeSourcesFs)
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
-              setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSources(Cease, incomeSourceType)))))
+              setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
               mockGetCeaseIncomeSourceDetails(incomeSourceType)
 
               val result = action(fakeRequest)
@@ -180,7 +180,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
               setupMockSuccess(mtdRole)
               enable(IncomeSourcesFs)
               mockBothPropertyBothBusiness()
-              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSources(Cease, incomeSourceType)))))
+              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
               when(mockUpdateIncomeSourceService.updateCessationDate(any(), any(), any())(any(), any()))
                 .thenReturn(Future.successful(Right(UpdateIncomeSourceSuccess(testMtditid))))
 
@@ -195,7 +195,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
               setupMockSuccess(mtdRole)
               enable(IncomeSourcesFs)
               mockBothPropertyBothBusiness()
-              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSources(Cease, incomeSourceType)))))
+              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
 
               when(mockUpdateIncomeSourceService.updateCessationDate(any(), any(), any())(any(), any()))
                 .thenReturn(Future.successful(Left(UpdateIncomeSourceTestConstants.failureResponse)))
@@ -213,7 +213,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
               setupMockSuccess(mtdRole)
               enable(IncomeSourcesFs)
               mockNoIncomeSources()
-              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSources(Cease, incomeSourceType)))))
+              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
 
               val result = action(fakePostRequest)
 

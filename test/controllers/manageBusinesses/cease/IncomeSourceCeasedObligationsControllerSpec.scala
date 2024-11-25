@@ -19,7 +19,7 @@ package controllers.manageBusinesses.cease
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney._
-import enums.JourneyType.{Cease, IncomeSources, JourneyType}
+import enums.JourneyType.{Cease, IncomeSourceJourneyType, JourneyType}
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
@@ -78,7 +78,7 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
     setupMockCreateSession(true)
     val sessionData = UIJourneySessionData(
       sessionId = testSessionId,
-      journeyType = IncomeSources(Cease, incomeSourceType).toString,
+      journeyType = IncomeSourceJourneyType(Cease, incomeSourceType).toString,
       ceaseIncomeSourceData = Some(CeaseIncomeSourceData(
         incomeSourceId = incomeSourceId,
         endDate = ceaseDate,

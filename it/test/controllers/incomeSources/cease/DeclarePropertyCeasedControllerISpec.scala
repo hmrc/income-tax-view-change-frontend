@@ -18,7 +18,7 @@ package controllers.incomeSources.cease
 
 import models.admin.IncomeSourcesFs
 import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
-import enums.JourneyType.{Cease, IncomeSources}
+import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.CeaseIncomeSourceData.ceaseIncomeSourceDeclare
@@ -89,7 +89,7 @@ class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
           redirectURI(showUKPropertyEndDateControllerUrl)
         )
 
-        sessionService.getMongoKey(ceaseIncomeSourceDeclare, IncomeSources(Cease, UkProperty)).futureValue shouldBe Right(Some(stringTrue))
+        sessionService.getMongoKey(ceaseIncomeSourceDeclare, IncomeSourceJourneyType(Cease, UkProperty)).futureValue shouldBe Right(Some(stringTrue))
 
       }
       "form is filled incorrectly" in {
@@ -142,7 +142,7 @@ class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
           redirectURI(showForeignPropertyEndDateControllerUrl)
         )
 
-        sessionService.getMongoKey(ceaseIncomeSourceDeclare, IncomeSources(Cease, ForeignProperty)).futureValue shouldBe Right(Some(stringTrue))
+        sessionService.getMongoKey(ceaseIncomeSourceDeclare, IncomeSourceJourneyType(Cease, ForeignProperty)).futureValue shouldBe Right(Some(stringTrue))
 
       }
       "form is filled incorrectly" in {

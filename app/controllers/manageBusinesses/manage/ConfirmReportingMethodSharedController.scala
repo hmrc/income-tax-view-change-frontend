@@ -22,7 +22,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney._
-import enums.JourneyType.{IncomeSources, JourneyType, Manage}
+import enums.JourneyType.{IncomeSourceJourneyType, JourneyType, Manage}
 import enums.ReportingMethod
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import models.core.IncomeSourceId
@@ -59,7 +59,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
            isAgent: Boolean,
            incomeSourceType: IncomeSourceType
           ): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
-    withSessionData(IncomeSources(Manage, incomeSourceType), journeyState = AfterSubmissionPage) { sessionData =>
+    withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = AfterSubmissionPage) { sessionData =>
       val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
       val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
       handleShowRequest(taxYear, changeTo, isAgent, incomeSourceType, incomeSourceIdOpt)
@@ -72,7 +72,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
              incomeSourceType: IncomeSourceType
             ): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
 
-    withSessionData(IncomeSources(Manage, incomeSourceType), BeforeSubmissionPage) { sessionData =>
+    withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), BeforeSubmissionPage) { sessionData =>
       val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
       val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
       handleSubmitRequest(taxYear, changeTo, isAgent, incomeSourceIdOpt, incomeSourceType)
@@ -121,7 +121,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                                    incomeSourceType: IncomeSourceType
                                                   )(implicit user: MtdItUser[_]): Future[Result] = {
     val (backCall, _) = getRedirectCalls(taxYearModel.toString, isAgent, changeTo, Some(id), incomeSourceType)
-    val journeyType = IncomeSources(Manage, incomeSourceType)
+    val journeyType = IncomeSourceJourneyType(Manage, incomeSourceType)
 
     sessionService.getMongo(journeyType).flatMap {
       case Right(Some(sessionData)) =>

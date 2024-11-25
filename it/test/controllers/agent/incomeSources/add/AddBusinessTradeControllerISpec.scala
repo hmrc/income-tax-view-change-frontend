@@ -18,7 +18,7 @@ package controllers.agent.incomeSources.add
 
 import controllers.agent.ControllerISpecHelper
 import enums.IncomeSourceJourney.SelfEmployment
-import enums.JourneyType.{Add, IncomeSources}
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import forms.incomeSources.add.BusinessTradeForm
 import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDAgentAuthStub}
@@ -167,7 +167,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
 
               val result = buildPOSTMTDPostClient(path, additionalCookies, formData).futureValue
 
-              sessionService.getMongoKeyTyped[String](businessTradeField, IncomeSources(Add, SelfEmployment)).futureValue shouldBe Right(Some(testBusinessTrade))
+              sessionService.getMongoKeyTyped[String](businessTradeField, IncomeSourceJourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(testBusinessTrade))
 
               result should have(
                 httpStatus(SEE_OTHER),
@@ -230,7 +230,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
 
               val result = buildPOSTMTDPostClient(changePath, additionalCookies, formData).futureValue
 
-              sessionService.getMongoKeyTyped[String](businessTradeField, IncomeSources(Add, SelfEmployment)).futureValue shouldBe Right(Some(changedTrade))
+              sessionService.getMongoKeyTyped[String](businessTradeField, IncomeSourceJourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(changedTrade))
 
               result should have(
                 httpStatus(SEE_OTHER),

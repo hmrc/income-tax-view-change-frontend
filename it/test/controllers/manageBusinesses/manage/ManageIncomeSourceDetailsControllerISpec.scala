@@ -17,7 +17,7 @@
 package controllers.manageBusinesses.manage
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{IncomeSources, Manage}
+import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.admin.IncomeSourcesFs
@@ -78,7 +78,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
   def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
-    journeyType = IncomeSources(Manage, incomeSourceType).toString)
+    journeyType = IncomeSourceJourneyType(Manage, incomeSourceType).toString)
 
   s"calling GET $manageSelfEmploymentShowUrl" should {
     "render the Manage Self Employment business page" when {
@@ -98,7 +98,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/manage/your-details?id=$thisTestSelfEmploymentIdHashed")
 
         And("Mongo storage is successfully set")
-        sessionService.getMongoKey(incomeSourceIdField, IncomeSources(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
+        sessionService.getMongoKey(incomeSourceIdField, IncomeSourceJourneyType(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
 
         result should have(
           httpStatus(OK),
@@ -136,7 +136,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/manage/your-details?id=$thisTestSelfEmploymentIdHashed")
 
         And("Mongo storage is successfully set")
-        sessionService.getMongoKey(incomeSourceIdField, IncomeSources(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
+        sessionService.getMongoKey(incomeSourceIdField, IncomeSourceJourneyType(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
 
         result should have(
           httpStatus(OK),
@@ -174,7 +174,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/manage/your-details?id=$thisTestSelfEmploymentIdHashed")
 
         And("Mongo storage is successfully set")
-        sessionService.getMongoKey(incomeSourceIdField, IncomeSources(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
+        sessionService.getMongoKey(incomeSourceIdField, IncomeSourceJourneyType(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
 
         result should have(
           httpStatus(OK),
@@ -217,7 +217,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/manage/your-details?id=$thisTestSelfEmploymentIdHashed")
 
         And("Mongo storage is successfully set")
-        sessionService.getMongoKey(incomeSourceIdField, IncomeSources(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
+        sessionService.getMongoKey(incomeSourceIdField, IncomeSourceJourneyType(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
 
         result should have(
           httpStatus(OK),
@@ -256,7 +256,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/manage/your-details?id=$thisTestSelfEmploymentIdHashed")
 
         And("Mongo storage is successfully set")
-        sessionService.getMongoKey(incomeSourceIdField, IncomeSources(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
+        sessionService.getMongoKey(incomeSourceIdField, IncomeSourceJourneyType(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
 
         result should have(
           httpStatus(OK),

@@ -18,7 +18,7 @@ package controllers.incomeSources.manage
 
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{IncomeSources, JourneyType, Manage}
+import enums.JourneyType.{IncomeSourceJourneyType, JourneyType, Manage}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
 import models.admin.IncomeSourcesFs
@@ -56,7 +56,7 @@ class CannotGoBackErrorControllerSpec extends TestSupport with MockAuthenticatio
 
   def setupOKTest(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
     setupMockCalls(isAgent)
-    setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSources(Manage, incomeSourceType)))))
+    setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
 
     val result = if (isAgent) {
       TestCannotGoBackController.show(isAgent, incomeSourceType)(fakeRequestConfirmedClient())
@@ -69,7 +69,7 @@ class CannotGoBackErrorControllerSpec extends TestSupport with MockAuthenticatio
 
   def setupISETest(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
     setupMockCalls(isAgent)
-    setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSources(Manage, incomeSourceType)))))
+    setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
 
     val result = if (isAgent) {
       TestCannotGoBackController.show(isAgent, incomeSourceType)(fakeRequestConfirmedClient())

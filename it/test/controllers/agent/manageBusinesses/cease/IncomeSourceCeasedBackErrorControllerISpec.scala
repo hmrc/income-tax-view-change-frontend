@@ -18,7 +18,7 @@ package controllers.agent.manageBusinesses.cease
 
 import models.admin.IncomeSourcesFs
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Cease, IncomeSources}
+import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import org.scalatest.Assertion
@@ -51,7 +51,7 @@ class IncomeSourceCeasedBackErrorControllerISpec extends ComponentSpecBase {
     enable(IncomeSourcesFs)
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-    await(sessionService.setMongoData(completedUIJourneySessionData(IncomeSources(Cease, incomeSourceType))))
+    await(sessionService.setMongoData(completedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType))))
 
     val specificHeading = incomeSourceType match {
       case SelfEmployment => headingSE

@@ -21,7 +21,7 @@ import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.IncomeSourceJourney.{InitialPage, SelfEmployment}
-import enums.JourneyType.{Add, IncomeSources, JourneyType}
+import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
 import forms.incomeSources.add.BusinessNameForm
 import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.Logger
@@ -92,7 +92,7 @@ class AddBusinessNameController @Inject()(val authActions: AuthActions,
   }
 
   def handleRequest(isAgent: Boolean, backUrl: String, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    withSessionData(IncomeSources(Add, SelfEmployment), journeyState = InitialPage) { sessionData =>
+    withSessionData(IncomeSourceJourneyType(Add, SelfEmployment), journeyState = InitialPage) { sessionData =>
       val businessNameOpt: Option[String] = sessionData.addIncomeSourceData.flatMap(_.businessName)
       val filledForm: Form[BusinessNameForm] = businessNameOpt.fold(BusinessNameForm.form)(name =>
         BusinessNameForm.form.fill(BusinessNameForm(name)))
@@ -120,7 +120,7 @@ class AddBusinessNameController @Inject()(val authActions: AuthActions,
   }
 
   def handleSubmitRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
-    withSessionData(IncomeSources(Add, SelfEmployment), InitialPage) { sessionData =>
+    withSessionData(IncomeSourceJourneyType(Add, SelfEmployment), InitialPage) { sessionData =>
 
       val businessTradeOpt: Option[String] = sessionData.addIncomeSourceData.flatMap(_.businessTrade)
 

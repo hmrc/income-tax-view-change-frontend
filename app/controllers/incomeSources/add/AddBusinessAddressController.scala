@@ -22,7 +22,7 @@ import com.google.inject.Singleton
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.IncomeSourceJourney.SelfEmployment
-import enums.JourneyType.{Add, IncomeSources, JourneyType}
+import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.{AddIncomeSourceData, BusinessAddressModel, UIJourneySessionData}
@@ -90,7 +90,7 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
                           (implicit request: Request[_]): Future[Boolean] = {
     addressLookUpResult match {
       case Right(value) =>
-        val incomeSources: IncomeSources = IncomeSources(Add, SelfEmployment)
+        val incomeSources: IncomeSourceJourneyType = IncomeSourceJourneyType(Add, SelfEmployment)
         sessionService.getMongo(incomeSources).flatMap {
           case Right(Some(sessionData)) =>
             val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())

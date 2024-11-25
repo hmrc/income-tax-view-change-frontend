@@ -18,7 +18,7 @@ package controllers.manageBusinesses.add
 
 import models.admin.IncomeSourcesFs
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, IncomeSources}
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
@@ -53,7 +53,7 @@ class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
 
   def testUIJourneySessionData(incomeSourceType: IncomeSourceType, accountingMethod: Option[String]): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
-    journeyType = IncomeSources(Add, incomeSourceType).toString,
+    journeyType = IncomeSourceJourneyType(Add, incomeSourceType).toString,
     addIncomeSourceData = Some(
       AddIncomeSourceData(
         businessName  = if (incomeSourceType.equals(SelfEmployment)) Some("testBusinessName")  else None,
@@ -66,9 +66,9 @@ class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
   override def beforeEach(): Unit = {
     super.beforeEach()
     await(sessionService.deleteSession(Add))
-    await(sessionService.createSession(IncomeSources(Add, SelfEmployment)))
-    await(sessionService.createSession(IncomeSources(Add, UkProperty)))
-    await(sessionService.createSession(IncomeSources(Add, ForeignProperty)))
+    await(sessionService.createSession(IncomeSourceJourneyType(Add, SelfEmployment)))
+    await(sessionService.createSession(IncomeSourceJourneyType(Add, UkProperty)))
+    await(sessionService.createSession(IncomeSourceJourneyType(Add, ForeignProperty)))
   }
 
   def runGetTest(addIncomeSourcesAccountingMethodShowUrl: String, url: String, messageKey: String): Unit = {
@@ -96,7 +96,7 @@ class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
 
     await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType, accountingMethod)))
 
-    val session = sessionService.getMongo(IncomeSources(Add, incomeSourceType))(hc, ec).futureValue
+    val session = sessionService.getMongo(IncomeSourceJourneyType(Add, incomeSourceType))(hc, ec).futureValue
 
     val resultAccountingMethod = session match {
       case Right(Some(uiJourneySessionData)) =>

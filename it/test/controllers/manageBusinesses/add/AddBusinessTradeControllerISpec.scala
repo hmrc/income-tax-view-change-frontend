@@ -18,7 +18,7 @@ package controllers.manageBusinesses.add
 
 import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.SelfEmployment
-import enums.JourneyType.{Add, IncomeSources, JourneyType}
+import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
 import forms.manageBusinesses.add.BusinessTradeForm
 import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDIndividualAuthStub}
 import models.admin.{IncomeSourcesFs, NavBarFs}
@@ -43,7 +43,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
   val testBusinessTrade: String = "Test Business Trade"
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
-  val journeyType: JourneyType = IncomeSources(Add, SelfEmployment)
+  val journeyType: JourneyType = IncomeSourceJourneyType(Add, SelfEmployment)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -154,7 +154,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
 
           val result = buildPOSTMTDPostClient(path, body = formData).futureValue
 
-          sessionService.getMongoKeyTyped[String](businessTradeField, IncomeSources(Add, SelfEmployment)).futureValue shouldBe Right(Some(testBusinessTrade))
+          sessionService.getMongoKeyTyped[String](businessTradeField, IncomeSourceJourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(testBusinessTrade))
 
           result should have(
             httpStatus(SEE_OTHER),
@@ -212,7 +212,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
 
           val result = buildPOSTMTDPostClient(changePath, body = formData).futureValue
 
-        sessionService.getMongoKeyTyped[String](businessTradeField, IncomeSources(Add, SelfEmployment)).futureValue shouldBe Right(Some(changedTrade))
+        sessionService.getMongoKeyTyped[String](businessTradeField, IncomeSourceJourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(changedTrade))
 
           result should have(
             httpStatus(SEE_OTHER),

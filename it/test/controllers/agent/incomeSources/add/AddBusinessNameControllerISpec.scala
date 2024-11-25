@@ -18,7 +18,7 @@ package controllers.agent.incomeSources.add
 
 import controllers.agent.ControllerISpecHelper
 import enums.IncomeSourceJourney.SelfEmployment
-import enums.JourneyType.{Add, IncomeSources}
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import forms.incomeSources.add.BusinessNameForm
 import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDAgentAuthStub}
@@ -44,7 +44,7 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
   val testBusinessName: String = "Test Business"
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
   override implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
-  val journeyType: IncomeSources = IncomeSources(Add, SelfEmployment)
+  val journeyType: IncomeSourceJourneyType = IncomeSourceJourneyType(Add, SelfEmployment)
 
   def backUrl(isChange: Boolean): String = {
     if (isChange) {

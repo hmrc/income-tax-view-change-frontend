@@ -18,7 +18,7 @@ package controllers.manageBusinesses.add
 
 import models.admin.IncomeSourcesFs
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, IncomeSources}
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -55,7 +55,7 @@ class ReportingMethodSetBackErrorControllerISpec extends ComponentSpecBase{
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-        await(sessionService.setMongoData(completedUIJourneySessionData(IncomeSources(Add, SelfEmployment))))
+        await(sessionService.setMongoData(completedUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))))
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses
           .get(s"/manage-your-businesses/add/add-business-cannot-go-back")
@@ -94,7 +94,7 @@ class ReportingMethodSetBackErrorControllerISpec extends ComponentSpecBase{
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-        await(sessionService.setMongoData(completedUIJourneySessionData(IncomeSources(Add, UkProperty))))
+        await(sessionService.setMongoData(completedUIJourneySessionData(IncomeSourceJourneyType(Add, UkProperty))))
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses
           .get(s"/manage-your-businesses/add/add-uk-property-cannot-go-back")
@@ -133,7 +133,7 @@ class ReportingMethodSetBackErrorControllerISpec extends ComponentSpecBase{
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-        await(sessionService.setMongoData(completedUIJourneySessionData(IncomeSources(Add, ForeignProperty))))
+        await(sessionService.setMongoData(completedUIJourneySessionData(IncomeSourceJourneyType(Add, ForeignProperty))))
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses
           .get(s"/manage-your-businesses/add/add-foreign-property-cannot-go-back")

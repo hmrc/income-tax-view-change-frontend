@@ -21,7 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney._
-import enums.JourneyType.{Add, IncomeSources}
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import implicits.ImplicitDateFormatterImpl
 import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.Logger
@@ -86,14 +86,14 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
 
     val messagesPrefix = incomeSourceType.startDateMessagesPrefix
 
-    withSessionData(IncomeSources(Add, incomeSourceType), journeyState = {
+    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = {
       incomeSourceType match {
         case SelfEmployment => BeforeSubmissionPage
         case _ => InitialPage
       }
     }) { sessionData =>
       if (!isChange && incomeSourceType.equals(UkProperty) || !isChange && incomeSourceType.equals(ForeignProperty)) {
-        lazy val journeyType = IncomeSources(Add, incomeSourceType)
+        lazy val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
         sessionService.createSession(journeyType)
       }
 
@@ -158,7 +158,7 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
 
   def handleValidFormData(formData: LocalDate, incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean)
                          (implicit user: MtdItUser[_]): Future[Result] = {
-    withSessionData(IncomeSources(Add, incomeSourceType), journeyState = {
+    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = {
       incomeSourceType match {
         case SelfEmployment => BeforeSubmissionPage
         case _ => InitialPage

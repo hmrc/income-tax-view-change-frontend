@@ -19,7 +19,7 @@ package controllers.manageBusinesses.manage
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{IncomeSources, JourneyType, Manage}
+import enums.JourneyType.{IncomeSourceJourneyType, JourneyType, Manage}
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
@@ -98,7 +98,7 @@ class CheckYourAnswersControllerSpec extends MockAuthenticationPredicate
         setupMockAuthorisationSuccess(isAgent)
         mockBothPropertyBothBusiness()
         setupMockCreateSession(true)
-        setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSources(Manage, incomeSourceType)))))
+        setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
         val result = if (isAgent) TestCheckYourAnswersController
           .show(isAgent, incomeSourceType)(fakeRequestConfirmedClient())
         else TestCheckYourAnswersController
@@ -259,8 +259,8 @@ class CheckYourAnswersControllerSpec extends MockAuthenticationPredicate
     setupMockAuthorisationSuccess(isAgent)
 
     setupMockCreateSession(true)
-    if (emptyMongo) setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSources(Manage, incomeSourceType)))))
-    else setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSources(Manage, incomeSourceType))
+    if (emptyMongo) setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
+    else setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType))
       .copy(manageIncomeSourceData = Some(ManageIncomeSourceData(
         incomeSourceId = Some(testSelfEmploymentId),
         reportingMethod = Some(changeTo),
@@ -293,7 +293,7 @@ class CheckYourAnswersControllerSpec extends MockAuthenticationPredicate
     setupMockAuthorisationSuccess(isAgent)
 
     setupMockCreateSession(true)
-    setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSources(Manage, incomeSourceType))
+    setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType))
       .copy(manageIncomeSourceData = Some(ManageIncomeSourceData(
         incomeSourceId = Some(testSelfEmploymentId),
         reportingMethod = Some(changeTo),

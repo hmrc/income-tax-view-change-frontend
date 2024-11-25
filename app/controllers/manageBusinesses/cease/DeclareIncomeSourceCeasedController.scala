@@ -21,7 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.{IncomeSourceType, InitialPage, SelfEmployment}
-import enums.JourneyType.{Cease, IncomeSources, JourneyType}
+import enums.JourneyType.{Cease, IncomeSourceJourneyType, JourneyType}
 import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.CeaseIncomeSourceData
@@ -81,7 +81,7 @@ class DeclareIncomeSourceCeasedController @Inject()(val authorisedFunctions: Fro
 
   def handleRequest(id: Option[String], isAgent: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] =
-    withSessionData(IncomeSources(Cease, incomeSourceType), journeyState = InitialPage) { _ =>
+    withSessionData(IncomeSourceJourneyType(Cease, incomeSourceType), journeyState = InitialPage) { _ =>
 
       (incomeSourceType, id, getBusinessName(user, id)) match {
         case (SelfEmployment, None, _) =>
@@ -124,7 +124,7 @@ class DeclareIncomeSourceCeasedController @Inject()(val authorisedFunctions: Fro
           ))
         },
       _ => {
-        sessionService.setMongoKey(key = CeaseIncomeSourceData.ceaseIncomeSourceDeclare, value = "true", incomeSources = IncomeSources(Cease, incomeSourceType))
+        sessionService.setMongoKey(key = CeaseIncomeSourceData.ceaseIncomeSourceDeclare, value = "true", incomeSources = IncomeSourceJourneyType(Cease, incomeSourceType))
           .flatMap {
             case Right(_) => Future.successful(Redirect(redirectAction(id, isAgent, isChange, incomeSourceType)))
             case Left(exception) => Future.failed(exception)
