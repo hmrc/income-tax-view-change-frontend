@@ -17,24 +17,33 @@
 package connectors
 
 import config.FrontendAppConfig
+
 import javax.inject.{Inject, Singleton}
 import models.btaNavBar.NavContent
 import play.api.Logger
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReadsInstances}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpReadsInstances, HttpResponse}
 
+import java.net.{URI, URL}
 import scala.concurrent.{ExecutionContext, Future}
 
 
 @Singleton
-class BtaNavBarPartialConnector @Inject()(val http: HttpClient,
+class BtaNavBarPartialConnector @Inject()(val http: HttpClientV2,
                                           val config: FrontendAppConfig) extends HttpReadsInstances {
 
-  lazy val btaNavLinksUrl: String = config.btaService + "/business-account/partial/nav-links"
+  private lazy val btaNavLinksUrl: URL = new URI(config.btaService + "/business-account/partial/nav-links").toURL
 
   val logger: Logger = Logger(this.getClass)
 
+  implicit val hr: HttpReads.Implicits.type = HttpReads.Implicits
+  implicit val legacyRawReads: HttpReads[HttpResponse] = HttpReads.Implicits.throwOnFailure(HttpReads.Implicits.readEitherOf(HttpReads.Implicits.readRaw))
+
+
   def getNavLinks()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[NavContent]] = {
-    http.GET[Option[NavContent]](s"$btaNavLinksUrl")
+    http
+      .get(btaNavLinksUrl)
+      .execute[Option[NavContent]]
       .recover {
         case e =>
           logger.warn(s"Unexpected error ${e.getMessage}")
