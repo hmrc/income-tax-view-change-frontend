@@ -22,7 +22,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import models.admin.OptOut
+import models.admin.OptOutFs
 import models.obligations._
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -68,7 +68,7 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
           case _ => ObligationsModel(Nil)
         }
         viewModel = nextUpdatesService.getNextUpdatesViewModel(nextUpdates)
-        result <- (nextUpdates.obligations, isEnabled(OptOut)) match {
+        result <- (nextUpdates.obligations, isEnabled(OptOutFs)) match {
           case (Nil, _) =>
             Future.successful(errorHandler.showInternalServerError())
           case (_, true) =>

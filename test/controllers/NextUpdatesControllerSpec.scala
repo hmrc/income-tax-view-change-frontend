@@ -20,7 +20,7 @@ import mocks.auth.MockAuthActions
 import mocks.controllers.predicates.MockIncomeSourceDetailsPredicateNoCache
 import mocks.services.{MockNextUpdatesService, MockOptOutService}
 import mocks.views.agent.MockNextUpdates
-import models.admin.OptOut
+import models.admin.OptOutFs
 import models.obligations._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -306,7 +306,7 @@ class NextUpdatesControllerSpec extends MockAuthActions with MockIncomeSourceDet
 
     "the opt out feature switch is enabled and optOutService returns failed future" should {
       s"show an INTERNAL SERVER ERROR page with HTTP ${Status.INTERNAL_SERVER_ERROR} Status " in {
-        enable(OptOut)
+        enable(OptOutFs)
         setupMockUserAuth
         mockSingleBusinessIncomeSourceError()
         mockSingleBusinessIncomeSourceWithDeadlines()
