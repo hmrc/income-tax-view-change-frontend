@@ -44,7 +44,7 @@ SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOptOutSer
 
   val testSingleYearOptOutWarningController = fakeApplication().injector.instanceOf[SingleYearOptOutWarningController]
 
-  mtdAllRoles.foreach{ case mtdUserRole =>
+  mtdAllRoles.foreach { case mtdUserRole =>
 
     val isAgent = mtdUserRole != MTDIndividual
 
@@ -144,8 +144,8 @@ SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOptOutSer
               ))
             status(result) shouldBe Status.SEE_OTHER
             redirectLocation(result) shouldBe Some(optOutCancelledUrl)
-        }
           }
+        }
 
         s"return result with $BAD_REQUEST status" when {
           "invalid response is submitted" in {

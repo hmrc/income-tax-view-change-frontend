@@ -67,31 +67,31 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
     s"calling GET $path" when {
       s"the user is a $mtdUserRole" that {
         "is authenticated, with a valid agent and client delegated enrolment" should {
-        "render single tax year opt out confirmation pager" in {
-          enable(IncomeSourcesFs)
-          disable(NavBarFs)
-          MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+          "render single tax year opt out confirmation pager" in {
+            enable(IncomeSourcesFs)
+            disable(NavBarFs)
+            MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-          helper.stubOptOutInitialState(currentTaxYear,
-            previousYearCrystallised = false,
-            previousYearStatus = Voluntary,
-            currentYearStatus = NoStatus,
-            nextYearStatus = NoStatus)
+            helper.stubOptOutInitialState(currentTaxYear,
+              previousYearCrystallised = false,
+              previousYearStatus = Voluntary,
+              currentYearStatus = NoStatus,
+              nextYearStatus = NoStatus)
 
-          val result = buildGETMTDClient(path, additionalCookies).futureValue
+            val result = buildGETMTDClient(path, additionalCookies).futureValue
 
 
-          result should have(
-            httpStatus(OK),
-            pageTitleAgent("optOut.confirmSingleYearOptOut.title"),
-            elementTextByID("detail-text")(expectedDetailText),
-            elementTextByID("warning-inset")(expectedInsetText),
-            elementTextBySelector(".govuk-fieldset__legend--m")(expectedFormTitle)
-          )
+            result should have(
+              httpStatus(OK),
+              pageTitleAgent("optOut.confirmSingleYearOptOut.title"),
+              elementTextByID("detail-text")(expectedDetailText),
+              elementTextByID("warning-inset")(expectedInsetText),
+              elementTextBySelector(".govuk-fieldset__legend--m")(expectedFormTitle)
+            )
 
+          }
         }
-      }
 
         testAuthFailuresForMTDAgent(path, isSupportingAgent)
       }
@@ -182,5 +182,10 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
       }
     }
   }
+
+  testAuthFailuresForMTDAgent(path, isSupportingAgent)
+}
+}
+}
 
 }
