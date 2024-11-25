@@ -578,7 +578,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       interestRate = None,
       lpiWithDunningLock = None,
       amountCodedOut = None,
-      dunningLock = false
+      dunningLock = false,
+      poaRelevantAmount = None
     )
 
     val chargeItemPaid = chargeItemUnpaid.copy(outstandingAmount = 0)

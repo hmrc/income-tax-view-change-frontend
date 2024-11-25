@@ -34,10 +34,21 @@ object ClaimToAdjustPoaTestConstants {
     mainTransaction = Some("4920"),
     outstandingAmount = Some(outstandingAmount),
     chargeReference = Some("ABCD1234"),
-    items = None
+    items = None,
+    transactionId = Some("DOCID01")
   )
 
   def genericFinancialDetailPOA2(taxYearEnd: Int, outstandingAmount: BigDecimal = 0.0) = FinancialDetail(
+    taxYear = taxYearEnd.toString,
+    mainType = Some("SA Payment on Account 2"),
+    mainTransaction = Some("4930"),
+    outstandingAmount = Some(outstandingAmount),
+    chargeReference = Some("ABCD1234"),
+    items = None,
+    transactionId = Some("DOCID02")
+  )
+
+  def genericFinancialDetailPOA2NoTransactionID(taxYearEnd: Int, outstandingAmount: BigDecimal = 0.0) = FinancialDetail(
     taxYear = taxYearEnd.toString,
     mainType = Some("SA Payment on Account 2"),
     mainTransaction = Some("4930"),
@@ -85,7 +96,14 @@ object ClaimToAdjustPoaTestConstants {
   val userPOADetails2024: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     documentDetails = List(genericDocumentDetailPOA1(2024), genericDocumentDetailPOA2(2024)),
-    financialDetails = List.empty,
+    financialDetails = List(genericFinancialDetailPOA1(2023, 150.00), genericFinancialDetailPOA2(2024, 250.00)),
+  )
+
+  val userPOADetails2023: FinancialDetailsModel = FinancialDetailsModel(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    documentDetails = List(genericDocumentDetailPOA1(2023), genericDocumentDetailPOA2(2023)),
+    financialDetails = List(genericFinancialDetailPOA1(2023, 150.00),
+      genericFinancialDetailPOA2(2023, 250.00))
   )
 
   def financialDetailsWithUnpaidPoas(taxYearEnd: Int): FinancialDetailsModel = FinancialDetailsModel(
