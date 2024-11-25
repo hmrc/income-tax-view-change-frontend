@@ -97,12 +97,6 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
   def findDocumentDetailForTaxYear(taxYear: Int): Option[DocumentDetail] = documentDetails.find(_.taxYear == taxYear)
 
 
-
-  def findDocumentDetailForYearWithDueDate(taxYear: Int)(implicit dateService: DateServiceInterface): Option[DocumentDetailWithDueDate] = {
-    findDocumentDetailForTaxYear(taxYear)
-      .map(documentDetail => DocumentDetailWithDueDate(documentDetail, documentDetail.getDueDate()))
-  }
-
   def findDocumentDetailByIdWithDueDate(id: String)(implicit dateService: DateServiceInterface): Option[DocumentDetailWithDueDate] = {
     documentDetails.find(_.transactionId == id)
       .map(documentDetail => DocumentDetailWithDueDate(
@@ -126,16 +120,6 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
         isReviewAndReconcilePoaTwoDebit = isReviewAndReconcilePoaTwoDebit(documentDetail.transactionId, reviewAndReconcileEnabled)))
   }
 
-  def getAllDocumentDetailsWithDueDatesAndFinancialDetails()(implicit dateService: DateServiceInterface): List[(DocumentDetailWithDueDate, FinancialDetail)] = {
-    documentDetails.map(documentDetail =>
-      (DocumentDetailWithDueDate(documentDetail, documentDetail.getDueDate(),
-        documentDetail.isLatePaymentInterest, dunningLockExists(documentDetail.transactionId),
-        isMFADebit = isMFADebit(documentDetail.transactionId)),
-        financialDetails.find(_.transactionId.get == documentDetail.transactionId)
-          .getOrElse(throw new Exception("no financialDetail found for documentDetail" + documentDetail)))
-    )
-  }
-
   def getPairedDocumentDetails(): List[(DocumentDetail, FinancialDetail)] = {
     documentDetails.map(documentDetail =>
       (documentDetail, financialDetails.find(_.transactionId.get == documentDetail.transactionId)
@@ -143,10 +127,6 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     )
   }
 
-
-  def isAllPaid()(implicit user: MtdItUser[_]): Boolean = documentDetails.forall(_.isPaid)
-
-  def isAllInterestPaid()(implicit user: MtdItUser[_]): Boolean = documentDetails.forall(_.interestIsPaid)
 
   def validChargeTypeCondition: DocumentDetail => Boolean = documentDetail => {
     (documentDetail.documentText, documentDetail.getDocType) match {
