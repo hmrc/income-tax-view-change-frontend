@@ -69,7 +69,7 @@ class OptOutSessionDataRepository @Inject()(val repository: UIJourneySessionData
   def initialiseOptOutJourney(oop :OptOutProposition)(implicit hc: HeaderCarrier): Future[Boolean] = {
     val data = UIJourneySessionData(
       sessionId = hc.sessionId.get.value,
-      journeyType = OptOutJourney.Name,
+      journeyType = OptOutJourney.toString,
       optOutSessionData = Some(OptOutSessionData(Some(buildOptOutContextData(oop)), selectedOptOutYear = None))
     )
     repository.set(data)
