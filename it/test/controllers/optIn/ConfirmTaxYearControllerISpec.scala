@@ -19,7 +19,7 @@ package controllers.optIn
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
 import controllers.optIn.ConfirmTaxYearControllerISpec._
-import enums.JourneyType.{In, Opt}
+import enums.JourneyType.{OptInJourney, Opt}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import helpers.{ComponentSpecBase, ITSAStatusUpdateConnectorStub}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear, UIJourneySessionData}
@@ -212,7 +212,7 @@ class ConfirmTaxYearControllerISpec extends ComponentSpecBase {
                                     nextYearStatus: ITSAStatus.Value, intent: TaxYear): Future[Boolean] = {
     repository.set(
       UIJourneySessionData(testSessionId,
-        Opt(In).toString,
+        Opt(OptInJourney).toString,
         optInSessionData =
           Some(OptInSessionData(
             Some(OptInContextData(

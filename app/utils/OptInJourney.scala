@@ -17,7 +17,7 @@
 package utils
 
 import auth.MtdItUser
-import enums.JourneyType.{In, JourneyType, Opt, Out}
+import enums.JourneyType.{OptInJourney, JourneyType, Opt, Out}
 import models.incomeSourceDetails.UIJourneySessionData
 import play.api.mvc.Result
 import services.SessionService
@@ -36,11 +36,11 @@ trait OptInJourney {
                       handleErrorCase: Throwable => Future[Result])
                      (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
-    sessionService.getMongo(Opt(In)).flatMap {
+    sessionService.getMongo(Opt(OptInJourney)).flatMap {
       case Right(Some(data: UIJourneySessionData)) => handleSessionData(data)
       case Right(None) =>
         sessionService.createSession(Opt(Out)).flatMap { _ =>
-          val data = UIJourneySessionData(hc.sessionId.get.value, Opt(In).toString)
+          val data = UIJourneySessionData(hc.sessionId.get.value, Opt(OptInJourney).toString)
           handleSessionData(data)
         }
       case Left(ex) => handleErrorCase(ex)

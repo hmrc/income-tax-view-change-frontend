@@ -48,7 +48,7 @@ sealed trait OptJourney extends JourneyType {
   val choice: String
 }
 
-case object In extends OptJourney {
+case object OptInJourney extends OptJourney {
   override val choice = "OPTIN"
 }
 

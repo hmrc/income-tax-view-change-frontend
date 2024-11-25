@@ -17,7 +17,7 @@
 package controllers.agent.optIn
 
 import controllers.optIn.BeforeYouStartControllerISpec._
-import enums.JourneyType.{In, Opt}
+import enums.JourneyType.{OptInJourney, Opt}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
@@ -90,7 +90,7 @@ class BeforeYouStartControllerISpec extends ComponentSpecBase {
   private def setupOptInSessionData(currentTaxYear: TaxYear, currentYearStatus: ITSAStatus.Value, nextYearStatus: ITSAStatus.Value): Unit = {
     repository.set(
       UIJourneySessionData(testSessionId,
-        Opt(In).toString,
+        Opt(OptInJourney).toString,
         optInSessionData =
           Some(OptInSessionData(
             Some(OptInContextData(

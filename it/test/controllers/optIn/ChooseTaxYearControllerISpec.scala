@@ -18,7 +18,7 @@ package controllers.optIn
 
 
 import controllers.optIn.ChooseYearControllerISpec.{descriptionText, headingText, taxYearChoiceOne, taxYearChoiceTwo}
-import enums.JourneyType.{In, Opt}
+import enums.JourneyType.{OptInJourney, Opt}
 import forms.optIn.ChooseTaxYearForm
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -151,7 +151,7 @@ class ChooseYearControllerISpec extends ComponentSpecBase {
   private def setupOptInSessionData(currentTaxYear: TaxYear, currentYearStatus: ITSAStatus.Value, nextYearStatus: ITSAStatus.Value): Unit = {
     repository.set(
       UIJourneySessionData(testSessionId,
-        Opt(In).toString,
+        Opt(OptInJourney).toString,
         optInSessionData =
           Some(OptInSessionData(
             Some(OptInContextData(
