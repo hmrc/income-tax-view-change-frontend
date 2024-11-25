@@ -65,7 +65,7 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
     val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, true)
 
     s"calling GET $path" when {
-      s"a user is a $mtdUserRole" that {
+      s"the user is a $mtdUserRole" that {
         "is authenticated, with a valid agent and client delegated enrolment" should {
         "render single tax year opt out confirmation pager" in {
           enable(IncomeSources)
@@ -100,7 +100,7 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
     s"calling POST $path" when {
       s"a user is a $mtdUserRole" that {
         "is authenticated, with a valid agent and client delegated enrolment" should {
-          s"return status $BAD_REQUEST and render single tax year opt out confirmation pager with error message - $BAD_REQUEST " when {
+          s"render single tax year opt out confirmation pager with error message and status $BAD_REQUEST " when {
             "invalid data is sent" in {
               enable(IncomeSources)
               disable(NavBarFs)
@@ -128,7 +128,7 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
 
             }
           }
-          s"return status $SEE_OTHER with location $confirmOptOutPageUrl" when {
+          s"redirect to ConfirmOptOutPage - $confirmOptOutPageUrl with status $SEE_OTHER" when {
             "Yes response is sent" in {
               enable(IncomeSources)
               disable(NavBarFs)
@@ -153,7 +153,7 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
             }
           }
 
-          s"return status $SEE_OTHER with location $nextUpdatesPageUrl" when {
+          s"redirect to OptOutCancelledPage - $nextUpdatesPageUrl with status $SEE_OTHER" when {
             "No response is sent" in {
               enable(IncomeSources)
               disable(NavBarFs)

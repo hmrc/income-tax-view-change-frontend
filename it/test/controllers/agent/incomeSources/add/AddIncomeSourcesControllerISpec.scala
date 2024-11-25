@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.agent.manageBusinesses.add
+package controllers.agent.incomeSources.add
 
 import controllers.agent.ControllerISpecHelper
 import enums.{MTDPrimaryAgent, MTDSupportingAgent}
@@ -26,7 +26,7 @@ import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesResp
 
 class AddIncomeSourcesControllerISpec extends ControllerISpecHelper {
 
-  val path = "/agents/manage-your-businesses/add/new-income-sources"
+  val path = "/agents/income-sources/add/new-income-sources"
 
   val pageTitleMsgKey = "incomeSources.add.addIncomeSources.heading"
   val soleTraderBusinessName1: String = "business"
@@ -44,7 +44,7 @@ class AddIncomeSourcesControllerISpec extends ControllerISpecHelper {
         val isSupportingAgent = mtdUserRole == MTDSupportingAgent
         val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, true)
         "is authenticated, with a valid agent and client delegated enrolment" should {
-          "render the Add Income Source page" in {
+        "render the Add Income Source page" in {
             enable(IncomeSources)
             disable(NavBarFs)
             MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)

@@ -67,7 +67,9 @@ class ReportingFrequencyControllerISpec extends ControllerISpecBase with Feature
 
           AuthStub.stubAuthorised()
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
-          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(dateService.getCurrentTaxYearEnd)
+          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
+            taxYear = dateService.getCurrentTaxYear
+          )
 
           val res =
             httpClient

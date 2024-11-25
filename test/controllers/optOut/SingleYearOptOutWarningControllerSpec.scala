@@ -47,10 +47,18 @@ SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOptOutSer
   mtdAllRoles.foreach{ case mtdUserRole =>
 
     val isAgent = mtdUserRole != MTDIndividual
+
     val requestGET = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
     val requestPOST = fakePostRequestBasedOnMTDUserType(mtdUserRole)
     val confirmOptOutPage = Some(controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url)
-    val nextUpdatesPage = if (isAgent) controllers.routes.NextUpdatesController.showAgent.url else controllers.routes.NextUpdatesController.show().url
+
+    val optOutCancelledUrl =
+      if (isAgent) {
+        controllers.optOut.routes.OptOutCancelledController.showAgent().url
+      } else {
+        controllers.optOut.routes.OptOutCancelledController.show().url
+      }
+
     val taxYear = TaxYear.forYearEnd(2024)
     val eligibleTaxYearResponse = Future.successful(Some(OptOutOneYearViewModel(taxYear, None)))
     val noEligibleTaxYearResponse = Future.successful(None)
@@ -121,7 +129,8 @@ SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOptOutSer
             redirectLocation(result) shouldBe confirmOptOutPage
           }
         }
-        s"return result with $SEE_OTHER status with redirect to $nextUpdatesPage" when {
+        s"return result with 303 status with redirect to Opt Out Cancelled Page" when {
+
           "No response is submitted" in {
             setupMockSuccess(mtdUserRole)
             enable(IncomeSources)
@@ -134,9 +143,10 @@ SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOptOutSer
                 ConfirmOptOutSingleTaxYearForm.csrfToken -> ""
               ))
             status(result) shouldBe Status.SEE_OTHER
-            redirectLocation(result) shouldBe Some(nextUpdatesPage)
-          }
+            redirectLocation(result) shouldBe Some(optOutCancelledUrl)
         }
+          }
+
         s"return result with $BAD_REQUEST status" when {
           "invalid response is submitted" in {
             setupMockSuccess(mtdUserRole)

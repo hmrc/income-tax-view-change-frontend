@@ -138,9 +138,9 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
     val cutover = if (cutoverEnabled) List(PaymentHistoryEntry(LocalDate.parse("2019-12-25"), CutOverCreditType, Some(-11000.0), None,
       s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}credits-from-hmrc/2019", "AY777777202202")) else Nil
     val reviewAndReconcileCredits = if (reviewAndReconcileEnabled) List(
-      PaymentHistoryEntry(LocalDate.parse("2019-12-23"), PaymentOnAccountOneReviewAndReconcileCredit, Some(-11000.0), None,
+      PaymentHistoryEntry(LocalDate.parse("2019-12-23"), PoaOneReconciliationCredit, Some(-11000.0), None,
       s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}tax-years/2019/charge?id=AY777777202298", "AY777777202298"),
-      PaymentHistoryEntry(LocalDate.parse("2019-12-23"), PaymentOnAccountTwoReviewAndReconcileCredit, Some(-11000.0), None,
+      PaymentHistoryEntry(LocalDate.parse("2019-12-23"), PoaTwoReconciliationCredit, Some(-11000.0), None,
         s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}tax-years/2019/charge?id=AY777777202299", "AY777777202299"),
     ) else Nil
     val standardPayments = List(

@@ -329,15 +329,15 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
     "validate Payment on Accounts" in {
       testValidChargeType(
         List(
-          chargeItemModel(transactionType = PaymentOnAccountOne),
-          chargeItemModel(transactionType = PaymentOnAccountTwo)),true)
+          chargeItemModel(transactionType = PoaOneDebit),
+          chargeItemModel(transactionType = PoaTwoDebit)),true)
     }
 
     "validate Payment on Account Review and Reconcile" in {
       testValidChargeType(
         List(
-          chargeItemModel(transactionType = PaymentOnAccountOneReviewAndReconcile),
-          chargeItemModel(transactionType = PaymentOnAccountTwoReviewAndReconcile)), true)
+          chargeItemModel(transactionType = PoaOneReconciliationDebit),
+          chargeItemModel(transactionType = PoaTwoReconciliationDebit)), true)
     }
 
     "validate any balancing charges" in {

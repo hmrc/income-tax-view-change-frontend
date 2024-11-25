@@ -31,7 +31,7 @@ trait ChargeConstants {
 
   def chargeItemModel(taxYear: TaxYear = TaxYear.forYearEnd(2018),
                       transactionId: String = id1040000123,
-                      transactionType: TransactionType = PaymentOnAccountOne,
+                      transactionType: TransactionType = PoaOneDebit,
                       subTransactionType: Option[SubTransactionType] = None,
                       documentDate: LocalDate = LocalDate.of(2018, 3, 29),
                       dueDate: Option[LocalDate] =  Some(LocalDate.of(2019, 5, 15)),
@@ -68,7 +68,7 @@ trait ChargeConstants {
                                               dunningLock: List[Option[String]],
                                               documentDate: List[LocalDate] = List(LocalDate.of(2018, 3, 29), LocalDate.of(2018, 3, 29)),
                                               transactionId: List[String] = List(id1040000124, id1040000125),
-                                              transactionTypes: List[ChargeType] = List(PaymentOnAccountOne, PaymentOnAccountTwo),
+                                              transactionTypes: List[ChargeType] = List(PoaOneDebit, PoaTwoDebit),
                                               subTransactionTypes: List[Option[SubTransactionType]] = List(None, None),
                                               originalAmount: List[BigDecimal] = List( 43.21, 12.34),
                                               outstandingAmount: List[BigDecimal] = List(50, 75),
@@ -120,7 +120,7 @@ trait ChargeConstants {
   }
 
   def financialDetailsOverdueInterestDataCi(latePaymentInterest: List[Option[BigDecimal]]): List[ChargeItem] = testFinancialDetailsChargeItems(
-    transactionTypes = List(PaymentOnAccountOne, PaymentOnAccountTwo),
+    transactionTypes = List(PoaOneDebit, PoaTwoDebit),
     dueDate = dueDateOverdue,
     dunningLock = noDunningLocks,
     outstandingAmount = List(50.0, 75.0),
@@ -193,7 +193,7 @@ trait ChargeConstants {
       ChargeItem(
         taxYear = TaxYear.forYearEnd(2021),
         transactionId = "1040000124",
-        transactionType = PaymentOnAccountOne,
+        transactionType = PoaOneDebit,
         subTransactionType = None,
         outstandingAmount = 2000,
         originalAmount = 2000,
@@ -209,7 +209,7 @@ trait ChargeConstants {
       ChargeItem(
         taxYear = TaxYear.forYearEnd(2021),
         transactionId = "1040000125",
-        transactionType = PaymentOnAccountTwo,
+        transactionType = PoaTwoDebit,
         subTransactionType = None,
         outstandingAmount = 2000,
         originalAmount = 2000,
@@ -288,7 +288,7 @@ trait ChargeConstants {
   val poa1WithCodedOut = ChargeItem(
     transactionId = id1040000123,
     taxYear = TaxYear.forYearEnd(currentYear.toInt),
-    transactionType = PaymentOnAccountOne,
+    transactionType = PoaOneDebit,
     subTransactionType = None,
     outstandingAmount = 1000,
     originalAmount = 43.21,
@@ -306,7 +306,7 @@ trait ChargeConstants {
   val poa2WithCodedOut = ChargeItem(
     transactionId = id1040000124,
     taxYear = TaxYear.forYearEnd(currentYear.toInt),
-    transactionType = PaymentOnAccountTwo,
+    transactionType = PoaTwoDebit,
     subTransactionType = None,
     outstandingAmount = 400,
     originalAmount = 12.34,
@@ -325,7 +325,7 @@ trait ChargeConstants {
   val poa2 = ChargeItem(
       transactionId = id1040000124,
       taxYear = TaxYear.forYearEnd(currentYear.toInt),
-      transactionType = PaymentOnAccountTwo,
+      transactionType = PoaTwoDebit,
       subTransactionType = None,
       outstandingAmount = 0,
       originalAmount = 12.34,
@@ -389,7 +389,7 @@ trait ChargeConstants {
       ChargeItem(
         id1040000124,
         taxYear,
-        transactionType = PaymentOnAccountOne,
+        transactionType = PoaOneDebit,
         subTransactionType = None,
         documentDate = LocalDate.of(2018, 3, 29),
         dueDate = Some(fixedDate.minusDays(10)),
@@ -407,7 +407,7 @@ trait ChargeConstants {
       ChargeItem(
         id1040000125,
         taxYear,
-        transactionType = PaymentOnAccountOne,
+        transactionType = PoaOneDebit,
         subTransactionType = None,
         documentDate = LocalDate.of(2018, 3, 29),
         dueDate = Some(fixedDate.minusDays(1)),
@@ -452,7 +452,7 @@ trait ChargeConstants {
         ChargeItem(
           taxYear = TaxYear.forYearEnd(2021),
           transactionId = "transId2",
-          transactionType = PaymentOnAccountOne,
+          transactionType = PoaOneDebit,
           subTransactionType = None,
           outstandingAmount = 100,
           originalAmount = 1000,
@@ -513,7 +513,7 @@ trait ChargeConstants {
 
   val financialDetailsReviewAndReconcileCi: List[ChargeItem] = testFinancialDetailsChargeItems(
     transactionId = List(id1040000123, id1040000124),
-    transactionTypes = List(PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwo),
+    transactionTypes = List(PoaOneReconciliationDebit, PoaTwoDebit),
     dueDate = List(Some(fixedDate.plusYears(100).minusDays(1)), Some(fixedDate.plusYears(100).plusDays(30))),
     outstandingAmount = List(50, 75),
     taxYear = fixedDate.getYear.toString,
@@ -523,7 +523,7 @@ trait ChargeConstants {
 
   val financialDetailsOverdueCharges: List[ChargeItem] = testFinancialDetailsChargeItems(
     transactionId = List(id1040000123, id1040000124),
-    transactionTypes = List(PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile),
+    transactionTypes = List(PoaOneReconciliationDebit, PoaTwoReconciliationDebit),
     dueDate = List(Some(fixedDate.plusDays(1)), Some(fixedDate.plusDays(1))),
     outstandingAmount = List(50, 75),
     taxYear = fixedDate.getYear.toString,
@@ -533,7 +533,7 @@ trait ChargeConstants {
 
   val financialDetailsReviewAndReconcileNotYetDueCi: List[ChargeItem] = testFinancialDetailsChargeItems(
     transactionId = List(id1040000123, id1040000124),
-    transactionTypes = List(PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile),
+    transactionTypes = List(PoaOneReconciliationDebit, PoaTwoReconciliationDebit),
     dueDate = List(Some(fixedDate.plusYears(100).minusDays(1)), Some(fixedDate.plusYears(100).plusDays(30))),
     outstandingAmount = List(50, 75),
     taxYear = fixedDate.getYear.toString,
@@ -543,7 +543,7 @@ trait ChargeConstants {
 
   val financialDetailsReviewAndReconcileInterest: List[ChargeItem] = testFinancialDetailsChargeItems(
     transactionId = List(id1040000123, id1040000124),
-    transactionTypes = List(PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwoReviewAndReconcile),
+    transactionTypes = List(PoaOneReconciliationDebit, PoaTwoReconciliationDebit),
     dueDate = List(Some(fixedDate.plusYears(100).minusDays(1)), Some(fixedDate.plusYears(100).plusDays(30))),
     outstandingAmount = List(0, 0),
     taxYear = fixedDate.getYear.toString,
@@ -589,7 +589,7 @@ trait ChargeConstants {
 
   val financialDetailsWithMixedData4Ci: List[ChargeItem] = testFinancialDetailsChargeItems(
     transactionId = List(id1040000123, id1040000124),
-    transactionTypes = List(PaymentOnAccountOneReviewAndReconcile, PaymentOnAccountTwo),
+    transactionTypes = List(PoaOneReconciliationDebit, PoaTwoDebit),
     dueDate = List(Some(fixedDate.plusDays(30)), Some(fixedDate.minusDays(1))),
     outstandingAmount = List(50, 75),
     outstandingInterest  = List(Some(100.0), Some(100.0)),
@@ -718,7 +718,7 @@ trait ChargeConstants {
   val codedOutChargeItemsA: ChargeItem = ChargeItem(
     id1040000124,
     TaxYear.forYearEnd(2022),
-    PaymentOnAccountOne,
+    PoaOneDebit,
     None,
     LocalDate.of(2018, 3, 29),
     Some(LocalDate.of(2018, 3, 29)),
@@ -843,7 +843,7 @@ trait ChargeConstants {
       taxYear = fixedDate.getYear.toString
     ) ++ Seq(chargeItemModel(
       transactionId = id1040000124,
-      transactionType = PaymentOnAccountTwo,
+      transactionType = PoaTwoDebit,
       documentDate = LocalDate.of(2018, 3, 29),
       dueDate = Some(LocalDate.of(2023, 12, 16)),
       interestOutstandingAmount = Some(100.0),
@@ -855,7 +855,7 @@ trait ChargeConstants {
       taxYear = TaxYear.forYearEnd(fixedDate.getYear)
     )) ++ Seq(chargeItemModel(
       transactionId = id1040000124,
-      transactionType = PaymentOnAccountOne,
+      transactionType = PoaOneDebit,
       documentDate = LocalDate.of(2018, 3, 29),
       dueDate = Some(fixedDate.plusDays(45)),
       interestOutstandingAmount = Some(100.0),
@@ -881,13 +881,13 @@ trait ChargeConstants {
       outstandingAmount = List(50, 75)
     ) ++ Seq(chargeItemModel(
       transactionId = id1040000124,
-      transactionType = PaymentOnAccountTwo,
+      transactionType = PoaTwoDebit,
       dueDate = Some(fixedDate.plusDays(1)),
       outstandingAmount = 100,
       taxYear = TaxYear.forYearEnd(fixedDate.getYear)
     )) ++ Seq(chargeItemModel(
       transactionId = id1040000124,
-      transactionType = PaymentOnAccountOne,
+      transactionType = PoaOneDebit,
       dueDate = Some(fixedDate.plusDays(45)),
       outstandingAmount = 125,
       taxYear = TaxYear.forYearEnd(fixedDate.getYear)
@@ -946,7 +946,7 @@ trait ChargeConstants {
       chargeItemModel(
         taxYear = TaxYear.forYearEnd(2021),
         transactionId = "1040000124",
-        transactionType = PaymentOnAccountOne,
+        transactionType = PoaOneDebit,
         outstandingAmount = 2000,
         originalAmount = 2000,
         documentDate = LocalDate.parse("2018-03-29"),
@@ -961,7 +961,7 @@ trait ChargeConstants {
       chargeItemModel(
         taxYear = TaxYear.forYearEnd(2021),
         transactionId = "1040000125",
-        transactionType = PaymentOnAccountTwo,
+        transactionType = PoaTwoDebit,
         outstandingAmount = 2000,
         originalAmount = 2000,
         documentDate = LocalDate.parse("2018-03-29"),
@@ -997,7 +997,7 @@ trait ChargeConstants {
           chargeItemModel(
             taxYear = TaxYear.forYearEnd(2021),
             transactionId = "1040000124",
-            transactionType = PaymentOnAccountOne,
+            transactionType = PoaOneDebit,
             subTransactionType = None,
             outstandingAmount = 2000,
             originalAmount = 2000,
@@ -1013,7 +1013,7 @@ trait ChargeConstants {
           chargeItemModel(
             taxYear = TaxYear.forYearEnd(2021),
             transactionId = "1040000125",
-            transactionType = PaymentOnAccountTwo,
+            transactionType = PoaTwoDebit,
             subTransactionType = None,
             outstandingAmount = 2000,
             originalAmount = 2000,

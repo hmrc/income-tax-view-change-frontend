@@ -55,7 +55,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with ChargeConstants w
   val testDate: LocalDate = LocalDate.parse("2022-01-01")
 
   val configuredChargeItemGetter: List[FinancialDetail] => DocumentDetail => Option[ChargeItem] =
-    getChargeItemOpt(reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa))
+    getChargeItemOpt
 
   val testValidOutStandingChargeResponseJsonWithAciAndBcdCharges: JsValue = Json.parse(
     s"""

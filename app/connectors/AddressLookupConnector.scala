@@ -25,23 +25,24 @@ import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpPar
 import play.api.Logger
 import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
-                                       http: HttpClient,
+                                       http: HttpClientV2,
                                        val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends FeatureSwitching {
 
   val baseUrl: String = appConfig.addressLookupService
 
   def addressLookupInitializeUrl: String = {
-    s"${baseUrl}/api/v2/init"
+    s"$baseUrl/api/v2/init"
   }
 
   def getAddressDetailsUrl(id: String): String = {
-    s"${baseUrl}/api/v2/confirmed?id=$id"
+    s"$baseUrl/api/v2/confirmed?id=$id"
   }
 
   def continueUrl(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_]): String = (isAgent, isEnabled(IncomeSourcesNewJourney)) match {
@@ -168,14 +169,12 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
     } else {
       addressJson(continueUrl(isAgent, isChange), individualFeedbackUrl, individualEnglishBanner, individualWelshBanner)
     }
-
-    http.POST[JsValue, PostAddressLookupResponse](
-      url = addressLookupInitializeUrl,
-      body = payload
-    )
+    http.post(url"$addressLookupInitializeUrl")
+      .withBody(payload)
+      .execute[PostAddressLookupResponse]
   }
 
   def getAddressDetails(id: String)(implicit hc: HeaderCarrier): Future[GetAddressLookupDetailsResponse] = {
-    http.GET[GetAddressLookupDetailsResponse](getAddressDetailsUrl(id))
+    http.get(url"${getAddressDetailsUrl(id)}").execute[GetAddressLookupDetailsResponse]
   }
 }

@@ -35,7 +35,8 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
   private val validNoForm = getPageForm("false")
   private val inValidForm = getPageForm("")
   private val confirmOptOutPageUrl = controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url
-  private val nextUpdatesPageUrl = controllers.routes.NextUpdatesController.show().url
+
+  private val optOutCancelledUrl = controllers.optOut.routes.OptOutCancelledController.show().url
 
   private val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
   private val previousYear = currentTaxYear.addYears(-1)
@@ -94,7 +95,7 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
 
   s"calling POST $path" should {
     s"return status $BAD_REQUEST and render single tax year opt out confirmation pager with error message - $BAD_REQUEST " when {
-      "invalid data is sent" in {
+      "user answers with invalid data" in {
         enable(IncomeSources)
         disable(NavBarFs)
         MTDIndividualAuthStub.stubAuthorised()
@@ -121,8 +122,8 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
 
       }
     }
-    s"return status $SEE_OTHER with location $confirmOptOutPageUrl" when {
-      "Yes response is sent" in {
+    s"redirect to $confirmOptOutPageUrl and return status $SEE_OTHER" when {
+      "user answers Yes" in {
         enable(IncomeSources)
         disable(NavBarFs)
         MTDIndividualAuthStub.stubAuthorised()
@@ -146,11 +147,8 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
       }
     }
 
-    s"return status $SEE_OTHER with location $nextUpdatesPageUrl" when {
-      "No response is sent" in {
-        enable(IncomeSources)
-        disable(NavBarFs)
-        MTDIndividualAuthStub.stubAuthorised()
+    s"redirect to $optOutCancelledUrl and return status $SEE_OTHER" when {
+      "user answers No" in {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -166,7 +164,7 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(nextUpdatesPageUrl)
+          redirectURI(optOutCancelledUrl)
         )
       }
     }
