@@ -17,7 +17,7 @@
 package utils
 
 import auth.MtdItUser
-import enums.JourneyType.{OptInJourney, JourneyType, Opt, Out}
+import enums.JourneyType.{OptInJourney, JourneyType, Opt, OptOutJourney}
 import models.incomeSourceDetails.UIJourneySessionData
 import play.api.mvc.Result
 import services.SessionService
@@ -39,7 +39,7 @@ trait OptInJourney {
     sessionService.getMongo(Opt(OptInJourney)).flatMap {
       case Right(Some(data: UIJourneySessionData)) => handleSessionData(data)
       case Right(None) =>
-        sessionService.createSession(Opt(Out)).flatMap { _ =>
+        sessionService.createSession(Opt(OptOutJourney)).flatMap { _ =>
           val data = UIJourneySessionData(hc.sessionId.get.value, Opt(OptInJourney).toString)
           handleSessionData(data)
         }

@@ -52,6 +52,6 @@ case object OptInJourney extends OptJourney {
   override val choice = "OPTIN"
 }
 
-case object Out extends OptJourney {
+case object OptOutJourney extends OptJourney {
   override val choice = "OPTOUT"
 }
