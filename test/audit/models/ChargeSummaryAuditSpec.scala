@@ -113,7 +113,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
   val chargeItemWithNoInterest: ChargeItem = ChargeItem(
     transactionId = "1040000124",
     taxYear = TaxYear.forYearEnd(taxYear),
-    transactionType = PaymentOnAccountOne,
+    transactionType = PoaOneDebit,
     subTransactionType = None,
     documentDate = LocalDate.of(2018, 3, 29),
     dueDate = Some(fixedDate),

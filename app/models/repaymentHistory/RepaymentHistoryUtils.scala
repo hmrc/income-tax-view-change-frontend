@@ -103,8 +103,8 @@ object RepaymentHistoryUtils {
     (hasCredit,  reviewAndReconcileEnabled, hasLot, payment.creditType) match {
       case (true, _, _, Some(MfaCreditType))                                   => Some(mfaCreditEntry(payment, isAgent))
       case (true, _, _, Some(CutOverCreditType))                               => Some(creditEntry(payment, isAgent))
-      case (true, true, _, Some(PaymentOnAccountOneReviewAndReconcileCredit))  => Some(creditEntry(payment, isAgent, true))
-      case (true, true, _, Some(PaymentOnAccountTwoReviewAndReconcileCredit))  => Some(creditEntry(payment, isAgent, true))
+      case (true, true, _, Some(PoaOneReconciliationCredit))  => Some(creditEntry(payment, isAgent, true))
+      case (true, true, _, Some(PoaTwoReconciliationCredit))  => Some(creditEntry(payment, isAgent, true))
       case (true, _, _, Some(BalancingChargeCreditType))                       => Some(creditEntry(payment, isAgent))
       case (true, _, _, Some(RepaymentInterest))                               => Some(creditEntry(payment, isAgent))
       case (false, _, true, Some(PaymentType))                                 => Some(paymentToHMRCEntry(payment, isAgent))
