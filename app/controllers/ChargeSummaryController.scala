@@ -157,16 +157,16 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
         val (poaOneChargeUrl, poaTwoChargeUrl) =
           (for { // TODO: no need for duplicate type conversion / example only
             poaOneTaxYearTo     <- chargeDetailsforTaxYear.toChargeItem()
-              .find(_.transactionType == PaymentOnAccountOne)
+              .find(_.transactionType == PoaOneDebit)
               .map(_.taxYear.startYear)
             poaOneTransactionId <- chargeDetailsforTaxYear.toChargeItem()
-              .find(_.transactionType == PaymentOnAccountOne)
+              .find(_.transactionType == PoaOneDebit)
               .map(_.transactionId)
             poaTwoTaxYearTo     <- chargeDetailsforTaxYear.toChargeItem()
-              .find(_.transactionType == PaymentOnAccountTwo)
+              .find(_.transactionType == PoaTwoDebit)
               .map(_.taxYear.startYear)
             poaTwoTransactionId <- chargeDetailsforTaxYear.toChargeItem()
-              .find(_.transactionType == PaymentOnAccountTwo)
+              .find(_.transactionType == PoaTwoDebit)
               .map(_.transactionId)
           } yield
             if (isAgent)

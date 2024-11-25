@@ -23,12 +23,12 @@ import models.calculationList.{CalculationListErrorModel, CalculationListModel}
 import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import models.claimToAdjustPoa.PaymentOnAccountViewModel
 import models.core.Nino
-import models.financialDetails.{ChargeItem, DocumentDetail, FinancialDetail, FinancialDetailsModel, PaymentOnAccountOne, PaymentOnAccountTwo}
+import models.financialDetails.{ChargeItem, DocumentDetail, FinancialDetail, FinancialDetailsModel, PoaOneDebit, PoaTwoDebit}
 import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
 import play.api.Logger
 import services.DateServiceInterface
-import services.claimToAdjustPoa.ClaimToAdjustHelper.{POA1, POA2, isPoaOne, isPoaTwo, poaDocumentDescriptions}
+import services.claimToAdjustPoa.ClaimToAdjustHelper.{isPoaOne, isPoaTwo}
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
 import java.time.{LocalDate, Month}
@@ -59,8 +59,8 @@ trait ClaimToAdjustHelper {
                                poaPreviouslyAdjusted: Option[Boolean] = None): Either[Throwable, Option[PaymentOnAccountViewModel]] = {
     {
       for {
-        poaOneDocDetail <- charges.find(_.transactionType == PaymentOnAccountOne)
-        poaTwoDocDetail <- charges.find(_.transactionType == PaymentOnAccountTwo)
+        poaOneDocDetail <- charges.find(_.transactionType == PoaOneDebit)
+        poaTwoDocDetail <- charges.find(_.transactionType == PoaTwoDebit)
         latestDocumentDetail = poaTwoDocDetail
         taxReturnDeadline = getTaxReturnDeadline(poaTwoDocDetail.documentDate)
         poasAreBeforeDeadline = poaTwoDocDetail.documentDate isBefore taxReturnDeadline
