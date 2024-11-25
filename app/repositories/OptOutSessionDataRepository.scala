@@ -25,7 +25,6 @@ import repositories.ITSAStatusRepositorySupport.{statusToString, stringToStatus}
 import services.optout.OptOutProposition
 import services.optout.OptOutProposition.createOptOutProposition
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.OptOutJourney
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
