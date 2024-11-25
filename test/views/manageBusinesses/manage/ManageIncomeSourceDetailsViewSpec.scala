@@ -470,8 +470,12 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
   class ukCrystallisedSetup(isAgent: Boolean, error: Boolean = false) {
 
     def changeReportingMethodUrl(id: String, taxYear: String, changeTo: String): String = {
-      controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController
-        .show(taxYear, changeTo, incomeSourceType = SelfEmployment).url
+     if(isAgent) {
+        controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController.showAgent(taxYear, changeTo, UkProperty).url
+      }else{
+        controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController.show(taxYear, changeTo, UkProperty).url
+      }
+
     }
 
     lazy val view: HtmlFormat.Appendable = {
