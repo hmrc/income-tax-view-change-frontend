@@ -96,7 +96,7 @@ class TestDateService extends DateServiceInterface {
   override def isAfterTaxReturnDeadlineButBeforeTaxYearEnd: Boolean = true
 }
 
-trait ComponentSpecBase extends TestSuite with CustomMatchers
+trait  ComponentSpecBase extends TestSuite with CustomMatchers
   with GuiceOneServerPerSuite with ScalaFutures with IntegrationPatience with Matchers
   with WiremockHelper with BeforeAndAfterEach with BeforeAndAfterAll with Eventually
   with GenericStubMethods with FeatureSwitching with SessionCookieBaker {

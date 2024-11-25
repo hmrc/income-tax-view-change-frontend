@@ -51,7 +51,6 @@ class BusinessDetailsConnector @Inject()(
     s"${appConfig.itvcProtectedService}/income-tax-view-change/nino-lookup/$mtdRef"
   }
 
-
   def getBusinessDetails(nino: String)(implicit headerCarrier: HeaderCarrier): Future[IncomeSourceDetailsResponse] = {
     val url = getBusinessDetailsUrl(nino)
     Logger("application").debug(s"GET $url")
@@ -121,12 +120,13 @@ class BusinessDetailsConnector @Inject()(
                 IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error Parsing Income Source Details response")
               },
               valid => {
-                auditingService.extendedAudit(IncomeSourceDetailsResponseAuditModel(
-                  mtdItUser,
-                  valid.businesses.map(_.incomeSourceId),
-                  valid.properties.map(_.incomeSourceId),
-                  valid.yearOfMigration
-                ))
+                auditingService.extendedAudit(
+                  IncomeSourceDetailsResponseAuditModel(
+                    mtdItUser,
+                    valid.businesses.map(_.incomeSourceId),
+                    valid.properties.map(_.incomeSourceId),
+                    valid.yearOfMigration
+                  ))
                 valid
               }
             )
@@ -164,7 +164,7 @@ class BusinessDetailsConnector @Inject()(
                 },
                 valid => valid
               )
-          case status if (status >= 500) =>
+          case status if status >= 500 =>
             Logger("application").error(s"RESPONSE status: ${response.status}, body: ${response.body}")
             NinoResponseError(response.status, response.body)
           case _ =>
