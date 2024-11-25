@@ -23,12 +23,12 @@ import models.calculationList.{CalculationListErrorModel, CalculationListModel}
 import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import models.claimToAdjustPoa.PaymentOnAccountViewModel
 import models.core.Nino
-import models.financialDetails.{DocumentDetail, FinancialDetail, FinancialDetailsModel}
+import models.financialDetails.{ChargeItem, DocumentDetail, FinancialDetail, FinancialDetailsModel, PoaOneDebit, PoaTwoDebit}
 import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
 import play.api.Logger
 import services.DateServiceInterface
-import services.claimToAdjustPoa.ClaimToAdjustHelper.{POA1, POA2, isPoaOne, isPoaTwo, poaDocumentDescriptions}
+import services.claimToAdjustPoa.ClaimToAdjustHelper.{isPoaOne, isPoaTwo}
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
 import java.time.{LocalDate, Month}
@@ -46,22 +46,24 @@ trait ClaimToAdjustHelper {
   val sortByTaxYear: List[DocumentDetail] => List[DocumentDetail] =
     _.sortBy(_.taxYear).reverse
 
+  val sortByTaxYearC: List[ChargeItem] => List[ChargeItem] =
+    _.sortBy(_.taxYear.startYear).reverse
+
   protected case class FinancialDetailsAndPoaModel(financialDetails: Option[FinancialDetailsModel],
                                                    poaModel: Option[PaymentOnAccountViewModel])
 
   protected case class FinancialDetailAndChargeRefMaybe(documentDetails: List[DocumentDetail],
                                                         chargeReference: Option[String])
 
-  def getPaymentOnAccountModel(documentDetails: List[DocumentDetail],
+  def getPaymentOnAccountModel(charges: List[ChargeItem],
                                poaPreviouslyAdjusted: Option[Boolean] = None): Either[Throwable, Option[PaymentOnAccountViewModel]] = {
     {
       for {
-        poaOneDocDetail <- documentDetails.find(isPoaOne)
-        poaTwoDocDetail <- documentDetails.find(isPoaTwo)
+        poaOneDocDetail <- charges.find(_.transactionType == PoaOneDebit)
+        poaTwoDocDetail <- charges.find(_.transactionType == PoaTwoDebit)
         latestDocumentDetail = poaTwoDocDetail
-        poaTwoDueDate <- poaTwoDocDetail.documentDueDate
-        taxReturnDeadline = getTaxReturnDeadline(poaTwoDueDate)
-        poasAreBeforeDeadline = poaTwoDueDate isBefore taxReturnDeadline
+        taxReturnDeadline = getTaxReturnDeadline(poaTwoDocDetail.documentDate)
+        poasAreBeforeDeadline = poaTwoDocDetail.documentDate isBefore taxReturnDeadline
         if poasAreBeforeDeadline
       } yield {
         if (poaOneDocDetail.poaRelevantAmount.isDefined && poaTwoDocDetail.poaRelevantAmount.isDefined) {
@@ -70,7 +72,7 @@ trait ClaimToAdjustHelper {
               PaymentOnAccountViewModel(
                 poaOneTransactionId = poaOneDocDetail.transactionId,
                 poaTwoTransactionId = poaTwoDocDetail.transactionId,
-                taxYear = makeTaxYearWithEndYear(latestDocumentDetail.taxYear),
+                taxYear = latestDocumentDetail.taxYear,
                 totalAmountOne = poaOneDocDetail.originalAmount,
                 totalAmountTwo = poaTwoDocDetail.originalAmount,
                 relevantAmountOne = poaOneDocDetail.poaRelevantAmount.get,
@@ -151,11 +153,6 @@ trait ClaimToAdjustHelper {
         TaxYear.makeTaxYearWithEndYear(dateService.getCurrentTaxYearEnd)
       ).sortBy(_.endYear)
     }
-  }
-
-  protected def arePoaPaymentsPresent(documentDetails: List[DocumentDetail]): Option[TaxYear] = {
-    documentDetails.filter(_.documentDescription.exists(description => poaDocumentDescriptions.contains(description)))
-      .sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
   }
 
   def getAmendablePoaViewModel(documentDetails: List[DocumentDetail],
@@ -244,7 +241,7 @@ object ClaimToAdjustHelper {
   private final val POA1: String = Poa1Charge.key
   private final val POA2: String = Poa2Charge.key
 
-  protected val poaDocumentDescriptions: List[String] = List(POA1, POA2)
+  val poaDocumentDescriptions: List[String] = List(POA1, POA2)
 
   val isPoaOne: DocumentDetail => Boolean = _.documentDescription.contains(POA1)
 

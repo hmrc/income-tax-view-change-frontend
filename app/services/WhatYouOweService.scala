@@ -68,12 +68,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
         val balanceDetails = financialDetailsModelList.headOption
           .map(_.balanceDetails).getOrElse(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None))
         val codedOutChargeItem = {
-
-          def chargeItemf: DocumentDetail => Option[ChargeItem] = getChargeItemOpt(financialDetailsModelList
-              .flatMap(_.financialDetails))(_)
-
-          financialDetailsModelList.flatMap(_.documentDetails)
-            .flatMap(chargeItemf)
+          financialDetailsModelList.flatMap(_.toChargeItem())
             .filter(_.subTransactionType.contains(Accepted))
             .find(_.taxYear.endYear == (dateService.getCurrentTaxYearEnd - 1))
         }

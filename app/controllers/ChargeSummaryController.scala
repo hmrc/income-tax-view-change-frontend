@@ -93,7 +93,7 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
         case (year, response) if year == taxYear => response
       }
       matchingYear.headOption match {
-        case Some(fdmForTaxYear: FinancialDetailsModel) if fdmForTaxYear.documentDetails.exists(_.transactionId == id) =>
+        case Some(fdmForTaxYear: FinancialDetailsModel) if fdmForTaxYear.documentDetailsExist(id) =>
           doShowChargeSummary(taxYear, id, isInterestCharge, fdmForTaxYear, paymentsFromAllYears, isAgent, origin, isMFADebit(fdmForTaxYear, id))
         case Some(_: FinancialDetailsModel) =>
           Future.successful(onError(s"Transaction id not found for tax year $taxYear", isAgent, showInternalServerError = false))
@@ -155,11 +155,19 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
 
 
         val (poaOneChargeUrl, poaTwoChargeUrl) =
-          (for {
-            poaOneTaxYearTo     <- chargeDetailsforTaxYear.documentDetails.filter(isPoaOne).map(_.taxYear).headOption
-            poaOneTransactionId <- chargeDetailsforTaxYear.documentDetails.filter(isPoaOne).map(_.transactionId).headOption
-            poaTwoTaxYearTo     <- chargeDetailsforTaxYear.documentDetails.filter(isPoaTwo).map(_.taxYear).headOption
-            poaTwoTransactionId <- chargeDetailsforTaxYear.documentDetails.filter(isPoaTwo).map(_.transactionId).headOption
+          (for { // TODO: no need for duplicate type conversion / example only
+            poaOneTaxYearTo     <- chargeDetailsforTaxYear.toChargeItem()
+              .find(_.transactionType == PoaOneDebit)
+              .map(_.taxYear.startYear)
+            poaOneTransactionId <- chargeDetailsforTaxYear.toChargeItem()
+              .find(_.transactionType == PoaOneDebit)
+              .map(_.transactionId)
+            poaTwoTaxYearTo     <- chargeDetailsforTaxYear.toChargeItem()
+              .find(_.transactionType == PoaTwoDebit)
+              .map(_.taxYear.startYear)
+            poaTwoTransactionId <- chargeDetailsforTaxYear.toChargeItem()
+              .find(_.transactionType == PoaTwoDebit)
+              .map(_.transactionId)
           } yield
             if (isAgent)
               (routes.ChargeSummaryController.showAgent(poaOneTaxYearTo, poaOneTransactionId).url,

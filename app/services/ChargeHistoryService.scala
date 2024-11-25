@@ -72,10 +72,10 @@ class ChargeHistoryService @Inject()(chargeHistoryConnector: ChargeHistoryConnec
   }
 
   def getReviewAndReconcileCredit(chargeItem: ChargeItem,
-                                  chargeDetailsforTaxYear: FinancialDetailsModel,
+                                  chargeDetailsForTaxYear: FinancialDetailsModel,
                                   reviewAndReconcileEnabled: Boolean): Option[ChargeItem] = {
     for {
-      financialDetailForRarCredit <- chargeDetailsforTaxYear.financialDetails.find(
+      financialDetailForRarCredit <- chargeDetailsForTaxYear.financialDetails.find(
         chargeItem.transactionType match {
           case PoaOneDebit => (fd: FinancialDetail) => reviewAndReconcileEnabled && fd.isReconcilePoaOneCredit
           case PoaTwoDebit => (fd: FinancialDetail) => reviewAndReconcileEnabled && fd.isReconcilePoaTwoCredit
@@ -83,7 +83,7 @@ class ChargeHistoryService @Inject()(chargeHistoryConnector: ChargeHistoryConnec
         }
       )
       id                         <- financialDetailForRarCredit.transactionId
-      documentDetailForRarCredit <- chargeDetailsforTaxYear.documentDetails.find(_.transactionId == id)
+      documentDetailForRarCredit <- chargeDetailsForTaxYear.documentDetailsWithTransactionId(id)
     } yield {
       ChargeItem.fromDocumentPair(
         documentDetailForRarCredit,
