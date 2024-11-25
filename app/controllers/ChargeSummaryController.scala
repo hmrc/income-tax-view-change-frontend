@@ -155,11 +155,19 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
 
 
         val (poaOneChargeUrl, poaTwoChargeUrl) =
-          (for {
-            poaOneTaxYearTo     <- chargeDetailsforTaxYear.documentDetailsFilter(isPoaOne).map(_.taxYear)
-            poaOneTransactionId <- chargeDetailsforTaxYear.documentDetailsFilter(isPoaOne).map(_.transactionId)
-            poaTwoTaxYearTo     <- chargeDetailsforTaxYear.documentDetailsFilter(isPoaTwo).map(_.taxYear)
-            poaTwoTransactionId <- chargeDetailsforTaxYear.documentDetailsFilter(isPoaTwo).map(_.transactionId)
+          (for { // TODO: no need for duplicate type conversion / example only
+            poaOneTaxYearTo     <- chargeDetailsforTaxYear.toChargeItem()
+              .find(_.transactionType == PaymentOnAccountOne)
+              .map(_.taxYear.startYear)
+            poaOneTransactionId <- chargeDetailsforTaxYear.toChargeItem()
+              .find(_.transactionType == PaymentOnAccountOne)
+              .map(_.transactionId)
+            poaTwoTaxYearTo     <- chargeDetailsforTaxYear.toChargeItem()
+              .find(_.transactionType == PaymentOnAccountTwo)
+              .map(_.taxYear.startYear)
+            poaTwoTransactionId <- chargeDetailsforTaxYear.toChargeItem()
+              .find(_.transactionType == PaymentOnAccountTwo)
+              .map(_.transactionId)
           } yield
             if (isAgent)
               (routes.ChargeSummaryController.showAgent(poaOneTaxYearTo, poaOneTransactionId).url,

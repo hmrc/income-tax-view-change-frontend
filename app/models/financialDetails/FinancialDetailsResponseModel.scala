@@ -225,9 +225,10 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     documentDetails.exists(_.transactionId == id)
   }
 
-  def documentDetailsFilter(predicate: DocumentDetail => Boolean): Option[DocumentDetail] = {
-    this.documentDetails.find(predicate)
-  }
+  // TODO: 1 - Next steps
+//  def documentDetailsFilter(predicate: DocumentDetail => Boolean): Option[DocumentDetail] = {
+//    this.documentDetails.find(predicate)
+//  }
 
   def documentDetailsWithTransactionId(id: String): Option[DocumentDetail] = {
     documentDetails.find(_.transactionId == id)
