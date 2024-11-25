@@ -66,7 +66,7 @@ class AddBusinessNameControllerSpec extends MockAuthActions
   Seq(true, false).foreach { isChange =>
     mtdAllRoles.foreach { mtdRole =>
       s"show${if(mtdRole != MTDIndividual)"Agent"}(isChange = $isChange)" when {
-        val fakeRequest = getFakeRequestBasedOnMTDUserType(mtdRole)
+        val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
         val action = getAction(mtdRole, isChange)
         s"the user is authenticated as a $mtdRole" should {
           "return 200 OK" when {
@@ -148,7 +148,7 @@ class AddBusinessNameControllerSpec extends MockAuthActions
         }
       }
       s"submit${if(mtdRole != MTDIndividual)"Agent"}(isChange = $isChange)" when {
-        val fakeRequest = getFakeRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
+        val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
         val action = getAction(mtdRole, isChange, true)
         s"the user is authenticated as a $mtdRole" should {
           if(isChange) {

@@ -102,7 +102,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
 
   Seq(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
     mtdAllRoles.foreach { mtdRole =>
-      val fakeRequest = getFakeRequestBasedOnMTDUserType(mtdRole)
+      val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
       s"show${if (mtdRole != MTDIndividual) "Agent"}(incomeSourceType = $incomeSourceType)" when {
         val action = if (mtdRole == MTDIndividual) testCeaseCheckIncomeSourceDetailsController.show(incomeSourceType) else testCeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType)
         s"the user is authenticated as a $mtdRole" should {

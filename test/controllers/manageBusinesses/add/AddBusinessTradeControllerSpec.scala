@@ -60,7 +60,7 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
     mtdAllRoles.foreach { mtdRole =>
       s"show${if (mtdRole != MTDIndividual) "Agent"}(isChange = $isChange)" when {
         val action = getAction(mtdRole, isChange)
-        val fakeRequest = getFakeRequestBasedOnMTDUserType(mtdRole)
+        val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
         s"the user is authenticated as a $mtdRole" should {
           "render the AddBusinessTrade page" when {
             "incomeSources feature is enabled" in {
@@ -138,7 +138,7 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
 
       s"submit${if (mtdRole != MTDIndividual) "Agent"}(isChange = $isChange)" when {
         val action = getAction(mtdRole, isChange, true)
-        val fakeRequest = getFakeRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
+        val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
         s"the user is authenticated as a $mtdRole" should {
           if(isChange) {
             "redirect to the IncomeSourceCheckDetailsController page" when {

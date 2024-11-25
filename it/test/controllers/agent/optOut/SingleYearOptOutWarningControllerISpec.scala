@@ -16,24 +16,25 @@
 
 package controllers.agent.optOut
 
+import controllers.agent.ControllerISpecHelper
+import enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import forms.optOut.ConfirmOptOutSingleTaxYearForm
 import helpers.OptOutSessionRepositoryHelper
-import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDAgentAuthStub}
+import models.admin.{IncomeSources, NavBarFs}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus._
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import repositories.UIJourneySessionDataRepository
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSessionId}
+import testConstants.BaseIntegrationTestConstants.{getAgentClientDetailsForCookie, testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
-class SingleYearOptOutWarningControllerISpec extends ComponentSpecBase {
+class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
   private val isAgent: Boolean = true
-  private val singleYearOptOutWarningPageGETUrl = controllers.optOut.routes.SingleYearOptOutWarningController.show(isAgent).url
-  private val singleYearOptOutWarningPagePOSTUrl = controllers.optOut.routes.SingleYearOptOutWarningController.submit(isAgent).url
-  private val validYesForm = ConfirmOptOutSingleTaxYearForm(Some(true), "")
-  private val validNoForm = ConfirmOptOutSingleTaxYearForm(Some(false), "")
-  private val inValidForm = ConfirmOptOutSingleTaxYearForm(None, "")
+  private val path = "/agents/optout/single-taxyear-warning"
+  private val validYesForm = getPageForm("true")
+  private val validNoForm = getPageForm("false")
+  private val inValidForm = getPageForm("")
   private val confirmOptOutPageUrl = controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url
   private val nextUpdatesPageUrl = controllers.routes.NextUpdatesController.showAgent.url
 
@@ -48,106 +49,136 @@ class SingleYearOptOutWarningControllerISpec extends ComponentSpecBase {
   private val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
   private val helper = new OptOutSessionRepositoryHelper(repository)
 
+  private def getPageForm(value: String): Map[String, Seq[String]] = Map(
+    ConfirmOptOutSingleTaxYearForm.confirmOptOutField -> Seq(value),
+    ConfirmOptOutSingleTaxYearForm.csrfToken -> Seq("")
+  )
+
   override def beforeEach(): Unit = {
     super.beforeEach()
     repository.clearSession(testSessionId).futureValue shouldBe true
   }
 
-  s"calling GET $singleYearOptOutWarningPageGETUrl" should {
-    "render single tax year opt out confirmation pager" when {
-      "User is authorised" in {
-        stubAuthorisedAgentUser(authorised = true)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+  List(MTDPrimaryAgent, MTDSupportingAgent).foreach { case mtdUserRole =>
 
-        helper.stubOptOutInitialState(currentTaxYear,
-          previousYearCrystallised = false,
-          previousYearStatus = Voluntary,
-          currentYearStatus = NoStatus,
-          nextYearStatus = NoStatus)
+    val isSupportingAgent = mtdUserRole == MTDSupportingAgent
+    val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, true)
 
-        val result = IncomeTaxViewChangeFrontend.getSingleYearOptOutWarning(clientDetailsWithConfirmation)
+    s"calling GET $path" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid agent and client delegated enrolment" should {
+        "render single tax year opt out confirmation pager" in {
+          enable(IncomeSources)
+          disable(NavBarFs)
+          MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        result should have(
-          httpStatus(OK),
-          pageTitleAgent("optOut.confirmSingleYearOptOut.title"),
-          elementTextByID("detail-text")(expectedDetailText),
-          elementTextByID("warning-inset")(expectedInsetText),
-          elementTextBySelector(".govuk-fieldset__legend--m")(expectedFormTitle)
-        )
+          helper.stubOptOutInitialState(currentTaxYear,
+            previousYearCrystallised = false,
+            previousYearStatus = Voluntary,
+            currentYearStatus = NoStatus,
+            nextYearStatus = NoStatus)
 
+          val result = buildGETMTDClient(path, additionalCookies).futureValue
+
+
+          result should have(
+            httpStatus(OK),
+            pageTitleAgent("optOut.confirmSingleYearOptOut.title"),
+            elementTextByID("detail-text")(expectedDetailText),
+            elementTextByID("warning-inset")(expectedInsetText),
+            elementTextBySelector(".govuk-fieldset__legend--m")(expectedFormTitle)
+          )
+
+        }
       }
-    }
-  }
 
-  s"calling POST $singleYearOptOutWarningPagePOSTUrl" should {
-    s"return status $BAD_REQUEST and render single tax year opt out confirmation pager with error message - $BAD_REQUEST " when {
-      "invalid data is sent" in {
-        stubAuthorisedAgentUser(authorised = true)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
-
-        helper.stubOptOutInitialState(currentTaxYear,
-          previousYearCrystallised = false,
-          previousYearStatus = Voluntary,
-          currentYearStatus = NoStatus,
-          nextYearStatus = NoStatus)
-
-        val result = IncomeTaxViewChangeFrontend.postSingleYearOptOutWarning(clientDetailsWithConfirmation)(inValidForm)
-
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        result should have(
-          httpStatus(BAD_REQUEST),
-          pageTitleAgent("optOut.confirmSingleYearOptOut.title"),
-          elementTextByID("detail-text")(expectedDetailText),
-          elementTextByID("warning-inset")(expectedInsetText),
-          elementTextBySelector(".govuk-fieldset__legend--m")(expectedFormTitle),
-          elementTextBySelector(".govuk-error-summary__body")(expectedErrorText)
-        )
-
-      }
-    }
-    s"return status $SEE_OTHER with location $confirmOptOutPageUrl" when {
-      "Yes response is sent" in {
-        stubAuthorisedAgentUser(authorised = true)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
-
-        helper.stubOptOutInitialState(currentTaxYear,
-          previousYearCrystallised = false,
-          previousYearStatus = Voluntary,
-          currentYearStatus = NoStatus,
-          nextYearStatus = NoStatus)
-
-        val result = IncomeTaxViewChangeFrontend.postSingleYearOptOutWarning(clientDetailsWithConfirmation)(validYesForm)
-
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(confirmOptOutPageUrl)
-        )
-
+        testAuthFailuresForMTDAgent(path, isSupportingAgent)
       }
     }
 
-    s"return status $SEE_OTHER with location $nextUpdatesPageUrl" when {
-      "Yes response is sent" in {
-        stubAuthorisedAgentUser(authorised = true)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+    s"calling POST $path" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid agent and client delegated enrolment" should {
+          s"return status $BAD_REQUEST and render single tax year opt out confirmation pager with error message - $BAD_REQUEST " when {
+            "invalid data is sent" in {
+              enable(IncomeSources)
+              disable(NavBarFs)
+              MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        helper.stubOptOutInitialState(currentTaxYear,
-          previousYearCrystallised = false,
-          previousYearStatus = Voluntary,
-          currentYearStatus = NoStatus,
-          nextYearStatus = NoStatus)
+              helper.stubOptOutInitialState(currentTaxYear,
+                previousYearCrystallised = false,
+                previousYearStatus = Voluntary,
+                currentYearStatus = NoStatus,
+                nextYearStatus = NoStatus)
 
-        val result = IncomeTaxViewChangeFrontend.postSingleYearOptOutWarning(clientDetailsWithConfirmation)(validNoForm)
+              val result = buildPOSTMTDPostClient(path, additionalCookies, inValidForm).futureValue
 
-        verifyIncomeSourceDetailsCall(testMtditid)
+              verifyIncomeSourceDetailsCall(testMtditid)
 
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(nextUpdatesPageUrl)
-        )
+              result should have(
+                httpStatus(BAD_REQUEST),
+                pageTitleAgent("optOut.confirmSingleYearOptOut.title"),
+                elementTextByID("detail-text")(expectedDetailText),
+                elementTextByID("warning-inset")(expectedInsetText),
+                elementTextBySelector(".govuk-fieldset__legend--m")(expectedFormTitle),
+                elementTextBySelector(".govuk-error-summary__body")(expectedErrorText)
+              )
+
+            }
+          }
+          s"return status $SEE_OTHER with location $confirmOptOutPageUrl" when {
+            "Yes response is sent" in {
+              enable(IncomeSources)
+              disable(NavBarFs)
+              MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+              helper.stubOptOutInitialState(currentTaxYear,
+                previousYearCrystallised = false,
+                previousYearStatus = Voluntary,
+                currentYearStatus = NoStatus,
+                nextYearStatus = NoStatus)
+
+              val result = buildPOSTMTDPostClient(path, additionalCookies, validYesForm).futureValue
+
+              verifyIncomeSourceDetailsCall(testMtditid)
+
+              result should have(
+                httpStatus(SEE_OTHER),
+                redirectURI(confirmOptOutPageUrl)
+              )
+
+            }
+          }
+
+          s"return status $SEE_OTHER with location $nextUpdatesPageUrl" when {
+            "No response is sent" in {
+              enable(IncomeSources)
+              disable(NavBarFs)
+              MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+              helper.stubOptOutInitialState(currentTaxYear,
+                previousYearCrystallised = false,
+                previousYearStatus = Voluntary,
+                currentYearStatus = NoStatus,
+                nextYearStatus = NoStatus)
+
+              val result = buildPOSTMTDPostClient(path, additionalCookies, validNoForm).futureValue
+
+              verifyIncomeSourceDetailsCall(testMtditid)
+
+              result should have(
+                httpStatus(SEE_OTHER),
+                redirectURI(nextUpdatesPageUrl)
+              )
+            }
+          }
+        }
+
+        testAuthFailuresForMTDAgent(path, isSupportingAgent)
       }
     }
   }

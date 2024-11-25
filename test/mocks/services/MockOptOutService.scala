@@ -29,7 +29,7 @@ import scala.concurrent.Future
 
 trait MockOptOutService extends UnitSpec with BeforeAndAfterEach {
 
-  val mockOptOutService: OptOutService = mock(classOf[OptOutService])
+  lazy val mockOptOutService: OptOutService = mock(classOf[OptOutService])
 
   override def beforeEach(): Unit = {
     super.beforeEach()
