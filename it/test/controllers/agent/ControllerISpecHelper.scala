@@ -18,7 +18,6 @@ package controllers.agent
 
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.MTDAgentAuthStub
-import helpers.servicemocks.SessionDataStub.stubGetSessionDataResponseSuccess
 import play.api.http.Status.SEE_OTHER
 import testConstants.BaseIntegrationTestConstants._
 
@@ -42,7 +41,6 @@ trait ControllerISpecHelper extends ComponentSpecBase {
                                   requiresConfirmedClient: Boolean = true,
                                   optBody: Option[Map[String, Seq[String]]] = None): Unit = {
     val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, requiresConfirmedClient)
-    stubGetSessionDataResponseSuccess()
 
     "does not have a valid session" should {
       s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" in {

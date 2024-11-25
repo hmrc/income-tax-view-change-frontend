@@ -98,12 +98,12 @@ case class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: FrontendA
       )
   }
 
-  val ivUpliftRedirectUrl: String = "/report-quarterly/income-and-expenses/view/sign-in"
+  val signInUrl: String = "/report-quarterly/income-and-expenses/view/sign-in"
 
   private def redirectIfInsufficientConfidence[A](): PartialFunction[AuthRetrievals, Future[Either[Result, MtdItUserOptionNino[A]]]] = {
     case _ ~ _ ~ _ ~ _ ~ confidenceLevel
       if confidenceLevel.level < requiredConfidenceLevel =>
-      Future.successful(Left(Redirect(ivUpliftRedirectUrl)))
+      Future.successful(Left(Redirect(signInUrl)))
   }
 }
 
