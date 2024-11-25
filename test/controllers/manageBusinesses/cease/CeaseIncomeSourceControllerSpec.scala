@@ -48,7 +48,7 @@ class CeaseIncomeSourceControllerSpec extends MockAuthActions
   val testCeaseIncomeSourceController = fakeApplication().injector.instanceOf[CeaseIncomeSourceController]
 
   mtdAllRoles.foreach { mtdRole =>
-    val fakeRequest = getFakeRequestBasedOnMTDUserType(mtdRole)
+    val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
     s"show${if (mtdRole != MTDIndividual) "Agent"}" when {
       val action = if (mtdRole == MTDIndividual) testCeaseIncomeSourceController.show() else testCeaseIncomeSourceController.showAgent()
       s"the user is authenticated as a $mtdRole" should {

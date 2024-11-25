@@ -36,7 +36,7 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
   private val validNoForm = getPageForm("false")
   private val inValidForm = getPageForm("")
   private val confirmOptOutPageUrl = controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url
-  private val nextUpdatesPageUrl = controllers.routes.NextUpdatesController.showAgent.url
+  private val optOutCancelledUrl = controllers.optOut.routes.OptOutCancelledController.showAgent().url
 
   private val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
   private val previousYear = currentTaxYear.addYears(-1)
@@ -153,7 +153,7 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
             }
           }
 
-          s"redirect to OptOutCancelledPage - $nextUpdatesPageUrl with status $SEE_OTHER" when {
+          s"redirect to OptOutCancelledPage - $optOutCancelledUrl with status $SEE_OTHER" when {
             "No response is sent" in {
               enable(IncomeSources)
               disable(NavBarFs)
@@ -172,7 +172,7 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
 
               result should have(
                 httpStatus(SEE_OTHER),
-                redirectURI(nextUpdatesPageUrl)
+                redirectURI(optOutCancelledUrl)
               )
             }
           }
