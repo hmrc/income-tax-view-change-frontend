@@ -40,7 +40,7 @@ object SessionDataStub {
   val testSessionResponse: String = Json.stringify(Json.obj(
     "mtditid" -> "XAITSA123456",
     "nino" -> "AA111111A",
-    "utr" -> "123456789",
+    "utr" -> "1234567890",
     "sessionId" -> "sessionId"
   ))
 

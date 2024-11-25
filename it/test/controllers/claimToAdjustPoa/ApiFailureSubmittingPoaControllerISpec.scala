@@ -17,8 +17,7 @@
 package controllers.claimToAdjustPoa
 
 import helpers.ComponentSpecBase
-import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDAgentAuthStub}
-import helpers.servicemocks.SessionDataStub.stubGetSessionDataResponseSuccess
+import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.AdjustPaymentsOnAccount
 import org.scalatest.Assertion
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -42,10 +41,8 @@ class ApiFailureSubmittingPoaControllerISpec extends ComponentSpecBase {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    stubGetSessionDataResponseSuccess()
     if (isAgent) {
-      MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, false)
-      //stubAuthorisedAgentUser(true, clientMtdId = testMtditid)
+      stubAuthorisedAgentUser(true, clientMtdId = testMtditid)
     }
     Given("Income Source Details with multiple business and property")
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
