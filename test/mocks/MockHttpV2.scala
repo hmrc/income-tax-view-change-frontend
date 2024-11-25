@@ -38,9 +38,12 @@ trait MockHttpV2 extends UnitSpec with BeforeAndAfterEach {
     reset(mockRequestBuilder)
   }
 
-  def setupMockHttpVTwoGet[T](url: String)(response: T): OngoingStubbing[Future[T]] = {
+  def setupMockHttpV2Get[T](url: String)(response: T): OngoingStubbing[Future[T]] = {
     when(mockHttpClientV2
       .get(ArgumentMatchers.eq(url"$url"))(ArgumentMatchers.any()))
+      .thenReturn(mockRequestBuilder)
+
+    when(mockRequestBuilder.setHeader(any[(String, String)]))
       .thenReturn(mockRequestBuilder)
 
     when(mockRequestBuilder
@@ -48,7 +51,7 @@ trait MockHttpV2 extends UnitSpec with BeforeAndAfterEach {
       .thenReturn(Future.successful(response))
   }
 
-  def setupMockFailedHttpVTwoGet[T](url: String): OngoingStubbing[Future[T]] = {
+  def setupMockFailedHttpV2Get[T](url: String): OngoingStubbing[Future[T]] = {
     when(mockHttpClientV2
       .get(ArgumentMatchers.eq(url"$url"))(ArgumentMatchers.any())).thenReturn(mockRequestBuilder)
 
