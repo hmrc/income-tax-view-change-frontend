@@ -77,8 +77,8 @@ class ChargeHistoryService @Inject()(chargeHistoryConnector: ChargeHistoryConnec
     for {
       financialDetailForRarCredit <- chargeDetailsForTaxYear.financialDetails.find(
         chargeItem.transactionType match {
-          case PaymentOnAccountOne => (fd: FinancialDetail) => reviewAndReconcileEnabled && fd.isReconcilePoaOneCredit
-          case PaymentOnAccountTwo => (fd: FinancialDetail) => reviewAndReconcileEnabled && fd.isReconcilePoaTwoCredit
+          case PoaOneDebit => (fd: FinancialDetail) => reviewAndReconcileEnabled && fd.isReconcilePoaOneCredit
+          case PoaTwoDebit => (fd: FinancialDetail) => reviewAndReconcileEnabled && fd.isReconcilePoaTwoCredit
           case _                   => (_:  FinancialDetail) => false
         }
       )

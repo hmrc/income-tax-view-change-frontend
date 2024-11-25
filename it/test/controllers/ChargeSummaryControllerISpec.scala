@@ -97,7 +97,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
           Some("12345-credId"), Some(Individual), None
         )(FakeRequest()),
-        docDetail(PaymentOnAccountOne),
+        docDetail(PoaOneDebit),
         paymentBreakdown = List(financialDetailModelPartial(chargeType = ITSA_ENGLAND_AND_NI, originalAmount = 10.34, dunningLock = Some("Stand over order"), interestLock = Some("Breathing Space Moratorium Act"))),
         chargeHistories = List.empty,
         paymentAllocations = List.empty,

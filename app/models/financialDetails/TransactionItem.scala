@@ -41,7 +41,7 @@ trait TransactionItem {
   def notCodedOutPoa(filterCodedOutPoasEnabled: Boolean): Boolean = {
     (filterCodedOutPoasEnabled, transactionType) match {
       case (false, _) => true
-      case (_, PaymentOnAccountOne | PaymentOnAccountTwo) if amountCodedOut.getOrElse[BigDecimal](0) > 0 => false
+      case (_, PoaOneDebit | PoaTwoDebit) if amountCodedOut.getOrElse[BigDecimal](0) > 0 => false
       case _ => true
     }
   }
@@ -49,17 +49,17 @@ trait TransactionItem {
   // TODO: duplicate logic, in scope of => https://jira.tools.tax.service.gov.uk/browse/MISUV-8557
   def getChargeTypeKey(reviewAndReconcileEnabled: Boolean = false): String =
     (transactionType, subTransactionType) match {
-      case (PaymentOnAccountOne, _) => "paymentOnAccount1.text"
-      case (PaymentOnAccountTwo, _) => "paymentOnAccount2.text"
+      case (PoaOneDebit, _) => "paymentOnAccount1.text"
+      case (PoaTwoDebit, _) => "paymentOnAccount2.text"
       case (MfaDebitCharge, _) => "hmrcAdjustment.text"
       case (BalancingCharge, Some(Nics2)) => "class2Nic.text"
       case (BalancingCharge, Some(Accepted)) => "codingOut.text"
       case (BalancingCharge, Some(Cancelled)) => "cancelledPayeSelfAssessment.text"
       case (BalancingCharge, _) => "balancingCharge.text"
-      case (PaymentOnAccountOneReviewAndReconcileDebit, _) if reviewAndReconcileEnabled => "reviewAndReconcilePoa1.text"
-      case (PaymentOnAccountTwoReviewAndReconcileDebit, _) if reviewAndReconcileEnabled => "reviewAndReconcilePoa2.text"
-      case (PaymentOnAccountOneReviewAndReconcileCredit, _) if reviewAndReconcileEnabled => "reviewAndReconcilePoa1Credit.text"
-      case (PaymentOnAccountTwoReviewAndReconcileCredit, _) if reviewAndReconcileEnabled => "reviewAndReconcilePoa2Credit.text"
+      case (PoaOneReconciliationDebit, _) if reviewAndReconcileEnabled => "reviewAndReconcilePoa1.text"
+      case (PoaTwoReconciliationDebit, _) if reviewAndReconcileEnabled => "reviewAndReconcilePoa2.text"
+      case (PoaOneReconciliationCredit, _) if reviewAndReconcileEnabled => "reviewAndReconcilePoa1Credit.text"
+      case (PoaTwoReconciliationCredit, _) if reviewAndReconcileEnabled => "reviewAndReconcilePoa2Credit.text"
       case error =>
         Logger("application").error(s"Missing or non-matching charge type: $error found")
         "unknownCharge"

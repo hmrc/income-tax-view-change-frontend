@@ -43,7 +43,7 @@ object ChargeItemStub {
     poaRelevantAmount = None
   )
 
-  def chargeItemWithInterest(chargeType: ChargeType = PaymentOnAccountOne,
+  def chargeItemWithInterest(chargeType: ChargeType = PoaOneDebit,
                              subTransactionType: Option[SubTransactionType] = None): ChargeItem = ChargeItem(
     transactionId = "1040000124",
     taxYear = TaxYear.forYearEnd(testTaxYear),
@@ -64,7 +64,7 @@ object ChargeItemStub {
     poaRelevantAmount = None
   )
 
-  def chargeItemWithInterestAndOverdue(chargeType: ChargeType = PaymentOnAccountOne,
+  def chargeItemWithInterestAndOverdue(chargeType: ChargeType = PoaOneDebit,
                                        subTransactionType: Option[SubTransactionType] = None,
                                        dueDate: Option[LocalDate] = Some(LocalDate.of(2017, 7, 1))): ChargeItem = ChargeItem(
     transactionId = "1040000124",

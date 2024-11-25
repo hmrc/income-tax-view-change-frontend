@@ -145,19 +145,19 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     )))
 
   val testDunningLockChargesList: List[TaxYearSummaryChargeItem] = List(
-    TaxYearSummaryChargeItem.fromChargeItem(chargeItemModel(transactionType=PaymentOnAccountOne, dueDate = Some(LocalDate.of(2019, 6, 15)), dunningLock = true),
+    TaxYearSummaryChargeItem.fromChargeItem(chargeItemModel(transactionType=PoaOneDebit, dueDate = Some(LocalDate.of(2019, 6, 15)), dunningLock = true),
       dueDate = Some(LocalDate.of(2019, 6, 15))),
-    TaxYearSummaryChargeItem.fromChargeItem(chargeItemModel(transactionType=PaymentOnAccountTwo, dueDate = Some(LocalDate.of(2019, 7, 15)), dunningLock = false),
+    TaxYearSummaryChargeItem.fromChargeItem(chargeItemModel(transactionType=PoaTwoDebit, dueDate = Some(LocalDate.of(2019, 7, 15)), dunningLock = false),
       dueDate = Some(LocalDate.of(2019, 7, 15))),
     TaxYearSummaryChargeItem.fromChargeItem(chargeItemModel(transactionType=BalancingCharge,     dueDate = Some(LocalDate.of(2019, 8, 15)), dunningLock = true),
     dueDate = Some(LocalDate.of(2019, 8, 15))))
 
   val testChargesList: List[TaxYearSummaryChargeItem] = List(
     TaxYearSummaryChargeItem.fromChargeItem(
-      chargeItemModel(transactionType=PaymentOnAccountOne, dueDate = Some(LocalDate.of(2019, 6, 15)), latePaymentInterestAmount = Some(100.0)),
+      chargeItemModel(transactionType=PoaOneDebit, dueDate = Some(LocalDate.of(2019, 6, 15)), latePaymentInterestAmount = Some(100.0)),
       dueDate = Some(LocalDate.of(2019, 6, 15)), isLatePaymentInterest = true),
     TaxYearSummaryChargeItem.fromChargeItem(
-      chargeItemModel(transactionType=PaymentOnAccountTwo, dueDate = Some(LocalDate.of(2019, 7, 15)), latePaymentInterestAmount = Some(80.0)),
+      chargeItemModel(transactionType=PoaTwoDebit, dueDate = Some(LocalDate.of(2019, 7, 15)), latePaymentInterestAmount = Some(80.0)),
       dueDate = Some(LocalDate.of(2019, 7, 15)), isLatePaymentInterest = true),
     TaxYearSummaryChargeItem.fromChargeItem(
       chargeItemModel(transactionType=BalancingCharge, dueDate = Some(LocalDate.of(2019, 8, 15)), interestOutstandingAmount = Some(0.0)),
@@ -167,7 +167,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
   val testChargesWithoutLpiList: List[TaxYearSummaryChargeItem] = testChargesList.map(_.copy(isLatePaymentInterest = false))
 
   val class2NicsChargesList: List[TaxYearSummaryChargeItem] = List(
-    chargeItemModel(transactionType=PaymentOnAccountOne, dueDate = Some(LocalDate.of(2021, 7, 31)), latePaymentInterestAmount = None),
+    chargeItemModel(transactionType=PoaOneDebit, dueDate = Some(LocalDate.of(2021, 7, 31)), latePaymentInterestAmount = None),
     chargeItemModel(transactionType=BalancingCharge, subTransactionType = Some(Nics2), dueDate = Some(LocalDate.of(2021, 7, 30)), latePaymentInterestAmount = None)
     ).map(TaxYearSummaryChargeItem.fromChargeItem(_))
 

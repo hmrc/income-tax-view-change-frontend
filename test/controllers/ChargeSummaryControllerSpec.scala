@@ -26,7 +26,7 @@ import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSour
 import mocks.services.MockIncomeSourceDetailsService
 import models.admin.{ChargeHistory, ReviewAndReconcilePoa}
 import models.chargeHistory._
-import models.financialDetails.{ChargeItem, FinancialDetail, FinancialDetailsResponseModel, PaymentOnAccountOneReviewAndReconcileCredit, PaymentOnAccountTwoReviewAndReconcileCredit, TransactionType}
+import models.financialDetails.{ChargeItem, FinancialDetail, FinancialDetailsResponseModel, PoaOneReconciliationCredit, PoaTwoReconciliationCredit, TransactionType}
 import models.incomeSourceDetails.TaxYear
 import models.repaymentHistory.RepaymentHistoryUtils
 import org.mockito.ArgumentMatchers.any
@@ -108,7 +108,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
     when(mockChargeHistoryService.getAdjustmentHistory(any(), any()))
       .thenReturn(adjustmentHistoryModel)
 
-    mockGetReviewAndReconcileCredit(PaymentOnAccountOneReviewAndReconcileCredit)
+    mockGetReviewAndReconcileCredit(PoaOneReconciliationCredit)
 
     mockBothIncomeSources()
     if (isAgent) {
@@ -369,7 +369,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         enable(ChargeHistory)
         val result: Future[Result] = controller.show(testTaxYear, id1040000126)(fakeRequestWithNinoAndOrigin("PTA"))
 
-        mockGetReviewAndReconcileCredit(PaymentOnAccountTwoReviewAndReconcileCredit)
+        mockGetReviewAndReconcileCredit(PoaTwoReconciliationCredit)
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.getElementById("rar-charge-link").text() shouldBe "Second payment on account: credit from your tax return"
@@ -435,7 +435,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
     "display the Review & Reconcile credit for POA2 when present in the user's financial details" in new Setup(
       financialDetailsModelWithPoaOneAndTwoWithRarCredits(), isAgent = true, enableReviewAndReconcile = true) {
 
-      mockGetReviewAndReconcileCredit(PaymentOnAccountTwoReviewAndReconcileCredit)
+      mockGetReviewAndReconcileCredit(PoaTwoReconciliationCredit)
 
       val result: Future[Result] = controller.showAgent(testTaxYear, id1040000126)(fakeRequestConfirmedClient("AB123456C"))
 
