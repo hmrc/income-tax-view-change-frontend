@@ -18,11 +18,12 @@ package controllers.agent
 
 import audit.models.NextUpdatesResponseAuditModel
 import auth.MtdItUser
+import controllers.ControllerISpecHelper
 import enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub, MTDAgentAuthStub}
+import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import models.admin.OptOutFs
+import models.admin.OptOut
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
 import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
@@ -70,17 +71,17 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
   val path = "/agents/next-updates"
 
   s"GET $path" when {
-    Map(MTDPrimaryAgent -> false, MTDSupportingAgent -> true).foreach { case  (userType, isSupportingAgent) =>
-      val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, true)
+    List(MTDPrimaryAgent, MTDSupportingAgent).foreach { mtdUserRole =>
+      val additionalCookies = getAdditionalCookies(mtdUserRole)
 
-      s"there is a ${userType.toString}" that {
+      s"there is a ${mtdUserRole.toString}" that {
 
-        testAuthFailuresForMTDAgent(path, isSupportingAgent)
+        testAuthFailures(path, mtdUserRole)
 
         "is authenticated with a client" that {
 
           "has obligations" in {
-            MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+            stubAuthorised(mtdUserRole)
 
             val currentObligations: ObligationsModel = ObligationsModel(Seq(
               GroupedObligationsModel(
@@ -116,7 +117,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
           }
 
           "has no obligations" in {
-            MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+            stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
               status = OK,
               response = incomeSourceDetails
@@ -140,8 +141,8 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
           }
 
           "has obligations and the Opt Out feature switch enabled" in {
-            MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
-            enable(OptOutFs)
+            stubAuthorised(mtdUserRole)
+            enable(OptOut)
             val currentTaxYear = dateService.getCurrentTaxYearEnd
             val previousYear = currentTaxYear - 1
             val currentObligations: ObligationsModel = ObligationsModel(Seq(
@@ -188,8 +189,8 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
           }
 
           "has obligations and the Opt Out feature switch disabled" in {
-            MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
-            disable(OptOutFs)
+            stubAuthorised(mtdUserRole)
+            disable(OptOut)
 
             val currentObligations: ObligationsModel = ObligationsModel(Seq(
               GroupedObligationsModel(
@@ -230,8 +231,8 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
             "show next updates" when {
 
               "there is an ITSA Status API failure" in {
-                MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
-                enable(OptOutFs)
+                stubAuthorised(mtdUserRole)
+                enable(OptOut)
                 val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
                 val previousYear = currentTaxYear.addYears(-1)
                 val currentObligations: ObligationsModel = ObligationsModel(Seq(
@@ -269,8 +270,8 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
               }
 
               "there is an Calculation API failure" in {
-                MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
-                enable(OptOutFs)
+                stubAuthorised(mtdUserRole)
+                enable(OptOut)
                 val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
                 val previousYear = currentTaxYear.addYears(-1)
                 val currentObligations: ObligationsModel = ObligationsModel(Seq(
@@ -308,8 +309,8 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
               }
 
               "there is both an ITSA Status and Calculation API failure" in {
-                MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
-                enable(OptOutFs)
+                stubAuthorised(mtdUserRole)
+                enable(OptOut)
                 val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
                 val previousYear = currentTaxYear.addYears(-1)
                 val currentObligations: ObligationsModel = ObligationsModel(Seq(

@@ -17,32 +17,32 @@
 package controllers.manageBusinesses.add
 
 import auth.MtdItUser
+import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney._
-import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
+import enums.JourneyType.{Add, JourneyType}
+import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.SessionService
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.JourneyCheckerManageBusinesses
 import views.html.manageBusinesses.YouCannotGoBackError
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ReportingMethodSetBackErrorController @Inject()(val authorisedFunctions: AuthorisedFunctions,
+class ReportingMethodSetBackErrorController @Inject()(val authActions: AuthActions,
+                                                      val sessionService: SessionService,
                                                       val cannotGoBackError: YouCannotGoBackError,
-                                                      val auth: AuthenticatorPredicate)
+                                                      val itvcErrorHandler: ItvcErrorHandler,
+                                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                                      (implicit val appConfig: FrontendAppConfig,
                                                       mcc: MessagesControllerComponents,
-                                                      val ec: ExecutionContext,
-                                                      val itvcErrorHandler: ItvcErrorHandler,
-                                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                                      val sessionService: SessionService) extends ClientConfirmedController with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
+                                                      val ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses {
 
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_]): Future[Result] = withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = CannotGoBackPage) { _ =>
+                   (implicit user: MtdItUser[_]): Future[Result] = withSessionData(JourneyType(Add, incomeSourceType), journeyState = CannotGoBackPage) { _ =>
     val subheadingContent = getSubheadingContent(incomeSourceType)
     Future.successful(Ok(cannotGoBackError(isAgent, subheadingContent)))
   }
@@ -55,7 +55,7 @@ class ReportingMethodSetBackErrorController @Inject()(val authorisedFunctions: A
     }
   }
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
       handleRequest(
         isAgent = false,
@@ -63,7 +63,7 @@ class ReportingMethodSetBackErrorController @Inject()(val authorisedFunctions: A
       )
   }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit mtdItUser =>
       handleRequest(
         isAgent = true,

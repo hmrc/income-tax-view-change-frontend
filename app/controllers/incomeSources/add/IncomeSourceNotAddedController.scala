@@ -17,28 +17,27 @@
 package controllers.incomeSources.add
 
 import auth.MtdItUser
+import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates._
 import enums.IncomeSourceJourney.IncomeSourceType
+import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{CreateBusinessDetailsService, IncomeSourceDetailsService}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
+import services.CreateBusinessDetailsService
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.IncomeSourcesUtils
 import views.html.incomeSources.add.IncomeSourceNotAddedError
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeSourceNotAddedController @Inject()(val authorisedFunctions: AuthorisedFunctions,
+class IncomeSourceNotAddedController @Inject()(val authActions: AuthActions,
                                                val businessDetailsService: CreateBusinessDetailsService,
                                                val incomeSourceNotAddedError: IncomeSourceNotAddedError,
-                                               val auth: AuthenticatorPredicate)
+                                               val itvcErrorHandler: ItvcErrorHandler,
+                                               val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                               (implicit val appConfig: FrontendAppConfig,
                                                mcc: MessagesControllerComponents,
-                                               val ec: ExecutionContext,
-                                               val itvcErrorHandler: ItvcErrorHandler,
-                                               val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController with IncomeSourcesUtils {
+                                               val ec: ExecutionContext) extends FrontendController(mcc) with IncomeSourcesUtils with I18nSupport{
 
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
@@ -57,7 +56,7 @@ class IncomeSourceNotAddedController @Inject()(val authorisedFunctions: Authoris
     )))
   }
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
       handleRequest(
         isAgent = false,
@@ -65,7 +64,7 @@ class IncomeSourceNotAddedController @Inject()(val authorisedFunctions: Authoris
       )
   }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit mtdItUser =>
       handleRequest(
         isAgent = true,

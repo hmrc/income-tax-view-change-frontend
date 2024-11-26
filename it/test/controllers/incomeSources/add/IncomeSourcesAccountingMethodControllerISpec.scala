@@ -16,35 +16,25 @@
 
 package controllers.incomeSources.add
 
-import models.admin.IncomeSourcesFs
+import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, IncomeSourceJourneyType}
-import helpers.ComponentSpecBase
+import enums.JourneyType.{Add, JourneyType}
+import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.admin.{IncomeSources, NavBarFs}
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSessionId}
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 import scala.concurrent.ExecutionContext
 
-class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
+class IncomeSourcesAccountingMethodControllerISpec extends ControllerISpecHelper {
 
-  val addIncomeSourcesAccountingMethodShowUrlSoleTrader: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(SelfEmployment, isAgent = false).url
-  val addIncomeSourcesAccountingMethodShowUrlUK: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(UkProperty, isAgent = false).url
-  val addIncomeSourcesAccountingMethodShowUrlForeign: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(ForeignProperty, isAgent = false).url
-
-  val checkBusinessDetailsShowUrl: String = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
-  val checkUKPropertyDetailsShowUrl: String = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(UkProperty).url
-  val foreignPropertyCheckDetailsShowUrl: String = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(ForeignProperty).url
-
-  val selfEmploymentAccountingMethod: String = "incomeSources.add." + SelfEmployment.key + ".AccountingMethod"
-  val UKPropertyAccountingMethod: String = "incomeSources.add." + UkProperty.key + ".AccountingMethod"
-  val foreignPropertyAccountingMethod: String = "incomeSources.add." + ForeignProperty.key + ".AccountingMethod"
-
+  def accountingMethodKey(incomeSourceType: IncomeSourceType): String = "incomeSources.add." + incomeSourceType.key + ".AccountingMethod"
   val continueButtonText: String = messagesAPI("base.continue")
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
@@ -53,7 +43,7 @@ class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
 
   def testUIJourneySessionData(incomeSourceType: IncomeSourceType, accountingMethod: Option[String]): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
-    journeyType = IncomeSourceJourneyType(Add, incomeSourceType).toString,
+    journeyType = JourneyType(Add, incomeSourceType).toString,
     addIncomeSourceData = Some(
       AddIncomeSourceData(
         businessName  = if (incomeSourceType.equals(SelfEmployment)) Some("testBusinessName")  else None,
@@ -66,146 +56,135 @@ class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
   override def beforeEach(): Unit = {
     super.beforeEach()
     await(sessionService.deleteSession(Add))
-    await(sessionService.createSession(IncomeSourceJourneyType(Add, SelfEmployment)))
-    await(sessionService.createSession(IncomeSourceJourneyType(Add, UkProperty)))
-    await(sessionService.createSession(IncomeSourceJourneyType(Add, ForeignProperty)))
+    await(sessionService.createSession(JourneyType(Add, SelfEmployment).toString))
+    await(sessionService.createSession(JourneyType(Add, UkProperty).toString))
+    await(sessionService.createSession(JourneyType(Add, ForeignProperty).toString))
   }
 
-  def runGetTest(addIncomeSourcesAccountingMethodShowUrl: String, url: String, messageKey: String): Unit = {
-    "User is authorised" in {
-      Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
-      enable(IncomeSourcesFs)
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-      When(s"I call GET $addIncomeSourcesAccountingMethodShowUrl")
-      val result = IncomeTaxViewChangeFrontend.get(url, clientDetailsWithConfirmation)
-      verifyIncomeSourceDetailsCall(testMtditid)
-      result should have(
-        httpStatus(OK),
-        pageTitleIndividual(messageKey),
-        elementTextByID("continue-button")(continueButtonText)
-      )
+  def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType): String = {
+    val pathStart = if(mtdRole == MTDIndividual) "/income-sources/add" else "/agents/income-sources/add"
+    incomeSourceType match {
+      case SelfEmployment => s"$pathStart/business-accounting-method"
+      case UkProperty => s"$pathStart/uk-property-accounting-method"
+      case ForeignProperty => s"$pathStart/foreign-property-business-accounting-method"
     }
   }
 
-  def runPostTest(checkDetailsShowUrl: String, url: String, formData: Map[String, Seq[String]], incomeSourceType: IncomeSourceType, accountingMethod: Option[String]): Unit = {
+  mtdAllRoles.foreach { case mtdUserRole =>
+    List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
+      val path = getPath(mtdUserRole, incomeSourceType)
+      val additionalCookies = getAdditionalCookies(mtdUserRole)
+      s"GET $path" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            "render the Business Accounting Method page" in {
+              enable(IncomeSources)
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-    enable(IncomeSourcesFs)
-    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+              val result = buildGETMTDClient(path, additionalCookies).futureValue
+              verifyIncomeSourceDetailsCall(testMtditid)
 
-    val result = IncomeTaxViewChangeFrontend.post(url, clientDetailsWithConfirmation)(formData)
-
-    await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType, accountingMethod)))
-
-    val session = sessionService.getMongo(IncomeSourceJourneyType(Add, incomeSourceType))(hc, ec).futureValue
-
-    val resultAccountingMethod = session match {
-      case Right(Some(uiJourneySessionData)) =>
-        uiJourneySessionData.addIncomeSourceData.get.incomeSourcesAccountingMethod
-      case _ => None
-    }
-
-    result should have(
-      httpStatus(SEE_OTHER),
-      redirectURI(checkDetailsShowUrl))
-    resultAccountingMethod shouldBe accountingMethod
-
-  }
-
-  s"calling GET $addIncomeSourcesAccountingMethodShowUrlSoleTrader" should {
-    "render the Business Accounting Method page" when {
-      runGetTest(addIncomeSourcesAccountingMethodShowUrlSoleTrader, "/income-sources/add/business-accounting-method", "incomeSources.add.SE.AccountingMethod.heading")
-    }
-  }
-  s"calling GET $addIncomeSourcesAccountingMethodShowUrlUK" should {
-    "render the Business Accounting Method page" when {
-      runGetTest(addIncomeSourcesAccountingMethodShowUrlUK, "/income-sources/add/uk-property-accounting-method", "incomeSources.add.UK.AccountingMethod.heading")
-    }
-  }
-  s"calling GET $addIncomeSourcesAccountingMethodShowUrlForeign" should {
-    "render the Business Accounting Method page" when {
-      runGetTest(addIncomeSourcesAccountingMethodShowUrlForeign, "/income-sources/add/foreign-property-business-accounting-method", "incomeSources.add.FP.AccountingMethod.heading")
-    }
-  }
-  s"calling POST $addIncomeSourcesAccountingMethodShowUrlSoleTrader" should {
-    s"redirect to $checkBusinessDetailsShowUrl" when {
-      "user selects 'cash basis accounting', 'cash' should be added to session storage" in {
-        val formData: Map[String, Seq[String]] = Map(selfEmploymentAccountingMethod -> Seq("cash"))
-        runPostTest(checkBusinessDetailsShowUrl, "/income-sources/add/business-accounting-method", formData, SelfEmployment, Some("cash"))
-      }
-      s"redirect to $checkBusinessDetailsShowUrl" when {
-        "user selects 'traditional accounting', 'accruals' should be added to session storage" in {
-          val formData: Map[String, Seq[String]] = Map(selfEmploymentAccountingMethod -> Seq("traditional"))
-          runPostTest(checkBusinessDetailsShowUrl, "/income-sources/add/business-accounting-method", formData, SelfEmployment, Some("accruals"))
+              result should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, "incomeSources.add." + incomeSourceType.key + ".AccountingMethod.heading"),
+                elementTextByID("continue-button")(continueButtonText)
+              )
+            }
+          }
+          testAuthFailures(path, mtdUserRole)
         }
       }
-      s"return BAD_REQUEST $checkBusinessDetailsShowUrl" when {
-        "user does not select anything" in {
-          val formData: Map[String, Seq[String]] = Map(selfEmploymentAccountingMethod -> Seq(""))
-          enable(IncomeSourcesFs)
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+      s"POST $path" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            s"add 'cash' to session storage and redirect to check business details" when {
+              "user selects 'cash basis accounting'" in {
+                enable(IncomeSources)
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-          val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/business-accounting-method", clientDetailsWithConfirmation)(formData)
+                val formData: Map[String, Seq[String]] = Map(accountingMethodKey(incomeSourceType) -> Seq("cash"))
+                val result = buildPOSTMTDPostClient(path, additionalCookies, body = formData).futureValue
 
-          result should have(
-            httpStatus(BAD_REQUEST),
-            elementTextByID("error-summary-heading")(messagesAPI("base.error_summary.heading"))
-          )
-        }
-      }
-    }
-  }
-  s"calling POST $addIncomeSourcesAccountingMethodShowUrlUK" should {
-    s"redirect to $checkUKPropertyDetailsShowUrl" when {
-      "user selects 'cash basis accounting', 'cash' should be added to session storage" in {
-        val formData: Map[String, Seq[String]] = Map(UKPropertyAccountingMethod -> Seq("cash"))
-        runPostTest(checkUKPropertyDetailsShowUrl, "/income-sources/add/uk-property-accounting-method", formData, UkProperty, Some("cash"))
-      }
-      s"redirect to $checkUKPropertyDetailsShowUrl" when {
-        "user selects 'traditional accounting', 'accruals' should be added to session storage" in {
-          val formData: Map[String, Seq[String]] = Map(UKPropertyAccountingMethod -> Seq("traditional"))
-          runPostTest(checkUKPropertyDetailsShowUrl, "/income-sources/add/uk-property-accounting-method", formData, UkProperty, Some("accruals"))
-        }
-      }
-      s"return BAD_REQUEST $checkUKPropertyDetailsShowUrl" when {
-        "user does not select anything" in {
-          val formData: Map[String, Seq[String]] = Map(UKPropertyAccountingMethod -> Seq(""))
-          enable(IncomeSourcesFs)
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+                await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType, Some("cash"))))
 
-          val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/uk-property-accounting-method", clientDetailsWithConfirmation)(formData)
+                val session = sessionService.getMongo(JourneyType(Add, incomeSourceType).toString)(hc, ec).futureValue
 
-          result should have(
-            httpStatus(BAD_REQUEST),
-            elementTextByID("error-summary-heading")(messagesAPI("base.error_summary.heading"))
-          )
-        }
-      }
-    }
-  }
-  s"calling POST $addIncomeSourcesAccountingMethodShowUrlForeign" should {
-    s"redirect to $foreignPropertyCheckDetailsShowUrl" when {
-      "user selects 'cash basis accounting', 'cash' should be added to session storage" in {
-        val formData: Map[String, Seq[String]] = Map(foreignPropertyAccountingMethod -> Seq("cash"))
-        runPostTest(foreignPropertyCheckDetailsShowUrl, "/income-sources/add/foreign-property-business-accounting-method", formData, ForeignProperty, Some("cash"))
-      }
-      s"redirect to $foreignPropertyCheckDetailsShowUrl" when {
-        "user selects 'traditional accounting', 'accruals' should be added to session storage" in {
-          val formData: Map[String, Seq[String]] = Map(foreignPropertyAccountingMethod -> Seq("traditional"))
-          runPostTest(foreignPropertyCheckDetailsShowUrl, "/income-sources/add/foreign-property-business-accounting-method", formData, ForeignProperty, Some("accruals"))
-        }
-      }
-      s"return BAD_REQUEST $foreignPropertyCheckDetailsShowUrl" when {
-        "user does not select anything" in {
-          val formData: Map[String, Seq[String]] = Map(foreignPropertyAccountingMethod -> Seq(""))
-          enable(IncomeSourcesFs)
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+                val resultAccountingMethod = session match {
+                  case Right(Some(uiJourneySessionData)) =>
+                    uiJourneySessionData.addIncomeSourceData.get.incomeSourcesAccountingMethod
+                  case _ => None
+                }
 
-          val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/foreign-property-business-accounting-method", clientDetailsWithConfirmation)(formData)
+                val expectedUrl = if(mtdUserRole == MTDIndividual) {
+                  controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(incomeSourceType).url
+                } else {
+                  controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType).url
+                }
 
-          result should have(
-            httpStatus(BAD_REQUEST),
-            elementTextByID("error-summary-heading")(messagesAPI("base.error_summary.heading"))
-          )
+                result should have(
+                  httpStatus(SEE_OTHER),
+                  redirectURI(expectedUrl)
+                )
+                resultAccountingMethod shouldBe Some("cash")
+              }
+            }
+
+            s"add 'accruals' to session storage and redirect to check business details" when {
+              "user selects 'traditional accounting'" in {
+                enable(IncomeSources)
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
+                val formData: Map[String, Seq[String]] = Map(accountingMethodKey(incomeSourceType) -> Seq("traditional"))
+                val result = buildPOSTMTDPostClient(path, additionalCookies, body = formData).futureValue
+
+                await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType, Some("accruals"))))
+
+                val session = sessionService.getMongo(JourneyType(Add, incomeSourceType).toString)(hc, ec).futureValue
+
+                val resultAccountingMethod = session match {
+                  case Right(Some(uiJourneySessionData)) =>
+                    uiJourneySessionData.addIncomeSourceData.get.incomeSourcesAccountingMethod
+                  case _ => None
+                }
+
+                val expectedUrl = if(mtdUserRole == MTDIndividual) {
+                  controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(incomeSourceType).url
+                } else {
+                  controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType).url
+                }
+
+                result should have(
+                  httpStatus(SEE_OTHER),
+                  redirectURI(expectedUrl)
+                )
+                resultAccountingMethod shouldBe Some("accruals")
+              }
+            }
+
+            s"return BAD_REQUEST" when {
+              "user does not select anything" in {
+                enable(IncomeSources)
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
+                val formData: Map[String, Seq[String]] = Map(accountingMethodKey(incomeSourceType) -> Seq(""))
+                val result = buildPOSTMTDPostClient(path, additionalCookies, body = formData).futureValue
+
+                result should have(
+                  httpStatus(BAD_REQUEST),
+                  elementTextByID("error-summary-heading")(messagesAPI("base.error_summary.heading"))
+                )
+              }
+            }
+          }
+          testAuthFailures(path, mtdUserRole, optBody = Some(Map(accountingMethodKey(incomeSourceType) -> Seq("traditional"))))
         }
       }
     }

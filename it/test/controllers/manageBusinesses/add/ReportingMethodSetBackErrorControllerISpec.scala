@@ -16,26 +16,21 @@
 
 package controllers.manageBusinesses.add
 
-import models.admin.IncomeSourcesFs
-import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, IncomeSourceJourneyType}
-import helpers.ComponentSpecBase
+import controllers.ControllerISpecHelper
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.JourneyType.{Add, JourneyType}
+import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.admin.{IncomeSources, NavBarFs}
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, completedUIJourneySessionData}
 
-class ReportingMethodSetBackErrorControllerISpec extends ComponentSpecBase{
-
-  private lazy val backErrorController = controllers.manageBusinesses.add.routes.ReportingMethodSetBackErrorController
+class ReportingMethodSetBackErrorControllerISpec extends ControllerISpecHelper {
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
-
-  val selfEmploymentBackErrorUrl: String = backErrorController.show(SelfEmployment).url
-  val ukPropertyBackErrorUrl: String = backErrorController.show(UkProperty).url
-  val foreignPropertyBackErrorUrl: String = backErrorController.show(ForeignProperty).url
 
   val title = messagesAPI("cannotGoBack.heading")
   val headingSE = messagesAPI("cannotGoBack.soleTraderAdded")
@@ -47,120 +42,59 @@ class ReportingMethodSetBackErrorControllerISpec extends ComponentSpecBase{
     await(sessionService.deleteSession(Add))
   }
 
-  s"calling GET $selfEmploymentBackErrorUrl" should {
-    "render the self employment business not added error page" when {
-      "Income Sources FS is enabled" in {
-        enable(IncomeSourcesFs)
-
-        And("API 1771  returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-        await(sessionService.setMongoData(completedUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))))
-
-        val result = IncomeTaxViewChangeFrontendManageBusinesses
-          .get(s"/manage-your-businesses/add/add-business-cannot-go-back")
-
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual(s"$title")
-        )
-      }
-    }
-    "Income Sources FS is disabled" in {
-      Given("Income Sources FS is enabled")
-      disable(IncomeSourcesFs)
-
-      And("API 1771  returns a success response")
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-      val result = IncomeTaxViewChangeFrontendManageBusinesses
-        .get(s"/manage-your-businesses/add/add-business-cannot-go-back")
-
-      verifyIncomeSourceDetailsCall(testMtditid)
-
-      result should have(
-        httpStatus(SEE_OTHER)
-      )
+  def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType): String = {
+    val pathStart = if(mtdRole == MTDIndividual) "/manage-your-businesses/add" else "/agents/manage-your-businesses/add"
+    incomeSourceType match {
+      case SelfEmployment => s"$pathStart/add-business-cannot-go-back"
+      case UkProperty => s"$pathStart/add-uk-property-cannot-go-back"
+      case ForeignProperty => s"$pathStart/add-foreign-property-cannot-go-back"
     }
   }
 
-  s"calling GET $ukPropertyBackErrorUrl" should {
-    "render the self employment business not added error page" when {
-      "Income Sources FS is enabled" in {
-        enable(IncomeSourcesFs)
+  mtdAllRoles.foreach { case mtdUserRole =>
+    List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
+      val path = getPath(mtdUserRole, incomeSourceType)
+      val additionalCookies = getAdditionalCookies(mtdUserRole)
+      s"GET $path" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            "render the Business Accounting Method page" in {
+              enable(IncomeSources)
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-        And("API 1771  returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+              await(sessionService.setMongoData(completedUIJourneySessionData(JourneyType(Add, incomeSourceType))))
 
-        await(sessionService.setMongoData(completedUIJourneySessionData(IncomeSourceJourneyType(Add, UkProperty))))
+              val result = buildGETMTDClient(path, additionalCookies).futureValue
+              verifyIncomeSourceDetailsCall(testMtditid)
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses
-          .get(s"/manage-your-businesses/add/add-uk-property-cannot-go-back")
+              result should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, s"$title")
+              )
+            }
 
-        verifyIncomeSourceDetailsCall(testMtditid)
+            "redirect to home page" when {
+              "Income Sources FS is disabled" in {
+                disable(IncomeSources)
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual(s"$title")
-        )
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                verifyIncomeSourceDetailsCall(testMtditid)
+
+                result should have(
+                  httpStatus(SEE_OTHER),
+                  redirectURI(homeUrl(mtdUserRole))
+                )
+              }
+            }
+          }
+          testAuthFailures(path, mtdUserRole)
+        }
       }
-    }
-    "Income Sources FS is disabled" in {
-      Given("Income Sources FS is enabled")
-      disable(IncomeSourcesFs)
-
-      And("API 1771  returns a success response")
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-      val result = IncomeTaxViewChangeFrontendManageBusinesses
-        .get(s"/manage-your-businesses/add/add-uk-property-cannot-go-back")
-
-      verifyIncomeSourceDetailsCall(testMtditid)
-
-      result should have(
-        httpStatus(SEE_OTHER)
-      )
-    }
-  }
-
-  s"calling GET $foreignPropertyBackErrorUrl" should {
-    "render the self employment business not added error page" when {
-      "Income Sources FS is enabled" in {
-        enable(IncomeSourcesFs)
-
-        And("API 1771  returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-        await(sessionService.setMongoData(completedUIJourneySessionData(IncomeSourceJourneyType(Add, ForeignProperty))))
-
-        val result = IncomeTaxViewChangeFrontendManageBusinesses
-          .get(s"/manage-your-businesses/add/add-foreign-property-cannot-go-back")
-
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual(s"$title")
-        )
-      }
-    }
-    "Income Sources FS is disabled" in {
-      Given("Income Sources FS is enabled")
-      disable(IncomeSourcesFs)
-
-      And("API 1771  returns a success response")
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-      val result = IncomeTaxViewChangeFrontendManageBusinesses
-        .get(s"/manage-your-businesses/add/add-foreign-property-cannot-go-back")
-
-      verifyIncomeSourceDetailsCall(testMtditid)
-
-      result should have(
-        httpStatus(SEE_OTHER)
-      )
     }
   }
 }
