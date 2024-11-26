@@ -17,56 +17,70 @@
 package controllers.manageBusinesses.add
 
 import controllers.ControllerISpecHelper
-import helpers.servicemocks.{AddressLookupStub, IncomeTaxViewChangeStub, MTDIndividualAuthStub}
-import models.admin.{IncomeSourcesFs, NavBarFs}
+import enums.{MTDIndividual, MTDUserRole}
+import helpers.servicemocks.{AddressLookupStub, IncomeTaxViewChangeStub}
+import models.admin.{IncomeSources, NavBarFs}
 import play.api.http.Status.{OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
 
 class AddBusinessAddressControllerISpec extends ControllerISpecHelper {
 
-  val path = "/manage-your-businesses/add-sole-trader/business-address"
-  val changePath = "/manage-your-businesses/add-sole-trader/change-business-address-lookup"
-
-  s"GET $path" when {
-    "the user is authenticated, with a valid MTD enrolment" should {
-      "redirect to address lookup" in {
-        enable(IncomeSourcesFs)
-        disable(NavBarFs)
-        MTDIndividualAuthStub.stubAuthorised()
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-        AddressLookupStub.stubPostInitialiseAddressLookup()
-
-        val result = buildGETMTDClient(path).futureValue
-
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI("TestRedirect")
-        )
-      }
-    }
-    testAuthFailuresForMTDIndividual(path)
+  def getPath(mtdRole: MTDUserRole, isChange: Boolean): String = {
+    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    val pathEnd = if(isChange) "/change-business-address-lookup" else "/business-address"
+    pathStart + "/manage-your-businesses/add-sole-trader" + pathEnd
   }
 
-  s"GET $changePath" when {
-    "the user is authenticated, with a valid MTD enrolment" should {
-      "redirect to address lookup" in {
-        enable(IncomeSourcesFs)
-        disable(NavBarFs)
-        MTDIndividualAuthStub.stubAuthorised()
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+  mtdAllRoles.foreach { mtdUserRole =>
+    val path = getPath(mtdUserRole, isChange = false)
+    val additionalCookies = getAdditionalCookies(mtdUserRole)
+    s"GET $path" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          "redirect to address lookup" in {
+            enable(IncomeSources)
+            disable(NavBarFs)
+            stubAuthorised(mtdUserRole)
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-        AddressLookupStub.stubPostInitialiseAddressLookup()
+            AddressLookupStub.stubPostInitialiseAddressLookup()
 
-        val result = buildGETMTDClient(changePath).futureValue
+            val result = buildGETMTDClient(path, additionalCookies).futureValue
 
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI("TestRedirect")
-        )
+            result should have(
+              httpStatus(SEE_OTHER),
+              redirectURI("TestRedirect")
+            )
+          }
+        }
+        testAuthFailures(path, mtdUserRole)
       }
     }
-    testAuthFailuresForMTDIndividual(changePath)
+
+    val changePath = getPath(mtdUserRole, isChange = true)
+
+    s"GET $changePath" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          "redirect to address lookup" in {
+            enable(IncomeSources)
+            disable(NavBarFs)
+            stubAuthorised(mtdUserRole)
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+
+            AddressLookupStub.stubPostInitialiseAddressLookup()
+
+            val result = buildGETMTDClient(changePath, additionalCookies).futureValue
+
+            result should have(
+              httpStatus(SEE_OTHER),
+              redirectURI("TestRedirect")
+            )
+          }
+        }
+        testAuthFailures(changePath, mtdUserRole)
+      }
+    }
   }
 }

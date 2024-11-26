@@ -22,7 +22,7 @@ import play.api.libs.json.{JsArray, JsString, JsValue, Json}
 import testConstants.BaseIntegrationTestConstants._
 import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolment}
 
-object MTDIndividualAuthStub {
+object MTDIndividualAuthStub extends MTDAuthStub {
 
   val postAuthoriseUrl = "/auth/authorise"
   val requiredConfidenceLevel = 250
@@ -50,7 +50,7 @@ object MTDIndividualAuthStub {
   }
 
 
-  def stubAuthorised(confidenceLevel: Option[Int] = None): Unit = {
+  override def stubAuthorised(confidenceLevel: Option[Int] = None): Unit = {
 
     stubPostWithRequest(
       url = postAuthoriseUrl,
@@ -105,7 +105,7 @@ object MTDIndividualAuthStub {
     )
   }
 
-  def stubUnauthorised(): Unit = {
+  override def stubUnauthorised(): Unit = {
     val responseHeaders = Map("WWW-Authenticate" -> "MDTP detail=\"InvalidBearerToken\"")
 
     stubPostWithRequestAndResponseHeaders(
@@ -118,7 +118,7 @@ object MTDIndividualAuthStub {
 
 
 
-  def stubBearerTokenExpired(): Unit = {
+  override def stubBearerTokenExpired(): Unit = {
     val responseHeaders = Map("WWW-Authenticate" -> "MDTP detail=\"BearerTokenExpired\"")
 
     stubPostWithRequestAndResponseHeaders(

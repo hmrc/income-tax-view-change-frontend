@@ -16,30 +16,30 @@
 
 package controllers.manageBusinesses.add
 
-import auth.{FrontendAuthorisedFunctions, MtdItUser}
+import auth.MtdItUser
+import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
-import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import forms.manageBusinesses.add.{AddProprertyForm => form}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.IncomeSourcesUtils
 import views.html.manageBusinesses.add.AddProperty
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 
-class AddPropertyController @Inject()(auth: AuthenticatorPredicate,
+class AddPropertyController @Inject()(authActions: AuthActions,
                                       val addProperty: AddProperty,
-                                      val authorisedFunctions: FrontendAuthorisedFunctions)
-                                     (implicit val appConfig: FrontendAppConfig,
-                                      mcc: MessagesControllerComponents,
-                                      val ec: ExecutionContext,
                                       val itvcErrorHandler: ItvcErrorHandler,
                                       val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-  extends ClientConfirmedController with I18nSupport with IncomeSourcesUtils{
+                                     (implicit val appConfig: FrontendAppConfig,
+                                      mcc: MessagesControllerComponents,
+                                      val ec: ExecutionContext)
+  extends FrontendController(mcc) with I18nSupport with IncomeSourcesUtils {
 
   private def getBackUrl(isAgent: Boolean): String = if(isAgent) {
     controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
@@ -47,7 +47,7 @@ class AddPropertyController @Inject()(auth: AuthenticatorPredicate,
     controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
   }
 
-  def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def show(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
       handleRequest(isAgent)
   }
@@ -57,7 +57,7 @@ class AddPropertyController @Inject()(auth: AuthenticatorPredicate,
     Future.successful(Ok(addProperty(form.apply, isAgent, Some(getBackUrl(isAgent)), postAction)))
   }
 
-  def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
+  def submit(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
     handleSubmitRequest(
       isAgent = isAgent
     )
@@ -95,7 +95,8 @@ class AddPropertyController @Inject()(auth: AuthenticatorPredicate,
       case Some(form.responseForeign) => Future.successful(Redirect(foreignPropertyUrl))
       case _ =>
         Logger("application").error(s"Unexpected response, isAgent = $isAgent")
-        Future.successful(showInternalServerError(isAgent))
+        val errorHandler = if(isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+        Future.successful(errorHandler.showInternalServerError())
     }
   }
 }

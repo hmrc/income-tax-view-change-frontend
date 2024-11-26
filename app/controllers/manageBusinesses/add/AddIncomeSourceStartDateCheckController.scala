@@ -17,12 +17,11 @@
 package controllers.manageBusinesses.add
 
 import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
+import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.{BeforeSubmissionPage, ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
+import enums.IncomeSourceJourney.{BeforeSubmissionPage, IncomeSourceType, SelfEmployment}
+import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.{AddIncomeSourceStartDateCheckForm => form}
 import implicits.ImplicitDateFormatter
 import models.incomeSourceDetails.UIJourneySessionData
@@ -30,9 +29,9 @@ import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{DateService, SessionService}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
+import utils.JourneyCheckerManageBusinesses
 import views.html.manageBusinesses.add.AddIncomeSourceStartDateCheck
 
 import java.time.LocalDate
@@ -40,19 +39,18 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions: AuthorisedFunctions,
+class AddIncomeSourceStartDateCheckController @Inject()(val authActions: AuthActions,
                                                         val checkSessionTimeout: SessionTimeoutPredicate,
                                                         val addIncomeSourceStartDateCheckView: AddIncomeSourceStartDateCheck,
                                                         val languageUtils: LanguageUtils,
                                                         val sessionService: SessionService,
-                                                        auth: AuthenticatorPredicate)
-                                                       (implicit val appConfig: FrontendAppConfig,
-                                                        implicit val dateService: DateService,
-                                                        mcc: MessagesControllerComponents,
-                                                        val ec: ExecutionContext,
+                                                        val dateService: DateService,
                                                         val itvcErrorHandler: ItvcErrorHandler,
                                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching with ImplicitDateFormatter with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
+                                                       (implicit val appConfig: FrontendAppConfig,
+                                                        mcc: MessagesControllerComponents,
+                                                        val ec: ExecutionContext)
+  extends FrontendController(mcc) with I18nSupport with ImplicitDateFormatter with JourneyCheckerManageBusinesses {
 
   lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) =>
     if (isAgent) itvcErrorHandlerAgent
@@ -61,7 +59,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
   def show(isAgent: Boolean,
            isChange: Boolean,
            incomeSourceType: IncomeSourceType
-          ): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
+          ): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
 
     handleShowRequest(
       incomeSourceType = incomeSourceType,
@@ -73,7 +71,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
   def submit(isAgent: Boolean,
              isChange: Boolean,
              incomeSourceType: IncomeSourceType
-            ): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
+            ): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
 
     handleSubmitRequest(
       incomeSourceType = incomeSourceType,
@@ -87,7 +85,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
                                 isChange: Boolean)
                                (implicit user: MtdItUser[_]): Future[Result] = {
 
-    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
+    withSessionData(JourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
       val dateStartedOpt = sessionData.addIncomeSourceData.flatMap(_.dateStarted)
       dateStartedOpt match {
         case Some(startDate: LocalDate) =>
@@ -106,7 +104,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
         case None =>
           Logger("application").error("" +
             "Failed to get income source start date from session")
-          Future.successful(showInternalServerError(isAgent))
+          Future.successful(errorHandler(isAgent).showInternalServerError())
       }
     }
   }.recover {
@@ -120,7 +118,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
                                   isAgent: Boolean,
                                   isChange: Boolean)
                                  (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
-    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), BeforeSubmissionPage) { sessionData =>
+    withSessionData(JourneyType(Add, incomeSourceType), BeforeSubmissionPage) { sessionData =>
       val dateStartedOpt = sessionData.addIncomeSourceData.flatMap(_.dateStarted)
       dateStartedOpt match {
         case Some(startDate) =>
@@ -152,7 +150,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
         case None =>
           Logger("application").error("" +
             "Failed to get income source start date from session")
-          Future.successful(showInternalServerError(isAgent))
+          Future.successful(errorHandler(isAgent).showInternalServerError())
       }
     }
   }.recover {
@@ -179,7 +177,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
       case (Some(form.responseYes), _) => Future.successful(Redirect(successUrl))
       case _ =>
         Logger("application").error(s"Unexpected response, isAgent = $isAgent")
-        Future.successful(showInternalServerError(isAgent))
+        Future.successful(errorHandler(isAgent).showInternalServerError())
     }
   }
 

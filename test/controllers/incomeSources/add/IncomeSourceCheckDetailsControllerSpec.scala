@@ -16,38 +16,27 @@
 
 package controllers.incomeSources.add
 
-import audit.AuditingService
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import mocks.auth.MockAuthActions
-import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.MockSessionService
 import models.admin.IncomeSources
 import models.createIncomeSource.CreateIncomeSourceResponse
-import models.incomeSourceDetails.{AddIncomeSourceData, Address, UIJourneySessionData}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
-import org.scalatest.Assertion
 import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
-import play.api.mvc.{MessagesControllerComponents, Result}
+import play.api.mvc.Result
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.{CreateBusinessDetailsService, SessionService}
-import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSelfEmploymentId, testSessionId}
+import testConstants.BaseTestConstants.testSelfEmploymentId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{emptyUIJourneySessionData, notCompletedUIJourneySessionData}
-import testUtils.TestSupport
-import uk.gov.hmrc.http.HttpClient
-import views.html.incomeSources.add.IncomeSourceCheckDetails
 
-import java.time.LocalDate
 import scala.concurrent.Future
 
 class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSessionService {
@@ -97,7 +86,7 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
         val fakeRequest = getFakeRequestBasedOnMTDUserType(mtdRole)
         s"the user is authenticated as a $mtdRole" should {
           "render the check details page" when {
-            "the session contains full business details and FS enabled" when {
+            "the session contains full business details and FS enabled" in {
               enable(IncomeSources)
               setupMockSuccess(mtdRole)
 
@@ -118,7 +107,7 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
           }
 
           "return 303 and redirect an individual back to the home page" when {
-            "the IncomeSources FS is disabled" when {
+            "the IncomeSources FS is disabled" in {
               disable(IncomeSources)
               setupMockSuccess(mtdRole)
               mockSingleBusinessIncomeSource()
@@ -137,7 +126,7 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
           }
 
           s"return ${Status.SEE_OTHER}: redirect to ReportingMethodSetBackErrorController" when {
-            s"user has already completed the journey" when {
+            s"user has already completed the journey" in {
               enable(IncomeSources)
               mockNoIncomeSources()
               setupMockSuccess(mtdRole)
@@ -188,7 +177,7 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
         val fakeRequest = getFakeRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
         s"the user is authenticated as a $mtdRole" should {
           "redirect to IncomeSourceReportingMethodController" when {
-            "data is correct and redirect next page" when {
+            "data is correct and redirect next page" in {
               setupMockSuccess(mtdRole)
               enable(IncomeSources)
 

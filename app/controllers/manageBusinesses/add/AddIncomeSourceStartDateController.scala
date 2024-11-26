@@ -17,48 +17,46 @@
 package controllers.manageBusinesses.add
 
 import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
+import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney._
-import enums.JourneyType.{Add, IncomeSourceJourneyType}
+import enums.JourneyType.{Add, JourneyType}
+import forms.incomeSources.add.AddIncomeSourceStartDateFormProvider
 import implicits.ImplicitDateFormatterImpl
 import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{DateService, SessionService}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.JourneyCheckerManageBusinesses
 import views.html.errorPages.CustomNotFoundError
 import views.html.manageBusinesses.add.AddIncomeSourceStartDate
-import forms.incomeSources.add.AddIncomeSourceStartDateFormProvider
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: AuthorisedFunctions,
+class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActions,
                                                    val addIncomeSourceStartDate: AddIncomeSourceStartDate,
                                                    val customNotFoundErrorView: CustomNotFoundError,
                                                    val sessionService: SessionService,
                                                    form: AddIncomeSourceStartDateFormProvider,
-                                                   auth: AuthenticatorPredicate)
+                                                   val itvcErrorHandler: ItvcErrorHandler,
+                                                   val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                                   (implicit val appConfig: FrontendAppConfig,
-                                                   implicit val itvcErrorHandler: ItvcErrorHandler,
-                                                   implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                                   implicit val dateFormatter: ImplicitDateFormatterImpl,
-                                                   implicit val dateService: DateService,
-                                                   implicit override val mcc: MessagesControllerComponents,
+                                                   val dateFormatter: ImplicitDateFormatterImpl,
+                                                   val dateService: DateService,
+                                                   val mcc: MessagesControllerComponents,
                                                    val ec: ExecutionContext)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
+  extends FrontendController(mcc) with JourneyCheckerManageBusinesses with I18nSupport {
 
 
   def show(isAgent: Boolean,
            isChange: Boolean,
            incomeSourceType: IncomeSourceType
-          ): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
+          ): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
 
     handleShowRequest(
       incomeSourceType = incomeSourceType,
@@ -70,7 +68,7 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
   def submit(isAgent: Boolean,
              isChange: Boolean,
              incomeSourceType: IncomeSourceType
-            ): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
+            ): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
 
     handleSubmitRequest(
       incomeSourceType = incomeSourceType,
@@ -86,15 +84,15 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
 
     val messagesPrefix = incomeSourceType.startDateMessagesPrefix
 
-    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = {
+    withSessionData(JourneyType(Add, incomeSourceType), journeyState = {
       incomeSourceType match {
         case SelfEmployment => BeforeSubmissionPage
         case _ => InitialPage
       }
     }) { sessionData =>
       if (!isChange && incomeSourceType.equals(UkProperty) || !isChange && incomeSourceType.equals(ForeignProperty)) {
-        lazy val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
-        sessionService.createSession(journeyType)
+        lazy val journeyType = JourneyType(Add, incomeSourceType)
+        sessionService.createSession(journeyType.toString)
       }
 
       val dateStartedOpt = sessionData.addIncomeSourceData.flatMap(_.dateStarted)
@@ -158,7 +156,7 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
 
   def handleValidFormData(formData: LocalDate, incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean)
                          (implicit user: MtdItUser[_]): Future[Result] = {
-    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = {
+    withSessionData(JourneyType(Add, incomeSourceType), journeyState = {
       incomeSourceType match {
         case SelfEmployment => BeforeSubmissionPage
         case _ => InitialPage

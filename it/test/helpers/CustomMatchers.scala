@@ -16,6 +16,7 @@
 
 package helpers
 
+import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.AuthStub.{lang, messagesAPI}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -67,6 +68,14 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
         )
       }
     }
+
+  def pageTitle(mtdUserRole: MTDUserRole, messageKey: String, isInvalidInput: Boolean = false, isErrorPage: Boolean = false): HavePropertyMatcher[WSResponse, String] = {
+    if(mtdUserRole == MTDIndividual) {
+      pageTitleIndividual(messageKey, isInvalidInput, isErrorPage)
+    } else {
+      pageTitleAgent(messageKey, isInvalidInput, isErrorPage)
+    }
+  }
 
   def pageTitleIndividual(messageKey: String, isInvalidInput: Boolean = false, isErrorPage: Boolean = false): HavePropertyMatcher[WSResponse, String] =
     new HavePropertyMatcher[WSResponse, String] {
