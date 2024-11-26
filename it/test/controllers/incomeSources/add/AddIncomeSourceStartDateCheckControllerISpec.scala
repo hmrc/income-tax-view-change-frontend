@@ -16,59 +16,34 @@
 
 package controllers.incomeSources.add
 
-import models.admin.IncomeSourcesFs
+import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, IncomeSourceJourneyType}
-import helpers.ComponentSpecBase
+import enums.JourneyType.{Add, JourneyType}
+import enums.{MTDIndividual, MTDUserRole}
+import forms.incomeSources.add.AddIncomeSourceStartDateCheckForm
+import forms.incomeSources.add.AddIncomeSourceStartDateCheckForm.{responseNo, responseYes}
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.admin.{IncomeSources, NavBarFs}
 import models.incomeSourceDetails.AddIncomeSourceData.{accountingPeriodEndDateField, accountingPeriodStartDateField, dateStartedField}
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, clientDetailsWithStartDate, testMtditid, testSessionId}
-import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, noPropertyOrBusinessResponse, ukPropertyOnlyResponse}
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
+import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, noPropertyOrBusinessResponse, ukPropertyOnlyResponse}
 
 import java.time.LocalDate
+import scala.concurrent.ExecutionContext
 
-class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
-  val testDate: String = "2020-11-1"
-  val addBusinessStartDateCheckShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = false).url
-  val addBusinessTradeShowUrl: String = controllers.incomeSources.add.routes.AddBusinessTradeController.show(isChange = false).url
-  val addBusinessStartDateShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = false).url
-  val addBusinessStartDateCheckSubmitUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submit(incomeSourceType = SelfEmployment, isAgent = false, isChange = false).url
+class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper {
   val continueButtonText: String = messagesAPI("base.continue")
   val incomeSourcePrefix: String = "start-date-check"
-  val soleTraderBusinessPrefix: String = SelfEmployment.addStartDateCheckMessagesPrefix
-  val ukPropertyPrefix: String = UkProperty.addStartDateCheckMessagesPrefix
-  val foreignPropertyPrefix: String = ForeignProperty.addStartDateCheckMessagesPrefix
-  val addBusinessStartDateCheckChangeSubmitUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submit(incomeSourceType = SelfEmployment, isAgent = false, isChange = true).url
-  val addBusinessStartDateCheckChangeShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = true).url
-  val addBusinessStartDateCheckDetailsShowUrl: String = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
-
-
-  val foreignPropertyStartDateCheckShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = ForeignProperty, isAgent = false, isChange = false).url
-  val foreignPropertyStartDateCheckSubmitUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submit(incomeSourceType = ForeignProperty, isAgent = false, isChange = false).url
-  val foreignPropertyAccountingMethodShowUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(ForeignProperty, isAgent = false).url
-  val foreignPropertyStartDateShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = ForeignProperty, isAgent = false, isChange = false).url
-  val addForeignPropertyStartDateCheckChangeShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = ForeignProperty, isAgent = false, isChange = true).url
-  val addForeignPropertyStartDateCheckChangeSubmitUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submit(incomeSourceType = ForeignProperty, isAgent = false, isChange = true).url
-  val addForeignPropertyStartDateCheckDetailsShowUrl: String = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(ForeignProperty).url
-
-  val dateText: String = "10 October 2022"
-
-  val checkUKPropertyStartDateShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = UkProperty, isAgent = false, isChange = false).url
-  val checkUKPropertyStartDateSubmitUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submit(incomeSourceType = UkProperty, isAgent = false, isChange = false).url
-  val addUKPropertyStartDateShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = UkProperty, isAgent = false, isChange = false).url
-  val ukPropertyAccountingMethodShowUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(UkProperty, isAgent = false).url
-  val addUKPropertyStartDateCheckChangeSubmitUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submit(incomeSourceType = UkProperty, isAgent = false, isChange = true).url
-  val addUKPropertyStartDateCheckChangeShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = UkProperty, isAgent = false, isChange = true).url
-  val addUKPropertyStartDateCheckDetailsShowUrl: String = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(UkProperty).url
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
-  val journeyTypeSE: IncomeSourceJourneyType = IncomeSourceJourneyType(Add, SelfEmployment)
-  val journeyTypeUK: IncomeSourceJourneyType = IncomeSourceJourneyType(Add, UkProperty)
-  val journeyTypeFP: IncomeSourceJourneyType = IncomeSourceJourneyType(Add, ForeignProperty)
+  val journeyTypeSE: JourneyType = JourneyType(Add, SelfEmployment)
+  val journeyTypeUK: JourneyType = JourneyType(Add, UkProperty)
+  val journeyTypeFP: JourneyType = JourneyType(Add, ForeignProperty)
+  override implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
   val testBusinessStartDate: LocalDate = LocalDate.of(2022, 10, 10)
   val testAccountingPeriodStartDate: LocalDate = LocalDate.of(2022, 10, 10)
   val testAccountingPeriodEndDate: LocalDate = LocalDate.of(2023, 4, 5)
@@ -93,7 +68,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
 
   def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
-    journeyType = IncomeSourceJourneyType(Add, incomeSourceType).toString,
+    journeyType = JourneyType(Add, incomeSourceType).toString,
     addIncomeSourceData = Some(testAddIncomeSourceDataWithStartDate(incomeSourceType)))
 
   override def beforeEach(): Unit = {
@@ -101,401 +76,212 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
     await(sessionService.deleteSession(Add))
   }
 
-
-  s"calling GET $addBusinessStartDateCheckShowUrl" should {
-    "render the Add Business Start Date Check Page" when {
-      "User is authorised" in {
-
-        Given("I wiremock stub a successful Income Source Details response with UK property")
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
-
-        When(s"I call GET $addBusinessStartDateCheckShowUrl")
-
-        await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
-
-        val result = IncomeTaxViewChangeFrontend.getAddBusinessStartDateCheck(clientDetailsWithStartDate )
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual("dateForm.check.heading"),
-          elementTextByID("continue-button")(continueButtonText)
-        )
-      }
+  def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType, isChange: Boolean): String = {
+    val pathStart = if(mtdRole == MTDIndividual) "/income-sources/add" else "/agents/income-sources/add"
+    val changeFlagIfReq = if(isChange) "/change-" else "/"
+    incomeSourceType match {
+      case SelfEmployment => pathStart + changeFlagIfReq + "business-start-date-check"
+      case UkProperty => pathStart + changeFlagIfReq + "uk-property-start-date-check"
+      case ForeignProperty => pathStart + changeFlagIfReq + "foreign-property-start-date-check"
     }
   }
-  s"calling POST $addBusinessStartDateCheckSubmitUrl" should {
-    s"redirect to $addBusinessTradeShowUrl" when {
-      "form response is Yes" in {
 
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
-
-        await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
-
-        val result = IncomeTaxViewChangeFrontend.postAddBusinessStartDateCheck(Some("Yes"))(clientDetailsWithConfirmation)
-
-        sessionService.getMongoKeyTyped[LocalDate](dateStartedField, journeyTypeSE).futureValue shouldBe Right(Some(testBusinessStartDate))
-        sessionService.getMongoKeyTyped[LocalDate](accountingPeriodStartDateField, journeyTypeSE).futureValue shouldBe
-          Right(Some(testAccountingPeriodStartDate))
-        sessionService.getMongoKeyTyped[LocalDate](accountingPeriodEndDateField, journeyTypeSE).futureValue shouldBe Right(Some(testAccountingPeriodEndDate))
-
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(addBusinessTradeShowUrl)
-        )
-      }
-    }
-    s"redirect to $addBusinessStartDateShowUrl" when {
-      "form response is No" in {
-
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
-
-        await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
-
-        val result = IncomeTaxViewChangeFrontend.postAddBusinessStartDateCheck(Some("No"))(clientDetailsWithConfirmation)
-
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(addBusinessStartDateShowUrl)
-        )
-
-        sessionService.getMongoKeyTyped[LocalDate](dateStartedField, journeyTypeSE).futureValue shouldBe Right(None)
-        sessionService.getMongoKeyTyped[LocalDate](accountingPeriodStartDateField, journeyTypeSE).futureValue shouldBe Right(None)
-        sessionService.getMongoKeyTyped[LocalDate](accountingPeriodEndDateField, journeyTypeSE).futureValue shouldBe Right(None)
-      }
-    }
-    "return a BAD_REQUEST" when {
-      "form is empty" in {
-
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
-
-        await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
-
-        val result = IncomeTaxViewChangeFrontend.postAddBusinessStartDateCheck(None)(clientDetailsWithConfirmation)
-
-        result should have(
-          httpStatus(BAD_REQUEST),
-          elementTextByID(s"$incomeSourcePrefix-error")(messagesAPI("base.error-prefix") + " " +
-            messagesAPI(s"$soleTraderBusinessPrefix.error"))
-        )
-      }
-    }
-    "return INTERNAL_SERVER_ERROR" when {
-      "invalid entry given" in {
-
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
-
-        await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
-
-        val result = IncomeTaxViewChangeFrontend
-          .postAddBusinessStartDateCheck(Some("@"))(clientDetailsWithConfirmation)
-
-        result should have(
-          httpStatus(BAD_REQUEST)
-        )
-      }
+  def getJourneyType(incomeSourceType: IncomeSourceType): JourneyType = {
+    incomeSourceType match {
+      case SelfEmployment => journeyTypeSE
+      case UkProperty => journeyTypeUK
+      case ForeignProperty => journeyTypeFP
     }
   }
-  s"calling GET $foreignPropertyStartDateCheckShowUrl" should {
-    "render the foreign property start date check page" when {
-      "User is authorised" in {
 
-        Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-
-        When(s"I call GET $foreignPropertyStartDateCheckShowUrl")
-
-        await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
-
-        val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/foreign-property-start-date-check", clientDetailsWithConfirmation)
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual("dateForm.check.heading"),
-          elementTextByID(s"$incomeSourcePrefix-hint")(dateText),
-          elementTextByID("continue-button")(continueButtonText)
-        )
-      }
+  def getIncomeSourceDetailsResponse(incomeSourceType: IncomeSourceType) = {
+    incomeSourceType match {
+      case SelfEmployment => businessOnlyResponse
+      case UkProperty => ukPropertyOnlyResponse
+      case ForeignProperty => noPropertyOrBusinessResponse
     }
   }
-  s"calling POST $foreignPropertyStartDateCheckSubmitUrl" should {
-    s"redirect to $foreignPropertyAccountingMethodShowUrl" when {
-      "form is filled correctly with input Yes" in {
 
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-
-        await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
-
-        val result = IncomeTaxViewChangeFrontend.postAddForeignPropertyStartDateCheck(Some("Yes"))(clientDetailsWithConfirmation)
-
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(foreignPropertyAccountingMethodShowUrl)
-        )
-
-        sessionService.getMongoKeyTyped[LocalDate](dateStartedField, journeyTypeFP).futureValue shouldBe Right(Some(testBusinessStartDate))
-        sessionService.getMongoKeyTyped[LocalDate](accountingPeriodStartDateField, journeyTypeFP).futureValue shouldBe Right(None)
-        sessionService.getMongoKeyTyped[LocalDate](accountingPeriodEndDateField, journeyTypeFP).futureValue shouldBe Right(None)
-      }
-      "form is filled correctly with input No" in {
-
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-
-        await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
-
-        val result = IncomeTaxViewChangeFrontend.postAddForeignPropertyStartDateCheck(Some("No"))(clientDetailsWithConfirmation)
-
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(foreignPropertyStartDateShowUrl)
-        )
-      }
-      "form is filled incorrectly" in {
-
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-
-        await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
-
-        val result = IncomeTaxViewChangeFrontend.postAddForeignPropertyStartDateCheck(None)(clientDetailsWithConfirmation)
-
-        result should have(
-          httpStatus(BAD_REQUEST),
-          elementTextByID(s"$incomeSourcePrefix-error")(messagesAPI("base.error-prefix") + " " +
-            messagesAPI(s"$foreignPropertyPrefix.error"))
-        )
-      }
-    }
+  def verifySessionUpdate(incomeSourceType: IncomeSourceType, journeyType: JourneyType) = {
+    sessionService.getMongoKeyTyped[LocalDate](dateStartedField, journeyType).futureValue shouldBe Right(Some(testBusinessStartDate))
+    sessionService.getMongoKeyTyped[LocalDate](accountingPeriodStartDateField, journeyType).futureValue shouldBe
+      Right{ if(incomeSourceType == SelfEmployment) Some(testAccountingPeriodStartDate) else None }
+    sessionService.getMongoKeyTyped[LocalDate](accountingPeriodEndDateField, journeyType).futureValue shouldBe
+      Right{if(incomeSourceType == SelfEmployment) Some(testAccountingPeriodEndDate) else None }
   }
-  s"calling GET $checkUKPropertyStartDateShowUrl" should {
-    "render the Check UK Property Business Start Date page" when {
-      "User is authorised" in {
 
-        Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+  List(true, false).foreach { isChange =>
+    List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
+      mtdAllRoles.foreach { mtdUserRole =>
+        val path = getPath(mtdUserRole, incomeSourceType, isChange)
+        val additionalCookies = getAdditionalCookies(mtdUserRole)
+        s"GET $path" when {
+          s"a user is a $mtdUserRole" that {
+            "is authenticated, with a valid enrolment" should {
+              "render the Business Start Date Check Page" when {
+                "incomesources is enabled" in {
+                  enable(IncomeSources)
+                  disable(NavBarFs)
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
-        When(s"I call GET $checkUKPropertyStartDateShowUrl")
-        await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
+                  await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
 
-        val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/uk-property-start-date-check", clientDetailsWithConfirmation)
+                  val result = buildGETMTDClient(path, additionalCookies).futureValue
+                  verifyIncomeSourceDetailsCall(testMtditid)
 
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual("radioForm.checkDate.heading"),
-          elementTextByID("continue-button")(continueButtonText)
-        )
-      }
-    }
-  }
-  s"calling POST $checkUKPropertyStartDateSubmitUrl" should {
-    s"redirect to $ukPropertyAccountingMethodShowUrl" when {
-      "user selects 'yes' the date entered is correct" in {
-
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-
-        await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
-
-        val result = IncomeTaxViewChangeFrontend.postAddUKPropertyStartDateCheck(Some("Yes"))(clientDetailsWithConfirmation)
-
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(ukPropertyAccountingMethodShowUrl)
-        )
-
-        sessionService.getMongoKeyTyped[LocalDate](dateStartedField, journeyTypeUK).futureValue shouldBe Right(Some(testBusinessStartDate))
-        sessionService.getMongoKeyTyped[LocalDate](accountingPeriodStartDateField, journeyTypeUK).futureValue shouldBe Right(None)
-        sessionService.getMongoKeyTyped[LocalDate](accountingPeriodEndDateField, journeyTypeUK).futureValue shouldBe Right(None)
-      }
-      s"redirect to $addUKPropertyStartDateShowUrl" when {
-        "user selects 'no' the date entered is not correct" in {
-
-          enable(IncomeSourcesFs)
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-
-          await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
-
-          val result = IncomeTaxViewChangeFrontend.postAddUKPropertyStartDateCheck(Some("No"))(clientDetailsWithConfirmation)
-
-          result should have(
-            httpStatus(SEE_OTHER),
-            redirectURI(addUKPropertyStartDateShowUrl)
-          )
-
-          sessionService.getMongoKeyTyped[LocalDate](dateStartedField, journeyTypeUK).futureValue shouldBe Right(None)
+                  result should have(
+                    httpStatus(OK),
+                    pageTitle(mtdUserRole,"dateForm.check.heading"),
+                    elementTextByID("continue-button")(continueButtonText)
+                  )
+                }
+              }
+            }
+            testAuthFailures(path, mtdUserRole)
+          }
         }
-      }
-      s"return BAD_REQUEST $checkUKPropertyStartDateShowUrl" when {
-        "user does not select anything" in {
 
-          enable(IncomeSourcesFs)
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+        s"POST $path" when {
 
-          await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
+          val journeyType = getJourneyType(incomeSourceType)
+          val isAgent = mtdUserRole != MTDIndividual
+          s"a user is a $mtdUserRole" that {
+            "is authenticated, with a valid enrolment" should {
+              if(isChange) {
+                val checkDetailsUrl = if(isAgent) {
+                  controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType).url
+                } else {
+                  controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(incomeSourceType).url
+                }
+                s"redirect to $checkDetailsUrl" when {
+                  "form response is Yes" in {
+                    enable(IncomeSources)
+                    disable(NavBarFs)
+                    stubAuthorised(mtdUserRole)
+                    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
-          val result = IncomeTaxViewChangeFrontend.postAddUKPropertyStartDateCheck(Some(""))(clientDetailsWithConfirmation)
+                    await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
 
-          result should have(
-            httpStatus(BAD_REQUEST),
-            elementTextByID(s"$incomeSourcePrefix-error")(messagesAPI("base.error-prefix") + " " +
-              messagesAPI(s"$ukPropertyPrefix.error"))
-          )
+                    val result = buildPOSTMTDPostClient(path, additionalCookies,
+                      body = Map(AddIncomeSourceStartDateCheckForm.response -> Seq(responseYes))).futureValue
+
+                    verifySessionUpdate(incomeSourceType, journeyType)
+                    result should have(
+                      httpStatus(SEE_OTHER),
+                      redirectURI(checkDetailsUrl)
+                    )
+                  }
+                }
+              } else if(incomeSourceType == SelfEmployment) {
+                val addTradeUrl = if(isAgent) {
+                  controllers.incomeSources.add.routes.AddBusinessTradeController.showAgent(isChange = false).url
+                } else {
+                  controllers.incomeSources.add.routes.AddBusinessTradeController.show(isChange = false).url
+                }
+                s"redirect to $addTradeUrl" when {
+                  "form response is Yes" in {
+                    enable(IncomeSources)
+                    disable(NavBarFs)
+                    stubAuthorised(mtdUserRole)
+                    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+
+                    await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
+
+                    val result = buildPOSTMTDPostClient(path, additionalCookies,
+                      body = Map(AddIncomeSourceStartDateCheckForm.response -> Seq(responseYes))).futureValue
+
+                    verifySessionUpdate(incomeSourceType, journeyType)
+                    result should have(
+                      httpStatus(SEE_OTHER),
+                      redirectURI(addTradeUrl)
+                    )
+                  }
+                }
+              } else {
+                val accountingMethodUrl = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(incomeSourceType, isAgent).url
+                s"redirect to $accountingMethodUrl" when {
+                  "form response is Yes" in {
+                    enable(IncomeSources)
+                    disable(NavBarFs)
+                    stubAuthorised(mtdUserRole)
+                    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+
+                    await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
+
+                    val result = buildPOSTMTDPostClient(path, additionalCookies,
+                      body = Map(AddIncomeSourceStartDateCheckForm.response -> Seq(responseYes))).futureValue
+
+                    verifySessionUpdate(incomeSourceType, journeyType)
+                    result should have(
+                      httpStatus(SEE_OTHER),
+                      redirectURI(accountingMethodUrl)
+                    )
+                  }
+                }
+              }
+              val expectedUrlForNo = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController
+                .show(isAgent, isChange, incomeSourceType).url
+              s"redirect to $expectedUrlForNo" when {
+                "form response is No" in {
+                  enable(IncomeSources)
+                  disable(NavBarFs)
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+
+                  await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
+
+                  val result = buildPOSTMTDPostClient(path, additionalCookies,
+                    body = Map(AddIncomeSourceStartDateCheckForm.response -> Seq(responseNo))).futureValue
+
+                  result should have(
+                    httpStatus(SEE_OTHER),
+                    redirectURI(expectedUrlForNo)
+                  )
+
+                  sessionService.getMongoKeyTyped[LocalDate](dateStartedField, journeyType).futureValue shouldBe Right(None)
+                  sessionService.getMongoKeyTyped[LocalDate](accountingPeriodStartDateField, journeyType).futureValue shouldBe Right(None)
+                  sessionService.getMongoKeyTyped[LocalDate](accountingPeriodEndDateField, journeyType).futureValue shouldBe Right(None)
+                }
+              }
+              "return a BAD_REQUEST" when {
+                "form is empty" in {
+                  enable(IncomeSources)
+                  disable(NavBarFs)
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+
+                  await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
+
+                  val result = buildPOSTMTDPostClient(path, additionalCookies, body = Map.empty).futureValue
+
+                  result should have(
+                    httpStatus(BAD_REQUEST),
+                    elementTextByID(s"$incomeSourcePrefix-error")(messagesAPI("base.error-prefix") + " " +
+                      messagesAPI(s"${incomeSourceType.addStartDateCheckMessagesPrefix}.error"))
+                  )
+                }
+
+                "invalid entry given" in {
+                  enable(IncomeSources)
+                  disable(NavBarFs)
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+
+                  await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
+
+                  val result = buildPOSTMTDPostClient(path, additionalCookies,
+                    body = Map(incomeSourceType.addStartDateCheckMessagesPrefix -> Seq("@"))).futureValue
+
+                  result should have(
+                    httpStatus(BAD_REQUEST)
+                  )
+                }
+              }
+            }
+            testAuthFailures(path, mtdUserRole, optBody = Some(Map.empty))
+          }
         }
-      }
-    }
-  }
-  s"calling GET $addBusinessStartDateCheckChangeShowUrl" should {
-    s"render the Start Date Check Change Page" when {
-      "User is authorised" in {
-
-        Given("I wiremock stub a successful Income Source Details response with UK property")
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
-
-        When(s"I call GET $addBusinessStartDateCheckChangeShowUrl")
-
-        await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
-
-        val result = IncomeTaxViewChangeFrontend.getAddBusinessStartDateCheckChange()
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual("dateForm.check.heading"),
-          elementTextByID("continue-button")(continueButtonText)
-        )
-      }
-    }
-  }
-  s"calling GET $addForeignPropertyStartDateCheckChangeShowUrl" should {
-    s"render the Start Date Check Change Page" when {
-      "User is authorised" in {
-
-        Given("I wiremock stub a successful Income Source Details response with UK property")
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
-
-        When(s"I call GET $addForeignPropertyStartDateCheckChangeShowUrl")
-        await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
-
-        val result = IncomeTaxViewChangeFrontend.getAddForeignPropertyStartDateCheckChange()
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual("dateForm.check.heading"),
-          elementTextByID("continue-button")(continueButtonText)
-        )
-      }
-    }
-  }
-  s"calling GET $addUKPropertyStartDateCheckChangeShowUrl" should {
-    s"render the Start Date Check Change Page" when {
-      "User is authorised" in {
-
-        Given("I wiremock stub a successful Income Source Details response with UK property")
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
-
-        When(s"I call GET $addUKPropertyStartDateCheckChangeSubmitUrl")
-        await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
-
-        val result = IncomeTaxViewChangeFrontend.getAddUKPropertyStartDateCheckChange()
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual("dateForm.check.heading"),
-          elementTextByID("continue-button")(continueButtonText)
-        )
-
-        sessionService.getMongoKeyTyped[LocalDate](dateStartedField, journeyTypeUK).futureValue shouldBe Right(Some(testBusinessStartDate))
-        sessionService.getMongoKeyTyped[LocalDate](accountingPeriodStartDateField, journeyTypeUK).futureValue shouldBe Right(None)
-        sessionService.getMongoKeyTyped[LocalDate](accountingPeriodEndDateField, journeyTypeUK).futureValue shouldBe Right(None)
-      }
-    }
-  }
-  s"calling POST $addBusinessStartDateCheckChangeSubmitUrl" should {
-    s"render the Check Business Details Page" when {
-      "User selects 'Yes" in {
-
-        Given("I wiremock stub a successful Income Source Details response with UK property")
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-        When(s"I call GET $addBusinessStartDateCheckChangeSubmitUrl")
-
-        await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
-
-        val result = IncomeTaxViewChangeFrontend.postAddBusinessStartDateCheckChange(Some("Yes"))()
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(addBusinessStartDateCheckDetailsShowUrl)
-        )
-
-        sessionService.getMongoKeyTyped[LocalDate](dateStartedField, journeyTypeSE).futureValue shouldBe Right(Some(testBusinessStartDate))
-        sessionService.getMongoKeyTyped[LocalDate](accountingPeriodStartDateField, journeyTypeSE).futureValue shouldBe
-          Right(Some(testAccountingPeriodStartDate))
-        sessionService.getMongoKeyTyped[LocalDate](accountingPeriodEndDateField, journeyTypeSE).futureValue shouldBe Right(Some(testAccountingPeriodEndDate))
-      }
-    }
-  }
-  s"calling POST $addForeignPropertyStartDateCheckChangeSubmitUrl" should {
-    s"render the Check Foreign Property Details Page" when {
-      "User selects 'Yes" in {
-
-        Given("I wiremock stub a successful Income Source Details response with UK property")
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
-
-        When(s"I call GET $addForeignPropertyStartDateCheckChangeSubmitUrl")
-
-        await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
-
-        val result = IncomeTaxViewChangeFrontend.postAddForeignPropertyStartDateCheckChange(Some("Yes"))()
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(addForeignPropertyStartDateCheckDetailsShowUrl)
-        )
-      }
-    }
-  }
-  s"calling POST $addUKPropertyStartDateCheckChangeSubmitUrl" should {
-    s"render the Check UK Property Details Page" when {
-      "User selects 'Yes" in {
-
-        Given("I wiremock stub a successful Income Source Details response with UK property")
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
-
-        When(s"I call GET $addUKPropertyStartDateCheckChangeSubmitUrl")
-        await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
-
-        val result = IncomeTaxViewChangeFrontend.postAddUKPropertyStartDateCheckChange(Some("Yes"))()
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(addUKPropertyStartDateCheckDetailsShowUrl)
-        )
-
-        sessionService.getMongoKeyTyped[LocalDate](dateStartedField, journeyTypeUK).futureValue shouldBe Right(Some(testBusinessStartDate))
-        sessionService.getMongoKeyTyped[LocalDate](accountingPeriodStartDateField, journeyTypeUK).futureValue shouldBe Right(None)
-        sessionService.getMongoKeyTyped[LocalDate](accountingPeriodEndDateField, journeyTypeUK).futureValue shouldBe Right(None)
       }
     }
   }

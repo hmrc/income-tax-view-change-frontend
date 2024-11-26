@@ -16,123 +16,120 @@
 
 package controllers.manageBusinesses.add
 
-import models.admin.IncomeSourcesFs
+import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
+import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import forms.manageBusinesses.add.AddProprertyForm
-import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.admin.{IncomeSources, NavBarFs}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
 
-class AddPropertyControllerISpec extends ComponentSpecBase {
+class AddPropertyControllerISpec extends ControllerISpecHelper {
 
-  val addPropertyShowUrl = controllers.manageBusinesses.add.routes.AddPropertyController.show(isAgent = false).url
-  val addPropertySubmitUrl = controllers.manageBusinesses.add.routes.AddPropertyController.submit(isAgent = false).url
-
-  val manageBusinessesUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
-  val startDateUkPropertyUrl = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = false, incomeSourceType = UkProperty, isChange = false).url
-  val startDateForeignPropertyUrl = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = false, incomeSourceType = ForeignProperty, isChange = false).url
+  val startDateUkPropertyUrl = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = true, incomeSourceType = UkProperty, isChange = false).url
+  val startDateForeignPropertyUrl = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = true, incomeSourceType = ForeignProperty, isChange = false).url
 
   val continueButtonText: String = messagesAPI("base.continue")
 
-  s"calling GET $addPropertyShowUrl" should {
-    "render the Add Property page" when {
-      "the user is authorised" in {
-        Given("I wiremock stub a successful Income Source Details response with UK property")
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+  def getPath(mtdRole: MTDUserRole): String = {
+    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    pathStart + "/manage-your-businesses/add-property/property-type"
+  }
 
-        When(s"I call GET $addPropertyShowUrl")
+  List(MTDPrimaryAgent, MTDSupportingAgent).foreach { mtdUserRole =>
+    val path = getPath(mtdUserRole)
+    val additionalCookies = getAdditionalCookies(mtdUserRole)
+    s"GET $path" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          "render the Add Property page" when {
+            "income source feature is enabled" in {
+              enable(IncomeSources)
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.get("/manage-your-businesses/add-property/property-type")
-        verifyIncomeSourceDetailsCall(testMtditid)
+              val result = buildGETMTDClient(path, additionalCookies).futureValue
 
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual("manageBusinesses.type-of-property.heading"),
-          elementTextByID("continue-button")(continueButtonText)
-        )
+              result should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, "manageBusinesses.type-of-property.heading"),
+                elementTextByID("continue-button")(continueButtonText)
+              )
+            }
+          }
+        }
+        testAuthFailures(path, mtdUserRole)
+      }
+    }
+    s"POST $path" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          "redirect to the add uk property start date page" when {
+            "form response is UK" in {
+              enable(IncomeSources)
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+
+              val result = buildPOSTMTDPostClient(path, additionalCookies,
+                body = Map(AddProprertyForm.response -> Seq(AddProprertyForm.responseUK))).futureValue
+
+              result should have(
+                httpStatus(SEE_OTHER),
+                redirectURI(startDateUkPropertyUrl)
+              )
+            }
+          }
+          "redirect to the add foreign property start date page" when {
+            "form response is foreign propery" in {
+              enable(IncomeSources)
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+
+              val result = buildPOSTMTDPostClient(path, additionalCookies,
+                body = Map(AddProprertyForm.response -> Seq(AddProprertyForm.responseForeign))).futureValue
+
+              result should have(
+                httpStatus(SEE_OTHER),
+                redirectURI(startDateForeignPropertyUrl)
+              )
+            }
+          }
+          "return a BAD_REQUEST" when {
+            "form is empty" in {
+              enable(IncomeSources)
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+
+              val result = buildPOSTMTDPostClient(path, additionalCookies,
+                body = Map(AddProprertyForm.response -> Seq())).futureValue
+
+              result should have(
+                httpStatus(BAD_REQUEST)
+              )
+            }
+            "form is invalid" in {
+              enable(IncomeSources)
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+
+              val result = buildPOSTMTDPostClient(path, additionalCookies,
+                body = Map(AddProprertyForm.response -> Seq("£"))).futureValue
+
+              result should have(
+                httpStatus(BAD_REQUEST)
+              )
+            }
+          }
+        }
+        testAuthFailures(path, mtdUserRole, optBody = Some(Map(AddProprertyForm.response -> Seq(AddProprertyForm.responseUK))))
       }
     }
   }
-  s"calling GET $addPropertySubmitUrl" should {
-    "redirect to the add uk property start date page" when {
-      "form response is UK" in {
-        Given("I wiremock stub a successful Income Source Details response with UK property")
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-        When(s"I call POST $addPropertySubmitUrl")
-
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add-property/property-type")(Some("uk-property").fold(Map.empty[String, Seq[String]])(
-          selection => AddProprertyForm.apply
-            .fill(AddProprertyForm(Some(selection))).data.map { case (k, v) => (k, Seq(v)) }
-        ))
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(startDateUkPropertyUrl)
-        )
-      }
-    }
-    "redirect to the add foreign property start date page" when {
-      "form response is UK" in {
-        Given("I wiremock stub a successful Income Source Details response with Foreign property")
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-        When(s"I call POST $addPropertySubmitUrl")
-
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add-property/property-type")(Some("foreign-property").fold(Map.empty[String, Seq[String]])(
-          selection => AddProprertyForm.apply
-            .fill(AddProprertyForm(Some(selection))).data.map { case (k, v) => (k, Seq(v)) }
-        ))
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(startDateForeignPropertyUrl)
-        )
-      }
-    }
-    "return a BAD_REQUEST" when {
-      "form is empty" in {
-        Given("I wiremock stub a successful Income Source Details response with Foreign property")
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-        When(s"I call POST $addPropertySubmitUrl")
-
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add-property/property-type")(None.fold(Map.empty[String, Seq[String]])(
-          selection => AddProprertyForm.apply
-            .fill(AddProprertyForm(Some(selection))).data.map { case (k, v) => (k, Seq(v)) }
-        ))
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        result should have(
-          httpStatus(BAD_REQUEST)
-        )
-      }
-      "form is invalid" in {
-        Given("I wiremock stub a successful Income Source Details response with Foreign property")
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-        When(s"I call POST $addPropertySubmitUrl")
-
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add-property/property-type")(Some("£").fold(Map.empty[String, Seq[String]])(
-          selection => AddProprertyForm.apply
-            .fill(AddProprertyForm(Some(selection))).data.map { case (k, v) => (k, Seq(v)) }
-        ))
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        result should have(
-          httpStatus(BAD_REQUEST)
-        )
-      }
-    }
-  }
-
 }

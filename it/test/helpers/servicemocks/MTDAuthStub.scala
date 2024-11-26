@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,12 @@
 
 package helpers.servicemocks
 
-trait MTDAgentAuthStub extends MTDAuthStub {
+trait MTDAuthStub {
 
   def stubAuthorised(confidenceLevel: Option[Int] = None): Unit
 
   def stubUnauthorised(): Unit
 
   def stubBearerTokenExpired(): Unit
-
-  def stubNotAnAgent(): Unit
-
-  def stubNoAgentEnrolmentRequiredSuccess(): Unit
-
-  def stubNoAgentEnrolmentError(): Unit
-
-  def stubMissingDelegatedEnrolment(): Unit
 
 }

@@ -17,31 +17,28 @@
 package controllers.incomeSources.add
 
 import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
+import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates._
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.IncomeSourceType
+import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.IncomeSourceDetailsService
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.IncomeSourcesUtils
 import views.html.incomeSources.add.IncomeSourceReportingMethodNotSaved
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IncomeSourceReportingMethodNotSavedController @Inject()(val authorisedFunctions: AuthorisedFunctions,
+class IncomeSourceReportingMethodNotSavedController @Inject()(val authActions: AuthActions,
                                                               val view: IncomeSourceReportingMethodNotSaved,
-                                                              val auth: AuthenticatorPredicate)
+                                                              val itvcAgentErrorHandler: AgentItvcErrorHandler,
+                                                              val itvcErrorHandler: ItvcErrorHandler)
                                                              (implicit val ec: ExecutionContext,
-                                                              implicit override val mcc: MessagesControllerComponents,
-                                                              implicit val itvcAgentErrorHandler: AgentItvcErrorHandler,
-                                                              implicit val itvcErrorHandler: ItvcErrorHandler,
-                                                              val appConfig: FrontendAppConfig) extends ClientConfirmedController
-  with FeatureSwitching with IncomeSourcesUtils {
+                                                              val mcc: MessagesControllerComponents,
+                                                              val appConfig: FrontendAppConfig) extends FrontendController(mcc)
+  with I18nSupport with IncomeSourcesUtils {
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = withIncomeSourcesFS {
@@ -56,7 +53,7 @@ class IncomeSourceReportingMethodNotSavedController @Inject()(val authorisedFunc
   }
 
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
       handleRequest(
         isAgent = false,
@@ -64,7 +61,7 @@ class IncomeSourceReportingMethodNotSavedController @Inject()(val authorisedFunc
       )
   }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit mtdItUser =>
       handleRequest(
         isAgent = true,

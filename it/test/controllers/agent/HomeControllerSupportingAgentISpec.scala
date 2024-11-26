@@ -18,11 +18,12 @@ package controllers.agent
 
 import audit.models.NextUpdatesResponseAuditModel
 import auth.MtdItUser
+import controllers.ControllerISpecHelper
+import enums.MTDSupportingAgent
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import helpers.servicemocks.AuthStub.titleInternalServer
-import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDAgentAuthStub}
+import helpers.servicemocks.IncomeTaxViewChangeStub
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import models.admin.{IncomeSourcesFs, IncomeSourcesNewJourney, NavBarFs}
+import models.admin.{IncomeSources, IncomeSourcesNewJourney, NavBarFs}
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
@@ -71,228 +72,227 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
   import implicitDateFormatter.longDate
 
   "GET /" when {
-      val isSupportingAgent = true
-      val additionalCookies = getAgentClientDetailsForCookie(true, true)
-      s"there is a supporting agent" that {
-        s"is a authenticated for a client" should {
-          "render the home page" which {
-            "displays the next updates" when {
-              "nothing is overdue" in {
-                disable(NavBarFs)
-                MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                  status = OK,
-                  response = incomeSourceDetailsModel
-                )
-                val currentObligations: ObligationsModel = ObligationsModel(Seq(
-                  GroupedObligationsModel(
-                    identification = "testId",
-                    obligations = List(
-                      SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", StatusFulfilled)
-                    ))
-                ))
+    val additionalCookies = getAgentClientDetailsForCookie(true, true)
+    val mtdUserRole = MTDSupportingAgent
+    s"there is a supporting agent" that {
+      s"is a authenticated for a client" should {
+        "render the home page" which {
+          "displays the next updates" when {
+            "nothing is overdue" in {
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                status = OK,
+                response = incomeSourceDetailsModel
+              )
+              val currentObligations: ObligationsModel = ObligationsModel(Seq(
+                GroupedObligationsModel(
+                  identification = "testId",
+                  obligations = List(
+                    SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", StatusFulfilled)
+                  ))
+              ))
 
-                IncomeTaxViewChangeStub.stubGetNextUpdates(
-                  nino = testNino,
-                  deadlines = currentObligations
-                )
+              IncomeTaxViewChangeStub.stubGetNextUpdates(
+                nino = testNino,
+                deadlines = currentObligations
+              )
 
 
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
+              val result = buildGETMTDClient(path, additionalCookies).futureValue
 
-                result should have(
-                  httpStatus(OK),
-                  pageTitleAgent("home.agent.heading"),
-                  elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
-                )
+              result should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, "home.agent.heading"),
+                elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
+              )
 
-                verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
-              }
-            }
-
-            "displays an overdue obligation" when {
-              "there is a single obligation overdue" in {
-                disable(NavBarFs)
-                MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                  status = OK,
-                  response = incomeSourceDetailsModel
-                )
-
-                val currentObligations: ObligationsModel = ObligationsModel(Seq(
-                  GroupedObligationsModel(
-                    identification = "testId",
-                    obligations = List(
-                      SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
-                    ))
-                ))
-
-                IncomeTaxViewChangeStub.stubGetNextUpdates(
-                  nino = testNino,
-                  deadlines = currentObligations
-                )
-
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-
-                result should have(
-                  httpStatus(OK),
-                  pageTitleAgent("home.agent.heading"),
-                  elementTextBySelector("#updates-tile p:nth-child(2)")(s"$overdue ${currentDate.minusDays(1).toLongDate}"),
-                )
-
-                verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
-              }
-            }
-
-            "display a count of the overdue obligations" when {
-              "there is more than one obligation overdue" in {
-                disable(NavBarFs)
-                MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
-
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                  status = OK,
-                  response = incomeSourceDetailsModel
-                )
-
-                val currentObligations: ObligationsModel =
-                  ObligationsModel(
-                    Seq(
-                      GroupedObligationsModel(
-                        identification = "testId",
-                        obligations = List(
-                          SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled),
-                          SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(2), "Quarterly", None, "testPeriodKey", StatusFulfilled)
-                        ))
-                    ))
-
-                IncomeTaxViewChangeStub.stubGetNextUpdates(
-                  nino = testNino,
-                  deadlines = currentObligations
-                )
-
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-
-                result should have(
-                  httpStatus(OK),
-                  pageTitleAgent("home.agent.heading"),
-                  elementTextBySelector("#updates-tile p:nth-child(2)")(overdueUpdates(numberOverdue = "2")),
-                )
-
-                verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
-              }
-            }
-            "display Income Sources tile" when {
-              "IncomeSources feature switch is enabled" in {
-                disable(NavBarFs)
-                MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
-                enable(IncomeSourcesFs)
-
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                  status = OK,
-                  response = incomeSourceDetailsModel
-                )
-
-                val currentObligations: ObligationsModel = ObligationsModel(Seq(
-                  GroupedObligationsModel(
-                    identification = "testId",
-                    obligations = List(
-                      SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", StatusFulfilled)
-                    ))
-                ))
-
-                IncomeTaxViewChangeStub.stubGetNextUpdates(
-                  nino = testNino,
-                  deadlines = currentObligations
-                )
-
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-
-                result should have(
-                  httpStatus(OK),
-                  pageTitleAgent("home.agent.heading"),
-                  elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
-                  elementTextBySelector("#income-sources-tile h2:nth-child(1)")("Income Sources")
-                )
-              }
-            }
-            "display Your Businesses tile" when {
-              "IncomeSources and IncomeSourcesNewJourney feature switches are enabled" in {
-                disable(NavBarFs)
-                MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
-                enable(IncomeSourcesFs)
-                enable(IncomeSourcesNewJourney)
-
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                  status = OK,
-                  response = incomeSourceDetailsModel
-                )
-
-                val currentObligations: ObligationsModel = ObligationsModel(Seq(
-                  GroupedObligationsModel(
-                    identification = "testId",
-                    obligations = List(
-                      SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", StatusFulfilled)
-                    ))
-                ))
-
-                IncomeTaxViewChangeStub.stubGetNextUpdates(
-                  nino = testNino,
-                  deadlines = currentObligations
-                )
-
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-
-                result should have(
-                  httpStatus(OK),
-                  pageTitleAgent("home.agent.heading"),
-                  elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
-                  elementTextBySelector("#income-sources-tile h2:nth-child(1)")("Your businesses")
-                )
-              }
+              verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
             }
           }
 
-          "render the error page" when {
-
-            "retrieving the obligations was unsuccessful" in {
+          "displays an overdue obligation" when {
+            "there is a single obligation overdue" in {
               disable(NavBarFs)
-              MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                status = OK,
+                response = incomeSourceDetailsModel
+              )
+
+              val currentObligations: ObligationsModel = ObligationsModel(Seq(
+                GroupedObligationsModel(
+                  identification = "testId",
+                  obligations = List(
+                    SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
+                  ))
+              ))
+
+              IncomeTaxViewChangeStub.stubGetNextUpdates(
+                nino = testNino,
+                deadlines = currentObligations
+              )
+
+              val result = buildGETMTDClient(path, additionalCookies).futureValue
+
+              result should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, "home.agent.heading"),
+                elementTextBySelector("#updates-tile p:nth-child(2)")(s"$overdue ${currentDate.minusDays(1).toLongDate}"),
+              )
+
+              verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
+            }
+          }
+
+          "display a count of the overdue obligations" when {
+            "there is more than one obligation overdue" in {
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
 
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                 status = OK,
                 response = incomeSourceDetailsModel
               )
 
-              IncomeTaxViewChangeStub.stubGetNextUpdatesError(testNino)
+              val currentObligations: ObligationsModel =
+                ObligationsModel(
+                  Seq(
+                    GroupedObligationsModel(
+                      identification = "testId",
+                      obligations = List(
+                        SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled),
+                        SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(2), "Quarterly", None, "testPeriodKey", StatusFulfilled)
+                      ))
+                  ))
+
+              IncomeTaxViewChangeStub.stubGetNextUpdates(
+                nino = testNino,
+                deadlines = currentObligations
+              )
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
               result should have(
-                httpStatus(INTERNAL_SERVER_ERROR),
-                pageTitleAgent(titleInternalServer, isErrorPage = true)
+                httpStatus(OK),
+                pageTitle(mtdUserRole, "home.agent.heading"),
+                elementTextBySelector("#updates-tile p:nth-child(2)")(overdueUpdates(numberOverdue = "2")),
+              )
+
+              verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
+            }
+          }
+          "display Income Sources tile" when {
+            "IncomeSources feature switch is enabled" in {
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              enable(IncomeSources)
+
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                status = OK,
+                response = incomeSourceDetailsModel
+              )
+
+              val currentObligations: ObligationsModel = ObligationsModel(Seq(
+                GroupedObligationsModel(
+                  identification = "testId",
+                  obligations = List(
+                    SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", StatusFulfilled)
+                  ))
+              ))
+
+              IncomeTaxViewChangeStub.stubGetNextUpdates(
+                nino = testNino,
+                deadlines = currentObligations
+              )
+
+              val result = buildGETMTDClient(path, additionalCookies).futureValue
+
+              result should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, "home.agent.heading"),
+                elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
+                elementTextBySelector("#income-sources-tile h2:nth-child(1)")("Income Sources")
               )
             }
-            "retrieving the income sources was unsuccessful" in {
+          }
+          "display Your Businesses tile" when {
+            "IncomeSources and IncomeSourcesNewJourney feature switches are enabled" in {
               disable(NavBarFs)
-              enable(IncomeSourcesFs)
-              MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+              stubAuthorised(mtdUserRole)
+              enable(IncomeSources)
+              enable(IncomeSourcesNewJourney)
 
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsErrorResponse(testMtditid)(
-                status = INTERNAL_SERVER_ERROR)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                status = OK,
+                response = incomeSourceDetailsModel
+              )
+
+              val currentObligations: ObligationsModel = ObligationsModel(Seq(
+                GroupedObligationsModel(
+                  identification = "testId",
+                  obligations = List(
+                    SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", StatusFulfilled)
+                  ))
+              ))
+
+              IncomeTaxViewChangeStub.stubGetNextUpdates(
+                nino = testNino,
+                deadlines = currentObligations
+              )
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
               result should have(
-                httpStatus(INTERNAL_SERVER_ERROR),
-                pageTitleAgentLogin(titleInternalServer, isErrorPage = true)
+                httpStatus(OK),
+                pageTitle(mtdUserRole, "home.agent.heading"),
+                elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
+                elementTextBySelector("#income-sources-tile h2:nth-child(1)")("Your businesses")
               )
             }
           }
         }
 
-        testAuthFailuresForMTDAgent(path, isSupportingAgent)
+        "render the error page" when {
+
+          "retrieving the obligations was unsuccessful" in {
+            disable(NavBarFs)
+            stubAuthorised(mtdUserRole)
+
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+              status = OK,
+              response = incomeSourceDetailsModel
+            )
+
+            IncomeTaxViewChangeStub.stubGetNextUpdatesError(testNino)
+
+            val result = buildGETMTDClient(path, additionalCookies).futureValue
+
+            result should have(
+              httpStatus(INTERNAL_SERVER_ERROR),
+              pageTitle(mtdUserRole, titleInternalServer, isErrorPage = true)
+            )
+          }
+          "retrieving the income sources was unsuccessful" in {
+            disable(NavBarFs)
+            enable(IncomeSources)
+            stubAuthorised(mtdUserRole)
+
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsErrorResponse(testMtditid)(
+              status = INTERNAL_SERVER_ERROR)
+
+            val result = buildGETMTDClient(path, additionalCookies).futureValue
+
+            result should have(
+              httpStatus(INTERNAL_SERVER_ERROR),
+              pageTitleAgentLogin(titleInternalServer, isErrorPage = true)
+            )
+          }
+        }
       }
+
+      testAuthFailures(path, MTDSupportingAgent)
+    }
     testNoClientDataFailure(path)
   }
-
 }
