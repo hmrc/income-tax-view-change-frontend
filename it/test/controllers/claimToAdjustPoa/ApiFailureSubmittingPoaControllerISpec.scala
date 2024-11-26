@@ -33,17 +33,12 @@ class ApiFailureSubmittingPoaControllerISpec extends ComponentSpecBase {
 
   def amendablePoaUrl: String = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent).url
 
-  def homeUrl: String = if (isAgent) {
-    controllers.routes.HomeController.showAgent.url
-  } else {
+  def homeUrl: String =
     controllers.routes.HomeController.show().url
-  }
+
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    if (isAgent) {
-      stubAuthorisedAgentUser(true, clientMtdId = testMtditid)
-    }
     Given("Income Source Details with multiple business and property")
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
       OK, multipleBusinessesResponse
@@ -51,24 +46,13 @@ class ApiFailureSubmittingPoaControllerISpec extends ComponentSpecBase {
   }
 
   def checkPageTitleOk(res: WSResponse): Assertion = {
-    if (isAgent) {
-      res should have(
-        pageTitleAgent("claimToAdjustPoa.apiFailure.heading")
-      )
-    } else {
-      res should have(
-        pageTitleIndividual("claimToAdjustPoa.apiFailure.heading")
-      )
-    }
+    res should have(
+      pageTitleIndividual("claimToAdjustPoa.apiFailure.heading")
+    )
   }
 
   def get(url: String): WSResponse = {
-    IncomeTaxViewChangeFrontend.get(
-      s"""${
-        if (isAgent) {
-          "/agents"
-        } else ""
-      }${url}""", additionalCookies = clientDetailsWithConfirmation)
+    IncomeTaxViewChangeFrontend.get(url, additionalCookies = clientDetailsWithConfirmation)
   }
 
   "calling GET" should {

@@ -36,26 +36,16 @@ class PoaAdjustedControllerISpec extends ComponentSpecBase {
 
   val sessionService: PaymentOnAccountSessionService = app.injector.instanceOf[PaymentOnAccountSessionService]
 
-  def homeUrl: String = if (isAgent) {
-    controllers.routes.HomeController.showAgent.url
-  } else {
-    controllers.routes.HomeController.show().url
-  }
+  def homeUrl: String = controllers.routes.HomeController.show().url
+
 
   def get(url: String): WSResponse = {
-    IncomeTaxViewChangeFrontend.get(s"""${
-      if (isAgent) {
-        "/agents"
-      } else ""
-    }${url}""", additionalCookies = clientDetailsWithConfirmation)
+    IncomeTaxViewChangeFrontend.get(url, additionalCookies = clientDetailsWithConfirmation)
   }
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     await(sessionService.setMongoData(None))
-    if (isAgent) {
-      stubAuthorisedAgentUser(true, clientMtdId = testMtditid)
-    }
   }
 
   s"calling GET $poaAdjustedUrl" should {

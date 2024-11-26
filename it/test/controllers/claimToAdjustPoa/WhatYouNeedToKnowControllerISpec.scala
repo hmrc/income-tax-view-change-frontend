@@ -44,23 +44,15 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
 
   val sessionService: PaymentOnAccountSessionService = app.injector.instanceOf[PaymentOnAccountSessionService]
 
-  def homeUrl: String = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+  def homeUrl: String = controllers.routes.HomeController.show().url
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     await(sessionService.setMongoData(Some(PoaAmendmentData(poaAdjustmentReason = None, newPoaAmount = None))))
-    if (isAgent) {
-      stubAuthorisedAgentUser(authorised = true, clientMtdId = testMtditid)
-    }
   }
 
   def get(url: String): WSResponse = {
-    IncomeTaxViewChangeFrontend.get(
-      s"""${
-        if (isAgent) {
-          "/agents"
-        } else ""
-      }$url""", additionalCookies = clientDetailsWithConfirmation)
+    IncomeTaxViewChangeFrontend.get(url, additionalCookies = clientDetailsWithConfirmation)
   }
 
   s"calling GET $whatYouNeedToKnowUrl" should {

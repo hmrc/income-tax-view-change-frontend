@@ -32,17 +32,11 @@ class ApiFailureSubmittingPoaControllerISpec extends ComponentSpecBase {
 
   def amendablePoaUrl: String = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent).url
 
-  def homeUrl: String = if (isAgent) {
-    controllers.routes.HomeController.showAgent.url
-  } else {
-    controllers.routes.HomeController.show().url
-  }
+  def homeUrl: String = controllers.routes.HomeController.showAgent.url
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    if (isAgent) {
-      MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, false)
-    }
+    MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, false)
     Given("Income Source Details with multiple business and property")
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
       OK, multipleBusinessesResponse
@@ -50,15 +44,9 @@ class ApiFailureSubmittingPoaControllerISpec extends ComponentSpecBase {
   }
 
   def checkPageTitleOk(res: WSResponse): Assertion = {
-    if (isAgent) {
       res should have(
         pageTitleAgent("claimToAdjustPoa.apiFailure.heading")
       )
-    } else {
-      res should have(
-        pageTitleIndividual("claimToAdjustPoa.apiFailure.heading")
-      )
-    }
   }
 
   "calling GET" should {
