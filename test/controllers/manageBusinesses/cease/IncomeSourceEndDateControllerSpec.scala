@@ -385,7 +385,6 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
           enable(IncomeSourcesFs)
           mockBothPropertyBothBusiness()
           setupMockCreateSession(true)
-          println("INCOME SOURCE TYPE YAYA "+ incomeSourceType)
           if (incomeSourceType == SelfEmployment) {setupMockSetMultipleMongoData(Right(true))}
           else {setupMockSetSessionKeyMongo(Right(true))}
           if (isChange) {

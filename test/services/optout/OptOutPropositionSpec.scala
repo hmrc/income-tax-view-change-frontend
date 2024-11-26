@@ -99,7 +99,6 @@ class OptOutPropositionSpec extends UnitSpec {
 
     rowsWithoutHeaders.foreach(line => {
       val cells = line.split("\t").take(noOfColumns)
-//      println(cells.mkString("  --  "))
       println(s"(${
         Seq(
           quote(parseCrystallisedStatus(cells(0))),
