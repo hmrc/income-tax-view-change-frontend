@@ -26,15 +26,13 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import testConstants.ANewCreditAndRefundModel
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testNino}
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
-import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate
 
 class CreditAndRefundControllerISpec extends ComponentSpecBase {
-
-  val isAgent = false
 
   lazy val fixedDate : LocalDate = LocalDate.of(2020, 11, 29)
 
@@ -55,15 +53,6 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
     .withMfaCredit(LocalDate.of(testTaxYear, 3, 29), 2000.0)
     .withCutoverCredit(LocalDate.of(testTaxYear, 3, 29), 2000.0)
     .get()
-
-
-
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    if(isAgent){
-      stubAuthorisedAgentUser(authorised = true, clientMtdId = testMtditid)
-    }
-  }
 
   "Navigating to /report-quarterly/income-and-expenses/view/credit-and-refunds" should {
 
@@ -106,11 +95,8 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
 
           elementTextBySelectorList("#main-content", "li:nth-child(9)", "p")(expectedValue = "£2.00 "
             + messagesAPI("credit-and-refund.refundProgress-prt-2")),
-          if(isAgent) {
-            pageTitleAgent("credit-and-refund.heading")
-          } else {
+
             pageTitleIndividual("credit-and-refund.heading")
-          }
         )
       }
 
@@ -130,11 +116,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
             messagesAPI("credit-and-refund.row.repaymentInterest-2") + s" $testPreviousTaxYear to $testTaxYear tax year"),
           elementTextBySelectorList("#main-content", "li:nth-child(8)", "p")(expectedValue = "£3.00 "
             + messagesAPI("credit-and-refund.refundProgress-prt-2")),
-          if(isAgent) {
-            pageTitleAgent("credit-and-refund.heading")
-          } else {
             pageTitleIndividual("credit-and-refund.heading")
-          }
         )
       }
     }
@@ -151,11 +133,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
           httpStatus(OK),
           elementTextBySelectorList("#main-content", "p")(expectedValue = "You have no money in your account."),
 
-          if (isAgent) {
-            pageTitleAgent("credit-and-refund.heading")
-          } else {
             pageTitleIndividual("credit-and-refund.heading")
-          }
         )
       }
     }
@@ -186,13 +164,9 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
 
         res should have(
           httpStatus(INTERNAL_SERVER_ERROR),
-          if(isAgent) {
-            pageTitleAgent("standardError.heading", isErrorPage = true)
-            elementAttributeBySelector(".govuk-phase-banner__text a", "href")("/report-quarterly/income-and-expenses/view/agents/feedback")
-          } else {
-            pageTitleIndividual("standardError.heading", isErrorPage = true)
+            pageTitleIndividual("standardError.heading", isErrorPage = true),
             elementAttributeBySelector(".govuk-phase-banner__text a", "href")("/report-quarterly/income-and-expenses/view/feedback")
-          }
+
         )
       }
 
@@ -204,11 +178,8 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
 
         res should have(
           httpStatus(INTERNAL_SERVER_ERROR),
-          if(isAgent) {
-            pageTitleAgent("standardError.heading", isErrorPage = true)
-          } else {
+
             pageTitleIndividual("standardError.heading", isErrorPage = true)
-          }
         )
       }
     }
@@ -216,12 +187,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
     "redirect to unauthorised page" when {
 
       "the user is not authenticated" in {
-
-        if(isAgent) {
-          stubAuthorisedAgentUser(authorised = false)
-        } else {
           isAuthorisedUser(authorised = false)
-        }
 
         enable(CreditsRefundsRepay)
 
@@ -271,17 +237,12 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
 
 
 
-      val mtdUser = if(isAgent) {
-        MtdItUser(testMtditid, testNino, userName = None,
-          incomeSources = multipleBusinessesAndPropertyResponse, btaNavPartial = None, saUtr = Some("1234567890"),
-          credId = None, userType = Some(Agent), arn = Some("1"))(FakeRequest())
-      } else {
-        MtdItUser(
+      val mtdUser = MtdItUser(
           testMtditid, testNino, None,
           multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
           Some("12345-credId"), Some(Individual), None
         )(FakeRequest())
-      }
+
 
       Given("I wiremock stub a successful Income Source Details response with multiple business and a property")
       IncomeTaxViewChangeStub
@@ -296,10 +257,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
           response.json)
       })
 
-      val res = isAgent match {
-        case true => IncomeTaxViewChangeFrontend.getCreditAndRefunds(isAgent = true, additionalCookies = clientDetailsWithConfirmation)
-        case false => IncomeTaxViewChangeFrontend.getCreditAndRefunds()
-      }
+      val res = IncomeTaxViewChangeFrontend.getCreditAndRefunds()
 
       Then("I verify Income Source Details was called")
       verifyIncomeSourceDetailsCall(testMtditid)

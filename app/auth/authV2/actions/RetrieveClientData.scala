@@ -16,7 +16,7 @@
 
 package auth.authV2.actions
 
-import config.AgentItvcErrorHandler
+import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.routes
 import controllers.agent.sessionUtils.SessionKeys
 import models.sessionData.SessionDataGetResponse.SessionDataNotFound
@@ -31,7 +31,9 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RetrieveClientData @Inject()(sessionDataService: SessionDataService,
-                                   errorHandler: AgentItvcErrorHandler)(implicit val executionContext: ExecutionContext) extends ActionRefiner[Request, ClientDataRequest] {
+                                   errorHandler: AgentItvcErrorHandler,
+                                   appConfig: FrontendAppConfig)
+                                  (implicit val executionContext: ExecutionContext) extends ActionRefiner[Request, ClientDataRequest] {
 
   lazy val logger: Logger = Logger(getClass)
 
@@ -43,7 +45,9 @@ class RetrieveClientData @Inject()(sessionDataService: SessionDataService,
     implicit val hc: HeaderCarrier = HeaderCarrierConverter
       .fromRequestAndSession(request, request.session)
 
-    sessionDataService.getSessionData(useCookie = true).map {
+    val useSessionDataService = appConfig.isSessionDataStorageEnabled
+
+    sessionDataService.getSessionData(useCookie = !useSessionDataService).map {
       case Right(sessionData) => Right(ClientDataRequest(
         sessionData.mtditid,
         r.session.get(SessionKeys.clientFirstName),
@@ -51,8 +55,13 @@ class RetrieveClientData @Inject()(sessionDataService: SessionDataService,
         sessionData.nino,
         sessionData.utr,
         getBooleanFromSession(SessionKeys.isSupportingAgent),
-        getBooleanFromSession(SessionKeys.confirmedClient))
-      )
+        confirmed = {
+          r.session.get(SessionKeys.confirmedClient) match {
+            case Some(value) if value != "" => value.toBoolean
+            case _ => useSessionDataService
+          }
+        }
+      ))
       case Left(_: SessionDataNotFound) => Left(Redirect(routes.EnterClientsUTRController.show))
       case Left(_) => Left(errorHandler.showInternalServerError())
     }

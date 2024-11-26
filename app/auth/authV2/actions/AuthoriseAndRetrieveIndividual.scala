@@ -98,7 +98,7 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
       lazy val optMtdId: Option[String] =
         getValueFromEnrolment(Constants.mtdEnrolmentName, Constants.mtdEnrolmentIdentifierKey)
 
-      optMtdId.fold(throw new MissingMtdId) {
+      optMtdId.fold(throw InsufficientEnrolments("Missing MTDId Individual")) {
         mtditid =>
           Future.successful(
             Right(

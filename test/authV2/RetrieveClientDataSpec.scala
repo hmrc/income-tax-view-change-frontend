@@ -31,6 +31,7 @@ import services.SessionDataService
 
 import scala.concurrent.Future
 import authV2.AuthActionsTestData._
+import controllers.agent.sessionUtils.SessionKeys
 import models.sessionData.SessionDataGetResponse.{SessionDataNotFound, SessionDataUnexpectedResponse}
 
 class RetrieveClientDataSpec extends AuthActionsSpecHelper {
@@ -80,7 +81,7 @@ class RetrieveClientDataSpec extends AuthActionsSpecHelper {
           }
 
         "the user has is primary agent that has not been confirmed" in {
-          val fakeRequestWithSession = fakeRequestWithClientDetails
+          val fakeRequestWithSession = fakeRequestWithClientDetails.addingToSession(SessionKeys.confirmedClient -> "false")
           when(mockSessionDataService.getSessionData(any())(any(), any()))
             .thenReturn(Future.successful(Right(sessionGetSuccessResponse)))
 

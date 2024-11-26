@@ -172,7 +172,7 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
                                                               ec: ExecutionContext): Future[Option[MultiYearCheckYourAnswersViewModel]] = {
     val result = for {
       intentTaxYear <- OptionT(fetchSavedChosenTaxYear())
-      cancelURL = routes.ReportingFrequencyPageController.show().url
+      cancelURL = routes.ReportingFrequencyPageController.show(isAgent).url
       intentIsNextYear = isNextTaxYear(dateService.getCurrentTaxYear, intentTaxYear)
     } yield MultiYearCheckYourAnswersViewModel(intentTaxYear, isAgent, cancelURL, intentIsNextYear)
 
@@ -186,7 +186,7 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
                                                    ec: ExecutionContext): Future[Option[ConfirmTaxYearViewModel]] = {
     val result = for {
       intentTaxYear <- OptionT(fetchSavedChosenTaxYear())
-      cancelURL = routes.ReportingFrequencyPageController.show().url
+      cancelURL = routes.ReportingFrequencyPageController.show(isAgent).url
       intentIsNextYear = isNextTaxYear(dateService.getCurrentTaxYear, intentTaxYear)
     } yield ConfirmTaxYearViewModel(intentTaxYear, cancelURL, intentIsNextYear, isAgent)
 

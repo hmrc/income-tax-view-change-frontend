@@ -66,7 +66,7 @@ class CheckYourAnswersControllerSpec extends TestSupport
         when(mockOptInService.getMultiYearCheckYourAnswersViewModel(any())(any(), any(), any()))
           .thenReturn(Future.successful(Some(MultiYearCheckYourAnswersViewModel(
             taxYear2023,
-            isAgent, routes.ReportingFrequencyPageController.show().url,
+            isAgent, routes.ReportingFrequencyPageController.show(isAgent).url,
             intentIsNextYear = true)
           )))
 

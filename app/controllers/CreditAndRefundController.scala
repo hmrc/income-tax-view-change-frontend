@@ -55,7 +55,7 @@ class CreditAndRefundController @Inject()(val authActions: AuthActions,
   extends FrontendBaseController with FeatureSwitching with I18nSupport with ErrorRecovery {
 
   def show(origin: Option[String] = None): Action[AnyContent] =
-    authActions.individualOrAgentWithClient async {
+    authActions.asIndividualOrAgent(isAgent = false) async {
       implicit user =>
         handleRequest(
           backUrl = controllers.routes.HomeController.show(origin).url,
@@ -77,7 +77,7 @@ class CreditAndRefundController @Inject()(val authActions: AuthActions,
   }
 
   def showAgent(): Action[AnyContent] = {
-    authActions.individualOrAgentWithClient async {
+    authActions.asIndividualOrAgent(isAgent = true) async {
       implicit mtdItUser =>
         handleRequest(
           backUrl = controllers.routes.HomeController.showAgent.url,
@@ -87,7 +87,7 @@ class CreditAndRefundController @Inject()(val authActions: AuthActions,
   }
 
   def startRefund(): Action[AnyContent] =
-    authActions.individualOrAgentWithClient async {
+    authActions.asIndividualOrAgent(false) async {
       implicit user =>
         user.userType match {
           case _ if !isEnabled(CreditsRefundsRepay) =>

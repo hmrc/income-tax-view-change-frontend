@@ -16,43 +16,70 @@
 
 package auth.authV2.actions
 
+import auth.MtdItUserOptionNino
 import auth.authV2.AuthExceptions._
-import auth.authV2.EnroledUser
+import config.FrontendAppConfig
 import controllers.agent.routes
 import controllers.agent.sessionUtils.SessionKeys
+import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Result}
+import services.SessionDataService
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AgentHasClientDetails @Inject()(implicit val executionContext: ExecutionContext) extends ActionRefiner[EnroledUser, EnroledUser] {
+class AgentHasClientDetails @Inject()(implicit val executionContext: ExecutionContext,
+                                      sessionDataService: SessionDataService, appConfig: FrontendAppConfig)
+  extends ActionRefiner[MtdItUserOptionNino, MtdItUserOptionNino] {
 
   lazy val noClientDetailsRoute: Result = Redirect(routes.EnterClientsUTRController.show)
 
-  override protected def refine[A](request: EnroledUser[A]): Future[Either[Result, EnroledUser[A]]] = {
+  override protected def refine[A](request: MtdItUserOptionNino[A]): Future[Either[Result, MtdItUserOptionNino[A]]] = {
 
     val hasConfirmedClient: Boolean = request.session.get(SessionKeys.confirmedClient).nonEmpty
 
-    val hasClientDetails: Boolean = {
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter
+      .fromRequestAndSession(request, request.session)
+
+    lazy val cookiesHaveClientDetails: Boolean = {
       request.session.get(SessionKeys.clientMTDID).nonEmpty &&
-      request.session.get(SessionKeys.clientFirstName).nonEmpty &&
-      request.session.get(SessionKeys.clientLastName).nonEmpty &&
-      request.session.get(SessionKeys.clientUTR).nonEmpty
+        request.session.get(SessionKeys.clientFirstName).nonEmpty &&
+        request.session.get(SessionKeys.clientLastName).nonEmpty &&
+        request.session.get(SessionKeys.clientUTR).nonEmpty
+    }
+
+    val hasClientDetails: Future[Boolean] = {
+      if (appConfig.isSessionDataStorageEnabled){
+        sessionDataService.getSessionData()(request, hc) map {
+          case Right(_) => true
+          case Left(ex) =>
+            Logger("application").warn(s"Failed to get client details from mongo: $ex")
+            cookiesHaveClientDetails
+        }
+      }
+      else{
+       Future.successful(cookiesHaveClientDetails)
+      }
     }
 
     // This check might not be necessary now we authorise on the Agent enrolment?
     val hasArn: Boolean = request.arn.nonEmpty
 
-    if (!request.affinityGroup.contains(Agent)) {
-      Future.successful(Right(request))
-    } else if (hasArn && hasConfirmedClient && hasClientDetails) {
-      Future.successful(Right(request))
-    } else if (!hasArn) {
+    hasClientDetails flatMap{ hasDetails =>
+      if (!request.userType.contains(Agent)) {
+        Future.successful(Right(request))
+      } else if (hasArn && hasConfirmedClient && hasDetails) {
+        Future.successful(Right(request))
+      } else if (!hasArn) {
         throw new MissingAgentReferenceNumber
-    } else {
-      Future.successful(Left(noClientDetailsRoute))
+      } else {
+        Future.successful(Left(noClientDetailsRoute))
+      }
     }
+
   }
 }

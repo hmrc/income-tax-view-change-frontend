@@ -19,6 +19,8 @@ package helpers.agent
 import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
+
+import java.time.LocalDate
 //import controllers.agent.sessionUtils.SessionKeys
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import forms.agent.ClientsUTRForm
@@ -152,6 +154,13 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     buildClient(uri)
       .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "Csrf-Token" -> "nocheck")
       .get()
+  }
+
+  val getCurrentTaxYearEnd: LocalDate = {
+    val currentDate: LocalDate = LocalDate.of(2023, 4, 4)
+    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6)))
+      LocalDate.of(currentDate.getYear, 4, 5)
+    else LocalDate.of(currentDate.getYear + 1, 4, 5)
   }
 
   object IncomeTaxViewChangeFrontend {
