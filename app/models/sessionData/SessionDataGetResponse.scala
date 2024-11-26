@@ -59,8 +59,8 @@ object SessionDataGetResponse {
           Logger("application").error(s"No user session was found. status: $NOT_FOUND")
           Left(SessionDataNotFound(s"No user session was found. status: $NOT_FOUND"))
         case status =>
-          Logger("application").error(s"User session could not be saved. status: $status")
-          Left(SessionDataUnexpectedResponse(s"User session could not be saved. status: $status"))
+          Logger("application").error(s"User session could not be retrieved. status: $status")
+          Left(SessionDataUnexpectedResponse(s"User session could not be retrieved. status: $status"))
       }
     }
   }
