@@ -67,7 +67,6 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
             )
 
           val result = testManageYourBusinessesController.show()(fakeRequestWithActiveSession)
-          result.map(res => println(res))
           status(result) shouldBe Status.OK
         }
       }
