@@ -325,8 +325,6 @@ class BusinessDetailsConnectorSpec extends BaseConnectorSpec {
             when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
               .thenReturn(Future.failed(new Exception("unknown error")))
 
-            //            setupMockFailedHttpGet(getNinoTestUrl)
-
             val result: Future[NinoResponse] = connector.getNino(testMtditid)
             result.futureValue shouldBe NinoResponseError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, unknown error")
           }
