@@ -53,7 +53,7 @@ class WhatYouNeedToKnowController @Inject()(val authActions: AuthActions,
     }).url
   }
 
-  def show(isAgent: Boolean): Action[AnyContent] = authActions.individualOrAgentWithClient async {
+  def show(isAgent: Boolean): Action[AnyContent] = authActions.asIndividualOrAgent(isAgent) async {
     implicit user =>
       withSessionDataAndPoa() { (_, poa) =>
         val viewModel = WhatYouNeedToKnowViewModel(poa.taxYear, poa.partiallyPaidAndTotalAmountLessThanPoa, getRedirect(poa))

@@ -508,6 +508,19 @@ object IncomeSourceIntegrationTestConstants {
             "interestLock" -> interestLocks(1),
             "dunningLock" -> dunningLock(1)
           ))
+      ),
+      Json.obj(
+        "taxYear" -> taxYear,
+        "mainType" -> "SA Balancing Charge",
+        "mainTransaction" -> "4910",
+        "transactionId" -> "PAYID01",
+        "chargeType" -> ITSA_NI,
+        "chargeReference" -> "ABCD1234",
+        "originalAmount" -> originalAmount,
+        "items" -> Json.arr(
+          Json.obj("amount" -> 10000,
+            "clearingDate" -> "2019-08-13",
+            "dueDate" -> dueDate))
       )
     )
   )

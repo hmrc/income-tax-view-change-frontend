@@ -17,7 +17,7 @@
 package controllers.agent.claimToAdjustPoa
 
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDAgentAuthStub}
 import models.admin.AdjustPaymentsOnAccount
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testDate, testMtditid, testNino}
@@ -31,7 +31,7 @@ class AmendablePoaControllerISpec extends ComponentSpecBase {
   s"calling GET $amendPoaUrl" should {
     s"return status $OK and render the Adjusting your payments on account page" when {
       "User is authorised" in {
-        stubAuthorisedAgentUser(authorised = true)
+        MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, false)
         enable(AdjustPaymentsOnAccount)
 
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
@@ -57,7 +57,7 @@ class AmendablePoaControllerISpec extends ComponentSpecBase {
     }
     s"return status $SEE_OTHER and redirect to the home page" when {
       "AdjustPaymentsOnAccount FS is disabled" in {
-        stubAuthorisedAgentUser(authorised = true)
+        MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, false)
         disable(AdjustPaymentsOnAccount)
 
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
@@ -85,7 +85,7 @@ class AmendablePoaControllerISpec extends ComponentSpecBase {
   }
   s"return $INTERNAL_SERVER_ERROR" when {
     "no non-crystallised financial details are found" in {
-      stubAuthorisedAgentUser(authorised = true)
+      MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, false)
       enable(AdjustPaymentsOnAccount)
 
       And("I wiremock stub empty financial details response")

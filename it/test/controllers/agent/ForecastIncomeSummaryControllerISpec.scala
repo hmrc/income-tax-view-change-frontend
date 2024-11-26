@@ -97,7 +97,7 @@ class ForecastIncomeSummaryControllerISpec extends ComponentSpecBase with Featur
 
   lazy val fixedDate : LocalDate = LocalDate.of(2023, 12, 15)
 
-  val getCurrentTaxYearEnd: LocalDate = {
+  override val getCurrentTaxYearEnd: LocalDate = {
     val currentDate: LocalDate = fixedDate
     if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) LocalDate.of(currentDate.getYear, 4, 5)
     else LocalDate.of(currentDate.getYear + 1, 4, 5)

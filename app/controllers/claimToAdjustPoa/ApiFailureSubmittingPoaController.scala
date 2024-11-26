@@ -39,7 +39,7 @@ class ApiFailureSubmittingPoaController @Inject()(val authActions: AuthActions,
   extends FrontendBaseController with I18nSupport with FeatureSwitching with ClaimToAdjustUtils {
 
   def show(isAgent: Boolean): Action[AnyContent] = {
-    authActions.individualOrAgentWithClient async {
+    authActions.asIndividualOrAgent(isAgent) async {
       implicit user =>
         ifAdjustPoaIsEnabled(user.isAgent()) {
           Future.successful(Ok(view(user.isAgent())))

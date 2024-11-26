@@ -55,8 +55,6 @@ class ReportingFrequencyPageControllerSpec extends MockOldAuthActions with MockI
   val errorTemplateView: ErrorTemplate = app.injector.instanceOf[ErrorTemplate]
   val reportingFrequencyView: ReportingFrequencyView = app.injector.instanceOf[ReportingFrequencyView]
 
-  val mockAuthoriseAndRetrieve: AuthoriseAndRetrieve = mock[AuthoriseAndRetrieve]
-
   val controller =
     new ReportingFrequencyPageController(
       optOutService = mockOptOutService,
@@ -104,7 +102,7 @@ class ReportingFrequencyPageControllerSpec extends MockOldAuthActions with MockI
             mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
           ).thenReturn(Future(singleBusinessIncome))
 
-          val result = controller.show()(fakeRequestWithActiveSession)
+          val result = controller.show(false)(fakeRequestWithActiveSession)
 
           status(result) shouldBe OK
           contentAsString(result) shouldBe
@@ -125,6 +123,7 @@ class ReportingFrequencyPageControllerSpec extends MockOldAuthActions with MockI
 
           disableAllSwitches()
           disable(ReportingFrequencyPage)
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
           val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2017"), List(business1), Nil)
 
@@ -143,7 +142,7 @@ class ReportingFrequencyPageControllerSpec extends MockOldAuthActions with MockI
           when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
             .thenReturn(Future(singleBusinessIncome))
 
-          val result = controller.show()(fakeRequestWithActiveSession)
+          val result = controller.show(false)(fakeRequestWithActiveSession)
 
           status(result) shouldBe INTERNAL_SERVER_ERROR
           contentAsString(result).contains("Sorry, there is a problem with the service") shouldBe true

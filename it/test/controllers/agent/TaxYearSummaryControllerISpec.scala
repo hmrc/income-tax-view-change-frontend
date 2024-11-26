@@ -373,7 +373,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser, messagesAPI,
           TaxYearSummaryViewModel(
             Some(CalculationSummary(liabilityCalculationModelSuccessful)),
-            financialDetailsSuccess.documentDetails.map(dd => ChargeItem.fromDocumentPair(dd, financialDetailsSuccess.financialDetails))
+            financialDetailsSuccess.toChargeItem()
               .map(TaxYearSummaryChargeItem.fromChargeItem),
             allObligations, reviewAndReconcileEnabled = true, showForecastData = true, ctaViewModel = emptyCTAModel)))
         allObligations.obligations.foreach {
@@ -447,8 +447,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           messagesAPI,
           TaxYearSummaryViewModel(
             Some(CalculationSummary(liabilityCalculationModelSuccessful)),
-            financialDetailsDunningLockSuccess.documentDetails.
-              map(dd => ChargeItem.fromDocumentPair(dd, financialDetailsDunningLockSuccess.financialDetails)).map(TaxYearSummaryChargeItem.fromChargeItem),
+            financialDetailsDunningLockSuccess.toChargeItem().map(TaxYearSummaryChargeItem.fromChargeItem),
             allObligations,
             reviewAndReconcileEnabled = true, showForecastData = true, ctaViewModel = emptyCTAModel)))
         allObligations.obligations.foreach {

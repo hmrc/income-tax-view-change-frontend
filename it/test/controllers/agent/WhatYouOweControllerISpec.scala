@@ -202,11 +202,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase  with ChargeConstants 
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
       val whatYouOweChargesList = {
-        val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == currentTaxYearEnd)
+        val documentDetailsForTestTaxYear = financialDetailsModel.documentDetailsFilterByTaxYear(testTaxYear)
 
         val financialDetails = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear)
-        val chargeItemFromDocumentDetail = configuredChargeItemGetter(financialDetails.financialDetails)
-        val chargeItems = financialDetails.documentDetails.flatMap(chargeItemFromDocumentDetail)
+        val chargeItems = financialDetails.toChargeItem()
 
         WhatYouOweChargesList(
           balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
@@ -244,9 +243,9 @@ class WhatYouOweControllerISpec extends ComponentSpecBase  with ChargeConstants 
       val mixedJson = Json.obj(
         "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
         "documentDetails" -> Json.arr(
-          documentDetailJson(3400.00, 1000.00, (currentTaxYearEnd - 2), "ITSA- POA 1", transactionId = "transId1"),
-          documentDetailJson(1000.00, 100.00, (currentTaxYearEnd - 2), "ITSA- POA 1", transactionId = "transId2", dueDate = testDate.plusDays(1).toString),
-          documentDetailJson(1000.00, 0, (currentTaxYearEnd - 2), "ITSA - POA 2", transactionId = "transId3", dueDate = testDate.minusDays(1).toString)
+          documentDetailJson(3400.00, 1000.00, currentTaxYearEnd - 2, "ITSA- POA 1", transactionId = "transId1"),
+          documentDetailJson(1000.00, 100.00, currentTaxYearEnd - 2, "ITSA- POA 1", transactionId = "transId2", dueDate = testDate.plusDays(1).toString),
+          documentDetailJson(1000.00, 0, currentTaxYearEnd - 2, "ITSA - POA 2", transactionId = "transId3", dueDate = testDate.minusDays(1).toString)
         ),
         "financialDetails" -> Json.arr(
           financialDetailJson((currentTaxYearEnd - 2).toString, transactionId = "transId1"),
@@ -471,10 +470,9 @@ class WhatYouOweControllerISpec extends ComponentSpecBase  with ChargeConstants 
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
       val whatYouOweChargesList = {
-        val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear)
+        val documentDetailsForTestTaxYear = financialDetailsModel.documentDetailsFilterByTaxYear(testTaxYear)
         val financialDetails = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear)
-        val chargeItemFromDocumentDetail = configuredChargeItemGetter(financialDetails.financialDetails)
-        val chargeItems = financialDetails.documentDetails.flatMap(chargeItemFromDocumentDetail)
+        val chargeItems = financialDetails.toChargeItem()
 
         WhatYouOweChargesList(
           balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
@@ -513,10 +511,9 @@ class WhatYouOweControllerISpec extends ComponentSpecBase  with ChargeConstants 
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
       val whatYouOweChargesList = {
-        val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear)
+        val documentDetailsForTestTaxYear = financialDetailsModel.documentDetailsFilterByTaxYear(testTaxYear)
         val financialDetails = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear)
-        val chargeItemFromDocumentDetail = configuredChargeItemGetter(financialDetails.financialDetails)
-        val chargeItems = financialDetails.documentDetails.flatMap(chargeItemFromDocumentDetail)
+        val chargeItems = financialDetails.toChargeItem()
 
         WhatYouOweChargesList(
           balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
@@ -556,10 +553,9 @@ class WhatYouOweControllerISpec extends ComponentSpecBase  with ChargeConstants 
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
       val whatYouOweChargesList = {
-        val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear)
+        val documentDetailsForTestTaxYear = financialDetailsModel.documentDetailsFilterByTaxYear(testTaxYear)
         val financialDetails = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear)
-        val chargeItemFromDocumentDetail = configuredChargeItemGetter(financialDetails.financialDetails)
-        val chargeItems = financialDetails.documentDetails.flatMap(chargeItemFromDocumentDetail)
+        val chargeItems = financialDetails.toChargeItem()
 
         WhatYouOweChargesList(
           balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),

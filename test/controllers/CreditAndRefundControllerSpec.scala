@@ -16,11 +16,9 @@
 
 package controllers
 
-import auth.authV2.actions._
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates.SessionTimeoutPredicate
-import mocks.auth.{MockOldAuthActions, MockFrontendAuthorisedFunctions}
+import mocks.auth.{MockFrontendAuthorisedFunctions, MockOldAuthActions}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import models.admin.CreditsRefundsRepay
 import models.financialDetails.FinancialDetailsModel
@@ -248,7 +246,8 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
 
         val result: Future[Result] = controller.startRefund()(fakePostRequestConfirmedClient())
 
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show.url)
       }
 
       "RepaymentJourneyErrorResponse is returned" in  new Setup {

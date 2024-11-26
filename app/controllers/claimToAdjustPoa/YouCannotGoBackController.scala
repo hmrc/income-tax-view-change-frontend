@@ -43,7 +43,7 @@ class YouCannotGoBackController @Inject()(val authActions: AuthActions,
                                           val ec: ExecutionContext)
   extends FrontendBaseController with I18nSupport with FeatureSwitching with RecalculatePoaHelper with WithSessionAndPoa {
 
-  def show(isAgent: Boolean): Action[AnyContent] = authActions.individualOrAgentWithClient async {
+  def show(isAgent: Boolean): Action[AnyContent] = authActions.asIndividualOrAgent(isAgent) async {
     implicit user =>
       withSessionDataAndPoa(journeyState = CannotGoBackPage) {(_, poa) =>
         EitherT.rightT(Ok(view(

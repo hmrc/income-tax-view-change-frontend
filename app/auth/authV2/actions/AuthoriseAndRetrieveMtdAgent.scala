@@ -19,6 +19,7 @@ package auth.authV2.actions
 import auth.{FrontendAuthorisedFunctions, MtdItUserOptionNino}
 import config.FrontendAppConfig
 import controllers.agent.AuthUtils._
+import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
 import play.api.{Configuration, Environment, Logger}
 import uk.gov.hmrc.auth.core._
@@ -41,6 +42,8 @@ case class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: FrontendA
   lazy val logger: Logger = Logger(getClass)
 
   implicit val executionContext: ExecutionContext = mcc.executionContext
+  lazy val requiredConfidenceLevel: Int = appConfig.requiredConfidenceLevel
+
 
   override protected def refine[A](request: ClientDataRequest[A]): Future[Either[Result, MtdItUserOptionNino[A]]] = {
 
@@ -70,7 +73,8 @@ case class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: FrontendA
 
     authorisedFunctions.authorised((isAgent and hasDelegatedEnrolment) or isNotAgent)
       .retrieve(allEnrolments and name and credentials and affinityGroup and confidenceLevel) {
-        redirectIfNotAgent() orElse constructMtdIdUserOptNino()
+        redirectIfNotAgent() orElse
+          redirectIfInsufficientConfidence() orElse constructMtdIdUserOptNino()
       }(hc, executionContext) recoverWith logAndRedirect(true)
   }
 
@@ -92,6 +96,14 @@ case class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: FrontendA
           clientConfirmed = request.confirmed
         ))
       )
+  }
+
+  val signInUrl: String = "/report-quarterly/income-and-expenses/view/sign-in"
+
+  private def redirectIfInsufficientConfidence[A](): PartialFunction[AuthRetrievals, Future[Either[Result, MtdItUserOptionNino[A]]]] = {
+    case _ ~ _ ~ _ ~ _ ~ confidenceLevel
+      if confidenceLevel.level < requiredConfidenceLevel =>
+      Future.successful(Left(Redirect(signInUrl)))
   }
 }
 

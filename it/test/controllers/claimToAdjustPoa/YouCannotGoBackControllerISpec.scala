@@ -54,12 +54,7 @@ class YouCannotGoBackControllerISpec extends ComponentSpecBase {
   }
 
   def get(url: String): WSResponse = {
-    IncomeTaxViewChangeFrontend.get(
-      s"""${
-        if (isAgent) {
-          "/agents"
-        } else ""
-      }${url}""", additionalCookies = clientDetailsWithConfirmation)
+    IncomeTaxViewChangeFrontend.get(url, additionalCookies = clientDetailsWithConfirmation)
   }
 
   def checkPageTitleOk(res: WSResponse): Assertion = {

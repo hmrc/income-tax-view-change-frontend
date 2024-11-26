@@ -49,11 +49,7 @@ class EnterPoaAmountControllerISpec extends ComponentSpecBase {
 
   def msg(key: String) = msgs(s"claimToAdjustPoa.enterPoaAmount.$key")
 
-  def homeUrl: String = if (isAgent) {
-    controllers.routes.HomeController.showAgent.url
-  } else {
-    controllers.routes.HomeController.show().url
-  }
+  def homeUrl: String = controllers.routes.HomeController.show().url
 
   val testTaxYear = 2024
   val sessionService: PaymentOnAccountSessionService = app.injector.instanceOf[PaymentOnAccountSessionService]
@@ -61,53 +57,32 @@ class EnterPoaAmountControllerISpec extends ComponentSpecBase {
   override def beforeEach(): Unit = {
     super.beforeEach()
     await(sessionService.setMongoData(None))
-    if (isAgent) {
-      stubAuthorisedAgentUser(true, clientMtdId = testMtditid)
-    }
   }
 
   def get(url: String): WSResponse = {
-    IncomeTaxViewChangeFrontend.get(s"""${
-      if (isAgent) {
-        "/agents"
-      } else ""
-    }${url}""", additionalCookies = clientDetailsWithConfirmation)
+    IncomeTaxViewChangeFrontend.get(url, additionalCookies = clientDetailsWithConfirmation)
   }
 
-  def postEnterPoa(isAgent: Boolean, newPoaAmount: BigDecimal)(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+  def postEnterPoa(newPoaAmount: BigDecimal)(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
     val formData: Map[String, Seq[String]] = {
       Map(
         "poa-amount" -> Seq(newPoaAmount.toString())
       )
     }
     IncomeTaxViewChangeFrontend.post(
-      uri =
-        s"""${
-          if (isAgent) {
-            "/agents"
-          } else {
-            ""
-          }
-        }/adjust-poa/enter-poa-amount""",
+      uri = "/adjust-poa/enter-poa-amount",
       additionalCookies = additionalCookies
     )(formData)
   }
 
-  def postChangePoa(isAgent: Boolean, newPoaAmount: BigDecimal)(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+  def postChangePoa(newPoaAmount: BigDecimal)(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
     val formData: Map[String, Seq[String]] = {
       Map(
         "poa-amount" -> Seq(newPoaAmount.toString())
       )
     }
     IncomeTaxViewChangeFrontend.post(
-      uri =
-        s"""${
-          if (isAgent) {
-            "/agents"
-          } else {
-            ""
-          }
-        }/adjust-poa/change-poa-amount""",
+      uri = "/adjust-poa/change-poa-amount",
       additionalCookies = additionalCookies
     )(formData)
   }
@@ -328,7 +303,7 @@ class EnterPoaAmountControllerISpec extends ComponentSpecBase {
 
         When(s"I call POST")
 
-        val res = postEnterPoa(isAgent, 1234.56)(clientDetailsWithConfirmation)
+        val res = postEnterPoa(1234.56)(clientDetailsWithConfirmation)
 
         res should have(
           httpStatus(SEE_OTHER),
@@ -360,7 +335,7 @@ class EnterPoaAmountControllerISpec extends ComponentSpecBase {
 
         When(s"I call POST")
 
-        val res = postEnterPoa(isAgent, 2500.00)(clientDetailsWithConfirmation)
+        val res = postEnterPoa(2500.00)(clientDetailsWithConfirmation)
 
         res should have(
           httpStatus(SEE_OTHER),
@@ -390,7 +365,7 @@ class EnterPoaAmountControllerISpec extends ComponentSpecBase {
 
         When(s"I call POST")
 
-        val res = postEnterPoa(isAgent, 1.11)(clientDetailsWithConfirmation)
+        val res = postEnterPoa(1.11)(clientDetailsWithConfirmation)
 
         res should have(
           httpStatus(SEE_OTHER),
@@ -416,7 +391,7 @@ class EnterPoaAmountControllerISpec extends ComponentSpecBase {
         await(sessionService.setMongoData(Some(PoaAmendmentData())))
 
         When(s"I call POST")
-        val res = postEnterPoa(isAgent, 2000)(clientDetailsWithConfirmation)
+        val res = postEnterPoa(2000)(clientDetailsWithConfirmation)
 
         res should have(
           httpStatus(INTERNAL_SERVER_ERROR)
@@ -436,7 +411,7 @@ class EnterPoaAmountControllerISpec extends ComponentSpecBase {
 
         When(s"I call POST")
 
-        val res = postEnterPoa(isAgent, 2000)(clientDetailsWithConfirmation)
+        val res = postEnterPoa(2000)(clientDetailsWithConfirmation)
 
         res should have(
           httpStatus(INTERNAL_SERVER_ERROR)
@@ -501,7 +476,7 @@ class EnterPoaAmountControllerISpec extends ComponentSpecBase {
 
         When(s"I call POST")
 
-        val res = postChangePoa(isAgent, 100)(clientDetailsWithConfirmation)
+        val res = postChangePoa(100)(clientDetailsWithConfirmation)
 
         res should have(
           httpStatus(SEE_OTHER),
@@ -531,7 +506,7 @@ class EnterPoaAmountControllerISpec extends ComponentSpecBase {
 
         When(s"I call POST")
 
-        val res = postChangePoa(isAgent, 2800)(clientDetailsWithConfirmation)
+        val res = postChangePoa(2800)(clientDetailsWithConfirmation)
 
         res should have(
           httpStatus(SEE_OTHER),
@@ -561,7 +536,7 @@ class EnterPoaAmountControllerISpec extends ComponentSpecBase {
 
         When(s"I call POST")
 
-        val res = postChangePoa(isAgent, 2800)(clientDetailsWithConfirmation)
+        val res = postChangePoa(2800)(clientDetailsWithConfirmation)
 
         res should have(
           httpStatus(SEE_OTHER),
@@ -591,7 +566,7 @@ class EnterPoaAmountControllerISpec extends ComponentSpecBase {
 
         When(s"I call POST")
 
-        val res = postChangePoa(isAgent, 1000)(clientDetailsWithConfirmation)
+        val res = postChangePoa(1000)(clientDetailsWithConfirmation)
 
         res should have(
           httpStatus(SEE_OTHER),
@@ -623,7 +598,7 @@ class EnterPoaAmountControllerISpec extends ComponentSpecBase {
 
         When(s"I call POST")
 
-        val res = postChangePoa(isAgent, 500)(clientDetailsWithConfirmation)
+        val res = postChangePoa(500)(clientDetailsWithConfirmation)
 
         res should have(
           httpStatus(SEE_OTHER),

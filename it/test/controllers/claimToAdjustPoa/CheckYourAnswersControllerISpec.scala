@@ -34,7 +34,7 @@ import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.PaymentOnAccountSessionService
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testDate, testIncomeSource, testMtditid, testNino, testUserTypeAgent, testUserTypeIndividual}
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testDate, testIncomeSource, testMtditid, testNino, testUserTypeIndividual}
 import testConstants.BusinessDetailsIntegrationTestConstants.address
 import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.validSession
 import testConstants.FinancialDetailsTestConstants.testFinancialDetailsErrorModelJson
@@ -47,9 +47,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
 
   val isAgent = false
 
-  def homeUrl: String =
-    if (isAgent) controllers.routes.HomeController.showAgent.url
-    else controllers.routes.HomeController.show().url
+  def homeUrl: String = controllers.routes.HomeController.show().url
 
   val testTaxYear = 2024
   val sessionService: PaymentOnAccountSessionService = app.injector.instanceOf[PaymentOnAccountSessionService]
@@ -75,16 +73,10 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
     )),
     properties = Nil
   )
-  lazy val testUser: MtdItUser[_] = {
-    if (isAgent)
-      MtdItUser(
-        testMtditid, testNino, Some(Name(Some("Test"), Some("User"))), incomeSource,
-        None, Some("1234567890"), credId = None, Some(testUserTypeAgent), Some("1"))(FakeRequest())
-    else
-      MtdItUser(
+  lazy val testUser: MtdItUser[_] = MtdItUser(
         testMtditid, testNino, Some(Name(Some("Test"), Some("User"))), incomeSource,
         None, Some("1234567890"), credId = None, Some(testUserTypeIndividual), None)(FakeRequest())
-  }
+
   private def auditAdjustPayementsOnAccount(isSuccessful: Boolean): AdjustPaymentsOnAccountAuditModel = AdjustPaymentsOnAccountAuditModel(
     isSuccessful = isSuccessful,
     previousPaymentOnAccountAmount = 2000.00,
@@ -98,29 +90,14 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
     super.beforeEach()
     setupGetIncomeSourceDetails()
     await(sessionService.setMongoData(None))
-    if (isAgent) {
-      stubAuthorisedAgentUser(authorised = true, clientMtdId = testMtditid)
-    }
   }
 
   def get(url: String): WSResponse = {
-    IncomeTaxViewChangeFrontend.get(
-      s"""${
-        if (isAgent) {
-          "/agents"
-        } else ""
-      }$url""", additionalCookies = clientDetailsWithConfirmation)
+    IncomeTaxViewChangeFrontend.get(url, additionalCookies = clientDetailsWithConfirmation)
   }
 
   def post(url: String): WSResponse = {
-    IncomeTaxViewChangeFrontend.post(
-      uri =
-        s"""${
-          if (isAgent) {
-            "/agents"
-          } else ""
-        }$url""",
-      additionalCookies = clientDetailsWithConfirmation
+    IncomeTaxViewChangeFrontend.post(url, additionalCookies = clientDetailsWithConfirmation
     )(Map.empty)
   }
 
