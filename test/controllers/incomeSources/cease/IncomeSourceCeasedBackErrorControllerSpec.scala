@@ -20,7 +20,7 @@ import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import org.scalatest.Assertion
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
@@ -42,7 +42,7 @@ class IncomeSourceCeasedBackErrorControllerSpec extends TestSupport with MockAut
 
     def setupOKTest(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
       disableAllSwitches()
-      enable(IncomeSources)
+      enable(IncomeSourcesFs)
       setupMockAuthorisationSuccess(isAgent)
       mockUKPropertyIncomeSourceWithLatency2024()
 

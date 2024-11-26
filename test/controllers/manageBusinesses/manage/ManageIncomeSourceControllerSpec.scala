@@ -23,7 +23,7 @@ import implicits.ImplicitDateFormatter
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockIncomeSourceDetailsService, MockSessionService}
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import models.incomeSourceDetails.viewmodels.ViewIncomeSourcesViewModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -109,7 +109,7 @@ class ManageIncomeSourceControllerSpec extends MockAuthenticationPredicate
              ): Future[Result] = {
 
     if (disableIncomeSources)
-      disable(IncomeSources)
+      disable(IncomeSourcesFs)
 
     if (isAgent)
       setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
@@ -146,6 +146,6 @@ class ManageIncomeSourceControllerSpec extends MockAuthenticationPredicate
 
   override def beforeEach(): Unit = {
     disableAllSwitches()
-    enable(IncomeSources)
+    enable(IncomeSourcesFs)
   }
 }

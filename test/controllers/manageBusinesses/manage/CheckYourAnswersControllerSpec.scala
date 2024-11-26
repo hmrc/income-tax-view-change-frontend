@@ -19,12 +19,12 @@ package controllers.manageBusinesses.manage
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{JourneyType, Manage}
+import enums.JourneyType.{IncomeSourceJourneyType, JourneyType, Manage}
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockIncomeSourceDetailsService, MockSessionService}
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import models.incomeSourceDetails.ManageIncomeSourceData
 import models.updateIncomeSource.{UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import org.mockito.ArgumentMatchers.any
@@ -98,7 +98,7 @@ class CheckYourAnswersControllerSpec extends MockAuthenticationPredicate
         setupMockAuthorisationSuccess(isAgent)
         mockBothPropertyBothBusiness()
         setupMockCreateSession(true)
-        setupMockGetMongo(Right(Some(completedUIJourneySessionData(JourneyType(Manage, incomeSourceType)))))
+        setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
         val result = if (isAgent) TestCheckYourAnswersController
           .show(isAgent, incomeSourceType)(fakeRequestConfirmedClient())
         else TestCheckYourAnswersController
@@ -253,14 +253,14 @@ class CheckYourAnswersControllerSpec extends MockAuthenticationPredicate
                  ): Future[Result] = {
 
     if (disableIncomeSources)
-      disable(IncomeSources)
+      disable(IncomeSourcesFs)
 
     mockBothPropertyBothBusinessWithLatency()
     setupMockAuthorisationSuccess(isAgent)
 
     setupMockCreateSession(true)
-    if (emptyMongo) setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, incomeSourceType)))))
-    else setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Manage, incomeSourceType))
+    if (emptyMongo) setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
+    else setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType))
       .copy(manageIncomeSourceData = Some(ManageIncomeSourceData(
         incomeSourceId = Some(testSelfEmploymentId),
         reportingMethod = Some(changeTo),
@@ -286,14 +286,14 @@ class CheckYourAnswersControllerSpec extends MockAuthenticationPredicate
                    ): Future[Result] = {
 
     if (disableIncomeSources)
-      disable(IncomeSources)
+      disable(IncomeSourcesFs)
 
     mockBothPropertyBothBusiness()
 
     setupMockAuthorisationSuccess(isAgent)
 
     setupMockCreateSession(true)
-    setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Manage, incomeSourceType))
+    setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType))
       .copy(manageIncomeSourceData = Some(ManageIncomeSourceData(
         incomeSourceId = Some(testSelfEmploymentId),
         reportingMethod = Some(changeTo),
@@ -325,7 +325,7 @@ class CheckYourAnswersControllerSpec extends MockAuthenticationPredicate
 
   override def beforeEach(): Unit = {
     disableAllSwitches()
-    enable(IncomeSources)
+    enable(IncomeSourcesFs)
   }
 
   private lazy val testTaxYear = "2023"

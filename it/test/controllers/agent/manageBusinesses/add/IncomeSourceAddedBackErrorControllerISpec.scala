@@ -16,9 +16,9 @@
 
 package controllers.agent.manageBusinesses.add
 
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
@@ -41,7 +41,7 @@ class IncomeSourceAddedBackErrorControllerISpec extends ComponentSpecBase{
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
   val UIJourneySessionDataRepository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
-  val journeyType: JourneyType = JourneyType(Add, SelfEmployment)
+  val journeyType: IncomeSourceJourneyType = IncomeSourceJourneyType(Add, SelfEmployment)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -51,7 +51,7 @@ class IncomeSourceAddedBackErrorControllerISpec extends ComponentSpecBase{
   s"calling GET $selfEmploymentBackErrorUrl" should {
     "render the self employment business not added error page" when {
       "Income Sources FS is enabled" in {
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         stubAuthorisedAgentUser(authorised = true)
 
         And("API 1771  returns a success response")
@@ -73,7 +73,7 @@ class IncomeSourceAddedBackErrorControllerISpec extends ComponentSpecBase{
     }
     "Income Sources FS is disabled" in {
       Given("Income Sources FS is enabled")
-      disable(IncomeSources)
+      disable(IncomeSourcesFs)
       stubAuthorisedAgentUser(authorised = true)
 
       And("API 1771  returns a success response")
@@ -93,7 +93,7 @@ class IncomeSourceAddedBackErrorControllerISpec extends ComponentSpecBase{
   s"calling GET $ukPropertyBackErrorUrl" should {
     "render the self employment business not added error page" when {
       "Income Sources FS is enabled" in {
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         stubAuthorisedAgentUser(authorised = true)
 
         And("API 1771  returns a success response")
@@ -115,7 +115,7 @@ class IncomeSourceAddedBackErrorControllerISpec extends ComponentSpecBase{
     }
     "Income Sources FS is disabled" in {
       Given("Income Sources FS is enabled")
-      disable(IncomeSources)
+      disable(IncomeSourcesFs)
       stubAuthorisedAgentUser(authorised = true)
 
       And("API 1771  returns a success response")
@@ -135,7 +135,7 @@ class IncomeSourceAddedBackErrorControllerISpec extends ComponentSpecBase{
   s"calling GET $foreignPropertyBackErrorUrl" should {
     "render the self employment business not added error page" when {
       "Income Sources FS is enabled" in {
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         stubAuthorisedAgentUser(authorised = true)
 
         And("API 1771  returns a success response")
@@ -157,7 +157,7 @@ class IncomeSourceAddedBackErrorControllerISpec extends ComponentSpecBase{
     }
     "Income Sources FS is disabled" in {
       Given("Income Sources FS is enabled")
-      disable(IncomeSources)
+      disable(IncomeSourcesFs)
       stubAuthorisedAgentUser(authorised = true)
 
       And("API 1771  returns a success response")

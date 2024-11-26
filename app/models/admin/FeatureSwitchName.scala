@@ -54,10 +54,10 @@ object FeatureSwitchName {
       JsSuccess(PaymentHistoryRefunds)
     case JsString(IncomeSourcesNewJourney.name) =>
       JsSuccess(IncomeSourcesNewJourney)
-    case JsString(IncomeSources.name) =>
-      JsSuccess(IncomeSources)
-    case JsString(OptOut.name) =>
-      JsSuccess(OptOut)
+    case JsString(IncomeSourcesFs.name) =>
+      JsSuccess(IncomeSourcesFs)
+    case JsString(OptOutFs.name) =>
+      JsSuccess(OptOutFs)
     case JsString(AdjustPaymentsOnAccount.name) =>
       JsSuccess(AdjustPaymentsOnAccount)
     case JsString(ReviewAndReconcilePoa.name) =>
@@ -97,8 +97,8 @@ object FeatureSwitchName {
       CreditsRefundsRepay,
       PaymentHistoryRefunds,
       IncomeSourcesNewJourney,
-      IncomeSources,
-      OptOut,
+      IncomeSourcesFs,
+      OptOutFs,
       AdjustPaymentsOnAccount,
       ReviewAndReconcilePoa,
       FilterCodedOutPoas,
@@ -143,12 +143,12 @@ case object IncomeSourcesNewJourney extends FeatureSwitchName {
   override val toString = "Income Sources New Journey"
 }
 
-case object IncomeSources extends FeatureSwitchName {
+case object IncomeSourcesFs extends FeatureSwitchName {
   override val name = "income-sources"
   override val toString = "Income Sources"
 }
 
-case object OptOut extends FeatureSwitchName {
+case object OptOutFs extends FeatureSwitchName {
   override val name = "opt-out"
   override val toString = "Opt Out"
 }

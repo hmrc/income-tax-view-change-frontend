@@ -19,7 +19,7 @@ package controllers.agent.manageBusinesses.add
 import controllers.agent.ControllerISpecHelper
 import enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import helpers.servicemocks.{AddressLookupStub, IncomeTaxViewChangeStub, MTDAgentAuthStub}
-import models.admin.{IncomeSources, NavBarFs}
+import models.admin.{IncomeSourcesFs, NavBarFs}
 import play.api.http.Status.{OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.{getAgentClientDetailsForCookie, testMtditid}
 import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
@@ -36,7 +36,7 @@ class AddBusinessAddressControllerISpec extends ControllerISpecHelper {
         val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, true)
         "is authenticated, with a valid agent and client delegated enrolment" should {
           "redirect to address lookup" in {
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             disable(NavBarFs)
             MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
@@ -63,7 +63,7 @@ class AddBusinessAddressControllerISpec extends ControllerISpecHelper {
         val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, true)
         "is authenticated, with a valid agent and client delegated enrolment" should {
           "redirect to address lookup" in {
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             disable(NavBarFs)
             MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)

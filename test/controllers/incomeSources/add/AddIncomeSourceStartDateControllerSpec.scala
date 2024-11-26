@@ -19,14 +19,14 @@ package controllers.incomeSources.add
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
 import forms.incomeSources.add.AddIncomeSourceStartDateFormProvider
 import implicits.ImplicitDateFormatter
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockSessionService}
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.jsoup.Jsoup
@@ -82,7 +82,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
   def sessionDataWithDate(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(dateStarted = Some(LocalDate.parse("2022-01-01")))))
 
   def getInitialMongo(sourceType: IncomeSourceType): Option[UIJourneySessionData] = sourceType match {
-    case SelfEmployment => Some(sessionData(JourneyType(Add, SelfEmployment)))
+    case SelfEmployment => Some(sessionData(IncomeSourceJourneyType(Add, SelfEmployment)))
     case _ =>
       setupMockCreateSession(true)
       None
@@ -151,7 +151,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
         s"return ${Status.SEE_OTHER} and redirect to home page" when {
           s"incomeSources FS is disabled (${incomeSourceType.key})" in {
             disableAllSwitches()
-            disable(IncomeSources)
+            disable(IncomeSourcesFs)
 
             mockNoIncomeSources()
             setupMockAuthorisationSuccess(isAgent)
@@ -167,7 +167,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
         s"return ${Status.OK}: render the Add ${incomeSourceType.key} start date page" when {
           "incomeSources FS is enabled" in {
             disableAllSwitches()
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             mockNoIncomeSources()
             setupMockAuthorisationSuccess(isAgent)
             setupMockGetMongo(Right(getInitialMongo(incomeSourceType)))
@@ -183,11 +183,11 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
         s"return ${Status.OK}: render the Add ${incomeSourceType.key} start date Change page" when {
           s"isChange flag set to true (${incomeSourceType.key})" in {
             disableAllSwitches()
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
 
             mockNoIncomeSources()
             setupMockAuthorisationSuccess(isAgent)
-            val journeyType = JourneyType(Add, incomeSourceType)
+            val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
             setupMockGetMongo(Right(Some(sessionDataWithDate(journeyType))))
 
             val result = TestAddIncomeSourceStartDateController
@@ -207,12 +207,12 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
         s"return ${Status.OK}: render the Add Business start date Change page with form filled " when {
           s"session contains key: $dateStartedField (${incomeSourceType.key})" in {
             disableAllSwitches()
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
 
             mockNoIncomeSources()
             setupMockAuthorisationSuccess(isAgent)
             setupMockCreateSession(true)
-            val journeyType = JourneyType(Add, incomeSourceType)
+            val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
             setupMockGetMongo(Right(Some(sessionDataWithDate(journeyType))))
 
             val result = TestAddIncomeSourceStartDateController
@@ -234,11 +234,11 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
         s"return ${Status.SEE_OTHER}: redirect to the relevant You Cannot Go Back page" when {
           s"user has already completed the journey (${incomeSourceType.key})" in {
             disableAllSwitches()
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
 
             mockNoIncomeSources()
             setupMockAuthorisationSuccess(isAgent)
-            setupMockGetMongo(Right(Some(sessionDataCompletedJourney(JourneyType(Add, incomeSourceType)))))
+            setupMockGetMongo(Right(Some(sessionDataCompletedJourney(IncomeSourceJourneyType(Add, incomeSourceType)))))
 
             val result: Future[Result] = TestAddIncomeSourceStartDateController.show(isAgent, isChange = false, incomeSourceType)(getRequest(isAgent))
             status(result) shouldBe SEE_OTHER
@@ -248,11 +248,11 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
           }
           s"user has already added their income source (${incomeSourceType.key})" in {
             disableAllSwitches()
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
 
             mockNoIncomeSources()
             setupMockAuthorisationSuccess(isAgent)
-            setupMockGetMongo(Right(Some(sessionDataISAdded(JourneyType(Add, incomeSourceType)))))
+            setupMockGetMongo(Right(Some(sessionDataISAdded(IncomeSourceJourneyType(Add, incomeSourceType)))))
 
             val result: Future[Result] = TestAddIncomeSourceStartDateController.show(isAgent, isChange = false, incomeSourceType)(getRequest(isAgent))
             status(result) shouldBe SEE_OTHER
@@ -267,7 +267,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
         s"return ${Status.SEE_OTHER} and redirect to home page" when {
           "incomeSources FS is disabled" in {
             disableAllSwitches()
-            disable(IncomeSources)
+            disable(IncomeSourcesFs)
 
             mockNoIncomeSources()
             setupMockAuthorisationSuccess(isAgent)
@@ -282,7 +282,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
         s"return ${Status.BAD_REQUEST}" when {
           "an invalid form is submitted" in {
             disableAllSwitches()
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
 
             mockNoIncomeSources()
             setupMockAuthorisationSuccess(isAgent)
@@ -296,7 +296,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
           }
           "an empty form is submitted" in {
             disableAllSwitches()
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
 
             mockNoIncomeSources()
             setupMockAuthorisationSuccess(isAgent)
@@ -311,7 +311,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
           }
           "no form is submitted" in {
             disableAllSwitches()
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
 
             mockNoIncomeSources()
             setupMockAuthorisationSuccess(isAgent)
@@ -324,12 +324,12 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
         s"return ${Status.SEE_OTHER}: redirect to the Add Business Start Date Check page" when {
           "a valid form is submitted" in {
             disableAllSwitches()
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
 
             mockNoIncomeSources()
             setupMockAuthorisationSuccess(isAgent)
             setupMockCreateSession(true)
-            setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Add, SelfEmployment)))))
+            setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment)))))
             setupMockSetMongoData(true)
 
             val result = TestAddIncomeSourceStartDateController.submit(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = false)(postRequest(isAgent).withFormUrlEncodedBody(
@@ -345,12 +345,12 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
         s"return ${Status.SEE_OTHER}: redirect to the Add Business Start Date Check Change page" when {
           "a valid form is submitted" in {
             disableAllSwitches()
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
 
             mockNoIncomeSources()
             setupMockAuthorisationSuccess(isAgent)
             setupMockCreateSession(true)
-            setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Add, SelfEmployment)))))
+            setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment)))))
             setupMockSetMongoData(true)
 
             val result = TestAddIncomeSourceStartDateController.submit(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = true)(postRequest(isAgent).withFormUrlEncodedBody(

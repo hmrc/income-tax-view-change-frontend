@@ -19,10 +19,10 @@ package controllers.manageBusinesses.add
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.jsoup.Jsoup
 import play.api.http.Status
@@ -108,11 +108,11 @@ class IncomeSourceAddedBackErrorControllerSpec extends TestSupport with MockAuth
         def showSuccess(isAgent: Boolean, incomeSourceType: IncomeSourceType): Unit = {
           s"Display the you cannot go back error page (${if (isAgent) "agent" else "individual"}, $incomeSourceType)" in {
             disableAllSwitches()
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
 
             authenticate(isAgent)
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-            mockMongo(JourneyType(Add, SelfEmployment))
+            mockMongo(IncomeSourceJourneyType(Add, SelfEmployment))
 
             val result = if (isAgent) TestIncomeSourceAddedBackErrorController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
             else TestIncomeSourceAddedBackErrorController.show(incomeSourceType)(fakeRequestWithActiveSession)
@@ -131,12 +131,12 @@ class IncomeSourceAddedBackErrorControllerSpec extends TestSupport with MockAuth
         ".submit" should {
           s"return ${Status.SEE_OTHER} and redirect to $incomeSourceType reporting method page (isAgent = $isAgent)" in {
             disableAllSwitches()
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
 
             mockNoIncomeSources()
             authenticate(isAgent)
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-            mockMongo(JourneyType(Add, incomeSourceType))
+            mockMongo(IncomeSourceJourneyType(Add, incomeSourceType))
 
             val result = if (isAgent) TestIncomeSourceAddedBackErrorController.submitAgent(incomeSourceType)(postRequest(isAgent))
             else TestIncomeSourceAddedBackErrorController.submit(incomeSourceType)(postRequest(isAgent))

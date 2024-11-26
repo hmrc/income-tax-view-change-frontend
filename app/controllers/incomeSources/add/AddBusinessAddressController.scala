@@ -22,7 +22,7 @@ import com.google.inject.Singleton
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.IncomeSourceJourney.SelfEmployment
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.{AddIncomeSourceData, BusinessAddressModel, UIJourneySessionData}
@@ -90,8 +90,8 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
                           (implicit request: Request[_]): Future[Boolean] = {
     addressLookUpResult match {
       case Right(value) =>
-        val journeyType = JourneyType(Add, SelfEmployment)
-        sessionService.getMongo(journeyType.toString).flatMap {
+        val incomeSources: IncomeSourceJourneyType = IncomeSourceJourneyType(Add, SelfEmployment)
+        sessionService.getMongo(incomeSources).flatMap {
           case Right(Some(sessionData)) =>
             val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
             val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(address = Some(value.address), countryCode = Some("GB"))
@@ -99,7 +99,7 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
 
             sessionService.setMongoData(uiJourneySessionData)
 
-          case _ => Future.failed(new Exception(s"failed to retrieve session data for ${journeyType.toString}"))
+          case _ => Future.failed(new Exception(s"failed to retrieve session data for ${incomeSources.toString}"))
         }
       case Left(ex) => Future.failed(ex)
     }

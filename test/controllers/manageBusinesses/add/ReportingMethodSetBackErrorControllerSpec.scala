@@ -19,10 +19,10 @@ package controllers.manageBusinesses.add
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.jsoup.Jsoup
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -118,12 +118,12 @@ class ReportingMethodSetBackErrorControllerSpec extends TestSupport with MockAut
         ".show" should {
           "Display the you cannot go back error page" in {
             disableAllSwitches()
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
 
             authenticate(isAgent)
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-            mockMongo(JourneyType(Add, incomeSourceType))
+            mockMongo(IncomeSourceJourneyType(Add, incomeSourceType))
 
             val result = if (isAgent) TestReportingMethodSetBackController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
             else TestReportingMethodSetBackController.show(incomeSourceType)(fakeRequestWithActiveSession)

@@ -21,7 +21,7 @@ import exceptions.MissingFieldException
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import models.incomeSourceDetails.viewmodels.ViewIncomeSourcesViewModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -50,7 +50,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
       "render the manage businesses page" when {
         "the IncomeSources FS in enabled" in {
           setupMockUserAuth
-          enable(IncomeSources)
+          enable(IncomeSourcesFs)
           mockBothIncomeSources()
           setupMockCreateSession(true)
           setupMockClearSession(true)
@@ -74,7 +74,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
 
       "redirect to the home page" when {
         "the IncomeSources FS is disabled" in {
-          disable(IncomeSources)
+          disable(IncomeSourcesFs)
           setupMockUserAuth
           mockBothIncomeSources()
 
@@ -87,7 +87,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
       "render the error page" when {
         "the call to get income source view model fails" in {
           setupMockUserAuth
-          enable(IncomeSources)
+          enable(IncomeSourcesFs)
           mockBothIncomeSources()
           when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any()))
             .thenReturn(
@@ -100,7 +100,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
 
         "the header carrier is missing the X-sessionId" in {
           setupMockUserAuth
-          enable(IncomeSources)
+          enable(IncomeSourcesFs)
           mockBothIncomeSources()
           setupMockCreateSession(true)
           setupMockClearSession(true)
@@ -134,7 +134,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
         "render the manage businesses page" when {
           "the IncomeSources FS in enabled" in {
             setupMockAgentWithClientAuth(isSupportingAgent)
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             mockBothIncomeSources()
             setupMockCreateSession(true)
             setupMockClearSession(true)
@@ -157,7 +157,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
 
         "redirect to the home page" when {
           "the IncomeSources FS is disabled" in {
-            disable(IncomeSources)
+            disable(IncomeSourcesFs)
             setupMockAgentWithClientAuth(isSupportingAgent)
             mockBothIncomeSources()
 
@@ -170,7 +170,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
         "render the error page" when {
           "the call to get income source view model fails" in {
             setupMockAgentWithClientAuth(isSupportingAgent)
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             mockBothIncomeSources()
             when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any()))
               .thenReturn(
@@ -183,7 +183,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
 
           "the header carrier is missing the X-sessionId" in {
             setupMockAgentWithClientAuth(isSupportingAgent)
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             mockBothIncomeSources()
             setupMockCreateSession(true)
             setupMockClearSession(true)

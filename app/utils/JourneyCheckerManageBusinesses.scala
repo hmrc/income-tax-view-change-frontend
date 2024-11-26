@@ -18,7 +18,7 @@ package utils
 
 import auth.MtdItUser
 import enums.IncomeSourceJourney.{BeforeSubmissionPage, CannotGoBackPage, InitialPage, JourneyState}
-import enums.JourneyType.{Add, Cease, JourneyType, Manage}
+import enums.JourneyType.{Add, Cease, IncomeSourceJourneyType, Manage}
 import models.incomeSourceDetails.UIJourneySessionData
 import play.api.Logger
 import play.api.mvc.Result
@@ -38,37 +38,39 @@ trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils {
 
   private lazy val isAgent: MtdItUser[_] => Boolean = (user: MtdItUser[_]) => user.userType.contains(Agent)
 
-  private lazy val redirectUrl: (JourneyType, Boolean) => MtdItUser[_] => Future[Result] =
-    (journeyType: JourneyType, useDefault: Boolean) => user => {
-      (journeyType.operation, isAgent(user), useDefault) match {
+  private lazy val redirectUrl: (IncomeSourceJourneyType, Boolean) => MtdItUser[_] => Future[Result] =
+    (incomeSources: IncomeSourceJourneyType, useDefault: Boolean) => user => {
+      (incomeSources.operation, isAgent(user), useDefault) match {
         case (Add, true, true) =>
           Future.successful {
-            Redirect(controllers.manageBusinesses.add.routes.ReportingMethodSetBackErrorController.showAgent(journeyType.businessType))
+            Redirect(controllers.manageBusinesses.add.routes.ReportingMethodSetBackErrorController.showAgent(incomeSources.businessType))
           }
         case (Add, true, false) =>
           Future.successful {
-            Redirect(controllers.manageBusinesses.add.routes.IncomeSourceAddedBackErrorController.showAgent(journeyType.businessType))
+            Redirect(controllers.manageBusinesses.add.routes.IncomeSourceAddedBackErrorController.showAgent(incomeSources.businessType))
           }
         case (Add, false, true) =>
           Future.successful {
-            Redirect(controllers.manageBusinesses.add.routes.ReportingMethodSetBackErrorController.show(journeyType.businessType))
+            Redirect(controllers.manageBusinesses.add.routes.ReportingMethodSetBackErrorController.show(incomeSources.businessType))
           }
         case (Add, false, false) =>
           Future.successful {
-            Redirect(controllers.manageBusinesses.add.routes.IncomeSourceAddedBackErrorController.show(journeyType.businessType))
+            Redirect(controllers.manageBusinesses.add.routes.IncomeSourceAddedBackErrorController.show(incomeSources.businessType))
           }
         case (Manage, _, _) =>
           Future.successful {
-            Redirect(controllers.manageBusinesses.manage.routes.CannotGoBackErrorController.show(isAgent(user), journeyType.businessType))
+            Redirect(controllers.manageBusinesses.manage.routes.CannotGoBackErrorController.show(isAgent(user), incomeSources.businessType))
           }
         case (Cease, true, _) =>
           Future.successful {
-            Redirect(controllers.manageBusinesses.cease.routes.IncomeSourceCeasedBackErrorController.showAgent(journeyType.businessType))
+            Redirect(controllers.manageBusinesses.cease.routes.IncomeSourceCeasedBackErrorController.showAgent(incomeSources.businessType))
           }
         case (Cease, false, _) =>
           Future.successful {
-            Redirect(controllers.manageBusinesses.cease.routes.IncomeSourceCeasedBackErrorController.show(journeyType.businessType))
+            Redirect(controllers.manageBusinesses.cease.routes.IncomeSourceCeasedBackErrorController.show(incomeSources.businessType))
           }
+        case (e, _, _) =>
+          throw new Exception(s"Invalid operation found: ${e.operationType}")
       }
     }
 
@@ -84,25 +86,25 @@ trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils {
       }
     }
 
-  private def useDefaultRedirect(data: UIJourneySessionData, journeyType: JourneyType, journeyState: JourneyState): Boolean = {
-    journeyType.operation match {
+  private def useDefaultRedirect(data: UIJourneySessionData, incomeSources: IncomeSourceJourneyType, journeyState: JourneyState): Boolean = {
+    incomeSources.operation match {
       case Add => !((journeyState == BeforeSubmissionPage || journeyState == InitialPage) && data.addIncomeSourceData.flatMap(_.incomeSourceAdded).getOrElse(false))
       case _ => true
     }
   }
 
-  def withSessionData(journeyType: JourneyType, journeyState: JourneyState)(codeBlock: UIJourneySessionData => Future[Result])
+  def withSessionData(incomeSources: IncomeSourceJourneyType, journeyState: JourneyState)(codeBlock: UIJourneySessionData => Future[Result])
                      (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     withIncomeSourcesFS {
-      sessionService.getMongo(journeyType.toString).flatMap {
-        case Right(Some(data: UIJourneySessionData)) if showCannotGoBackErrorPage(data, journeyType, journeyState) =>
-          redirectUrl(journeyType, useDefaultRedirect(data, journeyType, journeyState))(user)
+      sessionService.getMongo(incomeSources).flatMap {
+        case Right(Some(data: UIJourneySessionData)) if showCannotGoBackErrorPage(data, incomeSources, journeyState) =>
+          redirectUrl(incomeSources, useDefaultRedirect(data, incomeSources, journeyState))(user)
         case Right(Some(data: UIJourneySessionData)) =>
           codeBlock(data)
         case Right(None) =>
           if (journeyState == InitialPage) {
-            sessionService.createSession(journeyType.toString).flatMap { _ =>
-              val data = UIJourneySessionData(hc.sessionId.get.value, journeyType.toString)
+            sessionService.createSession(incomeSources).flatMap { _ =>
+              val data = UIJourneySessionData(hc.sessionId.get.value, incomeSources.toString)
               codeBlock(data)
             }
           }
@@ -110,14 +112,14 @@ trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils {
         case Left(ex) =>
           val agentPrefix = if (isAgent(user)) "[Agent]" else ""
           Logger("application").error(s"$agentPrefix" +
-            s"Unable to retrieve Mongo data for journey type ${journeyType.toString}", ex)
+            s"Unable to retrieve Mongo data for journey type ${incomeSources.toString}", ex)
           journeyRestartUrl(user)
       }
     }
   }
 
-  private def showCannotGoBackErrorPage(data: UIJourneySessionData, journeyType: JourneyType, journeyState: JourneyState): Boolean = {
-    (journeyType.operation, journeyState) match {
+  private def showCannotGoBackErrorPage(data: UIJourneySessionData, incomeSources: IncomeSourceJourneyType, journeyState: JourneyState): Boolean = {
+    (incomeSources.operation, journeyState) match {
       case (_, CannotGoBackPage) => false
       case (Add, BeforeSubmissionPage) | (Add, InitialPage) =>
         data.addIncomeSourceData.flatMap(_.journeyIsComplete).getOrElse(false) ||

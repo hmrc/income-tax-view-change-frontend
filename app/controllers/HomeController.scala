@@ -86,8 +86,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
   private def buildHomePageForSupportingAgent(nextUpdatesDueDates: Seq[LocalDate])
                                              (implicit user: MtdItUser[_]): Future[Result] = {
-    val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, dateService.getCurrentDate, isEnabled(OptOut))
-    val yourBusinessesTileViewModel = YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome, isEnabled(IncomeSources),
+    val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, dateService.getCurrentDate, isEnabled(OptOutFs))
+    val yourBusinessesTileViewModel = YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome, isEnabled(IncomeSourcesFs),
       isEnabled(IncomeSourcesNewJourney))
     Future.successful(
       Ok(
@@ -112,12 +112,12 @@ class HomeController @Inject()(val homeView: views.html.Home,
       paymentsDueMerged = mergePaymentsDue(paymentsDue, outstandingChargeDueDates)
     } yield {
 
-      val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, dateService.getCurrentDate, isEnabled(OptOut))
+      val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, dateService.getCurrentDate, isEnabled(OptOutFs))
 
       val paymentCreditAndRefundHistoryTileViewModel =
         PaymentCreditAndRefundHistoryTileViewModel(unpaidCharges, isEnabled(CreditsRefundsRepay), isEnabled(PaymentHistoryRefunds), user.incomeSources.yearOfMigration.isDefined)
 
-      val yourBusinessesTileViewModel = YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome, isEnabled(IncomeSources),
+      val yourBusinessesTileViewModel = YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome, isEnabled(IncomeSourcesFs),
         isEnabled(IncomeSourcesNewJourney))
 
       val returnsTileViewModel = ReturnsTileViewModel(TaxYear(dateService.getCurrentTaxYearEnd - 1, dateService.getCurrentTaxYearEnd), isEnabled(ITSASubmissionIntegration))

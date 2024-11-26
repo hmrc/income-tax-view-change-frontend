@@ -22,7 +22,7 @@ import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.JourneyType.Cease
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub, MTDIndividualAuthStub}
-import models.admin.{IncomeSources, NavBarFs}
+import models.admin.{IncomeSourcesFs, NavBarFs}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.{CeaseIncomeSourceData, UIJourneySessionData}
 import models.updateIncomeSource.UpdateIncomeSourceResponseModel
@@ -79,7 +79,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
     "the user is authenticated, with a valid MTD enrolment" should {
       "render the Cease Business Page" when {
         "Income source is enabled" in {
-          enable(IncomeSources)
+          enable(IncomeSourcesFs)
           disable(NavBarFs)
           MTDIndividualAuthStub.stubAuthorised()
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -109,7 +109,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
       }
       "render the Cease Business Page with unknown address and title" when {
         "Income source is enabled" in {
-          enable(IncomeSources)
+          enable(IncomeSourcesFs)
           disable(NavBarFs)
           MTDIndividualAuthStub.stubAuthorised()
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponseWithUnknownAddressName)
@@ -139,7 +139,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
       }
       "redirect to Home Page" when {
         "Income source is disabled" in {
-          disable(IncomeSources)
+          disable(IncomeSourcesFs)
           disable(NavBarFs)
           MTDIndividualAuthStub.stubAuthorised()
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -168,7 +168,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
     "the user is authenticated, with a valid MTD enrolment" should {
       "render the Cease Business Page" when {
         "Income source is enabled" in {
-          enable(IncomeSources)
+          enable(IncomeSourcesFs)
           disable(NavBarFs)
           MTDIndividualAuthStub.stubAuthorised()
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
@@ -192,7 +192,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
       }
       "redirect to Home Page" when {
         "Income source is disabled" in {
-          disable(IncomeSources)
+          disable(IncomeSourcesFs)
           disable(NavBarFs)
           MTDIndividualAuthStub.stubAuthorised()
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
@@ -219,7 +219,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
     "the user is authenticated, with a valid MTD enrolment" should {
       "render the Cease Business Page" when {
         "Income source is enabled" in {
-          enable(IncomeSources)
+          enable(IncomeSourcesFs)
           disable(NavBarFs)
           MTDIndividualAuthStub.stubAuthorised()
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
@@ -243,7 +243,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
       }
       "redirect to Home Page" when {
         "Income source is disabled" in {
-          disable(IncomeSources)
+          disable(IncomeSourcesFs)
           disable(NavBarFs)
           MTDIndividualAuthStub.stubAuthorised()
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
@@ -268,7 +268,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
   s"POST ${selfEmploymentPath}" should {
     s"redirect to $redirectUriSE" when {
       "User is authorised" in {
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         disable(NavBarFs)
         MTDIndividualAuthStub.stubAuthorised()
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
@@ -293,7 +293,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
   s"calling POST ${ukPropertyPath}" should {
     s"redirect to $redirectUriUK" when {
       "User is authorised" in {
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         disable(NavBarFs)
         MTDIndividualAuthStub.stubAuthorised()
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
@@ -318,7 +318,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
   s"calling POST ${foreignPropertyPath}" should {
     s"redirect to $redirectUriFP" when {
       "User is authorised" in {
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         disable(NavBarFs)
         MTDIndividualAuthStub.stubAuthorised()
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)

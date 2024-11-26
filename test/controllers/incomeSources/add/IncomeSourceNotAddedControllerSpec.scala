@@ -20,7 +20,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import org.jsoup.Jsoup
 import org.mockito.Mockito.mock
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -93,7 +93,7 @@ class IncomeSourceNotAddedControllerSpec extends TestSupport with MockAuthentica
         "return 200 and render Income Source Not Added Error Page" when {
           "user is trying to add SE business" in {
             disableAllSwitches()
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             mockIncomeSource(incomeSourceType)
             setupMockAuthorisationSuccess(isAgent)
 

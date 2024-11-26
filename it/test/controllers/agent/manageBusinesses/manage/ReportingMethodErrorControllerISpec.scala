@@ -16,7 +16,7 @@
 
 package controllers.agent.manageBusinesses.manage
 
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -52,7 +52,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
 
         stubAuthorisedAgentUser(authorised = true)
 
-        disable(IncomeSources)
+        disable(IncomeSourcesFs)
 
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
@@ -73,7 +73,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
@@ -95,7 +95,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -119,7 +119,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
@@ -141,7 +141,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -165,7 +165,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
@@ -190,7 +190,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = None)))

@@ -23,7 +23,7 @@ import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.IncomeSourceJourney.{BeforeSubmissionPage, IncomeSourceType, SelfEmployment}
-import enums.JourneyType.{Cease, JourneyType}
+import enums.JourneyType.{Cease, IncomeSourceJourneyType, JourneyType}
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
 import play.api.Logger
@@ -62,7 +62,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
   }
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_]): Future[Result] = withSessionData(JourneyType(Cease, incomeSourceType), BeforeSubmissionPage) { sessionData =>
+                   (implicit user: MtdItUser[_]): Future[Result] = withSessionData(IncomeSourceJourneyType(Cease, incomeSourceType), BeforeSubmissionPage) { sessionData =>
 
     val messagesPrefix = incomeSourceType.ceaseCheckDetailsPrefix
     val incomeSourceIdOpt = sessionData.ceaseIncomeSourceData.flatMap(_.incomeSourceId)
@@ -131,7 +131,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
 
   def handleSubmitRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                          (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
-    withSessionData(JourneyType(Cease, incomeSourceType), BeforeSubmissionPage) { sessionData =>
+    withSessionData(IncomeSourceJourneyType(Cease, incomeSourceType), BeforeSubmissionPage) { sessionData =>
       val incomeSourceIdOpt = sessionData.ceaseIncomeSourceData.flatMap(_.incomeSourceId)
       val endDateOpt = sessionData.ceaseIncomeSourceData.flatMap(_.endDate)
 

@@ -18,7 +18,7 @@ package controllers.manageBusinesses.cease
 
 import controllers.ControllerISpecHelper
 import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDIndividualAuthStub}
-import models.admin.{IncomeSources, NavBarFs}
+import models.admin.{IncomeSourcesFs, NavBarFs}
 import play.api.http.Status.OK
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyAndCeasedBusiness, multipleBusinessesAndUkProperty}
@@ -44,7 +44,7 @@ class CeaseIncomeSourcesControllerISpec extends ControllerISpecHelper {
         "Income source details are enabled for UK property" in {
           MTDIndividualAuthStub.stubAuthorised()
           disable(NavBarFs)
-          enable(IncomeSources)
+          enable(IncomeSourcesFs)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
           When(s"I call GET ${ceaseIncomeSourcesPath}")
           val result = buildGETMTDClient(ceaseIncomeSourcesPath).futureValue
@@ -64,7 +64,7 @@ class CeaseIncomeSourcesControllerISpec extends ControllerISpecHelper {
         }
         "Income source details are enabled for for foreign property" in {
           MTDIndividualAuthStub.stubAuthorised()
-          enable(IncomeSources)
+          enable(IncomeSourcesFs)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)
           When(s"I call GET ${ceaseIncomeSourcesPath}")
           val result = buildGETMTDClient(ceaseIncomeSourcesPath).futureValue

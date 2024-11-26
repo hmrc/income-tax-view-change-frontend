@@ -23,7 +23,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.JourneyType.Cease
 import enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub, MTDAgentAuthStub}
-import models.admin.{IncomeSources, NavBarFs}
+import models.admin.{IncomeSourcesFs, NavBarFs}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.{CeaseIncomeSourceData, IncomeSourceDetailsModel, UIJourneySessionData}
 import models.updateIncomeSource.UpdateIncomeSourceResponseModel
@@ -85,7 +85,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
         "is authenticated, with a valid agent and client delegated enrolment" should {
           "render the Cease Business Page" when {
             "Income source is enabled" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -114,7 +114,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
           }
           "redirect to Home Page" when {
             "Income source is disabled" in {
-              disable(IncomeSources)
+              disable(IncomeSourcesFs)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -148,7 +148,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
         "is authenticated, with a valid agent and client delegated enrolment" should {
           "render the Cease Business Page" when {
             "Income source is enabled" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -174,7 +174,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
           }
           "redirect to Home Page" when {
             "Income source is disabled" in {
-              disable(IncomeSources)
+              disable(IncomeSourcesFs)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -208,7 +208,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
         "is authenticated, with a valid agent and client delegated enrolment" should {
           "render the Cease Business Page" when {
             "Income source is enabled" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -234,7 +234,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
           }
           "redirect to Home Page" when {
             "Income source is disabled" in {
-              disable(IncomeSources)
+              disable(IncomeSourcesFs)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -268,7 +268,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
         "is authenticated, with a valid agent and client delegated enrolment" should {
           s"redirect to $redirectUriSE" when {
             "Income source is enabled" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
@@ -301,7 +301,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
         "is authenticated, with a valid agent and client delegated enrolment" should {
           s"redirect to $redirectUriUK" when {
             "Income source is enabled" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
@@ -334,7 +334,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
         "is authenticated, with a valid agent and client delegated enrolment" should {
           s"redirect to $redirectUriFP" when {
             "Income source is enabled" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)

@@ -20,7 +20,7 @@ import audit.models.NextUpdatesAuditing.NextUpdatesAuditModel
 import auth.MtdItUser
 import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import helpers.servicemocks._
-import models.admin.OptOut
+import models.admin.OptOutFs
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.obligations.ObligationsModel
@@ -191,7 +191,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
       "the user has a Opt Out Feature Switch Enabled" in {
         
-        enable(OptOut)
+        enable(OptOutFs)
         MTDIndividualAuthStub.stubAuthorised()
 
         val currentTaxYear = dateService.getCurrentTaxYearEnd
@@ -240,7 +240,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
       }
 
       "the user has a Opt Out Feature Switch Disabled" in {
-        disable(OptOut)
+        disable(OptOutFs)
         MTDIndividualAuthStub.stubAuthorised()
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -276,7 +276,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
     "one year opt-out scenarios" when {
 
       "show opt-out message if the user has Previous Year as Voluntary, Current Year as NoStatus, Next Year as NoStatus" in {
-        enable(OptOut)
+        enable(OptOutFs)
         MTDIndividualAuthStub.stubAuthorised()
 
         val currentTaxYear = dateService.getCurrentTaxYearEnd
@@ -309,7 +309,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
       }
 
       "show multi year opt-out message if the user has Previous Year as Voluntary, Current Year as Voluntary, Next Year as Voluntary" in {
-        enable(OptOut)
+        enable(OptOutFs)
         MTDIndividualAuthStub.stubAuthorised()
 
         val currentTaxYear = dateService.getCurrentTaxYearEnd
@@ -344,7 +344,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
     "show Next updates page" when {
       "Opt Out feature switch is enabled" when {
         "ITSA Status API Failure" in {
-          enable(OptOut)
+          enable(OptOutFs)
           MTDIndividualAuthStub.stubAuthorised()
 
           val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
@@ -376,7 +376,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
         }
 
         "Calculation API Failure" in {
-          enable(OptOut)
+          enable(OptOutFs)
           MTDIndividualAuthStub.stubAuthorised()
 
           val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
@@ -408,7 +408,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
         }
 
         "ITSA Status API Failure and Calculation API Failure" in {
-          enable(OptOut)
+          enable(OptOutFs)
           MTDIndividualAuthStub.stubAuthorised()
 
           val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)

@@ -17,7 +17,7 @@
 package repositories
 
 import config.FrontendAppConfig
-import enums.JourneyType.Operation
+import enums.JourneyType.{JourneyType, Operation}
 import models.incomeSourceDetails.UIJourneySessionData
 import org.mongodb.scala.bson.collection.mutable.Document
 import org.mongodb.scala.bson.conversions.Bson
@@ -87,8 +87,8 @@ class UIJourneySessionDataRepository @Inject()(
       .toFuture()
       .map(_.wasAcknowledged())
 
-  def get(sessionId: String, journeyType: String): Future[Option[UIJourneySessionData]] = {
-    val data = UIJourneySessionData(sessionId, journeyType)
+  def get(sessionId: String, journeyType: JourneyType): Future[Option[UIJourneySessionData]] = {
+    val data = UIJourneySessionData(sessionId, journeyType.toString)
     keepAlive(data).flatMap {
       _ =>
         collection

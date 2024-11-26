@@ -19,7 +19,7 @@ package controllers.incomeSources.manage
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
@@ -148,7 +148,7 @@ class ReportingMethodChangeErrorControllerSpec
              ): Future[Result] = {
 
     if (disableIncomeSources)
-      disable(IncomeSources)
+      disable(IncomeSourcesFs)
 
     mockBothPropertyBothBusiness()
 
@@ -176,6 +176,6 @@ class ReportingMethodChangeErrorControllerSpec
 
   override def beforeEach(): Unit = {
     disableAllSwitches()
-    enable(IncomeSources)
+    enable(IncomeSourcesFs)
   }
 }

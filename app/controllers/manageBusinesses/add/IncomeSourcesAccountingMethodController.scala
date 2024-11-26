@@ -22,7 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import controllers.agent.predicates.ClientConfirmedController
 import enums.AccountingMethod.fromApiField
 import enums.IncomeSourceJourney._
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
 import forms.incomeSources.add.IncomeSourcesAccountingMethodForm
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -56,7 +56,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
                                                cashOrAccrualsFlag: Option[String])
                                               (implicit user: MtdItUser[_],
                                                backUrl: String, postAction: Call): Future[Result] = {
-    withSessionData(JourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
+    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
       val cashOrAccrualsRecords = user.incomeSources.getBusinessCashOrAccruals()
       if (cashOrAccrualsRecords.distinct.size > 1) {
         Logger("application").error(s"${if (isAgent) "[Agent]"}" +
@@ -121,7 +121,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
                     cashOrAccrualsFlag: Option[String] = None,
                     isChange: Boolean)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] =
-    withSessionData(JourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { _ =>
+    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { _ =>
 
       val backUrl = getBackUrl(isAgent, isChange, incomeSourceType)
 
@@ -143,7 +143,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
 
 
   def handleSubmitRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
-    withSessionData(JourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
+    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
       IncomeSourcesAccountingMethodForm(incomeSourceType).bindFromRequest().fold(
         hasErrors => Future.successful(BadRequest(view(
           incomeSourceType = incomeSourceType,
@@ -217,7 +217,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
   def changeIncomeSourcesAccountingMethod(incomeSourceType: IncomeSourceType, isAgent: Boolean): Action[AnyContent] =
     auth.authenticatedAction(isAgent) {
       implicit user =>
-        withSessionData(JourneyType(Add, incomeSourceType), BeforeSubmissionPage) { sessionData =>
+        withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), BeforeSubmissionPage) { sessionData =>
           val accountingMethodOpt = sessionData.addIncomeSourceData.flatMap(_.incomeSourcesAccountingMethod)
           handleRequest(
             isAgent,

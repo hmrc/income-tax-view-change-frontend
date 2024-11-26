@@ -19,15 +19,15 @@ package controllers.manageBusinesses.cease
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney._
-import enums.JourneyType.{Cease, JourneyType}
+import enums.JourneyType.{Cease, IncomeSourceJourneyType, JourneyType}
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockNextUpdatesService, MockSessionService}
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import models.incomeSourceDetails._
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
-import models.obligations.{SingleObligationModel, GroupedObligationsModel, ObligationsResponseModel, ObligationsModel, StatusFulfilled}
+import models.obligations.{GroupedObligationsModel, ObligationsModel, ObligationsResponseModel, SingleObligationModel, StatusFulfilled}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.mockito.stubbing.OngoingStubbing
@@ -78,7 +78,7 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
     setupMockCreateSession(true)
     val sessionData = UIJourneySessionData(
       sessionId = testSessionId,
-      journeyType = JourneyType(Cease, incomeSourceType).toString,
+      journeyType = IncomeSourceJourneyType(Cease, incomeSourceType).toString,
       ceaseIncomeSourceData = Some(CeaseIncomeSourceData(
         incomeSourceId = incomeSourceId,
         endDate = ceaseDate,
@@ -185,7 +185,7 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
     super.beforeEach()
     reset(mockIncomeSourceDetailsService)
     disableAllSwitches()
-    enable(IncomeSources)
+    enable(IncomeSourcesFs)
   }
 
   "IncomeSourceCeasedObligationsController" should {

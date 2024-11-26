@@ -44,7 +44,7 @@ trait MockUIJourneySessionDataRepository extends UnitSpec with BeforeAndAfterEac
   }
 
   def mockRepositoryGet(response: Option[UIJourneySessionData]): Unit = {
-    when(mockUIJourneySessionDataRepository.get(ArgumentMatchers.anyString(), ArgumentMatchers.anyString()))
+    when(mockUIJourneySessionDataRepository.get(ArgumentMatchers.anyString(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
 
