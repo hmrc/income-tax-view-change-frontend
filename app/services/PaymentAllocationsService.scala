@@ -87,7 +87,7 @@ class PaymentAllocationsService @Inject()(financialDetailsConnector: FinancialDe
     financialDetailsService.getAllFinancialDetails.map { financialDetailsWithTaxYear =>
       financialDetailsWithTaxYear.flatMap {
         case (_, financialDetails: FinancialDetailsModel) =>
-          financialDetails.documentDetails.find(_.latePaymentInterestId == paymentCharge.allocations.head.chargeReference).map {
+          financialDetails.documentDetailsWithLpiId(paymentCharge.allocations.head.chargeReference).map {
             documentDetailsWithLpiId =>
               LatePaymentInterestPaymentAllocationDetails(documentDetailsWithLpiId,
                 documentDetailsWithFinancialDetails.documentDetails.head.originalAmount)
