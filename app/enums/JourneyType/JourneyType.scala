@@ -41,17 +41,15 @@ case object Cease extends Operation {
 }
 
 case class Opt(optJourney: OptJourney) extends JourneyType {
-  override def toString: String = optJourney.choice
+  override def toString: String = optJourney.toString
 }
 
-sealed trait OptJourney extends JourneyType {
-  val choice: String
-}
+sealed trait OptJourney extends JourneyType
 
 case object OptInJourney extends OptJourney {
-  override val choice = "OPTIN"
+  override val toString = "OPTIN"
 }
 
 case object OptOutJourney extends OptJourney {
-  override val choice = "OPTOUT"
+  override val toString = "OPTOUT"
 }
