@@ -21,7 +21,7 @@ import enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import forms.optOut.ConfirmOptOutSingleTaxYearForm
 import helpers.OptOutSessionRepositoryHelper
 import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDAgentAuthStub}
-import models.admin.{IncomeSources, NavBarFs}
+import models.admin.{IncomeSourcesFs, NavBarFs}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus._
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -68,7 +68,7 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
       s"the user is a $mtdUserRole" that {
         "is authenticated, with a valid agent and client delegated enrolment" should {
         "render single tax year opt out confirmation pager" in {
-          enable(IncomeSources)
+          enable(IncomeSourcesFs)
           disable(NavBarFs)
           MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -102,7 +102,7 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid agent and client delegated enrolment" should {
           s"render single tax year opt out confirmation pager with error message and status $BAD_REQUEST " when {
             "invalid data is sent" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -130,7 +130,7 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
           }
           s"redirect to ConfirmOptOutPage - $confirmOptOutPageUrl with status $SEE_OTHER" when {
             "Yes response is sent" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -155,7 +155,7 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
 
           s"redirect to OptOutCancelledPage - $optOutCancelledUrl with status $SEE_OTHER" when {
             "No response is sent" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
