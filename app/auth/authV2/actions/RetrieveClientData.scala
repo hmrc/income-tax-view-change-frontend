@@ -48,7 +48,8 @@ class RetrieveClientData @Inject()(sessionDataService: SessionDataService,
     val useSessionDataService = appConfig.isSessionDataStorageEnabled
 
     sessionDataService.getSessionData(useCookie = !useSessionDataService).map {
-      case Right(sessionData) => Right(ClientDataRequest(
+      case Right(sessionData) =>
+        Right(ClientDataRequest(
         sessionData.mtditid,
         r.session.get(SessionKeys.clientFirstName),
         r.session.get(SessionKeys.clientLastName),

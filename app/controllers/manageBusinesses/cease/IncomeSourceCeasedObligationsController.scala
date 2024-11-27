@@ -17,9 +17,8 @@
 package controllers.manageBusinesses.cease
 
 import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
+import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{Cease, IncomeSourceJourneyType, JourneyType}
 import models.core.IncomeSourceId
@@ -30,27 +29,26 @@ import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{DateServiceInterface, NextUpdatesService, SessionService}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.JourneyCheckerManageBusinesses
 import views.html.manageBusinesses.cease.IncomeSourceCeasedObligations
 
 import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeSourceCeasedObligationsController @Inject()(val authorisedFunctions: AuthorisedFunctions,
+class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthActions,
                                                         val itvcErrorHandler: ItvcErrorHandler,
+                                                        val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                         val obligationsView: IncomeSourceCeasedObligations,
                                                         val nextUpdatesService: NextUpdatesService,
-                                                        val sessionService: SessionService,
-                                                        val auth: AuthenticatorPredicate)
+                                                        val sessionService: SessionService)
                                                        (implicit val appConfig: FrontendAppConfig,
-                                                        implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                                        implicit override val mcc: MessagesControllerComponents,
+                                                        val mcc: MessagesControllerComponents,
                                                         val ec: ExecutionContext,
                                                         dateService: DateServiceInterface)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
+  extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses {
 
   private def getBusinessName(incomeSourceId: IncomeSourceId)(implicit user: MtdItUser[_]): Option[String] = {
     user.incomeSources.businesses
@@ -103,12 +101,12 @@ class IncomeSourceCeasedObligationsController @Inject()(val authorisedFunctions:
       errorHandler.showInternalServerError()
   }
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
       handleRequest(isAgent = false, incomeSourceType = incomeSourceType)
   }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit mtdItUser =>
       handleRequest(isAgent = true, incomeSourceType = incomeSourceType)
   }

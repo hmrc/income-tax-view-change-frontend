@@ -16,11 +16,12 @@
 
 package controllers.incomeSources.cease
 
-import models.admin.IncomeSourcesFs
-import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import controllers.ControllerISpecHelper
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.Cease
-import helpers.ComponentSpecBase
+import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.admin.{IncomeSources, NavBarFs}
 import models.incomeSourceDetails.{CeaseIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -33,15 +34,11 @@ import testConstants.IncomeSourcesObligationsIntegrationTestConstants.testObliga
 
 import java.time.LocalDate
 
-class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
+class IncomeSourceCeasedObligationsControllerISpec extends ControllerISpecHelper {
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
   val repository = app.injector.instanceOf[UIJourneySessionDataRepository]
 
-  val businessCeasedObligationsShowUrl: String = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(SelfEmployment).url
-  val foreignPropertyCeasedObligationsShowUrl: String = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(ForeignProperty).url
-  val ukPropertyCeasedObligationsShowUrl: String = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(UkProperty).url
-  val testDate: String = "2020-11-10"
   val prefix: String = "business-ceased.obligation"
   val continueButtonText: String = messagesAPI(s"$prefix.income-sources-button")
   val htmlTitle = " - Manage your Income Tax updates - GOV.UK"
@@ -52,91 +49,60 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
     await(sessionService.deleteSession(Cease))
   }
 
-  s"calling GET $businessCeasedObligationsShowUrl" should {
-    "render the Business Ceased obligations page" when {
-      "User is authorised" in {
-        Given("Income Sources FS is enabled")
-        enable(IncomeSourcesFs)
-
-        When(s"I call GET $businessCeasedObligationsShowUrl")
-
-        And("API 1771 returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-        And("API 1330 getNextUpdates returns a success response with a valid ObligationsModel")
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
-
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
-          Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = None, journeyIsComplete = Some(true))))))
-
-        val result = IncomeTaxViewChangeFrontend.getBusinessCeasedObligations
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        val expectedText: String = b1TradingName + " " + messagesAPI(s"$prefix.heading1.base")
-
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual(expectedText),
-          elementTextByID("continue-button")(continueButtonText)
-        )
-      }
+  def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType): String = {
+    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    incomeSourceType match {
+      case SelfEmployment => pathStart + "/income-sources/cease/cease-business-success"
+      case UkProperty => pathStart + "/income-sources/cease/cease-uk-property-success"
+      case _ => pathStart + "/income-sources/cease/cease-foreign-property-success"
     }
   }
 
-  s"calling GET $ukPropertyCeasedObligationsShowUrl" should {
-    "render the UK Property Ceased obligations page" when {
-      "User is authorised" in {
-        Given("Income Sources FS is enabled")
-        enable(IncomeSourcesFs)
+  def getIncomeSourceResponse(incomeSourceType: IncomeSourceType) = incomeSourceType match {
+    case SelfEmployment => businessOnlyResponse
+    case UkProperty => ukPropertyOnlyResponse
+    case ForeignProperty => foreignPropertyOnlyResponse
+  }
 
-        When(s"I call GET $ukPropertyCeasedObligationsShowUrl")
-
-        And("API 1771 returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
-
-        And("API 1330 getNextUpdates returns a success response with a valid ObligationsModel")
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
-
-        val result = IncomeTaxViewChangeFrontend.getUkPropertyCeasedObligations(Map.empty)
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        val expectedText: String = messagesAPI("business-ceased.obligation.heading1.uk-property.part2") + " " + messagesAPI("business-ceased.obligation.heading1.base")
-
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual(expectedText),
-          elementTextByID("continue-button")(continueButtonText)
-        )
-      }
+  def getExpectedTitle(incomeSourceType: IncomeSourceType): String = {
+    incomeSourceType match {
+      case SelfEmployment => b1TradingName + " " + messagesAPI(s"$prefix.heading1.base")
+      case UkProperty => messagesAPI("business-ceased.obligation.heading1.uk-property.part2") + " " + messagesAPI("business-ceased.obligation.heading1.base")
+      case ForeignProperty => messagesAPI("business-ceased.obligation.heading1.foreign-property.part2") + " " + messagesAPI("business-ceased.obligation.heading1.base")
     }
   }
 
-  s"calling GET $foreignPropertyCeasedObligationsShowUrl" should {
-    "render the Foreign Property Ceased obligations page" when {
-      "User is authorised" in {
-        Given("Income Sources FS is enabled")
-        enable(IncomeSourcesFs)
+  mtdAllRoles.foreach { mtdUserRole =>
+    List(UkProperty, ForeignProperty).foreach { incomeSourceType =>
+      val path = getPath(mtdUserRole, incomeSourceType)
+      val additionalCookies = getAdditionalCookies(mtdUserRole)
+      s"GET $path" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            "render the Business Ceased obligations page" in {
+              stubAuthorised(mtdUserRole)
+              disable(NavBarFs)
+              enable(IncomeSources)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
+              IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
+              if (incomeSourceType == SelfEmployment) {
+                await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"CEASE-${incomeSourceType.key}", ceaseIncomeSourceData =
+                  Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = None, journeyIsComplete = Some(true))))))
+              }
 
-        When(s"I call GET $foreignPropertyCeasedObligationsShowUrl")
+              val result = buildGETMTDClient(path, additionalCookies).futureValue
+              verifyIncomeSourceDetailsCall(testMtditid)
 
-        And("API 1771 returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
-
-        And("API 1330 getNextUpdates returns a success response with a valid ObligationsModel")
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
-
-        val result = IncomeTaxViewChangeFrontend.getForeignPropertyCeasedObligations(Map.empty)
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        val expectedText: String = messagesAPI("business-ceased.obligation.heading1.foreign-property.part2") + " " + messagesAPI("business-ceased.obligation.heading1.base")
-
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual(expectedText),
-          elementTextByID("continue-button")(continueButtonText)
-        )
+              result should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, getExpectedTitle(incomeSourceType)),
+                elementTextByID("continue-button")(continueButtonText)
+              )
+            }
+          }
+          testAuthFailures(path, mtdUserRole)
+        }
       }
     }
   }
-
 }
