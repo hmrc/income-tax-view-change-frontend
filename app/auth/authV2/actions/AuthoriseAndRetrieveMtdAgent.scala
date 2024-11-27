@@ -73,8 +73,7 @@ case class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: FrontendA
 
     authorisedFunctions.authorised((isAgent and hasDelegatedEnrolment) or isNotAgent)
       .retrieve(allEnrolments and name and credentials and affinityGroup and confidenceLevel) {
-        redirectIfNotAgent() orElse
-          redirectIfInsufficientConfidence() orElse constructMtdIdUserOptNino()
+        redirectIfNotAgent() orElse constructMtdIdUserOptNino()
       }(hc, executionContext) recoverWith logAndRedirect(true)
   }
 
@@ -96,14 +95,6 @@ case class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: FrontendA
           clientConfirmed = request.confirmed
         ))
       )
-  }
-
-  val signInUrl: String = "/report-quarterly/income-and-expenses/view/sign-in"
-
-  private def redirectIfInsufficientConfidence[A](): PartialFunction[AuthRetrievals, Future[Either[Result, MtdItUserOptionNino[A]]]] = {
-    case _ ~ _ ~ _ ~ _ ~ confidenceLevel
-      if confidenceLevel.level < requiredConfidenceLevel =>
-      Future.successful(Left(Redirect(signInUrl)))
   }
 }
 

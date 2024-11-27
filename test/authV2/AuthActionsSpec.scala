@@ -213,18 +213,6 @@ class AuthActionsSpec extends TestSupport with ScalaFutures with MockOldAuthActi
         result.header.status shouldBe OK
       }
 
-      s"throw exception when confidence level < ${appConfig.requiredConfidenceLevel}" in new ResultFixture(
-        retrievals = agentRetrievalData.copy(confidenceLevel = ConfidenceLevel.L50 ),
-        request = validAgentRequest,
-        isAgent = true) {
-
-        // does not re-direct to uplift for agent
-        // agent throws exception if insufficient confidence, which then redirects to sign-in
-
-        result.header.status shouldBe SEE_OTHER
-        result.header.headers(Location) shouldBe "/report-quarterly/income-and-expenses/view/sign-in"
-      }
-
       s"show internal error when $INTERNAL_SERVER_ERROR returned from income sources" in new ResultFixture(
         retrievals = agentRetrievalData,
         incomeSources = IncomeSourceDetailsError(INTERNAL_SERVER_ERROR, "Internal server error"),
