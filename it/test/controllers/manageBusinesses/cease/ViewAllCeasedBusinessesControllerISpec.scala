@@ -16,16 +16,16 @@
 
 package controllers.manageBusinesses.cease
 
-import models.admin.IncomeSourcesFs
-import helpers.ComponentSpecBase
+import controllers.ControllerISpecHelper
+import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.admin.{IncomeSources, NavBarFs}
 import play.api.http.Status.OK
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyAndCeasedBusiness, multipleBusinessesWithBothPropertiesAndCeasedBusiness}
 
-class ViewAllCeasedBusinessesControllerISpec extends ComponentSpecBase {
+class ViewAllCeasedBusinessesControllerISpec extends ControllerISpecHelper {
 
-  val ViewAllCeasedBusinessesControllerUrl: String = controllers.manageBusinesses.cease.routes.ViewAllCeasedBusinessesController.show(false).url
   val pageTitleMsgKey = "manageBusinesses.ceased.heading"
   val soleTraderBusinessName1: String = "thirdBusiness"
   val ceaseMessage: String = messagesAPI("cease-income-sources.cease")
@@ -37,45 +37,59 @@ class ViewAllCeasedBusinessesControllerISpec extends ComponentSpecBase {
   val propertyStartDate1: String = "31 December 2019"
   val ceasedBusinessName: String = "ceasedBusiness"
 
-  s"calling GET $ViewAllCeasedBusinessesControllerUrl" should {
-    "render the Cease Income Source page for an Individual" when {
-      "User is authorised" in {
-        Given("I wiremock stub a successful Income Source Details response with multiple businesses and a uk property")
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesWithBothPropertiesAndCeasedBusiness)
-        When(s"I call GET ${ViewAllCeasedBusinessesControllerUrl}")
-        val res = IncomeTaxViewChangeFrontendManageBusinesses.getViewAllCeasedBusinesses
-        verifyIncomeSourceDetailsCall(testMtditid)
+  def getPath(mtdRole: MTDUserRole): String = {
+    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    pathStart + "/manage-your-businesses/ceased-businesses"
+  }
 
-        res should have(
-          httpStatus(OK),
-          pageTitleIndividual(pageTitleMsgKey),
-          elementTextByID("ceased-businesses-table-head-name")(businessNameMessage),
-          elementTextByID("ceased-business-table-row-trading-name-0")(soleTraderBusinessName1),
-          elementTextByID("ceased-business-table-row-date-ended-0")(propertyEndDate),
-          elementTextByID("ceased-businesses-table-head-date-started")(startDateMessage),
-          elementTextByID("ceased-business-table-row-date-started-0")(propertyStartDate),
-        )
-      }
+  mtdAllRoles.foreach { mtdUserRole =>
+    val path = getPath(mtdUserRole)
+    val additionalCookies = getAdditionalCookies(mtdUserRole)
+    s"GET $path" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          "render the Cease Income Source page" when {
+            "the user has multipleBusinessesWithBothPropertiesAndCeasedBusiness" in {
+              stubAuthorised(mtdUserRole)
+              disable(NavBarFs)
+              enable(IncomeSources)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesWithBothPropertiesAndCeasedBusiness)
+              val result = buildGETMTDClient(path, additionalCookies).futureValue
+              verifyIncomeSourceDetailsCall(testMtditid)
 
-      "User is authorised with different data" in {
-        Given("I wiremock stub a successful Income Source Details response with a foreign property and a ceased business")
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)
-        When(s"I call GET ${ViewAllCeasedBusinessesControllerUrl}")
-        val res = IncomeTaxViewChangeFrontendManageBusinesses.getViewAllCeasedBusinesses
-        verifyIncomeSourceDetailsCall(testMtditid)
+              result should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, pageTitleMsgKey),
+                elementTextByID("ceased-businesses-table-head-name")(businessNameMessage),
+                elementTextByID("ceased-business-table-row-trading-name-0")(soleTraderBusinessName1),
+                elementTextByID("ceased-business-table-row-date-ended-0")(propertyEndDate),
+                elementTextByID("ceased-businesses-table-head-date-started")(startDateMessage),
+                elementTextByID("ceased-business-table-row-date-started-0")(propertyStartDate),
+              )
+            }
 
-        res should have(
-          httpStatus(OK),
-          pageTitleIndividual(pageTitleMsgKey),
-          elementTextByID("ceased-businesses-table-head-name")(businessNameMessage),
-          elementTextByID("ceased-businesses-table-head-date-ended")(ceasedDateMessage),
-          elementTextByID("ceased-business-table-row-trading-name-0")(ceasedBusinessName),
-          elementTextByID("ceased-businesses-table-head-date-started")(startDateMessage),
-          elementTextByID("ceased-business-table-row-date-ended-0")(propertyStartDate1),
-          elementTextByID("ceased-business-table-row-date-started-0")(propertyStartDate)
-        )
+            "the user has foreignPropertyAndCeasedBusiness " in {
+              stubAuthorised(mtdUserRole)
+              disable(NavBarFs)
+              enable(IncomeSources)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)
+              val result = buildGETMTDClient(path, additionalCookies).futureValue
+              verifyIncomeSourceDetailsCall(testMtditid)
+
+              result should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, pageTitleMsgKey),
+                elementTextByID("ceased-businesses-table-head-name")(businessNameMessage),
+                elementTextByID("ceased-businesses-table-head-date-ended")(ceasedDateMessage),
+                elementTextByID("ceased-business-table-row-trading-name-0")(ceasedBusinessName),
+                elementTextByID("ceased-businesses-table-head-date-started")(startDateMessage),
+                elementTextByID("ceased-business-table-row-date-ended-0")(propertyStartDate1),
+                elementTextByID("ceased-business-table-row-date-started-0")(propertyStartDate)
+              )
+            }
+          }
+        }
+        testAuthFailures(path, mtdUserRole)
       }
     }
   }

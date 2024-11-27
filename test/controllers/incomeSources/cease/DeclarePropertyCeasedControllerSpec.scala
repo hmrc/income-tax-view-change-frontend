@@ -16,88 +16,55 @@
 
 package controllers.incomeSources.cease
 
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Cease, IncomeSourceJourneyType, JourneyType}
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, UkProperty}
+import enums.JourneyType.{Cease, JourneyType}
+import enums.MTDIndividual
 import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
-import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSourcesFs
+import models.admin.IncomeSources
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, verify}
-import org.scalatest.Assertion
+import org.mockito.Mockito.verify
+import play.api
 import play.api.http.Status
 import play.api.http.Status.SEE_OTHER
-import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import services.SessionService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData}
-import testUtils.TestSupport
-import uk.gov.hmrc.http.HttpClient
-import views.html.incomeSources.cease.DeclarePropertyCeased
 
-import scala.concurrent.Future
+class DeclarePropertyCeasedControllerSpec extends MockAuthActions with MockSessionService {
 
-class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthenticationPredicate with
-  MockIncomeSourceDetailsPredicate with FeatureSwitching with MockSessionService {
+  override def fakeApplication() = applicationBuilderWithAuthBindings()
+    .overrides(
+      api.inject.bind[SessionService].toInstance(mockSessionService)
+    ).build()
 
-  val mockHttpClient: HttpClient = mock(classOf[HttpClient])
-  val mockDeclarePropertyCeased: DeclarePropertyCeased = app.injector.instanceOf[DeclarePropertyCeased]
+  val testController = fakeApplication().injector.instanceOf[DeclarePropertyCeasedController]
 
-  object TestDeclarePropertyCeasedController extends DeclarePropertyCeasedController(
-    mockAuthService,
-    app.injector.instanceOf[DeclarePropertyCeased],
-    sessionService = mockSessionService,
-    testAuthenticator)(appConfig,
-    mcc = app.injector.instanceOf[MessagesControllerComponents],
-    ec, app.injector.instanceOf[ItvcErrorHandler],
-    app.injector.instanceOf[AgentItvcErrorHandler]) {
-
-    val titleUkProperty: String = s"${messages("htmlTitle", messages("incomeSources.cease.UK.heading"))}"
-    val titleAgentUkProperty: String = s"${messages("htmlTitle.agent", messages("incomeSources.cease.UK.heading"))}"
-    val headingUkProperty: String = messages("incomeSources.cease.UK.heading")
-
-    val titleForeignProperty: String = s"${messages("htmlTitle", messages("incomeSources.cease.FP.heading"))}"
-    val titleAgentForeignProperty: String = s"${messages("htmlTitle.agent", messages("incomeSources.cease.FP.heading"))}"
-    val headingForeignProperty: String = messages("incomeSources.cease.FP.heading")
-  }
-
-
-  def showCall(isAgent: Boolean, incomeSourceType: IncomeSourceType): Future[Result] = {
-    (isAgent, incomeSourceType) match {
-      case (true, UkProperty) => TestDeclarePropertyCeasedController.showAgent(UkProperty)(fakeRequestConfirmedClient())
-      case (_, UkProperty) => TestDeclarePropertyCeasedController.show(UkProperty)(fakeRequestWithNinoAndOrigin("pta"))
-      case (true, _) => TestDeclarePropertyCeasedController.showAgent(ForeignProperty)(fakeRequestConfirmedClient())
-      case (_, _) => TestDeclarePropertyCeasedController.show(ForeignProperty)(fakeRequestWithNinoAndOrigin("pta"))
+  def getHeader(incomeSourceType: IncomeSourceType): String = {
+    incomeSourceType match {
+      case UkProperty => messages("incomeSources.cease.UK.heading")
+      case _ => messages("incomeSources.cease.FP.heading")
     }
   }
 
-  def submitCall(isAgent: Boolean, incomeSourceType: IncomeSourceType, formBody: Option[Map[String, String]] = None): Future[Result] = {
-    val formData = formBody.getOrElse(Map(
-      DeclareIncomeSourceCeasedForm.declaration -> "true",
-      DeclareIncomeSourceCeasedForm.ceaseCsrfToken -> "12345"
-    ))
-
-    (isAgent, incomeSourceType) match {
-      case (true, UkProperty) => TestDeclarePropertyCeasedController.submitAgent(UkProperty)(fakePostRequestConfirmedClient()
-        .withFormUrlEncodedBody(formData.toSeq: _*))
-      case (_, UkProperty) => TestDeclarePropertyCeasedController.submit(UkProperty)(fakePostRequestWithNinoAndOrigin("pta")
-        .withFormUrlEncodedBody(formData.toSeq: _*))
-      case (true, _) => TestDeclarePropertyCeasedController.submitAgent(ForeignProperty)(fakePostRequestConfirmedClient()
-        .withFormUrlEncodedBody(formData.toSeq: _*))
-      case (_, _) => TestDeclarePropertyCeasedController.submit(ForeignProperty)(fakePostRequestWithNinoAndOrigin("pta")
-        .withFormUrlEncodedBody(formData.toSeq: _*))
+  def getTitle(incomeSourceType: IncomeSourceType, isAgent: Boolean): String = {
+    val title = getHeader(incomeSourceType)
+    if (isAgent) {
+      messages("htmlTitle.agent", s"$title")
+    } else {
+      messages("htmlTitle", s"$title")
     }
   }
 
   def verifySetMongoKey(key: String, value: String, journeyType: JourneyType): Unit = {
     val argumentKey: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
     val argumentValue: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-    val argumentJourneyType: ArgumentCaptor[IncomeSourceJourneyType] = ArgumentCaptor.forClass(classOf[IncomeSourceJourneyType])
+    val argumentJourneyType: ArgumentCaptor[JourneyType] = ArgumentCaptor.forClass(classOf[JourneyType])
 
     verify(mockSessionService).setMongoKey(argumentKey.capture(), argumentValue.capture(), argumentJourneyType.capture())(any(), any())
     argumentKey.getValue shouldBe key
@@ -105,268 +72,137 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
     argumentJourneyType.getValue.toString shouldBe journeyType.toString
   }
 
-  "DeclarePropertyCeasedController.show / DeclarePropertyCeasedController.showAgent" should {
-    "return 200 OK" when {
-      def testViewReturnsOKWithCorrectContent(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
-        setupMockAuthorisationSuccess(isAgent)
-        enable(IncomeSourcesFs)
-        mockPropertyIncomeSource()
+  mtdAllRoles.foreach { mtdRole =>
+    List(UkProperty, ForeignProperty).foreach { incomeSourceType =>
+      val isAgent = mtdRole != MTDIndividual
+      s"show${if (isAgent) "Agent"}($incomeSourceType)" when {
+        val fakeRequest = getFakeRequestBasedOnMTDUserType(mtdRole)
+        val action = if (mtdRole == MTDIndividual) testController.show(incomeSourceType) else testController.showAgent(incomeSourceType)
+        s"the user is authenticated as a $mtdRole" should {
+          "return 200 OK" when {
+            "income source FS Enabled" in {
+              setupMockSuccess(mtdRole)
+              enable(IncomeSources)
+              mockPropertyIncomeSource()
 
-        setupMockCreateSession(true)
-        setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
+              setupMockCreateSession(true)
+              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
 
-        val result = showCall(isAgent, incomeSourceType)
-        val document: Document = Jsoup.parse(contentAsString(result))
-        status(result) shouldBe Status.OK
-
-        (isAgent, incomeSourceType) match {
-          case (true, UkProperty) =>
-            document.title shouldBe TestDeclarePropertyCeasedController.titleAgentUkProperty
-            document.select("legend:nth-child(1)").text shouldBe TestDeclarePropertyCeasedController.headingUkProperty
-          case (_, UkProperty) =>
-            document.title shouldBe TestDeclarePropertyCeasedController.titleUkProperty
-            document.select("legend:nth-child(1)").text shouldBe TestDeclarePropertyCeasedController.headingUkProperty
-          case (true, _) =>
-            document.title shouldBe TestDeclarePropertyCeasedController.titleAgentForeignProperty
-            document.select("legend:nth-child(1)").text shouldBe TestDeclarePropertyCeasedController.headingForeignProperty
-          case (_, _) =>
-            document.title shouldBe TestDeclarePropertyCeasedController.titleForeignProperty
-            document.select("legend:nth-child(1)").text shouldBe TestDeclarePropertyCeasedController.headingForeignProperty
-        }
-      }
-
-      "income source is UK Property and FS Enabled - Individual" in {
-        testViewReturnsOKWithCorrectContent(isAgent = false, UkProperty)
-      }
-      "income source is UK Property and FS Enabled - Agent" in {
-        testViewReturnsOKWithCorrectContent(isAgent = false, UkProperty)
-      }
-      "income source is Foreign Property and FS Enabled - Individual" in {
-        testViewReturnsOKWithCorrectContent(isAgent = false, ForeignProperty)
-      }
-      "income source is Foreign Property and FS Enabled - Agent" in {
-        testViewReturnsOKWithCorrectContent(isAgent = true, ForeignProperty)
-      }
-    }
-
-
-    "return 303 SEE_OTHER and redirect to home page" when {
-      def testFeatureSwitchRedirectsToHomePage(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
-        setupMockAuthorisationSuccess(isAgent)
-
-        disable(IncomeSourcesFs)
-        mockPropertyIncomeSource()
-
-        val result: Future[Result] = showCall(isAgent, incomeSourceType)
-        status(result) shouldBe Status.SEE_OTHER
-
-        val expectedRedirectUrl: String = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
-        redirectLocation(result) shouldBe Some(expectedRedirectUrl)
-      }
-
-      "navigating to the UK Property declaration page with FS Disabled - Individual" in {
-        testFeatureSwitchRedirectsToHomePage(isAgent = false, UkProperty)
-      }
-      "navigating to the UK Property declaration page with FS Disabled - Agent" in {
-        testFeatureSwitchRedirectsToHomePage(isAgent = true, UkProperty)
-      }
-      "navigating to the Foreign Property declaration page with FS Disabled - Individual" in {
-        testFeatureSwitchRedirectsToHomePage(isAgent = false, ForeignProperty)
-      }
-      "navigating to the Foreign Property declaration page with FS Disabled - Agent" in {
-        testFeatureSwitchRedirectsToHomePage(isAgent = true, ForeignProperty)
-      }
-    }
-
-
-    "return 303 SEE_OTHER and redirect to error page" when {
-      def testUnauthorisedUserRedirectsToSignIn(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
-        setupMockAuthorisationException(isAgent)
-
-        val result: Future[Result] = showCall(isAgent, incomeSourceType)
-        status(result) shouldBe Status.SEE_OTHER
-
-        val expectedRedirectUrl: String = if (isAgent) controllers.agent.routes.ClientRelationshipFailureController.show.url else
-          controllers.errors.routes.NotEnrolledController.show.url
-        redirectLocation(result) shouldBe Some(expectedRedirectUrl)
-      }
-
-      "unauthorised user navigates to UK Property declaration page - Individual" in {
-        testUnauthorisedUserRedirectsToSignIn(isAgent = false, UkProperty)
-      }
-      "unauthorised user navigates to UK Property declaration page - Agent" in {
-        testUnauthorisedUserRedirectsToSignIn(isAgent = true, UkProperty)
-      }
-      "unauthorised user navigates to Foreign Property declaration page - Individual" in {
-        testUnauthorisedUserRedirectsToSignIn(isAgent = false, ForeignProperty)
-      }
-      "unauthorised user navigates to Foreign Property declaration page - Agent" in {
-        testUnauthorisedUserRedirectsToSignIn(isAgent = true, ForeignProperty)
-      }
-    }
-
-    "redirect to the Cannot Go Back page" when {
-      def setupCompletedCeaseJourney(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
-        setupMockAuthorisationSuccess(isAgent)
-        disableAllSwitches()
-        enable(IncomeSourcesFs)
-        mockBothPropertyBothBusiness()
-        setupMockCreateSession(true)
-        setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
-
-        val result = if (isAgent) {
-          TestDeclarePropertyCeasedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
-        } else {
-          TestDeclarePropertyCeasedController.show(incomeSourceType)(fakeRequestWithActiveSession)
-        }
-
-        val expectedRedirectUrl = if (isAgent) {
-          routes.IncomeSourceCeasedBackErrorController.showAgent(incomeSourceType).url
-        } else {
-          routes.IncomeSourceCeasedBackErrorController.show(incomeSourceType).url
-        }
-
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(expectedRedirectUrl)
-      }
-
-      "UK Property journey is complete - Individual" in {
-        setupCompletedCeaseJourney(isAgent = false, UkProperty)
-      }
-      "UK Property journey is complete - Agent" in {
-        setupCompletedCeaseJourney(isAgent = true, UkProperty)
-      }
-      "Foreign Property journey is complete - Individual" in {
-        setupCompletedCeaseJourney(isAgent = false, ForeignProperty)
-      }
-      "Foreign Property journey is complete - Agent" in {
-        setupCompletedCeaseJourney(isAgent = true, ForeignProperty)
-      }
-      "Self Employment journey is complete - Individual" in {
-        setupCompletedCeaseJourney(isAgent = false, SelfEmployment)
-      }
-      "Self Employment journey is complete - Agent" in {
-        setupCompletedCeaseJourney(isAgent = true, SelfEmployment)
-      }
-    }
-
-  }
-
-  "DeclarePropertyCeasedController.submit / DeclarePropertyCeasedController.submitAgent" should {
-    "return 200 OK" when {
-      def testSubmitReturnsOKAndSetsMongoData(isAgent: Boolean, incomeSourceType: IncomeSourceType): Unit = {
-        setupMockAuthorisationSuccess(isAgent)
-        enable(IncomeSourcesFs)
-        mockPropertyIncomeSource()
-        setupMockSetSessionKeyMongo(Right(true))
-
-        val journeyType = IncomeSourceJourneyType(Cease, incomeSourceType)
-        val redirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
-          (isAgent, incomeSourceType) match {
-            case (true, _) => controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(None, incomeSourceType).url
-            case (false, _) => controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, incomeSourceType).url
+              val result = action(fakeRequest)
+              val document: Document = Jsoup.parse(contentAsString(result))
+              status(result) shouldBe Status.OK
+              document.title shouldBe getTitle(incomeSourceType, isAgent)
+              document.select("legend:nth-child(1)").text shouldBe getHeader(incomeSourceType)
+            }
           }
-        val result = submitCall(isAgent, incomeSourceType)
+          "return 303 SEE_OTHER and redirect to home page" when {
+            "income sources FS Disabled" in {
+              setupMockSuccess(mtdRole)
+              disable(IncomeSources)
+              mockPropertyIncomeSource()
+              val result = action(fakeRequest)
+              val expectedRedirectUrl: String = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+              redirectLocation(result) shouldBe Some(expectedRedirectUrl)
 
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(redirectUrl(isAgent, incomeSourceType))
-        verifySetMongoKey(CeaseIncomeSourceData.ceaseIncomeSourceDeclare, "true", journeyType)
-      }
+            }
+          }
 
-      "UK Property cease declaration is completed - Individual" in {
-        testSubmitReturnsOKAndSetsMongoData(isAgent = false, UkProperty)
-      }
-      "UK Property cease declaration is completed - Agent" in {
-        testSubmitReturnsOKAndSetsMongoData(isAgent = true, UkProperty)
-      }
-      "Foreign Property cease declaration is completed - Individual" in {
-        testSubmitReturnsOKAndSetsMongoData(isAgent = false, ForeignProperty)
-      }
-      "Foreign Property cease declaration is completed - Agent" in {
-        testSubmitReturnsOKAndSetsMongoData(isAgent = true, ForeignProperty)
-      }
-    }
+          "redirect to the Cannot Go Back page" when {
+            "journey is complete" in {
+              setupMockSuccess(mtdRole)
+              disableAllSwitches()
+              enable(IncomeSources)
+              mockBothPropertyBothBusiness()
+              setupMockCreateSession(true)
+              setupMockGetMongo(Right(Some(completedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
 
+              val result = action(fakeRequest)
 
-    "return 303 SEE_OTHER and redirect to home page" when {
-      def testFeatureSwitchRedirectsToHomePage(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
-        setupMockAuthorisationSuccess(isAgent)
+              val expectedRedirectUrl = if (isAgent) {
+                routes.IncomeSourceCeasedBackErrorController.showAgent(incomeSourceType).url
+              } else {
+                routes.IncomeSourceCeasedBackErrorController.show(incomeSourceType).url
+              }
 
-        disable(IncomeSourcesFs)
-        mockPropertyIncomeSource()
-
-        lazy val result: Future[Result] = submitCall(isAgent, incomeSourceType)
-        val expectedRedirectUrl: String = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
-
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(expectedRedirectUrl)
-      }
-
-      "POST call to the UK Property declaration page with FS Disabled - Individual" in {
-        testFeatureSwitchRedirectsToHomePage(isAgent = false, UkProperty)
-      }
-      "POST call to the UK Property declaration page with FS Disabled - Agent" in {
-        testFeatureSwitchRedirectsToHomePage(isAgent = true, UkProperty)
-      }
-      "POST call to the Foreign Property declaration page with FS Disabled - Individual" in {
-        testFeatureSwitchRedirectsToHomePage(isAgent = false, ForeignProperty)
-      }
-      "POST call to the Foreign Property declaration page with FS Disabled - Agent" in {
-        testFeatureSwitchRedirectsToHomePage(isAgent = true, ForeignProperty)
-      }
-    }
-
-
-    "return 400 BAD_REQUEST" when {
-      def testInvalidForm(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
-        setupMockAuthorisationSuccess(isAgent)
-        enable(IncomeSourcesFs)
-        mockPropertyIncomeSource()
-        setupMockSetSessionKeyMongo(Right(true))
-        val invalidForm = Map(DeclareIncomeSourceCeasedForm.declaration -> "invalid")
-        lazy val result = submitCall(isAgent, incomeSourceType, Some(invalidForm))
-
-        status(result) shouldBe Status.BAD_REQUEST
+              status(result) shouldBe SEE_OTHER
+              redirectLocation(result) shouldBe Some(expectedRedirectUrl)
+            }
+          }
+        }
+        testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
       }
 
-      "UK Property cease declaration is not completed - Individual" in {
-        testInvalidForm(isAgent = false, UkProperty)
-      }
-      "UK Property cease declaration is not completed - Agent" in {
-        testInvalidForm(isAgent = true, UkProperty)
-      }
-      "Foreign Property cease declaration is not completed - Individual" in {
-        testInvalidForm(isAgent = false, ForeignProperty)
-      }
-      "Foreign Property cease declaration is not completed - Agent" in {
-        testInvalidForm(isAgent = true, ForeignProperty)
-      }
-    }
+      s"submit${if (isAgent) "Agent"}($incomeSourceType)" when {
+        val action = if (mtdRole == MTDIndividual) testController.submit(incomeSourceType) else testController.submitAgent(incomeSourceType)
+        val fakeRequest = getFakeRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
+        val validFormData = Map(
+          DeclareIncomeSourceCeasedForm.declaration -> "true",
+          DeclareIncomeSourceCeasedForm.ceaseCsrfToken -> "12345"
+        )
+        s"the user is authenticated as a $mtdRole" should {
+          "redirect to end date controller" when {
+            "cease declaration is completed" in {
+              setupMockSuccess(mtdRole)
+              enable(IncomeSources)
+              mockPropertyIncomeSource()
+              setupMockSetSessionKeyMongo(Right(true))
 
+              val journeyType = JourneyType(Cease, incomeSourceType)
+              val redirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
+                (isAgent, incomeSourceType) match {
+                  case (true, _) => controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(None, incomeSourceType).url
+                  case (false, _) => controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, incomeSourceType).url
+                }
 
-    "return 500 INTERNAL_SERVER_ERROR" when {
-      def testMongoException(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
-        setupMockAuthorisationSuccess(isAgent)
-        enable(IncomeSourcesFs)
-        mockPropertyIncomeSource()
-        setupMockSetSessionKeyMongo(Left(new Exception))
+              val result = action(fakeRequest.withFormUrlEncodedBody(validFormData.toSeq: _*))
 
-        lazy val result = submitCall(isAgent, incomeSourceType)
+              status(result) shouldBe Status.SEE_OTHER
+              redirectLocation(result) shouldBe Some(redirectUrl(isAgent, incomeSourceType))
+              verifySetMongoKey(CeaseIncomeSourceData.ceaseIncomeSourceDeclare, "true", journeyType)
+            }
+          }
 
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
+          "return 303 SEE_OTHER and redirect to home page" when {
+            "income source FS Disabled" in {
+              setupMockSuccess(mtdRole)
 
-      "Exception received from Mongo while setting UK Property Declaration - Individual" in {
-        testMongoException(isAgent = false, UkProperty)
-      }
-      "Exception received from Mongo while setting UK Property Declaration - Agent" in {
-        testMongoException(isAgent = true, UkProperty)
-      }
-      "Exception received from Mongo while setting Foreign Property Declaration - Individual" in {
-        testMongoException(isAgent = false, ForeignProperty)
-      }
-      "Exception received from Mongo while setting Foreign Property Declaration - Agent" in {
-        testMongoException(isAgent = true, ForeignProperty)
+              disable(IncomeSources)
+              mockPropertyIncomeSource()
+
+              val result = action(fakeRequest.withFormUrlEncodedBody(validFormData.toSeq: _*))
+              val expectedRedirectUrl: String = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+
+              status(result) shouldBe Status.SEE_OTHER
+              redirectLocation(result) shouldBe Some(expectedRedirectUrl)
+            }
+          }
+
+          "return 400 BAD_REQUEST" when {
+            "cease declaration is not completed" in {
+              setupMockSuccess(mtdRole)
+              enable(IncomeSources)
+              mockPropertyIncomeSource()
+              setupMockSetSessionKeyMongo(Right(true))
+              val invalidForm = Map(DeclareIncomeSourceCeasedForm.declaration -> "invalid")
+              val result = action(fakeRequest.withFormUrlEncodedBody(invalidForm.toSeq: _*))
+
+              status(result) shouldBe Status.BAD_REQUEST
+            }
+          }
+
+          "return 500 INTERNAL_SERVER_ERROR" when {
+            "Exception received from Mongo" in {
+              setupMockSuccess(mtdRole)
+              enable(IncomeSources)
+              mockPropertyIncomeSource()
+              setupMockSetSessionKeyMongo(Left(new Exception))
+              val result = action(fakeRequest.withFormUrlEncodedBody(validFormData.toSeq: _*))
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+
+            }
+          }
+        }
+        testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
       }
     }
   }

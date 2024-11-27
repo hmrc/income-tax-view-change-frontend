@@ -16,14 +16,12 @@
 
 package controllers.incomeSources.cease
 
-import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.FeatureSwitching
+import auth.MtdItUser
+import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.{IncomeSourceType, InitialPage, SelfEmployment}
 import enums.JourneyType.{Cease, IncomeSourceJourneyType, JourneyType}
 import forms.incomeSources.cease.CeaseIncomeSourceEndDateFormProvider
-import implicits.ImplicitDateFormatterImpl
 import models.admin.IncomeSourcesNewJourney
 import models.core.IncomeSourceIdHash.mkFromQueryString
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
@@ -33,7 +31,8 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{DateService, SessionService}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.JourneyChecker
 import views.html.incomeSources.cease.IncomeSourceEndDate
 
 import java.time.LocalDate
@@ -41,18 +40,17 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
+class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,
                                               val form: CeaseIncomeSourceEndDateFormProvider,
                                               val incomeSourceEndDate: IncomeSourceEndDate,
                                               val sessionService: SessionService,
-                                              val auth: AuthenticatorPredicate)
+                                              val itvcErrorHandler: ItvcErrorHandler,
+                                              val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                              (implicit val appConfig: FrontendAppConfig,
                                               mcc: MessagesControllerComponents,
                                               val ec: ExecutionContext,
-                                              implicit val dateService: DateService,
-                                              val itvcErrorHandler: ItvcErrorHandler,
-                                              val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyChecker {
+                                              implicit val dateService: DateService)
+  extends FrontendController(mcc) with I18nSupport with JourneyChecker {
 
   private def getBackCall(isAgent: Boolean, incomeSourceType: IncomeSourceType): Call = {
     (isAgent, incomeSourceType) match {
@@ -83,7 +81,7 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
 
   private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-  def show(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
       val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
       handleRequest(
@@ -94,7 +92,7 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
       )
   }
 
-  def showAgent(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit mtdItUser =>
       val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
       handleRequest(
@@ -105,7 +103,7 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
       )
   }
 
-  def showChange(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def showChange(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
       val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
       handleRequest(
@@ -116,7 +114,7 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
       )
   }
 
-  def showChangeAgent(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showChangeAgent(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit mtdItUser =>
       val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
       handleRequest(
@@ -167,7 +165,7 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
         errorHandler(isAgent).showInternalServerError()
     }
 
-  def submit(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def submit(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
       val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
       handleSubmitRequest(
@@ -178,7 +176,7 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
       )
   }
 
-  def submitAgent(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def submitAgent(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit mtdItUser =>
       val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
       handleSubmitRequest(
@@ -189,7 +187,7 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
       )
   }
 
-  def submitChange(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def submitChange(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
       val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
       handleSubmitRequest(
@@ -200,7 +198,7 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
       )
   }
 
-  def submitChangeAgent(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def submitChangeAgent(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit mtdItUser =>
       val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
       handleSubmitRequest(

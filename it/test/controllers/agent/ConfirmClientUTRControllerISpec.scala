@@ -16,10 +16,10 @@
 
 package controllers.agent
 
-import controllers.ControllerISpecHelper
 import audit.models.ConfirmClientDetailsAuditModel
+import controllers.ControllerISpecHelper
 import enums.{MTDPrimaryAgent, MTDSupportingAgent}
-import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub, MTDPrimaryAgentAuthStub, MTDSupportingAgentAuthStub}
+import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status._
@@ -36,7 +36,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
       val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, false)
       "is authenticated, with a valid agent and client delegated enrolment" should {
         "render the confirm client utr page with an empty black banner" in {
-          MTDPrimaryAgentAuthStub.stubAuthorised()
+          stubAuthorised(MTDPrimaryAgent)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
           val result = buildMTDClient(path, additionalCookies).futureValue
@@ -61,7 +61,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
       val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, false)
       "is authenticated, with a valid agent and client delegated enrolment" should {
         "render the confirm client utr page with an empty black banner" in {
-          MTDSupportingAgentAuthStub.stubAuthorised()
+          stubAuthorised(MTDSupportingAgent)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
           val result = buildGETMTDClient(path, additionalCookies).futureValue
@@ -91,7 +91,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
       val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, false)
       "is authenticated, with a valid agent and client delegated enrolment" should {
         s"redirect ($SEE_OTHER) to the agent home page" in {
-          MTDPrimaryAgentAuthStub.stubAuthorised()
+          stubAuthorised(MTDPrimaryAgent)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
           val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
@@ -113,7 +113,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
       val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, false)
       "is authenticated, with a valid agent and client delegated enrolment" should {
         s"redirect ($SEE_OTHER) to the agent home page" in {
-          MTDSupportingAgentAuthStub.stubAuthorised()
+          stubAuthorised(MTDSupportingAgent)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
           val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue

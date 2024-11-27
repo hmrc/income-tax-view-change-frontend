@@ -17,7 +17,7 @@
 package controllers.agent.claimToAdjustPoa
 
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDAgentAuthStub}
+import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDPrimaryAgentAuthStub, SessionDataStub}
 import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.{Increase, MainIncomeLower, PoaAmendmentData}
 import models.core.{CheckMode, NormalMode}
@@ -57,7 +57,8 @@ class EnterPoaAmountControllerISpec extends ComponentSpecBase {
   override def beforeEach(): Unit = {
     super.beforeEach()
     await(sessionService.setMongoData(None))
-    MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, false)
+    SessionDataStub.stubGetSessionDataResponseSuccess()
+    MTDPrimaryAgentAuthStub.stubAuthorised()
   }
 
   def get(url: String): WSResponse = {
