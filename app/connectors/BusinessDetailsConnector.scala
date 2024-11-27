@@ -24,67 +24,69 @@ import models.core.{NinoResponse, NinoResponseError, NinoResponseSuccess}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import play.api.Logger
 import play.api.http.Status
-import play.api.http.Status.{NOT_FOUND, OK}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import play.api.http.Status.OK
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import utils.Headers.checkAndAddTestHeader
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class BusinessDetailsConnector @Inject()(val http: HttpClient,
-                                         val auditingService: AuditingService,
-                                         val appConfig: FrontendAppConfig
+class BusinessDetailsConnector @Inject()(
+                                          httpClient: HttpClientV2,
+                                          auditingService: AuditingService,
+                                          appConfig: FrontendAppConfig
                                         )(implicit val ec: ExecutionContext) extends RawResponseReads {
 
-  def getBusinessDetailsUrl(nino: String): String = {
+  private[connectors] def getBusinessDetailsUrl(nino: String): String = {
     s"${appConfig.itvcProtectedService}/income-tax-view-change/get-business-details/nino/$nino"
   }
 
-  def getIncomeSourcesUrl(mtditid: String): String = {
+  private[connectors] def getIncomeSourcesUrl(mtditid: String): String = {
     s"${appConfig.itvcProtectedService}/income-tax-view-change/income-sources/$mtditid"
   }
 
-  def getNinoLookupUrl(mtdRef: String): String = {
+  private[connectors] def getNinoLookupUrl(mtdRef: String): String = {
     s"${appConfig.itvcProtectedService}/income-tax-view-change/nino-lookup/$mtdRef"
   }
-
 
   def getBusinessDetails(nino: String)(implicit headerCarrier: HeaderCarrier): Future[IncomeSourceDetailsResponse] = {
     val url = getBusinessDetailsUrl(nino)
     Logger("application").debug(s"GET $url")
 
-    http.GET[HttpResponse](url) map { response =>
-      response.status match {
-        case OK =>
-          Logger("application").debug(s"RESPONSE status: ${response.status}, json: ${response.json}")
-          response.json.validate[IncomeSourceDetailsModel].fold(
-            invalid => {
-              Logger("application").error(s"$invalid")
-              IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error Parsing Income Source Details response")
-            },
-            valid => valid
-          )
-        case status =>
-          if (status == NOT_FOUND) {
-            Logger("application").warn(s"RESPONSE status: ${response.status}, body: ${response.body}")
-          } else if (status >= 500) {
+    httpClient
+      .get(url"$url")
+      .execute[HttpResponse]
+      .map { response =>
+        response.status match {
+          case OK =>
+            Logger("application").debug(s"RESPONSE status: ${response.status}, json: ${response.json}")
+            response.json.validate[IncomeSourceDetailsModel].fold(
+              invalid => {
+                Logger("application").error(s"$invalid")
+                IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error Parsing Income Source Details response")
+              },
+              valid => valid
+            )
+          case status if status >= 500 =>
             Logger("application").error(s"RESPONSE status: ${response.status}, body: ${response.body}")
-          } else {
+            IncomeSourceDetailsError(response.status, response.body)
+          case _ =>
             Logger("application").warn(s"RESPONSE status: ${response.status}, body: ${response.body}")
-          }
-          IncomeSourceDetailsError(response.status, response.body)
+            IncomeSourceDetailsError(response.status, response.body)
+        }
+      }.recover {
+        case ex =>
+          Logger("application").error(s"Unexpected future failed error, ${ex.getMessage}")
+          IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, ${ex.getMessage}")
       }
-    } recover {
-      case ex =>
-        Logger("application").error(s"Unexpected future failed error, ${ex.getMessage}")
-        IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, ${ex.getMessage}")
-    }
   }
 
   def modifyHeaderCarrier(path: String,
                           headerCarrier: HeaderCarrier
                          )(implicit appConfig: FrontendAppConfig): HeaderCarrier = {
+
     val manageBusinessesPattern = """.*/manage-your-businesses/.*""".r
     val incomeSourcesPattern = """.*/income-sources/.*""".r
 
@@ -98,47 +100,51 @@ class BusinessDetailsConnector @Inject()(val http: HttpClient,
 
 
   def getIncomeSources()(
-    implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUserOptionNino[_]): Future[IncomeSourceDetailsResponse] = {
-
-    //Check and add test headers Gov-Test-Scenario for dynamic stub Income Sources Created Scenarios for Income Source Journey
-    val hc = modifyHeaderCarrier(mtdItUser.path, headerCarrier)(appConfig)
+    implicit headerCarrier: HeaderCarrier,
+    mtdItUser: MtdItUserOptionNino[_]
+  ): Future[IncomeSourceDetailsResponse] = {
 
     val url = getIncomeSourcesUrl(mtdItUser.mtditid)
     Logger("application").debug(s"GET $url")
 
-    //Passing the updated headercarrier implicitly to the request
-    http.GET[HttpResponse](url)(implicitly, hc = hc, implicitly) map { response =>
-      response.status match {
-        case OK =>
-          Logger("application").debug(s"RESPONSE status: ${response.status}, json: ${response.json}")
-          response.json.validate[IncomeSourceDetailsModel].fold(
-            invalid => {
-              Logger("application").error(s"$invalid")
-              IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error Parsing Income Source Details response")
-            },
-            valid => {
-              auditingService.extendedAudit(IncomeSourceDetailsResponseAuditModel(
-                mtdItUser,
-                valid.businesses.map(_.incomeSourceId),
-                valid.properties.map(_.incomeSourceId),
-                valid.yearOfMigration
-              ))
-              valid
-            }
-          )
-        case status =>
-          if (status >= 500) {
+    val hc: HeaderCarrier = modifyHeaderCarrier(mtdItUser.path, headerCarrier)(appConfig)
+
+    httpClient
+      .get(url"$url")
+      .setHeader(hc.extraHeaders:_*)
+      .execute[HttpResponse]
+      .map { response =>
+        response.status match {
+          case OK =>
+            Logger("application").debug(s"RESPONSE status: ${response.status}, json: ${response.json}")
+            response.json.validate[IncomeSourceDetailsModel].fold(
+              invalid => {
+                Logger("application").error(s"$invalid")
+                IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error Parsing Income Source Details response")
+              },
+              valid => {
+                auditingService.extendedAudit(
+                  IncomeSourceDetailsResponseAuditModel(
+                    mtdItUser,
+                    valid.businesses.map(_.incomeSourceId),
+                    valid.properties.map(_.incomeSourceId),
+                    valid.yearOfMigration
+                  ))
+                valid
+              }
+            )
+          case status if (status >= 500) =>
             Logger("application").error(s"RESPONSE status: ${response.status}, body: ${response.body}")
-          } else {
+            IncomeSourceDetailsError(response.status, response.body)
+          case _ =>
             Logger("application").warn(s"RESPONSE status: ${response.status}, body: ${response.body}")
-          }
-          IncomeSourceDetailsError(response.status, response.body)
+            IncomeSourceDetailsError(response.status, response.body)
+        }
+      }.recover {
+        case ex =>
+          Logger("application").error(s"Unexpected future failed error, ${ex.getMessage}")
+          IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, ${ex.getMessage}")
       }
-    } recover {
-      case ex =>
-        Logger("application").error(s"Unexpected future failed error, ${ex.getMessage}")
-        IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, ${ex.getMessage}")
-    }
   }
 
   def getNino(mtdRef: String)(implicit headerCarrier: HeaderCarrier): Future[NinoResponse] = {
@@ -146,26 +152,29 @@ class BusinessDetailsConnector @Inject()(val http: HttpClient,
     val url = getNinoLookupUrl(mtdRef)
     Logger("application").debug(s"GET $url")
 
-    http.GET[HttpResponse](url) map { response =>
-      response.status match {
-        case OK =>
-          Logger("application").debug(s"RESPONSE status: ${response.status}, json: ${response.json}")
-          response.json.validate[NinoResponseSuccess].fold(
-            invalid => {
-              Logger("application").error(s"Json Validation Error - $invalid")
-              NinoResponseError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Nino Response")
-            },
-            valid => valid
-          )
-        case status =>
-          if (status >= 500) {
+    httpClient
+      .get(url"$url")
+      .execute[HttpResponse]
+      .map { response =>
+        response.status match {
+          case OK =>
+            Logger("application").debug(s"RESPONSE status: ${response.status}, json: ${response.json}")
+            response.json.validate[NinoResponseSuccess]
+              .fold(
+                invalid => {
+                  Logger("application").error(s"Json Validation Error - $invalid")
+                  NinoResponseError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Nino Response")
+                },
+                valid => valid
+              )
+          case status if status >= 500 =>
             Logger("application").error(s"RESPONSE status: ${response.status}, body: ${response.body}")
-          } else {
+            NinoResponseError(response.status, response.body)
+          case _ =>
             Logger("application").warn(s"RESPONSE status: ${response.status}, body: ${response.body}")
-          }
-          NinoResponseError(response.status, response.body)
-      }
-    } recover {
+            NinoResponseError(response.status, response.body)
+        }
+      } recover {
       case ex =>
         Logger("application").error(s"Unexpected future failed error, ${ex.getMessage}")
         NinoResponseError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, ${ex.getMessage}")
