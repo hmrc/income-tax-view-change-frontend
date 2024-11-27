@@ -107,8 +107,11 @@ class BusinessDetailsConnector @Inject()(
     val url = getIncomeSourcesUrl(mtdItUser.mtditid)
     Logger("application").debug(s"GET $url")
 
+    val hc: HeaderCarrier = modifyHeaderCarrier(mtdItUser.path, headerCarrier)(appConfig)
+
     httpClient
       .get(url"$url")
+      .setHeader(hc.extraHeaders:_*)
       .execute[HttpResponse]
       .map { response =>
         response.status match {
