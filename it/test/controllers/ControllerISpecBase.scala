@@ -83,6 +83,7 @@ trait ControllerISpecBase
       override def getCurrentDate: LocalDate = LocalDate.of(2023, 4, 5)
 
       override def getCurrentTaxYearEnd: Int = 2023
+
     }
 
   override implicit lazy val app: Application =

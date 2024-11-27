@@ -14,11 +14,11 @@
  * limitations under the License.
  *@
 
-@import models.optin.OptInCompletedViewModel
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
 @import models.ReportingFrequencyViewModel
+@import services.DateServiceInterface
 
 @this(
     mainTemplate: unifiedLayout,
@@ -31,7 +31,17 @@
     govukInsetText : GovukInsetText
 )
 
-@(viewModel: ReportingFrequencyViewModel)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(viewModel: ReportingFrequencyViewModel)(implicit messages: Messages, user: auth.MtdItUser[_], dateService: DateServiceInterface)
+
+@optInLink = {
+    @if(viewModel.optInTaxYears.size > 1) {
+        @linkComponent(controllers.optIn.routes.BeforeYouStartController.show(viewModel.isAgent).url, message = messages("reporting.frequency.manageReportingFrequency.optIn.link.generic"))
+    } else if (viewModel.optInTaxYears.size == 1 && viewModel.optInTaxYears.head == dateService.getCurrentTaxYear.nextYear) {
+        @linkComponent(controllers.optIn.routes.BeforeYouStartController.show(viewModel.isAgent).url, message = messages("reporting.frequency.manageReportingFrequency.optIn.link.onwards", viewModel.optInTaxYears.head.startYear.toString, viewModel.optInTaxYears.head.endYear.toString))
+    } else if (viewModel.optInTaxYears.size == 1) {
+        @linkComponent(controllers.optIn.routes.BeforeYouStartController.show(viewModel.isAgent).url, message = messages("reporting.frequency.manageReportingFrequency.optIn.link.taxyear", viewModel.optInTaxYears.head.startYear.toString, viewModel.optInTaxYears.head.endYear.toString))
+    }
+}
 
 @manageReportingFrequency = {
 
@@ -46,12 +56,20 @@
     }
 
     <ul class="govuk-list govuk-list--bullet">
-        <li>
-            @linkComponent(controllers.optIn.routes.BeforeYouStartController.show(viewModel.isAgent).url, message = messages("reporting.frequency.manageReportingFrequency.b1.link", viewModel.currentTaxYear.startYear.toString, viewModel.currentTaxYear.endYear.toString))
-        </li>
+        @if(optInLink.body.contains(controllers.optIn.routes.BeforeYouStartController.show(viewModel.isAgent).url)) {
+            <li>
+                @optInLink
+            </li>
+        }
         @viewModel.optOutJourneyUrl.map{ url =>
             <li>
-                @linkComponent(url, message = messages("reporting.frequency.manageReportingFrequency.b2.link", viewModel.nextTaxYear.startYear.toString, viewModel.nextTaxYear.endYear.toString))
+                @if(viewModel.optOutTaxYears.size > 1) {
+                    @linkComponent(url, message = messages("reporting.frequency.manageReportingFrequency.optOut.link.generic"))
+                } else if (viewModel.optOutTaxYears.size == 1 && viewModel.optOutTaxYears.head == dateService.getCurrentTaxYear.nextYear) {
+                    @linkComponent(url, message = messages("reporting.frequency.manageReportingFrequency.optOut.link.onwards", viewModel.optOutTaxYears.head.startYear.toString, viewModel.optOutTaxYears.head.endYear.toString))
+                } else if (viewModel.optOutTaxYears.size == 1) {
+                    @linkComponent(url, message = messages("reporting.frequency.manageReportingFrequency.optOut.link.taxyear", viewModel.optOutTaxYears.head.startYear.toString, viewModel.optOutTaxYears.head.endYear.toString))
+                }
             </li>
         }
     </ul>
