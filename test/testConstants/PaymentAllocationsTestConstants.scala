@@ -154,7 +154,7 @@ object PaymentAllocationsTestConstants {
     clearedAmount = Some(BigDecimal(500.00)),
     chargeType = Some(NIC4_WALES),
     mainType = Some("SA Payment on Account 1"),
-mainTransaction = Some("4920"),
+    mainTransaction = Some("4920"),
     items = Some(Seq(
       SubItem(
         subItemId = Some("1"),
@@ -306,13 +306,16 @@ mainTransaction = Some("4920"),
     )
   )
 
-  val testValidPaymentAllocationsModel: PaymentAllocations = PaymentAllocations(
-    Some(110.10), Some("Payment by Card"), Some(LocalDate.parse("2019-05-27")), Some("reference"),
-    Seq(
-      AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1")),
-      AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2"))
+  val testValidPaymentAllocationsModel: PaymentAllocations =
+    PaymentAllocations(
+      Some(110.10), Some("Payment by Card"),
+      Some(LocalDate.parse("2019-05-27")),
+      Some("reference"),
+      Seq(
+        AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1")),
+        AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2"))
+      )
     )
-  )
 
   val testValidLpiPaymentAllocationsModel: PaymentAllocations = PaymentAllocations(
     Some(110.10), Some("Payment by Card"), Some(LocalDate.parse("2019-05-27")), Some("reference"),
@@ -543,7 +546,7 @@ mainTransaction = Some("4920"),
 			|                }
 			|            ],
 			|            "mainType": "SA Payment on Account 1",
-      |            "mainTransaction": "4920",
+|            "mainTransaction": "4920",
 			|            "originalAmount": 500.0,
 			|            "outstandingAmount": 500.00,
 			|            "taxYear": "2018",
@@ -599,7 +602,7 @@ mainTransaction = Some("4920"),
 			|                }
 			|            ],
 			|            "mainType": "SA Payment on Account 1",
-      |            "mainTransaction": "4920",
+|            "mainTransaction": "4920",
 			|            "originalAmount": 500.0,
 			|            "outstandingAmount": 500.00,
 			|            "taxYear": "2018",
@@ -619,7 +622,7 @@ mainTransaction = Some("4920"),
 			|                    "dueDate": "2021-01-31",
 			|                    "outgoingPaymentMethod": "outgoingPaymentMethod",
 			|                    "paymentAmount": 2000.00,
-      |                    "clearingSAPDocument": "012345678912",
+|                    "clearingSAPDocument": "012345678912",
 			|                    "paymentId": "paymentLot-paymentLotItem",
 			|                    "paymentLot": "paymentLot",
 			|                    "paymentLotItem": "paymentLotItem",
@@ -628,7 +631,7 @@ mainTransaction = Some("4920"),
 			|                }
 			|            ],
 			|            "mainType": "SA Payment on Account 1",
-      |            "mainTransaction": "4920",
+|            "mainTransaction": "4920",
 			|            "originalAmount": 500.0,
 			|            "outstandingAmount": 500.00,
 			|            "taxYear": "2018",
@@ -699,7 +702,7 @@ mainTransaction = Some("4920"),
 			|                }
 			|            ],
 			|            "mainType": "SA Payment on Account 1",
-      |            "mainTransaction": "4920",
+|            "mainTransaction": "4920",
 			|            "originalAmount": 500.0,
 			|            "outstandingAmount": 500.00,
 			|            "taxYear": "2018",
@@ -726,7 +729,7 @@ mainTransaction = Some("4920"),
 			|                }
 			|            ],
 			|            "mainType": "SA Payment on Account 1",
-      |            "mainTransaction": "4920",
+|            "mainTransaction": "4920",
 			|            "originalAmount": 500.0,
 			|            "outstandingAmount": 200.00,
 			|            "taxYear": "2019",

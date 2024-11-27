@@ -27,6 +27,10 @@ case class Payments(payments: Seq[Payment]) extends PaymentsResponse
 
 case class PaymentsError(status: Int, error: String) extends PaymentsResponse
 
+object Payments {
+  implicit val format: Format[Payments] = Json.format[Payments]
+}
+
 sealed trait PaymentAllocationStatus
 
 case object FullyAllocatedPaymentStatus extends PaymentAllocationStatus
