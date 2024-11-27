@@ -20,7 +20,7 @@ import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.optOut.ConfirmOptOutSingleTaxYearForm
 import mocks.auth.MockAuthActions
 import mocks.services.MockOptOutService
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import models.incomeSourceDetails.TaxYear
 import models.optout.OptOutOneYearViewModel
 import play.api
@@ -72,7 +72,7 @@ SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOptOutSer
 
         s"return result with $OK status" in {
           setupMockSuccess(mtdUserRole)
-          enable(IncomeSources)
+          enable(IncomeSourcesFs)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
           mockRecallNextUpdatesPageOneYearOptOutViewModel(eligibleTaxYearResponse)
 
@@ -83,7 +83,7 @@ SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOptOutSer
         s"return result with $INTERNAL_SERVER_ERROR status" when {
           "there is no tax year eligible for opt out" in {
             setupMockSuccess(mtdUserRole)
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
             mockRecallNextUpdatesPageOneYearOptOutViewModel(noEligibleTaxYearResponse)
 
@@ -93,7 +93,7 @@ SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOptOutSer
 
           "opt out service fails" in {
             setupMockSuccess(mtdUserRole)
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
             mockRecallNextUpdatesPageOneYearOptOutViewModel(failedResponse)
 
@@ -115,7 +115,7 @@ SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOptOutSer
         s"return result with $SEE_OTHER status with redirect to $confirmOptOutPage" when {
           "Yes response is submitted" in {
             setupMockSuccess(mtdUserRole)
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
             mockRecallNextUpdatesPageOneYearOptOutViewModel(eligibleTaxYearResponse)
 
@@ -133,7 +133,7 @@ SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOptOutSer
 
           "No response is submitted" in {
             setupMockSuccess(mtdUserRole)
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
             mockRecallNextUpdatesPageOneYearOptOutViewModel(eligibleTaxYearResponse)
 
@@ -150,7 +150,7 @@ SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOptOutSer
         s"return result with $BAD_REQUEST status" when {
           "invalid response is submitted" in {
             setupMockSuccess(mtdUserRole)
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
             mockRecallNextUpdatesPageOneYearOptOutViewModel(eligibleTaxYearResponse)
 
@@ -165,7 +165,7 @@ SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOptOutSer
         s"return result with $INTERNAL_SERVER_ERROR status" when {
           "there is no tax year eligible for opt out" in {
             setupMockSuccess(mtdUserRole)
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
             mockRecallNextUpdatesPageOneYearOptOutViewModel(noEligibleTaxYearResponse)
 
@@ -175,7 +175,7 @@ SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOptOutSer
 
           "opt out service fails" in {
             setupMockSuccess(mtdUserRole)
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
             mockRecallNextUpdatesPageOneYearOptOutViewModel(failedResponse)
 
