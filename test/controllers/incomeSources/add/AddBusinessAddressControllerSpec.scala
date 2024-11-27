@@ -70,7 +70,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
 
   Seq(true, false).foreach { isChange =>
     mtdAllRoles.foreach { mtdRole =>
-      val fakeRequest = getFakeRequestBasedOnMTDUserType(mtdRole)
+      val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
       s"show${if (mtdRole != MTDIndividual) "Agent"}(isChange = $isChange)" when {
         val action = if (mtdRole == MTDIndividual) testAddBusinessAddressController.show(isChange) else testAddBusinessAddressController.showAgent(isChange)
         s"the user is authenticated as a $mtdRole" should {

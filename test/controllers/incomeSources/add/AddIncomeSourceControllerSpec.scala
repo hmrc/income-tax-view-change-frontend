@@ -55,7 +55,7 @@ class AddIncomeSourceControllerSpec extends MockAuthActions
   val controller = fakeApplication().injector.instanceOf[AddIncomeSourceController]
 
   mtdAllRoles.foreach { mtdRole =>
-    val fakeRequest = getFakeRequestBasedOnMTDUserType(mtdRole)
+    val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
     s"show${if (mtdRole != MTDIndividual) "Agent"}" when {
       val action = if (mtdRole == MTDIndividual) controller.show() else controller.showAgent()
       s"the user is authenticated as a $mtdRole" should {
