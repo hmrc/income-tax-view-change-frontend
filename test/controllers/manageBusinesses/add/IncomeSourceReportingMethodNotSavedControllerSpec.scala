@@ -24,7 +24,7 @@ import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockSessionService}
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers._
@@ -125,7 +125,7 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
         "return 200 OK" when {
           s"business type is $incomeSourceType" in {
             disableAllSwitches()
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             authenticate(isAgent = isAgent)
             setupMockGetIncomeSourceDetails()(ukPlusForeignPropertyAndSoleTraderNoLatency)
 

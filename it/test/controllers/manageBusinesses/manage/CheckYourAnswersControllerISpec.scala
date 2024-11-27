@@ -18,9 +18,9 @@ package controllers.manageBusinesses.manage
 
 import audit.models.ManageIncomeSourceCheckYourAnswersAuditModel
 import auth.MtdItUser
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{JourneyType, Manage}
+import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.incomeSourceDetails.{LatencyDetails, ManageIncomeSourceData, UIJourneySessionData}
@@ -99,7 +99,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
 
   def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
-    journeyType = JourneyType(Manage, incomeSourceType).toString,
+    journeyType = IncomeSourceJourneyType(Manage, incomeSourceType).toString,
     manageIncomeSourceData = Some(ManageIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), reportingMethod = Some(annual), taxYear = Some(2024))))
 
   s"calling GET $checkYourAnswersShowUKPropertyUrl" should {
@@ -107,7 +107,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
       "all session parameters are valid" in {
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         When(s"I call GET $checkYourAnswersShowUKPropertyUrl")
 
@@ -137,7 +137,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
       "all session parameters are valid" in {
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         When(s"I call GET $checkYourAnswersShowForeignPropertyUrl")
 
@@ -166,7 +166,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
       "all session parameters are valid" in {
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId), Some(annual), Some(taxYear.toInt), Some(false))))))
@@ -192,7 +192,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
       "Income Sources FS is Disabled" in {
 
         Given("Income Sources FS is disabled")
-        disable(IncomeSources)
+        disable(IncomeSourcesFs)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
@@ -220,7 +220,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
       "submitted with valid session data" in {
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
@@ -248,7 +248,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
       "submitted with valid session data" in {
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
@@ -275,7 +275,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
       "submitted with valid session data" in {
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
@@ -302,7 +302,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
     "redirect to home page" when {
       "Income Sources FS is disabled" in {
 
-        disable(IncomeSources)
+        disable(IncomeSourcesFs)
 
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)

@@ -37,11 +37,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
 
   def poaCyaUrl: String = controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent).url
 
-  def homeUrl: String = if (isAgent) {
-    controllers.routes.HomeController.showAgent.url
-  } else {
-    controllers.routes.HomeController.show().url
-  }
+  def homeUrl: String = controllers.routes.HomeController.show().url
 
   val testTaxYear = 2024
   val sessionService: PaymentOnAccountSessionService = app.injector.instanceOf[PaymentOnAccountSessionService]
@@ -49,29 +45,15 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
   override def beforeEach(): Unit = {
     super.beforeEach()
     await(sessionService.setMongoData(None))
-    if (isAgent) {
-      stubAuthorisedAgentUser(true, clientMtdId = testMtditid)
-    }
   }
 
   def get(url: String): WSResponse = {
-    IncomeTaxViewChangeFrontend.get(s"""${
-      if (isAgent) {
-        "/agents"
-      } else ""
-    }${url}""", additionalCookies = clientDetailsWithConfirmation)
+    IncomeTaxViewChangeFrontend.get(url, additionalCookies = clientDetailsWithConfirmation)
   }
 
-  def postSelectYourReason(isAgent: Boolean, answer: Option[SelectYourReason])(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+  def postSelectYourReason(answer: Option[SelectYourReason])(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
     val formProvider = app.injector.instanceOf[SelectYourReasonFormProvider]
-    IncomeTaxViewChangeFrontend.post(
-      uri = s"""${
-        if (isAgent) {
-          "/agents"
-        } else {
-          ""
-        }
-      }/adjust-poa/select-your-reason""",
+    IncomeTaxViewChangeFrontend.post("/adjust-poa/select-your-reason",
       additionalCookies = additionalCookies
     )(
       answer.fold(Map.empty[String, Seq[String]])(
@@ -307,7 +289,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
 
         When(s"I call POST")
 
-        val res = postSelectYourReason(isAgent, Some(MainIncomeLower))(clientDetailsWithConfirmation)
+        val res = postSelectYourReason(Some(MainIncomeLower))(clientDetailsWithConfirmation)
 
         res should have(
           httpStatus(SEE_OTHER),
@@ -337,7 +319,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
         await(sessionService.setMongoData(Some(PoaAmendmentData())))
 
         When(s"I call POST")
-        val res = postSelectYourReason(isAgent, Some(MainIncomeLower))(clientDetailsWithConfirmation)
+        val res = postSelectYourReason(Some(MainIncomeLower))(clientDetailsWithConfirmation)
 
         res should have(
           httpStatus(SEE_OTHER),
@@ -370,7 +352,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
 
         When(s"I call POST")
 
-        val res = postSelectYourReason(isAgent, Some(MainIncomeLower))(clientDetailsWithConfirmation)
+        val res = postSelectYourReason(Some(MainIncomeLower))(clientDetailsWithConfirmation)
 
         res should have(
           httpStatus(SEE_OTHER),
@@ -395,7 +377,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
         await(sessionService.setMongoData(Some(PoaAmendmentData())))
 
         When(s"I call POST")
-        val res = postSelectYourReason(isAgent, Some(MainIncomeLower))(clientDetailsWithConfirmation)
+        val res = postSelectYourReason(Some(MainIncomeLower))(clientDetailsWithConfirmation)
 
         res should have(
           httpStatus(INTERNAL_SERVER_ERROR)
@@ -415,7 +397,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
 
         When(s"I call POST")
 
-        val res = postSelectYourReason(isAgent, Some(MainIncomeLower))(clientDetailsWithConfirmation)
+        val res = postSelectYourReason(Some(MainIncomeLower))(clientDetailsWithConfirmation)
 
         res should have(
           httpStatus(INTERNAL_SERVER_ERROR)

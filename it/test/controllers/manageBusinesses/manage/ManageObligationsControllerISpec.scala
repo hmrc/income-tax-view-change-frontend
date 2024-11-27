@@ -20,7 +20,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.JourneyType.Manage
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import models.incomeSourceDetails.viewmodels.ObligationsViewModel
 import models.incomeSourceDetails.{ManageIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
@@ -68,7 +68,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
     "render the self employment obligations page" when {
       "given valid url params" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         When(s"I call GET $manageSEObligationsShowUrl")
 
@@ -101,7 +101,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
     "return an error" when {
       "there is no incomeSourceId in the session storage" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         When(s"I call GET $manageSEObligationsShowUrl")
 
@@ -128,7 +128,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
     "render the self employment obligations page" when {
       "given valid url params" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         When(s"I call GET $manageUKObligationsShowUrl")
 
@@ -164,7 +164,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
     "render the self employment obligations page" when {
       "given valid url params" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         When(s"I call GET $manageFPObligationsShowUrl")
 
@@ -200,7 +200,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
     s"redirect to $manageIncomeSourcesShowUrl" when {
       "called" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 

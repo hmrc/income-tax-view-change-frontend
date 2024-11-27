@@ -47,7 +47,7 @@ class AmendablePoaController @Inject()(val authActions: AuthActions,
   extends FrontendBaseController with I18nSupport with ClaimToAdjustUtils with ImplicitCurrencyFormatter with WithSessionAndPoa with ErrorRecovery {
 
   def show(isAgent: Boolean): Action[AnyContent] =
-    authActions.individualOrAgentWithClient async {
+    authActions.asIndividualOrAgent(isAgent) async {
       implicit user =>
         withSessionData(journeyState = InitialPage) { _ => {
           for {

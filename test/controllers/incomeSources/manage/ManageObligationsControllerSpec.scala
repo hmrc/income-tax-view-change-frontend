@@ -23,7 +23,7 @@ import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockNextUpdatesService}
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
@@ -173,7 +173,7 @@ class ManageObligationsControllerSpec extends TestSupport
     super.beforeEach()
     reset(mockIncomeSourceDetailsService)
     disableAllSwitches()
-    enable(IncomeSources)
+    enable(IncomeSourcesFs)
   }
 
   "ManageObligationsController" should {

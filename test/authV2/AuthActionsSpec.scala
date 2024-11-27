@@ -16,12 +16,13 @@
 
 package authV2
 
-import auth.authV2.{AgentUser, AuthActions}
 import auth.authV2.AuthExceptions.{MissingAgentReferenceNumber, MissingMtdId}
 import auth.authV2.actions._
+import auth.authV2.{AgentUser, AuthActions}
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.FrontendAuthConnector
+import config.{AgentItvcErrorHandler, FrontendAuthConnector}
 import controllers.agent.sessionUtils.SessionKeys
+import mocks.auth.MockOldAuthActions
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito
@@ -38,6 +39,7 @@ import play.api.mvc.{AnyContent, Result}
 import play.api.test.FakeRequest
 import services.IncomeSourceDetailsService
 import sttp.model.HeaderNames.Location
+import testConstants.BaseTestConstants
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
@@ -45,7 +47,7 @@ import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
 import java.net.URLEncoder
 import scala.concurrent.Future
 
-class AuthActionsSpec extends TestSupport with ScalaFutures {
+class AuthActionsSpec extends TestSupport with ScalaFutures with MockOldAuthActions{
 
   val nino              = "AA111111A"
   val saUtr             = "123456789"
@@ -93,32 +95,41 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
             user.credId shouldBe Some(credentials.providerId)
             Future.successful(Ok("!"))
           }
-        }
+        },
+        isAgent = false
       ) {
         result.header.status shouldBe OK
       }
 
-      "throw exception if no HMRC-MTD-ID in enrolments" in new ExceptionFixture(
+      "redirect to not enrolled page if no HMRC-MTD-ID in enrolments" in new ResultFixture(
         retrievals = individualRetrievalData.copy(enrolments = Enrolments(Set.empty)),
-        request = fakeRequestWithActiveSession.withSession(("origin", "PTA")),
-        expectedError = new MissingMtdId) { }
+        request = fakeRequestWithActiveSession.withSession(("origin", "PTA"), (SessionKeys.clientMTDID, mtdId)),
+        isAgent = false) {
+
+        val notEnrolledUrl: String = controllers.errors.routes.NotEnrolledController.show.url
+        result.header.status shouldBe SEE_OTHER
+        result.header.headers(Location) shouldBe notEnrolledUrl
+      }
 
       s"show internal error when $INTERNAL_SERVER_ERROR returned from income sources" in new ResultFixture(
         retrievals = individualRetrievalData,
-        incomeSources = IncomeSourceDetailsError(INTERNAL_SERVER_ERROR, "Internal server error")
+        incomeSources = IncomeSourceDetailsError(INTERNAL_SERVER_ERROR, "Internal server error"),
+        isAgent = false
       ) {
         result.header.status shouldBe INTERNAL_SERVER_ERROR
       }
 
       s"show internal error when $NOT_FOUND returned from income sources" in new ResultFixture(
         retrievals = individualRetrievalData,
-        incomeSources = IncomeSourceDetailsError(NOT_FOUND, "Record not found")
+        incomeSources = IncomeSourceDetailsError(NOT_FOUND, "Record not found"),
+        isAgent = false
       ) {
         result.header.status shouldBe INTERNAL_SERVER_ERROR
       }
 
       s"redirect to /uplift with confidence level < ${appConfig.requiredConfidenceLevel}, " in new ResultFixture(
-        retrievals = individualRetrievalData.copy(confidenceLevel = ConfidenceLevel.L50 )) {
+        retrievals = individualRetrievalData.copy(confidenceLevel = ConfidenceLevel.L50 ),
+        isAgent = false) {
 
         val completionUrl = URLEncoder.encode("http://localhost:9081/report-quarterly/income-and-expenses/view/uplift-success?origin=PTA", "UTF-8")
         val failureUrl = URLEncoder.encode("http://localhost:9081/report-quarterly/income-and-expenses/view/cannot-view-page", "UTF-8")
@@ -130,7 +141,8 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
 
       s"redirect to /cannot-access-service when required enrolments not found" in new AuthThrowsExceptionFixture(
         retrievals = individualRetrievalData,
-        authorisationException = new InsufficientEnrolments("Enrolment not found")
+        authorisationException = new InsufficientEnrolments("Enrolment not found"),
+        isAgent = false
       ) {
         result.header.status shouldBe SEE_OTHER
         result.header.headers(Location) shouldBe "/report-quarterly/income-and-expenses/view/cannot-access-service"
@@ -138,7 +150,8 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
 
       s"redirect to /session-timeout when BearerToken has expired" in new AuthThrowsExceptionFixture(
         retrievals = individualRetrievalData,
-        authorisationException = new BearerTokenExpired("Bearer token expired")
+        authorisationException = new BearerTokenExpired("Bearer token expired"),
+        isAgent = false
       ) {
         result.header.status shouldBe SEE_OTHER
         result.header.headers(Location) shouldBe "/report-quarterly/income-and-expenses/view/session-timeout"
@@ -146,7 +159,8 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
 
       "redirect to /session-timeout with a timestamp and no auth token" in new ResultFixture(
         retrievals = individualRetrievalData,
-        request = fakeRequestWithTimeoutSession.withSession(("origin", "PTA"))
+        request = fakeRequestWithTimeoutSession.withSession(("origin", "PTA")),
+        isAgent = false
       ) {
         result.header.status shouldBe SEE_OTHER
         result.header.headers(Location).contains("/report-quarterly/income-and-expenses/view/session-timeout") shouldBe true
@@ -154,7 +168,8 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
 
       s"redirect to /sign-in when any other error is returned" in new AuthThrowsExceptionFixture(
         retrievals = individualRetrievalData,
-        authorisationException = new UnsupportedAffinityGroup("Affinity group not supported")
+        authorisationException = new UnsupportedAffinityGroup("Affinity group not supported"),
+        isAgent = false
       ) {
         result.header.status shouldBe SEE_OTHER
         result.header.headers(Location) shouldBe "/report-quarterly/income-and-expenses/view/sign-in"
@@ -192,14 +207,16 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
             user.mtditid shouldBe mtdId
             user.saUtr shouldBe Some(saUtr)
             Future.successful(Ok("!"))
-        }}
+        }},
+        isAgent = true
       ) {
         result.header.status shouldBe OK
       }
 
       s"throw exception when confidence level < ${appConfig.requiredConfidenceLevel}" in new ResultFixture(
         retrievals = agentRetrievalData.copy(confidenceLevel = ConfidenceLevel.L50 ),
-        request = validAgentRequest) {
+        request = validAgentRequest,
+        isAgent = true) {
 
         // does not re-direct to uplift for agent
         // agent throws exception if insufficient confidence, which then redirects to sign-in
@@ -211,7 +228,8 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
       s"show internal error when $INTERNAL_SERVER_ERROR returned from income sources" in new ResultFixture(
         retrievals = agentRetrievalData,
         incomeSources = IncomeSourceDetailsError(INTERNAL_SERVER_ERROR, "Internal server error"),
-        request = validAgentRequest
+        request = validAgentRequest,
+        isAgent = true
       ) {
         result.header.status shouldBe INTERNAL_SERVER_ERROR
       }
@@ -219,7 +237,8 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
       s"show internal error when $NOT_FOUND returned from income sources" in new ResultFixture(
         retrievals = agentRetrievalData,
         incomeSources = IncomeSourceDetailsError(NOT_FOUND, "Record not found"),
-        request = validAgentRequest
+        request = validAgentRequest,
+        isAgent = true
       ) {
         result.header.status shouldBe INTERNAL_SERVER_ERROR
       }
@@ -227,19 +246,25 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
       "throw exception when agent reference number is missing" in new ExceptionFixture(
         retrievals = agentRetrievalData.copy(enrolments = Enrolments(Set.empty)),
         request = validAgentRequest,
-        expectedError = new MissingAgentReferenceNumber
+        expectedError = new MissingAgentReferenceNumber,
+        isAgent = true
       ) {  }
 
       "redirect to /agents/client-utr when confirmed client is missing" in new ResultFixture(
         retrievals = agentRetrievalData,
-        request = agentRequestMissingConfirmedClient) {
+        request = agentRequestMissingConfirmedClient,
+        isAgent = true,
+        sessionDataFailure = true
+        ) {
         result.header.status shouldBe SEE_OTHER
         result.header.headers(Location) shouldBe "/report-quarterly/income-and-expenses/view/agents/client-utr"
       }
 
       "redirect to /agents/client-utr when client id is missing from session" in new ResultFixture(
         retrievals = agentRetrievalData,
-        request = agentRequestMissingClientMtdId) {
+        request = agentRequestMissingClientMtdId,
+        isAgent = true,
+        sessionDataFailure = true) {
         result.header.status shouldBe SEE_OTHER
         result.header.headers(Location) shouldBe "/report-quarterly/income-and-expenses/view/agents/client-utr"
       }
@@ -247,7 +272,8 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
       s"redirect to /cannot-access-service when required enrolments not found" in new AuthThrowsExceptionFixture(
         retrievals = agentRetrievalData,
         request = validAgentRequest,
-        authorisationException = new InsufficientEnrolments("Enrolment not found")
+        authorisationException = new InsufficientEnrolments("Enrolment not found"),
+        isAgent = true
       ) {
         result.header.status shouldBe SEE_OTHER
         result.header.headers(Location) shouldBe "/report-quarterly/income-and-expenses/view/cannot-access-service"
@@ -255,7 +281,8 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
 
       "redirect to /session-timeout with a timestamp and no auth token" in new ResultFixture(
         retrievals = agentRetrievalData,
-        request = timeoutAgentRequest
+        request = timeoutAgentRequest,
+        isAgent = true
       ) {
         result.header.status shouldBe SEE_OTHER
         result.header.headers(Location).contains("/report-quarterly/income-and-expenses/view/session-timeout") shouldBe true
@@ -264,7 +291,8 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
       s"redirect to /session-timeout when BearerToken has expired" in new AuthThrowsExceptionFixture(
         retrievals = agentRetrievalData,
         request = validAgentRequest,
-        authorisationException = new BearerTokenExpired("Bearer token expired")
+        authorisationException = new BearerTokenExpired("Bearer token expired"),
+        isAgent = true
       ) {
         result.header.status shouldBe SEE_OTHER
         result.header.headers(Location) shouldBe "/report-quarterly/income-and-expenses/view/session-timeout"
@@ -273,7 +301,8 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
       s"redirect to /sign-in when any other error is returned" in new AuthThrowsExceptionFixture(
         retrievals = agentRetrievalData,
         request = validAgentRequest,
-        authorisationException = new UnsupportedAffinityGroup("Affinity group not supported")
+        authorisationException = new UnsupportedAffinityGroup("Affinity group not supported"),
+        isAgent = true
       ) {
         result.header.status shouldBe SEE_OTHER
         result.header.headers(Location) shouldBe "/report-quarterly/income-and-expenses/view/sign-in"
@@ -338,7 +367,6 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
   }
 
   lazy val mockAuthConnector = mock[FrontendAuthConnector]
-  lazy val mockIncomeSourceDetailsService = mock[IncomeSourceDetailsService]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -379,26 +407,38 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
                            affinityGroup: Option[AffinityGroup],
                            confidenceLevel: ConfidenceLevel)
 
+  val mockRetrieveClientData: RetrieveClientData = new RetrieveClientData(
+    mockSessionDataService,
+    errorHandler = app.injector.instanceOf[AgentItvcErrorHandler],
+    appConfig = appConfig
+  )
+
   val authActions = new AuthActions(
     app.injector.instanceOf[SessionTimeoutAction],
-    app.injector.instanceOf[AuthoriseAndRetrieve],
+    mockAuthActions.authoriseAndRetrieve,
     app.injector.instanceOf[AuthoriseAndRetrieveIndividual],
     app.injector.instanceOf[AuthoriseAndRetrieveAgent],
     app.injector.instanceOf[AuthoriseAndRetrieveMtdAgent],
-    app.injector.instanceOf[AgentHasClientDetails],
+    mockAuthActions.agentHasClientDetails,
     app.injector.instanceOf[AgentHasConfirmedClientAction],
     app.injector.instanceOf[AgentIsPrimaryAction],
     app.injector.instanceOf[AsMtdUser],
     app.injector.instanceOf[NavBarRetrievalAction],
     app.injector.instanceOf[IncomeSourceRetrievalAction],
-    app.injector.instanceOf[RetrieveClientData],
+    mockRetrieveClientData,
     app.injector.instanceOf[FeatureSwitchRetrievalAction]
   )
 
   abstract class Fixture(retrievals: RetrievalData,
                          request: FakeRequest[AnyContent] = FakeRequest(),
                          incomeSources: IncomeSourceDetailsResponse = defaultIncomeSourcesData,
-                         block: MtdItUser[_] => Future[Result] = (_) => Future.successful(Ok("OK!"))) {
+                         block: MtdItUser[_] => Future[Result] = (_) => Future.successful(Ok("OK!")),
+                         isAgent: Boolean,
+                         sessionDataFailure: Boolean) {
+    val testConstant = if (isAgent) BaseTestConstants.testAgentAuthRetrievalSuccess else BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse()
+    setupMockAuthRetrievalSuccess(testConstant)
+
+    if (sessionDataFailure) setupMockGetSessionDataNotFound() else setupMockGetSessionDataSuccess()
 
     when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
       .thenReturn(Future.successful(incomeSources))
@@ -416,32 +456,38 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
                       request: FakeRequest[AnyContent] = FakeRequest(),
                       incomeSources: IncomeSourceDetailsResponse = defaultIncomeSourcesData,
                       block: MtdItUser[_] => Future[Result] = (_) => Future.successful(Ok("OK!")),
-                      authorisationException: AuthorisationException)
-    extends Fixture(retrievals, request, incomeSources, block) {
+                      authorisationException: AuthorisationException,
+                                   isAgent: Boolean,
+                                   sessionDataFailure: Boolean = false)
+    extends Fixture(retrievals, request, incomeSources, block, isAgent, sessionDataFailure) {
 
     when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(Future.failed( authorisationException ))
 
-    val result = authActions.individualOrAgentWithClient.async(block)(request).futureValue
+    val result = authActions.asIndividualOrAgent(false).async(block)(request).futureValue
   }
 
   class ResultFixture(retrievals: RetrievalData,
                       request: FakeRequest[AnyContent] = FakeRequest(),
                       incomeSources: IncomeSourceDetailsResponse = defaultIncomeSourcesData,
-                      block: MtdItUser[_] => Future[Result] = (_) => Future.successful(Ok("OK!")))
-    extends Fixture(retrievals, request, incomeSources, block) {
+                      block: MtdItUser[_] => Future[Result] = (_) => Future.successful(Ok("OK!")),
+                      isAgent: Boolean,
+                      sessionDataFailure: Boolean = false)
+    extends Fixture(retrievals, request, incomeSources, block, isAgent, sessionDataFailure) {
 
-    val result = authActions.individualOrAgentWithClient.async(block)(request).futureValue
+    val result = authActions.asIndividualOrAgent(isAgent).async(block)(request).futureValue
   }
 
   class ExceptionFixture(retrievals: RetrievalData,
                          request: FakeRequest[AnyContent] = FakeRequest(),
                          incomeSources: IncomeSourceDetailsResponse = defaultIncomeSourcesData,
                          block: MtdItUser[_] => Future[Result] = (_) => Future.successful(Ok("OK!")),
-                         expectedError: Throwable)
-    extends Fixture(retrievals, request, incomeSources, block) {
+                         expectedError: Throwable,
+                         isAgent: Boolean,
+                         sessionDataFailure: Boolean = false)
+    extends Fixture(retrievals, request, incomeSources, block, isAgent, sessionDataFailure) {
 
     val failedException: TestFailedException = intercept[TestFailedException] {
-      authActions.individualOrAgentWithClient.async(block)(request).futureValue
+      authActions.asIndividualOrAgent(isAgent).async(block)(request).futureValue
     }
 
     failedException.getCause.getClass shouldBe expectedError.getClass

@@ -16,7 +16,7 @@
 
 package controllers
 
-import models.admin.{CreditsRefundsRepay, IncomeSources, IncomeSourcesNewJourney, ReviewAndReconcilePoa}
+import models.admin.{CreditsRefundsRepay, IncomeSourcesFs, IncomeSourcesNewJourney, ReviewAndReconcilePoa}
 import models.financialDetails._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -370,7 +370,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
         "has `Cease an income source`" when {
           "the user has non-ceased businesses or property and income sources is enabled" in new Setup {
             setupMockUserAuth
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
             mockGetDueDates(Right(futureDueDates))
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
@@ -398,7 +398,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
         "does not have a `Cease an income source`" when {
           "the user has ceased businesses or property and income sources is enabled" in new Setup {
             setupMockUserAuth
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncomeCeased)
             mockGetDueDates(Right(futureDueDates))
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
@@ -427,7 +427,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
       "render the home page with the Your Businesses tile with link" when {
         "the IncomeSourcesNewJourney is enabled" in new Setup {
           setupMockUserAuth
-          enable(IncomeSources)
+          enable(IncomeSourcesFs)
           enable(IncomeSourcesNewJourney)
           mockGetDueDates(Right(futureDueDates))
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)

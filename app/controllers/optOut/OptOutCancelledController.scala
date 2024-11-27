@@ -47,7 +47,7 @@ class OptOutCancelledController @Inject()(
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   def show(): Action[AnyContent] =
-    auth.individualOrAgentWithClient.async { implicit user =>
+    auth.asMTDIndividual.async { implicit user =>
       for {
         proposition <- optOutService.fetchOptOutProposition()
         availableOptOutYears = proposition.availableOptOutYears

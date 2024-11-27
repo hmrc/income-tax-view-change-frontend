@@ -67,7 +67,7 @@ class ConfirmTaxYearControllerSpec extends TestSupport
 
         when(mockOptInService.getConfirmTaxYearViewModel(any())(any(), any(), any()))
           .thenReturn(Future.successful(Some(ConfirmTaxYearViewModel(
-            taxYear2024_25, routes.ReportingFrequencyPageController.show().url, isNextTaxYear = false,
+            taxYear2024_25, routes.ReportingFrequencyPageController.show(isAgent).url, isNextTaxYear = false,
             isAgent)
           )))
 
@@ -82,7 +82,7 @@ class ConfirmTaxYearControllerSpec extends TestSupport
 
         when(mockOptInService.getConfirmTaxYearViewModel(any())(any(), any(), any()))
           .thenReturn(Future.successful(Some(ConfirmTaxYearViewModel(
-            taxYear2025_26, routes.ReportingFrequencyPageController.show().url, isNextTaxYear = true,
+            taxYear2025_26, routes.ReportingFrequencyPageController.show(isAgent).url, isNextTaxYear = true,
             isAgent)
           )))
 

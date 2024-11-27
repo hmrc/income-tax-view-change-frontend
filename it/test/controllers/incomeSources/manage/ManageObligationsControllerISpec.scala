@@ -16,7 +16,7 @@
 
 package controllers.incomeSources.manage
 
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import enums.IncomeSourceJourney.UkProperty
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -63,7 +63,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
     "render the self employment obligations page" when {
       "given valid url params" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         When(s"I call GET $manageSEObligationsShowUrl")
 
@@ -96,7 +96,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
     "return an error" when {
       "there is no incomeSourceId in the session storage" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         When(s"I call GET $manageSEObligationsShowUrl")
 
@@ -123,7 +123,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
     "render the self employment obligations page" when {
       "given valid url params" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         When(s"I call GET $manageUKObligationsShowUrl")
 
@@ -156,7 +156,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
     "render the self employment obligations page" when {
       "given valid url params" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         When(s"I call GET $manageFPObligationsShowUrl")
 
@@ -189,7 +189,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
     s"redirect to $manageIncomeSourcesShowUrl" when {
       "called" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 

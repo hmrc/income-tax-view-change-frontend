@@ -19,7 +19,7 @@ package controllers.agent.manageBusinesses
 import controllers.agent.ControllerISpecHelper
 import enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDAgentAuthStub}
-import models.admin.{IncomeSources, NavBarFs}
+import models.admin.{IncomeSourcesFs, NavBarFs}
 import play.api.http.Status.{OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.{getAgentClientDetailsForCookie, testMtditid}
 import testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyAndCeasedBusiness, multipleBusinessesAndUkProperty}
@@ -49,7 +49,7 @@ class ManageYourBusinessesControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid agent and client delegated enrolment" should {
           "render the manage your businesses page" when {
             "the income sources is enabled and the user has multiple businesses and uk property" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
@@ -73,7 +73,7 @@ class ManageYourBusinessesControllerISpec extends ControllerISpecHelper {
             }
 
             "the income sources is enabled and the user has foreign property and ceased business" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)
@@ -93,7 +93,7 @@ class ManageYourBusinessesControllerISpec extends ControllerISpecHelper {
 
           "redirect to the home page" when {
             "the income sources feature switch is disabled" in {
-              disable(IncomeSources)
+              disable(IncomeSourcesFs)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)

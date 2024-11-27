@@ -23,7 +23,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.{AfterSubmissionPage, IncomeSourceType, SelfEmployment}
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
 import forms.incomeSources.add.IncomeSourceReportingMethodForm
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.viewmodels.IncomeSourceReportingMethodViewModel
@@ -84,7 +84,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
   }
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
-    withSessionData(JourneyType(Add, incomeSourceType), journeyState = AfterSubmissionPage) { sessionData =>
+    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = AfterSubmissionPage) { sessionData =>
 
       sessionData.addIncomeSourceData.flatMap(_.incomeSourceId) match {
         case Some(id) => handleIncomeSourceIdRetrievalSuccess(incomeSourceType, id, sessionData, isAgent = isAgent)
@@ -183,7 +183,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
 
   private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]):
   Future[Result] = {
-    withSessionData(JourneyType(Add, incomeSourceType), AfterSubmissionPage) { sessionData =>
+    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), AfterSubmissionPage) { sessionData =>
       sessionData.addIncomeSourceData.flatMap(_.incomeSourceId) match {
         case Some(id) => IncomeSourceReportingMethodForm.form.bindFromRequest().fold(
           invalid => handleInvalidForm(invalid, incomeSourceType, IncomeSourceId(id), isAgent),

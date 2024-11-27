@@ -21,7 +21,7 @@ import enums.{MTDIndividual, MTDSupportingAgent}
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import models.incomeSourceDetails.viewmodels.AddIncomeSourcesViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -51,13 +51,13 @@ class AddIncomeSourceControllerSpec extends MockAuthActions
   val controller = fakeApplication().injector.instanceOf[AddIncomeSourceController]
 
   mtdAllRoles.foreach { mtdRole =>
-    val fakeRequest = getFakeRequestBasedOnMTDUserType(mtdRole)
+    val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
     s"show${if (mtdRole != MTDIndividual) "Agent"}" when {
       val action = if (mtdRole == MTDIndividual) controller.show() else controller.showAgent()
       s"the user is authenticated as a $mtdRole" should {
         s"render the add income source page" when {
           "the user has a Sole Trader Business, a UK property and a Foreign Property" in {
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             ukPlusForeignPropertyWithSoleTraderIncomeSource()
             setupMockSuccess(mtdRole)
             setupMockDeleteSession(true)
@@ -76,7 +76,7 @@ class AddIncomeSourceControllerSpec extends MockAuthActions
         "render the add income source page with no tables or table paragraph text" when {
           "user has no businesses or properties" in {
             disableAllSwitches()
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             mockNoIncomeSources()
             setupMockSuccess(mtdRole)
             setupMockDeleteSession(true)
@@ -101,7 +101,7 @@ class AddIncomeSourceControllerSpec extends MockAuthActions
         }
         "render the add income source page with all tables showing" when {
           "user has a ceased business, sole trader business and uk/foreign property" in {
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             mockBothPropertyBothBusiness()
             setupMockSuccess(mtdRole)
 
@@ -148,7 +148,7 @@ class AddIncomeSourceControllerSpec extends MockAuthActions
 
         "show error page" when {
           s"failed to return incomeSourceViewModel" in {
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             mockUkPropertyWithSoleTraderBusiness()
             setupMockSuccess(mtdRole)
 

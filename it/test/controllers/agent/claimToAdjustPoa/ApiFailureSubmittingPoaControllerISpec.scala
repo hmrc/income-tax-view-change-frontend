@@ -16,8 +16,66 @@
 
 package controllers.agent.claimToAdjustPoa
 
-class ApiFailureSubmittingPoaControllerISpec extends controllers.claimToAdjustPoa.ApiFailureSubmittingPoaControllerISpec {
+import helpers.agent.ComponentSpecBase
+import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDAgentAuthStub}
+import models.admin.AdjustPaymentsOnAccount
+import org.scalatest.Assertion
+import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.libs.ws.WSResponse
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid}
+import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesResponse
 
-  override val isAgent = true
+class ApiFailureSubmittingPoaControllerISpec extends ComponentSpecBase {
+  val isAgent = true
+
+  def apiFailureSubmittingPoaUrl: String = controllers.claimToAdjustPoa.routes.ApiFailureSubmittingPoaController.show(isAgent).url
+
+  def amendablePoaUrl: String = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent).url
+
+  def homeUrl: String = controllers.routes.HomeController.showAgent.url
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, false)
+    Given("Income Source Details with multiple business and property")
+    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+      OK, multipleBusinessesResponse
+    )
+  }
+
+  def checkPageTitleOk(res: WSResponse): Assertion = {
+      res should have(
+        pageTitleAgent("claimToAdjustPoa.apiFailure.heading")
+      )
+  }
+
+  "calling GET" should {
+    s"return status $OK" when {
+      s"user visits $apiFailureSubmittingPoaUrl with the AdjustPaymentsOnAccount FS enabled" in {
+        enable(AdjustPaymentsOnAccount)
+
+        When(s"I call GET")
+        val res = IncomeTaxViewChangeFrontend.get("/adjust-poa/error-poa-not-updated", clientDetailsWithConfirmation)
+
+        res should have(
+          httpStatus(OK)
+        )
+        checkPageTitleOk(res)
+      }
+    }
+    s"return status $SEE_OTHER" when {
+      s"user visits $apiFailureSubmittingPoaUrl with the AdjustPaymentsOnAccount FS disabled" in {
+        disable(AdjustPaymentsOnAccount)
+
+        When(s"I call GET")
+        val res = IncomeTaxViewChangeFrontend.get("/adjust-poa/error-poa-not-updated", clientDetailsWithConfirmation)
+
+        res should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(homeUrl)
+        )
+      }
+    }
+  }
 
 }

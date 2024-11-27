@@ -19,6 +19,7 @@ package controllers.optIn
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
 import controllers.optIn.ConfirmTaxYearControllerISpec._
+import enums.JourneyType.{OptInJourney, Opt}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import helpers.{ComponentSpecBase, ITSAStatusUpdateConnectorStub}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear, UIJourneySessionData}
@@ -33,7 +34,6 @@ import repositories.ITSAStatusRepositorySupport._
 import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
-import utils.OptInJourney
 
 import scala.concurrent.Future
 
@@ -212,7 +212,7 @@ class ConfirmTaxYearControllerISpec extends ComponentSpecBase {
                                     nextYearStatus: ITSAStatus.Value, intent: TaxYear): Future[Boolean] = {
     repository.set(
       UIJourneySessionData(testSessionId,
-        OptInJourney.Name,
+        Opt(OptInJourney).toString,
         optInSessionData =
           Some(OptInSessionData(
             Some(OptInContextData(

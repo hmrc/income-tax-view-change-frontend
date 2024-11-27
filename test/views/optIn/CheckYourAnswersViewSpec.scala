@@ -34,7 +34,7 @@ class CheckYourAnswersViewSpec extends TestSupport {
   class Setup(isAgent: Boolean = true, intent: TaxYear, intentIsNextYear: Boolean) {
 
     private val cancelURL =
-      controllers.routes.ReportingFrequencyPageController.show().url
+      controllers.routes.ReportingFrequencyPageController.show(isAgent).url
 
     private val model =
       MultiYearCheckYourAnswersViewModel(

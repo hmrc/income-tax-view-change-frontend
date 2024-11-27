@@ -20,7 +20,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.JourneyType.Add
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -75,7 +75,7 @@ class AddIncomeSourceController @Inject()(val authActions: AuthActions,
                     isAgent: Boolean,
                     backUrl: String)
                    (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
-    if (!isEnabled(IncomeSources)) {
+    if (!isEnabled(IncomeSourcesFs)) {
       Future.successful(Redirect(homePageCall))
     } else {
       incomeSourceDetailsService.getAddIncomeSourceViewModel(sources) match {

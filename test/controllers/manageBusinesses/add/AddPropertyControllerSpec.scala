@@ -23,7 +23,7 @@ import forms.manageBusinesses.add.AddProprertyForm
 import forms.manageBusinesses.add.AddProprertyForm._
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status
@@ -67,7 +67,7 @@ class AddPropertyControllerSpec extends TestSupport with MockAuthenticationPredi
       "redirect to the appropriate page" when {
         "IncomeSources FS is disabled" in {
           disableAllSwitches()
-          disable(IncomeSources)
+          disable(IncomeSourcesFs)
 
           mockNoIncomeSources()
           setupMockAuthorisationSuccess(isAgent)
@@ -88,7 +88,7 @@ class AddPropertyControllerSpec extends TestSupport with MockAuthenticationPredi
       "display the add property page" when {
         "IncomeSources FS is enabled" in {
           disableAllSwitches()
-          enable(IncomeSources)
+          enable(IncomeSourcesFs)
           mockNoIncomeSources()
           setupMockAuthorisationSuccess(isAgent)
           val result = TestAddPropertyController.show(isAgent = isAgent)(getRequest(isAgent))
@@ -106,7 +106,7 @@ class AddPropertyControllerSpec extends TestSupport with MockAuthenticationPredi
       "redirect to the home page" when {
         "IncomeSources FS is disabled" in {
           disableAllSwitches()
-          disable(IncomeSources)
+          disable(IncomeSourcesFs)
 
           mockNoIncomeSources()
           setupMockAuthorisationSuccess(isAgent)
@@ -121,7 +121,7 @@ class AddPropertyControllerSpec extends TestSupport with MockAuthenticationPredi
       s"return ${Status.BAD_REQUEST}" when {
         "an invalid form is submitted" in {
           disableAllSwitches()
-          enable(IncomeSources)
+          enable(IncomeSourcesFs)
 
           mockNoIncomeSources()
           setupMockAuthorisationSuccess(isAgent)
@@ -135,7 +135,7 @@ class AddPropertyControllerSpec extends TestSupport with MockAuthenticationPredi
         }
         "an empty form is submitted" in {
           disableAllSwitches()
-          enable(IncomeSources)
+          enable(IncomeSourcesFs)
 
           mockNoIncomeSources()
           setupMockAuthorisationSuccess(isAgent)
@@ -149,7 +149,7 @@ class AddPropertyControllerSpec extends TestSupport with MockAuthenticationPredi
         }
         "no form is submitted" in {
           disableAllSwitches()
-          enable(IncomeSources)
+          enable(IncomeSourcesFs)
 
           mockNoIncomeSources()
           setupMockAuthorisationSuccess(isAgent)
@@ -162,7 +162,7 @@ class AddPropertyControllerSpec extends TestSupport with MockAuthenticationPredi
       s"return ${Status.SEE_OTHER}: redirect to the correct Add Start Date Page" when {
         "foreign property selected" in {
           disableAllSwitches()
-          enable(IncomeSources)
+          enable(IncomeSourcesFs)
 
           mockNoIncomeSources()
           setupMockAuthorisationSuccess(isAgent)
@@ -177,7 +177,7 @@ class AddPropertyControllerSpec extends TestSupport with MockAuthenticationPredi
         }
         "uk property selected" in {
           disableAllSwitches()
-          enable(IncomeSources)
+          enable(IncomeSourcesFs)
 
           mockNoIncomeSources()
           setupMockAuthorisationSuccess(isAgent)

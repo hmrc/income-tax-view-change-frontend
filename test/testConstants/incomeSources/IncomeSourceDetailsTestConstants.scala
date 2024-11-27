@@ -17,7 +17,7 @@
 package testConstants.incomeSources
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
 import models.core.{AddressModel, IncomeSourceId}
 import models.incomeSourceDetails._
 import models.incomeSourceDetails.viewmodels.{CeaseIncomeSourcesViewModel, CheckCeaseIncomeSourceDetailsViewModel}
@@ -136,7 +136,7 @@ object IncomeSourceDetailsTestConstants {
     else currentDate.getYear + 1
   }
 
-  val emptyUIJourneySessionData: JourneyType => UIJourneySessionData = journeyType => {
+  val emptyUIJourneySessionData: IncomeSourceJourneyType => UIJourneySessionData = journeyType => {
     journeyType.operation.operationType match {
       case "ADD" =>
         UIJourneySessionData(
@@ -159,7 +159,7 @@ object IncomeSourceDetailsTestConstants {
     }
   }
 
-  val notCompletedUIJourneySessionData: JourneyType => UIJourneySessionData = journeyType => {
+  val notCompletedUIJourneySessionData: IncomeSourceJourneyType => UIJourneySessionData = journeyType => {
     journeyType.operation.operationType match {
       case "ADD" =>
         UIJourneySessionData(
@@ -204,10 +204,10 @@ object IncomeSourceDetailsTestConstants {
   }
 
   val addedIncomeSourceUIJourneySessionData: IncomeSourceType => UIJourneySessionData = (incomeSourceType: IncomeSourceType) =>
-    UIJourneySessionData(testSessionId, JourneyType(Add, incomeSourceType).toString,
+    UIJourneySessionData(testSessionId, IncomeSourceJourneyType(Add, incomeSourceType).toString,
       addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceAdded = Some(true))))
 
-  val completedUIJourneySessionData: JourneyType => UIJourneySessionData = (journeyType: JourneyType) => {
+  val completedUIJourneySessionData: IncomeSourceJourneyType => UIJourneySessionData = (journeyType: IncomeSourceJourneyType) => {
     journeyType.operation.operationType match {
       case "ADD" => UIJourneySessionData(testSessionId, journeyType.toString,
         addIncomeSourceData = Some(notCompletedUIJourneySessionData(journeyType).addIncomeSourceData.get.copy(journeyIsComplete = Some(true))))

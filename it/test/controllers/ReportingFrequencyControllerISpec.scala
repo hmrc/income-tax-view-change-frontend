@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import helpers.servicemocks.{AuthStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.admin.FeatureSwitchName.allFeatureSwitches
-import models.admin.{OptOut, ReportingFrequencyPage}
+import models.admin.{OptOutFs, ReportingFrequencyPage}
 import models.itsaStatus.ITSAStatus.{Annual, Mandated, Voluntary}
 import org.jsoup.Jsoup
 import play.api.http.HeaderNames
@@ -71,16 +71,16 @@ class ReportingFrequencyControllerISpec extends ControllerISpecBase with Feature
 
             allFeatureSwitches.foreach(switch => disable(switch))
             enable(ReportingFrequencyPage)
-            enable(OptOut)
+            enable(OptOutFs)
 
-          AuthStub.stubAuthorised()
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
-          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
-            dateService.getCurrentTaxYear,
-            Mandated,
-            Voluntary,
-            Voluntary
-          )
+            AuthStub.stubAuthorised()
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+            ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
+              dateService.getCurrentTaxYear,
+              Mandated,
+              Voluntary,
+              Voluntary
+            )
 
             val res =
               httpClient
@@ -100,7 +100,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecBase with Feature
 
             allFeatureSwitches.foreach(switch => disable(switch))
             enable(ReportingFrequencyPage)
-            enable(OptOut)
+            enable(OptOutFs)
 
             AuthStub.stubAuthorised()
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
@@ -129,7 +129,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecBase with Feature
 
             allFeatureSwitches.foreach(switch => disable(switch))
             enable(ReportingFrequencyPage)
-            enable(OptOut)
+            enable(OptOutFs)
 
             AuthStub.stubAuthorised()
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
@@ -159,7 +159,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecBase with Feature
 
             allFeatureSwitches.foreach(switch => disable(switch))
             enable(ReportingFrequencyPage)
-            enable(OptOut)
+            enable(OptOutFs)
 
             AuthStub.stubAuthorised()
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
@@ -189,7 +189,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecBase with Feature
 
             allFeatureSwitches.foreach(switch => disable(switch))
             enable(ReportingFrequencyPage)
-            enable(OptOut)
+            enable(OptOutFs)
 
             AuthStub.stubAuthorised()
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
@@ -218,7 +218,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecBase with Feature
 
             allFeatureSwitches.foreach(switch => disable(switch))
             enable(ReportingFrequencyPage)
-            enable(OptOut)
+            enable(OptOutFs)
 
             AuthStub.stubAuthorised()
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
@@ -247,7 +247,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecBase with Feature
 
             allFeatureSwitches.foreach(switch => disable(switch))
             enable(ReportingFrequencyPage)
-            enable(OptOut)
+            enable(OptOutFs)
 
             AuthStub.stubAuthorised()
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
@@ -276,7 +276,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecBase with Feature
 
             allFeatureSwitches.foreach(switch => disable(switch))
             enable(ReportingFrequencyPage)
-            enable(OptOut)
+            enable(OptOutFs)
 
             AuthStub.stubAuthorised()
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
@@ -306,7 +306,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecBase with Feature
 
             allFeatureSwitches.foreach(switch => disable(switch))
             enable(ReportingFrequencyPage)
-            enable(OptOut)
+            enable(OptOutFs)
 
             AuthStub.stubAuthorised()
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)

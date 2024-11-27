@@ -70,34 +70,14 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
     }).map(_.flatten)
   }
 
-  def getAllCreditFinancialDetails(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[List[FinancialDetailsResponseModel]] = {
-    getAllFinancialDetails.map { chargesWithYears =>
-      chargesWithYears.flatMap {
-        case (_, errorModel: FinancialDetailsErrorModel) => Some(errorModel)
-        case (_, financialDetails: FinancialDetailsModel) =>
-          val creditDocDetails: List[DocumentDetail] = financialDetails.documentDetails.filter(_.credit.isDefined)
-          if (creditDocDetails.nonEmpty) Some(financialDetails.copy(documentDetails = creditDocDetails)) else None
-      }
-    }
-  }
-
   def getAllUnpaidFinancialDetails()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[List[FinancialDetailsResponseModel]] = {
     getAllFinancialDetails.map { chargesWithYears =>
       chargesWithYears.flatMap {
         case (_, errorModel: FinancialDetailsErrorModel) => Some(errorModel)
         case (_, financialDetails: FinancialDetailsModel) =>
-          val unpaidDocDetails: List[DocumentDetail] = unpaidDocumentDetails(financialDetails)
+          val unpaidDocDetails: List[DocumentDetail] = financialDetails.unpaidDocumentDetails()
           if (unpaidDocDetails.nonEmpty) Some(financialDetails.copy(documentDetails = unpaidDocDetails)) else None
       }
-    }
-  }
-
-  private def unpaidDocumentDetails(financialDetailsModel: FinancialDetailsModel): List[DocumentDetail] = {
-    financialDetailsModel.documentDetails.collect {
-      case documentDetail: DocumentDetail if documentDetail.isCodingOutDocumentDetail => documentDetail
-      case documentDetail: DocumentDetail if documentDetail.latePaymentInterestAmount.isDefined && !documentDetail.interestIsPaid => documentDetail
-      case documentDetail: DocumentDetail if documentDetail.interestOutstandingAmount.isDefined && !documentDetail.interestIsPaid => documentDetail
-      case documentDetail: DocumentDetail if documentDetail.isNotCodingOutDocumentDetail && !documentDetail.isPaid => documentDetail
     }
   }
 }

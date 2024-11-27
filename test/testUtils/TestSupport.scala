@@ -168,11 +168,19 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
     def toHtmlDocument: Document = Jsoup.parse(contentAsString(x))
   }
 
-  def getFakeRequestBasedOnMTDUserType(mtdUserRole: MTDUserRole): FakeRequest[AnyContentAsEmpty.type] = {
+  def fakeGetRequestBasedOnMTDUserType(mtdUserRole: MTDUserRole): FakeRequest[AnyContentAsEmpty.type] = {
     mtdUserRole match {
       case MTDIndividual => fakeRequestWithActiveSession
       case MTDPrimaryAgent => fakeRequestConfirmedClient()
       case _ => fakeRequestConfirmedClient(isSupportingAgent = true)
+    }
+  }
+
+  def fakePostRequestBasedOnMTDUserType(mtdUserRole: MTDUserRole): FakeRequest[AnyContentAsEmpty.type] = {
+    mtdUserRole match {
+      case MTDIndividual => fakePostRequestWithActiveSession
+      case MTDPrimaryAgent => fakePostRequestConfirmedClient()
+      case _ => fakePostRequestConfirmedClient(isSupportingAgent = true)
     }
   }
 
@@ -270,14 +278,15 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
       sessionUtils.SessionKeys.isSupportingAgent -> "false"
     )
 
-  def fakePostRequestConfirmedClient(clientNino: String = "AA111111A"): FakeRequest[AnyContentAsEmpty.type] =
+  def fakePostRequestConfirmedClient(clientNino: String = "AA111111A", isSupportingAgent: Boolean = false): FakeRequest[AnyContentAsEmpty.type] =
     fakePostRequestWithActiveSession.withSession(
       sessionUtils.SessionKeys.clientFirstName -> "Test",
       sessionUtils.SessionKeys.clientLastName -> "User",
       sessionUtils.SessionKeys.clientUTR -> "1234567890",
       sessionUtils.SessionKeys.clientMTDID -> "XAIT00000000015",
       sessionUtils.SessionKeys.clientNino -> clientNino,
-      sessionUtils.SessionKeys.confirmedClient -> "true"
+      sessionUtils.SessionKeys.confirmedClient -> "true",
+      sessionUtils.SessionKeys.isSupportingAgent -> isSupportingAgent.toString
     )
 
   def fakeRequestConfirmedClientwithBusinessName(clientNino: String = "AA111111A"): FakeRequest[AnyContentAsEmpty.type] =

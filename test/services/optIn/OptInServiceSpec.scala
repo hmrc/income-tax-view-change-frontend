@@ -20,6 +20,7 @@ import auth.MtdItUser
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import controllers.routes
+import enums.JourneyType.{OptInJourney, Opt}
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockITSAStatusUpdateConnector}
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Voluntary}
@@ -82,10 +83,10 @@ class OptInServiceSpec extends UnitSpec
 
       val data = UIJourneySessionData(
         sessionId = hc.sessionId.get.value,
-        journeyType = OptInJourney.Name,
+        journeyType = Opt(OptInJourney).toString,
         optInSessionData = Some(OptInSessionData(None, selectedOptInYear = None))
       )
-      when(repository.get(hc.sessionId.get.value, OptInJourney.Name)).thenReturn(Future.successful(Some(data)))
+      when(repository.get(hc.sessionId.get.value, Opt(OptInJourney))).thenReturn(Future.successful(Some(data)))
 
       val dataAfter = data.copy(optInSessionData = Some(data.optInSessionData.get.copy(selectedOptInYear = Some(currentTaxYear.toString))))
       when(repository.set(dataAfter)).thenReturn(Future.successful(true))
@@ -100,9 +101,9 @@ class OptInServiceSpec extends UnitSpec
   "OptInService.saveIntent and no session data" should {
     "save selectedOptInYear in session data" in {
 
-      val jsd = UIJourneySessionData(hc.sessionId.get.value, OptInJourney.Name)
+      val jsd = UIJourneySessionData(hc.sessionId.get.value, Opt(OptInJourney).toString)
 
-      when(repository.get(hc.sessionId.get.value, OptInJourney.Name)).thenReturn(Future.successful(Some(jsd)))
+      when(repository.get(hc.sessionId.get.value, Opt(OptInJourney))).thenReturn(Future.successful(Some(jsd)))
 
       val result = service.saveIntent(currentTaxYear)
       result.futureValue shouldBe true
@@ -117,7 +118,7 @@ class OptInServiceSpec extends UnitSpec
 
       "return tax years ending 2023, 2024" in {
 
-        when(repository.get(hc.sessionId.get.value, OptInJourney.Name)).thenReturn(Future.successful(None))
+        when(repository.get(hc.sessionId.get.value, Opt(OptInJourney))).thenReturn(Future.successful(None))
         when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
         when(mockITSAStatusService.getStatusTillAvailableFutureYears(currentTaxYear.previousYear))
           .thenReturn(Future.successful(
@@ -130,7 +131,7 @@ class OptInServiceSpec extends UnitSpec
 
       "return tax year ending 2023" in {
 
-        when(repository.get(hc.sessionId.get.value, OptInJourney.Name)).thenReturn(Future.successful(None))
+        when(repository.get(hc.sessionId.get.value, Opt(OptInJourney))).thenReturn(Future.successful(None))
         when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
         when(mockITSAStatusService.getStatusTillAvailableFutureYears(currentTaxYear.previousYear))
           .thenReturn(Future.successful(
@@ -247,7 +248,7 @@ class OptInServiceSpec extends UnitSpec
       result.futureValue.get shouldBe MultiYearCheckYourAnswersViewModel(
         intentTaxYear = currentTaxYear,
         isAgent = isAgent,
-        cancelURL = routes.ReportingFrequencyPageController.show().url,
+        cancelURL = routes.ReportingFrequencyPageController.show(isAgent).url,
         intentIsNextYear = false
       )
     }
@@ -266,7 +267,7 @@ class OptInServiceSpec extends UnitSpec
       result.futureValue.get shouldBe MultiYearCheckYourAnswersViewModel(
         intentTaxYear = currentTaxYear.nextYear,
         isAgent = isAgent,
-        cancelURL = routes.ReportingFrequencyPageController.show().url,
+        cancelURL = routes.ReportingFrequencyPageController.show(isAgent).url,
         intentIsNextYear = true
       )
     }
@@ -277,9 +278,9 @@ class OptInServiceSpec extends UnitSpec
 
   def mockRepository(optInContextData: Option[OptInContextData] = None, selectedOptInYear: Option[String] = None): Unit = {
 
-    val sessionData = UIJourneySessionData(hc.sessionId.get.value, OptInJourney.Name,
+    val sessionData = UIJourneySessionData(hc.sessionId.get.value, Opt(OptInJourney).toString,
       optInSessionData = Some(OptInSessionData(optInContextData, selectedOptInYear)))
 
-    when(repository.get(hc.sessionId.get.value, OptInJourney.Name)).thenReturn(Future.successful(Some(sessionData)))
+    when(repository.get(hc.sessionId.get.value, Opt(OptInJourney))).thenReturn(Future.successful(Some(sessionData)))
   }
 }

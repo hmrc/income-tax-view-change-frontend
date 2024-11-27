@@ -18,23 +18,23 @@ package controllers.claimToAdjustPoa
 
 import audit.models.AdjustPaymentsOnAccountAuditModel
 import auth.MtdItUser
+import controllers.claimToAdjustPoa.routes._
 import helpers.ComponentSpecBase
+import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.AdjustPaymentsOnAccount
-import models.claimToAdjustPoa.{MainIncomeLower, PoaAmendmentData}
-import play.api.http.Status.{BAD_REQUEST, CREATED, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
-import play.api.libs.json.{JsValue, Json}
-import play.api.libs.ws.WSResponse
-import controllers.claimToAdjustPoa.routes._
-import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import models.claimToAdjustPoa.ClaimToAdjustPoaResponse.ClaimToAdjustPoaSuccess
+import models.claimToAdjustPoa.{MainIncomeLower, PoaAmendmentData}
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
+import play.api.http.Status._
+import play.api.libs.json.{JsValue, Json}
+import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.PaymentOnAccountSessionService
+import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.address
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testDate, testIncomeSource, testMtditid, testNino, testUserTypeAgent, testUserTypeIndividual}
 import testConstants.FinancialDetailsTestConstants.testFinancialDetailsErrorModelJson
 import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
 import uk.gov.hmrc.auth.core.retrieve.Name
@@ -45,9 +45,7 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
 
   val isAgent = false
 
-  private def homeUrl: String =
-    if (isAgent) controllers.routes.HomeController.showAgent.url
-    else controllers.routes.HomeController.show().url
+  private def homeUrl: String = controllers.routes.HomeController.show().url
 
   private val testTaxYear = 2024
   private val sessionService: PaymentOnAccountSessionService = app.injector.instanceOf[PaymentOnAccountSessionService]
@@ -73,16 +71,9 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
     )),
     properties = Nil
   )
-  lazy val testUser: MtdItUser[_] = {
-    if (isAgent)
-    MtdItUser(
-    testMtditid, testNino, Some(Name(Some("Test"), Some("User"))), incomeSource,
-    None, Some("1234567890"), credId = None, Some(testUserTypeAgent), Some("1"))(FakeRequest())
-    else
-      MtdItUser(
+  lazy val testUser: MtdItUser[_] = MtdItUser(
         testMtditid, testNino, Some(Name(Some("Test"), Some("User"))), incomeSource,
         None, Some("1234567890"), credId = None, Some(testUserTypeIndividual), None)(FakeRequest())
-  }
 
   private def auditAdjustPayementsOnAccount(isSuccessful: Boolean): AdjustPaymentsOnAccountAuditModel = AdjustPaymentsOnAccountAuditModel(
     isSuccessful = isSuccessful,
@@ -97,7 +88,6 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
 
     super.beforeEach()
     await(sessionService.setMongoData(None))
-    if (isAgent) stubAuthorisedAgentUser(isAgent, clientMtdId = testMtditid)
 
     Given("Income Source Details with multiple business and property")
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -107,21 +97,11 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
   }
 
   def get(url: String): WSResponse = {
-    IncomeTaxViewChangeFrontend.get(s"""${
-      if (isAgent) {
-        "/agents"
-      } else ""
-    }$url""", additionalCookies = clientDetailsWithConfirmation)
+    IncomeTaxViewChangeFrontend.get(url, additionalCookies = clientDetailsWithConfirmation)
   }
 
   def post(url: String): WSResponse = {
-    IncomeTaxViewChangeFrontend.post(
-      uri = s"""${
-        if (isAgent) {
-          "/agents"
-        } else ""
-      }$url""",
-      additionalCookies = clientDetailsWithConfirmation
+    IncomeTaxViewChangeFrontend.post(url, additionalCookies = clientDetailsWithConfirmation
     )(Map.empty)
   }
 

@@ -19,7 +19,7 @@ package services
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import connectors.AddressLookupConnector
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.UnexpectedGetStatusFailure
 import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.{PostAddressLookupSuccessResponse, UnexpectedPostStatusFailure}
@@ -50,7 +50,7 @@ class AddressLookupServiceSpec extends TestSupport
     "initialiseAddressJourney" should {
       "return an error when connector lookup fails" in {
         disableAllSwitches()
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         when(mockAddressLookupConnector.initialiseAddressLookup(any(), any())(any(), any()))
           .thenReturn(Future(Left(UnexpectedPostStatusFailure(418))))
@@ -65,7 +65,7 @@ class AddressLookupServiceSpec extends TestSupport
 
       "return an error when an empty location is returned" in {
         disableAllSwitches()
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         when(mockAddressLookupConnector.initialiseAddressLookup(any(), any())(any(), any()))
           .thenReturn(Future(Right(PostAddressLookupSuccessResponse(None))))
@@ -80,7 +80,7 @@ class AddressLookupServiceSpec extends TestSupport
 
       "return a redirect location when connector lookup works" in {
         disableAllSwitches()
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         when(mockAddressLookupConnector.initialiseAddressLookup(any(), any())(any(), any()))
           .thenReturn(Future(Right(PostAddressLookupSuccessResponse(Some("sample location")))))
@@ -96,7 +96,7 @@ class AddressLookupServiceSpec extends TestSupport
     "initialiseAddressJourney on change page" should {
       "return an error when connector lookup fails and isChange = true" in {
         disableAllSwitches()
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         when(mockAddressLookupConnector.initialiseAddressLookup(any(), any())(any(), any()))
           .thenReturn(Future(Left(UnexpectedPostStatusFailure(418))))
@@ -111,7 +111,7 @@ class AddressLookupServiceSpec extends TestSupport
 
       "return an error when an empty location is returned and isChange = true" in {
         disableAllSwitches()
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         when(mockAddressLookupConnector.initialiseAddressLookup(any(), any())(any(), any()))
           .thenReturn(Future(Right(PostAddressLookupSuccessResponse(None))))
@@ -126,7 +126,7 @@ class AddressLookupServiceSpec extends TestSupport
 
       "return a redirect location when connector lookup works and isChange = true" in {
         disableAllSwitches()
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         when(mockAddressLookupConnector.initialiseAddressLookup(any(), any())(any(), any()))
           .thenReturn(Future(Right(PostAddressLookupSuccessResponse(Some("sample location")))))
@@ -143,7 +143,7 @@ class AddressLookupServiceSpec extends TestSupport
     "fetchAddress" should {
       "return an error when getting address details fails" in {
         disableAllSwitches()
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         when(mockAddressLookupConnector.getAddressDetails(any())(any()))
           .thenReturn(Future(Left(UnexpectedGetStatusFailure(418))))
@@ -158,7 +158,7 @@ class AddressLookupServiceSpec extends TestSupport
 
       "return an error when no id provided" in {
         disableAllSwitches()
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         when(mockAddressLookupConnector.getAddressDetails(any())(any()))
           .thenReturn(Future(Right(None)))
@@ -173,7 +173,7 @@ class AddressLookupServiceSpec extends TestSupport
 
       "return an error when no address found" in {
         disableAllSwitches()
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         when(mockAddressLookupConnector.getAddressDetails(any())(any()))
           .thenReturn(Future(Right(None)))
@@ -188,7 +188,7 @@ class AddressLookupServiceSpec extends TestSupport
 
       "return a BusinessAddressModel when getting address details works" in {
         disableAllSwitches()
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         when(mockAddressLookupConnector.getAddressDetails(any())(any()))
           .thenReturn(Future(Right(Some(testBusinessAddressModel))))

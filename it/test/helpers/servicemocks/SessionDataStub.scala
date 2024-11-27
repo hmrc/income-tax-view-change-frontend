@@ -18,6 +18,7 @@ package helpers.servicemocks
 
 import helpers.WiremockHelper
 import play.api.http.Status
+import play.api.libs.json.Json
 
 object SessionDataStub {
 
@@ -29,5 +30,18 @@ object SessionDataStub {
 
   def stubPostSessionDataResponseFailure(): Unit =
     WiremockHelper.stubPost("/income-tax-session-data/", Status.INTERNAL_SERVER_ERROR, "")
+
+  def stubGetSessionDataResponseSuccess(): Unit =
+    WiremockHelper.stubGet("/income-tax-session-data/", Status.OK, testSessionResponse)
+
+  def stubGetSessionDataResponseNotFound(): Unit =
+    WiremockHelper.stubGet("/income-tax-session-data/", Status.NOT_FOUND, "")
+
+  val testSessionResponse: String = Json.stringify(Json.obj(
+    "mtditid" -> "XAITSA123456",
+    "nino" -> "AA111111A",
+    "utr" -> "1234567890",
+    "sessionId" -> "sessionId"
+  ))
 
 }

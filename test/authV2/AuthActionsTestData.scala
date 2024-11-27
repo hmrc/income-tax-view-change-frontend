@@ -23,7 +23,7 @@ import controllers.agent.sessionUtils.SessionKeys
 import models.admin.FeatureSwitch
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
 import models.sessionData.SessionCookieData
-import models.sessionData.SessionDataGetResponse.SessionDataGetSuccess
+import models.sessionData.SessionDataGetResponse.{SessionDataGetSuccess, SessionDataNotFound}
 import play.api.mvc.Request
 import play.twirl.api.Html
 import uk.gov.hmrc.auth.core._
@@ -149,6 +149,7 @@ object AuthActionsTestData {
   val sessionGetSuccessResponse = SessionDataGetSuccess(
     mtdId, nino, saUtr, "sessionId"
   )
+  val sessionGetNotFoundResponse = SessionDataNotFound("Not found")
 
 
 }

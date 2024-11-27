@@ -22,7 +22,7 @@ import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.AuthStub.titleInternalServer
 import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDAgentAuthStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import models.admin.{IncomeSources, IncomeSourcesNewJourney, NavBarFs}
+import models.admin.{IncomeSourcesFs, IncomeSourcesNewJourney, NavBarFs}
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.financialDetails._
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
@@ -451,7 +451,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
               "IncomeSources feature switch is enabled" in {
                 disable(NavBarFs)
                 MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
-                enable(IncomeSources)
+                enable(IncomeSourcesFs)
 
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   status = OK,
@@ -521,7 +521,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
               "IncomeSources and IncomeSourcesNewJourney feature switches are enabled" in {
                 disable(NavBarFs)
                 MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
-                enable(IncomeSources)
+                enable(IncomeSourcesFs)
                 enable(IncomeSourcesNewJourney)
 
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -653,7 +653,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
           }
           "retrieving the income sources was unsuccessful" in {
             disable(NavBarFs)
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
 
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsErrorResponse(testMtditid)(

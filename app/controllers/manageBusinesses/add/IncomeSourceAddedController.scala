@@ -21,7 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.IncomeSourceType
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.{AddIncomeSourceData, ChosenReportingMethod, UIJourneySessionData}
 import play.api.Logger
@@ -63,7 +63,7 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
 
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     withIncomeSourcesFS {
-      sessionService.getMongo(JourneyType(Add, incomeSourceType).toString).flatMap {
+      sessionService.getMongo(IncomeSourceJourneyType(Add, incomeSourceType)).flatMap {
         case Right(Some(sessionData)) =>
           (for {
             incomeSourceIdModel <- sessionData.addIncomeSourceData.flatMap(_.incomeSourceId.map(IncomeSourceId(_)))

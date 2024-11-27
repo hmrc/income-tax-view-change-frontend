@@ -16,9 +16,9 @@
 
 package controllers.agent.manageBusinesses.add
 
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
@@ -53,7 +53,7 @@ class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
 
   def testUIJourneySessionData(incomeSourceType: IncomeSourceType, accountingMethod: Option[String]): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
-    journeyType = JourneyType(Add, incomeSourceType).toString,
+    journeyType = IncomeSourceJourneyType(Add, incomeSourceType).toString,
     addIncomeSourceData = Some(
       AddIncomeSourceData(
         businessName  = if (incomeSourceType.equals(SelfEmployment)) Some("testBusinessName")  else None,
@@ -66,16 +66,16 @@ class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
   override def beforeEach(): Unit = {
     super.beforeEach()
     await(sessionService.deleteSession(Add))
-    await(sessionService.createSession(JourneyType(Add, SelfEmployment).toString))
-    await(sessionService.createSession(JourneyType(Add, UkProperty).toString))
-    await(sessionService.createSession(JourneyType(Add, ForeignProperty).toString))
+    await(sessionService.createSession(IncomeSourceJourneyType(Add, SelfEmployment)))
+    await(sessionService.createSession(IncomeSourceJourneyType(Add, UkProperty)))
+    await(sessionService.createSession(IncomeSourceJourneyType(Add, ForeignProperty)))
   }
 
   def runGetTest(addIncomeSourcesAccountingMethodShowUrl: String, url: String, messageKey: String): Unit = {
     "User is authorised" in {
       Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
       stubAuthorisedAgentUser(authorised = true)
-      enable(IncomeSources)
+      enable(IncomeSourcesFs)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
       When(s"I call GET $addIncomeSourcesAccountingMethodShowUrl")
@@ -92,14 +92,14 @@ class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
 
   def runPostTest(checkDetailsShowAgentUrl: String, url: String, formData: Map[String, Seq[String]], incomeSourceType: IncomeSourceType, accountingMethod: Option[String]): Unit = {
     stubAuthorisedAgentUser(authorised = true)
-    enable(IncomeSources)
+    enable(IncomeSourcesFs)
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
     val result = IncomeTaxViewChangeFrontend.post(url, clientDetailsWithConfirmation)(formData)
 
     await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType, accountingMethod)))
 
-    val session = sessionService.getMongo(JourneyType(Add, incomeSourceType).toString)(hc, ec).futureValue
+    val session = sessionService.getMongo(IncomeSourceJourneyType(Add, incomeSourceType))(hc, ec).futureValue
 
     val resultAccountingMethod = session match {
       case Right(Some(uiJourneySessionData)) =>
@@ -145,7 +145,7 @@ class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
         "user does not select anything" in {
           stubAuthorisedAgentUser(authorised = true)
           val formData: Map[String, Seq[String]] = Map(selfEmploymentAccountingMethod -> Seq(""))
-          enable(IncomeSources)
+          enable(IncomeSourcesFs)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
           val result = IncomeTaxViewChangeFrontend.post("/manage-your-businesses/add/business-accounting-method", clientDetailsWithConfirmation)(formData)
@@ -174,7 +174,7 @@ class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
         "user does not select anything" in {
           stubAuthorisedAgentUser(authorised = true)
           val formData: Map[String, Seq[String]] = Map(UKPropertyAccountingMethod -> Seq(""))
-          enable(IncomeSources)
+          enable(IncomeSourcesFs)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
           val result = IncomeTaxViewChangeFrontend.post("/manage-your-businesses/add/uk-property-accounting-method", clientDetailsWithConfirmation)(formData)
@@ -203,7 +203,7 @@ class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
         "user does not select anything" in {
           stubAuthorisedAgentUser(authorised = true)
           val formData: Map[String, Seq[String]] = Map(foreignPropertyAccountingMethod -> Seq(""))
-          enable(IncomeSources)
+          enable(IncomeSourcesFs)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
           val result = IncomeTaxViewChangeFrontend.post("/manage-your-businesses/add/foreign-property-accounting-method", clientDetailsWithConfirmation)(formData)

@@ -17,7 +17,7 @@
 package controllers.agent.manageBusinesses.manage
 
 import auth.MtdItUser
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.JourneyType.Manage
 import forms.incomeSources.manage.ConfirmReportingMethodForm
@@ -113,7 +113,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         When(s"I call GET $confirmReportingMethodShowUKPropertyUrl")
 
@@ -146,7 +146,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         When(s"I call GET $confirmReportingMethodShowForeignPropertyUrl")
 
@@ -178,7 +178,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
@@ -205,7 +205,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
 
         Given("Income Sources FS is disabled")
-        disable(IncomeSources)
+        disable(IncomeSourcesFs)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
@@ -236,7 +236,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
@@ -266,7 +266,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
@@ -289,7 +289,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
 
         stubAuthorisedAgentUser(authorised = true)
 
-        disable(IncomeSources)
+        disable(IncomeSourcesFs)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
@@ -319,7 +319,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-FP",
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testMtditid), Some(annual), Some(2024))))))
@@ -346,7 +346,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-UK",
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testMtditid), Some(annual), Some(2024))))))

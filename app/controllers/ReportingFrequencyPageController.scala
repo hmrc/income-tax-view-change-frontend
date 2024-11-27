@@ -53,8 +53,8 @@ class ReportingFrequencyPageController @Inject()(
 
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def show(): Action[AnyContent] =
-    auth.individualOrAgentWithClient.async { implicit user =>
+  def show(isAgent: Boolean): Action[AnyContent] =
+    auth.asIndividualOrAgent(isAgent).async { implicit user =>
 
       for {
         (optOutProposition, optOutJourneyType) <- optOutService.reportingFrequencyViewModels()
@@ -71,7 +71,6 @@ class ReportingFrequencyPageController @Inject()(
                 controllers.optOut.routes.OptOutChooseTaxYearController.show(user.isAgent()).url
             }
           }
-          println(s"============  Current tax year: ${dateService.getCurrentTaxYear} ================")
 
           Ok(view(
             ReportingFrequencyViewModel(

@@ -19,10 +19,15 @@ package controllers.incomeSources.cease
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Cease, JourneyType}
 import enums.MTDIndividual
+import enums.JourneyType.{Cease, IncomeSourceJourneyType, JourneyType}
 import exceptions.MissingFieldException
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSources
+import implicits.ImplicitDateFormatter
+import mocks.auth.MockFrontendAuthorisedFunctions
+import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
+import mocks.services.{MockIncomeSourceDetailsService, MockSessionService}
+import models.admin.IncomeSourcesFs
 import models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -48,14 +53,14 @@ class CeaseIncomeSourceControllerSpec extends MockAuthActions
   val testCeaseIncomeSourceController = fakeApplication().injector.instanceOf[CeaseIncomeSourceController]
 
   mtdAllRoles.foreach { mtdRole =>
-    val fakeRequest = getFakeRequestBasedOnMTDUserType(mtdRole)
+    val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
     s"show${if (mtdRole != MTDIndividual) "Agent"}" when {
       val action = if (mtdRole == MTDIndividual) testCeaseIncomeSourceController.show() else testCeaseIncomeSourceController.showAgent()
       s"the user is authenticated as a $mtdRole" should {
         "be redirected back to the home page" when {
           "income source is disabled" in {
             setupMockSuccess(mtdRole)
-            disable(IncomeSources)
+            disable(IncomeSourcesFs)
             mockSingleBISWithCurrentYearAsMigrationYear()
 
             val result = action(fakeRequest)
@@ -73,10 +78,10 @@ class CeaseIncomeSourceControllerSpec extends MockAuthActions
         "render the cease an income source page" when {
           "income source is enabled" in {
             setupMockSuccess(mtdRole)
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             mockBothIncomeSources()
             setupMockCreateSession(true)
-            setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Cease, SelfEmployment)))))
+            setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Cease, SelfEmployment)))))
             setupMockDeleteSession(true)
 
             when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any()))
@@ -94,7 +99,7 @@ class CeaseIncomeSourceControllerSpec extends MockAuthActions
         "show error page" when {
           "income source is enabled" in {
             setupMockSuccess(mtdRole)
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             mockBothIncomeSources()
 
             when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any()))

@@ -18,9 +18,9 @@ package controllers.incomeSources.add
 
 import audit.models.CreateIncomeSourceAuditModel
 import auth.MtdItUser
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
@@ -137,12 +137,12 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
 
   def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
-    journeyType = JourneyType(Add, incomeSourceType).toString,
+    journeyType = IncomeSourceJourneyType(Add, incomeSourceType).toString,
     addIncomeSourceData = Some(if (incomeSourceType == SelfEmployment) testAddBusinessData else testAddPropertyData))
 
   def testUIJourneySessionDataError(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
-    journeyType = JourneyType(Add, incomeSourceType).toString,
+    journeyType = IncomeSourceJourneyType(Add, incomeSourceType).toString,
     addIncomeSourceData = Some(if (incomeSourceType == SelfEmployment) testAddBusinessDataError else testAddPropertyData))
 
   def testUIJourneySessionDataNoAccountingMethod(incomeSourceType: IncomeSourceType): UIJourneySessionData =
@@ -169,7 +169,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
       "render the Check Business details page with accounting method" when {
         "User is authorised and has no existing businesses" in {
           Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
-          enable(IncomeSources)
+          enable(IncomeSourcesFs)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
           val response = List(CreateIncomeSourceResponse(testSelfEmploymentId))
@@ -224,7 +224,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
   def runSubmitSuccessTest(incomeSourceType: IncomeSourceType): Unit = {
     s"calling POST ${checkBusinessDetailsSubmitUrl(incomeSourceType)}" should {
       "user selects 'confirm and continue'" in {
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         val response = List(CreateIncomeSourceResponse(testSelfEmploymentId))
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
         IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, response)
@@ -254,7 +254,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
   def businessNotAddedTest(incomeSourceType: IncomeSourceType): Unit = {
     s"calling POST ${checkBusinessDetailsSubmitUrl(incomeSourceType)}" should {
       "error in response from API" in {
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         val response = List(CreateIncomeSourceErrorResponse(500, "INTERNAL_SERVER_ERROR"))
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
         IncomeTaxViewChangeStub.stubCreateBusinessDetailsErrorResponseNew(testMtditid)(response)
@@ -286,10 +286,10 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
   def noUserDetailsTest(incomeSourceType: IncomeSourceType): Unit = {
     s"calling POST ${checkBusinessDetailsSubmitUrl(incomeSourceType)}" should {
       "user session has no details" in {
-        enable(IncomeSources)
+        enable(IncomeSourcesFs)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-        await(sessionService.setMongoData(emptyUIJourneySessionData(JourneyType(Add, incomeSourceType))))
+        await(sessionService.setMongoData(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, incomeSourceType))))
 
         val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/add/${uriSegment(incomeSourceType)}-check-details")(Map.empty)
 

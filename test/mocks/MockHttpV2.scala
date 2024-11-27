@@ -17,12 +17,12 @@
 package mocks
 
 import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.{any, anyString, matches}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.BeforeAndAfterEach
 import testUtils.UnitSpec
-import uk.gov.hmrc.http.{HttpResponse, StringContextOps}
+import uk.gov.hmrc.http.StringContextOps
 import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 
 import scala.concurrent.Future
@@ -48,7 +48,6 @@ trait MockHttpV2 extends UnitSpec with BeforeAndAfterEach {
       .thenReturn(Future.successful(response))
   }
 
-
   def setupMockFailedHttpVTwoGet[T](url: String): OngoingStubbing[Future[T]] = {
     when(mockHttpClientV2
       .get(ArgumentMatchers.eq(url"$url"))(ArgumentMatchers.any())).thenReturn(mockRequestBuilder)
@@ -56,5 +55,11 @@ trait MockHttpV2 extends UnitSpec with BeforeAndAfterEach {
     when(mockRequestBuilder
       .execute[T](ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.failed(new Exception("unknown error")))
+  }
+
+  def setupMockHttpV2Post[T](url: String)(response: T): OngoingStubbing[Future[T]] = {
+    when(mockHttpClientV2.post(ArgumentMatchers.eq(url"$url"))(any())).thenReturn(mockRequestBuilder)
+    when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
+    when(mockRequestBuilder.execute[T](any(), any())).thenReturn(Future.successful(response))
   }
 }

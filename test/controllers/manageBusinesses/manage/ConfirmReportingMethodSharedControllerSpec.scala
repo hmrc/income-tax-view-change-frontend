@@ -19,13 +19,13 @@ package controllers.manageBusinesses.manage
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{JourneyType, Manage}
+import enums.JourneyType.{IncomeSourceJourneyType, JourneyType, Manage}
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockIncomeSourceDetailsService, MockSessionService}
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import org.mockito.Mockito.mock
 import org.scalatest.Assertion
 import play.api.http.Status
@@ -135,7 +135,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         setupMockAuthorisationSuccess(isAgent)
         mockBothPropertyBothBusiness()
         setupMockCreateSession(true)
-        setupMockGetMongo(Right(Some(completedUIJourneySessionData(JourneyType(Manage, incomeSourceType)))))
+        setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
         val result = if (isAgent) TestConfirmReportingMethodSharedController
           .show(testTaxYear, testChangeToAnnual, isAgent, incomeSourceType)(fakeRequestConfirmedClient())
         else TestConfirmReportingMethodSharedController
@@ -297,14 +297,14 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
                  ): Future[Result] = {
 
     if (disableIncomeSources)
-      disable(IncomeSources)
+      disable(IncomeSourcesFs)
 
     mockBothPropertyBothBusinessWithLatency()
     setupMockAuthorisationSuccess(isAgent)
 
     setupMockCreateSession(true)
-    if (emptyMongo) setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, incomeSourceType)))))
-    else setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Manage, incomeSourceType)))))
+    if (emptyMongo) setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
+    else setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
 
     setupMockSetMongoData(true)
 
@@ -327,14 +327,14 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
                    ): Future[Result] = {
 
     if (disableIncomeSources)
-      disable(IncomeSources)
+      disable(IncomeSourcesFs)
 
     mockBothPropertyBothBusiness()
 
     setupMockAuthorisationSuccess(isAgent)
 
     setupMockCreateSession(true)
-    setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Manage, incomeSourceType)))))
+    setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
     setupMockSetMongoData(true)
 
     TestConfirmReportingMethodSharedController
@@ -353,7 +353,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
 
   override def beforeEach(): Unit = {
     disableAllSwitches()
-    enable(IncomeSources)
+    enable(IncomeSourcesFs)
   }
 
   private lazy val testTaxYear = "2022-2023"

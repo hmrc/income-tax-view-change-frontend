@@ -582,7 +582,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
             None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
           )(FakeRequest()),
           messagesAPI, TaxYearSummaryViewModel(Some(CalculationSummary(liabilityCalculationModelSuccessfulExpected)),
-            financialDetailsDunningLockSuccess.documentDetails.map(dd => ChargeItem.fromDocumentPair(dd, financialDetailsDunningLockSuccess.financialDetails)).map(TaxYearSummaryChargeItem.fromChargeItem),
+            financialDetailsDunningLockSuccess.toChargeItem().map(TaxYearSummaryChargeItem.fromChargeItem),
             allObligations, reviewAndReconcileEnabled = true, showForecastData = true, ctaViewModel = emptyCTAModel)))
       }
 

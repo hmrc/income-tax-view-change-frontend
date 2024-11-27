@@ -48,7 +48,7 @@ class EnterPoaAmountController @Inject()(val authActions: AuthActions,
   extends FrontendBaseController with FeatureSwitching with ClaimToAdjustUtils with I18nSupport with JourneyCheckerClaimToAdjust with ErrorRecovery {
 
   def show(isAgent: Boolean, mode: Mode): Action[AnyContent] =
-    authActions.individualOrAgentWithClient async {
+    authActions.asIndividualOrAgent(isAgent) async {
       implicit user =>
         ifAdjustPoaIsEnabled(user.isAgent()) {
           withSessionData() { session =>
@@ -65,7 +65,7 @@ class EnterPoaAmountController @Inject()(val authActions: AuthActions,
         } recover logAndRedirect
     }
 
-  def submit(isAgent: Boolean, mode: Mode): Action[AnyContent] = authActions.individualOrAgentWithClient async {
+  def submit(isAgent: Boolean, mode: Mode): Action[AnyContent] = authActions.asIndividualOrAgent(isAgent) async {
     implicit user =>
       ifAdjustPoaIsEnabled(user.isAgent()) {
         claimToAdjustService.getPoaViewModelWithAdjustmentReason(Nino(user.nino)).flatMap {

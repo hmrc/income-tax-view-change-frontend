@@ -51,7 +51,7 @@ class CheckYourAnswersController @Inject()(val authActions: AuthActions,
   extends FrontendBaseController with ClaimToAdjustUtils with RecalculatePoaHelper with I18nSupport with WithSessionAndPoa with ErrorRecovery{
 
   def show(isAgent: Boolean): Action[AnyContent] =
-    authActions.individualOrAgentWithClient async {
+    authActions.asIndividualOrAgent(isAgent) async {
       implicit user =>
         withSessionDataAndPoa() { (session, poa) =>
           withValidSession(session) { (reason, amount) =>
@@ -73,7 +73,7 @@ class CheckYourAnswersController @Inject()(val authActions: AuthActions,
         } recover logAndRedirect
     }
 
-  def submit(isAgent: Boolean): Action[AnyContent] = authActions.individualOrAgentWithClient.async {
+  def submit(isAgent: Boolean): Action[AnyContent] = authActions.asIndividualOrAgent(isAgent).async {
     implicit user =>
       handleSubmitPoaData(
         claimToAdjustService = claimToAdjustService,

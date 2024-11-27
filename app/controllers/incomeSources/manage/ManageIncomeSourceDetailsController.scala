@@ -21,7 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney._
-import enums.JourneyType.{JourneyType, Manage}
+import enums.JourneyType.{IncomeSourceJourneyType, JourneyType, Manage}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.IncomeSourceIdHash.mkFromQueryString
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
@@ -56,7 +56,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
 
   def show(isAgent: Boolean, incomeSourceType: IncomeSourceType, id: Option[String]): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
-      withSessionData(JourneyType(Manage, incomeSourceType), InitialPage) { _ =>
+      withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), InitialPage) { _ =>
         incomeSourceType match {
           case SelfEmployment => id match {
             case Some(realId) => handleSoleTrader(realId, isAgent)
@@ -92,7 +92,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
           case Left(exception: Exception) => Future.failed(exception)
           case Left(_) => Future.failed(new Error(s"Unexpected exception incomeSourceIdHash: <$incomeSourceIdHash>"))
           case Right(incomeSourceId: IncomeSourceId) =>
-            sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Manage, SelfEmployment)).flatMap {
+            sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, IncomeSourceJourneyType(Manage, SelfEmployment)).flatMap {
               case Right(_) => handleRequest(
                 sources = user.incomeSources,
                 isAgent = isAgent,
@@ -287,7 +287,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String, incomeSourceIdHashMaybe: Option[IncomeSourceIdHash],
                     incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
-    withSessionData(JourneyType(Manage, incomeSourceType), journeyState = InitialPage) { _ =>
+    withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = InitialPage) { _ =>
 
       val hashCompareResult: Option[Either[Throwable, IncomeSourceId]] = incomeSourceIdHashMaybe.map(x => user.incomeSources.compareHashToQueryString(x))
 

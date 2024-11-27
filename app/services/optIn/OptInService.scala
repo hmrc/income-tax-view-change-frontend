@@ -22,6 +22,7 @@ import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure}
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import controllers.routes
+import enums.JourneyType.{OptInJourney, Opt}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
 import models.optin.{ConfirmTaxYearViewModel, MultiYearCheckYourAnswersViewModel, OptInSessionData}
@@ -60,7 +61,7 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
                          ec: ExecutionContext): Future[Boolean] = {
     repository.set(
       UIJourneySessionData(hc.sessionId.get.value,
-        OptInJourney.Name,
+        Opt(OptInJourney).toString,
         optInSessionData =
           Some(OptInSessionData(None, None))))
   }
@@ -68,7 +69,7 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
   private def fetchExistingUIJourneySessionDataOrInit(attempt: Int = 1)(implicit user: MtdItUser[_],
                                                                         hc: HeaderCarrier,
                                                                         ec: ExecutionContext): Future[Option[UIJourneySessionData]] = {
-    repository.get(hc.sessionId.get.value, OptInJourney.Name).flatMap {
+    repository.get(hc.sessionId.get.value, Opt(OptInJourney)).flatMap {
       case Some(jsd) => Future.successful(Some(jsd))
       case None if attempt < 2 => setupSessionData().filter(b => b).flatMap(_ => fetchExistingUIJourneySessionDataOrInit(2))
       case _ => Future.successful(None)
@@ -172,7 +173,7 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
                                                               ec: ExecutionContext): Future[Option[MultiYearCheckYourAnswersViewModel]] = {
     val result = for {
       intentTaxYear <- OptionT(fetchSavedChosenTaxYear())
-      cancelURL = routes.ReportingFrequencyPageController.show().url
+      cancelURL = routes.ReportingFrequencyPageController.show(isAgent).url
       intentIsNextYear = isNextTaxYear(dateService.getCurrentTaxYear, intentTaxYear)
     } yield MultiYearCheckYourAnswersViewModel(intentTaxYear, isAgent, cancelURL, intentIsNextYear)
 
@@ -186,7 +187,7 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
                                                    ec: ExecutionContext): Future[Option[ConfirmTaxYearViewModel]] = {
     val result = for {
       intentTaxYear <- OptionT(fetchSavedChosenTaxYear())
-      cancelURL = routes.ReportingFrequencyPageController.show().url
+      cancelURL = routes.ReportingFrequencyPageController.show(isAgent).url
       intentIsNextYear = isNextTaxYear(dateService.getCurrentTaxYear, intentTaxYear)
     } yield ConfirmTaxYearViewModel(intentTaxYear, cancelURL, intentIsNextYear, isAgent)
 
