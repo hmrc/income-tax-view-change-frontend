@@ -17,7 +17,7 @@
 package connectors
 
 import connectors.helpers.IncomeSourcesDataHelper
-import mocks.MockHttp
+import mocks.MockHttpV2
 import models.createIncomeSource.CreateIncomeSourceErrorResponse.format
 import models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
 import play.api.libs.json.Json
@@ -27,9 +27,9 @@ import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future
 
-class CreateIncomeSourcesConnectorSpec extends TestSupport with MockHttp with IncomeSourcesDataHelper {
+class CreateIncomeSourceConnectorSpec extends TestSupport with MockHttpV2 with IncomeSourcesDataHelper {
 
-  object UnderTestConnector extends CreateIncomeSourceConnector(httpClientMock, appConfig)
+  object UnderTestConnector extends CreateIncomeSourceConnector(mockHttpClientV2, appConfig)
 
   "call create business" should {
 
@@ -43,13 +43,7 @@ class CreateIncomeSourcesConnectorSpec extends TestSupport with MockHttp with In
           List(CreateIncomeSourceResponse(expectedIncomeSourceId))),
           headers = Map.empty)
 
-        val testBody = Json.parse(
-          """
-            |{"businessDetails":[{"accountingPeriodStartDate":"01-02-2023","accountingPeriodEndDate":"","tradingName":"","addressDetails":{"addressLine1":"tests test","addressLine2":"","countryCode":"UK","postalCode":""},"tradingStartDate":"","cashOrAccrualsFlag":"CASH","cessationDate":""}]}
-        """.stripMargin
-        )
-
-        setupMockHttpPost(url, testBody)(response = expectedResponse)
+        setupMockHttpV2Post(url)(expectedResponse)
 
         val result: Future[Either[CreateIncomeSourceErrorResponse, List[CreateIncomeSourceResponse]]] =
           UnderTestConnector.createBusiness(mtdId, createBusinessDetailsRequestObject)
@@ -64,12 +58,7 @@ class CreateIncomeSourcesConnectorSpec extends TestSupport with MockHttp with In
         val url = UnderTestConnector.createBusinessIncomeSourcesUrl(mtdId)
         val expectedResponse = HttpResponse(status = Status.OK, json = Json.toJson("Error message"), headers = Map.empty)
 
-        val testBody = Json.parse(
-          """
-            |{"businessDetails":[{"accountingPeriodStartDate":"01-02-2023","accountingPeriodEndDate":"","tradingName":"","addressDetails":{"addressLine1":"tests test","addressLine2":"","countryCode":"UK","postalCode":""},"tradingStartDate":"","cashOrAccrualsFlag":"CASH","cessationDate":""}]}
-        """.stripMargin
-        )
-        setupMockHttpPost(url, testBody)(response = expectedResponse)
+        setupMockHttpV2Post(url)(expectedResponse)
         val result: Future[Either[CreateIncomeSourceErrorResponse, List[CreateIncomeSourceResponse]]] = UnderTestConnector.createBusiness(mtdId, createBusinessDetailsRequestObject)
         result.futureValue shouldBe Left(CreateIncomeSourceErrorResponse(Status.OK, s"Not valid json: \"Error message\""))
       }
@@ -84,13 +73,7 @@ class CreateIncomeSourcesConnectorSpec extends TestSupport with MockHttp with In
           CreateIncomeSourceErrorResponse(status = 500, "Some error message")),
           headers = Map.empty)
 
-
-        val testBody2 = Json.parse(
-          """
-            |{"businessDetails":[{"accountingPeriodStartDate":"01-02-2023","accountingPeriodEndDate":"","tradingName":"","addressDetails":{"addressLine1":"tests test","addressLine2":"","countryCode":"UK","postalCode":""},"tradingStartDate":"","cashOrAccrualsFlag":"CASH","cessationDate":""}]}
-        """.stripMargin
-        )
-        setupMockHttpPost(url, testBody2)(response = expectedResponse)
+        setupMockHttpV2Post(url)(expectedResponse)
 
         val result: Future[Either[CreateIncomeSourceErrorResponse, List[CreateIncomeSourceResponse]]] = UnderTestConnector.createBusiness(mtdId, createBusinessDetailsRequestObject)
 
@@ -115,12 +98,7 @@ class CreateIncomeSourcesConnectorSpec extends TestSupport with MockHttp with In
         List(CreateIncomeSourceResponse(expectedIncomeSourceId))),
         headers = Map.empty)
 
-      val testBody = Json.parse(
-        """
-          |{"foreignPropertyDetails": {"tradingStartDate":"2011-01-01","cashOrAccrualsFlag":"CASH","startDate":"2011-01-01"}}
-        """.stripMargin)
-
-      setupMockHttpPost(url, testBody)(response = expectedResponse)
+      setupMockHttpV2Post(url)(expectedResponse)
 
       val result: Future[Either[CreateIncomeSourceErrorResponse, List[CreateIncomeSourceResponse]]] =
         UnderTestConnector.createForeignProperty(mtdId, createForeignPropertyRequestObject)
@@ -137,12 +115,7 @@ class CreateIncomeSourcesConnectorSpec extends TestSupport with MockHttp with In
           CreateIncomeSourceErrorResponse(status = Status.INTERNAL_SERVER_ERROR, "Some error message")),
           headers = Map.empty)
 
-        val testBody = Json.parse(
-          """
-            |{"foreignPropertyDetails": {"tradingStartDate":"2011-01-01","cashOrAccrualsFlag":"CASH","startDate":"2011-01-01"}}
-        """.stripMargin)
-
-        setupMockHttpPost(url, testBody)(response = expectedResponse)
+        setupMockHttpV2Post(url)(expectedResponse)
 
         val result: Future[Either[CreateIncomeSourceErrorResponse, List[CreateIncomeSourceResponse]]] = UnderTestConnector.createForeignProperty(mtdId, createForeignPropertyRequestObject)
 
@@ -167,12 +140,7 @@ class CreateIncomeSourcesConnectorSpec extends TestSupport with MockHttp with In
         List(CreateIncomeSourceResponse(expectedIncomeSourceId))),
         headers = Map.empty)
 
-      val testBody = Json.parse(
-        """
-          |{"ukPropertyDetails": {"tradingStartDate":"2011-01-01","cashOrAccrualsFlag":"CASH","startDate":"2011-01-01"}}
-        """.stripMargin)
-
-      setupMockHttpPost(url, testBody)(response = expectedResponse)
+      setupMockHttpV2Post(url)(expectedResponse)
 
       val result: Future[Either[CreateIncomeSourceErrorResponse, List[CreateIncomeSourceResponse]]] =
         UnderTestConnector.createUKProperty(mtdId, createUKPropertyRequestObject)
@@ -189,12 +157,7 @@ class CreateIncomeSourcesConnectorSpec extends TestSupport with MockHttp with In
           CreateIncomeSourceErrorResponse(status = Status.INTERNAL_SERVER_ERROR, "Some error message")),
           headers = Map.empty)
 
-        val testBody = Json.parse(
-          """
-            |{"ukPropertyDetails": {"tradingStartDate":"2011-01-01","cashOrAccrualsFlag":"CASH","startDate":"2011-01-01"}}
-        """.stripMargin)
-
-        setupMockHttpPost(url, testBody)(response = expectedResponse)
+        setupMockHttpV2Post(url)(expectedResponse)
 
         val result: Future[Either[CreateIncomeSourceErrorResponse, List[CreateIncomeSourceResponse]]] = UnderTestConnector.createUKProperty(mtdId, createUKPropertyRequestObject)
 
@@ -208,5 +171,4 @@ class CreateIncomeSourcesConnectorSpec extends TestSupport with MockHttp with In
 
     }
   }
-
 }

@@ -21,14 +21,15 @@ import models.createIncomeSource._
 import play.api.Logger
 import play.api.http.Status.OK
 import play.api.libs.json.{JsError, JsValue, Json}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CreateIncomeSourceConnector @Inject()(val http: HttpClient,
+class CreateIncomeSourceConnector @Inject()(val http: HttpClientV2,
                                             val appConfig: FrontendAppConfig
                                            )(implicit val ec: ExecutionContext) {
 
@@ -40,15 +41,14 @@ class CreateIncomeSourceConnector @Inject()(val http: HttpClient,
     val url = createBusinessIncomeSourcesUrl(mtdItid)
     val jsonRequest = Json.toJson(request)
     Logger("application").debug("createBusinessRequest json: " + jsonRequest)
-    http.POST[JsValue, HttpResponse](url, jsonRequest).flatMap(handleResponse)
+    http.post(url"$url").withBody(jsonRequest).execute[HttpResponse].flatMap(handleResponse)
   }
 
   def createForeignProperty(mtdItid: String, request: CreateForeignPropertyIncomeSourceRequest)
                     (implicit headerCarrier: HeaderCarrier): Future[Either[CreateIncomeSourceErrorResponse, List[CreateIncomeSourceResponse]]] = {
     val url = createBusinessIncomeSourcesUrl(mtdItid)
     val jsonRequest = Json.toJson(request)
-
-    http.POST[JsValue, HttpResponse](url, jsonRequest).flatMap(handleResponse)
+    http.post(url"$url").withBody(jsonRequest).execute[HttpResponse].flatMap(handleResponse)
   }
 
   def createUKProperty(mtdItid: String, request: CreateUKPropertyIncomeSourceRequest)
@@ -56,7 +56,7 @@ class CreateIncomeSourceConnector @Inject()(val http: HttpClient,
     val url = createBusinessIncomeSourcesUrl(mtdItid)
     val jsonRequest = Json.toJson(request)
 
-    http.POST[JsValue, HttpResponse](url, jsonRequest).flatMap(handleResponse)
+    http.post(url"$url").withBody(jsonRequest).execute[HttpResponse].flatMap(handleResponse)
   }
 
 
