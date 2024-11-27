@@ -212,6 +212,9 @@ class BusinessDetailsConnectorSpec extends BaseConnectorSpec {
             when(mockRequestBuilder.withBody(any())(any(), any(), any()))
               .thenReturn(mockRequestBuilder)
 
+            when(mockRequestBuilder.setHeader(any()))
+              .thenReturn(mockRequestBuilder)
+
             when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
               .thenReturn(Future(successResponse))
 
@@ -226,6 +229,9 @@ class BusinessDetailsConnectorSpec extends BaseConnectorSpec {
             when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
 
             when(mockRequestBuilder.withBody(any())(any(), any(), any()))
+              .thenReturn(mockRequestBuilder)
+
+            when(mockRequestBuilder.setHeader(any()))
               .thenReturn(mockRequestBuilder)
 
             when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
@@ -243,6 +249,9 @@ class BusinessDetailsConnectorSpec extends BaseConnectorSpec {
             when(mockRequestBuilder.withBody(any())(any(), any(), any()))
               .thenReturn(mockRequestBuilder)
 
+            when(mockRequestBuilder.setHeader(any()))
+              .thenReturn(mockRequestBuilder)
+
             when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
               .thenReturn(Future(badResponse))
 
@@ -256,6 +265,9 @@ class BusinessDetailsConnectorSpec extends BaseConnectorSpec {
             when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
 
             when(mockRequestBuilder.withBody(any())(any(), any(), any()))
+              .thenReturn(mockRequestBuilder)
+
+            when(mockRequestBuilder.setHeader(any()))
               .thenReturn(mockRequestBuilder)
 
             when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
