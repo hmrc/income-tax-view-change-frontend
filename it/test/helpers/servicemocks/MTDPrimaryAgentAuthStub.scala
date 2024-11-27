@@ -27,7 +27,7 @@ import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolment}
 object MTDPrimaryAgentAuthStub extends MTDAgentAuthStub {
 
   val postAuthoriseUrl = "/auth/authorise"
-  val requiredConfidenceLevel = 200
+  val requiredConfidenceLevel = 250
 
   override def stubAuthorised(confidenceLevel: Option[Int] = None): Unit = {
     val jsonRequest = getMTDAgentAuthRequest()

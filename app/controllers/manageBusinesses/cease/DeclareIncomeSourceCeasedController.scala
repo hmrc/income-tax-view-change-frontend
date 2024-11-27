@@ -16,12 +16,11 @@
 
 package controllers.manageBusinesses.cease
 
-import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.FeatureSwitching
+import auth.MtdItUser
+import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.{IncomeSourceType, InitialPage, SelfEmployment}
-import enums.JourneyType.{Cease, IncomeSourceJourneyType, JourneyType}
+import enums.JourneyType.{Cease, JourneyType}
 import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.CeaseIncomeSourceData
@@ -31,23 +30,23 @@ import play.api.mvc._
 import services.SessionService
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.JourneyCheckerManageBusinesses
 import views.html.manageBusinesses.cease.DeclareIncomeSourceCeased
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DeclareIncomeSourceCeasedController @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
+class DeclareIncomeSourceCeasedController @Inject()(val authActions: AuthActions,
                                                     val view: DeclareIncomeSourceCeased,
                                                     val sessionService: SessionService,
-                                                    val auth: AuthenticatorPredicate)
+                                                    val itvcErrorHandler: ItvcErrorHandler,
+                                                    val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                                    (implicit val appConfig: FrontendAppConfig,
                                                     mcc: MessagesControllerComponents,
-                                                    val ec: ExecutionContext,
-                                                    val itvcErrorHandler: ItvcErrorHandler,
-                                                    val itvcErrorHandlerAgent: AgentItvcErrorHandler
+                                                    val ec: ExecutionContext
                                                    )
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
+  extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses {
 
   private def getBackUrl(isAgent: Boolean): String = if(isAgent) {
     controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
@@ -56,32 +55,32 @@ class DeclareIncomeSourceCeasedController @Inject()(val authorisedFunctions: Fro
   }
 
   def show(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] =
-    auth.authenticatedAction(isAgent = false) {
+    authActions.asMTDIndividual.async {
       implicit user =>
         handleRequest(id, isAgent = false, incomeSourceType)
   }
 
   def showAgent(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] =
-    auth.authenticatedAction(isAgent = true) {
+    authActions.asMTDAgentWithConfirmedClient.async {
       implicit mtdItUser =>
         handleRequest(id, isAgent = true, incomeSourceType)
   }
 
   def submit(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] =
-    auth.authenticatedAction(isAgent = false) {
+    authActions.asMTDIndividual.async {
       implicit request =>
         handleSubmitRequest(id, isAgent = false, isChange = false, incomeSourceType)
   }
 
   def submitAgent(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] =
-    auth.authenticatedAction(isAgent = true) {
+    authActions.asMTDAgentWithConfirmedClient.async {
       implicit mtdItUser =>
         handleSubmitRequest(id, isAgent = true, isChange = false, incomeSourceType)
   }
 
   def handleRequest(id: Option[String], isAgent: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] =
-    withSessionData(IncomeSourceJourneyType(Cease, incomeSourceType), journeyState = InitialPage) { _ =>
+    withSessionData(JourneyType(Cease, incomeSourceType), journeyState = InitialPage) { _ =>
 
       (incomeSourceType, id, getBusinessName(user, id)) match {
         case (SelfEmployment, None, _) =>
@@ -124,7 +123,9 @@ class DeclareIncomeSourceCeasedController @Inject()(val authorisedFunctions: Fro
           ))
         },
       _ => {
-        sessionService.setMongoKey(key = CeaseIncomeSourceData.ceaseIncomeSourceDeclare, value = "true", incomeSources = IncomeSourceJourneyType(Cease, incomeSourceType))
+        println("&&&&&&&&&&&&&&&&&&&&HERE***************")
+        println(id)
+        sessionService.setMongoKey(key = CeaseIncomeSourceData.ceaseIncomeSourceDeclare, value = "true", journeyType = JourneyType(Cease, incomeSourceType))
           .flatMap {
             case Right(_) => Future.successful(Redirect(redirectAction(id, isAgent, isChange, incomeSourceType)))
             case Left(exception) => Future.failed(exception)

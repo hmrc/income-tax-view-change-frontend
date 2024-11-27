@@ -16,10 +16,9 @@
 
 package controllers.manageBusinesses.cease
 
-import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.FeatureSwitching
+import auth.MtdItUser
+import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.{BeforeSubmissionPage, IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Cease, IncomeSourceJourneyType, JourneyType}
 import forms.incomeSources.cease.CeaseIncomeSourceEndDateFormProvider
@@ -32,7 +31,8 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{DateService, SessionService}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.JourneyCheckerManageBusinesses
 import views.html.manageBusinesses.cease.IncomeSourceEndDate
 
 import java.time.LocalDate
@@ -40,18 +40,17 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
+class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,
                                               val incomeSourceEndDate: IncomeSourceEndDate,
                                               val sessionService: SessionService,
                                               form: CeaseIncomeSourceEndDateFormProvider,
-                                              val auth: AuthenticatorPredicate)
+                                              val itvcErrorHandler: ItvcErrorHandler,
+                                              val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                              (implicit val appConfig: FrontendAppConfig,
                                               mcc: MessagesControllerComponents,
                                               val ec: ExecutionContext,
-                                              implicit val dateService: DateService,
-                                              val itvcErrorHandler: ItvcErrorHandler,
-                                              val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
+                                              dateService: DateService)
+  extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses {
 
   private def getBackCall(isAgent: Boolean): Call = {
     if(isAgent) {
@@ -78,7 +77,7 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
   private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
   def show(id: Option[String], incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean):
-            Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
+            Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
             val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
 
       handleRequest(
@@ -130,7 +129,7 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
     }
 
   def submit(id: Option[String], incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean):
-              Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
+              Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
               val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
 
       handleSubmitRequest(

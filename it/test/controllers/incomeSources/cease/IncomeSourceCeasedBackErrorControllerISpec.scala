@@ -16,20 +16,19 @@
 
 package controllers.incomeSources.cease
 
-import models.admin.IncomeSourcesFs
+import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Cease, IncomeSourceJourneyType}
-import helpers.ComponentSpecBase
+import enums.JourneyType.{Cease, JourneyType}
+import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import org.scalatest.Assertion
+import models.admin.{IncomeSources, NavBarFs}
 import play.api.http.Status.{OK, SEE_OTHER}
-import play.api.libs.ws.WSResponse
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, completedUIJourneySessionData}
 
-class IncomeSourceCeasedBackErrorControllerISpec extends ComponentSpecBase {
+class IncomeSourceCeasedBackErrorControllerISpec extends ControllerISpecHelper {
 
   val title = messagesAPI("cannotGoBack.heading")
   val headingSE = messagesAPI("cannotGoBack.sole-trader-ceased")
@@ -43,89 +42,65 @@ class IncomeSourceCeasedBackErrorControllerISpec extends ComponentSpecBase {
     await(sessionService.deleteSession(Cease))
   }
 
-  val url: IncomeSourceType => String = (incomeSourceType: IncomeSourceType) =>
-    controllers.incomeSources.cease.routes.IncomeSourceCeasedBackErrorController.show(incomeSourceType).url
-
-  def runOKTest(incomeSourceType: IncomeSourceType): Assertion = {
-    enable(IncomeSourcesFs)
-    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-    await(sessionService.setMongoData(completedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType))))
-
-    val specificHeading = incomeSourceType match {
-      case SelfEmployment => headingSE
-      case UkProperty => headingUk
-      case ForeignProperty => headingFP
-    }
-
-    val expectedTitle = s"$title - $specificHeading"
-
-    lazy val result: WSResponse = incomeSourceType match {
-      case SelfEmployment => IncomeTaxViewChangeFrontend.getCeaseSECannotGoBack()
-      case UkProperty => IncomeTaxViewChangeFrontend.getCeaseUKCannotGoBack()
-      case ForeignProperty => IncomeTaxViewChangeFrontend.getCeaseFPCannotGoBack()
-    }
-
-    result should have(
-      httpStatus(OK),
-      pageTitleIndividual(s"$expectedTitle")
-    )
+  def specificHeading(incomeSourceType: IncomeSourceType) = incomeSourceType match {
+    case SelfEmployment => headingSE
+    case UkProperty => headingUk
+    case ForeignProperty => headingFP
   }
 
-  def runRedirectTest(incomeSourceType: IncomeSourceType): Assertion = {
-    disable(IncomeSourcesFs)
-    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-    val result: WSResponse = incomeSourceType match {
-      case SelfEmployment => IncomeTaxViewChangeFrontend.getCeaseSECannotGoBack()
-      case UkProperty => IncomeTaxViewChangeFrontend.getCeaseUKCannotGoBack()
-      case ForeignProperty => IncomeTaxViewChangeFrontend.getCeaseFPCannotGoBack()
-    }
-
-    val expectedRedirect: String = controllers.routes.HomeController.show().url
-
-    result should have(
-      httpStatus(SEE_OTHER),
-      redirectURI(expectedRedirect)
-    )
+  def expectedTitle(incomeSourceType: IncomeSourceType): String = {
+    s"$title - ${specificHeading(incomeSourceType)}"
   }
 
-
-  s"calling GET ${url(UkProperty)}" should {
-    "return 200 OK" when {
-      "FS enabled - UK Property" in {
-        runOKTest(UkProperty)
-      }
+  def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType): String = {
+    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    val endPath = incomeSourceType match {
+      case SelfEmployment => s"/income-sources/cease/cease-business-cannot-go-back"
+      case UkProperty =>  "/income-sources/cease/cease-uk-property-cannot-go-back"
+      case _ => "/income-sources/cease/cease-foreign-property-cannot-go-back"
     }
-    "return 303 SEE_OTHER" when {
-      "FS disabled - UK Property" in {
-        runRedirectTest(UkProperty)
-      }
-    }
+    pathStart + endPath
   }
-  s"calling GET ${url(ForeignProperty)}" should {
-    "return 200 OK" when {
-      "FS enabled - Foreign Property" in {
-        runOKTest(ForeignProperty)
-      }
-    }
-    "return 303 SEE_OTHER" when {
-      "FS disabled - Foreign Property" in {
-        runRedirectTest(ForeignProperty)
+
+  mtdAllRoles.foreach { mtdUserRole =>
+    List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
+      val path = getPath(mtdUserRole, incomeSourceType)
+      val additionalCookies = getAdditionalCookies(mtdUserRole)
+      s"GET $path" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            "render the back error page" in {
+              stubAuthorised(mtdUserRole)
+              disable(NavBarFs)
+              enable(IncomeSources)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+
+              await(sessionService.setMongoData(completedUIJourneySessionData(JourneyType(Cease, incomeSourceType))))
+              val result = buildGETMTDClient(path, additionalCookies).futureValue
+              result should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, expectedTitle(incomeSourceType))
+              )
+            }
+
+            "redirect to home page" when {
+              "FS disabled" in {
+                stubAuthorised(mtdUserRole)
+                disable(NavBarFs)
+                disable(IncomeSources)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                result should have(
+                  httpStatus(SEE_OTHER),
+                  redirectURI(homeUrl(mtdUserRole))
+                )
+              }
+            }
+          }
+          testAuthFailures(path, mtdUserRole)
+
+        }
       }
     }
   }
-  s"calling GET ${url(SelfEmployment)}" should {
-    "return 200 OK" when {
-      "FS enabled - Self Employment" in {
-        runOKTest(SelfEmployment)
-      }
-    }
-    "return 303 SEE_OTHER" when {
-      "FS disabled - Self Employment" in {
-        runRedirectTest(SelfEmployment)
-      }
-    }
-  }
-
 }

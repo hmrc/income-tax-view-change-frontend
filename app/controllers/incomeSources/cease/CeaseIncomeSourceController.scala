@@ -38,8 +38,7 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
                                             val itvcErrorHandler: ItvcErrorHandler,
                                             val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                             val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                            val sessionService: SessionService,
-                                            val auth: AuthenticatorPredicate)
+                                            val sessionService: SessionService)
                                            (implicit val ec: ExecutionContext,
                                             val mcc: MessagesControllerComponents,
                                             val appConfig: FrontendAppConfig)

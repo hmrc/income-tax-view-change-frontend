@@ -23,23 +23,23 @@ import controllers.claimToAdjustPoa.routes
 import controllers.claimToAdjustPoa.routes.{ApiFailureSubmittingPoaController, PoaAdjustedController}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDAgentAuthStub}
+import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDPrimaryAgentAuthStub, SessionDataStub}
 import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.ClaimToAdjustPoaResponse.ClaimToAdjustPoaSuccess
 import models.claimToAdjustPoa.PoaAmendmentData
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
-import play.api.http.Status.{BAD_REQUEST, CREATED, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
+import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.PaymentOnAccountSessionService
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testDate, testIncomeSource, testMtditid, testNino, testUserTypeAgent}
+import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.address
-import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.validSession
 import testConstants.FinancialDetailsTestConstants.testFinancialDetailsErrorModelJson
 import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
+import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.validSession
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
@@ -91,7 +91,8 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
     super.beforeEach()
     setupGetIncomeSourceDetails()
     await(sessionService.setMongoData(None))
-    MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, false)
+    SessionDataStub.stubGetSessionDataResponseSuccess()
+    MTDPrimaryAgentAuthStub.stubAuthorised()
   }
 
   def get(url: String): WSResponse = {

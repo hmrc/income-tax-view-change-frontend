@@ -34,6 +34,9 @@ trait ControllerISpecHelper extends ComponentSpecBase {
   }
 
   def stubAuthorised(mtdRole: MTDUserRole): Unit = {
+    if(mtdRole != MTDIndividual) {
+      SessionDataStub.stubGetSessionDataResponseSuccess()
+    }
     getMTDAuthStub(mtdRole).stubAuthorised()
   }
 
@@ -53,6 +56,7 @@ trait ControllerISpecHelper extends ComponentSpecBase {
   def testNoClientDataFailure(requestPath: String, optBody: Option[Map[String, Seq[String]]] = None): Unit = {
     "the user does not have client session data" should {
       s"redirect ($SEE_OTHER) to ${controllers.agent.routes.EnterClientsUTRController.show.url}" in {
+        SessionDataStub.stubGetSessionDataResponseNotFound()
         val result = buildMTDClient(requestPath, optBody = optBody).futureValue
 
         result should have(
@@ -72,6 +76,9 @@ trait ControllerISpecHelper extends ComponentSpecBase {
 
     "does not have a valid session" should {
       s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" in {
+        if(mtdUserRole != MTDIndividual) {
+          SessionDataStub.stubGetSessionDataResponseSuccess()
+        }
         mtdAuthStub.stubUnauthorised()
         val result = buildMTDClient(requestPath, additionalCookies, optBody).futureValue
 
@@ -84,6 +91,9 @@ trait ControllerISpecHelper extends ComponentSpecBase {
 
     "has an expired bearerToken" should {
       s"redirect ($SEE_OTHER) to ${controllers.timeout.routes.SessionTimeoutController.timeout.url}" in {
+        if(mtdUserRole != MTDIndividual) {
+          SessionDataStub.stubGetSessionDataResponseSuccess()
+        }
         mtdAuthStub.stubBearerTokenExpired()
         val result = buildMTDClient(requestPath, additionalCookies, optBody).futureValue
 
@@ -96,78 +106,95 @@ trait ControllerISpecHelper extends ComponentSpecBase {
 
     mtdAuthStub match {
       case authStub: MTDAgentAuthStub =>
-        "does not have arn enrolment" should {
-          s"redirect ($SEE_OTHER) to ${controllers.agent.errors.routes.AgentErrorController.show.url}" in {
-            authStub.stubNoAgentEnrolmentError()
-            val result = buildMTDClient(requestPath, additionalCookies, optBody).futureValue
+        testAgentAuthFailures(authStub, requestPath, additionalCookies, optBody, requiresConfirmedClient)
+      case _ => testIndividualAuthFailures(requestPath, optBody)
+    }
+  }
 
-            result should have(
-              httpStatus(SEE_OTHER),
-              redirectURI(controllers.agent.errors.routes.AgentErrorController.show.url)
-            )
-          }
-        }
+  def testIndividualAuthFailures(requestPath: String,
+                                 optBody: Option[Map[String, Seq[String]]]): Unit = {
+    "does not have HMRC-MTD-IT enrolment" should {
+      s"redirect ($SEE_OTHER) to ${controllers.errors.routes.NotEnrolledController.show.url}" in {
+        MTDIndividualAuthStub.stubInsufficientEnrolments()
+        val result = buildMTDClient(requestPath, optBody = optBody).futureValue
 
-        "does not have a valid delegated MTD enrolment" should {
-          s"redirect ($SEE_OTHER) to ${controllers.agent.routes.ClientRelationshipFailureController.show.url}" in {
-            authStub.stubMissingDelegatedEnrolment()
-            val result = buildMTDClient(requestPath, additionalCookies, optBody).futureValue
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.errors.routes.NotEnrolledController.show.url)
+        )
+      }
+    }
 
-            result should have(
-              httpStatus(SEE_OTHER),
-              redirectURI(controllers.agent.routes.ClientRelationshipFailureController.show.url)
-            )
-          }
-        }
+    "does not have the required confidence level" should {
+      s"redirect ($SEE_OTHER) to IV uplift" in {
+        MTDIndividualAuthStub.stubAuthorised(Some(50))
+        val result = buildMTDClient(requestPath, optBody = optBody).futureValue
 
-        "is not an agent" should {
-          "redirect to the home controller" in {
-            authStub.stubNotAnAgent()
+        result.status shouldBe SEE_OTHER
+        result.header("Location").get should include("/iv-stub")
+      }
+    }
 
-            val result = buildMTDClient(requestPath, additionalCookies, optBody).futureValue
+    "is an agent" should {
+      "redirect to the Enter clients UTR controller" in {
+        MTDIndividualAuthStub.stubAuthorisedButAgent()
 
-            result should have(
-              httpStatus(SEE_OTHER),
-              redirectURI(controllers.routes.HomeController.show().url)
-            )
-          }
-        }
+        val result = buildMTDClient(requestPath, optBody = optBody).futureValue
 
-      case _ =>
-        "does not have HMRC-MTD-IT enrolment" should {
-          s"redirect ($SEE_OTHER) to ${controllers.errors.routes.NotEnrolledController.show.url}" in {
-            MTDIndividualAuthStub.stubInsufficientEnrolments()
-            val result = buildMTDClient(requestPath, optBody = optBody).futureValue
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.agent.routes.EnterClientsUTRController.show.url)
+        )
+      }
+    }
+  }
 
-            result should have(
-              httpStatus(SEE_OTHER),
-              redirectURI(controllers.errors.routes.NotEnrolledController.show.url)
-            )
-          }
-        }
+  def testAgentAuthFailures(authStub: MTDAgentAuthStub,
+                            requestPath: String,
+                            additionalCookies: Map[String, String],
+                            optBody: Option[Map[String, Seq[String]]],
+                            requiresConfirmedClient: Boolean): Unit = {
+    "does not have arn enrolment" should {
+      s"redirect ($SEE_OTHER) to ${controllers.agent.errors.routes.AgentErrorController.show.url}" in {
+        SessionDataStub.stubGetSessionDataResponseSuccess()
+        authStub.stubNoAgentEnrolmentError()
+        val result = buildMTDClient(requestPath, additionalCookies, optBody).futureValue
 
-        "does not have the required confidence level" should {
-          s"redirect ($SEE_OTHER) to IV uplift" in {
-            MTDIndividualAuthStub.stubAuthorised(Some(50))
-            val result = buildMTDClient(requestPath, optBody = optBody).futureValue
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.agent.errors.routes.AgentErrorController.show.url)
+        )
+      }
+    }
 
-            result.status shouldBe SEE_OTHER
-            result.header("Location").get should include("/iv-stub")
-          }
-        }
+    "does not have a valid delegated MTD enrolment" should {
+      s"redirect ($SEE_OTHER) to ${controllers.agent.routes.ClientRelationshipFailureController.show.url}" in {
+        SessionDataStub.stubGetSessionDataResponseSuccess()
+        authStub.stubMissingDelegatedEnrolment()
+        val result = buildMTDClient(requestPath, additionalCookies, optBody).futureValue
 
-        "is an agent" should {
-          "redirect to the Enter clients UTR controller" in {
-            MTDIndividualAuthStub.stubAuthorisedButAgent()
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.agent.routes.ClientRelationshipFailureController.show.url)
+        )
+      }
+    }
 
-            val result = buildMTDClient(requestPath, optBody = optBody).futureValue
+    "is not an agent" should {
+      "redirect to the home controller" in {
+        SessionDataStub.stubGetSessionDataResponseSuccess()
+        authStub.stubNotAnAgent()
 
-            result should have(
-              httpStatus(SEE_OTHER),
-              redirectURI(controllers.agent.routes.EnterClientsUTRController.show.url)
-            )
-          }
-        }
+        val result = buildMTDClient(requestPath, additionalCookies, optBody).futureValue
+
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.routes.HomeController.show().url)
+        )
+      }
+    }
+    if(requiresConfirmedClient) {
+      testNoClientDataFailure(requestPath, optBody)
     }
   }
 }
