@@ -17,11 +17,11 @@
 package controllers.incomeSources.add
 
 import enums.IncomeSourceJourney._
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.{MockNextUpdatesService, MockSessionService}
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails._
 import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
@@ -108,7 +108,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions
   }
 
   def mockMongo(incomeSourceType: IncomeSourceType): Unit = {
-    setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Add, incomeSourceType)))))
+    setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Add, incomeSourceType)))))
     when(mockSessionService.setMongoData(any())(any(), any())).thenReturn(Future(true))
   }
 
@@ -127,12 +127,12 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions
   incomeSourceTypes.foreach { incomeSourceType =>
     mtdAllRoles.foreach { mtdRole =>
       s"show${if (mtdRole != MTDIndividual) "Agent"}(incomeSourceType = ${incomeSourceType.key})" when {
-        val fakeRequest = getFakeRequestBasedOnMTDUserType(mtdRole)
+        val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
         val action = if (mtdRole == MTDIndividual) testIncomeSourceAddedController.show(incomeSourceType) else testIncomeSourceAddedController.showAgent(incomeSourceType)
         s"the user is authenticated as a $mtdRole" should {
           "render the income source added page" when {
             "FS enabled with newly added income source and obligations view model" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               setupMockSuccess(mtdRole)
               setupMockGetSessionKeyMongoTyped[String](Right(Some(testSelfEmploymentId)))
               mockIncomeSource(incomeSourceType)
@@ -148,7 +148,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions
 
               mockMongo(incomeSourceType)
 
-              setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.incomeSourceIdField, journeyType = JourneyType(Add, incomeSourceType), result = Right(Some(testSelfEmploymentId)))
+              setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.incomeSourceIdField, journeyType = IncomeSourceJourneyType(Add, incomeSourceType), result = Right(Some(testSelfEmploymentId)))
 
               val result = action(fakeRequest)
               status(result) shouldBe OK
@@ -157,7 +157,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions
 
           "return 303 SEE_OTHER" when {
             "Income Sources FS is disabled" in {
-              disable(IncomeSources)
+              disable(IncomeSourcesFs)
               setupMockSuccess(mtdRole)
               mockIncomeSource(incomeSourceType)
 
@@ -169,7 +169,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions
           }
           "return 500 ISE" when {
             "Income source start date was not retrieved" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               setupMockSuccess(mtdRole)
               mockIncomeSource(incomeSourceType)
               setupMockGetSessionKeyMongoTyped[String](Right(Some(testSelfEmploymentId)))
@@ -179,7 +179,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions
               status(result) shouldBe INTERNAL_SERVER_ERROR
             }
             "Income source id is invalid" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               setupMockSuccess(mtdRole)
               mockIncomeSource(incomeSourceType)
               setupMockGetSessionKeyMongoTyped[String](Right(Some(testSelfEmploymentId)))
@@ -193,7 +193,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions
             }
             if (incomeSourceType == SelfEmployment) {
               "Supplied business has no name" in {
-                enable(IncomeSources)
+                enable(IncomeSourcesFs)
 
                 setupMockSuccess(mtdRole)
                 val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel(testNino, "", Some("2022"), List(BusinessDetailsModel(
@@ -212,7 +212,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions
                   thenReturn(Future(testObligationsModel))
                 mockProperty()
                 mockMongo(incomeSourceType)
-                setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.incomeSourceIdField, journeyType = JourneyType(Add, incomeSourceType), result = Right(Some(testSelfEmploymentId)))
+                setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.incomeSourceIdField, journeyType = IncomeSourceJourneyType(Add, incomeSourceType), result = Right(Some(testSelfEmploymentId)))
 
                 val result = action(fakeRequest)
                 status(result) shouldBe INTERNAL_SERVER_ERROR
@@ -225,10 +225,10 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions
 
       s"submit${if (mtdRole != MTDIndividual) "Agent"}(incomeSourceType = $incomeSourceType)" when {
         val action = if (mtdRole == MTDIndividual) testIncomeSourceAddedController.submit else testIncomeSourceAddedController.agentSubmit
-        val fakeRequest = getFakeRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
+        val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
         s"the user is authenticated as a $mtdRole" should {
           "redirect to add income sources" in {
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             setupMockSuccess(mtdRole)
 
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)

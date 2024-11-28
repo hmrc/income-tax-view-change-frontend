@@ -17,16 +17,11 @@
 package controllers.incomeSources.cease
 
 import enums.IncomeSourceJourney.SelfEmployment
-import enums.JourneyType.{Cease, JourneyType}
+import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.MTDIndividual
-import enums.JourneyType.{Cease, IncomeSourceJourneyType, JourneyType}
 import exceptions.MissingFieldException
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import implicits.ImplicitDateFormatter
-import mocks.auth.MockFrontendAuthorisedFunctions
-import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
-import mocks.services.{MockIncomeSourceDetailsService, MockSessionService}
 import models.admin.IncomeSourcesFs
 import models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
 import org.mockito.ArgumentMatchers.any

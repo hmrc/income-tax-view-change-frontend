@@ -20,7 +20,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.IncomeSourceJourney.{CannotGoBackPage, IncomeSourceType}
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -44,7 +44,7 @@ class IncomeSourceAddedBackErrorController @Inject()(val authActions: AuthAction
 
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_]): Future[Result] = withSessionData(JourneyType(Add, incomeSourceType), journeyState = CannotGoBackPage) { data =>
+                   (implicit user: MtdItUser[_]): Future[Result] = withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = CannotGoBackPage) { data =>
     val cannotGoBackRedirectUrl = if (isAgent) controllers.manageBusinesses.add.routes.ReportingMethodSetBackErrorController.showAgent(incomeSourceType)
     else controllers.manageBusinesses.add.routes.ReportingMethodSetBackErrorController.show(incomeSourceType)
     if (data.addIncomeSourceData.exists(addData => addData.journeyIsComplete.contains(true))) {
@@ -86,7 +86,7 @@ class IncomeSourceAddedBackErrorController @Inject()(val authActions: AuthAction
 
   private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                           (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] =
-    withSessionData(JourneyType(Add, incomeSourceType), CannotGoBackPage) {
+    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), CannotGoBackPage) {
       _.addIncomeSourceData.map(_.incomeSourceId) match {
         case Some(_) =>
           Future.successful {

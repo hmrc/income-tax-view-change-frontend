@@ -17,11 +17,11 @@
 package controllers.manageBusinesses.cease
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Cease, JourneyType}
+import enums.JourneyType.{Cease, IncomeSourceJourneyType, JourneyType}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import org.jsoup.Jsoup
@@ -88,18 +88,18 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
           None
         }
         s"show($incomeSourceType, $isAgent, $isChange)" when {
-          val fakeRequest = getFakeRequestBasedOnMTDUserType(mtdRole)
+          val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
           val action = testController.show(optIncomeSourceIdHash, incomeSourceType, isAgent, isChange)
           s"the user is authenticated as a $mtdRole" should {
             "render the end date page" when {
               "incomeSource feature switch is enabled" in {
                 setupMockSuccess(mtdRole)
-                enable(IncomeSources)
+                enable(IncomeSourcesFs)
                 mockBothPropertyBothBusiness()
                 if (isChange) {
-                  setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+                  setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
                 } else {
-                  setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+                  setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
                 }
 
                 val result: Future[Result] = action(fakeRequest)
@@ -127,7 +127,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
             "return 303 SEE_OTHER and redirect to home page" when {
               "navigating to the page with FS Disabled" in {
                 setupMockSuccess(mtdRole)
-                disable(IncomeSources)
+                disable(IncomeSourcesFs)
                 mockBusinessIncomeSource()
                 val result: Future[Result] = action(fakeRequest)
                 status(result) shouldBe SEE_OTHER
@@ -137,10 +137,10 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
             "redirect to the Cannot Go Back page" when {
               "journey is complete" in {
                 setupMockSuccess(mtdRole)
-                enable(IncomeSources)
+                enable(IncomeSourcesFs)
                 mockBothPropertyBothBusiness()
                 setupMockCreateSession(true)
-                setupMockGetMongo(Right(Some(completedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+                setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
                 val result: Future[Result] = action(fakeRequest)
                 val expectedRedirectUrl = if (isAgent) {
                   routes.IncomeSourceCeasedBackErrorController.showAgent(incomeSourceType).url
@@ -157,22 +157,22 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
               "return 500 INTERNAL SERVER ERROR to internal server page" when {
                 "income source ID is missing" in {
                   setupMockSuccess(mtdRole)
-                  enable(IncomeSources)
+                  enable(IncomeSourcesFs)
                   mockBothPropertyBothBusiness()
 
                   setupMockCreateSession(true)
-                  setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+                  setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
                   val actionNoId = testController.show(None, incomeSourceType, isAgent, isChange)
                   val result: Future[Result] = actionNoId(fakeRequest)
                   status(result) shouldBe INTERNAL_SERVER_ERROR
                 }
                 "incomeSourceIdHash in URL does not match any incomeSourceIdHash in database" in {
                   setupMockSuccess(mtdRole)
-                  enable(IncomeSources)
+                  enable(IncomeSourcesFs)
                   mockBothPropertyBothBusiness()
 
                   setupMockCreateSession(true)
-                  setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+                  setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
                   val actionIdNotRec = testController.show(Some("12345"), incomeSourceType, isAgent, isChange)
                   val result: Future[Result] = actionIdNotRec(fakeRequest)
                   status(result) shouldBe INTERNAL_SERVER_ERROR
@@ -184,13 +184,13 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
         }
 
         s"submit($incomeSourceType, $isAgent, $isChange)" when {
-          val fakeRequest = getFakeRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
+          val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
           val action = testController.submit(optIncomeSourceIdHash, incomeSourceType, isAgent, isChange)
           s"the user is authenticated as a $mtdRole" should {
             "redirect to CheckIncomeSourceDetails" when {
               "form is completed successfully" in {
                 setupMockSuccess(mtdRole)
-                enable(IncomeSources)
+                enable(IncomeSourcesFs)
                 mockBothPropertyBothBusiness()
                 setupMockCreateSession(true)
                 if (incomeSourceType == SelfEmployment) {
@@ -199,9 +199,9 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
                   setupMockSetSessionKeyMongo(Right(true))
                 }
                 if (isChange) {
-                  setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+                  setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
                 } else {
-                  setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+                  setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
                 }
                 val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody("value.day" -> "27", "value.month" -> "8",
                   "value.year" -> "2022"))
@@ -216,7 +216,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
             "return 400 BAD_REQUEST" when {
               "the form is not completed successfully" in {
                 setupMockSuccess(mtdRole)
-                enable(IncomeSources)
+                enable(IncomeSourcesFs)
                 mockBusinessIncomeSource()
                 val result: Future[Result] = action(fakeRequest
                   .withFormUrlEncodedBody("value.day" -> "", "value.month" -> "8",
@@ -234,7 +234,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
                 if (incomeSourceType == SelfEmployment) {
                   "income source ID is missing" in {
                     setupMockSuccess(mtdRole)
-                    enable(IncomeSources)
+                    enable(IncomeSourcesFs)
                     mockBothPropertyBothBusiness()
 
                     val actionMissingId = testController.submit(None, incomeSourceType, isAgent, isChange)
@@ -245,7 +245,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
                   }
                   "incomeSourceIdHash in URL does not match any incomeSourceIdHash in database" in {
                     setupMockSuccess(mtdRole)
-                    enable(IncomeSources)
+                    enable(IncomeSourcesFs)
                     mockBothPropertyBothBusiness()
 
                     val actionInvalidId = testController.submit(Some("12345"), incomeSourceType, isAgent, isChange)
@@ -258,7 +258,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
 
                   "unable to set incomeSourceIdField session data" in {
                     setupMockSuccess(mtdRole)
-                    enable(IncomeSources)
+                    enable(IncomeSourcesFs)
                     mockBothPropertyBothBusiness()
 
                     setupMockCreateSession(true)
@@ -271,12 +271,12 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
                 } else {
                   "unable to set dateCeased session data" in {
                     setupMockSuccess(mtdRole)
-                    enable(IncomeSources)
+                    enable(IncomeSourcesFs)
                     mockBothPropertyBothBusiness()
 
                     setupMockCreateSession(true)
                     setupMockSetSessionKeyMongo(CeaseIncomeSourceData.dateCeasedField)(Left(new Exception()))
-                    val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody("value.day" -> "27", "value.month" -> "8",
+                    val result = action(fakeRequest.withFormUrlEncodedBody("value.day" -> "27", "value.month" -> "8",
                       "value.year" -> "2022"))
 
                     status(result) shouldBe INTERNAL_SERVER_ERROR

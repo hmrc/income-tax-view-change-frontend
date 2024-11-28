@@ -18,11 +18,11 @@ package controllers.manageBusinesses.add
 
 import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.SelfEmployment
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import forms.incomeSources.add.BusinessNameForm
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{IncomeSources, NavBarFs}
+import models.admin.{IncomeSourcesFs, NavBarFs}
 import models.incomeSourceDetails.AddIncomeSourceData.businessNameField
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -41,7 +41,7 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
   val testBusinessName: String = "Test Business"
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
   override implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
-  val journeyType: JourneyType = JourneyType(Add, SelfEmployment)
+  val journeyType: IncomeSourceJourneyType = IncomeSourceJourneyType(Add, SelfEmployment)
 
   def backUrl(isChange: Boolean, isAgent: Boolean): String = {
     if (isChange) {
@@ -68,7 +68,7 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
           "render the Add Business Name page" when {
             "income sources feature is enabled" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -90,7 +90,7 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
             "Income Sources FS disabled" in {
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
-              disable(IncomeSources)
+              disable(IncomeSourcesFs)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
@@ -113,7 +113,7 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
             "User is authorised" in {
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
               val result = buildGETMTDClient(changePath, additionalCookies).futureValue
@@ -133,7 +133,7 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
             "Income Sources FS disabled" in {
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
-              disable(IncomeSources)
+              disable(IncomeSourcesFs)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
               val result = buildGETMTDClient(changePath, additionalCookies).futureValue
@@ -154,7 +154,7 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
           s"303 SEE_OTHER and redirect to add business start date" when {
             "the income sources is enabled" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -175,7 +175,7 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
             }
           }
           "show error when form is filled incorrectly" in {
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             disable(NavBarFs)
             stubAuthorised(mtdUserRole)
 
@@ -211,7 +211,7 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
           }
           s"303 SEE_OTHER and redirect to $expectedRedirectUrl" when {
             "the income sources is enabled" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -232,7 +232,7 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
             }
           }
           "show error when form is filled incorrectly" in {
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             disable(NavBarFs)
             stubAuthorised(mtdUserRole)
 

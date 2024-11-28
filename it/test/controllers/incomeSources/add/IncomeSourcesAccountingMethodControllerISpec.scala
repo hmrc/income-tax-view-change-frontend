@@ -18,10 +18,10 @@ package controllers.incomeSources.add
 
 import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{IncomeSources, NavBarFs}
+import models.admin.{IncomeSourcesFs, NavBarFs}
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -43,7 +43,7 @@ class IncomeSourcesAccountingMethodControllerISpec extends ControllerISpecHelper
 
   def testUIJourneySessionData(incomeSourceType: IncomeSourceType, accountingMethod: Option[String]): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
-    journeyType = JourneyType(Add, incomeSourceType).toString,
+    journeyType = IncomeSourceJourneyType(Add, incomeSourceType).toString,
     addIncomeSourceData = Some(
       AddIncomeSourceData(
         businessName  = if (incomeSourceType.equals(SelfEmployment)) Some("testBusinessName")  else None,
@@ -56,9 +56,9 @@ class IncomeSourcesAccountingMethodControllerISpec extends ControllerISpecHelper
   override def beforeEach(): Unit = {
     super.beforeEach()
     await(sessionService.deleteSession(Add))
-    await(sessionService.createSession(JourneyType(Add, SelfEmployment).toString))
-    await(sessionService.createSession(JourneyType(Add, UkProperty).toString))
-    await(sessionService.createSession(JourneyType(Add, ForeignProperty).toString))
+    await(sessionService.createSession(IncomeSourceJourneyType(Add, SelfEmployment)))
+    await(sessionService.createSession(IncomeSourceJourneyType(Add, UkProperty)))
+    await(sessionService.createSession(IncomeSourceJourneyType(Add, ForeignProperty)))
   }
 
   def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType): String = {
@@ -78,7 +78,7 @@ class IncomeSourcesAccountingMethodControllerISpec extends ControllerISpecHelper
         s"a user is a $mtdUserRole" that {
           "is authenticated, with a valid enrolment" should {
             "render the Business Accounting Method page" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -101,7 +101,7 @@ class IncomeSourcesAccountingMethodControllerISpec extends ControllerISpecHelper
           "is authenticated, with a valid enrolment" should {
             s"add 'cash' to session storage and redirect to check business details" when {
               "user selects 'cash basis accounting'" in {
-                enable(IncomeSources)
+                enable(IncomeSourcesFs)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -111,7 +111,7 @@ class IncomeSourcesAccountingMethodControllerISpec extends ControllerISpecHelper
 
                 await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType, Some("cash"))))
 
-                val session = sessionService.getMongo(JourneyType(Add, incomeSourceType).toString)(hc, ec).futureValue
+                val session = sessionService.getMongo(IncomeSourceJourneyType(Add, incomeSourceType))(hc, ec).futureValue
 
                 val resultAccountingMethod = session match {
                   case Right(Some(uiJourneySessionData)) =>
@@ -135,7 +135,7 @@ class IncomeSourcesAccountingMethodControllerISpec extends ControllerISpecHelper
 
             s"add 'accruals' to session storage and redirect to check business details" when {
               "user selects 'traditional accounting'" in {
-                enable(IncomeSources)
+                enable(IncomeSourcesFs)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -145,7 +145,7 @@ class IncomeSourcesAccountingMethodControllerISpec extends ControllerISpecHelper
 
                 await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType, Some("accruals"))))
 
-                val session = sessionService.getMongo(JourneyType(Add, incomeSourceType).toString)(hc, ec).futureValue
+                val session = sessionService.getMongo(IncomeSourceJourneyType(Add, incomeSourceType))(hc, ec).futureValue
 
                 val resultAccountingMethod = session match {
                   case Right(Some(uiJourneySessionData)) =>
@@ -169,7 +169,7 @@ class IncomeSourcesAccountingMethodControllerISpec extends ControllerISpecHelper
 
             s"return BAD_REQUEST" when {
               "user does not select anything" in {
-                enable(IncomeSources)
+                enable(IncomeSourcesFs)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)

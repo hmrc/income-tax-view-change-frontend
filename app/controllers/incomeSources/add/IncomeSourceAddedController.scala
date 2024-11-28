@@ -20,7 +20,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.IncomeSourceJourney.{AfterSubmissionPage, IncomeSourceType, SelfEmployment}
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
@@ -59,7 +59,7 @@ class IncomeSourceAddedController @Inject()(val authActions: AuthActions,
 
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                            (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
-    withSessionData(JourneyType(Add, incomeSourceType), AfterSubmissionPage) { sessionData =>
+    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), AfterSubmissionPage) { sessionData =>
       (for {
         incomeSourceIdModel <- sessionData.addIncomeSourceData.flatMap(_.incomeSourceId.map(IncomeSourceId(_)))
         (startDate, businessName) <- incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, incomeSourceIdModel)
@@ -88,7 +88,7 @@ class IncomeSourceAddedController @Inject()(val authActions: AuthActions,
 
   def handleSuccess(incomeSourceId: IncomeSourceId, incomeSourceType: IncomeSourceType, businessName: Option[String],
                     showPreviousTaxYears: Boolean, isAgent: Boolean)(implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
-    sessionService.getMongo(JourneyType(Add, incomeSourceType).toString).flatMap {
+    sessionService.getMongo(IncomeSourceJourneyType(Add, incomeSourceType)).flatMap {
       case Right(Some(sessionData)) =>
         val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
         val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(journeyIsComplete = Some(true))

@@ -16,11 +16,11 @@
 
 package controllers.agent.optOut
 
-import controllers.agent.ControllerISpecHelper
+import controllers.ControllerISpecHelper
 import enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import forms.optOut.ConfirmOptOutSingleTaxYearForm
 import helpers.OptOutSessionRepositoryHelper
-import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDAgentAuthStub}
+import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.{IncomeSourcesFs, NavBarFs}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus._
@@ -70,7 +70,7 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
         "render single tax year opt out confirmation pager" in {
           enable(IncomeSourcesFs)
           disable(NavBarFs)
-          MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+          stubAuthorised(mtdUserRole)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
           helper.stubOptOutInitialState(currentTaxYear,
@@ -93,7 +93,7 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
         }
       }
 
-        testAuthFailuresForMTDAgent(path, isSupportingAgent)
+        testAuthFailures(path, mtdUserRole)
       }
     }
 
@@ -104,7 +104,7 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
             "invalid data is sent" in {
               enable(IncomeSourcesFs)
               disable(NavBarFs)
-              MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+              stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
               helper.stubOptOutInitialState(currentTaxYear,
@@ -132,7 +132,7 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
             "Yes response is sent" in {
               enable(IncomeSourcesFs)
               disable(NavBarFs)
-              MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+              stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
               helper.stubOptOutInitialState(currentTaxYear,
@@ -157,7 +157,7 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
             "No response is sent" in {
               enable(IncomeSourcesFs)
               disable(NavBarFs)
-              MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+              stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
               helper.stubOptOutInitialState(currentTaxYear,
@@ -178,7 +178,7 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
           }
         }
 
-        testAuthFailuresForMTDAgent(path, isSupportingAgent)
+        testAuthFailures(path, mtdUserRole)
       }
     }
   }

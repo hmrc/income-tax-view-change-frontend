@@ -17,12 +17,12 @@
 package controllers.incomeSources.add
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import forms.incomeSources.add.IncomeSourceReportingMethodForm._
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import models.incomeSourceDetails.AddIncomeSourceData
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import org.jsoup.Jsoup
@@ -184,15 +184,15 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with Moc
   }
 
   def setupMockCalls(isAgent: Boolean, incomeSourceType: IncomeSourceType, mtdRole: MTDUserRole, scenario: Scenario): Unit = {
-    enable(IncomeSources)
+    enable(IncomeSourcesFs)
     setupMockSuccess(mtdRole)
     setupMockIncomeSourceDetailsCall(scenario, incomeSourceType)
     setupMockDateServiceCall(scenario)
     setupMockITSAStatusCall(scenario)
     setupMockIsTaxYearCrystallisedCall(scenario)
-    setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Add, incomeSourceType)))))
+    setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Add, incomeSourceType)))))
     setupMockSetMongoData(true)
-    setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.incomeSourceIdField, journeyType = JourneyType(Add, incomeSourceType), result = Right(Some(testSelfEmploymentId)))
+    setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.incomeSourceIdField, journeyType = IncomeSourceJourneyType(Add, incomeSourceType), result = Right(Some(testSelfEmploymentId)))
   }
 
   def getTestTitleIncomeSourceType(incomeSourceType: IncomeSourceType): String = {
@@ -214,7 +214,7 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with Moc
     incomeSourceTypes.foreach { incomeSourceType =>
       s"show($isAgent, $incomeSourceType)" when {
         val action = testController.show(isAgent, incomeSourceType)
-        val fakeRequest = getFakeRequestBasedOnMTDUserType(mtdRole)
+        val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
         s"the user is authenticated as a $mtdRole" should {
           "render the reporting method selection page for only tax year 2" when {
             s"in 2nd year of latency with FS enabled" in {
@@ -317,7 +317,7 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with Moc
           "return 303 SEE_OTHER and redirect to home page" when {
             s"navigating to the ${getTestTitleIncomeSourceType(incomeSourceType)} page with FS disabled" in {
               setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-              disable(IncomeSources)
+              disable(IncomeSourcesFs)
 
               val expectedRedirectUrl = if (isAgent) controllers.routes.HomeController.showAgent.url
               else controllers.routes.HomeController.show().url
@@ -331,7 +331,7 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with Moc
           "return 303 SEE_OTHER and redirect to the You Cannot Go Back Page" when {
             s"user has already visited the obligations page for ${getTestTitleIncomeSourceType(incomeSourceType)}" in {
               setupMockCalls(isAgent = isAgent, incomeSourceType, mtdRole, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-              setupMockGetMongo(Right(Some(completedUIJourneySessionData(JourneyType(Add, incomeSourceType)))))
+              setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Add, incomeSourceType)))))
               val expectedBackErrorRedirectUrl = if (isAgent)
                 controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(incomeSourceType).url
               else
@@ -356,7 +356,7 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with Moc
 
       s"submit($isAgent, $incomeSourceType)" when {
         val action = testController.submit(isAgent, incomeSourceType)
-        val fakeRequest = getFakeRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
+        val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
         s"the user is authenticated as a $mtdRole" should {
           "return 303 SEE_OTHER and redirect to Obligations page" when {
             s"completing the ${getTestTitleIncomeSourceType(incomeSourceType)} form and updates send successfully" in {
@@ -396,7 +396,7 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with Moc
           "return 303 SEE_OTHER and redirect to home page" when {
             s"POST request to the ${getTestTitleIncomeSourceType(incomeSourceType)} page with FS disabled" in {
               setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-              disable(IncomeSources)
+              disable(IncomeSourcesFs)
 
               val expectedRedirectUrl = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
 

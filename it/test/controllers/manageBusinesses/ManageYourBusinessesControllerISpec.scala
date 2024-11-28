@@ -19,7 +19,7 @@ package controllers.manageBusinesses
 import controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{IncomeSources, NavBarFs}
+import models.admin.{IncomeSourcesFs, NavBarFs}
 import play.api.http.Status.{OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyAndCeasedBusiness, multipleBusinessesAndUkProperty}
@@ -51,7 +51,7 @@ class ManageYourBusinessesControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
           "render the manage your businesses page" when {
             "the income sources is enabled and the user has multiple businesses and uk property" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
@@ -75,7 +75,7 @@ class ManageYourBusinessesControllerISpec extends ControllerISpecHelper {
             }
 
             "the income sources is enabled and the user has foreign property and ceased business" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)
@@ -95,7 +95,7 @@ class ManageYourBusinessesControllerISpec extends ControllerISpecHelper {
 
           "redirect to the home page" when {
             "the income sources feature switch is disabled" in {
-              disable(IncomeSources)
+              disable(IncomeSourcesFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)

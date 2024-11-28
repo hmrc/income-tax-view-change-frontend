@@ -20,7 +20,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney._
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import forms.incomeSources.add.AddIncomeSourceStartDateFormProvider
 import implicits.ImplicitDateFormatterImpl
 import models.incomeSourceDetails.AddIncomeSourceData
@@ -84,15 +84,15 @@ class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActions,
 
     val messagesPrefix = incomeSourceType.startDateMessagesPrefix
 
-    withSessionData(JourneyType(Add, incomeSourceType), journeyState = {
+    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = {
       incomeSourceType match {
         case SelfEmployment => BeforeSubmissionPage
         case _ => InitialPage
       }
     }) { sessionData =>
       if (!isChange && incomeSourceType.equals(UkProperty) || !isChange && incomeSourceType.equals(ForeignProperty)) {
-        lazy val journeyType = JourneyType(Add, incomeSourceType)
-        sessionService.createSession(journeyType.toString)
+        lazy val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
+        sessionService.createSession(journeyType)
       }
 
       val dateStartedOpt = sessionData.addIncomeSourceData.flatMap(_.dateStarted)
@@ -156,7 +156,7 @@ class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActions,
 
   def handleValidFormData(formData: LocalDate, incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean)
                          (implicit user: MtdItUser[_]): Future[Result] = {
-    withSessionData(JourneyType(Add, incomeSourceType), journeyState = {
+    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = {
       incomeSourceType match {
         case SelfEmployment => BeforeSubmissionPage
         case _ => InitialPage

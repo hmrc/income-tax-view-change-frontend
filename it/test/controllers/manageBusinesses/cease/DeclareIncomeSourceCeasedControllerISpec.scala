@@ -18,11 +18,11 @@ package controllers.manageBusinesses.cease
 
 import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Cease, JourneyType}
+import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{IncomeSources, NavBarFs}
+import models.admin.{IncomeSourcesFs, NavBarFs}
 import models.incomeSourceDetails.CeaseIncomeSourceData.ceaseIncomeSourceDeclare
 import models.incomeSourceDetails.UIJourneySessionData
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -63,7 +63,7 @@ class DeclareIncomeSourceCeasedControllerISpec extends ControllerISpecHelper {
             "render the income source ceased Page" in {
               stubAuthorised(mtdUserRole)
               disable(NavBarFs)
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
@@ -91,7 +91,7 @@ class DeclareIncomeSourceCeasedControllerISpec extends ControllerISpecHelper {
               "form is filled correctly" in {
                 stubAuthorised(mtdUserRole)
                 disable(NavBarFs)
-                enable(IncomeSources)
+                enable(IncomeSourcesFs)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                 await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"CEASE-${incomeSourceType.key}")))
 
@@ -106,7 +106,7 @@ class DeclareIncomeSourceCeasedControllerISpec extends ControllerISpecHelper {
                   httpStatus(SEE_OTHER),
                   redirectURI(expectedRedirectUrl)
                 )
-                sessionService.getMongoKey(ceaseIncomeSourceDeclare, JourneyType(Cease, incomeSourceType)).futureValue shouldBe Right(Some(stringTrue))
+                sessionService.getMongoKey(ceaseIncomeSourceDeclare, IncomeSourceJourneyType(Cease, incomeSourceType)).futureValue shouldBe Right(Some(stringTrue))
 
               }
             }
@@ -114,7 +114,7 @@ class DeclareIncomeSourceCeasedControllerISpec extends ControllerISpecHelper {
               "form is filled incorrectly" in {
                 stubAuthorised(mtdUserRole)
                 disable(NavBarFs)
-                enable(IncomeSources)
+                enable(IncomeSourcesFs)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
                 await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"CEASE-${incomeSourceType.key}")))

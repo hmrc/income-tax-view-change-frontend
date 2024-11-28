@@ -17,17 +17,12 @@
 package controllers.incomeSources.add
 
 import enums.IncomeSourceJourney.SelfEmployment
-import enums.JourneyType.{Add, JourneyType}
-import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
+import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import forms.incomeSources.add.BusinessTradeForm
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.admin.IncomeSourcesFs
-import mocks.MockItvcErrorHandler
-import mocks.auth.MockFrontendAuthorisedFunctions
-import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
-import mocks.services.{MockClientDetailsService, MockIncomeSourceDetailsService, MockSessionService}
 import models.incomeSourceDetails.AddIncomeSourceData
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api

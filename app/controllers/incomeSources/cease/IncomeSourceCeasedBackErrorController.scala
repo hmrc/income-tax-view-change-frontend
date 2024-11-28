@@ -20,7 +20,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{CannotGoBackPage, IncomeSourceType}
-import enums.JourneyType.{Cease, JourneyType}
+import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.SessionService
@@ -42,7 +42,7 @@ class IncomeSourceCeasedBackErrorController @Inject()(val authActions: AuthActio
 
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_]): Future[Result] = withSessionData(JourneyType(Cease, incomeSourceType), journeyState = CannotGoBackPage) { _ =>
+                   (implicit user: MtdItUser[_]): Future[Result] = withSessionData(IncomeSourceJourneyType(Cease, incomeSourceType), journeyState = CannotGoBackPage) { _ =>
     Future.successful(Ok(cannotGoBackCeasedError(isAgent, incomeSourceType)))
   }
 

@@ -17,11 +17,11 @@
 package controllers.incomeSources.add
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.jsoup.Jsoup
 import play.api
@@ -75,14 +75,14 @@ class ReportingMethodSetBackErrorControllerSpec extends MockAuthActions with Moc
     incomeSourceTypes.foreach { incomeSourceType =>
       s"show${if (mtdRole != MTDIndividual) "Agent"}($incomeSourceType)" when {
         val action = if (mtdRole == MTDIndividual) testController.show(incomeSourceType) else testController.showAgent(incomeSourceType)
-        val fakeRequest = getFakeRequestBasedOnMTDUserType(mtdRole)
+        val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
         s"the user is authenticated as a $mtdRole" should {
           "render the you cannot go back error page" in {
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-            mockMongo(JourneyType(Add, incomeSourceType))
+            mockMongo(IncomeSourceJourneyType(Add, incomeSourceType))
 
             val result = action(fakeRequest)
 

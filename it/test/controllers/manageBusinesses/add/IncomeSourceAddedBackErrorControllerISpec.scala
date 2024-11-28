@@ -21,7 +21,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.JourneyType.Add
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{IncomeSources, NavBarFs}
+import models.admin.{IncomeSourcesFs, NavBarFs}
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -58,7 +58,7 @@ class IncomeSourceAddedBackErrorControllerISpec extends ControllerISpecHelper {
           "is authenticated, with a valid enrolment" should {
             "render the self employment business not added error page" when {
               "Income Sources FS is enabled" in {
-                enable(IncomeSources)
+                enable(IncomeSourcesFs)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
@@ -78,7 +78,7 @@ class IncomeSourceAddedBackErrorControllerISpec extends ControllerISpecHelper {
             }
             "redirect to home page" when {
               "Income Sources FS is disabled" in {
-                disable(IncomeSources)
+                disable(IncomeSourcesFs)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)

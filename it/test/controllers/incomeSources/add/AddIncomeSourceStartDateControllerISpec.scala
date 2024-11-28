@@ -18,10 +18,10 @@ package controllers.incomeSources.add
 
 import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{IncomeSources, NavBarFs}
+import models.admin.{IncomeSourcesFs, NavBarFs}
 import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -39,9 +39,9 @@ class AddIncomeSourceStartDateControllerISpec extends ControllerISpecHelper {
   val prefixForeignProperty = "incomeSources.add.foreignProperty.startDate"
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
-  val journeyTypeSE: JourneyType = JourneyType(Add, SelfEmployment)
-  val journeyTypeUK: JourneyType = JourneyType(Add, UkProperty)
-  val journeyTypeFP: JourneyType = JourneyType(Add, ForeignProperty)
+  val journeyTypeSE: IncomeSourceJourneyType = IncomeSourceJourneyType(Add, SelfEmployment)
+  val journeyTypeUK: IncomeSourceJourneyType = IncomeSourceJourneyType(Add, UkProperty)
+  val journeyTypeFP: IncomeSourceJourneyType = IncomeSourceJourneyType(Add, ForeignProperty)
   val testBusinessStartDate: LocalDate = LocalDate.of(2022, 10, 10)
   val testBusinessName: String = "Test Business"
   val testBusinessTrade: String = "Plumbing"
@@ -61,7 +61,7 @@ class AddIncomeSourceStartDateControllerISpec extends ControllerISpecHelper {
 
   def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
-    journeyType = JourneyType(Add, incomeSourceType).toString,
+    journeyType = IncomeSourceJourneyType(Add, incomeSourceType).toString,
     addIncomeSourceData = Some(testAddIncomeSourceData(incomeSourceType)))
 
   override def beforeEach(): Unit = {
@@ -87,7 +87,7 @@ class AddIncomeSourceStartDateControllerISpec extends ControllerISpecHelper {
     }
   }
 
-  def getJourneyType(incomeSourceType: IncomeSourceType): JourneyType = {
+  def getIncomeSourceJourneyType(incomeSourceType: IncomeSourceType): IncomeSourceJourneyType = {
     incomeSourceType match {
       case SelfEmployment => journeyTypeSE
       case UkProperty => journeyTypeUK
@@ -113,7 +113,7 @@ class AddIncomeSourceStartDateControllerISpec extends ControllerISpecHelper {
             "is authenticated, with a valid enrolment" should {
               "render the Business Start Date Check Page" when {
                 "incomesources is enabled" in {
-                  enable(IncomeSources)
+                  enable(IncomeSourcesFs)
                   disable(NavBarFs)
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
@@ -140,14 +140,14 @@ class AddIncomeSourceStartDateControllerISpec extends ControllerISpecHelper {
         }
 
         s"POST $path" when {
-          val journeyType = getJourneyType(incomeSourceType)
+          val journeyType = getIncomeSourceJourneyType(incomeSourceType)
           s"a user is a $mtdUserRole" that {
             "is authenticated, with a valid enrolment" should {
               val addBusinessStartDateCheckUrl =
                 controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(mtdUserRole != MTDIndividual, isChange, incomeSourceType).url
               s"redirect to $addBusinessStartDateCheckUrl" when {
                 "a valid date is submitted" in {
-                  enable(IncomeSources)
+                  enable(IncomeSourcesFs)
                   disable(NavBarFs)
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
@@ -174,7 +174,7 @@ class AddIncomeSourceStartDateControllerISpec extends ControllerISpecHelper {
 
               "return a BAD_REQUEST" when {
                 "form is filled incorrectly" in {
-                  enable(IncomeSources)
+                  enable(IncomeSourcesFs)
                   disable(NavBarFs)
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
@@ -198,7 +198,7 @@ class AddIncomeSourceStartDateControllerISpec extends ControllerISpecHelper {
                 }
 
                 "form is empty" in {
-                  enable(IncomeSources)
+                  enable(IncomeSourcesFs)
                   disable(NavBarFs)
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))

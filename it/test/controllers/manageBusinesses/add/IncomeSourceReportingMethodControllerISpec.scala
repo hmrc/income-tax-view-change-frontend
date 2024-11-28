@@ -20,11 +20,11 @@ import audit.models.IncomeSourceReportingMethodAuditModel
 import auth.MtdItUser
 import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.ITSAStatusDetailsStub.stubGetITSAStatusDetailsError
 import helpers.servicemocks.{AuditStub, CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
-import models.admin.{IncomeSources, NavBarFs}
+import models.admin.{IncomeSourcesFs, NavBarFs}
 import models.incomeSourceDetails._
 import models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
@@ -110,7 +110,7 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
   }
   def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
-    journeyType = JourneyType(Add, incomeSourceType).toString,
+    journeyType = IncomeSourceJourneyType(Add, incomeSourceType).toString,
     addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId))))
 
   def getIncomeSourceDetailsResponse(incomeSourceType: IncomeSourceType, isWithinLatencyPeriod: Boolean): IncomeSourceDetailsModel = {
@@ -149,7 +149,7 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
               val taxYear1TYS: String = s"${taxYear1 - 1}-$taxYear1"
               val taxYear2TYS: String = s"${taxYear2 - 1}-$taxYear2"
               "user is within latency period (before 23/24) - tax year 1 not crystallised" in {
-                enable(IncomeSources)
+                enable(IncomeSourcesFs)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType, true))
@@ -166,10 +166,10 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
                   elementTextBySelectorList("#add-uk-property-reporting-method-form", "div:nth-of-type(7)", "legend")(s"Tax year $taxYear2TYS")
                 )
 
-                sessionService.getMongoKey(AddIncomeSourceData.incomeSourceAddedField, JourneyType(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
+                sessionService.getMongoKey(AddIncomeSourceData.incomeSourceAddedField, IncomeSourceJourneyType(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
               }
               "user is within latency period (before 23/24) - tax year 1 crystallised" in {
-                enable(IncomeSources)
+                enable(IncomeSourcesFs)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType, true))
@@ -186,10 +186,10 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
                   elementCountBySelector("#add-uk-property-reporting-method-form > legend:nth-of-type(2)")(0),
                   elementTextBySelectorList("#add-uk-property-reporting-method-form", "legend:nth-of-type(1)")(s"Tax year 2024-2025")
                 )
-                sessionService.getMongoKey(AddIncomeSourceData.incomeSourceAddedField, JourneyType(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
+                sessionService.getMongoKey(AddIncomeSourceData.incomeSourceAddedField, IncomeSourceJourneyType(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
               }
               "user is within latency period (after 23/24) - tax year 1 not crystallised" in {
-                enable(IncomeSources)
+                enable(IncomeSourcesFs)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType, true))
@@ -204,10 +204,10 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
                   elementTextBySelectorList("#add-uk-property-reporting-method-form", "div:nth-of-type(3)", "legend")(s"Tax year $taxYear1TYS"),
                   elementTextBySelectorList("#add-uk-property-reporting-method-form", "div:nth-of-type(7)", "legend")(s"Tax year $taxYear2TYS")
                 )
-                sessionService.getMongoKey(AddIncomeSourceData.incomeSourceAddedField, JourneyType(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
+                sessionService.getMongoKey(AddIncomeSourceData.incomeSourceAddedField, IncomeSourceJourneyType(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
               }
               "user is within latency period (after 23/24) - tax year 1 crystallised" in {
-                enable(IncomeSources)
+                enable(IncomeSourcesFs)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType, true))
@@ -223,13 +223,13 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
                   elementCountBySelector("#add-uk-property-reporting-method-form > legend:nth-of-type(2)")(0),
                   elementTextBySelectorList("#add-uk-property-reporting-method-form", "legend:nth-of-type(1)")(s"Tax year $taxYear1TYS")
                 )
-                sessionService.getMongoKey(AddIncomeSourceData.incomeSourceAddedField, JourneyType(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
+                sessionService.getMongoKey(AddIncomeSourceData.incomeSourceAddedField, IncomeSourceJourneyType(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
               }
             }
 
             s"redirect to the ${incomeSourceType.journeyType} Obligations page" when {
               "user is out of latency period (before 23/24)" in {
-                enable(IncomeSources)
+                enable(IncomeSourcesFs)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType, false))
@@ -245,7 +245,7 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
                 )
               }
               "user is out of latency period (after 23/24)" in {
-                enable(IncomeSources)
+                enable(IncomeSourcesFs)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType, false))
@@ -263,7 +263,7 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
             }
             "500 INTERNAL_SERVER_ERROR" when {
               "API 1171 returns an error" in {
-                enable(IncomeSources)
+                enable(IncomeSourcesFs)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(INTERNAL_SERVER_ERROR, IncomeSourceDetailsError(INTERNAL_SERVER_ERROR, "ISE"))
@@ -274,7 +274,7 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
                 result should have(httpStatus(INTERNAL_SERVER_ERROR))
               }
               "API 1404 returns an error" in {
-                enable(IncomeSources)
+                enable(IncomeSourcesFs)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, allBusinessesAndPropertiesInLatencyPeriod(latencyDetails))
@@ -287,7 +287,7 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
                 result should have(httpStatus(INTERNAL_SERVER_ERROR))
               }
               "API 1878 returns an error" in {
-                enable(IncomeSources)
+                enable(IncomeSourcesFs)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, allBusinessesAndPropertiesInLatencyPeriod(latencyDetails))
@@ -299,7 +299,7 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
                 result should have(httpStatus(INTERNAL_SERVER_ERROR))
               }
               "API 1896 returns an error" in {
-                enable(IncomeSources)
+                enable(IncomeSourcesFs)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, allBusinessesAndPropertiesInLatencyPeriod(latencyDetails))
@@ -321,7 +321,7 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
           "is authenticated, with a valid enrolment" should {
             s"303 SEE_OTHER - redirect to ${redirectUrl(incomeSourceType, mtdUserRole)}" when {
               "user completes the form and API 1776 updateIncomeSource returns a success response - UK Property" in {
-                enable(IncomeSources)
+                enable(IncomeSourcesFs)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType, true))
@@ -343,7 +343,7 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
             }
             s"303 SEE_OTHER - redirect to ${errorRedirectUrl(incomeSourceType, mtdUserRole)}" when {
               "API 1776 updateIncomeSource returns a failure response" in {
-                enable(IncomeSources)
+                enable(IncomeSourcesFs)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, allBusinessesAndPropertiesInLatencyPeriod(latencyDetails))
@@ -366,7 +366,7 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
             }
             "400 BAD_REQUEST" when {
               "user does not complete the form - UK Property" in {
-                enable(IncomeSources)
+                enable(IncomeSourcesFs)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType, true))
