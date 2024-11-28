@@ -18,12 +18,12 @@ package controllers.incomeSources.add
 
 import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import forms.incomeSources.add.AddIncomeSourceStartDateCheckForm
 import forms.incomeSources.add.AddIncomeSourceStartDateCheckForm.{responseNo, responseYes}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{IncomeSources, NavBarFs}
+import models.admin.{IncomeSourcesFs, NavBarFs}
 import models.incomeSourceDetails.AddIncomeSourceData.{accountingPeriodEndDateField, accountingPeriodStartDateField, dateStartedField}
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -40,9 +40,9 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
   val incomeSourcePrefix: String = "start-date-check"
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
-  val journeyTypeSE: JourneyType = JourneyType(Add, SelfEmployment)
-  val journeyTypeUK: JourneyType = JourneyType(Add, UkProperty)
-  val journeyTypeFP: JourneyType = JourneyType(Add, ForeignProperty)
+  val journeyTypeSE: IncomeSourceJourneyType = IncomeSourceJourneyType(Add, SelfEmployment)
+  val journeyTypeUK: IncomeSourceJourneyType = IncomeSourceJourneyType(Add, UkProperty)
+  val journeyTypeFP: IncomeSourceJourneyType = IncomeSourceJourneyType(Add, ForeignProperty)
   override implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
   val testBusinessStartDate: LocalDate = LocalDate.of(2022, 10, 10)
   val testAccountingPeriodStartDate: LocalDate = LocalDate.of(2022, 10, 10)
@@ -68,7 +68,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
 
   def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
-    journeyType = JourneyType(Add, incomeSourceType).toString,
+    journeyType = IncomeSourceJourneyType(Add, incomeSourceType).toString,
     addIncomeSourceData = Some(testAddIncomeSourceDataWithStartDate(incomeSourceType)))
 
   override def beforeEach(): Unit = {
@@ -86,7 +86,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
     }
   }
 
-  def getJourneyType(incomeSourceType: IncomeSourceType): JourneyType = {
+  def getJourneyType(incomeSourceType: IncomeSourceType): IncomeSourceJourneyType = {
     incomeSourceType match {
       case SelfEmployment => journeyTypeSE
       case UkProperty => journeyTypeUK
@@ -102,7 +102,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
     }
   }
 
-  def verifySessionUpdate(incomeSourceType: IncomeSourceType, journeyType: JourneyType) = {
+  def verifySessionUpdate(incomeSourceType: IncomeSourceType, journeyType: IncomeSourceJourneyType) = {
     sessionService.getMongoKeyTyped[LocalDate](dateStartedField, journeyType).futureValue shouldBe Right(Some(testBusinessStartDate))
     sessionService.getMongoKeyTyped[LocalDate](accountingPeriodStartDateField, journeyType).futureValue shouldBe
       Right{ if(incomeSourceType == SelfEmployment) Some(testAccountingPeriodStartDate) else None }
@@ -120,7 +120,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
             "is authenticated, with a valid enrolment" should {
               "render the Business Start Date Check Page" when {
                 "incomesources is enabled" in {
-                  enable(IncomeSources)
+                  enable(IncomeSourcesFs)
                   disable(NavBarFs)
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
@@ -156,7 +156,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
                 }
                 s"redirect to $checkDetailsUrl" when {
                   "form response is Yes" in {
-                    enable(IncomeSources)
+                    enable(IncomeSourcesFs)
                     disable(NavBarFs)
                     stubAuthorised(mtdUserRole)
                     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
@@ -181,7 +181,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
                 }
                 s"redirect to $addTradeUrl" when {
                   "form response is Yes" in {
-                    enable(IncomeSources)
+                    enable(IncomeSourcesFs)
                     disable(NavBarFs)
                     stubAuthorised(mtdUserRole)
                     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
@@ -202,7 +202,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
                 val accountingMethodUrl = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(incomeSourceType, isAgent).url
                 s"redirect to $accountingMethodUrl" when {
                   "form response is Yes" in {
-                    enable(IncomeSources)
+                    enable(IncomeSourcesFs)
                     disable(NavBarFs)
                     stubAuthorised(mtdUserRole)
                     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
@@ -224,7 +224,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
                 .show(isAgent, isChange, incomeSourceType).url
               s"redirect to $expectedUrlForNo" when {
                 "form response is No" in {
-                  enable(IncomeSources)
+                  enable(IncomeSourcesFs)
                   disable(NavBarFs)
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
@@ -246,7 +246,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
               }
               "return a BAD_REQUEST" when {
                 "form is empty" in {
-                  enable(IncomeSources)
+                  enable(IncomeSourcesFs)
                   disable(NavBarFs)
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
@@ -263,7 +263,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
                 }
 
                 "invalid entry given" in {
-                  enable(IncomeSources)
+                  enable(IncomeSourcesFs)
                   disable(NavBarFs)
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))

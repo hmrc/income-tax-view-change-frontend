@@ -17,11 +17,11 @@
 package controllers.incomeSources.cease
 
 import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
-import enums.JourneyType.{Cease, JourneyType}
+import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import play.api
 import play.api.http.Status.OK
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
@@ -41,14 +41,14 @@ class IncomeSourceCeasedBackErrorControllerSpec extends MockAuthActions with Moc
     List(UkProperty, ForeignProperty).foreach { incomeSourceType =>
       val isAgent = mtdRole != MTDIndividual
       s"show${if (isAgent) "Agent"}($incomeSourceType)" when {
-        val fakeRequest = getFakeRequestBasedOnMTDUserType(mtdRole)
+        val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
         val action = if (!isAgent) testController.show(incomeSourceType) else testController.showAgent(incomeSourceType)
         s"the user is authenticated as a $mtdRole" should {
           "return 200 OK" in {
             setupMockSuccess(mtdRole)
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             mockUKPropertyIncomeSourceWithLatency2024()
-            setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+            setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
             val result = action(fakeRequest)
             status(result) shouldBe OK
           }

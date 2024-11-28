@@ -17,11 +17,11 @@
 package controllers.incomeSources.add
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, JourneyType}
-import enums.{MTDIndividual, MTDSupportingAgent}
+import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
+import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.jsoup.Jsoup
 import play.api
@@ -62,15 +62,15 @@ class IncomeSourceAddedBackErrorControllerSpec extends MockAuthActions
   incomeSourceTypes.foreach { incomeSourceType =>
     mtdAllRoles.foreach { mtdRole =>
       s"show${if (mtdRole != MTDIndividual) "Agent"}(incomeSourceType = ${incomeSourceType.key})" when {
-        val fakeRequest = getFakeRequestBasedOnMTDUserType(mtdRole)
+        val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
         val action = if (mtdRole == MTDIndividual) testIncomeSourceAddedBackErrorController.show(incomeSourceType) else testIncomeSourceAddedBackErrorController.showAgent(incomeSourceType)
         s"the user is authenticated as a $mtdRole" should {
           s"render the you cannot go back error page" in {
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             setupMockSuccess(mtdRole)
 
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-            mockMongo(JourneyType(Add, SelfEmployment))
+            mockMongo(IncomeSourceJourneyType(Add, SelfEmployment))
 
             val result = action(fakeRequest)
             val document = Jsoup.parse(contentAsString(result))
@@ -102,16 +102,16 @@ class IncomeSourceAddedBackErrorControllerSpec extends MockAuthActions
 
       s"submit${if (mtdRole != MTDIndividual) "Agent"}(incomeSourceType = $incomeSourceType)" when {
         val action = if (mtdRole == MTDIndividual) testIncomeSourceAddedBackErrorController.submit(incomeSourceType) else testIncomeSourceAddedBackErrorController.submitAgent(incomeSourceType)
-        val fakeRequest = getFakeRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
+        val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
         s"the user is authenticated as a $mtdRole" should {
           s"return ${Status.SEE_OTHER} and redirect to $incomeSourceType reporting method page" in {
             disableAllSwitches()
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
 
             mockNoIncomeSources()
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-            mockMongo(JourneyType(Add, incomeSourceType))
+            mockMongo(IncomeSourceJourneyType(Add, incomeSourceType))
 
             val result = action(fakeRequest)
 

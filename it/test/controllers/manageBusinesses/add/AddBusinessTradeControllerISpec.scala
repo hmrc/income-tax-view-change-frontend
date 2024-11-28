@@ -18,11 +18,11 @@ package controllers.manageBusinesses.add
 
 import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.SelfEmployment
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import forms.manageBusinesses.add.BusinessTradeForm
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{IncomeSources, NavBarFs}
+import models.admin.{IncomeSourcesFs, NavBarFs}
 import models.incomeSourceDetails.AddIncomeSourceData.businessTradeField
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -61,7 +61,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
           "render the Add Business trade page for an Agent" when {
             "Income Sources FS enabled" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
@@ -81,7 +81,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
           }
           "303 SEE_OTHER - redirect to home page" when {
             "Income Sources FS disabled" in {
-              disable(IncomeSources)
+              disable(IncomeSourcesFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -109,7 +109,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
           "render the Add Business trade page for an Agent" when {
             "Income Sources FS enabled" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
@@ -128,7 +128,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
           }
           "303 SEE_OTHER - redirect to home page" when {
             "Income Sources FS disabled" in {
-              disable(IncomeSources)
+              disable(IncomeSourcesFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -156,7 +156,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
           s"303 SEE_OTHER and redirect to add business address" when {
             "User is authorised and business trade is valid" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -172,7 +172,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
 
               val result = buildPOSTMTDPostClient(path, additionalCookies, formData).futureValue
 
-              sessionService.getMongoKeyTyped[String](businessTradeField, JourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(testBusinessTrade))
+              sessionService.getMongoKeyTyped[String](businessTradeField, IncomeSourceJourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(testBusinessTrade))
 
               val expectedUrl = if(mtdUserRole == MTDIndividual) {
                 controllers.manageBusinesses.add.routes.AddBusinessAddressController.show(isChange = false).url
@@ -186,7 +186,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
             }
           }
           "show error when form is filled incorrectly" in {
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             disable(NavBarFs)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
@@ -221,7 +221,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
           s"303 SEE_OTHER and redirect to Check details" when {
             "User is authorised and business trade is valid" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -238,7 +238,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
 
               val result = buildPOSTMTDPostClient(changePath, additionalCookies, formData).futureValue
 
-              sessionService.getMongoKeyTyped[String](businessTradeField, JourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(changedTrade))
+              sessionService.getMongoKeyTyped[String](businessTradeField, IncomeSourceJourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(changedTrade))
 
               val expectedUrl = if(mtdUserRole == MTDIndividual) {
                 controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
@@ -252,7 +252,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
             }
           }
           "show error when form is filled incorrectly" in {
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             disable(NavBarFs)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)

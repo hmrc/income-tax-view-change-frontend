@@ -17,12 +17,12 @@
 package controllers.incomeSources.cease
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, UkProperty}
-import enums.JourneyType.{Cease, JourneyType}
+import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.MTDIndividual
 import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -61,10 +61,10 @@ class DeclarePropertyCeasedControllerSpec extends MockAuthActions with MockSessi
     }
   }
 
-  def verifySetMongoKey(key: String, value: String, journeyType: JourneyType): Unit = {
+  def verifySetMongoKey(key: String, value: String, journeyType: IncomeSourceJourneyType): Unit = {
     val argumentKey: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
     val argumentValue: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-    val argumentJourneyType: ArgumentCaptor[JourneyType] = ArgumentCaptor.forClass(classOf[JourneyType])
+    val argumentJourneyType: ArgumentCaptor[IncomeSourceJourneyType] = ArgumentCaptor.forClass(classOf[IncomeSourceJourneyType])
 
     verify(mockSessionService).setMongoKey(argumentKey.capture(), argumentValue.capture(), argumentJourneyType.capture())(any(), any())
     argumentKey.getValue shouldBe key
@@ -76,17 +76,17 @@ class DeclarePropertyCeasedControllerSpec extends MockAuthActions with MockSessi
     List(UkProperty, ForeignProperty).foreach { incomeSourceType =>
       val isAgent = mtdRole != MTDIndividual
       s"show${if (isAgent) "Agent"}($incomeSourceType)" when {
-        val fakeRequest = getFakeRequestBasedOnMTDUserType(mtdRole)
+        val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
         val action = if (mtdRole == MTDIndividual) testController.show(incomeSourceType) else testController.showAgent(incomeSourceType)
         s"the user is authenticated as a $mtdRole" should {
           "return 200 OK" when {
             "income source FS Enabled" in {
               setupMockSuccess(mtdRole)
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               mockPropertyIncomeSource()
 
               setupMockCreateSession(true)
-              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
 
               val result = action(fakeRequest)
               val document: Document = Jsoup.parse(contentAsString(result))
@@ -98,7 +98,7 @@ class DeclarePropertyCeasedControllerSpec extends MockAuthActions with MockSessi
           "return 303 SEE_OTHER and redirect to home page" when {
             "income sources FS Disabled" in {
               setupMockSuccess(mtdRole)
-              disable(IncomeSources)
+              disable(IncomeSourcesFs)
               mockPropertyIncomeSource()
               val result = action(fakeRequest)
               val expectedRedirectUrl: String = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
@@ -111,10 +111,10 @@ class DeclarePropertyCeasedControllerSpec extends MockAuthActions with MockSessi
             "journey is complete" in {
               setupMockSuccess(mtdRole)
               disableAllSwitches()
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
-              setupMockGetMongo(Right(Some(completedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+              setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
 
               val result = action(fakeRequest)
 
@@ -134,7 +134,7 @@ class DeclarePropertyCeasedControllerSpec extends MockAuthActions with MockSessi
 
       s"submit${if (isAgent) "Agent"}($incomeSourceType)" when {
         val action = if (mtdRole == MTDIndividual) testController.submit(incomeSourceType) else testController.submitAgent(incomeSourceType)
-        val fakeRequest = getFakeRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
+        val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
         val validFormData = Map(
           DeclareIncomeSourceCeasedForm.declaration -> "true",
           DeclareIncomeSourceCeasedForm.ceaseCsrfToken -> "12345"
@@ -143,11 +143,11 @@ class DeclarePropertyCeasedControllerSpec extends MockAuthActions with MockSessi
           "redirect to end date controller" when {
             "cease declaration is completed" in {
               setupMockSuccess(mtdRole)
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               mockPropertyIncomeSource()
               setupMockSetSessionKeyMongo(Right(true))
 
-              val journeyType = JourneyType(Cease, incomeSourceType)
+              val journeyType = IncomeSourceJourneyType(Cease, incomeSourceType)
               val redirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
                 (isAgent, incomeSourceType) match {
                   case (true, _) => controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(None, incomeSourceType).url
@@ -166,7 +166,7 @@ class DeclarePropertyCeasedControllerSpec extends MockAuthActions with MockSessi
             "income source FS Disabled" in {
               setupMockSuccess(mtdRole)
 
-              disable(IncomeSources)
+              disable(IncomeSourcesFs)
               mockPropertyIncomeSource()
 
               val result = action(fakeRequest.withFormUrlEncodedBody(validFormData.toSeq: _*))
@@ -180,7 +180,7 @@ class DeclarePropertyCeasedControllerSpec extends MockAuthActions with MockSessi
           "return 400 BAD_REQUEST" when {
             "cease declaration is not completed" in {
               setupMockSuccess(mtdRole)
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               mockPropertyIncomeSource()
               setupMockSetSessionKeyMongo(Right(true))
               val invalidForm = Map(DeclareIncomeSourceCeasedForm.declaration -> "invalid")
@@ -193,7 +193,7 @@ class DeclarePropertyCeasedControllerSpec extends MockAuthActions with MockSessi
           "return 500 INTERNAL_SERVER_ERROR" when {
             "Exception received from Mongo" in {
               setupMockSuccess(mtdRole)
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               mockPropertyIncomeSource()
               setupMockSetSessionKeyMongo(Left(new Exception))
               val result = action(fakeRequest.withFormUrlEncodedBody(validFormData.toSeq: _*))

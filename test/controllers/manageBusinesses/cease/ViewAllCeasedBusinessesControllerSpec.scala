@@ -17,13 +17,13 @@
 package controllers.manageBusinesses.cease
 
 import enums.IncomeSourceJourney.SelfEmployment
-import enums.JourneyType.{Cease, JourneyType}
+import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.MTDIndividual
 import exceptions.MissingFieldException
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -52,15 +52,15 @@ class ViewAllCeasedBusinessesControllerSpec extends MockAuthActions
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual
     s"show($isAgent)" when {
-      val fakeRequest = getFakeRequestBasedOnMTDUserType(mtdRole)
+      val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
       val action = testController.show(isAgent)
       s"the user is authenticated as a $mtdRole" should {
         "render the view all ceased businesses page" in {
           setupMockSuccess(mtdRole)
-          enable(IncomeSources)
+          enable(IncomeSourcesFs)
           mockBothIncomeSources()
           setupMockCreateSession(true)
-          setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Cease, SelfEmployment)))))
+          setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Cease, SelfEmployment)))))
           setupMockDeleteSession(true)
 
           when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any()))
@@ -77,7 +77,7 @@ class ViewAllCeasedBusinessesControllerSpec extends MockAuthActions
         "show error page" when {
           "get incomeSourceCeased details returns an error" in {
             setupMockSuccess(mtdRole)
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             mockBothIncomeSources()
 
             when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any()))
