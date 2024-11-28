@@ -129,6 +129,15 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     }.getOrElse(responses.head)
   }
 
+  def reportingFrequencyViewModels()(implicit user: MtdItUser[_],
+                                     hc: HeaderCarrier,
+                                     ec: ExecutionContext): Future[(OptOutProposition, Option[OptOutViewModel])] = {
+    for {
+      proposition <- fetchOptOutProposition()
+      _ <- repository.initialiseOptOutJourney(proposition)
+    }yield (proposition, nextUpdatesOptOutViewModel(proposition))
+  }
+
   def nextUpdatesPageOptOutViewModels()(implicit user: MtdItUser[_],
                                         hc: HeaderCarrier,
                                         ec: ExecutionContext): Future[(NextUpdatesQuarterlyReportingContentChecks, Option[OptOutViewModel])] = {

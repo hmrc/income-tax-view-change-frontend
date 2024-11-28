@@ -20,7 +20,7 @@ import models.incomeSourceDetails.TaxYear
 
 case class ReportingFrequencyViewModel(
                                         isAgent: Boolean,
-                                        currentTaxYear: TaxYear,
-                                        nextTaxYear: TaxYear,
-                                        optOutJourneyUrl: Option[String]
+                                        optOutJourneyUrl: Option[String],
+                                        optOutTaxYears: Seq[TaxYear],
+                                        optInTaxYears: Seq[TaxYear]
                                       )

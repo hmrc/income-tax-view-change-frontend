@@ -2346,6 +2346,10 @@ reporting.frequency.h2 = Rheoli amlder eich adroddiadau ar gyfer eich holl fusne
 
 reporting.frequency.manageReportingFrequency.p1 = Os ydych yn adrodd yn flynyddol, neu’n adrodd yn chwarterol yn wirfoddol, mae’n bosibl y byddwch yn gallu newid amlder eich adroddiadau ar gyfer blynyddoedd treth penodol.
 reporting.frequency.manageReportingFrequency.p2 = Yr hyn y gallwch ei wneud ar gyfer eich holl fusnesau:
-reporting.frequency.manageReportingFrequency.b1.link = Optio i mewn i adrodd yn chwarterol ar gyfer blwyddyn dreth {0} i {1}
-reporting.frequency.manageReportingFrequency.b2.link = Optio allan o adrodd yn chwarterol, a mynd ati i adrodd yn flynyddol o flwyddyn dreth {0} i {1} ymlaen
+reporting.frequency.manageReportingFrequency.optIn.link.generic = Optio i mewn i adrodd yn chwarterol
+reporting.frequency.manageReportingFrequency.optIn.link.taxyear = Optio i mewn i adrodd yn chwarterol ar gyfer blwyddyn dreth {0} i {1}
+reporting.frequency.manageReportingFrequency.optIn.link.onwards = Optio i mewn i  adrodd yn chwarterol, a mynd ati i adrodd yn flynyddol o flwyddyn dreth {0} i {1} ymlaen
+reporting.frequency.manageReportingFrequency.optOut.link.generic = Optio allan o adrodd yn chwarterol, a mynd ati i adrodd yn flynyddol
+reporting.frequency.manageReportingFrequency.optOut.link.taxyear = Opt out of quarterly reporting and report annually for the {0} to {1} tax year
+reporting.frequency.manageReportingFrequency.optOut.link.onwards = Optio allan o adrodd yn chwarterol, a mynd ati i adrodd yn flynyddol o flwyddyn dreth {0} i {1} ymlaen
 

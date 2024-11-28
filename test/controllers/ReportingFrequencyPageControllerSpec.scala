@@ -24,6 +24,7 @@ import mocks.controllers.predicates.MockIncomeSourceDetailsPredicate
 import models.ReportingFrequencyViewModel
 import models.admin.ReportingFrequencyPage
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
+import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
 import models.optout.{NextUpdatesQuarterlyReportingContentChecks, OptOutMultiYearViewModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
@@ -33,7 +34,8 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
 import services.DateService
-import services.optout.OptOutService
+import services.optIn.OptInService
+import services.optout.{OptOutProposition, OptOutService}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testNino
 import testConstants.BusinessDetailsTestConstants.{business1, testMtdItId}
@@ -47,6 +49,7 @@ class ReportingFrequencyPageControllerSpec extends MockOldAuthActions with MockI
 
   val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
   val mockOptOutService: OptOutService = mock[OptOutService]
+  val mockOptInService: OptInService = mock[OptInService]
   val mockFrontendAuthorisedFunctions: FrontendAuthorisedFunctions = mock[FrontendAuthorisedFunctions]
   val mockNonAgentItvcErrorHandler: ItvcErrorHandler = mock[ItvcErrorHandler]
   val mockAgentItvcErrorHandler: AgentItvcErrorHandler = mock[AgentItvcErrorHandler]
@@ -58,13 +61,14 @@ class ReportingFrequencyPageControllerSpec extends MockOldAuthActions with MockI
   val controller =
     new ReportingFrequencyPageController(
       optOutService = mockOptOutService,
+      optInService = mockOptInService,
       authorisedFunctions = mockFrontendAuthorisedFunctions,
       auth = mockAuthActions,
-      dateService = dateService,
       errorTemplate = errorTemplateView,
       view = reportingFrequencyView
     )(
       appConfig = mockFrontendAppConfig,
+      dateService = dateService,
       mcc = app.injector.instanceOf[MessagesControllerComponents],
       ec = ec,
       itvcErrorHandler = mockNonAgentItvcErrorHandler,
@@ -87,13 +91,20 @@ class ReportingFrequencyPageControllerSpec extends MockOldAuthActions with MockI
 
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-          when(mockOptOutService.nextUpdatesPageOptOutViewModels()(any(), any(), any())).thenReturn(
-            Future(
-              (
-                NextUpdatesQuarterlyReportingContentChecks(currentYearItsaStatus = true, previousYearItsaStatus = true, previousYearCrystallisedStatus = true),
-                Some(OptOutMultiYearViewModel())
-              )
-            )
+          val optOutProposition: OptOutProposition = OptOutProposition.createOptOutProposition(
+            currentYear = TaxYear(2024, 2025),
+            previousYearCrystallised = false,
+            previousYearItsaStatus = Mandated,
+            currentYearItsaStatus = Voluntary,
+            nextYearItsaStatus = Mandated
+          )
+
+          when(mockOptInService.availableOptInTaxYear()(any(), any(), any())).thenReturn(
+            Future(Seq(TaxYear(2024, 2025)))
+          )
+
+          when(mockOptOutService.reportingFrequencyViewModels()(any(), any(), any())).thenReturn(
+            Future((optOutProposition, Some(OptOutMultiYearViewModel())))
           )
 
           when(mockFrontendAppConfig.readFeatureSwitchesFromMongo).thenReturn(false)
@@ -109,9 +120,9 @@ class ReportingFrequencyPageControllerSpec extends MockOldAuthActions with MockI
             reportingFrequencyView(
               ReportingFrequencyViewModel(
                 isAgent = false,
-                currentTaxYear = TaxYear(2023, 2024),
-                nextTaxYear = TaxYear(2024, 2025),
-                Some(controllers.optOut.routes.OptOutChooseTaxYearController.show(false).url)
+                Some(controllers.optOut.routes.OptOutChooseTaxYearController.show(false).url),
+                optOutTaxYears = Seq(TaxYear(2024, 2025)),
+                optInTaxYears = Seq(TaxYear(2024, 2025))
               )
             ).toString
         }

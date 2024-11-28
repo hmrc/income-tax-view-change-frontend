@@ -49,16 +49,16 @@ class ReportingFrequencyViewSpec extends TestSupport {
 
     "the user is an Agent" should {
 
-      "return the correct content" in {
+      "return the correct content when opt in and opt out has multiple tax years" in {
 
         val isAgentFlag = true
 
         val reportingFrequencyViewModel: ReportingFrequencyViewModel =
           ReportingFrequencyViewModel(
             isAgent = isAgentFlag,
-            TaxYear(2024, 2025),
-            TaxYear(2025, 2026),
-            Some(optOutChooseTaxYearUrl(isAgentFlag))
+            Some(optOutChooseTaxYearUrl(isAgentFlag)),
+            Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
+            Seq(TaxYear(2024, 2025), TaxYear(2025, 2026))
           )
 
         val pageDocument: Document =
@@ -88,11 +88,107 @@ class ReportingFrequencyViewSpec extends TestSupport {
 
         testContentByIds(expectedContent)
 
-        pageDocument.select(bullet(1)).text() shouldBe bullet1Content
+        pageDocument.select(bullet(1)).text() shouldBe optInGenericContent
 
         pageDocument.select(bullet(1)).attr("href") shouldBe beforeYouStartUrl(isAgentFlag)
 
-        pageDocument.select(bullet(2)).text() shouldBe bullet2Content
+        pageDocument.select(bullet(2)).text() shouldBe optOutGenericContent
+
+        pageDocument.select(bullet(2)).attr("href") shouldBe optOutChooseTaxYearUrl(isAgentFlag)
+      }
+      "return the correct content when opt in and opt out has single tax year and it is next tax year(2024)" in {
+
+        val isAgentFlag = true
+
+        val reportingFrequencyViewModel: ReportingFrequencyViewModel =
+          ReportingFrequencyViewModel(
+            isAgent = isAgentFlag,
+            Some(optOutChooseTaxYearUrl(isAgentFlag)),
+            Seq(TaxYear(2024, 2025)),
+            Seq(TaxYear(2024, 2025))
+          )
+
+        val pageDocument: Document =
+          Jsoup.parse(
+            contentAsString(
+              view.apply(
+                viewModel = reportingFrequencyViewModel
+              )
+            )
+          )
+
+
+        def testContentByIds(idsAndContent: Seq[(String, String)]): Unit =
+          idsAndContent.foreach {
+            case (selectors, content) =>
+              pageDocument.getElementById(selectors).text() shouldBe content
+          }
+
+        val expectedContent: Seq[(String, String)] =
+          Seq(
+            Selectors.h1 -> h1Content,
+            Selectors.h2 -> h2Content,
+            Selectors.p1 -> p1Content,
+            Selectors.p2 -> p2Content,
+          )
+
+        pageDocument.title() shouldBe agentTitle
+
+        testContentByIds(expectedContent)
+
+        pageDocument.select(bullet(1)).text() shouldBe optInContentWithTaxYearOnwards
+
+        pageDocument.select(bullet(1)).attr("href") shouldBe beforeYouStartUrl(isAgentFlag)
+
+        pageDocument.select(bullet(2)).text() shouldBe optOutContentWithTaxYearOnwards
+
+        pageDocument.select(bullet(2)).attr("href") shouldBe optOutChooseTaxYearUrl(isAgentFlag)
+      }
+      "return the correct content when opt in and opt out has single tax year and it is not next tax year(2024)" in {
+
+        val isAgentFlag = true
+
+        val reportingFrequencyViewModel: ReportingFrequencyViewModel =
+          ReportingFrequencyViewModel(
+            isAgent = isAgentFlag,
+            Some(optOutChooseTaxYearUrl(isAgentFlag)),
+            Seq(TaxYear(2023, 2024)),
+            Seq(TaxYear(2023, 2024))
+          )
+
+        val pageDocument: Document =
+          Jsoup.parse(
+            contentAsString(
+              view.apply(
+                viewModel = reportingFrequencyViewModel
+              )
+            )
+          )
+
+
+        def testContentByIds(idsAndContent: Seq[(String, String)]): Unit =
+          idsAndContent.foreach {
+            case (selectors, content) =>
+              pageDocument.getElementById(selectors).text() shouldBe content
+          }
+
+        val expectedContent: Seq[(String, String)] =
+          Seq(
+            Selectors.h1 -> h1Content,
+            Selectors.h2 -> h2Content,
+            Selectors.p1 -> p1Content,
+            Selectors.p2 -> p2Content,
+          )
+
+        pageDocument.title() shouldBe agentTitle
+
+        testContentByIds(expectedContent)
+
+        pageDocument.select(bullet(1)).text() shouldBe optInContentWithTaxYear
+
+        pageDocument.select(bullet(1)).attr("href") shouldBe beforeYouStartUrl(isAgentFlag)
+
+        pageDocument.select(bullet(2)).text() shouldBe optOutContentWithTaxYear
 
         pageDocument.select(bullet(2)).attr("href") shouldBe optOutChooseTaxYearUrl(isAgentFlag)
       }
@@ -100,16 +196,16 @@ class ReportingFrequencyViewSpec extends TestSupport {
 
     "the user is Non-Agent" should {
 
-      "return the correct content" in {
+      "return the correct content when opt in and opt out has multiple tax years" in {
 
         val isAgentFlag = false
 
         val reportingFrequencyViewModel: ReportingFrequencyViewModel =
           ReportingFrequencyViewModel(
             isAgent = isAgentFlag,
-            TaxYear(2024, 2025),
-            TaxYear(2025, 2026),
-            Some(confirmOptOutUrl(isAgentFlag))
+            Some(confirmOptOutUrl(isAgentFlag)),
+            Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
+            Seq(TaxYear(2024, 2025), TaxYear(2025, 2026))
           )
 
         val pageDocument: Document =
@@ -139,11 +235,11 @@ class ReportingFrequencyViewSpec extends TestSupport {
 
         testContentByIds(expectedContent)
 
-        pageDocument.select(bullet(1)).text() shouldBe bullet1Content
+        pageDocument.select(bullet(1)).text() shouldBe optInGenericContent
 
         pageDocument.select(bullet(1)).attr("href") shouldBe beforeYouStartUrl(isAgentFlag)
 
-        pageDocument.select(bullet(2)).text() shouldBe bullet2Content
+        pageDocument.select(bullet(2)).text() shouldBe optOutGenericContent
 
         pageDocument.select(bullet(2)).attr("href") shouldBe confirmOptOutUrl(isAgentFlag)
       }

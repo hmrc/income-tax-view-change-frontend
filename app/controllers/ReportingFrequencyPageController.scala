@@ -26,7 +26,8 @@ import models.admin.ReportingFrequencyPage
 import models.optout.{OptOutMultiYearViewModel, OptOutOneYearViewModel}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.DateService
+import services.DateServiceInterface
+import services.optIn.OptInService
 import services.optout.OptOutService
 import views.html.ReportingFrequencyView
 import views.html.errorPages.templates.ErrorTemplate
@@ -36,13 +37,14 @@ import scala.concurrent.ExecutionContext
 
 class ReportingFrequencyPageController @Inject()(
                                                   optOutService: OptOutService,
+                                                  optInService: OptInService,
                                                   val authorisedFunctions: FrontendAuthorisedFunctions,
                                                   val auth: AuthActions,
-                                                  dateService: DateService,
                                                   errorTemplate: ErrorTemplate,
                                                   view: ReportingFrequencyView
                                                 )(
                                                   implicit val appConfig: FrontendAppConfig,
+                                                  val dateService: DateServiceInterface,
                                                   mcc: MessagesControllerComponents,
                                                   val ec: ExecutionContext,
                                                   val itvcErrorHandler: ItvcErrorHandler,
@@ -55,24 +57,27 @@ class ReportingFrequencyPageController @Inject()(
     auth.asIndividualOrAgent(isAgent).async { implicit user =>
 
       for {
-        (checks, optOutJourneyType) <- optOutService.nextUpdatesPageOptOutViewModels()
+        (optOutProposition, optOutJourneyType) <- optOutService.reportingFrequencyViewModels()
+        optInTaxYears <- optInService.availableOptInTaxYear()
+
       } yield {
         if (isEnabled(ReportingFrequencyPage)) {
 
-          val optOutUrl: Option[String] =
+          val optOutUrl: Option[String] = {
             optOutJourneyType.map {
-              case singleYearModel: OptOutOneYearViewModel =>
+              case _: OptOutOneYearViewModel =>
                 controllers.optOut.routes.ConfirmOptOutController.show(user.isAgent()).url
-              case multiYearModel: OptOutMultiYearViewModel =>
+              case _: OptOutMultiYearViewModel =>
                 controllers.optOut.routes.OptOutChooseTaxYearController.show(user.isAgent()).url
             }
+          }
 
           Ok(view(
             ReportingFrequencyViewModel(
               isAgent = user.isAgent(),
-              currentTaxYear = dateService.getCurrentTaxYear,
-              nextTaxYear = dateService.getCurrentTaxYear.nextYear,
-              optOutJourneyUrl = optOutUrl
+              optOutJourneyUrl = optOutUrl,
+              optOutTaxYears = optOutProposition.availableTaxYearsForOptOut,
+              optInTaxYears = optInTaxYears
             )
           ))
         } else {

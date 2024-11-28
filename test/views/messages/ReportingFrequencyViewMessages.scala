@@ -24,7 +24,11 @@ object ReportingFrequencyViewMessages {
   val h2Content = "Manage your reporting frequency for all your businesses"
   val p1Content = "If you are reporting annually or voluntarily reporting quarterly, you may be able to change your reporting frequency for specific tax years."
   val p2Content = "This is what you can do for all your businesses:"
-  val bullet1Content = "Opt in to quarterly reporting for the 2024 to 2025 tax year"
-  val bullet2Content = "Opt out of quarterly reporting and report annually from the 2025 to 2026 tax year onwards"
+  val optInGenericContent = "Opt in to quarterly reporting"
+  val optInContentWithTaxYear = "Opt in to quarterly reporting for the 2023 to 2024 tax year"
+  val optInContentWithTaxYearOnwards = "Opt in to quarterly reporting from the 2024 to 2025 tax year onwards"
+  val optOutGenericContent = "Opt out of quarterly reporting and report annually"
+  val optOutContentWithTaxYear = "Opt out of quarterly reporting and report annually for the 2023 to 2024 tax year"
+  val optOutContentWithTaxYearOnwards = "Opt out of quarterly reporting and report annually from the 2024 to 2025 tax year onwards"
 
 }

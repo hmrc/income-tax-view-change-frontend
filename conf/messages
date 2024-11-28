@@ -2388,8 +2388,12 @@ reporting.frequency.h2 = Manage your reporting frequency for all your businesses
 
 reporting.frequency.manageReportingFrequency.p1 = If you are reporting annually or voluntarily reporting quarterly, you may be able to change your reporting frequency for specific tax years.
 reporting.frequency.manageReportingFrequency.p2 = This is what you can do for all your businesses:
-reporting.frequency.manageReportingFrequency.b1.link = Opt in to quarterly reporting for the {0} to {1} tax year
-reporting.frequency.manageReportingFrequency.b2.link = Opt out of quarterly reporting and report annually from the {0} to {1} tax year onwards
+reporting.frequency.manageReportingFrequency.optIn.link.generic = Opt in to quarterly reporting
+reporting.frequency.manageReportingFrequency.optIn.link.taxyear = Opt in to quarterly reporting for the {0} to {1} tax year
+reporting.frequency.manageReportingFrequency.optIn.link.onwards = Opt in to quarterly reporting from the {0} to {1} tax year onwards
+reporting.frequency.manageReportingFrequency.optOut.link.generic = Opt out of quarterly reporting and report annually
+reporting.frequency.manageReportingFrequency.optOut.link.taxyear = Opt out of quarterly reporting and report annually for the {0} to {1} tax year
+reporting.frequency.manageReportingFrequency.optOut.link.onwards = Opt out of quarterly reporting and report annually from the {0} to {1} tax year onwards
 
 
 
