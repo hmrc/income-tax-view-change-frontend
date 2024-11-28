@@ -23,7 +23,7 @@ import enums.MTDSupportingAgent
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import models.admin.{IncomeSources, IncomeSourcesNewJourney, NavBarFs}
+import models.admin.{IncomeSourcesFs, IncomeSourcesNewJourney, NavBarFs}
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
@@ -186,7 +186,7 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
             "IncomeSources feature switch is enabled" in {
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
 
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                 status = OK,
@@ -220,7 +220,7 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
             "IncomeSources and IncomeSourcesNewJourney feature switches are enabled" in {
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               enable(IncomeSourcesNewJourney)
 
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -275,7 +275,7 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
           }
           "retrieving the income sources was unsuccessful" in {
             disable(NavBarFs)
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             stubAuthorised(mtdUserRole)
 
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsErrorResponse(testMtditid)(

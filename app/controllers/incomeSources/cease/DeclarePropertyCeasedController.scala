@@ -21,7 +21,7 @@ import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.IncomeSourceJourney.{IncomeSourceType, InitialPage}
-import enums.JourneyType.{Cease, JourneyType}
+import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import play.api.Logger
@@ -49,7 +49,7 @@ class DeclarePropertyCeasedController @Inject()(val authActions: AuthActions,
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] =
-    withSessionData(JourneyType(Cease, incomeSourceType), journeyState = InitialPage) { _ =>
+    withSessionData(IncomeSourceJourneyType(Cease, incomeSourceType), journeyState = InitialPage) { _ =>
 
       val backUrl: String = if (isAgent) controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url else
         controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url
@@ -114,7 +114,7 @@ class DeclarePropertyCeasedController @Inject()(val authActions: AuthActions,
         },
       _ => {
         val result = Redirect(redirectAction)
-        sessionService.setMongoKey(key = CeaseIncomeSourceData.ceaseIncomeSourceDeclare, value = "true", journeyType = JourneyType(Cease, incomeSourceType))
+        sessionService.setMongoKey(key = CeaseIncomeSourceData.ceaseIncomeSourceDeclare, value = "true", incomeSources = IncomeSourceJourneyType(Cease, incomeSourceType))
           .flatMap {
             case Right(_) => Future.successful(result)
             case Left(exception) => Future.failed(exception)

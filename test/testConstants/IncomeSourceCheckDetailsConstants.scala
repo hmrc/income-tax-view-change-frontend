@@ -17,7 +17,7 @@
 package testConstants
 
 import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import models.incomeSourceDetails.{AddIncomeSourceData, Address, UIJourneySessionData}
 import testConstants.BaseTestConstants.{testSelfEmploymentId, testSessionId}
 
@@ -41,7 +41,7 @@ object IncomeSourceCheckDetailsConstants {
 
   val testUIJourneySessionDataBusiness: UIJourneySessionData = UIJourneySessionData(
     sessionId = "some-session-id",
-    journeyType = JourneyType(Add, SelfEmployment).toString,
+    journeyType = IncomeSourceJourneyType(Add, SelfEmployment).toString,
     addIncomeSourceData = Some(AddIncomeSourceData(
       businessName = Some(testBusinessName),
       businessTrade = Some(testBusinessTrade),
@@ -55,18 +55,18 @@ object IncomeSourceCheckDetailsConstants {
 
   def testUIJourneySessionDataProperty(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = "some-session-id",
-    journeyType = JourneyType(Add, incomeSourceType).toString,
+    journeyType = IncomeSourceJourneyType(Add, incomeSourceType).toString,
     addIncomeSourceData = Some(AddIncomeSourceData(
       dateStarted = Some(testBusinessStartDate),
       incomeSourcesAccountingMethod = Some(testBusinessAccountingMethod)
     )))
 
-  def sessionDataCompletedJourney(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(journeyIsComplete = Some(true))))
+  def sessionDataCompletedJourney(journeyType: IncomeSourceJourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(journeyIsComplete = Some(true))))
 
-  def sessionDataISAdded(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(incomeSourceAdded = Some(true))))
+  def sessionDataISAdded(journeyType: IncomeSourceJourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(incomeSourceAdded = Some(true))))
 
-  def sessionDataPartial(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(incomeSourceId = Some("1234"), dateStarted = Some(LocalDate.parse("2022-01-01")))))
+  def sessionDataPartial(journeyType: IncomeSourceJourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(incomeSourceId = Some("1234"), dateStarted = Some(LocalDate.parse("2022-01-01")))))
 
-  def sessionData(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, None)
+  def sessionData(journeyType: IncomeSourceJourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, None)
 
 }

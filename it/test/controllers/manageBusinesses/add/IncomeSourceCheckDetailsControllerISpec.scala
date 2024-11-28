@@ -20,10 +20,10 @@ import audit.models.CreateIncomeSourceAuditModel
 import auth.MtdItUser
 import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
-import models.admin.{IncomeSources, NavBarFs}
+import models.admin.{IncomeSourcesFs, NavBarFs}
 import models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
 import models.incomeSourceDetails.UIJourneySessionData
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -69,7 +69,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 
   def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
-    journeyType = JourneyType(Add, incomeSourceType).toString,
+    journeyType = IncomeSourceJourneyType(Add, incomeSourceType).toString,
     addIncomeSourceData = Some(if (incomeSourceType == SelfEmployment) testAddBusinessData else testAddPropertyData))
 
   def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType): String = {
@@ -90,7 +90,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
           "is authenticated, with a valid enrolment" should {
             "render the Check Business details page with accounting method" when {
               "the user has no existing businesses" in {
-                enable(IncomeSources)
+                enable(IncomeSourcesFs)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -145,7 +145,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
           "is authenticated, with a valid enrolment" should {
             "redirect to IncomeSourceReportingMethodController" when {
               "user selects 'confirm and continue'" in {
-                enable(IncomeSources)
+                enable(IncomeSourcesFs)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 val response = List(CreateIncomeSourceResponse(testSelfEmploymentId))
@@ -174,7 +174,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 
             "render the error page" when {
               "error in response from API" in {
-                enable(IncomeSources)
+                enable(IncomeSourcesFs)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 val response = List(CreateIncomeSourceErrorResponse(500, "INTERNAL_SERVER_ERROR"))
@@ -202,12 +202,12 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
               }
 
               "user session has no details" in {
-                enable(IncomeSources)
+                enable(IncomeSourcesFs)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-                await(sessionService.setMongoData(emptyUIJourneySessionData(JourneyType(Add, incomeSourceType))))
+                await(sessionService.setMongoData(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, incomeSourceType))))
 
                 val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
 

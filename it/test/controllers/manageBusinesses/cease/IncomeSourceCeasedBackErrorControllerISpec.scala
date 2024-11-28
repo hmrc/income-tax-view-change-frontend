@@ -18,10 +18,10 @@ package controllers.manageBusinesses.cease
 
 import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Cease, JourneyType}
+import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{IncomeSources, NavBarFs}
+import models.admin.{IncomeSourcesFs, NavBarFs}
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
@@ -72,10 +72,10 @@ class IncomeSourceCeasedBackErrorControllerISpec extends ControllerISpecHelper {
             "render the back error page" in {
               stubAuthorised(mtdUserRole)
               disable(NavBarFs)
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-              await(sessionService.setMongoData(completedUIJourneySessionData(JourneyType(Cease, incomeSourceType))))
+              await(sessionService.setMongoData(completedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType))))
               val result = buildGETMTDClient(path, additionalCookies).futureValue
               result should have(
                 httpStatus(OK),
@@ -87,7 +87,7 @@ class IncomeSourceCeasedBackErrorControllerISpec extends ControllerISpecHelper {
               "FS disabled" in {
                 stubAuthorised(mtdUserRole)
                 disable(NavBarFs)
-                disable(IncomeSources)
+                disable(IncomeSourcesFs)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
                 result should have(

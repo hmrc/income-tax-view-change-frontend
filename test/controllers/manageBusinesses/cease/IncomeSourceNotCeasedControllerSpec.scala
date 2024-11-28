@@ -19,7 +19,7 @@ package controllers.manageBusinesses.cease
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status.OK
@@ -46,12 +46,12 @@ class IncomeSourceNotCeasedControllerSpec extends MockAuthActions {
     incomeSourceTypes.foreach { incomeSourceType =>
       val isAgent = mtdRole != MTDIndividual
       s"show($isAgent, $incomeSourceType, )" when {
-        val fakeRequest = getFakeRequestBasedOnMTDUserType(mtdRole)
+        val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
         val action = testController.show(isAgent, incomeSourceType)
         s"the user is authenticated as a $mtdRole" should {
           "render the not ceased page" in {
             setupMockSuccess(mtdRole)
-            enable(IncomeSources)
+            enable(IncomeSourcesFs)
             mockUKPropertyIncomeSource()
 
             val result: Future[Result] = action(fakeRequest)

@@ -21,7 +21,7 @@ import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.AccountingMethod.fromApiField
 import enums.IncomeSourceJourney._
-import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import forms.incomeSources.add.IncomeSourcesAccountingMethodForm
 import play.api.Logger
 import play.api.i18n.I18nSupport

@@ -20,7 +20,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney._
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.SessionService
@@ -42,7 +42,7 @@ class ReportingMethodSetBackErrorController @Inject()(val authActions: AuthActio
 
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_]): Future[Result] = withSessionData(JourneyType(Add, incomeSourceType), journeyState = CannotGoBackPage) { _ =>
+                   (implicit user: MtdItUser[_]): Future[Result] = withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = CannotGoBackPage) { _ =>
     val subheadingContent = getSubheadingContent(incomeSourceType)
     Future.successful(Ok(cannotGoBackError(isAgent, subheadingContent)))
   }

@@ -18,10 +18,10 @@ package controllers.manageBusinesses.cease
 
 import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Cease, JourneyType}
+import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{IncomeSources, NavBarFs}
+import models.admin.{IncomeSourcesFs, NavBarFs}
 import models.incomeSourceDetails.CeaseIncomeSourceData.{dateCeasedField, incomeSourceIdField}
 import models.incomeSourceDetails.{CeaseIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -94,7 +94,7 @@ class IncomeSourceEndDateControllerISpec extends ControllerISpecHelper {
               "render the Date Business Ceased Page" in {
                 stubAuthorised(mtdUserRole)
                 disable(NavBarFs)
-                enable(IncomeSources)
+                enable(IncomeSourcesFs)
 
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
 
@@ -122,7 +122,7 @@ class IncomeSourceEndDateControllerISpec extends ControllerISpecHelper {
                 "no session data" in {
                   stubAuthorised(mtdUserRole)
                   disable(NavBarFs)
-                  enable(IncomeSources)
+                  enable(IncomeSourcesFs)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
 
                   val result = buildGETMTDClient(path, additionalCookies).futureValue
@@ -154,7 +154,7 @@ class IncomeSourceEndDateControllerISpec extends ControllerISpecHelper {
                   }
                   stubAuthorised(mtdUserRole)
                   disable(NavBarFs)
-                  enable(IncomeSources)
+                  enable(IncomeSourcesFs)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
 
                   setupTestMongoData(incomeSourceType)
@@ -171,9 +171,9 @@ class IncomeSourceEndDateControllerISpec extends ControllerISpecHelper {
                     httpStatus(SEE_OTHER),
                     redirectURI(expectedUrl)
                   )
-                  sessionService.getMongoKey(dateCeasedField, JourneyType(Cease, incomeSourceType)).futureValue shouldBe Right(Some(LocalDate.parse(testEndDate2022)))
+                  sessionService.getMongoKey(dateCeasedField, IncomeSourceJourneyType(Cease, incomeSourceType)).futureValue shouldBe Right(Some(LocalDate.parse(testEndDate2022)))
                   if (incomeSourceType == SelfEmployment) {
-                    sessionService.getMongoKey(incomeSourceIdField, JourneyType(Cease, incomeSourceType)).futureValue shouldBe Right(Some(testSelfEmploymentId))
+                    sessionService.getMongoKey(incomeSourceIdField, IncomeSourceJourneyType(Cease, incomeSourceType)).futureValue shouldBe Right(Some(testSelfEmploymentId))
                   }
                 }
               }
@@ -185,7 +185,7 @@ class IncomeSourceEndDateControllerISpec extends ControllerISpecHelper {
                   }
                   stubAuthorised(mtdUserRole)
                   disable(NavBarFs)
-                  enable(IncomeSources)
+                  enable(IncomeSourcesFs)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
 
                   val result = buildPOSTMTDPostClient(path, additionalCookies, formData).futureValue
@@ -196,8 +196,8 @@ class IncomeSourceEndDateControllerISpec extends ControllerISpecHelper {
                       messagesAPI(s"incomeSources.cease.endDate.${incomeSourceType.messagesCamel}.error.invalid"))
                   )
 
-                  sessionService.getMongoKey(dateCeasedField, JourneyType(Cease, incomeSourceType)).futureValue shouldBe Right(None)
-                  sessionService.getMongoKey(incomeSourceIdField, JourneyType(Cease, incomeSourceType)).futureValue shouldBe Right(None)
+                  sessionService.getMongoKey(dateCeasedField, IncomeSourceJourneyType(Cease, incomeSourceType)).futureValue shouldBe Right(None)
+                  sessionService.getMongoKey(incomeSourceIdField, IncomeSourceJourneyType(Cease, incomeSourceType)).futureValue shouldBe Right(None)
 
                 }
               }

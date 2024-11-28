@@ -18,10 +18,10 @@ package controllers.incomeSources.add
 
 import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, JourneyType}
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{IncomeSources, NavBarFs}
+import models.admin.{IncomeSourcesFs, NavBarFs}
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
@@ -59,12 +59,12 @@ class ReportingMethodSetBackErrorControllerISpec extends ControllerISpecHelper {
         s"a user is a $mtdUserRole" that {
           "is authenticated, with a valid enrolment" should {
             "render the Business Accounting Method page" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-              await(sessionService.setMongoData(completedUIJourneySessionData(JourneyType(Add, incomeSourceType))))
+              await(sessionService.setMongoData(completedUIJourneySessionData(IncomeSourceJourneyType(Add, incomeSourceType))))
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
               verifyIncomeSourceDetailsCall(testMtditid)
@@ -77,7 +77,7 @@ class ReportingMethodSetBackErrorControllerISpec extends ControllerISpecHelper {
 
             "redirect to home page" when {
               "Income Sources FS is disabled" in {
-                disable(IncomeSources)
+                disable(IncomeSourcesFs)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)

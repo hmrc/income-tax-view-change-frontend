@@ -20,7 +20,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Cease, IncomeSourceJourneyType, JourneyType}
+import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import exceptions.MissingSessionKey
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId

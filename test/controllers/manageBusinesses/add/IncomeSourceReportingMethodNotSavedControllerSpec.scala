@@ -21,7 +21,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSources
+import models.admin.IncomeSourcesFs
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers._
@@ -98,11 +98,11 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends MockAuthActions 
     incomeSourceTypes.foreach { incomeSourceType =>
       s"show${if (mtdRole != MTDIndividual) "Agent"}($incomeSourceType)" when {
         val action = if (mtdRole == MTDIndividual) testController.show(incomeSourceType) else testController.showAgent(incomeSourceType)
-        val fakeRequest = getFakeRequestBasedOnMTDUserType(mtdRole)
+        val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
         s"the user is authenticated as a $mtdRole" should {
           "render the reporting method not saved page" when {
             s"income sources feature is enabled" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               setupMockSuccess(mtdRole)
               setupMockGetIncomeSourceDetails()(ukPlusForeignPropertyAndSoleTraderNoLatency)
 
@@ -119,7 +119,7 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends MockAuthActions 
 
           s"redirect to the home page" when {
             "when feature switch is disabled" in {
-              disable(IncomeSources)
+              disable(IncomeSourcesFs)
               setupMockSuccess(mtdRole)
               setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 

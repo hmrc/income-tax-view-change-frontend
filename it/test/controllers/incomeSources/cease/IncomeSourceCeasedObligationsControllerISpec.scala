@@ -21,7 +21,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.JourneyType.Cease
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{IncomeSources, NavBarFs}
+import models.admin.{IncomeSourcesFs, NavBarFs}
 import models.incomeSourceDetails.{CeaseIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -82,7 +82,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ControllerISpecHelper
             "render the Business Ceased obligations page" in {
               stubAuthorised(mtdUserRole)
               disable(NavBarFs)
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
               IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
               if (incomeSourceType == SelfEmployment) {
