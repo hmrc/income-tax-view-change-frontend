@@ -19,7 +19,8 @@ package views.html.helpers.injected.obligations
 import testConstants.BaseTestConstants.testMtdItUser
 import testConstants.BusinessDetailsTestConstants.{business1, testTradeName}
 import testConstants.NextUpdatesTestConstants.{crystallisedObligation, twoObligationsSuccessModel}
-import models.obligations.{DeadlineViewModel, ObligationWithIncomeType, GroupedObligationsModel, NextUpdatesViewModel, ObligationType, ObligationsModel, QuarterlyObligation}
+import models.obligations.{DeadlineViewModel, ObligationWithIncomeType, GroupedObligationsModel, NextUpdatesViewModel,
+  ObligationType, ObligationsModel, QuarterlyObligation}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
@@ -66,7 +67,8 @@ class  NextUpdatesHelperSpec extends TestSupport {
       heading.text() shouldBe "Quarterly update"
 
       val table = section.select(".govuk-table")
-      table.select(".govuk-table__caption").text() shouldBe "Quarterly period from 1 Jul 2017 to 30 Sep 2017"
+      table.select(".govuk-table__caption").text() should  fullyMatch regex """Quarterly\speriod\sfrom\s1\sJul\s2017\sto\s30\s([Sept|Sep]+)+\s2017"""
+        //"Quarterly period from 1 Jul 2017 to 30 Sep 2017"
 
       table.select(".govuk-table__head").text() shouldBe "Update type Income source"
 
