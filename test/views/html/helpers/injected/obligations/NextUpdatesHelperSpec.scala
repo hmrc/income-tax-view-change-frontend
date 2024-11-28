@@ -68,7 +68,6 @@ class  NextUpdatesHelperSpec extends TestSupport {
 
       val table = section.select(".govuk-table")
       table.select(".govuk-table__caption").text() should  fullyMatch regex """Quarterly\speriod\sfrom\s1\sJul\s2017\sto\s30\s([Sept|Sep]+)+\s2017"""
-        //"Quarterly period from 1 Jul 2017 to 30 Sep 2017"
 
       table.select(".govuk-table__head").text() shouldBe "Update type Income source"
 
