@@ -29,7 +29,7 @@ object Headers {
       kv.map(k => (k, suffix)).toMap
     ).getOrElse(Map[String, String]())
     val urlPathArray = requestPath.split('/')
-    val actionPath = if(urlPathArray.isEmpty) "" else urlPathArray.last
+    val actionPath = if (urlPathArray.isEmpty) "" else urlPathArray.last
     val updatedHeader = page.get(actionPath) match {
       case Some(data) => "Gov-Test-Scenario" -> data
       case _ => "Gov-Test-Scenario" -> ""
