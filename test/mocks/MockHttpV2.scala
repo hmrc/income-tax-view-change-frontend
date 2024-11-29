@@ -47,6 +47,10 @@ trait MockHttpV2 extends UnitSpec with BeforeAndAfterEach {
       .thenReturn(mockRequestBuilder)
 
     when(mockRequestBuilder
+      .setHeader(any[(String, String)]))
+      .thenReturn(mockRequestBuilder)
+
+    when(mockRequestBuilder
       .execute[T](ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }

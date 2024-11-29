@@ -20,13 +20,14 @@ import config.FrontendAppConfig
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
 import play.api.Logger
 import play.api.http.Status._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IncomeTaxCalculationConnector @Inject()(http: HttpClient,
+class IncomeTaxCalculationConnector @Inject()(http: HttpClientV2,
                                               config: FrontendAppConfig) extends RawResponseReads {
   val baseUrl: String = config.incomeTaxCalculationService
 
@@ -38,8 +39,10 @@ class IncomeTaxCalculationConnector @Inject()(http: HttpClient,
   def getCalculationResponse(mtditid: String, nino: String, taxYear: String)
                             (implicit headerCarrier: HeaderCarrier,
                              ec: ExecutionContext): Future[LiabilityCalculationResponseModel] = {
-    http.GET[HttpResponse](getCalculationResponseUrl(nino), Seq(("taxYear", taxYear)))(httpReads,
-      headerCarrier.withExtraHeaders("mtditid" -> mtditid), ec) map { response =>
+
+    http.get(url"${getCalculationResponseUrl(nino)}?taxYear=$taxYear")
+      .setHeader("mtditid" -> mtditid)
+      .execute[HttpResponse] map { response =>
       response.status match {
         case OK =>
           response.json.validate[LiabilityCalculationResponse].fold(
@@ -64,8 +67,9 @@ class IncomeTaxCalculationConnector @Inject()(http: HttpClient,
   def getCalculationResponseByCalcId(mtditid: String, nino: String, calcId: String, taxYear: Int)
                                     (implicit headerCarrier: HeaderCarrier,
                                      ec: ExecutionContext): Future[LiabilityCalculationResponseModel] = {
-    http.GET[HttpResponse](getCalculationResponseByCalcIdUrl(nino, calcId), Seq(("taxYear", taxYear.toString)))(httpReads,
-      headerCarrier.withExtraHeaders("mtditid" -> mtditid), ec) map { response =>
+    http.get(url"${getCalculationResponseByCalcIdUrl(nino, calcId)}?taxYear=${taxYear.toString}")
+      .setHeader("mtditid" -> mtditid)
+      .execute[HttpResponse] map { response =>
       response.status match {
         case OK =>
           response.json.validate[LiabilityCalculationResponse].fold(

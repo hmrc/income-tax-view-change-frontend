@@ -16,8 +16,8 @@
 
 package connectors
 
-import mocks.MockHttp
-import models.liabilitycalculation.{Inputs, LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel, Metadata, PersonalInformation}
+import mocks.MockHttpV2
+import models.liabilitycalculation._
 import play.api.http.Status._
 import play.api.libs.json.{JsObject, Json}
 import testUtils.TestSupport
@@ -25,18 +25,18 @@ import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future
 
-class IncomeTaxCalculationConnectorSpec extends TestSupport with MockHttp {
+class IncomeTaxCalculationConnectorSpec extends TestSupport with MockHttpV2 {
 
   class GetCalculationResponseTest(nino: String, taxYear: String, response: HttpResponse) {
-    val connector = new IncomeTaxCalculationConnector(httpClientMock, appConfig)
+    val connector = new IncomeTaxCalculationConnector(mockHttpClientV2, appConfig)
 
-    setupMockHttpGetWithParams(connector.getCalculationResponseUrl(nino), Seq(("taxYear", taxYear)))(response)
+    setupMockHttpVTwoGet(s"${connector.getCalculationResponseUrl(nino)}?taxYear=$taxYear")(response)
   }
 
-  class GetCalculationResponseByCalcIdTest(nino: String, calcId: String, response: HttpResponse) {
-    val connector = new IncomeTaxCalculationConnector(httpClientMock, appConfig)
+  class GetCalculationResponseByCalcIdTest(nino: String, calcId: String, response: HttpResponse, taxYear: Int) {
+    val connector = new IncomeTaxCalculationConnector(mockHttpClientV2, appConfig)
 
-    setupMockHttpGet(connector.getCalculationResponseByCalcIdUrl(nino, calcId))(response)
+    setupMockHttpVTwoGet(s"${connector.getCalculationResponseByCalcIdUrl(nino, calcId)}?taxYear=${taxYear.toString}")(response)
   }
 
   val mtditid = "XAIT0000123456"
@@ -88,7 +88,7 @@ class IncomeTaxCalculationConnectorSpec extends TestSupport with MockHttp {
   "IncomeTaxCalculationConnector.getCalculationResponseByCalcId" should {
     "return a calculation" when {
       "receiving an OK with valid Calculation json" in new GetCalculationResponseByCalcIdTest(nino, calculationId, HttpResponse(status = OK,
-        json = calculationJson, headers = Map.empty)) {
+        json = calculationJson, headers = Map.empty), taxYearAsInt) {
         val result: Future[LiabilityCalculationResponseModel] = connector.getCalculationResponseByCalcId(mtditid, nino, calculationId, taxYearAsInt)
 
         result.futureValue shouldBe calculation
@@ -96,19 +96,19 @@ class IncomeTaxCalculationConnectorSpec extends TestSupport with MockHttp {
     }
     "return an error" when {
       "receiving a 500+ response" in new GetCalculationResponseByCalcIdTest(nino, calculationId, HttpResponse(
-        status = INTERNAL_SERVER_ERROR, json = Json.toJson("Error message"), headers = Map.empty)) {
+        status = INTERNAL_SERVER_ERROR, json = Json.toJson("Error message"), headers = Map.empty), taxYearAsInt) {
         val result: Future[LiabilityCalculationResponseModel] = connector.getCalculationResponseByCalcId(mtditid, nino, calculationId, taxYearAsInt)
 
         result.futureValue shouldBe LiabilityCalculationError(INTERNAL_SERVER_ERROR, """"Error message"""")
       }
       "receiving a 499- response" in new GetCalculationResponseByCalcIdTest(nino, calculationId, HttpResponse(
-        status = 499, json = Json.toJson("Error message"), headers = Map.empty)) {
+        status = 499, json = Json.toJson("Error message"), headers = Map.empty), taxYearAsInt) {
         val result: Future[LiabilityCalculationResponseModel] = connector.getCalculationResponseByCalcId(mtditid, nino, calculationId, taxYearAsInt)
 
         result.futureValue shouldBe LiabilityCalculationError(499, """"Error message"""")
       }
       "receiving OK with invalid json" in new GetCalculationResponseByCalcIdTest(
-        nino, calculationId, HttpResponse(status = OK, json = Json.toJson(""), headers = Map.empty)) {
+        nino, calculationId, HttpResponse(status = OK, json = Json.toJson(""), headers = Map.empty), taxYearAsInt) {
         val result: Future[LiabilityCalculationResponseModel] = connector.getCalculationResponseByCalcId(mtditid, nino, calculationId, taxYearAsInt)
 
         result.futureValue shouldBe LiabilityCalculationError(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation response")
