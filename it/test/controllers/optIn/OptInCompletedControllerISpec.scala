@@ -17,22 +17,24 @@
 package controllers.optIn
 
 import controllers.ControllerISpecHelper
-import controllers.optIn.BeforeYouStartControllerISpec._
 import enums.JourneyType.{Opt, OptInJourney}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.NavBarFs
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
+import models.itsaStatus.ITSAStatus.Annual
 import models.optin.{OptInContextData, OptInSessionData}
 import play.api.http.Status.OK
 import repositories.ITSAStatusRepositorySupport.statusToString
 import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
-class BeforeYouStartControllerISpec extends ControllerISpecHelper {
+import scala.concurrent.Future
 
+class OptInCompletedControllerISpec extends ControllerISpecHelper {
   val forYearEnd = 2023
   val currentTaxYear: TaxYear = TaxYear.forYearEnd(forYearEnd)
 
@@ -45,61 +47,52 @@ class BeforeYouStartControllerISpec extends ControllerISpecHelper {
 
   def getPath(mtdRole: MTDUserRole): String = {
     val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
-    pathStart + "/opt-in/start"
+    pathStart + "/opt-in/completed"
   }
 
   mtdAllRoles.foreach { case mtdUserRole =>
-    val isAgent = mtdUserRole != MTDIndividual
     val path = getPath(mtdUserRole)
     val additionalCookies = getAdditionalCookies(mtdUserRole)
     s"GET $path" when {
       s"a user is a $mtdUserRole" that {
         "is authenticated, with a valid enrolment" should {
-          "render the before you start page with a button" that {
-            "Redirects to choose tax year page" in {
+          "render the completed page" that {
+            "is for the current tax year" in {
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessesAndPropertyIncome)
 
-              setupOptInSessionData(currentTaxYear, ITSAStatus.Annual, ITSAStatus.Annual)
+              val intent = currentTaxYear
+              setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual, intent).futureValue shouldBe true
+
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
               verifyIncomeSourceDetailsCall(testMtditid)
 
               result should have(
                 httpStatus(OK),
-                pageTitle(mtdUserRole, "optIn.beforeYouStart.heading"),
-                elementTextByID("heading")(headingText),
-                elementTextByID("desc1")(desc1),
-                elementTextByID("desc2")(desc2),
-                elementTextByID("reportQuarterly")(reportQuarterlyText),
-                elementTextByID("voluntaryStatus")(voluntaryStatus),
-                elementTextByID("voluntaryStatus-text")(voluntaryStatusText),
-                elementAttributeBySelector("#start-button", "href")(routes.ChooseYearController.show(isAgent).url)
-
+                pageTitle(mtdUserRole, "optin.completedOptIn.heading"),
+                elementTextBySelector("h1")("Opt in completed"),
+                elementTextByClass("govuk-panel__body")("You are now reporting quarterly from 2022 to 2023 tax year onwards")
               )
             }
 
-            "Redirects to confirm tax year page" in {
+            "that is for next tax year" in {
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-              setupOptInSessionData(currentTaxYear, ITSAStatus.Annual, ITSAStatus.Voluntary)
+              val intent = currentTaxYear.nextYear
+              setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual, intent).futureValue shouldBe true
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
               verifyIncomeSourceDetailsCall(testMtditid)
 
               result should have(
                 httpStatus(OK),
-                pageTitle(mtdUserRole, "optIn.beforeYouStart.heading"),
-                elementTextByID("heading")(headingText),
-                elementTextByID("desc1")(desc1),
-                elementTextByID("desc2")(desc2),
-                elementTextByID("reportQuarterly")(reportQuarterlyText),
-                elementTextByID("voluntaryStatus")(voluntaryStatus),
-                elementTextByID("voluntaryStatus-text")(voluntaryStatusText),
-                elementAttributeBySelector("#start-button", "href")(routes.ConfirmTaxYearController.show(isAgent).url)
+                pageTitle(mtdUserRole, "optin.completedOptIn.heading"),
+                elementTextBySelector("h1")("Opt in completed"),
+                elementTextByClass("govuk-panel__body")("You opted in to quarterly reporting from 2023 to 2024 tax year onwards")
               )
             }
           }
@@ -111,22 +104,15 @@ class BeforeYouStartControllerISpec extends ControllerISpecHelper {
 
 
 
-  private def setupOptInSessionData(currentTaxYear: TaxYear, currentYearStatus: ITSAStatus.Value, nextYearStatus: ITSAStatus.Value): Unit = {
+  private def setupOptInSessionData(currentTaxYear: TaxYear, currentYearStatus: ITSAStatus.Value,
+                                    nextYearStatus: ITSAStatus.Value, intent: TaxYear): Future[Boolean] = {
     repository.set(
       UIJourneySessionData(testSessionId,
         Opt(OptInJourney).toString,
         optInSessionData =
           Some(OptInSessionData(
             Some(OptInContextData(
-              currentTaxYear.toString, statusToString(currentYearStatus), statusToString(nextYearStatus))), None))))
+              currentTaxYear.toString, statusToString(currentYearStatus),
+              statusToString(nextYearStatus))), Some(intent.toString)))))
   }
-}
-
-object BeforeYouStartControllerISpec {
-  val headingText = "Before you start"
-  val desc1 = "Reporting quarterly allows HMRC to give you a more precise forecast of how much tax you owe to help you budget more accurately."
-  val desc2 = "To report quarterly you will need compatible software. There are both paid and free options for you or your agent to choose from."
-  val reportQuarterlyText = "Reporting quarterly"
-  val voluntaryStatus = "Your voluntary status"
-  val voluntaryStatusText = "As you would be voluntarily opting in to reporting quarterly, you can decide to opt out and return to reporting annually at any time."
 }

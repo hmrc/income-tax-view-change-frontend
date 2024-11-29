@@ -25,15 +25,13 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
-                            val authoriseAndRetrieve: AuthoriseAndRetrieve,
                             val authoriseAndRetrieveIndividual: AuthoriseAndRetrieveIndividual,
                             val authoriseAndRetrieveAgent: AuthoriseAndRetrieveAgent,
                             val authoriseAndRetrieveMtdAgent: AuthoriseAndRetrieveMtdAgent,
                             val agentHasClientDetails: AgentHasClientDetails,
                             val agentHasConfirmedClientAction: AgentHasConfirmedClientAction,
                             val agentIsPrimaryAction: AgentIsPrimaryAction,
-                            val asMtdUser: AsMtdUser,
-                            val retrieveBtaNavBar: NavBarRetrievalAction,
+                            val retrieveNavBar: NavBarRetrievalAction,
                             val retrieveNinoWithIncomeSources: IncomeSourceRetrievalAction,
                             val retrieveClientData: RetrieveClientData,
                             val retrieveFeatureSwitches: FeatureSwitchRetrievalAction) {
@@ -43,7 +41,7 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
       authoriseAndRetrieveIndividual andThen
       retrieveNinoWithIncomeSources andThen
       retrieveFeatureSwitches andThen
-      retrieveBtaNavBar
+      retrieveNavBar
   }
 
   def asAgent(arnRequired: Boolean = true): ActionBuilder[AgentUser, AnyContent] = checkSessionTimeout andThen authoriseAndRetrieveAgent.authorise(arnRequired)
@@ -57,7 +55,7 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
     checkSessionTimeout andThen
       retrieveClientData andThen
       authoriseAndRetrieveMtdAgent andThen
-      agentHasClientDetails andThen
+ //     agentHasClientDetails andThen
       agentHasConfirmedClientAction andThen
       retrieveNinoWithIncomeSources andThen
       retrieveFeatureSwitches

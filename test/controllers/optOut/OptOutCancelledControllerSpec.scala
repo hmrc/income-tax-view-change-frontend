@@ -48,7 +48,6 @@ class OptOutCancelledControllerSpec extends MockOldAuthActions with MockIncomeSo
   val mockFrontendAuthorisedFunctions: FrontendAuthorisedFunctions = mock[FrontendAuthorisedFunctions]
   val mockNonAgentItvcErrorHandler: ItvcErrorHandler = mock[ItvcErrorHandler]
   val mockAgentItvcErrorHandler: AgentItvcErrorHandler = mock[AgentItvcErrorHandler]
-  val mockAuthoriseAndRetrieve: AuthoriseAndRetrieve = mock[AuthoriseAndRetrieve]
 
   val optOutCancelledView: OptOutCancelledView = app.injector.instanceOf[OptOutCancelledView]
   val errorTemplateView: ErrorTemplate = app.injector.instanceOf[ErrorTemplate]

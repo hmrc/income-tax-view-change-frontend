@@ -216,6 +216,21 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
       }
     }
 
+  def elementTextByClass(className: String)(expectedValue: String): HavePropertyMatcher[WSResponse, String] =
+    new HavePropertyMatcher[WSResponse, String] {
+
+      def apply(response: WSResponse) = {
+        val body = Jsoup.parse(response.body)
+
+        HavePropertyMatchResult(
+          body.getElementsByClass(className).text == expectedValue,
+          s"class",
+          expectedValue,
+          body.getElementsByClass(className).text
+        )
+      }
+    }
+
   def elementCountBySelector(selectors: String*)(expectedValue: Int): HavePropertyMatcher[WSResponse, Int] =
     new HavePropertyMatcher[WSResponse, Int] {
 

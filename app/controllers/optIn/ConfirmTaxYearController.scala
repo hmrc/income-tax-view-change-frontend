@@ -16,11 +16,11 @@
 
 package controllers.optIn
 
-import auth.{FrontendAuthorisedFunctions, MtdItUser}
+import auth.MtdItUser
+import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseSuccess
-import controllers.agent.predicates.ClientConfirmedController
 import controllers.optIn.routes.OptInErrorController
 import models.optin.ConfirmTaxYearViewModel
 import play.api.Logger
@@ -28,7 +28,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.DateService
 import services.optIn.OptInService
-import utils.AuthenticatorPredicate
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.optIn.ConfirmTaxYear
 
 import javax.inject.Inject
@@ -36,15 +36,14 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ConfirmTaxYearController @Inject()(val view: ConfirmTaxYear,
                                          val optInService: OptInService,
-                                         val authorisedFunctions: FrontendAuthorisedFunctions,
-                                         val auth: AuthenticatorPredicate)
+                                         val authActions: AuthActions,
+                                         val itvcErrorHandler: ItvcErrorHandler,
+                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                         (implicit val dateService: DateService,
                                          val appConfig: FrontendAppConfig,
                                          mcc: MessagesControllerComponents,
-                                         val ec: ExecutionContext,
-                                         val itvcErrorHandler: ItvcErrorHandler,
-                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
+                                         val ec: ExecutionContext)
+  extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
 
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
@@ -56,7 +55,7 @@ class ConfirmTaxYearController @Inject()(val view: ConfirmTaxYear,
     }
   }
 
-  def show(isAgent: Boolean = false): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def show(isAgent: Boolean = false): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
       withRecover(isAgent) {
         optInService.getConfirmTaxYearViewModel(isAgent) map {
@@ -71,7 +70,7 @@ class ConfirmTaxYearController @Inject()(val view: ConfirmTaxYear,
       }
   }
 
-  def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def submit(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
       optInService.makeOptInCall() map {
         case ITSAStatusUpdateResponseSuccess(_) => redirectToCheckpointPage(isAgent)
