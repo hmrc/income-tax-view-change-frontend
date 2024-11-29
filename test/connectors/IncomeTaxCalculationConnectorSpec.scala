@@ -30,13 +30,13 @@ class IncomeTaxCalculationConnectorSpec extends TestSupport with MockHttpV2 {
   class GetCalculationResponseTest(nino: String, taxYear: String, response: HttpResponse) {
     val connector = new IncomeTaxCalculationConnector(mockHttpClientV2, appConfig)
 
-    setupMockHttpVTwoGet(s"${connector.getCalculationResponseUrl(nino)}?taxYear=$taxYear")(response)
+    setupMockHttpV2Get(s"${connector.getCalculationResponseUrl(nino)}?taxYear=$taxYear")(response)
   }
 
   class GetCalculationResponseByCalcIdTest(nino: String, calcId: String, response: HttpResponse, taxYear: Int) {
     val connector = new IncomeTaxCalculationConnector(mockHttpClientV2, appConfig)
 
-    setupMockHttpVTwoGet(s"${connector.getCalculationResponseByCalcIdUrl(nino, calcId)}?taxYear=${taxYear.toString}")(response)
+    setupMockHttpV2Get(s"${connector.getCalculationResponseByCalcIdUrl(nino, calcId)}?taxYear=${taxYear.toString}")(response)
   }
 
   val mtditid = "XAIT0000123456"
