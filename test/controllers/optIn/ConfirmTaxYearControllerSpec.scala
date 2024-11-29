@@ -16,41 +16,35 @@
 
 package controllers.optIn
 
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import controllers.routes
-import mocks.controllers.predicates.MockAuthenticationPredicate
-import mocks.services.{MockDateService, MockOptInService, MockOptOutService}
+import enums.MTDIndividual
+import mocks.auth.MockAuthActions
+import mocks.services.{MockDateService, MockOptInService}
 import models.incomeSourceDetails.TaxYear
 import models.optin.ConfirmTaxYearViewModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
+import play.api
+import play.api.Application
 import play.api.http.Status
-import play.api.http.Status.OK
-import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
+import services.DateService
+import services.optIn.OptInService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
-import testUtils.TestSupport
-import views.html.optIn.ConfirmTaxYear
 
 import scala.concurrent.Future
 
-class ConfirmTaxYearControllerSpec extends TestSupport
-  with MockAuthenticationPredicate with MockOptOutService with MockOptInService with MockDateService {
+class ConfirmTaxYearControllerSpec extends MockAuthActions
+  with MockOptInService with MockDateService {
 
-  val controller = new ConfirmTaxYearController(
-    view = app.injector.instanceOf[ConfirmTaxYear],
-    mockOptInService,
-    authorisedFunctions = mockAuthService,
-    auth = testAuthenticator,
-  )(
-    dateService = mockDateService,
-    appConfig = appConfig,
-    ec = ec,
-    itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
-    itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
-    mcc = app.injector.instanceOf[MessagesControllerComponents]
-  )
+  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+    .overrides(
+      api.inject.bind[OptInService].toInstance(mockOptInService),
+      api.inject.bind[DateService].toInstance(mockDateService)
+    ).build()
+
+  val testController = fakeApplication().injector.instanceOf[ConfirmTaxYearController]
 
   val endCurrentTaxYear = 2025
   val taxYear2024_25: TaxYear = TaxYear.forYearEnd(endCurrentTaxYear)
@@ -58,92 +52,88 @@ class ConfirmTaxYearControllerSpec extends TestSupport
   val endTaxYear = 2026
   val taxYear2025_26: TaxYear = TaxYear.forYearEnd(endCurrentTaxYear)
 
-  def showTests(isAgent: Boolean): Unit = {
-    "show page" should {
+  mtdAllRoles.foreach { mtdRole =>
+    val isAgent = mtdRole != MTDIndividual
+    s"show(isAgent = $isAgent)" when {
+      val action = testController.show(isAgent)
+      val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
+      s"the user is authenticated as a $mtdRole" should {
+        "render the confirm tax year page for current tax year" in {
+          setupMockSuccess(mtdRole)
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-      s"return result with $OK status for current tax year" in {
-        setupMockAuthorisationSuccess(isAgent)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          when(mockOptInService.getConfirmTaxYearViewModel(any())(any(), any(), any()))
+            .thenReturn(Future.successful(Some(ConfirmTaxYearViewModel(
+              taxYear2024_25, routes.ReportingFrequencyPageController.show(isAgent).url, isNextTaxYear = false,
+              isAgent)
+            )))
 
-        when(mockOptInService.getConfirmTaxYearViewModel(any())(any(), any(), any()))
-          .thenReturn(Future.successful(Some(ConfirmTaxYearViewModel(
-            taxYear2024_25, routes.ReportingFrequencyPageController.show(isAgent).url, isNextTaxYear = false,
-            isAgent)
-          )))
+          val result = action(fakeRequest)
+          status(result) shouldBe Status.OK
+        }
 
-        val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
-        val result = controller.show(isAgent).apply(requestGET)
-        status(result) shouldBe Status.OK
+        "render the confirm tax year page for next tax year" in {
+          setupMockSuccess(mtdRole)
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+          when(mockOptInService.getConfirmTaxYearViewModel(any())(any(), any(), any()))
+            .thenReturn(Future.successful(Some(ConfirmTaxYearViewModel(
+              taxYear2025_26, routes.ReportingFrequencyPageController.show(isAgent).url, isNextTaxYear = true,
+              isAgent)
+            )))
+
+          val result = action(fakeRequest)
+          status(result) shouldBe Status.OK
+        }
+
+        s"return result with $INTERNAL_SERVER_ERROR status" when {
+          "getConfirmTaxYearViewModel fails" in {
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+            when(mockOptInService.getConfirmTaxYearViewModel(any())(any(), any(), any()))
+              .thenReturn(Future.successful(None))
+
+            val result = action(fakeRequest)
+            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          }
+        }
       }
-
-      s"return result with $OK status for next tax year" in {
-        setupMockAuthorisationSuccess(isAgent)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-
-        when(mockOptInService.getConfirmTaxYearViewModel(any())(any(), any(), any()))
-          .thenReturn(Future.successful(Some(ConfirmTaxYearViewModel(
-            taxYear2025_26, routes.ReportingFrequencyPageController.show(isAgent).url, isNextTaxYear = true,
-            isAgent)
-          )))
-
-        val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
-        val result = controller.show(isAgent).apply(requestGET)
-        status(result) shouldBe Status.OK
-      }
-
-      s"return result with $INTERNAL_SERVER_ERROR status" in {
-        setupMockAuthorisationSuccess(isAgent)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-
-        when(mockOptInService.getConfirmTaxYearViewModel(any())(any(), any(), any()))
-          .thenReturn(Future.successful(None))
-
-        val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
-        val result = controller.show(isAgent).apply(requestGET)
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-    }
-  }
-
-  def submitTest(isAgent: Boolean): Unit = {
-    val testName = "Single Year Opt-In"
-    val requestPOST = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
-
-    s"submit method is invoked $testName" should {
-
-      s"return result with $OK status for $testName" in {
-        setupMockAuthorisationSuccess(isAgent)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-
-        when(mockOptInService.makeOptInCall()(any(), any(), any()))
-          .thenReturn(Future.successful(ITSAStatusUpdateResponseSuccess()))
-
-        val result: Future[Result] = controller.submit(isAgent)(requestPOST)
-
-        status(result) shouldBe Status.SEE_OTHER
-      }
+      testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
     }
 
-    s"return result with $SEE_OTHER status for $testName and update fails" in {
-      setupMockAuthorisationSuccess(isAgent)
-      setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+    s"submit(isAgent = $isAgent)" when {
+      val action = testController.submit(isAgent)
+      val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
+      s"the user is authenticated as a $mtdRole" should {
+        "redirect to OptInCompletedController" in {
+          setupMockSuccess(mtdRole)
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-      when(mockOptInService.makeOptInCall()(any(), any(), any()))
-        .thenReturn(Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure()))
+          when(mockOptInService.makeOptInCall()(any(), any(), any()))
+            .thenReturn(Future.successful(ITSAStatusUpdateResponseSuccess()))
 
-      val result: Future[Result] = controller.submit(isAgent)(requestPOST)
+          val result = action(fakeRequest)
 
-      status(result) shouldBe Status.SEE_OTHER
+          status(result) shouldBe Status.SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.optIn.routes.OptInCompletedController.show(isAgent).url)
+        }
+
+        s"redirect to optInError page" when {
+          "the optInCall fails" in {
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+            when(mockOptInService.makeOptInCall()(any(), any(), any()))
+              .thenReturn(Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure()))
+
+            val result = action(fakeRequest)
+
+            status(result) shouldBe Status.SEE_OTHER
+          }
+        }
+        testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
+      }
     }
-  }
-
-  "CheckYourAnswersController - Individual" when {
-    showTests(isAgent = false)
-    submitTest(isAgent = false)
-  }
-
-  "CheckYourAnswersController - Agent" when {
-    showTests(isAgent = true)
-    submitTest(isAgent = true)
   }
 }
