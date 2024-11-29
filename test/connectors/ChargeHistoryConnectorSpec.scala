@@ -66,7 +66,7 @@ class ChargeHistoryConnectorSpec extends TestSupport with MockHttpV2 with MockAu
       s"http://localhost:9999/income-tax-view-change/charge-history/$testMtditid/chargeReference/$chargeReference"
 
     "return a ChargeHistory model when successful JSON is received" in new Setup {
-      setupMockHttpVTwoGet[ChargesHistoryResponse](getChargeHistoryUrlTestUrl)(successResponseModel)
+      setupMockHttpV2Get[ChargesHistoryResponse](getChargeHistoryUrlTestUrl)(successResponseModel)
 
       val result: Future[ChargeHistoryResponseModel] = connector.getChargeHistory(testMtditid, Some(chargeReference))
       result.futureValue shouldBe testValidChargeHistoryModel
@@ -74,7 +74,7 @@ class ChargeHistoryConnectorSpec extends TestSupport with MockHttpV2 with MockAu
     }
 
     "return a ChargeHistory model in case of future failed scenario" in new Setup {
-      setupMockFailedHttpVTwoGet[ChargesHistoryResponse](getChargeHistoryUrlTestUrl)
+      setupMockFailedHttpV2Get[ChargesHistoryResponse](getChargeHistoryUrlTestUrl)
 
       val result: Future[ChargeHistoryResponseModel] = connector.getChargeHistory(testMtditid, Some(chargeReference))
       result.futureValue shouldBe ChargesHistoryErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, unknown error")
@@ -82,14 +82,14 @@ class ChargeHistoryConnectorSpec extends TestSupport with MockHttpV2 with MockAu
 
 
     "return ChargeHistoryErrorResponse model in case of failure" in new Setup {
-      setupMockHttpVTwoGet[ChargesHistoryResponse](getChargeHistoryUrlTestUrl)(badResponseModel)
+      setupMockHttpV2Get[ChargesHistoryResponse](getChargeHistoryUrlTestUrl)(badResponseModel)
 
       val result: Future[ChargeHistoryResponseModel] = connector.getChargeHistory(testMtditid, Some(chargeReference))
       result.futureValue shouldBe ChargesHistoryErrorModel(Status.BAD_REQUEST, "Error Message")
     }
 
     "return ChargeHistoryErrorResponse model in case of bad/malformed JSON response" in new Setup {
-      setupMockHttpVTwoGet[ChargesHistoryResponse](getChargeHistoryUrlTestUrl)(successResponseBadJsonModel)
+      setupMockHttpV2Get[ChargesHistoryResponse](getChargeHistoryUrlTestUrl)(successResponseBadJsonModel)
 
       val result: Future[ChargeHistoryResponseModel] = connector.getChargeHistory(testMtditid, Some(chargeReference))
       result.futureValue shouldBe testChargeHistoryErrorModelParsing

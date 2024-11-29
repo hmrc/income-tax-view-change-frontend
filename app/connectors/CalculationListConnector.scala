@@ -19,20 +19,16 @@ package connectors
 import config.FrontendAppConfig
 import models.calculationList.{CalculationListErrorModel, CalculationListModel, CalculationListResponseModel}
 import models.core.Nino
-import models.createIncomeSource._
 import play.api.Logger
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
-import play.api.libs.json.{JsError, JsValue, Json}
-import play.api.mvc.Result
-import play.api.mvc.Results.{InternalServerError, Ok}
-import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CalculationListConnector @Inject()(val http: HttpClient,
+class CalculationListConnector @Inject()(val http: HttpClientV2,
                                          val appConfig: FrontendAppConfig
                                         )(implicit val ec: ExecutionContext) extends RawResponseReads {
 
@@ -47,11 +43,9 @@ class CalculationListConnector @Inject()(val http: HttpClient,
   def getLegacyCalculationList(nino: Nino, taxYearEnd: String)
                               (implicit headerCarrier: HeaderCarrier): Future[CalculationListResponseModel] = {
 
-    http.GET[HttpResponse](getLegacyCalculationListUrl(nino.value, taxYearEnd))(
-      httpReads,
-      headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.2.0+json"),
-      ec
-    ) map { response =>
+    http.get(url"${getLegacyCalculationListUrl(nino.value, taxYearEnd)}")
+      .setHeader("Accept" -> "application/vnd.hmrc.2.0+json")
+      .execute[HttpResponse] map { response =>
       response.status match {
         case OK =>
           response.json.validate[CalculationListModel].fold(
@@ -78,12 +72,9 @@ class CalculationListConnector @Inject()(val http: HttpClient,
 
     val url = getCalculationListUrl(nino.value, taxYearRange)
 
-
-    http.GET[HttpResponse](url)(
-      httpReads,
-      headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.2.0+json"),
-      ec
-    ) map { response =>
+    http.get(url"$url")
+      .setHeader("Accept" -> "application/vnd.hmrc.2.0+json")
+      .execute[HttpResponse] map { response =>
       response.status match {
         case OK =>
           response.json.validate[CalculationListModel].fold(
