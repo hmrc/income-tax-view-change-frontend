@@ -148,8 +148,8 @@ class ReportingFrequencyControllerISpec extends ControllerISpecBase with Feature
 
             res.futureValue.status shouldBe OK
             Jsoup.parse(res.futureValue.body).title shouldBe "Your reporting frequency - Manage your Income Tax updates - GOV.UK"
-            Jsoup.parse(res.futureValue.body).body().select(bullet(1)).text() shouldBe s"Opt in to quarterly reporting from the ${dateService.getCurrentTaxYear.nextYear.startYear} to ${dateService.getCurrentTaxYear.nextYear.endYear} tax year onwards"
-            Jsoup.parse(res.futureValue.body).body().select(bullet(2)).text() shouldBe s"Opt out of quarterly reporting and report annually for the ${dateService.getCurrentTaxYear.startYear} to ${dateService.getCurrentTaxYear.endYear} tax year"
+            Jsoup.parse(res.futureValue.body).body().select(bullet(1)).text() shouldBe s"Opt out of quarterly reporting and report annually for the ${dateService.getCurrentTaxYear.startYear} to ${dateService.getCurrentTaxYear.endYear} tax year"
+            Jsoup.parse(res.futureValue.body).body().select(bullet(2)).text() shouldBe s"Opt in to quarterly reporting from the ${dateService.getCurrentTaxYear.nextYear.startYear} to ${dateService.getCurrentTaxYear.nextYear.endYear} tax year onwards"
           }
         }
 
@@ -295,8 +295,8 @@ class ReportingFrequencyControllerISpec extends ControllerISpecBase with Feature
 
             res.futureValue.status shouldBe OK
             Jsoup.parse(res.futureValue.body).title shouldBe "Your reporting frequency - Manage your Income Tax updates - GOV.UK"
-            Jsoup.parse(res.futureValue.body).body().select(bullet(1)).text() shouldBe s"Opt in to quarterly reporting from the ${dateService.getCurrentTaxYear.nextYear.startYear} to ${dateService.getCurrentTaxYear.nextYear.endYear} tax year onwards"
-            Jsoup.parse(res.futureValue.body).body().select(bullet(2)).text() shouldBe s"Opt out of quarterly reporting and report annually"
+            Jsoup.parse(res.futureValue.body).body().select(bullet(1)).text() shouldBe s"Opt out of quarterly reporting and report annually"
+            Jsoup.parse(res.futureValue.body).body().select(bullet(2)).text() shouldBe s"Opt in to quarterly reporting from the ${dateService.getCurrentTaxYear.nextYear.startYear} to ${dateService.getCurrentTaxYear.nextYear.endYear} tax year onwards"
           }
         }
 
@@ -325,8 +325,8 @@ class ReportingFrequencyControllerISpec extends ControllerISpecBase with Feature
 
             res.futureValue.status shouldBe OK
             Jsoup.parse(res.futureValue.body).title shouldBe "Your reporting frequency - Manage your Income Tax updates - GOV.UK"
-            Jsoup.parse(res.futureValue.body).body().select(bullet(1)).text() shouldBe s"Opt in to quarterly reporting"
-            Jsoup.parse(res.futureValue.body).body().select(bullet(2)).text() shouldBe s"Opt out of quarterly reporting and report annually for the ${dateService.getCurrentTaxYear.previousYear.startYear} to ${dateService.getCurrentTaxYear.previousYear.endYear} tax year"
+            Jsoup.parse(res.futureValue.body).body().select(bullet(1)).text() shouldBe s"Opt out of quarterly reporting and report annually for the ${dateService.getCurrentTaxYear.previousYear.startYear} to ${dateService.getCurrentTaxYear.previousYear.endYear} tax year"
+            Jsoup.parse(res.futureValue.body).body().select(bullet(2)).text() shouldBe s"Opt in to quarterly reporting"
           }
         }
       }
