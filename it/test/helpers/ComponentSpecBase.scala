@@ -151,6 +151,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.business-account.port" -> mockPort,
     "microservice.services.financial-transactions.host" -> mockHost,
     "microservice.services.financial-transactions.port" -> mockPort,
+    "microservice.services.repayment-api.host" -> mockHost,
+    "microservice.services.repayment-api.port" -> mockPort,
     "microservice.services.pay-api.host" -> mockHost,
     "microservice.services.pay-api.port" -> mockPort,
     "microservice.services.income-tax-calculation.host" -> mockHost,
@@ -201,7 +203,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   override def beforeEach(): Unit = {
     super.beforeEach()
     WireMock.reset()
-    if(haveDefaultAuthMocks) {
+    if (haveDefaultAuthMocks) {
       isAuthorisedUser(true)
       stubUserDetails()
     }

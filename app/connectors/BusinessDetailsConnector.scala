@@ -28,6 +28,7 @@ import play.api.http.Status.OK
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import utils.Headers.checkAndAddTestHeader
+import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,7 +38,7 @@ class BusinessDetailsConnector @Inject()(
                                           httpClient: HttpClientV2,
                                           auditingService: AuditingService,
                                           appConfig: FrontendAppConfig
-                                        )(implicit val ec: ExecutionContext) extends RawResponseReads {
+                                        )(implicit val ec: ExecutionContext) {
 
   private[connectors] def getBusinessDetailsUrl(nino: String): String = {
     s"${appConfig.itvcProtectedService}/income-tax-view-change/get-business-details/nino/$nino"
