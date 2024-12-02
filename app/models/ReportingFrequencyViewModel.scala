@@ -17,10 +17,22 @@
 package models
 
 import models.incomeSourceDetails.TaxYear
+import services.DateServiceInterface
 
 case class ReportingFrequencyViewModel(
                                         isAgent: Boolean,
                                         optOutJourneyUrl: Option[String],
                                         optOutTaxYears: Seq[TaxYear],
                                         optInTaxYears: Seq[TaxYear]
-                                      )
+                                      )(implicit dateService: DateServiceInterface) {
+
+  val isOptInLinkOnward: Boolean =
+    optInTaxYears.size == 1 && optInTaxYears.head == dateService.getCurrentTaxYear.nextYear
+
+  val isOptOutLinkOnward: Boolean =
+    optOutTaxYears.size == 1 && optOutTaxYears.head == dateService.getCurrentTaxYear.nextYear
+
+  val isOptInLinkFirst: Boolean =
+    optOutTaxYears.isEmpty ||
+      (optInTaxYears.nonEmpty && (optInTaxYears.minBy(_.startYear).startYear < optOutTaxYears.minBy(_.startYear).startYear))
+}

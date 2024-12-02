@@ -2350,6 +2350,6 @@ reporting.frequency.manageReportingFrequency.optIn.link.generic = Optio i mewn i
 reporting.frequency.manageReportingFrequency.optIn.link.taxyear = Optio i mewn i adrodd yn chwarterol ar gyfer blwyddyn dreth {0} i {1}
 reporting.frequency.manageReportingFrequency.optIn.link.onwards = Optio i mewn i  adrodd yn chwarterol, a mynd ati i adrodd yn flynyddol o flwyddyn dreth {0} i {1} ymlaen
 reporting.frequency.manageReportingFrequency.optOut.link.generic = Optio allan o adrodd yn chwarterol, a mynd ati i adrodd yn flynyddol
-reporting.frequency.manageReportingFrequency.optOut.link.taxyear = Opt out of quarterly reporting and report annually for the {0} to {1} tax year
+reporting.frequency.manageReportingFrequency.optOut.link.taxyear = Optio allan o adrodd yn chwarterol, a mynd ati i adrodd yn flynyddol o flwyddyn dreth {0} i {1}
 reporting.frequency.manageReportingFrequency.optOut.link.onwards = Optio allan o adrodd yn chwarterol, a mynd ati i adrodd yn flynyddol o flwyddyn dreth {0} i {1} ymlaen
 

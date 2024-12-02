@@ -88,13 +88,13 @@ class ReportingFrequencyViewSpec extends TestSupport {
 
         testContentByIds(expectedContent)
 
-        pageDocument.select(bullet(1)).text() shouldBe optInGenericContent
+        pageDocument.select(bullet(1)).text() shouldBe optOutGenericContent
 
-        pageDocument.select(bullet(1)).attr("href") shouldBe beforeYouStartUrl(isAgentFlag)
+        pageDocument.select(bullet(1)).attr("href") shouldBe optOutChooseTaxYearUrl(isAgentFlag)
 
-        pageDocument.select(bullet(2)).text() shouldBe optOutGenericContent
+        pageDocument.select(bullet(2)).text() shouldBe optInGenericContent
 
-        pageDocument.select(bullet(2)).attr("href") shouldBe optOutChooseTaxYearUrl(isAgentFlag)
+        pageDocument.select(bullet(2)).attr("href") shouldBe beforeYouStartUrl(isAgentFlag)
       }
       "return the correct content when opt in and opt out has single tax year and it is next tax year(2024)" in {
 
@@ -136,13 +136,13 @@ class ReportingFrequencyViewSpec extends TestSupport {
 
         testContentByIds(expectedContent)
 
-        pageDocument.select(bullet(1)).text() shouldBe optInContentWithTaxYearOnwards
+        pageDocument.select(bullet(1)).text() shouldBe optOutContentWithTaxYearOnwards
 
-        pageDocument.select(bullet(1)).attr("href") shouldBe beforeYouStartUrl(isAgentFlag)
+        pageDocument.select(bullet(1)).attr("href") shouldBe optOutChooseTaxYearUrl(isAgentFlag)
 
-        pageDocument.select(bullet(2)).text() shouldBe optOutContentWithTaxYearOnwards
+        pageDocument.select(bullet(2)).text() shouldBe optInContentWithTaxYearOnwards
 
-        pageDocument.select(bullet(2)).attr("href") shouldBe optOutChooseTaxYearUrl(isAgentFlag)
+        pageDocument.select(bullet(2)).attr("href") shouldBe beforeYouStartUrl(isAgentFlag)
       }
       "return the correct content when opt in and opt out has single tax year and it is not next tax year(2024)" in {
 
@@ -184,13 +184,13 @@ class ReportingFrequencyViewSpec extends TestSupport {
 
         testContentByIds(expectedContent)
 
-        pageDocument.select(bullet(1)).text() shouldBe optInContentWithTaxYear
+        pageDocument.select(bullet(1)).text() shouldBe optOutContentWithTaxYear
 
-        pageDocument.select(bullet(1)).attr("href") shouldBe beforeYouStartUrl(isAgentFlag)
+        pageDocument.select(bullet(1)).attr("href") shouldBe optOutChooseTaxYearUrl(isAgentFlag)
 
-        pageDocument.select(bullet(2)).text() shouldBe optOutContentWithTaxYear
+        pageDocument.select(bullet(2)).text() shouldBe optInContentWithTaxYear
 
-        pageDocument.select(bullet(2)).attr("href") shouldBe optOutChooseTaxYearUrl(isAgentFlag)
+        pageDocument.select(bullet(2)).attr("href") shouldBe beforeYouStartUrl(isAgentFlag)
       }
     }
 
@@ -235,13 +235,13 @@ class ReportingFrequencyViewSpec extends TestSupport {
 
         testContentByIds(expectedContent)
 
-        pageDocument.select(bullet(1)).text() shouldBe optInGenericContent
+        pageDocument.select(bullet(1)).text() shouldBe optOutGenericContent
 
-        pageDocument.select(bullet(1)).attr("href") shouldBe beforeYouStartUrl(isAgentFlag)
+        pageDocument.select(bullet(1)).attr("href") shouldBe confirmOptOutUrl(isAgentFlag)
 
-        pageDocument.select(bullet(2)).text() shouldBe optOutGenericContent
+        pageDocument.select(bullet(2)).text() shouldBe optInGenericContent
 
-        pageDocument.select(bullet(2)).attr("href") shouldBe confirmOptOutUrl(isAgentFlag)
+        pageDocument.select(bullet(2)).attr("href") shouldBe beforeYouStartUrl(isAgentFlag)
       }
     }
   }
