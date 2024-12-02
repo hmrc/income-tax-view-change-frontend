@@ -18,15 +18,11 @@ package controllers.agent.manageBusinesses.manage
 
 import controllers.agent.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{JourneyType, Manage}
+import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{MTDPrimaryAgent, MTDSupportingAgent}
-import auth.MtdItUser
-import models.admin.IncomeSourcesFs
-import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import enums.JourneyType.Manage
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDAgentAuthStub}
-import models.admin.{IncomeSources, NavBarFs}
+import models.admin.{IncomeSourcesFs, NavBarFs}
 import models.incomeSourceDetails.{LatencyDetails, ManageIncomeSourceData, UIJourneySessionData}
 import models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -84,7 +80,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
   def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
-    journeyType = JourneyType(Manage, incomeSourceType).toString,
+    journeyType = IncomeSourceJourneyType(Manage, incomeSourceType).toString,
     manageIncomeSourceData = Some(ManageIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), reportingMethod = Some(annual), taxYear = Some(2024))))
 
 
@@ -96,7 +92,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
         " is authenticated, with a valid MTD enrolment" should {
           "render the Confirm Reporting Method page" when {
             "all query parameters are valid" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
 
@@ -120,7 +116,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
           "redirect to home page" when {
             "Income Sources FS is Disabled" in {
-              disable(IncomeSources)
+              disable(IncomeSourcesFs)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
 
@@ -154,7 +150,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
         " is authenticated, with a valid MTD enrolment" should {
           "render the Confirm Reporting Method page" when {
             "all query parameters are valid" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
 
@@ -177,7 +173,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
           "redirect to home page" when {
             "Income Sources FS is Disabled" in {
-              disable(IncomeSources)
+              disable(IncomeSourcesFs)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
 
@@ -209,7 +205,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
         " is authenticated, with a valid MTD enrolment" should {
           "render the Confirm Reporting Method page" when {
             "all query parameters are valid" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
 
@@ -232,7 +228,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
           "redirect to home page" when {
             "Income Sources FS is Disabled" in {
-              disable(IncomeSources)
+              disable(IncomeSourcesFs)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
 
@@ -266,7 +262,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
         " is authenticated, with a valid MTD enrolment" should {
           s"redirect to $checkYourAnswersShowSelfEmploymentUrl" when {
             "called with a valid form" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
 
@@ -290,7 +286,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
           s"return ${Status.BAD_REQUEST}" when {
             "called with a invalid form" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
 
@@ -313,7 +309,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
           "redirect to home page" when {
             "Income Sources FS is disabled" in {
-              disable(IncomeSources)
+              disable(IncomeSourcesFs)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
 
@@ -350,7 +346,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
         " is authenticated, with a valid MTD enrolment" should {
           s"redirect to $checkYourAnswersShowUKPropertyUrl" when {
             "called with a valid form" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
 
@@ -371,7 +367,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
           s"return ${Status.BAD_REQUEST}" when {
             "called with a invalid form" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
 
@@ -391,7 +387,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
           "redirect to home page" when {
             "Income Sources FS is disabled" in {
-              disable(IncomeSources)
+              disable(IncomeSourcesFs)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
 
@@ -428,7 +424,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
         " is authenticated, with a valid MTD enrolment" should {
           s"redirect to $checkYourAnswersShowForeignPropertyUrl" when {
             "called with a valid form" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
 
@@ -449,7 +445,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
           s"return ${Status.BAD_REQUEST}" when {
             "called with a invalid form" in {
-              enable(IncomeSources)
+              enable(IncomeSourcesFs)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
 
@@ -469,7 +465,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
           "redirect to home page" when {
             "Income Sources FS is disabled" in {
-              disable(IncomeSources)
+              disable(IncomeSourcesFs)
               disable(NavBarFs)
               MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
 

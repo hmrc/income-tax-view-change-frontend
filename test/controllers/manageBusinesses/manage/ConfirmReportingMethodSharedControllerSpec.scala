@@ -310,7 +310,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
               enable(IncomeSourcesFs)
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
-              setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
+              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
               setupMockSetMongoData(true)
               val result = action(fakeRequest.withFormUrlEncodedBody(validTestForm))
 

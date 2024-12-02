@@ -17,13 +17,12 @@
 package controllers.incomeSources.manage
 
 import auth.MtdItUser
-import models.admin.IncomeSourcesFs
 import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDIndividualAuthStub}
-import models.admin.{IncomeSources, NavBarFs}
+import models.admin.{IncomeSourcesFs, NavBarFs}
 import models.incomeSourceDetails.{LatencyDetails, ManageIncomeSourceData, UIJourneySessionData}
 import models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -100,7 +99,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
     "the user is authenticated, with a valid MTD enrolment" should {
       "render the Confirm Reporting Method page" when {
         "all query parameters are valid" in {
-          enable(IncomeSources)
+          enable(IncomeSourcesFs)
           disable(NavBarFs)
           MTDIndividualAuthStub.stubAuthorised()
 
@@ -123,7 +122,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
       }
       "redirect to home page" when {
         "Income Sources FS is Disabled" in {
-          disable(IncomeSources)
+          disable(IncomeSourcesFs)
           disable(NavBarFs)
           MTDIndividualAuthStub.stubAuthorised()
 
@@ -150,7 +149,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
     " is authenticated, with a valid MTD enrolment" should {
       "render the Confirm Reporting Method page" when {
         "all query parameters are valid" in {
-          enable(IncomeSources)
+          enable(IncomeSourcesFs)
           disable(NavBarFs)
           MTDIndividualAuthStub.stubAuthorised()
 
@@ -173,7 +172,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
       "redirect to home page" when {
         "Income Sources FS is Disabled" in {
-          disable(IncomeSources)
+          disable(IncomeSourcesFs)
           disable(NavBarFs)
           MTDIndividualAuthStub.stubAuthorised()
 
@@ -200,7 +199,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
     " is authenticated, with a valid MTD enrolment" should {
       "render the Confirm Reporting Method page" when {
         "all query parameters are valid" in {
-          enable(IncomeSources)
+          enable(IncomeSourcesFs)
           disable(NavBarFs)
           MTDIndividualAuthStub.stubAuthorised()
 
@@ -223,7 +222,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
       "redirect to home page" when {
         "Income Sources FS is Disabled" in {
-          disable(IncomeSources)
+          disable(IncomeSourcesFs)
           disable(NavBarFs)
           MTDIndividualAuthStub.stubAuthorised()
 
@@ -250,7 +249,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
     " is authenticated, with a valid MTD enrolment" should {
       s"redirect to $manageObligationsShowSelfEmploymentUrl" when {
         "called with a valid form" in {
-          enable(IncomeSources)
+          enable(IncomeSourcesFs)
           disable(NavBarFs)
           MTDIndividualAuthStub.stubAuthorised()
 
@@ -276,7 +275,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
       s"return ${Status.BAD_REQUEST}" when {
         "called with a invalid form" in {
-          enable(IncomeSources)
+          enable(IncomeSourcesFs)
           disable(NavBarFs)
           MTDIndividualAuthStub.stubAuthorised()
 
@@ -300,7 +299,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
       "redirect to home page" when {
         "Income Sources FS is disabled" in {
-          disable(IncomeSources)
+          disable(IncomeSourcesFs)
           disable(NavBarFs)
           MTDIndividualAuthStub.stubAuthorised()
 
@@ -330,7 +329,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
     " is authenticated, with a valid MTD enrolment" should {
       s"redirect to $manageObligationsShowUKPropertyUrl" when {
         "called with a valid form" in {
-          enable(IncomeSources)
+          enable(IncomeSourcesFs)
           disable(NavBarFs)
           MTDIndividualAuthStub.stubAuthorised()
 
@@ -355,7 +354,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
       s"return ${Status.BAD_REQUEST}" when {
         "called with a invalid form" in {
-          enable(IncomeSources)
+          enable(IncomeSourcesFs)
           disable(NavBarFs)
           MTDIndividualAuthStub.stubAuthorised()
 
@@ -376,7 +375,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
       "redirect to home page" when {
         "Income Sources FS is disabled" in {
-          disable(IncomeSources)
+          disable(IncomeSourcesFs)
           disable(NavBarFs)
           MTDIndividualAuthStub.stubAuthorised()
 
@@ -405,7 +404,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
     " is authenticated, with a valid MTD enrolment" should {
       s"redirect to $manageObligationsShowForeignPropertyUrl" when {
         "called with a valid form" in {
-          enable(IncomeSources)
+          enable(IncomeSourcesFs)
           disable(NavBarFs)
           MTDIndividualAuthStub.stubAuthorised()
 
@@ -428,7 +427,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
       s"return ${Status.BAD_REQUEST}" when {
         "called with a invalid form" in {
-          enable(IncomeSources)
+          enable(IncomeSourcesFs)
           disable(NavBarFs)
           MTDIndividualAuthStub.stubAuthorised()
 
@@ -448,7 +447,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
       "redirect to home page" when {
         "Income Sources FS is disabled" in {
-          disable(IncomeSources)
+          disable(IncomeSourcesFs)
           disable(NavBarFs)
           MTDIndividualAuthStub.stubAuthorised()
 
