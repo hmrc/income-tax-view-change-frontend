@@ -1575,7 +1575,6 @@ incomeSources.ceaseForeignProperty.checkDetails.dateStopped           = Date bus
 incomeSources.ceaseForeignProperty.checkDetails.confirm               = Confirm and continue
 incomeSources.ceaseForeignProperty.checkDetails.change                = Change
 
-
 ## Cease - Check Answers ##
 cease-check-answers.title                                     = Check your answers
 cease-check-answers.caption                                   = Sole trader

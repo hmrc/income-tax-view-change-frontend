@@ -1326,6 +1326,7 @@ add-trade.form.error.long                       = Mae’n rhaid i’r fasnach fo
 add-trade.form.error.invalid                    = Ni all y fasnach gynnwys !, “”,* neu ?
 add-trade.form.error.same-name                  = Ni all enw’r busnes a’r enw masnachu fod yr un peth
 
+
 add-business-trade.heading                  = Beth yw masnach eich busnes?
 add-business-trade.p1                       = Er enghraifft: plymio, gwaith trydanol, ymgynghori.
 add-business-trade.form.error.empty         = Nodwch fasnach eich busnes
@@ -1573,7 +1574,6 @@ incomeSources.ceaseForeignProperty.checkDetails.caption               = Y busnes
 incomeSources.ceaseForeignProperty.checkDetails.dateStopped           = Dyddiad y gwnaeth y busnes stopio
 incomeSources.ceaseForeignProperty.checkDetails.confirm               = Cadarnhau ac yn eich blaen
 incomeSources.ceaseForeignProperty.checkDetails.change                = Newid
-
 
 ## Cease - Check Answers ##
 cease-check-answers.title                                     = Gwirio’ch atebion
@@ -2187,6 +2187,7 @@ optout.cancelled.h2                                 = Adrodd yn flynyddol ar gyf
 optout.cancelled.p2                                 = Gan fod gennych un neu fwy o fusnesau newydd, gallwch ddewis i adrodd yn flynyddol ar eu cyfer am hyd at 2 o flynyddoedd treth tra’n parhau i adrodd yn chwarterol ar gyfer eich busnesau eraill.
 optout.cancelled.p3.link                            = Gallwch fwrw golwg dros eich busnesau a’u rheoli
 optout.cancelled.p3                                 = i newid pa mor aml rydych yn cyflwyno adroddiadau ar gyfer eich busnesau.
+
 
 #######################################################################################################################
 ## Opt In ##
