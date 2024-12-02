@@ -909,7 +909,7 @@ chargeSummary.dunning.locks.banner.title						   = Pwysig
 chargeSummary.dunning.locks.banner.linkText						   = Mae’r penderfyniad treth hwn yn cael ei adolygu
 chargeSummary.dunning.locks.banner.note							   = Mae dal angen i chi dalu’r cyfanswm o {0} oherwydd efallai y codir llog arnoch os na chaiff ei dalu erbyn {1}.
 
-chargeSummary.nic2TaxYear                                          = This is the Class 2 National Insurance payment for the {0} to {1} tax year.
+chargeSummary.nic2TaxYear                                          = Dyma’r taliad Yswiriant Gwladol Dosbarth 2 ar gyfer blwyddyn dreth {0} i {1}.
 
 chargeSummary.paymentsOnAccount                                    = Mae taliadau ar gyfrif yn 2 daliad ymlaen llaw a wneir tuag at eich bil treth nesaf. Maent yn talu am:
 chargeSummary.paymentsOnAccount.bullet1                            = Treth Incwm
@@ -1043,18 +1043,18 @@ chargeSummary.paymentAllocations.bcd.sl                         = Taliad wedi’
 chargeSummary.paymentAllocations.bcd.cgt                        = Taliad wedi’i ddyrannu i Dreth Enillion Cyfalaf ar gyfer y Taliad Mantoli
 chargeSummary.paymentAllocations.mfaDebit                       = Taliad wedi’i roi tuag at addasiad CThEF
 
-chargeSummary.codingOutHeader                                      = Self Assessment payment (through your PAYE tax code)
-chargeSummary.codingOutMessage                                     = This is the remaining tax you owe for the {0} to {1} tax year.
-chargeSummary.codingOutRemainingToPay                              = (Collected through your PAYE tax code for {0} to {1} tax year)
-chargeSummary.codingOutInset-1                                     = If this tax cannot be collected
-chargeSummary.codingOutInset-2                                     = through your PAYE tax code (opens in new tab)
-chargeSummary.codingOutInset-3                                     = for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may be charged interest and penalties.
-chargeSummary.codingOutPayHistoryAmount                            = Amount collected through your PAYE tax code for {0} to {1} tax year
-chargeSummary.check-paye-tax-code-1                                = Check if your
-chargeSummary.check-paye-tax-code-2                                = PAYE tax code
-chargeSummary.check-paye-tax-code-3                                = has changed for the {0} to {1} tax year.
-chargeSummary.cancelledPayeInset-1                                 = You have previously agreed to pay some of your Self Assessment bill
-chargeSummary.cancelledPayeInset-2                                 = through your PAYE tax code (opens in new tab).
+chargeSummary.codingOutHeader                                      = Taliad Hunanasesiad (drwy’ch cod treth TWE)
+chargeSummary.codingOutMessage                                     = Dyma’r dreth sy’n weddill y mae angen i chi ei thalu ar gyfer blwyddyn dreth {0} i {1}.
+chargeSummary.codingOutRemainingToPay                              = (Casglwyd hyn drwy’ch cod treth TWE ar gyfer blwyddyn dreth {0} i {1})
+chargeSummary.codingOutInset-1                                     = Os na ellir casglu’r dreth hon
+chargeSummary.codingOutInset-2                                     = drwy’ch cod treth TWE
+chargeSummary.codingOutInset-3                                     = am unrhyw reswm, bydd angen i chi dalu’r swm sy’n weddill. Bydd gennych 42 diwrnod i wneud y taliad hwn, cyn y gellir codi llog a chosbau arnoch.
+chargeSummary.codingOutPayHistoryAmount                            = Swm a gasglwyd drwy’ch cod treth TWE ar gyfer blwyddyn dreth {0} i {1}
+chargeSummary.check-paye-tax-code-1                                = Gwiriwch a yw’ch
+chargeSummary.check-paye-tax-code-2                                = cod treth TWE
+chargeSummary.check-paye-tax-code-3                                = wedi newid ar gyfer blwyddyn dreth {0} i {1}.
+chargeSummary.cancelledPayeInset-1                                 = Rydych eisoes wedi cytuno i dalu peth o’ch bil Hunanasesiad
+chargeSummary.cancelledPayeInset-2                                 = drwy’ch cod treth TWE
 chargeSummary.cancelledPayeInset-3                                 = Nid yw CThEF wedi gallu casglu’r holl daliadau hyn gennych, felly dyma’r dreth sydd yn weddill y mae angen i chi ei thalu.
 
 ## Regimes
