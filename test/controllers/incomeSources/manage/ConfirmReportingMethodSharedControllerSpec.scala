@@ -234,12 +234,12 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
     def createEndpoint (testMtd:MTDUserRole, incomeSourceType: IncomeSourceType): String = {
       val endpointCall = {
       (testMtd, incomeSourceType) match {
-        case (MTDIndividual, SelfEmployment) => controllers.IncomeSources.manage.routes.ManageObligationsController.showSelfEmployment(changeTo, taxYear)
-        case (MTDIndividual, UkProperty) => controllers.IncomeSources.manage.routes.ManageObligationsController.showUKProperty(changeTo, taxYear)
-        case (MTDIndividual, ForeignProperty) => controllers.IncomeSources.manage.routes.ManageObligationsController.showForeignProperty(changeTo, taxYear)
-        case (_, SelfEmployment) => controllers.IncomeSources.manage.routes.ManageObligationsController.showAgentSelfEmployment(changeTo, taxYear)
-        case (_, UkProperty) => controllers.IncomeSources.manage.routes.ManageObligationsController.showAgentUKProperty(changeTo, taxYear)
-        case (_, ForeignProperty) => controllers.IncomeSources.manage.routes.ManageObligationsController.showAgentForeignProperty(changeTo, taxYear)
+        case (MTDIndividual, SelfEmployment) => controllers.incomeSources.manage.routes.ManageObligationsController.showSelfEmployment(changeTo, taxYear)
+        case (MTDIndividual, UkProperty) => controllers.incomeSources.manage.routes.ManageObligationsController.showUKProperty(changeTo, taxYear)
+        case (MTDIndividual, ForeignProperty) => controllers.incomeSources.manage.routes.ManageObligationsController.showForeignProperty(changeTo, taxYear)
+        case (_, SelfEmployment) => controllers.incomeSources.manage.routes.ManageObligationsController.showAgentSelfEmployment(changeTo, taxYear)
+        case (_, UkProperty) => controllers.incomeSources.manage.routes.ManageObligationsController.showAgentUKProperty(changeTo, taxYear)
+        case (_, ForeignProperty) => controllers.incomeSources.manage.routes.ManageObligationsController.showAgentForeignProperty(changeTo, taxYear)
         }
       }
       endpointCall.url
@@ -255,7 +255,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
   Seq(SelfEmployment, UkProperty, ForeignProperty).foreach { testIncomeSourceType =>
     mtdAllRoles.foreach { testMtdRole =>
       s"submit${if (testMtdRole != MTDIndividual) "Agent"}($testIncomeSourceType)" when {
-        val fakeRequest = fakeGetRequestBasedOnMTDUserType(testMtdRole).withMethod("POST")
+        val fakeRequest = fakePostRequestBasedOnMTDUserType(testMtdRole).withMethod("POST")
         s"the user is authenticated as s$testMtdRole" should {
           s"return ${Status.SEE_OTHER} and redirect to the Manage Obligations page for a property" when {
             "the user's property reporting method is updated to annual" in new SetupPOST {
