@@ -117,15 +117,6 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
           sessionAuthorityUri = auth)))
   }
 
-  val showCss: Action[AnyContent] = Action.async { implicit request =>
-    dynamicStubConnector.showLogin("hmrc-frontend/assets/hmrc-frontend-5.19.0.min.css").map(
-      response => response.status match {
-        case OK => Ok(response.body).as("text/css")
-        case _ => InternalServerError(response.body)
-      }
-    )
-  }
-
   private def updateTestDataForOptOut(nino: String, crystallisationStatus: String, cyMinusOneItsaStatus: String,
                                       cyItsaStatus: String, cyPlusOneItsaStatus: String)(implicit hc: HeaderCarrier)
   : Future[Unit] = {
