@@ -34,51 +34,76 @@ package connectors
 
 import audit.mocks.MockAuditingService
 import config.FrontendAppConfig
-import mocks.MockHttp
+import mocks.{MockHttp, MockHttpV2}
+import models.itsaStatus.{ITSAStatusResponse, ITSAStatusResponseError, ITSAStatusResponseModel}
+import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.when
+import org.mockito.stubbing.OngoingStubbing
 import play.api.Configuration
+import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR}
 import testConstants.BaseTestConstants._
 import testConstants.ITSAStatusTestConstants.{badJsonErrorITSAStatusError, errorITSAStatusError}
 import testUtils.TestSupport
+import uk.gov.hmrc.http.client.RequestBuilder
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-class ITSAStatusConnectorSpec extends TestSupport with MockHttp with MockAuditingService {
+import scala.concurrent.Future
+
+class ITSAStatusConnectorSpec extends TestSupport with MockHttpV2 with MockAuditingService {
 
   trait Setup {
     val baseUrl = "http://localhost:9999"
-    def getAppConfig(): FrontendAppConfig =
+    def getAppConfig: FrontendAppConfig =
       new FrontendAppConfig(app.injector.instanceOf[ServicesConfig], app.injector.instanceOf[Configuration]) {
         override lazy val itvcProtectedService: String = "http://localhost:9999"
       }
 
-    val connector = new ITSAStatusConnector(httpClientMock, getAppConfig())
+    val connector = new ITSAStatusConnector(mockHttpClientV2, getAppConfig)
+
+    def transformMock(): OngoingStubbing[RequestBuilder] = {
+      when(mockRequestBuilder
+        .transform(ArgumentMatchers.any()))
+        .thenReturn(mockRequestBuilder)
+    }
   }
 
   "getITSAStatusDetail" should {
-    import testConstants.ITSAStatusTestConstants.{badJsonHttpResponse, errorHttpResponse, successHttpResponse, successITSAStatusResponseModel}
+    import testConstants.ITSAStatusTestConstants.{badJsonHttpResponse, successHttpResponse, successITSAStatusResponseModel}
     val successResponse = successHttpResponse
     val successResponseBadJson = badJsonHttpResponse
-    val badResponse = errorHttpResponse
     val argument = (testNino, "2020", true, true)
 
     "return a List[ITSAStatusResponseModel] model when successful JSON is received" in new Setup {
-      val url = connector.getITSAStatusDetailUrl(argument._1, argument._2)
-      setupMockHttpGet(url)(successResponse)
-      val result = (connector.getITSAStatusDetail _).tupled(argument)
+      val url: String = connector.getITSAStatusDetailUrl(argument._1, argument._2, argument._3, argument._4)
+      setupMockHttpVTwoGet(url)(successResponse)
+
+      transformMock()
+
+      val result: Future[Either[ITSAStatusResponse, List[ITSAStatusResponseModel]]] =
+        (connector.getITSAStatusDetail _).tupled(argument)
       result.futureValue shouldBe Right(List(successITSAStatusResponseModel))
     }
 
     "return ITSAStatusResponseError model in case of bad/malformed JSON response" in new Setup {
-      setupMockHttpGet(connector.getITSAStatusDetailUrl(argument._1, argument._2))(successResponseBadJson)
-      val result = (connector.getITSAStatusDetail _).tupled(argument)
+      setupMockHttpVTwoGet(connector.getITSAStatusDetailUrl(argument._1, argument._2, argument._3, argument._4))(successResponseBadJson)
+
+      transformMock()
+
+      val result: Future[Either[ITSAStatusResponse, List[ITSAStatusResponseModel]]] =
+        (connector.getITSAStatusDetail _).tupled(argument)
       result.futureValue shouldBe Left(badJsonErrorITSAStatusError)
     }
 
     "return ITSAStatusResponseError model in case of failure" in new Setup {
-      setupMockHttpGet(connector.getITSAStatusDetailUrl(argument._1, argument._2))(badResponse)
-      val result = (connector.getITSAStatusDetail _).tupled(argument)
-      result.futureValue shouldBe Left(errorITSAStatusError)
+      setupMockFailedHttpVTwoGet(
+        connector.getITSAStatusDetailUrl(argument._1, argument._2, argument._3, argument._4)
+      )
 
+      transformMock()
+
+      val result: Future[Either[ITSAStatusResponse, List[ITSAStatusResponseModel]]] =
+        (connector.getITSAStatusDetail _).tupled(argument)
+      result.futureValue shouldBe Left(ITSAStatusResponseError(INTERNAL_SERVER_ERROR, "unknown error"))
     }
   }
 }
