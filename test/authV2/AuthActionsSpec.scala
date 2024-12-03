@@ -210,6 +210,7 @@ class AuthActionsSpec extends TestSupport with ScalaFutures with MockOldAuthActi
         }},
         isAgent = true
       ) {
+        result.header.headers shouldBe ""
         result.header.status shouldBe OK
       }
 
@@ -410,7 +411,7 @@ class AuthActionsSpec extends TestSupport with ScalaFutures with MockOldAuthActi
     mockAuthActions.agentHasClientDetails,
     app.injector.instanceOf[AgentHasConfirmedClientAction],
     app.injector.instanceOf[AgentIsPrimaryAction],
-    app.injector.instanceOf[AsMtdUser],
+    mockAuthActions.asMtdUser,
     app.injector.instanceOf[NavBarRetrievalAction],
     app.injector.instanceOf[IncomeSourceRetrievalAction],
     mockRetrieveClientData,
