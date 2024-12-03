@@ -75,7 +75,7 @@ class ITSAStatusConnectorSpec extends TestSupport with MockHttpV2 with MockAudit
 
     "return a List[ITSAStatusResponseModel] model when successful JSON is received" in new Setup {
       val url: String = connector.getITSAStatusDetailUrl(argument._1, argument._2, argument._3, argument._4)
-      setupMockHttpVTwoGet(url)(successResponse)
+      setupMockHttpV2Get(url)(successResponse)
 
       transformMock()
 
@@ -85,7 +85,7 @@ class ITSAStatusConnectorSpec extends TestSupport with MockHttpV2 with MockAudit
     }
 
     "return ITSAStatusResponseError model in case of bad/malformed JSON response" in new Setup {
-      setupMockHttpVTwoGet(connector.getITSAStatusDetailUrl(argument._1, argument._2, argument._3, argument._4))(successResponseBadJson)
+      setupMockHttpV2Get(connector.getITSAStatusDetailUrl(argument._1, argument._2, argument._3, argument._4))(successResponseBadJson)
 
       transformMock()
 
@@ -95,7 +95,7 @@ class ITSAStatusConnectorSpec extends TestSupport with MockHttpV2 with MockAudit
     }
 
     "return ITSAStatusResponseError model in case of failure" in new Setup {
-      setupMockFailedHttpVTwoGet(
+      setupMockFailedHttpV2Get(
         connector.getITSAStatusDetailUrl(argument._1, argument._2, argument._3, argument._4)
       )
 
