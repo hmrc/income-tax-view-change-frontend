@@ -18,14 +18,15 @@ package auth.authV2
 
 import controllers.predicates.agent.Constants
 import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.auth.core.retrieve.Credentials
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name}
 import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, Enrolment, Enrolments}
 
-case class AgentUser[A](
+case class AuthorisedUser[A](
                       enrolments: Enrolments,
                       affinityGroup: Option[AffinityGroup],
                       confidenceLevel: ConfidenceLevel,
-                      credentials: Option[Credentials]
+                      credentials: Option[Credentials],
+                      name: Option[Name] = None
                     )(implicit request: Request[A]) extends WrappedRequest[A](request){
 
   lazy val agentReferenceNumber: Option[String] = getEnrolment(Constants.agentServiceEnrolmentName)

@@ -38,6 +38,14 @@ import scala.concurrent.{ExecutionContext, Future}
 trait MockOldAuthActions extends TestSupport with MockIncomeSourceDetailsService
   with MockFrontendAuthorisedFunctions with MockAuditingService with MockSessionDataService {
 
+  private val authoriseAndRetrieve = new AuthoriseAndRetrieve(
+    authorisedFunctions = mockAuthService,
+    appConfig = appConfig,
+    config = conf,
+    env = environment,
+    mcc = stubMessagesControllerComponents()
+  )
+
   private val authoriseAndRetrieveIndividual = new AuthoriseAndRetrieveIndividual(
     authorisedFunctions = mockAuthService,
     appConfig = appConfig,
@@ -84,6 +92,7 @@ trait MockOldAuthActions extends TestSupport with MockIncomeSourceDetailsService
 
   val mockAuthActions = new AuthActions(
     app.injector.instanceOf[SessionTimeoutAction],
+    authoriseAndRetrieve,
     authoriseAndRetrieveIndividual,
     authoriseAndRetrieveAgent,
     authoriseAndRetrieveMtdAgent,

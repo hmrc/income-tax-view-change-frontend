@@ -16,10 +16,9 @@
 
 package controllers.optOut
 
-import auth.FrontendAuthorisedFunctions
+import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
 import forms.optOut.ConfirmOptOutMultiTaxYearChoiceForm
 import models.incomeSourceDetails.TaxYear
 import play.api.Logger
@@ -27,7 +26,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import repositories.OptOutSessionDataRepository
 import services.optout.OptOutService
-import utils.AuthenticatorPredicate
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.optOut.OptOutChooseTaxYear
 
 import javax.inject.Inject
@@ -35,18 +34,17 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class OptOutChooseTaxYearController @Inject()(val optOutChooseTaxYear: OptOutChooseTaxYear,
                                               val optOutService: OptOutService,
-                                              val repository: OptOutSessionDataRepository)
+                                              val repository: OptOutSessionDataRepository,
+                                              val authActions: AuthActions,
+                                              val itvcErrorHandler: ItvcErrorHandler,
+                                              val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                              (implicit val appConfig: FrontendAppConfig,
                                               val ec: ExecutionContext,
-                                              val auth: AuthenticatorPredicate,
-                                              val authorisedFunctions: FrontendAuthorisedFunctions,
-                                              val itvcErrorHandler: ItvcErrorHandler,
-                                              val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                              override val mcc: MessagesControllerComponents
+                                              val mcc: MessagesControllerComponents
                                              )
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
+  extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
-  def show(isAgent: Boolean = false): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def show(isAgent: Boolean = false): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
       for {
         optOutProposition <- optOutService.recallOptOutProposition()
@@ -65,7 +63,7 @@ class OptOutChooseTaxYearController @Inject()(val optOutChooseTaxYear: OptOutCho
       }
   }
 
-  def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def submit(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
       for {
         optOutProposition <- optOutService.recallOptOutProposition()

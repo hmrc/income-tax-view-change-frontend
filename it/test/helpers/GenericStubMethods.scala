@@ -22,10 +22,8 @@ trait GenericStubMethods extends CustomMatchers {
 
   def isAuthorisedUser(authorised: Boolean): Unit = {
     if (authorised) {
-      Given("I wiremock stub an isAuthorisedUser user response")
       AuthStub.stubAuthorised()
     } else {
-      Given("I wiremock stub an unauthorised user response")
       AuthStub.stubUnauthorised()
     }
   }

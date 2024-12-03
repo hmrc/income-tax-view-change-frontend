@@ -32,4 +32,6 @@ trait MTDAgentAuthStub extends MTDAuthStub {
 
   def stubMissingDelegatedEnrolment(): Unit
 
+  def stubAuthorisedWhenNoChecks(): Unit = stubNoAgentEnrolmentRequiredSuccess()
+
 }
