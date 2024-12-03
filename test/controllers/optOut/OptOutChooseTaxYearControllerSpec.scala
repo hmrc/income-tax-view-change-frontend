@@ -16,41 +16,40 @@
 
 package controllers.optOut
 
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
+import enums.MTDIndividual
 import forms.optOut.ConfirmOptOutMultiTaxYearChoiceForm
-import mocks.auth.MockFrontendAuthorisedFunctions
-import mocks.controllers.predicates.MockAuthenticationPredicate
-import mocks.services.MockOptOutService
+import mocks.auth.MockAuthActions
 import mocks.repositories.MockOptOutSessionDataRepository
+import mocks.services.MockOptOutService
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.optout.OptOutMultiYearViewModel
 import org.jsoup.Jsoup
+import play.api
+import play.api.Application
 import play.api.http.Status
-import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import repositories.OptOutSessionDataRepository
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
+import services.optout.{CurrentOptOutTaxYear, OptOutProposition, OptOutService, OptOutTestSupport}
 import services.reportingfreq.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
-import services.optout.{CurrentOptOutTaxYear, OptOutProposition, OptOutTestSupport}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
-import testUtils.TestSupport
-import views.html.optOut.OptOutChooseTaxYear
 
 import scala.concurrent.Future
 
-class OptOutChooseTaxYearControllerSpec extends TestSupport
-  with MockAuthenticationPredicate with MockFrontendAuthorisedFunctions with MockOptOutService with MockOptOutSessionDataRepository {
+class OptOutChooseTaxYearControllerSpec extends MockAuthActions
+  with MockOptOutService with MockOptOutSessionDataRepository {
+
+  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+    .overrides(
+      api.inject.bind[OptOutService].toInstance(mockOptOutService),
+      api.inject.bind[OptOutSessionDataRepository].toInstance(mockOptOutSessionDataRepository)
+    ).build()
+
+  val testController = fakeApplication().injector.instanceOf[OptOutChooseTaxYearController]
+
 
   val optOutProposition: OptOutProposition = OptOutTestSupport.buildThreeYearOptOutProposition()
-
-  val optOutChooseTaxYear: OptOutChooseTaxYear = app.injector.instanceOf[OptOutChooseTaxYear]
-  val mcc: MessagesControllerComponents = app.injector.instanceOf[MessagesControllerComponents]
-
-  val itvcErrorHandler: ItvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler]
-  val itvcErrorHandlerAgent: AgentItvcErrorHandler = app.injector.instanceOf[AgentItvcErrorHandler]
-
-  val controller = new OptOutChooseTaxYearController(optOutChooseTaxYear, mockOptOutService, mockOptOutSessionDataRepository)(appConfig,
-    ec, testAuthenticator, mockAuthService, itvcErrorHandler, itvcErrorHandlerAgent, mcc)
 
   val yearEnd = optOutProposition.availableTaxYearsForOptOut(1).endYear
   val currentTaxYear: TaxYear = TaxYear.forYearEnd(yearEnd)
@@ -75,173 +74,152 @@ class OptOutChooseTaxYearControllerSpec extends TestSupport
 
   val submissionsCountForTaxYearModel: Future[QuarterlyUpdatesCountForTaxYearModel] = counts
 
-  "OptOutChooseTaxYearController - Individual" when {
-    controllerShowTest(isAgent = false)
-    controllerSubmitTest(isAgent = false)
-    testSaveIntent(isAgent = false)
-  }
+  mtdAllRoles.foreach { mtdRole =>
+    val isAgent = mtdRole != MTDIndividual
+  s"show(isAgent = $isAgent)" when {
+    val action = testController.show(isAgent)
+    val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
+    s"the user is authenticated as a $mtdRole" should {
+      s"render the choose tax year page" that {
+        "has intent not pre-selected" in {
+          setupMockSuccess(mtdRole)
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          mockFetchIntent(Future.successful(None))
+          mockGetSubmissionCountForTaxYear(counts)
+          mockRecallOptOutProposition(Future.successful(optOutProposition))
 
-  "OptOutChooseTaxYearController - Agent" when {
-    controllerShowTest(isAgent = true)
-    controllerSubmitTest(isAgent = true)
-    testSaveIntent(isAgent = true)
-  }
+          val result = action(fakeRequest)
 
-  def controllerShowTest(isAgent: Boolean): Unit = {
+          status(result) shouldBe Status.OK
+          Jsoup.parse(contentAsString(result)).select("#choice-year-1[checked]").toArray should have length 0
 
-    "show method is invoked" should {
-      s"return result with ${Status.OK} status for show" in {
+        }
 
-        val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
+        "has intent pre-selected" in {
+          setupMockSuccess(mtdRole)
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          mockFetchIntent(Future.successful(Some(optOutTaxYear.taxYear)))
+          mockGetSubmissionCountForTaxYear(counts)
+          mockRecallOptOutProposition(Future.successful(optOutProposition))
 
-        setupMockAuthorisationSuccess(isAgent)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        mockFetchIntent(Future.successful(None))
-        mockGetSubmissionCountForTaxYear(counts)
-        mockRecallOptOutProposition(Future.successful(optOutProposition))
+          val result = action(fakeRequest)
 
-        val result: Future[Result] = controller.show(isAgent)(requestGET)
-
-        status(result) shouldBe Status.OK
+          Jsoup.parse(contentAsString(result)).select("#choice-year-1[checked]").toArray should have length 1
+          status(result) shouldBe Status.OK
+        }
       }
     }
-
-    "show method is invoked with intent pre-selected" should {
-      s"return result with ${Status.OK} status for show" in {
-
-        val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
-
-        setupMockAuthorisationSuccess(isAgent)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        mockFetchIntent(Future.successful(Some(optOutTaxYear.taxYear)))
-        mockGetSubmissionCountForTaxYear(counts)
-        mockRecallOptOutProposition(Future.successful(optOutProposition))
-
-        val result: Future[Result] = controller.show(isAgent)(requestGET)
-
-        Jsoup.parse(contentAsString(result)).select("#choice-year-1[checked]").toArray should have length 1
-        status(result) shouldBe Status.OK
-      }
-    }
+    testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
 
   }
 
-  def controllerSubmitTest(isAgent: Boolean): Unit = {
+    s"submit(isAgent = $isAgent)" when {
+      val action = testController.submit(isAgent)
+      val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
+      s"the user is authenticated as a $mtdRole" should {
+        "redirect to review and confirm page" when {
+          "current tax is chosen" in {
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-    "submit method is invoked and choice made in form" should {
-      s"return result with successful ${Status.SEE_OTHER} status for submit" in {
+            mockGetSubmissionCountForTaxYear(counts)
+            mockSaveIntent(currentTaxYear, Future.successful(true))
+            mockRecallOptOutProposition(Future.successful(optOutProposition))
 
-        val requestPOST = if (isAgent) fakePostRequestConfirmedClient() else fakePostRequestWithNinoAndOrigin("PTA")
-        val requestPOSTWithChoice = requestPOST.withFormUrlEncodedBody(
-          ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> currentTaxYear.toString,
-          ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> ""
-        )
+            val formData = Map(ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> currentTaxYear.toString,
+              ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> "")
 
-        setupMockAuthorisationSuccess(isAgent)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            val result = action(fakeRequest.withFormUrlEncodedBody(
+              formData.toSeq: _*
+            ))
 
-        mockGetSubmissionCountForTaxYear(counts)
-        mockSaveIntent(currentTaxYear, Future.successful(true))
-        mockRecallOptOutProposition(Future.successful(optOutProposition))
+            status(result) shouldBe Status.SEE_OTHER
+            val agentPath = if (isAgent) "/agents" else ""
+            redirectLocation(result) shouldBe Some(s"/report-quarterly/income-and-expenses/view${agentPath}/optout/review-confirm-taxyear")
+          }
 
-        val result: Future[Result] = controller.submit(isAgent)(requestPOSTWithChoice)
+          "previous tax is chosen" in {
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        status(result) shouldBe Status.SEE_OTHER
-        val agentPath = if(isAgent) "/agents" else ""
-        redirectLocation(result) shouldBe Some(s"/report-quarterly/income-and-expenses/view${agentPath}/optout/review-confirm-taxyear")
+            mockGetSubmissionCountForTaxYear(counts)
+            mockSaveIntent(previousTaxYear, Future.successful(true))
+            mockRecallOptOutProposition(Future.successful(optOutProposition))
+
+            val formData = Map(ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> previousTaxYear.toString,
+              ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> "")
+
+            val result = action(fakeRequest.withFormUrlEncodedBody(
+              formData.toSeq: _*
+            ))
+
+            status(result) shouldBe Status.SEE_OTHER
+            val agentPath = if (isAgent) "/agents" else ""
+            redirectLocation(result) shouldBe Some(s"/report-quarterly/income-and-expenses/view${agentPath}/optout/review-confirm-taxyear")
+          }
+
+          "next tax is chosen" in {
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+            mockGetSubmissionCountForTaxYear(counts)
+            mockSaveIntent(nextTaxYear, Future.successful(true))
+            mockRecallOptOutProposition(Future.successful(optOutProposition))
+
+            val formData = Map(ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> nextTaxYear.toString,
+              ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> "")
+
+            val result = action(fakeRequest.withFormUrlEncodedBody(
+              formData.toSeq: _*
+            ))
+
+            status(result) shouldBe Status.SEE_OTHER
+            val agentPath = if (isAgent) "/agents" else ""
+            redirectLocation(result) shouldBe Some(s"/report-quarterly/income-and-expenses/view${agentPath}/optout/review-confirm-taxyear")
+          }
+        }
+
+        "return a BadRequest" when {
+          "choice is missing in form" in {
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+            mockGetSubmissionCountForTaxYear(counts)
+            mockSaveIntent(nextTaxYear, Future.successful(true))
+            mockRecallOptOutProposition(Future.successful(optOutProposition))
+
+            val formData = Map(ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> "", //missing
+              ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> "")
+
+            val result = action(fakeRequest.withFormUrlEncodedBody(
+              formData.toSeq: _*
+            ))
+
+            status(result) shouldBe Status.BAD_REQUEST
+          }
+        }
+
+        "return an Internal Server Error" when {
+          "intent cant be saved" in {
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+            mockGetSubmissionCountForTaxYear(counts)
+            mockSaveIntent(currentTaxYear, Future.successful(false))
+            mockRecallOptOutProposition(Future.successful(optOutProposition))
+
+            val formData = Map(ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> currentTaxYear.toString,
+              ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> "")
+
+            val result = action(fakeRequest.withFormUrlEncodedBody(
+              formData.toSeq: _*
+            ))
+
+            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          }
+        }
       }
-
-      s"return result with ${Status.INTERNAL_SERVER_ERROR} status for submit when intent cant be saved" in {
-
-        val requestPOST = if (isAgent) fakePostRequestConfirmedClient() else fakePostRequestWithNinoAndOrigin("PTA")
-        val requestPOSTWithChoice = requestPOST.withFormUrlEncodedBody(
-          ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> currentTaxYear.toString,
-          ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> ""
-        )
-
-        setupMockAuthorisationSuccess(isAgent)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-
-        mockGetSubmissionCountForTaxYear(counts)
-        mockSaveIntent(currentTaxYear, Future.successful(false))
-        mockRecallOptOutProposition(Future.successful(optOutProposition))
-
-        val result: Future[Result] = controller.submit(isAgent)(requestPOSTWithChoice)
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
+      testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
     }
-
-    "submit method is invoked and choice is missing in form" should {
-      s"return result with with error ${Status.BAD_REQUEST} status for submit" in {
-
-        val requestPOST = if (isAgent) fakePostRequestConfirmedClient() else fakePostRequestWithNinoAndOrigin("PTA")
-        val requestPOSTWithChoice = requestPOST.withFormUrlEncodedBody(
-          ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> "", //missing
-          ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> ""
-        )
-
-        setupMockAuthorisationSuccess(isAgent)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-
-        mockGetSubmissionCountForTaxYear(counts)
-        mockRecallOptOutProposition(Future.successful(optOutProposition))
-
-        val result: Future[Result] = controller.submit(isAgent)(requestPOSTWithChoice)
-
-        status(result) shouldBe Status.BAD_REQUEST
-        redirectLocation(result) shouldBe None
-      }
-    }
-  }
-
-  def testSaveIntent(isAgent: Boolean): Unit = {
-
-    "submit method is invoked and choice made in form but save intent fails" should {
-      s"return result with ${Status.INTERNAL_SERVER_ERROR} status for submit" in {
-
-        val requestPOST = if (isAgent) fakePostRequestConfirmedClient() else fakePostRequestWithNinoAndOrigin("PTA")
-        val requestPOSTWithChoice = requestPOST.withFormUrlEncodedBody(
-          ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> currentTaxYear.toString,
-          ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> ""
-        )
-
-        setupMockAuthorisationSuccess(isAgent)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-
-        mockGetSubmissionCountForTaxYear(counts)
-        mockSaveIntent(currentTaxYear, Future.successful(false))
-        mockRecallOptOutProposition(Future.successful(optOutProposition))
-
-        val result: Future[Result] = controller.submit(isAgent)(requestPOSTWithChoice)
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        redirectLocation(result) shouldBe None
-      }
-    }
-
-    "submit method is invoked and choice made not in form but save intent fails" should {
-      s"return result with ${Status.BAD_REQUEST} status for submit" in {
-
-        val requestPOST = if (isAgent) fakePostRequestConfirmedClient() else fakePostRequestWithNinoAndOrigin("PTA")
-        val requestPOSTWithChoice = requestPOST.withFormUrlEncodedBody(
-          ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> "",
-          ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> ""
-        )
-
-        setupMockAuthorisationSuccess(isAgent)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-
-        mockGetSubmissionCountForTaxYear(counts)
-        mockSaveIntent(currentTaxYear, Future.successful(true))
-        mockRecallOptOutProposition(Future.successful(optOutProposition))
-
-        val result: Future[Result] = controller.submit(isAgent)(requestPOSTWithChoice)
-
-        status(result) shouldBe Status.BAD_REQUEST
-        redirectLocation(result) shouldBe None
-      }
-    }
-
   }
 }

@@ -16,35 +16,33 @@
 
 package controllers.optOut
 
-import auth.{FrontendAuthorisedFunctions, MtdItUser}
+import auth.MtdItUser
+import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
 import models.admin.ReportingFrequencyPage
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.optout.OptOutService
-import utils.AuthenticatorPredicate
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.optOut.ConfirmedOptOut
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 
-class ConfirmedOptOutController @Inject()(
-                                           val authorisedFunctions: FrontendAuthorisedFunctions,
+class ConfirmedOptOutController @Inject()(val authActions: AuthActions,
                                            val view: ConfirmedOptOut,
-                                           val auth: AuthenticatorPredicate,
+                                          val itvcErrorHandler: ItvcErrorHandler,
+                                          val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                            val optOutService: OptOutService
                                          )
                                          (implicit val appConfig: FrontendAppConfig,
                                           mcc: MessagesControllerComponents,
-                                          val ec: ExecutionContext,
-                                          val itvcErrorHandler: ItvcErrorHandler,
-                                          val itvcErrorHandlerAgent: AgentItvcErrorHandler
+                                          val ec: ExecutionContext
                                          )
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
+  extends FrontendController(mcc) with I18nSupport with FeatureSwitching{
 
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
@@ -56,7 +54,7 @@ class ConfirmedOptOutController @Inject()(
     }
   }
 
-  def show(isAgent: Boolean = false): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def show(isAgent: Boolean = false): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
       withRecover(isAgent) {
         val showReportingFrequencyContent = isEnabled(ReportingFrequencyPage)

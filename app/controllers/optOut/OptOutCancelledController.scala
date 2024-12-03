@@ -16,38 +16,33 @@
 
 package controllers.optOut
 
-import auth.FrontendAuthorisedFunctions
 import auth.authV2.AuthActions
+import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.optout.OptOutService
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.errorPages.templates.ErrorTemplate
 import views.html.optOut.OptOutCancelledView
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class OptOutCancelledController @Inject()(
-                                           val authorisedFunctions: FrontendAuthorisedFunctions,
-                                           val auth: AuthActions,
+class OptOutCancelledController @Inject()(val authActions: AuthActions,
                                            optOutService: OptOutService,
                                            view: OptOutCancelledView,
                                            errorTemplate: ErrorTemplate
                                          )(
                                            implicit val appConfig: FrontendAppConfig,
                                            mcc: MessagesControllerComponents,
-                                           val ec: ExecutionContext,
-                                           val itvcErrorHandler: ItvcErrorHandler,
-                                           val itvcErrorHandlerAgent: AgentItvcErrorHandler
+                                           val ec: ExecutionContext
                                          )
 
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
+  extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
   def show(): Action[AnyContent] =
-    auth.asMTDIndividual.async { implicit user =>
+    authActions.asMTDIndividual.async { implicit user =>
       for {
         proposition <- optOutService.fetchOptOutProposition()
         availableOptOutYears = proposition.availableOptOutYears
@@ -81,7 +76,7 @@ class OptOutCancelledController @Inject()(
     }
 
   def showAgent(): Action[AnyContent] =
-    auth.asMTDAgentWithConfirmedClient.async { implicit user =>
+    authActions.asMTDAgentWithConfirmedClient.async { implicit user =>
       for {
         proposition <- optOutService.fetchOptOutProposition()
         availableOptOutYears = proposition.availableOptOutYears

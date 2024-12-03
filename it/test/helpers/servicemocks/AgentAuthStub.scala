@@ -129,6 +129,7 @@ object AgentAuthStub {
       "authorise" -> predicateJson,
       "retrieve" -> Json.arr(
         JsString("allEnrolments"),
+        JsString("optionalName"),
         JsString("optionalCredentials"),
         JsString("affinityGroup"),
         JsString("confidenceLevel")

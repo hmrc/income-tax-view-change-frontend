@@ -129,6 +129,15 @@ object MTDIndividualAuthStub extends MTDAuthStub {
     )
   }
 
+  override def stubAuthorisedWhenNoChecks(): Unit = {
+    stubPost(
+      url = postAuthoriseUrl,
+      status = Status.OK,
+      responseBody = mtdIndividualUserSuccessResponse(Some(requiredConfidenceLevel))
+    )
+  }
+
+
 
   def mtdIndividualUserSuccessResponse(optConfidenceLevel: Option[Int] = None,
                                        hasNinoEnrolment: Boolean = true,

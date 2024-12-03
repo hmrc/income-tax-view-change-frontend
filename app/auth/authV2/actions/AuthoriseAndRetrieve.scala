@@ -23,9 +23,8 @@ import config.featureswitch.FeatureSwitching
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Request, Result}
 import play.api.{Configuration, Environment, Logger}
-import uk.gov.hmrc.auth.core.AffinityGroup.{Individual, Organisation}
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.authorise.{EmptyPredicate, Predicate}
+import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -35,38 +34,27 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthoriseAndRetrieveAgent @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
-                                          val appConfig: FrontendAppConfig,
-                                          override val config: Configuration,
-                                          override val env: Environment,
-                                          mcc: MessagesControllerComponents)
-  extends AuthRedirects with FeatureSwitching {
+class AuthoriseAndRetrieve @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
+                                     val appConfig: FrontendAppConfig,
+                                     override val config: Configuration,
+                                     override val env: Environment,
+                                     mcc: MessagesControllerComponents)
+  extends AuthRedirects with FeatureSwitching with ActionRefiner[Request, AuthorisedUser] {
 
   lazy val logger: Logger = Logger(getClass)
+  implicit val executionContext: ExecutionContext = mcc.executionContext
 
-  def authorise(arnRequired: Boolean = true): ActionRefiner[Request, AuthorisedUser] = new ActionRefiner[Request, AuthorisedUser] {
+  override protected def refine[A](request: Request[A]): Future[Either[Result, AuthorisedUser[A]]] = {
 
-    implicit val executionContext: ExecutionContext = mcc.executionContext
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter
+      .fromRequestAndSession(request, request.session)
 
-    override protected def refine[A](request: Request[A]): Future[Either[Result, AuthorisedUser[A]]] = {
+    implicit val req: Request[A] = request
 
-      implicit val hc: HeaderCarrier = HeaderCarrierConverter
-        .fromRequestAndSession(request, request.session)
-
-      implicit val req: Request[A] = request
-
-      val isAgent: Predicate = Enrolment("HMRC-AS-AGENT") and AffinityGroup.Agent
-      val isNotAgent: Predicate = AffinityGroup.Individual or AffinityGroup.Organisation
-
-      val predicate = if(arnRequired) {
-        isAgent or isNotAgent
-      } else EmptyPredicate
-
-      authorisedFunctions.authorised(predicate)
-        .retrieve(allEnrolments and name and credentials and affinityGroup and confidenceLevel) {
-          redirectIfNotAgent() orElse constructAgentUser()
-        }(hc, executionContext) recoverWith logAndRedirect
-    }
+    authorisedFunctions.authorised(EmptyPredicate)
+      .retrieve(allEnrolments and name and credentials and affinityGroup and confidenceLevel) {
+        constructAuthorisedUser()
+      }(hc, executionContext) recoverWith logAndRedirect
   }
 
   def logAndRedirect[A]: PartialFunction[Throwable, Future[Either[Result, AuthorisedUser[A]]]] = {
@@ -87,7 +75,7 @@ class AuthoriseAndRetrieveAgent @Inject()(val authorisedFunctions: FrontendAutho
     Enrolments ~ Option[Name] ~ Option[Credentials] ~ Option[AffinityGroup] ~ ConfidenceLevel
 
 
-  private def constructAgentUser[A]()(
+  private def constructAuthorisedUser[A]()(
     implicit request: Request[A]): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedUser[A]]]] = {
     case enrolments ~ name ~ credentials ~ affinityGroup ~ confidenceLevel =>
       Future.successful(
@@ -98,12 +86,5 @@ class AuthoriseAndRetrieveAgent @Inject()(val authorisedFunctions: FrontendAutho
           credentials = credentials,
           name = name))
       )
-  }
-
-  private def redirectIfNotAgent[A]()(
-    implicit request: Request[A]): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedUser[A]]]] = {
-    case _ ~ _ ~ Some(ag@(Organisation | Individual)) ~ _ =>
-      logger.debug(s"$ag on endpoint for agents")
-      Future.successful(Left(Redirect(controllers.routes.HomeController.show())))
   }
 }

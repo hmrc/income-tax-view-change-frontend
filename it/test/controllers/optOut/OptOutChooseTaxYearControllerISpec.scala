@@ -16,23 +16,31 @@
 
 package controllers.optOut
 
-import controllers.optOut.OptOutChooseTaxYearControllerISpec._
+import controllers.ControllerISpecHelper
+import enums.{MTDIndividual, MTDUserRole}
 import forms.optOut.ConfirmOptOutMultiTaxYearChoiceForm
+import helpers.OptOutSessionRepositoryHelper
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import helpers.{ComponentSpecBase, OptOutSessionRepositoryHelper}
+import models.admin.NavBarFs
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus._
 import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
-import play.api.http.Status
 import play.api.http.Status.OK
+import play.mvc.Http.Status
 import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
-class OptOutChooseTaxYearControllerISpec extends ComponentSpecBase {
+class OptOutChooseTaxYearControllerISpec extends ControllerISpecHelper {
 
   private val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
   private val previousTaxYear = currentTaxYear.previousYear
+  private val nextTaxYear = currentTaxYear.nextYear
+
+  val headingText = "Opting out of quarterly reporting"
+  val descriptionText = "You can opt out from any of the tax years available and report annually from that year onwards. This means you’ll then report annually for all of your current businesses and any that you add in future."
+  val radioLabel3 = "2023 to 2024 onwards"
+
 
   private val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
   private val helper = new OptOutSessionRepositoryHelper(repository)
@@ -42,130 +50,157 @@ class OptOutChooseTaxYearControllerISpec extends ComponentSpecBase {
     repository.clearSession(testSessionId).futureValue shouldBe true
   }
 
-  def testShowHappyCase(isAgent: Boolean): Unit = {
-
-    val chooseOptOutTaxYearPageUrl = controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent).url
-
-    s"calling GET $chooseOptOutTaxYearPageUrl" should {
-      s"render page for show choose multi-year opt-out tax-year $chooseOptOutTaxYearPageUrl" when {
-        "User is authorised" in {
-
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
-
-          helper.stubOptOutInitialState(currentTaxYear,
-            previousYearCrystallised = false,
-            previousYearStatus = Voluntary,
-            currentYearStatus = Voluntary,
-            nextYearStatus = Voluntary)
-
-          IncomeTaxViewChangeStub.stubGetAllObligations(testNino, currentTaxYear.toFinancialYearStart, currentTaxYear.toFinancialYearEnd, allObligations)
-
-          val result = IncomeTaxViewChangeFrontendManageBusinesses.renderChooseOptOutTaxYearPageInMultiYearJourney()
-          verifyIncomeSourceDetailsCall(testMtditid)
-
-          result should have(
-            httpStatus(OK),
-            elementTextByID("heading")(headingText),
-            elementTextByID("description")(descriptionText),
-            elementTextBySelector("div.govuk-radios__item:nth-child(3) > label:nth-child(2)")(radioLabel3),
-          )
-        }
-      }
-    }
+  def getPath(mtdRole: MTDUserRole): String = {
+    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    pathStart + "/optout/choose-taxyear"
   }
 
-  def testSubmitHappyCase(isAgent: Boolean): Unit = {
+  mtdAllRoles.foreach { case mtdUserRole =>
+    val path = getPath(mtdUserRole)
+    val additionalCookies = getAdditionalCookies(mtdUserRole)
+    s"GET $path" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          "render the choose tax year page" in {
+            disable(NavBarFs)
+            stubAuthorised(mtdUserRole)
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-    val chooseOptOutTaxYearPageUrl = controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent).url
+            helper.stubOptOutInitialState(currentTaxYear,
+              previousYearCrystallised = false,
+              previousYearStatus = Voluntary,
+              currentYearStatus = Voluntary,
+              nextYearStatus = Voluntary)
 
-    s"calling GET $chooseOptOutTaxYearPageUrl" should {
-      s"render page for submit choice for multi-year opt-out tax-year $chooseOptOutTaxYearPageUrl" when {
-        "User is authorised" in {
+            IncomeTaxViewChangeStub.stubGetAllObligations(testNino, currentTaxYear.toFinancialYearStart, currentTaxYear.toFinancialYearEnd, allObligations)
 
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+            val result = buildGETMTDClient(path, additionalCookies).futureValue
+            verifyIncomeSourceDetailsCall(testMtditid)
 
-          helper.stubOptOutInitialState(currentTaxYear,
-            previousYearCrystallised = false,
-            previousYearStatus = Voluntary,
-            currentYearStatus = Voluntary,
-            nextYearStatus = Voluntary)
-
-          IncomeTaxViewChangeStub.stubGetAllObligations(testNino, currentTaxYear.toFinancialYearStart, currentTaxYear.toFinancialYearEnd, allObligations)
-
-          val formData: Map[String, Seq[String]] = Map(
-            ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> Seq(previousTaxYear.toString),
-            ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> Seq(""))
-          val result = IncomeTaxViewChangeFrontendManageBusinesses.submitChoiceOnOptOutChooseTaxYear(formData)
-          verifyIncomeSourceDetailsCall(testMtditid)
-
-          result should have(
-            httpStatus(Status.SEE_OTHER),
-            //elementTextByID("heading")("Confirm and opt out for the 2021 to 2022 tax year"),
-            //todo add more asserts as part MISUV-7538
-          )
+            result should have(
+              httpStatus(OK),
+              elementTextByID("heading")(headingText),
+              elementTextByID("description")(descriptionText),
+              elementTextBySelector("div.govuk-radios__item:nth-child(3) > label:nth-child(2)")(radioLabel3),
+            )
+          }
         }
-      }
-    }
-  }
-
-  def testSubmitUnhappyCase(isAgent: Boolean): Unit = {
-
-    val chooseOptOutTaxYearPageUrl = controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent).url
-
-    s"calling GET $chooseOptOutTaxYearPageUrl" should {
-      s"render page with error for submit choice for multi-year opt-out tax-year $chooseOptOutTaxYearPageUrl" when {
-        "User is authorised" in {
-
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
-
-          helper.stubOptOutInitialState(currentTaxYear,
-            previousYearCrystallised = false,
-            previousYearStatus = Voluntary,
-            currentYearStatus = Voluntary,
-            nextYearStatus = Voluntary)
-
-          IncomeTaxViewChangeStub.stubGetAllObligations(testNino, currentTaxYear.toFinancialYearStart, currentTaxYear.toFinancialYearEnd, allObligations)
-
-          val formData: Map[String, Seq[String]] = Map(
-            ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> Seq(),
-            ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> Seq(""))
-          val result = IncomeTaxViewChangeFrontendManageBusinesses.submitChoiceOnOptOutChooseTaxYear(formData)
-          verifyIncomeSourceDetailsCall(testMtditid)
-
-          result should have(
-            httpStatus(Status.BAD_REQUEST),
-            //elementTextByID("heading")("Confirm and opt out for the 2021 to 2022 tax year"),
-            //todo add more asserts as part MISUV-7538
-          )
-        }
+        testAuthFailures(path, mtdUserRole)
       }
     }
 
+    s"POST $path" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          "redirect to check your answers page" when {
+            "previous tax year selected" in {
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-    s"render page for submit choice for multi-year opt-out tax-year $chooseOptOutTaxYearPageUrl" when {
-      "User is authorised" in {
+              helper.stubOptOutInitialState(currentTaxYear,
+                previousYearCrystallised = false,
+                previousYearStatus = Voluntary,
+                currentYearStatus = Voluntary,
+                nextYearStatus = Voluntary)
 
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+              IncomeTaxViewChangeStub.stubGetAllObligations(testNino, currentTaxYear.toFinancialYearStart, currentTaxYear.toFinancialYearEnd, allObligations)
 
-        helper.stubOptOutInitialState(currentTaxYear,
-          previousYearCrystallised = false,
-          previousYearStatus = Voluntary,
-          currentYearStatus = Voluntary,
-          nextYearStatus = Voluntary)
+              val formData: Map[String, Seq[String]] = Map(
+                ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> Seq(previousTaxYear.toString),
+                ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> Seq(""))
 
-        IncomeTaxViewChangeStub.stubGetAllObligations(testNino, currentTaxYear.toFinancialYearStart, currentTaxYear.toFinancialYearEnd, allObligations)
+              val result = buildPOSTMTDPostClient(path, additionalCookies, body = formData).futureValue
+              verifyIncomeSourceDetailsCall(testMtditid)
 
-        val formData: Map[String, Seq[String]] = Map(
-          ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> Seq(previousTaxYear.toString),
-          ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> Seq(""))
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.submitChoiceOnOptOutChooseTaxYear(formData)
-        verifyIncomeSourceDetailsCall(testMtditid)
+              result should have(
+                httpStatus(Status.SEE_OTHER),
+                //todo add more asserts in MISUV-8006
+              )
+            }
 
-        result should have(
-          httpStatus(Status.SEE_OTHER),
-          //elementTextByID("heading")("Confirm and opt out for the 2021 to 2022 tax year"),
-          //todo add more asserts as part MISUV-7538
-        )
+            "current tax year selected" in {
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+              helper.stubOptOutInitialState(currentTaxYear,
+                previousYearCrystallised = false,
+                previousYearStatus = Voluntary,
+                currentYearStatus = Voluntary,
+                nextYearStatus = Voluntary)
+
+              IncomeTaxViewChangeStub.stubGetAllObligations(testNino, currentTaxYear.toFinancialYearStart, currentTaxYear.toFinancialYearEnd, allObligations)
+
+              val formData: Map[String, Seq[String]] = Map(
+                ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> Seq(currentTaxYear.toString),
+                ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> Seq(""))
+
+              val result = buildPOSTMTDPostClient(path, additionalCookies, body = formData).futureValue
+              verifyIncomeSourceDetailsCall(testMtditid)
+
+              result should have(
+                httpStatus(Status.SEE_OTHER),
+                //todo add more asserts in MISUV-8006
+              )
+            }
+
+              "next tax year selected" in {
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+                helper.stubOptOutInitialState(currentTaxYear,
+                  previousYearCrystallised = false,
+                  previousYearStatus = Voluntary,
+                  currentYearStatus = Voluntary,
+                  nextYearStatus = Voluntary)
+
+                IncomeTaxViewChangeStub.stubGetAllObligations(testNino, currentTaxYear.toFinancialYearStart, currentTaxYear.toFinancialYearEnd, allObligations)
+
+                val formData: Map[String, Seq[String]] = Map(
+                  ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> Seq(nextTaxYear.toString),
+                  ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> Seq(""))
+
+                val result = buildPOSTMTDPostClient(path, additionalCookies, body = formData).futureValue
+                verifyIncomeSourceDetailsCall(testMtditid)
+
+                result should have(
+                  httpStatus(Status.SEE_OTHER),
+                  //todo add more asserts in MISUV-8006
+                )
+              }
+            }
+
+          "return a BadRequest" when {
+            "the form is invalid" in {
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+              helper.stubOptOutInitialState(currentTaxYear,
+                previousYearCrystallised = false,
+                previousYearStatus = Voluntary,
+                currentYearStatus = Voluntary,
+                nextYearStatus = Voluntary)
+
+              IncomeTaxViewChangeStub.stubGetAllObligations(testNino, currentTaxYear.toFinancialYearStart, currentTaxYear.toFinancialYearEnd, allObligations)
+
+              val formData: Map[String, Seq[String]] = Map(
+                ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> Seq(),
+                ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> Seq(""))
+              val result = buildPOSTMTDPostClient(path, additionalCookies, body = formData).futureValue
+              verifyIncomeSourceDetailsCall(testMtditid)
+
+              result should have(
+                httpStatus(Status.BAD_REQUEST),
+                //elementTextByID("heading")("Confirm and opt out for the 2021 to 2022 tax year"),
+                //todo add more asserts as part MISUV-7538
+              )
+            }
+          }
+        }
+        testAuthFailures(path, mtdUserRole, Some(Map.empty))
       }
     }
   }
@@ -198,23 +233,4 @@ class OptOutChooseTaxYearControllerISpec extends ComponentSpecBase {
         ))
     )
   ))
-
-  "OptOutChooseTaxYearController - Individual" when {
-    testShowHappyCase(isAgent = false)
-    testSubmitHappyCase(isAgent = false)
-    testSubmitUnhappyCase(isAgent = false)
-  }
-
-  "OptOutChooseTaxYearController - Agent" when {
-    testShowHappyCase(isAgent = true)
-    testSubmitHappyCase(isAgent = true)
-    testSubmitUnhappyCase(isAgent = true)
-  }
-
-}
-
-object OptOutChooseTaxYearControllerISpec {
-  val headingText = "Opting out of quarterly reporting"
-  val descriptionText = "You can opt out from any of the tax years available and report annually from that year onwards. This means you’ll then report annually for all of your current businesses and any that you add in future."
-  val radioLabel3 = "2023 to 2024 onwards"
 }

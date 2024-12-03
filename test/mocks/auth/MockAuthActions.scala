@@ -26,7 +26,8 @@ import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import mocks.MockItvcErrorHandler
 import mocks.services.{MockClientDetailsService, MockIncomeSourceDetailsService, MockSessionDataService}
 import org.jsoup.Jsoup
-import org.mockito.Mockito.{mock, reset}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{mock, reset, when}
 import play.api
 import play.api.Play
 import play.api.http.Status
@@ -36,9 +37,15 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.agent.ClientDetailsService
 import services.{IncomeSourceDetailsService, SessionDataService}
+import testConstants.BaseTestConstants.{agentAuthRetrievalSuccess, testAuthSuccessResponse}
 import testUtils.TestSupport
-import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
+import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
+import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
 import uk.gov.hmrc.auth.core.{AffinityGroup, AuthorisationException, BearerTokenExpired, InsufficientEnrolments, InvalidBearerToken}
+import uk.gov.hmrc.http.HeaderCarrier
+
+import scala.concurrent.{ExecutionContext, Future}
 
 trait MockAuthActions extends
   TestSupport with

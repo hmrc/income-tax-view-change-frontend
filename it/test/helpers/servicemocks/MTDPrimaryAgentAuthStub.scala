@@ -121,6 +121,7 @@ object MTDPrimaryAgentAuthStub extends MTDAgentAuthStub {
       "authorise" -> predicateJson,
       "retrieve" -> Json.arr(
         JsString("allEnrolments"),
+        JsString("optionalName"),
         JsString("optionalCredentials"),
         JsString("affinityGroup"),
         JsString("confidenceLevel")
@@ -200,5 +201,4 @@ object MTDPrimaryAgentAuthStub extends MTDAgentAuthStub {
       "confidenceLevel" -> requiredConfidenceLevel
     ))
   }
-
 }

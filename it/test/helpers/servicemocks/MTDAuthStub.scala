@@ -24,4 +24,6 @@ trait MTDAuthStub {
 
   def stubBearerTokenExpired(): Unit
 
+  def stubAuthorisedWhenNoChecks(): Unit
+
 }
