@@ -179,7 +179,7 @@ class AuthActionsSpec extends TestSupport with ScalaFutures with MockOldAuthActi
     "user is an agent" should {
 
       val sessionData = Map(
-        (SessionKeys.confirmedClient, ""),
+        (SessionKeys.confirmedClient, "true"),
         (SessionKeys.clientMTDID, mtdId),
         (SessionKeys.clientFirstName, "Brian"),
         (SessionKeys.clientLastName, "Brianson"),
@@ -210,7 +210,6 @@ class AuthActionsSpec extends TestSupport with ScalaFutures with MockOldAuthActi
         }},
         isAgent = true
       ) {
-        result.header.headers shouldBe ""
         result.header.status shouldBe OK
       }
 
