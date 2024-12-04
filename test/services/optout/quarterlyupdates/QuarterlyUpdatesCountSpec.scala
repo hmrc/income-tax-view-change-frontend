@@ -21,7 +21,7 @@ import audit.mocks.MockAuditingService
 import config.FrontendAppConfig
 import connectors.ObligationsConnector
 import connectors.itsastatus.ITSAStatusUpdateConnector
-import mocks.MockHttp
+import mocks.{MockHttp, MockHttpV2}
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService}
 import org.mockito.Mockito.mock
 import org.scalatest.BeforeAndAfter
@@ -46,6 +46,7 @@ class QuarterlyUpdatesCountSpec extends UnitSpec
   with MockCalculationListService
   with MockDateService
   with MockHttp
+  with MockHttpV2
   with MockAuditingService {
 
   implicit override val dateService: DateService = mockDateService
@@ -55,7 +56,7 @@ class QuarterlyUpdatesCountSpec extends UnitSpec
   }
 
   val optOutConnector: ITSAStatusUpdateConnector = mock(classOf[ITSAStatusUpdateConnector])
-  val obligationsConnector: ObligationsConnector = new ObligationsConnector(httpClientMock, mockAuditingService, appConfig)
+  val obligationsConnector: ObligationsConnector = new ObligationsConnector(mockHttpClientV2, mockAuditingService, appConfig)
   val nextUpdatesService: NextUpdatesService = new NextUpdatesService(obligationsConnector)
   val repository: OptOutSessionDataRepository = mock(classOf[OptOutSessionDataRepository])
   val auditingService: AuditingService = mock(classOf[AuditingService])
@@ -81,7 +82,7 @@ class QuarterlyUpdatesCountSpec extends UnitSpec
         val requestUrl = buildUrl(optOutTaxYear.toFinancialYearStart, optOutTaxYear.toFinancialYearEnd)
         val successResponse = buildSuccessResponse()
 
-        setupMockHttpGet(requestUrl)(successResponse)
+        setupMockHttpV2Get(requestUrl)(successResponse)
 
         val result = service.getQuarterlyUpdatesCountForOfferedYears(proposition)
 
