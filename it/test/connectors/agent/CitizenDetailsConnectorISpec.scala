@@ -58,6 +58,7 @@ class CitizenDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase wi
         val result = connector.getCitizenDetailsBySaUtr(saUtr).futureValue
 
         result shouldBe CitizenDetailsModel(Some("John"), Some("Doe"), Some("AA123456A"))
+        WiremockHelper.verifyGet(s"/citizen-details/sautr/$saUtr")
       }
       "return an error when the request fails" in {
         WiremockHelper.stubGet(s"/citizen-details/sautr/$saUtr", INTERNAL_SERVER_ERROR, "{}")
@@ -65,6 +66,7 @@ class CitizenDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase wi
         val result = connector.getCitizenDetailsBySaUtr(saUtr).futureValue
 
         result shouldBe CitizenDetailsErrorModel(500, "{}")
+        WiremockHelper.verifyGet(s"/citizen-details/sautr/$saUtr")
       }
     }
   }
