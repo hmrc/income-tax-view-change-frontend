@@ -18,7 +18,7 @@ package controllers
 
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDUserRole}
 import mocks.auth.MockAuthActions
-import mocks.services.{MockDateService, MockFinancialDetailsService, MockNextUpdatesService, MockWhatYouOweService}
+import mocks.services.{MockClientDetailsService, MockDateService, MockFinancialDetailsService, MockNextUpdatesService, MockWhatYouOweService}
 import models.financialDetails._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -29,6 +29,7 @@ import play.api.http.Status
 import play.api.mvc.{Action, AnyContent, AnyContentAsEmpty}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.agent.ClientDetailsService
 import services.{DateService, FinancialDetailsService, NextUpdatesService, WhatYouOweService}
 
 import java.time.{LocalDate, Month}
@@ -38,6 +39,7 @@ trait HomeControllerHelperSpec extends MockAuthActions
   with MockNextUpdatesService
   with MockFinancialDetailsService
   with MockWhatYouOweService
+  with MockClientDetailsService
   with MockDateService {
 
   val agentTitle = s"${messages("htmlTitle.agent", messages("home.agent.heading"))}"

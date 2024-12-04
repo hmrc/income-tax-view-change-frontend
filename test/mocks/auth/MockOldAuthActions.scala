@@ -88,7 +88,8 @@ trait MockOldAuthActions extends TestSupport with MockIncomeSourceDetailsService
   private val retrieveClientData = new RetrieveClientData(
     sessionDataService = mockSessionDataService,
     appConfig = appConfig,
-    errorHandler = app.injector.instanceOf[AgentItvcErrorHandler]
+    errorHandler = app.injector.instanceOf[AgentItvcErrorHandler],
+    clientDetailsService = mockClientDetailsService
   )
 
   private val authoriseAndRetrieveMtdAgent = new AuthoriseAndRetrieveMtdAgent(
@@ -117,6 +118,7 @@ trait MockOldAuthActions extends TestSupport with MockIncomeSourceDetailsService
 
   override def setupMockAuthRetrievalSuccess[X, Y](retrievalValue: X ~ Y): Unit = {
     setupMockGetSessionDataSuccess()
+    setupMockGetClientDetailsSuccess()
     when(mockAuthService.authorised(any()))
       .thenReturn(
         new mockAuthService.AuthorisedFunction(EmptyPredicate) {

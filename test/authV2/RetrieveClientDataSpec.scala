@@ -32,9 +32,11 @@ import services.SessionDataService
 import scala.concurrent.Future
 import authV2.AuthActionsTestData._
 import controllers.agent.sessionUtils.SessionKeys
+import mocks.services.MockClientDetailsService
 import models.sessionData.SessionDataGetResponse.{SessionDataNotFound, SessionDataUnexpectedResponse}
+import services.agent.ClientDetailsService
 
-class RetrieveClientDataSpec extends AuthActionsSpecHelper {
+class RetrieveClientDataSpec extends AuthActionsSpecHelper with MockClientDetailsService{
 
   override def afterEach(): Unit = {
     Play.stop(fakeApplication())
@@ -45,7 +47,8 @@ class RetrieveClientDataSpec extends AuthActionsSpecHelper {
     new GuiceApplicationBuilder()
       .overrides(
         api.inject.bind[SessionDataService].toInstance(mockSessionDataService),
-        api.inject.bind[AgentItvcErrorHandler].toInstance(mockAgentErrorHandler)
+        api.inject.bind[AgentItvcErrorHandler].toInstance(mockAgentErrorHandler),
+        api.inject.bind[ClientDetailsService].toInstance(mockClientDetailsService)
       )
       .build()
   }
@@ -68,6 +71,7 @@ class RetrieveClientDataSpec extends AuthActionsSpecHelper {
             val fakeRequestWithSession = fakeRequestConfirmedClient(isSupportingAgent = true)
             when(mockSessionDataService.getSessionData(any())(any(), any()))
               .thenReturn(Future.successful(Right(sessionGetSuccessResponse)))
+            setupMockGetClientDetailsSuccess()
 
             val result = action.invokeBlock(
               fakeRequestWithSession,
@@ -84,6 +88,7 @@ class RetrieveClientDataSpec extends AuthActionsSpecHelper {
           val fakeRequestWithSession = fakeRequestWithClientDetails.addingToSession(SessionKeys.confirmedClient -> "false")
           when(mockSessionDataService.getSessionData(any())(any(), any()))
             .thenReturn(Future.successful(Right(sessionGetSuccessResponse)))
+          setupMockGetClientDetailsSuccess()
 
           val result = action.invokeBlock(
             fakeRequestWithSession,

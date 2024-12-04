@@ -398,7 +398,8 @@ class AuthActionsSpec extends TestSupport with ScalaFutures with MockOldAuthActi
   val mockRetrieveClientData: RetrieveClientData = new RetrieveClientData(
     mockSessionDataService,
     errorHandler = app.injector.instanceOf[AgentItvcErrorHandler],
-    appConfig = appConfig
+    appConfig = appConfig,
+    clientDetailsService = mockClientDetailsService
   )
 
   val authActions = new AuthActions(

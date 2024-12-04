@@ -41,8 +41,7 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
 
   override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
     .overrides(
-      api.inject.bind[EnterClientsUTR].toInstance(enterClientsUTR),
-      api.inject.bind[ClientDetailsService].toInstance(mockClientDetailsService)
+      api.inject.bind[EnterClientsUTR].toInstance(enterClientsUTR)
     ).build()
 
   val testEnterClientsUTRController = fakeApplication().injector.instanceOf[EnterClientsUTRController]
