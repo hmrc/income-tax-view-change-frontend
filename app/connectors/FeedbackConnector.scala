@@ -23,24 +23,21 @@ import play.api.http.HeaderNames
 import play.api.http.Status.OK
 import play.api.mvc.Request
 import uk.gov.hmrc.hmrcfrontend.views.Utils.urlEncode
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
 import uk.gov.hmrc.play.partials.HeaderCarrierForPartialsConverter
 
+import java.net.{URI, URL}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class FeedbackConnector @Inject()(val http: HttpClient,
+class FeedbackConnector @Inject()(val http: HttpClientV2,
                                   val config: FrontendAppConfig,
                                   val itvcHeaderCarrierForPartialsConverter: HeaderCarrierForPartialsConverter
                                  )(implicit val ec: ExecutionContext) extends RawResponseReads with HeaderNames {
 
-  private val feedbackServiceSubmitUrl: String =
-    s"${
-      config.contactFrontendBaseUrl
-    }/contact/beta-feedback/submit?" +
-      s"service=${
-        urlEncode(config.contactFormServiceIdentifier)
-      }"
+  val feedbackServiceSubmitUrl: URL =
+    new URI(s"${config.contactFrontendBaseUrl}/contact/beta-feedback/submit?service=${urlEncode(config.contactFormServiceIdentifier)}").toURL
 
   implicit val readForm: HttpReads[HttpResponse] = (method: String, url: String, response: HttpResponse) => response
 
@@ -53,16 +50,18 @@ class FeedbackConnector @Inject()(val http: HttpClient,
             (implicit request: Request[_]): Future[Either[Int, Unit]] = {
     val ref: String = request.headers.get(REFERER).getOrElse("N/A")
     val data = formData.toFormMap(ref)
-    http.POSTForm[HttpResponse](feedbackServiceSubmitUrl, data)(readForm, partialsReadyHeaderCarrier, ec).map {
-      resp =>
-        resp.status match {
-          case OK =>
-            Logger("application").info(s"RESPONSE status: ${resp.status}")
-            Right(())
-          case status =>
-            Logger("application").error(s"RESPONSE status: ${resp.status}")
-            Left(status)
-        }
+    http.post(feedbackServiceSubmitUrl)(partialsReadyHeaderCarrier)
+      .withBody(data)
+      .execute[HttpResponse]
+      .map {resp =>
+          resp.status match {
+            case OK =>
+              Logger("application").info(s"RESPONSE status: ${resp.status}")
+              Right(())
+            case status =>
+              Logger("application").error(s"RESPONSE status: ${resp.status}")
+              Left(status)
+          }
     }
   }
 }
