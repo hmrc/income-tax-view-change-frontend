@@ -17,8 +17,10 @@
 package connectors.agent
 
 import com.github.tomakehurst.wiremock.client.WireMock
-import _root_.helpers.{ComponentSpecBase, WiremockHelper}
+import _root_.helpers.agent.ComponentSpecBase
+import _root_.helpers.WiremockHelper
 import _root_.helpers.servicemocks.AuditStub
+import models.citizenDetails.CitizenDetailsErrorModel
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Injecting
@@ -37,7 +39,15 @@ class CitizenDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase wi
   "CitizenDetailsConnector" when {
     "sending a request" should {
       "return a successful response" in {
-        WiremockHelper.stubGet(s"/citizen-details/sautr/$saUtr", OK, "{}")
+        val responseBody =
+          """
+            |{
+            |   "firstName": "John",
+            |   "lastName": "Doe",
+            |   "nino": "AA123456A"
+            |}
+            |""".stripMargin
+        WiremockHelper.stubGet(s"/citizen-details/sautr/$saUtr", OK, responseBody)
 
         val result = connector.getCitizenDetailsBySaUtr(saUtr).futureValue
 
@@ -48,7 +58,7 @@ class CitizenDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase wi
 
         val result = connector.getCitizenDetailsBySaUtr(saUtr).futureValue
 
-        result shouldBe ""
+        result shouldBe CitizenDetailsErrorModel(500, "{}")
       }
     }
   }
