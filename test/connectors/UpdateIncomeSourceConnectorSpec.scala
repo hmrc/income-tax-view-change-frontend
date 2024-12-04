@@ -34,7 +34,7 @@ package connectors
 
 import audit.mocks.MockAuditingService
 import config.FrontendAppConfig
-import mocks.MockHttp
+import mocks.MockHttpV2
 import models.updateIncomeSource.UpdateIncomeSourceResponse
 import play.api.Configuration
 import play.api.libs.json.Json
@@ -43,14 +43,13 @@ import testConstants.BaseTestConstants._
 import testConstants.UpdateIncomeSourceTestConstants
 import testConstants.UpdateIncomeSourceTestConstants._
 import testUtils.TestSupport
-import uk.gov.hmrc.http.{HttpClient, HttpResponse}
+import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class UpdateIncomeSourceConnectorSpec extends TestSupport with MockHttp with MockAuditingService {
-  val http: HttpClient = httpClientMock
+class UpdateIncomeSourceConnectorSpec extends TestSupport with MockHttpV2 with MockAuditingService {
 
   trait Setup {
     val baseUrl = "http://localhost:9999"
@@ -59,44 +58,40 @@ class UpdateIncomeSourceConnectorSpec extends TestSupport with MockHttp with Moc
         override lazy val itvcProtectedService: String = "http://localhost:9999"
       }
 
-    val connector = new UpdateIncomeSourceConnector(httpClientMock, getAppConfig())
+    val connector = new UpdateIncomeSourceConnector(mockHttpClientV2, getAppConfig())
   }
 
   "updateCessationDate" should {
 
     s"return a valid UpdateIncomeSourceResponseModel" in new Setup {
-      setupMockHttpPutWithHeaderCarrier(connector.getUpdateIncomeSourceUrl)(
-        UpdateIncomeSourceTestConstants.request,
-        UpdateIncomeSourceTestConstants.successHttpResponse)
+      setupMockHttpV2Put(connector.getUpdateIncomeSourceUrl)(UpdateIncomeSourceTestConstants.successHttpResponse)
+
       val result: Future[UpdateIncomeSourceResponse] = connector.updateCessationDate(testNino, incomeSourceId, Some(LocalDate.parse(cessationDate)))
       result.futureValue shouldBe successResponse
     }
 
     s"return INTERNAL_SERVER_ERROR UpdateIncomeSourceResponseError" when {
       "invalid json response" in new Setup {
-        setupMockHttpPutWithHeaderCarrier(connector.getUpdateIncomeSourceUrl)(
-          UpdateIncomeSourceTestConstants.request,
-          UpdateIncomeSourceTestConstants.successInvalidJsonResponse)
+        setupMockHttpV2Put(connector.getUpdateIncomeSourceUrl)(UpdateIncomeSourceTestConstants.successInvalidJsonResponse)
+
         val result: Future[UpdateIncomeSourceResponse] = connector.updateCessationDate(testNino, incomeSourceId, Some(LocalDate.parse(cessationDate)))
         result.futureValue shouldBe badJsonResponse
       }
       "receiving a 500+ response" in new Setup {
-        setupMockHttpPutWithHeaderCarrier(connector.getUpdateIncomeSourceUrl)(
-          UpdateIncomeSourceTestConstants.request, HttpResponse(status = Status.INTERNAL_SERVER_ERROR,
-            json = Json.toJson(failureResponse), headers = Map.empty))
+        setupMockHttpV2Put(connector.getUpdateIncomeSourceUrl)(HttpResponse(status = Status.INTERNAL_SERVER_ERROR,
+          json = Json.toJson(failureResponse), headers = Map.empty))
+
         val result: Future[UpdateIncomeSourceResponse] = connector.updateCessationDate(testNino, incomeSourceId, Some(LocalDate.parse(cessationDate)))
         result.futureValue shouldBe failureResponse
       }
     }
-
   }
 
   "updateTaxYearSpecific" should {
 
     s"return a valid UpdateIncomeSourceResponseModel" in new Setup {
-      setupMockHttpPutWithHeaderCarrier(connector.getUpdateIncomeSourceUrl)(
-        UpdateIncomeSourceTestConstants.requestTaxYearSpecific,
-        UpdateIncomeSourceTestConstants.successHttpResponse)
+      setupMockHttpV2Put(connector.getUpdateIncomeSourceUrl)(UpdateIncomeSourceTestConstants.successHttpResponse)
+
       val result: Future[UpdateIncomeSourceResponse] = connector.updateIncomeSourceTaxYearSpecific(
         testNino, incomeSourceId, taxYearSpecific)
       result.futureValue shouldBe successResponse
@@ -104,18 +99,16 @@ class UpdateIncomeSourceConnectorSpec extends TestSupport with MockHttp with Moc
 
     s"return INTERNAL_SERVER_ERROR UpdateIncomeSourceResponseError" when {
       "invalid json response" in new Setup {
-        setupMockHttpPutWithHeaderCarrier(connector.getUpdateIncomeSourceUrl)(
-          UpdateIncomeSourceTestConstants.requestTaxYearSpecific,
-          UpdateIncomeSourceTestConstants.successInvalidJsonResponse)
+        setupMockHttpV2Put(connector.getUpdateIncomeSourceUrl)(UpdateIncomeSourceTestConstants.successInvalidJsonResponse)
+
         val result: Future[UpdateIncomeSourceResponse] = connector.updateIncomeSourceTaxYearSpecific(
           testNino, incomeSourceId, taxYearSpecific)
         result.futureValue shouldBe badJsonResponse
       }
       "receiving a 500+ response" in new Setup {
-        setupMockHttpPutWithHeaderCarrier(connector.getUpdateIncomeSourceUrl)(
-          UpdateIncomeSourceTestConstants.requestTaxYearSpecific,
-          HttpResponse(status = Status.INTERNAL_SERVER_ERROR,
-            json = Json.toJson(failureResponse), headers = Map.empty))
+        setupMockHttpV2Put(connector.getUpdateIncomeSourceUrl)(HttpResponse(status = Status.INTERNAL_SERVER_ERROR,
+          json = Json.toJson(failureResponse), headers = Map.empty))
+
         val result: Future[UpdateIncomeSourceResponse] = connector.updateIncomeSourceTaxYearSpecific(
           testNino, incomeSourceId, taxYearSpecific)
         result.futureValue shouldBe failureResponse

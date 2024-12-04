@@ -20,14 +20,16 @@ import config.FrontendAppConfig
 import models.updateIncomeSource._
 import play.api.Logger
 import play.api.http.Status.OK
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import play.api.libs.json.Json
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UpdateIncomeSourceConnector @Inject()(val http: HttpClient,
+class UpdateIncomeSourceConnector @Inject()(val http: HttpClientV2,
                                             val appConfig: FrontendAppConfig
                                            )(implicit val ec: ExecutionContext) extends RawResponseReads {
   def getUpdateIncomeSourceUrl: String = {
@@ -39,9 +41,9 @@ class UpdateIncomeSourceConnector @Inject()(val http: HttpClient,
     val body = UpdateIncomeSourceRequestModel(nino = nino, incomeSourceID = incomeSourceId,
       cessation = Some(Cessation(cessationIndicator = true, cessationDate = cessationDate)))
 
-    http.PUT[UpdateIncomeSourceRequestModel, HttpResponse](
-      getUpdateIncomeSourceUrl,
-      body, Seq[(String, String)]()).map { response =>
+    http.put(url"$getUpdateIncomeSourceUrl")
+      .withBody(Json.toJson[UpdateIncomeSourceRequestModel](body))
+      .execute[HttpResponse].map { response =>
       response.status match {
         case OK => response.json.validate[UpdateIncomeSourceResponseModel].fold(
           invalid => {
@@ -68,9 +70,9 @@ class UpdateIncomeSourceConnector @Inject()(val http: HttpClient,
                                        (implicit headerCarrier: HeaderCarrier): Future[UpdateIncomeSourceResponse] = {
     val body = UpdateIncomeSourceRequestModel(nino = nino, incomeSourceID = incomeSourceId, taxYearSpecific = Some(taxYearSpecific))
 
-    http.PUT[UpdateIncomeSourceRequestModel, HttpResponse](
-      getUpdateIncomeSourceUrl,
-      body, Seq[(String, String)]()).map { response =>
+    http.put(url"$getUpdateIncomeSourceUrl")
+      .withBody(Json.toJson[UpdateIncomeSourceRequestModel](body))
+      .execute[HttpResponse].map { response =>
       response.status match {
         case OK => response.json.validate[UpdateIncomeSourceResponseModel].fold(
           invalid => {
