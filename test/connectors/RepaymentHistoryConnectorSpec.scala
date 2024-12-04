@@ -34,7 +34,7 @@ package connectors
 
 import audit.mocks.MockAuditingService
 import config.FrontendAppConfig
-import mocks.MockHttp
+import mocks.MockHttpV2
 import models.repaymentHistory.{RepaymentHistoryErrorModel, RepaymentHistoryModel, RepaymentHistoryResponseModel}
 import play.api.Configuration
 import play.api.http.Status._
@@ -48,7 +48,7 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.Future
 
-class RepaymentHistoryConnectorSpec extends TestSupport with MockHttp with MockAuditingService {
+class RepaymentHistoryConnectorSpec extends TestSupport with MockHttpV2 with MockAuditingService {
 
   trait Setup {
     val baseUrl = "http://localhost:9999"
@@ -57,7 +57,7 @@ class RepaymentHistoryConnectorSpec extends TestSupport with MockHttp with MockA
         override lazy val itvcProtectedService: String = "http://localhost:9999"
       }
 
-    val connector = new RepaymentHistoryConnector(httpClientMock, getAppConfig())
+    val connector = new RepaymentHistoryConnector(mockHttpClientV2, getAppConfig())
   }
 
   "getRepaymentHistoryByIdUrl" should {
@@ -80,14 +80,14 @@ class RepaymentHistoryConnectorSpec extends TestSupport with MockHttp with MockA
       val successResponseMultipleRepayments = HttpResponse(status = OK, json = validMultipleRepaymentHistoryJson, headers = Map.empty)
 
       "receiving an OK with only one valid data item" in new Setup {
-        setupMockHttpGet(connector.getRepaymentHistoryByIdUrl(testNino, repaymentId))(successResponse)
+        setupMockHttpV2Get(connector.getRepaymentHistoryByIdUrl(testNino, repaymentId))(successResponse)
 
         val result: Future[RepaymentHistoryResponseModel] = connector.getRepaymentHistoryByRepaymentId(testUserNino, repaymentId)
         result.futureValue shouldBe RepaymentHistoryModel(List(repaymentHistoryOneRSI))
       }
 
       "receiving an OK with multiple valid data items" in new Setup {
-        setupMockHttpGet(connector.getRepaymentHistoryByIdUrl(testNino, repaymentId))(successResponseMultipleRepayments)
+        setupMockHttpV2Get(connector.getRepaymentHistoryByIdUrl(testNino, repaymentId))(successResponseMultipleRepayments)
 
         val result: Future[RepaymentHistoryResponseModel] = connector.getRepaymentHistoryByRepaymentId(testUserNino, repaymentId)
         result.futureValue shouldBe RepaymentHistoryModel(List(repaymentHistoryOneRSI, repaymentHistoryOneRSI))
@@ -97,7 +97,7 @@ class RepaymentHistoryConnectorSpec extends TestSupport with MockHttp with MockA
     "return a NOT FOUND repayment history error" when {
 
       "receiving a not found response" in new Setup {
-        setupMockHttpGet(connector.getRepaymentHistoryByIdUrl(testNino, repaymentId))(HttpResponse(status = Status.NOT_FOUND,
+        setupMockHttpV2Get(connector.getRepaymentHistoryByIdUrl(testNino, repaymentId))(HttpResponse(status = Status.NOT_FOUND,
           json = Json.toJson("Error message"), headers = Map.empty))
 
         val result: Future[RepaymentHistoryResponseModel] = connector.getRepaymentHistoryByRepaymentId(testUserNino, repaymentId)
@@ -108,7 +108,7 @@ class RepaymentHistoryConnectorSpec extends TestSupport with MockHttp with MockA
     "return an INTERNAL_SERVER_ERROR repayment history error" when {
 
       "receiving a 500+ response" in new Setup {
-        setupMockHttpGet(connector.getRepaymentHistoryByIdUrl(testNino, repaymentId))(HttpResponse(status = Status.SERVICE_UNAVAILABLE,
+        setupMockHttpV2Get(connector.getRepaymentHistoryByIdUrl(testNino, repaymentId))(HttpResponse(status = Status.SERVICE_UNAVAILABLE,
           json = Json.toJson("Error message"), headers = Map.empty))
 
         val result: Future[RepaymentHistoryResponseModel] = connector.getRepaymentHistoryByRepaymentId(testUserNino, repaymentId)
@@ -116,7 +116,7 @@ class RepaymentHistoryConnectorSpec extends TestSupport with MockHttp with MockA
       }
 
       "receiving a 400- response" in new Setup {
-        setupMockHttpGet(connector.getRepaymentHistoryByIdUrl(testNino, repaymentId))(HttpResponse(status = Status.BAD_REQUEST,
+        setupMockHttpV2Get(connector.getRepaymentHistoryByIdUrl(testNino, repaymentId))(HttpResponse(status = Status.BAD_REQUEST,
           json = Json.toJson("Error message"), headers = Map.empty))
 
         val result: Future[RepaymentHistoryResponseModel] = connector.getRepaymentHistoryByRepaymentId(testUserNino, repaymentId)
@@ -125,8 +125,7 @@ class RepaymentHistoryConnectorSpec extends TestSupport with MockHttp with MockA
     }
   }
 
-  // TODO rename to getallrepaymenthisotry
-  ".getRepaymentHistoryByDateUrl" should {
+  ".getRepaymentHistoryByNino" should {
 
     "return a valid RepaymentHistoryModel" when {
 
@@ -134,14 +133,14 @@ class RepaymentHistoryConnectorSpec extends TestSupport with MockHttp with MockA
       val successResponseMultipleRepayments = HttpResponse(status = OK, json = validMultipleRepaymentHistoryJson, headers = Map.empty)
 
       "receiving an OK with only one valid data item" in new Setup {
-        setupMockHttpGet(connector.getAllRepaymentHistoryUrl(testNino))(successResponse)
+        setupMockHttpV2Get(connector.getAllRepaymentHistoryUrl(testNino))(successResponse)
 
         val result: Future[RepaymentHistoryResponseModel] = connector.getRepaymentHistoryByNino(testUserNino)
         result.futureValue shouldBe RepaymentHistoryModel(List(repaymentHistoryOneRSI))
       }
 
       "receiving an OK with multiple valid data items" in new Setup {
-        setupMockHttpGet(connector.getAllRepaymentHistoryUrl(testNino))(successResponseMultipleRepayments)
+        setupMockHttpV2Get(connector.getAllRepaymentHistoryUrl(testNino))(successResponseMultipleRepayments)
 
         val result: Future[RepaymentHistoryResponseModel] = connector.getRepaymentHistoryByNino(testUserNino)
         result.futureValue shouldBe RepaymentHistoryModel(List(repaymentHistoryOneRSI, repaymentHistoryOneRSI))
@@ -151,7 +150,7 @@ class RepaymentHistoryConnectorSpec extends TestSupport with MockHttp with MockA
     "return a NOT FOUND repayment history error" when {
 
       "receiving a not found response" in new Setup {
-        setupMockHttpGet(connector.getAllRepaymentHistoryUrl(testNino))(HttpResponse(status = Status.NOT_FOUND,
+        setupMockHttpV2Get(connector.getAllRepaymentHistoryUrl(testNino))(HttpResponse(status = Status.NOT_FOUND,
           json = Json.toJson("Error message"), headers = Map.empty))
 
         val result: Future[RepaymentHistoryResponseModel] = connector.getRepaymentHistoryByNino(testUserNino)
@@ -162,7 +161,7 @@ class RepaymentHistoryConnectorSpec extends TestSupport with MockHttp with MockA
     "return an INTERNAL_SERVER_ERROR repayment history error" when {
 
       "receiving a 500+ response" in new Setup {
-        setupMockHttpGet(connector.getAllRepaymentHistoryUrl(testNino))(HttpResponse(status = Status.SERVICE_UNAVAILABLE,
+        setupMockHttpV2Get(connector.getAllRepaymentHistoryUrl(testNino))(HttpResponse(status = Status.SERVICE_UNAVAILABLE,
           json = Json.toJson("Error message"), headers = Map.empty))
 
         val result: Future[RepaymentHistoryResponseModel] = connector.getRepaymentHistoryByNino(testUserNino)
@@ -170,7 +169,7 @@ class RepaymentHistoryConnectorSpec extends TestSupport with MockHttp with MockA
       }
 
       "receiving a 400- response" in new Setup {
-        setupMockHttpGet(connector.getAllRepaymentHistoryUrl(testNino))(HttpResponse(status = Status.BAD_REQUEST,
+        setupMockHttpV2Get(connector.getAllRepaymentHistoryUrl(testNino))(HttpResponse(status = Status.BAD_REQUEST,
           json = Json.toJson("Error message"), headers = Map.empty))
 
         val result: Future[RepaymentHistoryResponseModel] = connector.getRepaymentHistoryByNino(testUserNino)
