@@ -35,8 +35,8 @@ package connectors
 import audit.mocks.MockAuditingService
 import audit.models._
 import config.FrontendAppConfig
-import mocks.MockHttp
-import models.obligations.{ObligationsErrorModel, ObligationsResponseModel, ObligationsModel}
+import mocks.{MockHttp, MockHttpV2}
+import models.obligations.{ObligationsErrorModel, ObligationsModel, ObligationsResponseModel}
 import play.api.Configuration
 import play.api.http.Status.{FORBIDDEN, NOT_FOUND}
 import play.api.libs.json.Json
@@ -50,7 +50,7 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class ObligationsConnectorSpec extends TestSupport with MockHttp with MockAuditingService {
+class ObligationsConnectorSpec extends TestSupport with MockHttpV2 with MockAuditingService {
 
   trait Setup {
     val baseUrl = "http://localhost:9999"
@@ -62,7 +62,7 @@ class ObligationsConnectorSpec extends TestSupport with MockHttp with MockAuditi
         override lazy val itvcProtectedService: String = "http://localhost:9999"
       }
 
-    val connector = new ObligationsConnector(httpClientMock, mockAuditingService, getAppConfig())
+    val connector = new ObligationsConnector(mockHttpClientV2, mockAuditingService, getAppConfig())
   }
 
   "getOpenObligationsUrl" should {
@@ -87,7 +87,7 @@ class ObligationsConnectorSpec extends TestSupport with MockHttp with MockAuditi
     val getNextUpdatesTestUrl = s"http://localhost:9999/income-tax-view-change/$testNino/open-obligations"
 
     "return a SuccessResponse with JSON in case of success" in new Setup {
-      setupMockHttpGet(getNextUpdatesTestUrl)(successResponse)
+      setupMockHttpV2Get(s"$getNextUpdatesTestUrl")(successResponse)
 
       val result: Future[ObligationsResponseModel] = connector.getOpenObligations()
       result.futureValue shouldBe obligationsDataSelfEmploymentOnlySuccessModel
@@ -96,7 +96,7 @@ class ObligationsConnectorSpec extends TestSupport with MockHttp with MockAuditi
     }
 
     "return ErrorResponse model in case of failure" in new Setup {
-      setupMockHttpGet(getNextUpdatesTestUrl)(badResponse)
+      setupMockHttpV2Get(s"$getNextUpdatesTestUrl")(badResponse)
 
       val result: Future[ObligationsResponseModel] = connector.getOpenObligations()
       result.futureValue shouldBe ObligationsErrorModel(Status.BAD_REQUEST, "Error Message")
@@ -104,7 +104,7 @@ class ObligationsConnectorSpec extends TestSupport with MockHttp with MockAuditi
     }
 
     "return BusinessListError model when bad JSON is received" in new Setup {
-      setupMockHttpGet(getNextUpdatesTestUrl)(successResponseBadJson)
+      setupMockHttpV2Get(s"$getNextUpdatesTestUrl")(successResponseBadJson)
 
       val result: Future[ObligationsResponseModel] = connector.getOpenObligations()
       result.futureValue shouldBe ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Next Updates Data Response")
@@ -112,7 +112,7 @@ class ObligationsConnectorSpec extends TestSupport with MockHttp with MockAuditi
     }
 
     "return NextUpdatesErrorModel model in case of future failed scenario" in new Setup {
-      setupMockFailedHttpGet(getNextUpdatesTestUrl)
+      setupMockFailedHttpV2Get(s"$getNextUpdatesTestUrl")
 
       val result: Future[ObligationsResponseModel] = connector.getOpenObligations()
       result.futureValue shouldBe ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, unknown error")
@@ -120,7 +120,7 @@ class ObligationsConnectorSpec extends TestSupport with MockHttp with MockAuditi
     }
 
     s"return a empty SuccessResponse when ${NOT_FOUND} or ${FORBIDDEN}" in new Setup {
-      setupMockHttpGet(getNextUpdatesTestUrl)(emptyResponse)
+      setupMockHttpV2Get(s"$getNextUpdatesTestUrl")(emptyResponse)
       val result: Future[ObligationsResponseModel] = connector.getOpenObligations()
       result.futureValue shouldBe ObligationsModel(Seq.empty)
     }
@@ -136,7 +136,7 @@ class ObligationsConnectorSpec extends TestSupport with MockHttp with MockAuditi
 
 
     s"return a valid updates model on a successful response with valid json" in new Setup {
-      setupMockHttpGet(connector.getAllObligationsDateRangeUrl(fromDate, toDate, testNino))(successResponse)
+      setupMockHttpV2Get(s"${connector.getAllObligationsDateRangeUrl(fromDate, toDate, testNino)}")(successResponse)
 
       val result: Future[ObligationsResponseModel] = connector.getAllObligationsDateRange(fromDate, toDate)
       result.futureValue shouldBe obligationsDataSelfEmploymentOnlySuccessModel
@@ -145,7 +145,7 @@ class ObligationsConnectorSpec extends TestSupport with MockHttp with MockAuditi
     }
 
     "return an error model in case of failure" in new Setup {
-      setupMockHttpGet(connector.getAllObligationsDateRangeUrl(fromDate, toDate, testNino))(badResponse)
+      setupMockHttpV2Get(s"${connector.getAllObligationsDateRangeUrl(fromDate, toDate, testNino)}")(badResponse)
 
       val result: Future[ObligationsResponseModel] = connector.getAllObligationsDateRange(fromDate, toDate)
       result.futureValue shouldBe ObligationsErrorModel(Status.BAD_REQUEST, "Error Message")
@@ -153,7 +153,7 @@ class ObligationsConnectorSpec extends TestSupport with MockHttp with MockAuditi
     }
 
     "return model when bad JSON is received" in new Setup {
-      setupMockHttpGet(connector.getAllObligationsDateRangeUrl(fromDate, toDate, testNino))(successResponseBadJson)
+      setupMockHttpV2Get(s"${connector.getAllObligationsDateRangeUrl(fromDate, toDate, testNino)}")(successResponseBadJson)
 
       val result: Future[ObligationsResponseModel] = connector.getAllObligationsDateRange(fromDate, toDate)
       result.futureValue shouldBe ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Next Updates Data Response")
@@ -161,7 +161,7 @@ class ObligationsConnectorSpec extends TestSupport with MockHttp with MockAuditi
     }
 
     "return NextUpdatesErrorModel model in case of future failed scenario" in new Setup {
-      setupMockFailedHttpGet(connector.getAllObligationsDateRangeUrl(fromDate, toDate, testNino))
+      setupMockFailedHttpV2Get(s"${connector.getAllObligationsDateRangeUrl(fromDate, toDate, testNino)}")
 
       val result: Future[ObligationsResponseModel] = connector.getAllObligationsDateRange(fromDate, toDate)
       result.futureValue shouldBe ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, unknown error")
@@ -169,7 +169,7 @@ class ObligationsConnectorSpec extends TestSupport with MockHttp with MockAuditi
     }
 
     s"return a empty SuccessResponse when ${NOT_FOUND} or ${FORBIDDEN}" in new Setup {
-      setupMockHttpGet(connector.getAllObligationsDateRangeUrl(fromDate, toDate, testNino))(emptyResponse)
+      setupMockHttpV2Get(s"${connector.getAllObligationsDateRangeUrl(fromDate, toDate, testNino)}")(emptyResponse)
       val result: Future[ObligationsResponseModel] = connector.getAllObligationsDateRange(fromDate, toDate)
       result.futureValue shouldBe ObligationsModel(Seq.empty)
     }
