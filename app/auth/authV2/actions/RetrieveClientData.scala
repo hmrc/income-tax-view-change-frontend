@@ -24,6 +24,7 @@ import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Request, Result}
 import services.SessionDataService
+import services.agent.ClientDetailsService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
@@ -31,6 +32,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RetrieveClientData @Inject()(sessionDataService: SessionDataService,
+                                   clientDetailsService: ClientDetailsService,
                                    errorHandler: AgentItvcErrorHandler,
                                    appConfig: FrontendAppConfig)
                                   (implicit val executionContext: ExecutionContext) extends ActionRefiner[Request, ClientDataRequest] {
@@ -47,23 +49,29 @@ class RetrieveClientData @Inject()(sessionDataService: SessionDataService,
 
     val useSessionDataService = appConfig.isSessionDataStorageEnabled
 
-    sessionDataService.getSessionData(useCookie = !useSessionDataService).map {
-      case Right(sessionData) => Right(ClientDataRequest(
-        sessionData.mtditid,
-        r.session.get(SessionKeys.clientFirstName),
-        r.session.get(SessionKeys.clientLastName),
-        sessionData.nino,
-        sessionData.utr,
-        getBooleanFromSession(SessionKeys.isSupportingAgent),
-        confirmed = {
-          r.session.get(SessionKeys.confirmedClient) match {
-            case Some(value) if value != "" => value.toBoolean
-            case _ => useSessionDataService
-          }
+    sessionDataService.getSessionData(useCookie = !useSessionDataService).flatMap {
+      case Right(sessionData) =>
+        clientDetailsService.checkClientDetails(sessionData.utr).map {
+          case Right(name) => Right(ClientDataRequest(
+              sessionData.mtditid,
+              name.firstName,
+              name.lastName,
+              sessionData.nino,
+              sessionData.utr,
+              getBooleanFromSession(SessionKeys.isSupportingAgent),
+              confirmed = {
+                r.session.get(SessionKeys.confirmedClient) match {
+                  case Some(value) if value != "" => value.toBoolean
+                  case _ => useSessionDataService
+                }
+              }
+            ))
+          case Left(error) =>
+            Logger("error").error(s"unable to find client with UTR: ${sessionData.utr} " + error)
+            Left(Redirect(routes.EnterClientsUTRController.show))
         }
-      ))
-      case Left(_: SessionDataNotFound) => Left(Redirect(routes.EnterClientsUTRController.show))
-      case Left(_) => Left(errorHandler.showInternalServerError())
+      case Left(_: SessionDataNotFound) => Future.successful(Left(Redirect(routes.EnterClientsUTRController.show)))
+      case Left(_) => Future.successful(Left(errorHandler.showInternalServerError()))
     }
   }
 
