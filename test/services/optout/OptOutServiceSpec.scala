@@ -426,7 +426,7 @@ class OptOutServiceSpec
 
           setupMockIsTaxYearCrystallisedCall(previousTaxYear)(Future.successful(crystallised))
           setupMockGetStatusTillAvailableFutureYears(previousTaxYear)(Future.successful(yearToStatus))
-          setupMockGetCurrentTaxYearEnd(taxYear)
+          setupMockGetCurrentTaxYear(taxYear)
 
           val expected = NextUpdatesQuarterlyReportingContentChecks(
             currentYearItsaStatus = true,
@@ -441,7 +441,7 @@ class OptOutServiceSpec
         "return NextUpdatesQuarterlyReportingContentCheck" in {
           setupMockIsTaxYearCrystallisedCall(previousTaxYear)(Future.failed(error))
           setupMockGetStatusTillAvailableFutureYears(previousTaxYear)(Future.successful(yearToStatus))
-          setupMockGetCurrentTaxYearEnd(taxYear)
+          setupMockGetCurrentTaxYear(taxYear)
 
           service.nextUpdatesPageOptOutViewModels().failed.map { ex =>
             ex shouldBe a[RuntimeException]
@@ -454,7 +454,7 @@ class OptOutServiceSpec
         "return NextUpdatesQuarterlyReportingContentCheck" in {
           setupMockIsTaxYearCrystallisedCall(previousTaxYear)(Future.successful(crystallised))
           setupMockGetStatusTillAvailableFutureYears(previousTaxYear)(Future.failed(error))
-          setupMockGetCurrentTaxYearEnd(taxYear)
+          setupMockGetCurrentTaxYear(taxYear)
 
           service.nextUpdatesPageOptOutViewModels().failed.map { ex =>
             ex shouldBe a[RuntimeException]

@@ -16,148 +16,95 @@
 
 package controllers.manageBusinesses.manage
 
+import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import helpers.ComponentSpecBase
+import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.IncomeSourcesFs
-import org.scalatest.Assertion
+import models.admin.{IncomeSourcesFs, NavBarFs}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
-import play.api.libs.ws.WSResponse
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, completedUIJourneySessionData, emptyUIJourneySessionData}
 
-class CannotGoBackErrorControllerISpec extends ComponentSpecBase {
+class CannotGoBackErrorControllerISpec extends ControllerISpecHelper {
   val title: String = messagesAPI("cannotGoBack.heading")
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
-  val url: IncomeSourceType => String = (incomeSourceType: IncomeSourceType) =>
-    routes.CannotGoBackErrorController.show(isAgent = false, incomeSourceType).url
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     await(sessionService.deleteSession(Manage))
   }
 
-  def runOKTest(incomeSourceType: IncomeSourceType): Assertion = {
-    enable(IncomeSourcesFs)
-    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-    await(sessionService.setMongoData(completedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType))))
-
-    lazy val result: WSResponse = incomeSourceType match {
-      case SelfEmployment => IncomeTaxViewChangeFrontendManageBusinesses.getManageSECannotGoBack
-      case UkProperty => IncomeTaxViewChangeFrontendManageBusinesses.getManageForeignPropertyCannotGoBack
-      case ForeignProperty => IncomeTaxViewChangeFrontendManageBusinesses.getManageUKPropertyCannotGoBack
+  def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType): String = {
+    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
+    val pathEnd = incomeSourceType match {
+      case SelfEmployment => "/manage-business-cannot-go-back"
+      case UkProperty => "/manage-uk-property-cannot-go-back"
+      case _ => "/manage-foreign-property-cannot-go-back"
     }
-
-    result should have(
-      httpStatus(OK),
-      pageTitleIndividual("cannotGoBack.heading")
-    )
+    pathStart + "/manage-your-businesses/manage" + pathEnd
   }
 
-  def runRedirectTest(incomeSourceType: IncomeSourceType): Assertion = {
-    disable(IncomeSourcesFs)
-    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+  mtdAllRoles.foreach { case mtdUserRole =>
+    List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
+      val path = getPath(mtdUserRole, incomeSourceType)
+      val additionalCookies = getAdditionalCookies(mtdUserRole)
+      s"GET $path" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            "render the cannot go back error page" when {
+              "the journey is completed" in {
+                enable(IncomeSourcesFs)
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+                await(sessionService.setMongoData(completedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType))))
 
-    lazy val result: WSResponse = incomeSourceType match {
-      case SelfEmployment => IncomeTaxViewChangeFrontendManageBusinesses.getManageSECannotGoBack
-      case UkProperty => IncomeTaxViewChangeFrontendManageBusinesses.getManageForeignPropertyCannotGoBack
-      case ForeignProperty => IncomeTaxViewChangeFrontendManageBusinesses.getManageUKPropertyCannotGoBack
-    }
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                result should have(
+                  httpStatus(OK),
+                  pageTitleIndividual("cannotGoBack.heading")
+                )
+              }
+            }
 
-    val expectedRedirect: String = controllers.routes.HomeController.show().url
+            "redirect to the home page" when {
+              "the income sources feature switch is disabled" in {
+                disable(IncomeSourcesFs)
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-    result should have(
-      httpStatus(SEE_OTHER),
-      redirectURI(expectedRedirect)
-    )
-  }
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                verifyIncomeSourceDetailsCall(testMtditid)
 
-  def runISETest(incomeSourceType: IncomeSourceType): Assertion = {
-    enable(IncomeSourcesFs)
-    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+                result should have(
+                  httpStatus(SEE_OTHER),
+                  redirectURI(homeUrl(mtdUserRole))
+                )
+              }
+            }
 
-    await(sessionService.setMongoData(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType))))
+            "render the error page" when {
+              "mongo is empty" in {
+                enable(IncomeSourcesFs)
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+                await(sessionService.setMongoData(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType))))
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                verifyIncomeSourceDetailsCall(testMtditid)
 
-    val result: WSResponse = incomeSourceType match {
-      case SelfEmployment => IncomeTaxViewChangeFrontendManageBusinesses.getManageSECannotGoBack
-      case UkProperty => IncomeTaxViewChangeFrontendManageBusinesses.getManageUKPropertyCannotGoBack
-      case ForeignProperty => IncomeTaxViewChangeFrontendManageBusinesses.getManageForeignPropertyCannotGoBack
-    }
-
-    result should have(
-      httpStatus(INTERNAL_SERVER_ERROR)
-    )
-  }
-
-  s"calling GET ${url(UkProperty)}" should {
-    "return 200 OK" when {
-      "FS enabled - UK Property" in {
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-        await(sessionService.setMongoData(completedUIJourneySessionData(IncomeSourceJourneyType(Manage, UkProperty))))
-
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.getManageUKPropertyCannotGoBack
-
-        result should have(
-          httpStatus(OK)
-        )
-      }
-    }
-    "return 303 SEE_OTHER" when {
-      "FS disabled - UK Property" in {
-        runRedirectTest(UkProperty)
-      }
-    }
-    "return 500 INTERNAL_SERVER_ERROR" when {
-      "Mongo empty - UK Property" in {
-        runISETest(UkProperty)
-      }
-    }
-  }
-  s"calling GET ${url(ForeignProperty)}" should {
-    "return 200 OK" when {
-      "FS enabled - Foreign Property" in {
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-        await(sessionService.setMongoData(completedUIJourneySessionData(IncomeSourceJourneyType(Manage, ForeignProperty))))
-
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.getManageForeignPropertyCannotGoBack
-
-        result should have(
-          httpStatus(OK)
-        )
-      }
-    }
-    "return 303 SEE_OTHER" when {
-      "FS disabled - Foreign Property" in {
-        runRedirectTest(ForeignProperty)
-      }
-
-      "return 500 INTERNAL_SERVER_ERROR" when {
-        "Mongo empty - Foreign Property" in {
-          runISETest(ForeignProperty)
+                result should have(
+                  httpStatus(INTERNAL_SERVER_ERROR)
+                )
+              }
+            }
+          }
+          testAuthFailures(path, mtdUserRole)
         }
-      }
-    }
-  }
-  s"calling GET ${url(SelfEmployment)}" should {
-    "return 200 OK" when {
-      "FS enabled - Self Employment" in {
-        runOKTest(SelfEmployment)
-      }
-    }
-    "return 303 SEE_OTHER" when {
-      "FS disabled - Self Employment" in {
-        runRedirectTest(SelfEmployment)
-      }
-    }
-    "return 500 INTERNAL_SERVER_ERROR" when {
-      "Mongo empty - Self Employment" in {
-        runISETest(SelfEmployment)
       }
     }
   }

@@ -17,41 +17,41 @@
 package controllers.manageBusinesses.manage
 
 import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
+import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney._
-import enums.JourneyType.{IncomeSourceJourneyType, JourneyType, Manage}
+import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{AnnualReportingMethod, QuarterlyReportingMethod}
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
 import play.api.Logger
+import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, NextUpdatesService, SessionService}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.JourneyCheckerManageBusinesses
 import views.html.manageBusinesses.manage.ManageObligations
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedFunctions,
-                                            implicit val itvcErrorHandler: ItvcErrorHandler,
-                                            implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+class ManageObligationsController @Inject()(val authActions: AuthActions,
+                                            val itvcErrorHandler: ItvcErrorHandler,
+                                            val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                             val incomeSourceDetailsService: IncomeSourceDetailsService,
                                             val obligationsView: ManageObligations,
                                             val sessionService: SessionService,
-                                            nextUpdatesService: NextUpdatesService,
-                                            val auth: AuthenticatorPredicate)
+                                            nextUpdatesService: NextUpdatesService)
                                            (implicit val ec: ExecutionContext,
-                                            implicit override val mcc: MessagesControllerComponents,
-                                            val appConfig: FrontendAppConfig) extends ClientConfirmedController
-  with FeatureSwitching with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
+                                            val mcc: MessagesControllerComponents,
+                                            val appConfig: FrontendAppConfig) extends FrontendController(mcc)
+  with I18nSupport with JourneyCheckerManageBusinesses {
 
   private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def show(isAgent: Boolean,
+           incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
       withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = CannotGoBackPage) { sessionData =>
         val (reportingMethodOpt, taxYearOpt, incomeSourceIdStringOpt) = (
@@ -66,7 +66,7 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
               handleRequest(
                 incomeSourceType,
                 isAgent,
-                (s"${taxYear - 1}-$taxYear"),
+                s"${taxYear - 1}-$taxYear",
                 reportingMethod,
                 incomeSourceId
               )
@@ -74,7 +74,7 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
               handleRequest(
                 incomeSourceType,
                 isAgent,
-                (s"${taxYear - 1}-$taxYear"),
+                s"${taxYear - 1}-$taxYear",
                 reportingMethod,
                 None
               )
@@ -113,7 +113,7 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
     }
   }
 
-  def showError(isAgent: Boolean, message: String)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+  def showError(isAgent: Boolean, message: String)(implicit user: MtdItUser[_]): Future[Result] = {
     Logger("application").error(
       s"${if (isAgent) "[Agent]"}$message")
     Future.successful {
@@ -154,7 +154,7 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
   }
 
 
-  def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
+  def submit(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { _ =>
     Future.successful(Redirect(controllers.manageBusinesses.manage.routes.ManageIncomeSourceController.show(isAgent)))
   }
 }

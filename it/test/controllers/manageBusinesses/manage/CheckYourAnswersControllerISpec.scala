@@ -18,11 +18,12 @@ package controllers.manageBusinesses.manage
 
 import audit.models.ManageIncomeSourceCheckYourAnswersAuditModel
 import auth.MtdItUser
-import models.admin.IncomeSourcesFs
+import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import helpers.ComponentSpecBase
+import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
+import models.admin.{IncomeSourcesFs, NavBarFs}
 import models.incomeSourceDetails.{LatencyDetails, ManageIncomeSourceData, UIJourneySessionData}
 import models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -37,7 +38,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import java.time.LocalDate
 import java.time.Month.APRIL
 
-class CheckYourAnswersControllerISpec extends ComponentSpecBase {
+class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
 
   val annual = "annual"
   val quarterly = "quarterly"
@@ -58,32 +59,6 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
       latencyIndicator2 = annuallyIndicator
     )
 
-  private lazy val manageObligationsController = controllers.manageBusinesses.manage.routes
-    .ManageObligationsController
-  private lazy val checkYourAnswersController = controllers.manageBusinesses.manage.routes
-    .CheckYourAnswersController
-
-  val checkYourAnswersShowUKPropertyUrl: String = checkYourAnswersController
-    .show(isAgent = false, incomeSourceType = UkProperty).url
-  val checkYourAnswersShowForeignPropertyUrl: String = checkYourAnswersController
-    .show(isAgent = false, incomeSourceType = ForeignProperty).url
-  val checkYourAnswersShowSoleTraderBusinessUrl: String = checkYourAnswersController
-    .show(isAgent = false, incomeSourceType = SelfEmployment).url
-
-  val checkYourAnswersSubmitUKPropertyUrl: String = checkYourAnswersController
-    .submit(isAgent = false, incomeSourceType = UkProperty).url
-  val checkYourAnswersSubmitForeignPropertyUrl: String = checkYourAnswersController
-    .submit(isAgent = false, incomeSourceType = ForeignProperty).url
-  val checkYourAnswersSubmitSoleTraderBusinessUrl: String = checkYourAnswersController
-    .submit(isAgent = false, incomeSourceType = SelfEmployment).url
-
-  val manageObligationsShowUKPropertyUrl: String = manageObligationsController
-    .show(false, UkProperty).url
-  val manageObligationsShowForeignPropertyUrl: String = manageObligationsController
-    .show(false, ForeignProperty).url
-  val manageObligationsShowSelfEmploymentUrl: String = manageObligationsController
-    .show(false, SelfEmployment).url
-
   val prefix: String = "manageBusinesses.check-answers"
 
   val continueButtonText: String = messagesAPI("manageBusinesses.check-answers.confirm")
@@ -102,220 +77,140 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
     journeyType = IncomeSourceJourneyType(Manage, incomeSourceType).toString,
     manageIncomeSourceData = Some(ManageIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), reportingMethod = Some(annual), taxYear = Some(2024))))
 
-  s"calling GET $checkYourAnswersShowUKPropertyUrl" should {
-    "render the Check your answers page" when {
-      "all session parameters are valid" in {
+  def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType): String = {
+    val pathStart = if(mtdRole == MTDIndividual) "/manage-your-businesses/manage" else "/agents/manage-your-businesses/manage"
+    val pathEnd = incomeSourceType match {
+      case SelfEmployment => "/business-check-your-answers"
+      case UkProperty => "/uk-property-check-your-answers"
+      case ForeignProperty => "/foreign-property-check-your-answers"
+    }
+    pathStart + pathEnd
+  }
 
-        Given("Income Sources FS is enabled")
-        enable(IncomeSourcesFs)
-
-        When(s"I call GET $checkYourAnswersShowUKPropertyUrl")
-
-        And("API 1771  returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetails))
-
-        And("API 1776 updateTaxYearSpecific returns a success response")
-        IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
-
-        await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
-
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.getCheckYourAnswersUKProperty()
-
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual(pageTitle),
-          elementTextByID("continue-button")(continueButtonText)
-        )
-      }
+  def getIncomeSourceDetailsResponse(incomeSourceType: IncomeSourceType) = {
+    incomeSourceType match {
+      case SelfEmployment => singleBusinessResponseInLatencyPeriod(latencyDetails)
+      case UkProperty => singleUKPropertyResponseInLatencyPeriod(latencyDetails)
+      case ForeignProperty => singleForeignPropertyResponseInLatencyPeriod(latencyDetails)
     }
   }
 
-  s"calling GET $checkYourAnswersShowForeignPropertyUrl" should {
-    "render the Check your answers page" when {
-      "all session parameters are valid" in {
-
-        Given("Income Sources FS is enabled")
-        enable(IncomeSourcesFs)
-
-        When(s"I call GET $checkYourAnswersShowForeignPropertyUrl")
-
-        And("API 1771  returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails))
-
-        And("API 1776 updateTaxYearSpecific returns a success response")
-        IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
-
-        await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
-
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.getCheckYourAnswersForeignProperty()
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual(pageTitle),
-          elementTextByID("continue-button")(continueButtonText)
-        )
-      }
+  def setupMongoSessionData(incomeSourceType: IncomeSourceType) = {
+    val incomeId = incomeSourceType match {
+      case SelfEmployment => testSelfEmploymentId
+      case _ => testPropertyIncomeId
     }
+    await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"MANAGE-${incomeSourceType.key}",
+      manageIncomeSourceData = Some(ManageIncomeSourceData(Some(incomeId), Some(annual), Some(taxYear.toInt), Some(false))))))
   }
 
-  s"calling GET $checkYourAnswersShowSoleTraderBusinessUrl" should {
-    "render the Check your answers page" when {
-      "all session parameters are valid" in {
+  List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
+    mtdAllRoles.foreach { mtdUserRole =>
+      val isAgent = mtdUserRole != MTDIndividual
+      val path = getPath(mtdUserRole, incomeSourceType)
+      val additionalCookies = getAdditionalCookies(mtdUserRole)
+      s"GET $path" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            "render the Check your answers page" when {
+              "all session parameters are valid" in {
+                enable(IncomeSourcesFs)
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+                IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
-        Given("Income Sources FS is enabled")
-        enable(IncomeSourcesFs)
+                if (incomeSourceType == SelfEmployment) {
+                  await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
+                    manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId), Some(annual), Some(taxYear.toInt), Some(false))))))
+                } else {
+                  await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
+                }
 
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
-          manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId), Some(annual), Some(taxYear.toInt), Some(false))))))
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
 
-        And("API 1771  returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod(latencyDetails))
+                verifyIncomeSourceDetailsCall(testMtditid)
 
-        And("API 1776 updateTaxYearSpecific returns a success response")
-        IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, pageTitle),
+                  elementTextByID("continue-button")(continueButtonText)
+                )
+              }
+            }
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.getCheckYourAnswersSoleTrader()
-        verifyIncomeSourceDetailsCall(testMtditid)
+            "redirect to home page" when {
+              "Income Sources FS is Disabled" in {
+                disable(IncomeSourcesFs)
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual(pageTitle),
-          elementTextByID("continue-button")(continueButtonText)
-        )
+                if (incomeSourceType == SelfEmployment) {
+                  await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
+                    manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId), Some(annual), Some(taxYear.toInt), Some(false))))))
+                } else {
+                  await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
+                }
+
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+                IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+
+                val result = IncomeTaxViewChangeFrontendManageBusinesses.getCheckYourAnswersSoleTrader()
+                verifyIncomeSourceDetailsCall(testMtditid)
+                result should have(
+                  httpStatus(SEE_OTHER),
+                  redirectURI(controllers.routes.HomeController.show().url)
+                )
+              }
+            }
+          }
+          testAuthFailures(path, mtdUserRole)
+        }
       }
-    }
 
-    "redirect to home page" when {
-      "Income Sources FS is Disabled" in {
+      s"POST $path" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            s"redirect to manage obligations" when {
+              "submitted with valid session data" in {
+                enable(IncomeSourcesFs)
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+                IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
-        Given("Income Sources FS is disabled")
-        disable(IncomeSourcesFs)
+                setupMongoSessionData(incomeSourceType)
 
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
-          manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
+                val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
+                AuditStub.verifyAuditContainsDetail(ManageIncomeSourceCheckYourAnswersAuditModel(true, UkProperty.journeyType, "MANAGE", "Annually", "2023-2024", "UK property")(testUser).detail)
 
-        When(s"I call GET $checkYourAnswersShowSoleTraderBusinessUrl")
+                result should have(
+                  httpStatus(SEE_OTHER),
+                  redirectURI(routes.ManageObligationsController.show(isAgent, incomeSourceType).url)
+                )
+              }
+            }
 
-        And("API 1771  returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+            "redirect to home page" when {
+              "Income Sources FS is disabled" in {
+                disable(IncomeSourcesFs)
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+                IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
-        And("API 1776 updateTaxYearSpecific returns a success response")
-        IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+                val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.getCheckYourAnswersSoleTrader()
-        verifyIncomeSourceDetailsCall(testMtditid)
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.HomeController.show().url)
-        )
-      }
-    }
-  }
-
-  s"calling POST $checkYourAnswersSubmitUKPropertyUrl" should {
-    s"redirect to $manageObligationsShowUKPropertyUrl" when {
-      "submitted with valid session data" in {
-
-        Given("Income Sources FS is enabled")
-        enable(IncomeSourcesFs)
-
-        And("API 1771  returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
-
-        And("API 1776 updateTaxYearSpecific returns a success response")
-        IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
-
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-UK",
-          manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testPropertyIncomeId), Some(annual), Some(taxYear.toInt), Some(false))))))
-
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.postCheckYourAnswersUKProperty()
-
-        AuditStub.verifyAuditContainsDetail(ManageIncomeSourceCheckYourAnswersAuditModel(true, UkProperty.journeyType, "MANAGE", "Annually", "2023-2024", "UK property")(testUser).detail)
-
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(manageObligationsShowUKPropertyUrl)
-        )
-      }
-    }
-  }
-
-  s"calling POST $checkYourAnswersSubmitForeignPropertyUrl" should {
-    s"redirect to $manageObligationsShowForeignPropertyUrl" when {
-      "submitted with valid session data" in {
-
-        Given("Income Sources FS is enabled")
-        enable(IncomeSourcesFs)
-
-        And("API 1771  returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
-
-        And("API 1776 updateTaxYearSpecific returns a success response")
-        IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
-
-        await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
-
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.postCheckYourAnswersForeignProperty()
-
-        AuditStub.verifyAuditContainsDetail(ManageIncomeSourceCheckYourAnswersAuditModel(true, ForeignProperty.journeyType, "MANAGE", "Annually", "2023-2024", "Foreign property")(testUser).detail)
-
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(manageObligationsShowForeignPropertyUrl)
-        )
-      }
-    }
-  }
-
-  s"calling POST $checkYourAnswersSubmitSoleTraderBusinessUrl" should {
-    s"redirect to $manageObligationsShowSelfEmploymentUrl" when {
-      "submitted with valid session data" in {
-
-        Given("Income Sources FS is enabled")
-        enable(IncomeSourcesFs)
-
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
-          manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
-
-        And("API 1771  returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-        And("API 1776 updateTaxYearSpecific returns a success response")
-        IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
-
-        await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
-
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.postCheckYourAnswersSoleTrader()
-
-        AuditStub.verifyAuditContainsDetail(ManageIncomeSourceCheckYourAnswersAuditModel(true, SelfEmployment.journeyType, "MANAGE", "Annually", "2023-2024", "business")(testUser).detail)
-
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(manageObligationsShowSelfEmploymentUrl)
-        )
-      }
-    }
-
-    "redirect to home page" when {
-      "Income Sources FS is disabled" in {
-
-        disable(IncomeSourcesFs)
-
-        And("API 1771  returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-        And("API 1776 updateTaxYearSpecific returns a success response")
-        IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
-
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.postCheckYourAnswersSoleTrader()
-
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.HomeController.show().url)
-        )
+                result should have(
+                  httpStatus(SEE_OTHER),
+                  redirectURI(homeUrl(mtdUserRole))
+                )
+              }
+            }
+          }
+          testAuthFailures(path, mtdUserRole, optBody = Some(Map.empty))
+        }
       }
     }
   }
