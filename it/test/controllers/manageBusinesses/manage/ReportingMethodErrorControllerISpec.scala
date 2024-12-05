@@ -26,7 +26,7 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
 import testConstants.BaseIntegrationTestConstants._
-import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, noPropertyOrBusinessResponse, ukPropertyOnlyResponse}
+import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, noPropertyOrBusinessResponse, ukPropertyOnlyResponse}
 
 class ReportingMethodErrorControllerISpec extends ControllerISpecHelper {
 
@@ -38,7 +38,7 @@ class ReportingMethodErrorControllerISpec extends ControllerISpecHelper {
     incomeSourceType match {
       case SelfEmployment => businessOnlyResponse
       case UkProperty => ukPropertyOnlyResponse
-      case ForeignProperty => noPropertyOrBusinessResponse
+      case ForeignProperty => foreignPropertyOnlyResponse
     }
   }
 
@@ -66,6 +66,8 @@ class ReportingMethodErrorControllerISpec extends ControllerISpecHelper {
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
+                await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
+                  manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
                 verifyIncomeSourceDetailsCall(testMtditid)
 

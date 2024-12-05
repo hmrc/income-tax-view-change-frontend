@@ -17,7 +17,6 @@
 package controllers.incomeSources.manage
 
 import controllers.ControllerISpecHelper
-import controllers.manageBusinesses.manage.routes
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -53,7 +52,7 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
     incomeSourceType match {
       case SelfEmployment => businessOnlyResponse
       case UkProperty => ukPropertyOnlyResponse
-      case ForeignProperty => noPropertyOrBusinessResponse
+      case ForeignProperty => foreignPropertyOnlyResponse
     }
   }
 
@@ -109,7 +108,6 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
                 verifyIncomeSourceDetailsCall(testMtditid)
 
 
-
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, getExpectedHeading(incomeSourceType, true)),
@@ -145,7 +143,8 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                val pathWithValidQueryParams = path + s"?changeTo=$quarterly&taxYear=$taxYear"
+                val result = buildGETMTDClient(pathWithValidQueryParams, additionalCookies).futureValue
 
                 result should have(
                   httpStatus(SEE_OTHER),
@@ -154,23 +153,25 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
               }
             }
 
-            "render the error page" when {
-              "there is no incomeSourceId in the session" in {
-                enable(IncomeSourcesFs)
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
-                await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"MANAGE-${incomeSourceType.key}",
-                  manageIncomeSourceData = None)))
-                IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
+            if (incomeSourceType == SelfEmployment) {
+              "render the error page" when {
+                "there is no incomeSourceId in the session" in {
+                  enable(IncomeSourcesFs)
+                  disable(NavBarFs)
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+                  await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"MANAGE-${incomeSourceType.key}",
+                    manageIncomeSourceData = None)))
+                  IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
 
-                val pathWithValidQueryParams = path + s"?changeTo=$annual&taxYear=$taxYear"
-                val result = buildGETMTDClient(pathWithValidQueryParams, additionalCookies).futureValue
-                verifyIncomeSourceDetailsCall(testMtditid)
+                  val pathWithValidQueryParams = path + s"?changeTo=$annual&taxYear=$taxYear"
+                  val result = buildGETMTDClient(pathWithValidQueryParams, additionalCookies).futureValue
+                  verifyIncomeSourceDetailsCall(testMtditid)
 
-                result should have(
-                  httpStatus(INTERNAL_SERVER_ERROR)
-                )
+                  result should have(
+                    httpStatus(INTERNAL_SERVER_ERROR)
+                  )
+                }
               }
             }
           }

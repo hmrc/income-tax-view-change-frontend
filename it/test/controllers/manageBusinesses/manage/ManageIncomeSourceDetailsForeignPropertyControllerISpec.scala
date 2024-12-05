@@ -54,7 +54,7 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
 
               result should have(
                 httpStatus(OK),
-                pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
+                pageTitle(mtdUserRole, "incomeSources.manage.business-manage-details.heading"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Date started"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessStartDate),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Accounting method"),
@@ -79,7 +79,7 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
 
               result should have(
                 httpStatus(OK),
-                pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
+                pageTitle(mtdUserRole, "incomeSources.manage.business-manage-details.heading"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Date started"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessStartDate),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Accounting method"),
@@ -103,7 +103,7 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
 
               result should have(
                 httpStatus(OK),
-                pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
+                pageTitle(mtdUserRole, "incomeSources.manage.business-manage-details.heading"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Date started"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessStartDate),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Accounting method"),
@@ -128,7 +128,7 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
 
               result should have(
                 httpStatus(OK),
-                pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
+                pageTitle(mtdUserRole, "incomeSources.manage.business-manage-details.heading"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Date started"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessStartDate),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Accounting method"),
@@ -151,7 +151,7 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
 
               result should have(
                 httpStatus(OK),
-                pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
+                pageTitle(mtdUserRole, "incomeSources.manage.business-manage-details.heading"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Date started"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(messagesUnknown),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Accounting method"),

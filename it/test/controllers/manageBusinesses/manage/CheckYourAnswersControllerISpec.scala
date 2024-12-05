@@ -33,7 +33,7 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
-import uk.gov.hmrc.auth.core.AffinityGroup.Individual
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 import java.time.LocalDate
 import java.time.Month.APRIL
@@ -67,10 +67,17 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
 
-  val testUser: MtdItUser[_] = MtdItUser(
-    testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
-    None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
-  )(FakeRequest())
+  def testUser(mtdUserRole: MTDUserRole): MtdItUser[_] = {
+    val (affinityGroup, arn) = if(mtdUserRole == MTDIndividual) {
+      (Individual, None)
+    } else {
+      (Agent, Some("1"))
+    }
+    MtdItUser(
+      testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
+      None, Some("1234567890"), Some("12345-credId"), Some(affinityGroup), arn
+    )(FakeRequest())
+  }
 
   def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
@@ -85,6 +92,21 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
       case ForeignProperty => "/foreign-property-check-your-answers"
     }
     pathStart + pathEnd
+  }
+
+  def verifyCheckAnswersAudit(incomeSourceType: IncomeSourceType, mtdUserRole: MTDUserRole) = {
+    val businessName = incomeSourceType match {
+      case SelfEmployment => "business"
+      case UkProperty => "UK property"
+      case ForeignProperty => "Foreign property"
+    }
+    AuditStub.verifyAuditContainsDetail(
+      ManageIncomeSourceCheckYourAnswersAuditModel(
+        true, incomeSourceType.journeyType,
+        "MANAGE", "Annually",
+        "2023-2024", businessName
+      )(testUser(mtdUserRole)).detail)
+
   }
 
   def getIncomeSourceDetailsResponse(incomeSourceType: IncomeSourceType) = {
@@ -156,11 +178,11 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
                 IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
-                val result = IncomeTaxViewChangeFrontendManageBusinesses.getCheckYourAnswersSoleTrader()
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
                 verifyIncomeSourceDetailsCall(testMtditid)
                 result should have(
                   httpStatus(SEE_OTHER),
-                  redirectURI(controllers.routes.HomeController.show().url)
+                  redirectURI(homeUrl(mtdUserRole))
                 )
               }
             }
@@ -183,8 +205,7 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
                 setupMongoSessionData(incomeSourceType)
 
                 val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
-                AuditStub.verifyAuditContainsDetail(ManageIncomeSourceCheckYourAnswersAuditModel(true, UkProperty.journeyType, "MANAGE", "Annually", "2023-2024", "UK property")(testUser).detail)
-
+                verifyCheckAnswersAudit(incomeSourceType, mtdUserRole)
                 result should have(
                   httpStatus(SEE_OTHER),
                   redirectURI(routes.ManageObligationsController.show(isAgent, incomeSourceType).url)

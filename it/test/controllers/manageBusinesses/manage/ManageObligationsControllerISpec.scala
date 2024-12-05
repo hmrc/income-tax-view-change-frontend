@@ -60,7 +60,7 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
     incomeSourceType match {
       case SelfEmployment => businessOnlyResponse
       case UkProperty => ukPropertyOnlyResponse
-      case ForeignProperty => noPropertyOrBusinessResponse
+      case ForeignProperty => foreignPropertyOnlyResponse
     }
   }
 
