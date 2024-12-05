@@ -53,26 +53,30 @@ class AsMtdUser @Inject()
     }
   }
 
+  private def getClientNameFromCookies(implicit request: Request[_]): Option[Name] = {
+    val firstName = request.session.get(SessionKeys.clientFirstName)
+    val lastName = request.session.get(SessionKeys.clientLastName)
+
+    if (firstName.isDefined && lastName.isDefined) {
+      Some(Name(firstName, lastName))
+    } else {
+      None
+    }
+  }
+
   private def getClientName(clientUtr: Option[String])(implicit request: Request[_], hc: HeaderCarrier): Future[Option[Name]] = {
     if (appConfig.isSessionDataStorageEnabled) {
       clientUtr match {
         case Some(utr) => clientDetailsService.checkClientDetails(utr) map {
           case Left(detailsError) =>
             Logger("error").error(s"unable to find client with UTR: $utr " + detailsError)
-            None
+            getClientNameFromCookies
           case Right(value) => Some(Name(value.firstName, value.lastName))
         }
         case None => Future.successful(None)
       }
     } else {
-      val firstName = request.session.get(SessionKeys.clientFirstName)
-      val lastName = request.session.get(SessionKeys.clientLastName)
-
-      if (firstName.isDefined && lastName.isDefined) {
-        Future.successful(Some(Name(firstName, lastName)))
-      } else {
-        Future.successful(None)
-      }
+      Future.successful(getClientNameFromCookies)
     }
   }
 
