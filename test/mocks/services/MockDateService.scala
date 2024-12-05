@@ -31,8 +31,12 @@ trait MockDateService extends UnitSpec with BeforeAndAfterEach {
     reset(mockDateService)
   }
 
-  def setupMockGetCurrentTaxYearEnd(taxYear: TaxYear): Unit = {
+  def setupMockGetCurrentTaxYear(taxYear: TaxYear): Unit = {
     when(mockDateService.getCurrentTaxYear).thenReturn(taxYear)
+  }
+
+  def setupMockGetCurrentTaxYearEnd(taxYearEnd: Int): Unit = {
+    when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd)
   }
 
 }

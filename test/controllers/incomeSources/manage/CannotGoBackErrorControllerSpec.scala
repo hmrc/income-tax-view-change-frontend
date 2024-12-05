@@ -16,109 +16,64 @@
 
 package controllers.incomeSources.manage
 
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{IncomeSourceJourneyType, JourneyType, Manage}
-import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import enums.JourneyType.{IncomeSourceJourneyType, Manage}
+import enums.MTDIndividual
+import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.admin.IncomeSourcesFs
-import org.scalatest.Assertion
+import play.api
+import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
-import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
+import services.SessionService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData}
-import testUtils.TestSupport
-import views.html.incomeSources.YouCannotGoBackError
 
-class CannotGoBackErrorControllerSpec extends TestSupport with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockSessionService {
+class CannotGoBackErrorControllerSpec extends MockAuthActions with MockSessionService {
 
-  object TestCannotGoBackController extends CannotGoBackErrorController(
-    mockAuthService,
-    app.injector.instanceOf[YouCannotGoBackError],
-    mockSessionService,
-    testAuthenticator
-  )(appConfig,
-    mcc = app.injector.instanceOf[MessagesControllerComponents],
-    ec,
-    app.injector.instanceOf[ItvcErrorHandler],
-    app.injector.instanceOf[AgentItvcErrorHandler])
+  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+    .overrides(
+      api.inject.bind[SessionService].toInstance(mockSessionService)
+    ).build()
+
+  val testController = fakeApplication().injector.instanceOf[CannotGoBackErrorController]
 
   val annualReportingMethod = "annual"
   val quarterlyReportingMethod = "quarterly"
   val taxYear = "2022-2023"
 
-  def setupMockCalls(isAgent: Boolean): Unit = {
-    disableAllSwitches()
-    enable(IncomeSourcesFs)
-    setupMockAuthorisationSuccess(isAgent)
-    mockUKPropertyIncomeSourceWithLatency2024()
-  }
+  val incomeSourceTypes = List(SelfEmployment, UkProperty, ForeignProperty)
 
-  def setupOKTest(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
-    setupMockCalls(isAgent)
-    setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
+  mtdAllRoles.foreach { mtdRole =>
+    val isAgent = mtdRole != MTDIndividual
+    incomeSourceTypes.foreach { incomeSourceType =>
+      s"show(isAgent = $isAgent, incomeSourceType = $incomeSourceType)" when {
+        val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
+        val action = testController.show(isAgent, incomeSourceType)
+        s"the user is authenticated as a $mtdRole" should {
+          "render the manage income sources page" in {
+            enable(IncomeSourcesFs)
+            setupMockSuccess(mtdRole)
+            mockUKPropertyIncomeSourceWithLatency2024()
+            setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
 
-    val result = if (isAgent) {
-      TestCannotGoBackController.show(isAgent, incomeSourceType)(fakeRequestConfirmedClient())
-    } else {
-      TestCannotGoBackController.show(isAgent, incomeSourceType)(fakeRequestWithActiveSession)
-    }
+            val result = action(fakeRequest)
+            status(result) shouldBe OK
+          }
 
-    status(result) shouldBe OK
-  }
+          "render the error page" when {
+            "Required Mongo data is missing" in {
+              enable(IncomeSourcesFs)
+              setupMockSuccess(mtdRole)
+              mockUKPropertyIncomeSourceWithLatency2024()
+              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
 
-  def setupISETest(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
-    setupMockCalls(isAgent)
-    setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
-
-    val result = if (isAgent) {
-      TestCannotGoBackController.show(isAgent, incomeSourceType)(fakeRequestConfirmedClient())
-    } else {
-      TestCannotGoBackController.show(isAgent, incomeSourceType)(fakeRequestWithActiveSession)
-    }
-
-    status(result) shouldBe INTERNAL_SERVER_ERROR
-  }
-
-  "CannotGoBackErrorController" should {
-    "return 200 OK" when {
-      "Self Employment - Individual" in {
-        setupOKTest(isAgent = false, SelfEmployment)
-      }
-      "Self Employment - Agent" in {
-        setupOKTest(isAgent = true, SelfEmployment)
-      }
-      "UK Property - Individual" in {
-        setupOKTest(isAgent = false, UkProperty)
-      }
-      "UK Property - Agent" in {
-        setupOKTest(isAgent = true, UkProperty)
-      }
-      "Foreign Property - Individual" in {
-        setupOKTest(isAgent = false, ForeignProperty)
-      }
-      "Foreign Property - Agent" in {
-        setupOKTest(isAgent = true, ForeignProperty)
-      }
-    }
-    "return 500 ISE" when {
-      "Required Mongo data is missing - Self Employment - Individual" in {
-        setupISETest(isAgent = false, SelfEmployment)
-      }
-      "Required Mongo data is missing - Self Employment - Agent" in {
-        setupISETest(isAgent = true, SelfEmployment)
-      }
-      "Required Mongo data is missing - UK Property - Individual" in {
-        setupISETest(isAgent = false, UkProperty)
-      }
-      "Required Mongo data is missing - UK Property - Agent" in {
-        setupISETest(isAgent = true, UkProperty)
-      }
-      "Required Mongo data is missing - Foreign Property - Individual" in {
-        setupISETest(isAgent = false, ForeignProperty)
-      }
-      "Required Mongo data is missing - Foreign Property - Agent" in {
-        setupISETest(isAgent = true, ForeignProperty)
+              val result = action(fakeRequest)
+              status(result) shouldBe INTERNAL_SERVER_ERROR
+            }
+          }
+        }
+        testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
       }
     }
   }

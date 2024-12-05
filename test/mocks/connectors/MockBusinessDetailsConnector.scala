@@ -29,7 +29,7 @@ import scala.concurrent.Future
 
 trait MockBusinessDetailsConnector extends UnitSpec with BeforeAndAfterEach {
 
-  val mockBusinessDetailsConnector: BusinessDetailsConnector = mock(classOf[BusinessDetailsConnector])
+  lazy val mockBusinessDetailsConnector: BusinessDetailsConnector = mock(classOf[BusinessDetailsConnector])
 
   override def beforeEach(): Unit = {
     super.beforeEach()

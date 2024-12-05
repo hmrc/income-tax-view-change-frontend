@@ -271,20 +271,10 @@ user.incomeSources.getLatencyDetails(incomeSourceType, id.value) match {
                                incomeSourceId: Option[IncomeSourceId],
                                incomeSourceType: IncomeSourceType
                               ): (Call, Call) = {
-
-    val successCall = (isAgent, incomeSourceType) match {
-      case (false, SelfEmployment) =>
-        routes.ManageObligationsController.showSelfEmployment(changeTo, taxYear)
-      case (_, SelfEmployment) =>
-        routes.ManageObligationsController.showAgentSelfEmployment(changeTo, taxYear)
-      case (false, UkProperty) =>
-        routes.ManageObligationsController.showUKProperty(changeTo, taxYear)
-      case (_, UkProperty) =>
-        routes.ManageObligationsController.showAgentUKProperty(changeTo, taxYear)
-      case (false, _) =>
-        routes.ManageObligationsController.showForeignProperty(changeTo, taxYear)
-      case (_, _) =>
-        routes.ManageObligationsController.showAgentForeignProperty(changeTo, taxYear)
+    val successCall = if(isAgent) {
+      routes.ManageObligationsController.showAgent(changeTo, taxYear, incomeSourceType)
+    } else {
+      routes.ManageObligationsController.show(changeTo, taxYear, incomeSourceType)
     }
 
     val backCallId = if (incomeSourceType == SelfEmployment) incomeSourceId.map(v => v.value) else None
