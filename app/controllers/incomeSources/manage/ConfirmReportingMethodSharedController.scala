@@ -64,7 +64,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = AfterSubmissionPage) { sessionData =>
       val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
       val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
-      handleShowRequest(taxYear, changeTo, false, incomeSourceType, incomeSourceIdOpt)
+      handleShowRequest(taxYear, changeTo, isAgent = false, incomeSourceType, incomeSourceIdOpt)
     }
   }
 
@@ -75,7 +75,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = AfterSubmissionPage) { sessionData =>
       val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
       val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
-      handleShowRequest(taxYear, changeTo, true, incomeSourceType, incomeSourceIdOpt)
+      handleShowRequest(taxYear, changeTo, isAgent = true, incomeSourceType, incomeSourceIdOpt)
     }
   }
 
@@ -87,7 +87,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), BeforeSubmissionPage) { sessionData =>
       val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
       val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
-      handleSubmitRequest(taxYear, changeTo, false, incomeSourceIdOpt, incomeSourceType)
+      handleSubmitRequest(taxYear, changeTo, isAgent = false, incomeSourceIdOpt, incomeSourceType)
     }
   }
 
@@ -99,7 +99,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), BeforeSubmissionPage) { sessionData =>
       val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
       val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
-      handleSubmitRequest(taxYear, changeTo, true, incomeSourceIdOpt, incomeSourceType)
+      handleSubmitRequest(taxYear, changeTo, isAgent = true, incomeSourceIdOpt, incomeSourceType)
     }
   }
 
@@ -128,7 +128,7 @@ user.incomeSources.getLatencyDetails(incomeSourceType, id.value) match {
               form = ConfirmReportingMethodForm(changeTo),
               taxYearEndYear = taxYearModel.endYear.toString,
               taxYearStartYear = taxYearModel.startYear.toString,
-              postAction = getPostAction(taxYear, changeTo, incomeSourceType),
+              postAction = getPostAction(taxYear, changeTo, isAgent, incomeSourceType),
               isCurrentTaxYear = dateService.getCurrentTaxYearEnd.equals(taxYearModel.endYear)
             ))
                 }
@@ -172,7 +172,7 @@ user.incomeSources.getLatencyDetails(incomeSourceType, id.value) match {
                     newReportingMethod = reportingMethod,
                     taxYearEndYear = taxYearModel.endYear.toString,
                     taxYearStartYear = taxYearModel.startYear.toString,
-                    postAction = getPostAction(taxYear, changeTo, incomeSourceType),
+                    postAction = getPostAction(taxYear, changeTo, isAgent, incomeSourceType),
                     isCurrentTaxYear = dateService.getCurrentTaxYearEnd.equals(taxYearModel.endYear)
                   )
                 )
@@ -293,9 +293,12 @@ user.incomeSources.getLatencyDetails(incomeSourceType, id.value) match {
     (backCall, successCall)
   }
 
-  private def getPostAction(taxYear: String, changeTo: String, incomeSourceType: IncomeSourceType): Call = {
-    routes.ConfirmReportingMethodSharedController
-      .submit(taxYear, changeTo, incomeSourceType)
+  private def getPostAction(taxYear: String, changeTo: String, isAgent: Boolean, incomeSourceType: IncomeSourceType): Call = {
+    if(isAgent){
+        routes.ConfirmReportingMethodSharedController.submitAgent(taxYear, changeTo, incomeSourceType)
+      } else {
+        routes.ConfirmReportingMethodSharedController.submit(taxYear, changeTo, incomeSourceType)
+      }
   }
 
   private def getErrorCall(incomeSourceType: IncomeSourceType, isAgent: Boolean): Call = {

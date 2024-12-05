@@ -159,7 +159,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
               form = ConfirmReportingMethodForm(changeTo),
               taxYearEndYear = taxYearModel.endYear.toString,
               taxYearStartYear = taxYearModel.startYear.toString,
-              postAction = getPostAction(taxYearModel.toString, changeTo, incomeSourceType),
+              postAction = getPostAction(taxYearModel.toString, changeTo, isAgent, incomeSourceType),
               isCurrentTaxYear = dateService.getCurrentTaxYearEnd.equals(taxYearModel.endYear)
             )
           )
@@ -193,7 +193,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                     newReportingMethod = reportingMethod,
                     taxYearEndYear = taxYearModel.endYear.toString,
                     taxYearStartYear = taxYearModel.startYear.toString,
-                    postAction = getPostAction(taxYear, changeTo, incomeSourceType),
+                    postAction = getPostAction(taxYear, changeTo, isAgent, incomeSourceType),
                     isCurrentTaxYear = dateService.getCurrentTaxYearEnd.equals(taxYearModel.endYear)
                   )
                 )
@@ -227,9 +227,12 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     (backCall, successCall)
   }
 
-  private def getPostAction(taxYear: String, changeTo: String, incomeSourceType: IncomeSourceType): Call = {
-    routes.ConfirmReportingMethodSharedController
-      .submit(taxYear, changeTo, incomeSourceType)
+  private def getPostAction(taxYear: String, changeTo: String, isAgent: Boolean, incomeSourceType: IncomeSourceType): Call = {
+    if(isAgent){
+      routes.ConfirmReportingMethodSharedController.submitAgent(taxYear, changeTo, incomeSourceType)
+    } else {
+      routes.ConfirmReportingMethodSharedController.submit(taxYear, changeTo, incomeSourceType)
+    }
   }
 
 }
