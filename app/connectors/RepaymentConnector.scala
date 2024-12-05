@@ -22,74 +22,76 @@ import models.core.{RepaymentJourneyResponseModel, RepaymentRefund, ViewHistory}
 import play.api.Logger
 import play.api.http.Status.{ACCEPTED, INTERNAL_SERVER_ERROR, UNAUTHORIZED}
 import play.api.libs.json.Json
-import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
+import uk.gov.hmrc.http.HttpReads.Implicits._
+
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 
-class RepaymentConnector @Inject()(val http: HttpClient,
-                                   val config: FrontendAppConfig
+class RepaymentConnector @Inject()(
+                                    httpClient: HttpClientV2,
+                                    config: FrontendAppConfig
                                   )(implicit ec: ExecutionContext) {
 
-  private val startRefundUrl: String = s"${config.repaymentsUrl}/self-assessment-refund-backend/itsa-viewer/journey/start-refund"
-  private val viewRefundUrl: String = s"${config.repaymentsUrl}/self-assessment-refund-backend/itsa-viewer/journey/view-history"
-  //view-history
+  private[connectors] val startRefundUrl: String = s"${config.repaymentsUrl}/self-assessment-refund-backend/itsa-viewer/journey/start-refund"
+  private[connectors] val viewRefundUrl: String = s"${config.repaymentsUrl}/self-assessment-refund-backend/itsa-viewer/journey/view-history"
 
   def start(nino: String, fullAmount: BigDecimal)(implicit headerCarrier: HeaderCarrier): Future[RepaymentJourneyResponseModel] = {
 
     val body = Json.toJson[RepaymentRefund](RepaymentRefund(nino, fullAmount))
 
-    http.POST(startRefundUrl, body).map {
-      case response if response.status == ACCEPTED =>
-        response.json.validate[RepaymentJourneyModel].fold(
-          invalidJson => {
-            Logger("application").error(s"Invalid Json with $invalidJson")
-            RepaymentJourneyErrorResponse(response.status, "Invalid Json")
-          },
-          (valid: RepaymentJourneyModel) => valid
-        )
-
-      case response if response.status == UNAUTHORIZED =>
-        Logger("application").error(s"Repayment journey start error with response code: ${response.status} and body: ${response.body}")
-        RepaymentJourneyErrorResponse(response.status, response.body)
-
-      case response =>
-        if (response.status >= INTERNAL_SERVER_ERROR) {
+    httpClient
+      .post(url"$startRefundUrl")
+      .withBody(body)
+      .execute[HttpResponse].map {
+        case response if response.status == ACCEPTED =>
+          response.json.validate[RepaymentJourneyModel].fold(
+            invalidJson => {
+              Logger("application").error(s"Invalid Json with $invalidJson")
+              RepaymentJourneyErrorResponse(response.status, "Invalid Json")
+            },
+            identity
+          )
+        case response if response.status == UNAUTHORIZED =>
           Logger("application").error(s"Repayment journey start error with response code: ${response.status} and body: ${response.body}")
-        } else {
+          RepaymentJourneyErrorResponse(response.status, response.body)
+        case response if response.status >= INTERNAL_SERVER_ERROR =>
+          Logger("application").error(s"Repayment journey start error with response code: ${response.status} and body: ${response.body}")
+          RepaymentJourneyErrorResponse(response.status, response.body)
+        case response =>
           Logger("application").warn(s"Repayment journey start error with response code: ${response.status} and body: ${response.body}")
-        }
-        RepaymentJourneyErrorResponse(response.status, response.body)
-    }
+          RepaymentJourneyErrorResponse(response.status, response.body)
+      }
   }
 
-
   def view(nino: String)(implicit headerCarrier: HeaderCarrier): Future[RepaymentJourneyResponseModel] = {
+
     val body = Json.toJson[ViewHistory](ViewHistory(nino))
 
-    http.POST(viewRefundUrl, body).map {
-      case response if response.status == ACCEPTED =>
-        response.json.validate[RepaymentJourneyModel].fold(
-          invalidJson => {
-            Logger("application").error(s"Invalid Json with $invalidJson")
-            RepaymentJourneyErrorResponse(response.status, "Invalid Json")
-          },
-          valid => valid
-        )
-
-      case response if response.status == UNAUTHORIZED =>
-        Logger("application").error(s"Repayment journey start error with response code: ${response.status} and body: ${response.body}")
-        RepaymentJourneyErrorResponse(response.status, response.body)
-
-      case response =>
-        if (response.status >= INTERNAL_SERVER_ERROR) {
+    httpClient
+      .post(url"$viewRefundUrl")
+      .withBody(body)
+      .execute[HttpResponse].map {
+        case response if response.status == ACCEPTED =>
+          response.json.validate[RepaymentJourneyModel].fold(
+            invalidJson => {
+              Logger("application").error(s"Invalid Json with $invalidJson")
+              RepaymentJourneyErrorResponse(response.status, "Invalid Json")
+            },
+            identity
+          )
+        case response if response.status == UNAUTHORIZED =>
           Logger("application").error(s"Repayment journey start error with response code: ${response.status} and body: ${response.body}")
-        } else {
+          RepaymentJourneyErrorResponse(response.status, response.body)
+        case response if response.status >= INTERNAL_SERVER_ERROR =>
+          Logger("application").error(s"Repayment journey start error with response code: ${response.status} and body: ${response.body}")
+          RepaymentJourneyErrorResponse(response.status, response.body)
+        case response =>
           Logger("application").warn(s"Repayment journey start error with response code: ${response.status} and body: ${response.body}")
-        }
-        RepaymentJourneyErrorResponse(response.status, response.body)
-    }
+          RepaymentJourneyErrorResponse(response.status, response.body)
+      }
   }
 }
