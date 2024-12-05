@@ -160,7 +160,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         val validUTR: String = "1234567890"
         stubAgentAuthorisedUser(true, true, testMtdItId, isSupportingAgent = false)
         stubPrimaryAuthorisedAgentUser(testMtdItId, true)
-        CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
+        CitizenDetailsStub.stubGetCitizenDetails(validUTR,
           status = OK,
           response = CitizenDetailsStub.validCitizenDetailsResponse(
             firstName = "testFirstName",
@@ -190,7 +190,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
       "the utr submitted by a secondary agent is valid and session data service post returns an OK response" in {
         val validUTR: String = "1234567890"
         stubAgentAuthorisedUser(true, true, testMtdItId, isSupportingAgent = true)
-        CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
+        CitizenDetailsStub.stubGetCitizenDetails(validUTR,
           status = OK,
           response = CitizenDetailsStub.validCitizenDetailsResponse(
             firstName = "testFirstName",
@@ -228,7 +228,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then(s"I stub the session-data service call to return status $OK")
         stubPostSessionDataResponseOkResponse()
 
-        CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
+        CitizenDetailsStub.stubGetCitizenDetails(validUTR,
           status = OK,
           response = CitizenDetailsStub.validCitizenDetailsResponse(
             firstName = "testFirstName",
@@ -262,7 +262,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then(s"I stub the session-data service call to return status $OK")
         stubPostSessionDataResponseOkResponse()
 
-        CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
+        CitizenDetailsStub.stubGetCitizenDetails(validUTR,
           status = OK,
           response = CitizenDetailsStub.validCitizenDetailsResponse(
             firstName = "testFirstName",
@@ -297,7 +297,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then(s"I stub the session-data service call to return status $CONFLICT")
         stubPostSessionDataResponseConflictResponse()
 
-        CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
+        CitizenDetailsStub.stubGetCitizenDetails(validUTR,
           status = OK,
           response = CitizenDetailsStub.validCitizenDetailsResponse(
             firstName = "testFirstName",
@@ -331,7 +331,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then(s"I stub the session-data service call to return status $CONFLICT")
         stubPostSessionDataResponseConflictResponse()
 
-        CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
+        CitizenDetailsStub.stubGetCitizenDetails(validUTR,
           status = OK,
           response = CitizenDetailsStub.validCitizenDetailsResponse(
             firstName = "testFirstName",
@@ -364,7 +364,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
 
         stubAgentAuthorisedUser(true)
 
-        CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
+        CitizenDetailsStub.stubGetCitizenDetails(validUTR,
           status = NOT_FOUND,
           response = Json.obj()
         )
@@ -382,7 +382,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         val validUTR: String = "1234567890"
 
         stubAgentAuthorisedUser(true)
-        CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
+        CitizenDetailsStub.stubGetCitizenDetails(validUTR,
           status = OK,
           response = CitizenDetailsStub.validCitizenDetailsResponse(
             firstName = "testFirstName",
@@ -408,7 +408,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         val validUTR: String = "1234567890"
 
         stubAgentAuthorisedUser(true)
-        CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
+        CitizenDetailsStub.stubGetCitizenDetails(validUTR,
           status = OK,
           response = CitizenDetailsStub.validCitizenDetailsResponse(
             firstName = "testFirstName",
@@ -443,7 +443,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         val validUTR: String = "1234567890"
 
         stubAgentAuthorisedUser(true)
-        CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
+        CitizenDetailsStub.stubGetCitizenDetails(validUTR,
           status = INTERNAL_SERVER_ERROR,
           response = Json.obj()
         )
@@ -460,7 +460,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         val validUTR: String = "1234567890"
 
         stubAgentAuthorisedUser(true)
-        CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
+        CitizenDetailsStub.stubGetCitizenDetails(validUTR,
           status = OK,
           response = CitizenDetailsStub.validCitizenDetailsResponse(
             firstName = "testFirstName",
@@ -484,7 +484,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
       "the income tax session data post call returned an error" in {
         val validUTR: String = "1234567890"
         stubAgentAuthorisedUser(true)
-        CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
+        CitizenDetailsStub.stubGetCitizenDetails(validUTR,
           status = OK,
           response = CitizenDetailsStub.validCitizenDetailsResponse(
             firstName = "testFirstName",
@@ -513,7 +513,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
       "there was a failed future when posting data to the income tax session data service" in {
         val validUTR: String = "1234567890"
         stubAgentAuthorisedUser(true)
-        CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
+        CitizenDetailsStub.stubGetCitizenDetails(validUTR,
           status = OK,
           response = CitizenDetailsStub.validCitizenDetailsResponse(
             firstName = "testFirstName",

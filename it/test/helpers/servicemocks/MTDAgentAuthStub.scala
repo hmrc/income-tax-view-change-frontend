@@ -18,7 +18,9 @@ package helpers.servicemocks
 
 import controllers.agent.AuthUtils._
 import helpers.WiremockHelper._
+import helpers.servicemocks.BusinessDetailsStub.stubGetBusinessDetails
 import helpers.servicemocks.SessionDataStub.stubGetSessionDataResponseSuccess
+import helpers.servicemocks.CitizenDetailsStub.stubGetCitizenDetails
 import play.api.http.Status
 import play.api.libs.json.{JsString, JsValue, Json}
 import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
@@ -31,6 +33,8 @@ object MTDAgentAuthStub {
 
   def stubAuthorisedMTDAgent(mtdItId: String = "mtdbsaId", isSupportingAgent: Boolean): Unit = {
     stubGetSessionDataResponseSuccess()
+    stubGetCitizenDetails()
+    stubGetBusinessDetails()()
     val jsonRequest = getMTDAgentAuthRequest(mtdItId, isSupportingAgent)
 
     stubPostWithRequest(
@@ -43,6 +47,8 @@ object MTDAgentAuthStub {
 
   def stubNotAnAgent(mtdItId: String = "mtdbsaId", isSupportingAgent: Boolean): Unit = {
     stubGetSessionDataResponseSuccess()
+    stubGetCitizenDetails()
+    stubGetBusinessDetails()()
     val jsonRequest = getMTDAgentAuthRequest(mtdItId, isSupportingAgent)
 
     stubPostWithRequest(
@@ -55,6 +61,8 @@ object MTDAgentAuthStub {
 
   def stubNoAgentEnrolmentRequiredSuccess(mtdItId: String = "mtdbsaId"): Unit = {
     stubGetSessionDataResponseSuccess()
+    stubGetCitizenDetails()
+    stubGetBusinessDetails()()
     val jsonRequest = emptyPredicateRequest
     stubPostWithRequest(
       url = postAuthoriseUrl,
@@ -66,6 +74,8 @@ object MTDAgentAuthStub {
 
   def stubNoAgentEnrolmentError(mtdItId: String = "mtdbsaId", isSupportingAgent: Boolean): Unit = {
     stubGetSessionDataResponseSuccess()
+    stubGetCitizenDetails()
+    stubGetBusinessDetails()()
     val jsonRequest = getMTDAgentAuthRequest(mtdItId, isSupportingAgent)
     val responseHeaders = Map("WWW-Authenticate" -> "MDTP detail=\"InsufficientEnrolments\"",
       "Failing-Enrolment" -> "no arn enrolment")
@@ -83,6 +93,8 @@ object MTDAgentAuthStub {
     val responseHeaders = Map("WWW-Authenticate" -> "MDTP detail=\"InvalidBearerToken\"")
 
     stubGetSessionDataResponseSuccess()
+    stubGetCitizenDetails()
+    stubGetBusinessDetails()()
 
     stubPostWithRequestAndResponseHeaders(
       url = postAuthoriseUrl,
@@ -99,6 +111,8 @@ object MTDAgentAuthStub {
     val responseHeaders = Map("WWW-Authenticate" -> "MDTP detail=\"BearerTokenExpired\"")
 
     stubGetSessionDataResponseSuccess()
+    stubGetCitizenDetails()
+    stubGetBusinessDetails()()
 
     stubPostWithRequestAndResponseHeaders(
       url = postAuthoriseUrl,
@@ -114,6 +128,8 @@ object MTDAgentAuthStub {
 
   def notAPrimaryAgent(mtdItId: String = "MtdItId"): Unit = {
     stubGetSessionDataResponseSuccess()
+    stubGetCitizenDetails()
+    stubGetBusinessDetails()()
     val jsonRequest = getMTDAgentAuthRequest(mtdItId, false)
 
     val responseHeaders = Map("WWW-Authenticate" -> "MDTP detail=\"InsufficientEnrolments\"",
@@ -129,6 +145,8 @@ object MTDAgentAuthStub {
 
   def notASecondaryAgent(mtdItId: String = "MtdItId"): Unit = {
     stubGetSessionDataResponseSuccess()
+    stubGetCitizenDetails()
+    stubGetBusinessDetails()()
     val jsonRequest = getMTDAgentAuthRequest(mtdItId, true)
     val responseHeaders = Map("WWW-Authenticate" -> "MDTP detail=\"InsufficientEnrolments\"",
       "Failing-Enrolment" -> "no HMRC-MTD-IT-SUPP enrolment")
