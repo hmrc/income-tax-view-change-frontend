@@ -18,28 +18,28 @@ package connectors.agent
 
 import config.FrontendAppConfig
 import connectors.RawResponseReads
-import javax.inject.{Inject, Singleton}
 import models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel, CitizenDetailsResponseModel}
 import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.OK
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
+import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames, HttpResponse, StringContextOps}
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 
 @Singleton
-class CitizenDetailsConnector @Inject()(val http: HttpClient,
+class CitizenDetailsConnector @Inject()(val http: HttpClientV2,
                                         val config: FrontendAppConfig
                                        )(implicit ec: ExecutionContext) extends RawResponseReads {
 
   private[connectors] lazy val getCitizenDetailsBySaUtrUrl: String => String = saUtr => s"${config.citizenDetailsUrl}/citizen-details/sautr/$saUtr"
 
-  def updatedHeaderCarrier(hc: HeaderCarrier): HeaderCarrier = if (config.hasEnabledTestOnlyRoutes) {
-    hc.copy(trueClientIp = Some("ITVC"))
+  private def updateHeaderCarrier(request: RequestBuilder): RequestBuilder = if (config.hasEnabledTestOnlyRoutes) {
+    request.setHeader(HeaderNames.trueClientIp -> "ITVC")
   } else {
-    hc
+    request
   }
 
   def getCitizenDetailsBySaUtr(saUtr: String)(implicit headerCarrier: HeaderCarrier): Future[CitizenDetailsResponseModel] = {
@@ -48,7 +48,7 @@ class CitizenDetailsConnector @Inject()(val http: HttpClient,
 
     Logger("application").debug(s"GET $url")
 
-    http.GET[HttpResponse](url)(implicitly, updatedHeaderCarrier(headerCarrier), implicitly) map { response =>
+    updateHeaderCarrier(http.get(url"$url")).execute[HttpResponse] map { response =>
       response.status match {
         case OK =>
           Logger("application").debug(s"RESPONSE status: ${response.status}, json: ${response.json}")
