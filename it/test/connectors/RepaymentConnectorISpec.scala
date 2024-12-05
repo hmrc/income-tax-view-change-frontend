@@ -100,9 +100,9 @@ class RepaymentConnectorISpec extends AnyWordSpec with ComponentSpecBase {
 
     ".view()" when {
 
-      "OK" should {
+      "ACCEPTED" should {
 
-        "return a successful Right(CreditsModel)" in {
+        "return a successful RepaymentJourneyModel" in {
 
           val testUserNino = "AA123456A"
 
