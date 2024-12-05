@@ -64,19 +64,23 @@ class AsMtdUser @Inject()
     }
   }
 
-  private def getClientName(clientUtr: Option[String])(implicit request: Request[_], hc: HeaderCarrier): Future[Option[Name]] = {
-    if (appConfig.isSessionDataStorageEnabled) {
-      clientUtr match {
-        case Some(utr) => clientDetailsService.checkClientDetails(utr) map {
-          case Left(detailsError) =>
-            Logger("error").error(s"unable to find client with UTR: $utr " + detailsError)
-            getClientNameFromCookies
-          case Right(value) => Some(Name(value.firstName, value.lastName))
+  private def getClientName(clientUtr: Option[String])(implicit request: EnroledUser[_], hc: HeaderCarrier): Future[Option[Name]] = {
+    request.affinityGroup match {
+      case Some(Agent) =>
+        if (appConfig.isSessionDataStorageEnabled) {
+          clientUtr match {
+            case Some(utr) => clientDetailsService.checkClientDetails(utr) map {
+              case Left(detailsError) =>
+                Logger("error").error(s"unable to find client with UTR: $utr " + detailsError)
+                getClientNameFromCookies
+              case Right(value) => Some(Name(value.firstName, value.lastName))
+            }
+            case None => Future.successful(None)
+          }
+        } else {
+          Future.successful(getClientNameFromCookies)
         }
-        case None => Future.successful(None)
-      }
-    } else {
-      Future.successful(getClientNameFromCookies)
+      case _ => Future.successful(None)
     }
   }
 
@@ -87,35 +91,27 @@ class AsMtdUser @Inject()
 
     implicit val r = request
 
-    val optMtdIdAndUtr = request.affinityGroup match {
-      case Some(Agent) => getClientMtdidAndUtr
-      case _ => Future.successful((request.mtdId, None))
-    }
-
-    optMtdIdAndUtr flatMap { optTuple =>
-      val (optMtdId, optUtr) = optTuple
-      val optClientName: Future[Option[Name]] = request.affinityGroup match {
-        case Some(Agent) => getClientName(optUtr)
-        case _ => Future.successful(None)
-      }
-      optClientName map { optName =>
-        optMtdId.map(id => MtdItUserOptionNino(
-            mtditid = id,
-            nino = request.nino,
-            userName = request.userName,
-            saUtr = request.saId,
-            credId = request.credId,
-            userType = request.affinityGroup,
-            arn = request.arn,
-            optClientName = optName))
-          .map(Right(_))
-          .getOrElse(
-            request.affinityGroup match {
-              case Some(Agent) => Left(noClientDetailsRoute)
-              case _ => throw new MissingMtdId
-            }
-          )
-      }
+    for {
+      mtdAndUtr <- getClientMtdidAndUtr
+      clientName <- getClientName(mtdAndUtr._2)
+    } yield {
+      val optMtdId = mtdAndUtr._1
+      optMtdId.map(id => MtdItUserOptionNino(
+          mtditid = id,
+          nino = request.nino,
+          userName = request.userName,
+          saUtr = request.saId,
+          credId = request.credId,
+          userType = request.affinityGroup,
+          arn = request.arn,
+          optClientName = clientName))
+        .map(Right(_))
+        .getOrElse(
+          request.affinityGroup match {
+            case Some(Agent) => Left(noClientDetailsRoute)
+            case _ => throw new MissingMtdId
+          }
+        )
     }
   }
 }
