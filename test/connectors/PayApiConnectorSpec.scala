@@ -16,55 +16,67 @@
 
 package connectors
 
-import audit.mocks.MockAuditingService
-import mocks.MockHttp
+import audit.AuditingService
 import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
-import testUtils.TestSupport
-import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.http.{HttpReads, HttpResponse}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{mock, when}
 
-class PayApiConnectorSpec extends TestSupport with MockHttp with MockAuditingService {
+import scala.concurrent.Future
+
+class PayApiConnectorSpec extends BaseConnectorSpec {
 
   val successResponse = HttpResponse(status = Status.CREATED,
     json = Json.toJson(PaymentJourneyModel("journeyId", "http://www.redirect-url.com")), headers = Map.empty)
   val successResponseBadJson = HttpResponse(status = Status.CREATED, json = Json.parse("{}"), headers = Map.empty)
   val badResponse = HttpResponse(status = Status.BAD_REQUEST, body = "Error Message")
+  lazy val mockAuditingService: AuditingService = mock(classOf[AuditingService])
 
-  object TestPayApiConnector extends PayApiConnector(httpClientMock, mockAuditingService, appConfig)
+  object TestPayApiConnector extends PayApiConnector(mockHttpClientV2, mockAuditingService, appConfig)
 
   "Calling .startPaymentJourney as an individual user" should {
-    val testUrl = "http://localhost:9057/pay-api/mtd-income-tax/sa/journey/start"
-    val testBody = Json.parse(
-      """
-        |{
-        | "utr": "saUtr",
-        | "amountInPence": 10000,
-        | "returnUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/what-you-owe",
-        | "backUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/what-you-owe"
-        |}
-      """.stripMargin
-    )
 
     "return a PaymentJourneyModel" when {
 
       "a 201 response is received with valid json" in {
-        setupMockHttpPost(testUrl, testBody)(successResponse)
+        when(mockHttpClientV2.post(any())(any())).thenReturn(mockRequestBuilder)
+
+        when(mockRequestBuilder.withBody(any())(any(), any(), any()))
+          .thenReturn(mockRequestBuilder)
+
+        when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
+          .thenReturn(Future(successResponse))
         val result = TestPayApiConnector.startPaymentJourney("saUtr", 10000, isAgent = false).futureValue
         result shouldBe PaymentJourneyModel("journeyId", "http://www.redirect-url.com")
       }
     }
 
-    "return a PaymentErrorResponse" when {
+    "return a PaymentJourneyErrorResponse" when {
 
       "a non 200 response is received" in {
-        setupMockHttpPost(testUrl, testBody)(badResponse)
+        when(mockHttpClientV2.post(any())(any())).thenReturn(mockRequestBuilder)
+
+        when(mockRequestBuilder.withBody(any())(any(), any(), any()))
+          .thenReturn(mockRequestBuilder)
+
+        when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
+          .thenReturn(Future(badResponse))
+
         val result = TestPayApiConnector.startPaymentJourney("saUtr", 10000, isAgent = false).futureValue
         result shouldBe PaymentJourneyErrorResponse(400, "Error Message")
       }
 
       "a 201 response with invalid json is received" in {
-        setupMockHttpPost(testUrl, testBody)(successResponseBadJson)
+        when(mockHttpClientV2.post(any())(any())).thenReturn(mockRequestBuilder)
+
+        when(mockRequestBuilder.withBody(any())(any(), any(), any()))
+          .thenReturn(mockRequestBuilder)
+
+        when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
+          .thenReturn(Future(successResponseBadJson))
+
         val result = TestPayApiConnector.startPaymentJourney("saUtr", 10000, isAgent = false).futureValue
         result shouldBe PaymentJourneyErrorResponse(201, "Invalid Json")
       }
@@ -72,37 +84,44 @@ class PayApiConnectorSpec extends TestSupport with MockHttp with MockAuditingSer
   }
 
   "Calling .startPaymentJourney as an Agent user" should {
-    val testUrl = "http://localhost:9057/pay-api/mtd-income-tax/sa/journey/start"
-    val testBody = Json.parse(
-      """
-        |{
-        | "utr": "saUtr",
-        | "amountInPence": 10000,
-        | "returnUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/agents/payments-owed",
-        | "backUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/agents/payments-owed"
-        |}
-      """.stripMargin
-    )
 
     "return a PaymentJourneyModel" when {
 
       "a 201 response is received with valid json" in {
-        setupMockHttpPost(testUrl, testBody)(successResponse)
+        when(mockHttpClientV2.post(any())(any())).thenReturn(mockRequestBuilder)
+
+        when(mockRequestBuilder.withBody(any())(any(), any(), any()))
+          .thenReturn(mockRequestBuilder)
+
+        when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
+          .thenReturn(Future(successResponse))
         val result = TestPayApiConnector.startPaymentJourney("saUtr", 10000, isAgent = true).futureValue
         result shouldBe PaymentJourneyModel("journeyId", "http://www.redirect-url.com")
       }
     }
 
-    "return a PaymentErrorResponse" when {
+    "return a PaymentJourneyErrorResponse" when {
 
       "a non 200 response is received" in {
-        setupMockHttpPost(testUrl, testBody)(badResponse)
+        when(mockHttpClientV2.post(any())(any())).thenReturn(mockRequestBuilder)
+
+        when(mockRequestBuilder.withBody(any())(any(), any(), any()))
+          .thenReturn(mockRequestBuilder)
+
+        when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
+          .thenReturn(Future(badResponse))
         val result = TestPayApiConnector.startPaymentJourney("saUtr", 10000, isAgent = true).futureValue
         result shouldBe PaymentJourneyErrorResponse(400, "Error Message")
       }
 
       "a 201 response with invalid json is received" in {
-        setupMockHttpPost(testUrl, testBody)(successResponseBadJson)
+        when(mockHttpClientV2.post(any())(any())).thenReturn(mockRequestBuilder)
+
+        when(mockRequestBuilder.withBody(any())(any(), any(), any()))
+          .thenReturn(mockRequestBuilder)
+
+        when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
+          .thenReturn(Future(successResponseBadJson))
         val result = TestPayApiConnector.startPaymentJourney("saUtr", 10000, isAgent = true).futureValue
         result shouldBe PaymentJourneyErrorResponse(201, "Invalid Json")
       }

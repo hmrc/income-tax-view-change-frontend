@@ -20,18 +20,19 @@ import audit.AuditingService
 import audit.models.NextUpdatesResponseAuditModel
 import auth.MtdItUser
 import config.FrontendAppConfig
-import models.obligations.{ObligationsErrorModel, GroupedObligationsModel, ObligationsResponseModel, ObligationsModel}
+import models.obligations.{GroupedObligationsModel, ObligationsErrorModel, ObligationsModel, ObligationsResponseModel}
 import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.{FORBIDDEN, NOT_FOUND, OK}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ObligationsConnector @Inject()(val http: HttpClient,
+class ObligationsConnector @Inject()(val http: HttpClientV2,
                                      val auditingService: AuditingService,
                                      val appConfig: FrontendAppConfig
                                     )(implicit val ec: ExecutionContext) extends RawResponseReads {
@@ -49,7 +50,7 @@ class ObligationsConnector @Inject()(val http: HttpClient,
     val url = getOpenObligationsUrl(mtdUser.nino)
     Logger("application").debug(s"GET $url")
 
-    http.GET[HttpResponse](url)(httpReads, headerCarrier, implicitly) map { response =>
+    http.get(url"$url").execute[HttpResponse] map { response =>
       response.status match {
         case OK =>
           Logger("application").debug(s"RESPONSE status: ${response.status}, json: ${response.json}")
@@ -87,12 +88,12 @@ class ObligationsConnector @Inject()(val http: HttpClient,
   }
 
   def getAllObligationsDateRange(fromDate: LocalDate, toDate: LocalDate)
-                       (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ObligationsResponseModel] = {
+                                (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ObligationsResponseModel] = {
 
     val url = getAllObligationsDateRangeUrl(fromDate, toDate, mtdUser.nino)
     Logger("application").debug(s"GET $url")
 
-    http.GET[HttpResponse](url)(httpReads, headerCarrier, implicitly) map { response =>
+    http.get(url"$url").execute[HttpResponse] map { response =>
       response.status match {
         case OK =>
           Logger("application").debug(s"Status: ${response.status}, json: ${response.json}")

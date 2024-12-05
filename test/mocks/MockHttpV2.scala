@@ -69,4 +69,10 @@ trait MockHttpV2 extends UnitSpec with BeforeAndAfterEach {
     when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
     when(mockRequestBuilder.execute[T](any(), any())).thenReturn(Future.successful(response))
   }
+
+  def setupMockHttpV2Put[T](url: String)(response: T): OngoingStubbing[Future[T]] = {
+    when(mockHttpClientV2.put(ArgumentMatchers.eq(url"$url"))(any())).thenReturn(mockRequestBuilder)
+    when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
+    when(mockRequestBuilder.execute[T](any(), any())).thenReturn(Future.successful(response))
+  }
 }

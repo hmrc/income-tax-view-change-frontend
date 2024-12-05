@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package connectors
+package connectors.agent
 
-import connectors.agent.CitizenDetailsConnector
-import mocks.MockHttp
+import mocks.MockHttpV2
 import models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel, CitizenDetailsResponseModel}
 import play.mvc.Http.Status
 import testConstants.BaseTestConstants.testSaUtr
@@ -27,7 +26,7 @@ import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future
 
-class CitizenDetailsConnectorSpec extends TestSupport with MockHttp {
+class CitizenDetailsConnectorSpec extends TestSupport with MockHttpV2 {
 
   val successResponse = HttpResponse(status = Status.OK, json = testValidCitizenDetailsModelJson, headers = Map.empty)
   val successResponseBadJson = HttpResponse(status = Status.OK, json = testInvalidCitizenDetailsJson, headers = Map.empty)
@@ -35,7 +34,7 @@ class CitizenDetailsConnectorSpec extends TestSupport with MockHttp {
   val serviceUnavailabeResponse = HttpResponse(status = Status.SERVICE_UNAVAILABLE, body = "Error Message")
 
 
-  object TestCitizenDetailsConnector extends CitizenDetailsConnector(httpClientMock, appConfig)
+  object TestCitizenDetailsConnector extends CitizenDetailsConnector(mockHttpClientV2, appConfig)
 
   "CitizenDetailsConnector.getCitizenDetailsBySaUtrUrl" should {
 
@@ -44,30 +43,28 @@ class CitizenDetailsConnectorSpec extends TestSupport with MockHttp {
     def result: Future[CitizenDetailsResponseModel] = TestCitizenDetailsConnector.getCitizenDetailsBySaUtr(testSaUtr)
 
     "return a CitizenDetailsModel with JSON in case of success" in {
-      setupMockHttpGet(testUrl)(successResponse)
+      setupMockHttpV2Get(testUrl)(successResponse)
       result.futureValue shouldBe testValidCitizenDetailsModel
     }
 
-    "return CitizenDetailsErrorModel when bad Json is recieved" in {
-      setupMockHttpGet(testUrl)(successResponseBadJson)
+    "return CitizenDetailsErrorModel when bad Json is received" in {
+      setupMockHttpV2Get(testUrl)(successResponseBadJson)
       result.futureValue shouldBe CitizenDetailsModel(None, None, None)
     }
 
-    "return CitizenDetailErrorModel when bad request recieved" in {
-      setupMockHttpGet(testUrl)(badResponse)
+    "return CitizenDetailErrorModel when bad request received" in {
+      setupMockHttpV2Get(testUrl)(badResponse)
       result.futureValue shouldBe CitizenDetailsErrorModel(Status.BAD_REQUEST, "Error Message")
     }
 
     "return CitizenDetailErrorModel when serviceUnavailable request received" in {
-      setupMockHttpGet(testUrl)(serviceUnavailabeResponse)
+      setupMockHttpV2Get(testUrl)(serviceUnavailabeResponse)
       result.futureValue shouldBe CitizenDetailsErrorModel(Status.SERVICE_UNAVAILABLE, "Error Message")
     }
 
     "return CitizenDetailErrorModel when GET fails" in {
-      setupMockFailedHttpGet(testUrl)
+      setupMockFailedHttpV2Get(testUrl)
       result.futureValue shouldBe CitizenDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "Unexpected future failed, unknown error")
     }
-
   }
-
 }

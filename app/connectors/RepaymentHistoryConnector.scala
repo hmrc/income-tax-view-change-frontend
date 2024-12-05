@@ -18,17 +18,17 @@ package connectors
 
 import config.FrontendAppConfig
 import models.core.Nino
-import models.itsaStatus.{ITSAStatusResponse, ITSAStatusResponseError, ITSAStatusResponseModel}
 import models.repaymentHistory.{RepaymentHistoryErrorModel, RepaymentHistoryModel, RepaymentHistoryResponseModel}
 import play.api.Logger
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RepaymentHistoryConnector @Inject()(val http: HttpClient,
+class RepaymentHistoryConnector @Inject()(val http: HttpClientV2,
                                           val appConfig: FrontendAppConfig
                                            )(implicit val ec: ExecutionContext) extends RawResponseReads {
 
@@ -42,11 +42,9 @@ class RepaymentHistoryConnector @Inject()(val http: HttpClient,
 
   def getRepaymentHistoryByRepaymentId(nino: Nino, repaymentId: String)
                                       (implicit headerCarrier: HeaderCarrier): Future[RepaymentHistoryResponseModel] = {
-    http.GET[HttpResponse](getRepaymentHistoryByIdUrl(nino.value, repaymentId))(
-      httpReads,
-      headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.2.0+json"),
-      ec
-    ) map { response =>
+    http.get(url"${getRepaymentHistoryByIdUrl(nino.value, repaymentId)}")
+      .setHeader("Accept" -> "application/vnd.hmrc.2.0+json")
+      .execute[HttpResponse] map { response =>
       response.status match {
         case OK =>
           response.json.validate[RepaymentHistoryModel].fold(
@@ -71,11 +69,9 @@ class RepaymentHistoryConnector @Inject()(val http: HttpClient,
                                (implicit headerCarrier: HeaderCarrier): Future[RepaymentHistoryResponseModel] = {
 
 
-    http.GET[HttpResponse](getAllRepaymentHistoryUrl(nino.value))(
-      httpReads,
-      headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.2.0+json"),
-      ec
-    ) map { response =>
+    http.get(url"${getAllRepaymentHistoryUrl(nino.value)}")
+      .setHeader("Accept" -> "application/vnd.hmrc.2.0+json")
+      .execute[HttpResponse] map { response =>
       response.status match {
         case OK =>
           response.json.validate[RepaymentHistoryModel].fold(
