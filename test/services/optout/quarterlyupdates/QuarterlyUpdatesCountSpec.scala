@@ -49,7 +49,7 @@ class QuarterlyUpdatesCountSpec extends UnitSpec
   with MockHttpV2
   with MockAuditingService {
 
-  implicit override val dateService: DateService = mockDateService
+  implicit override lazy val dateService: DateService = mockDateService
 
   override val appConfig: FrontendAppConfig = new FrontendAppConfig(app.injector.instanceOf[ServicesConfig], app.injector.instanceOf[Configuration]) {
     override lazy val itvcProtectedService: String = "http://localhost:9999"

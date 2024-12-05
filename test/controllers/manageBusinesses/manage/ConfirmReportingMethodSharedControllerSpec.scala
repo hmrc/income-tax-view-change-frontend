@@ -16,352 +16,330 @@
 
 package controllers.manageBusinesses.manage
 
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{IncomeSourceJourneyType, JourneyType, Manage}
+import enums.JourneyType.{IncomeSourceJourneyType, Manage}
+import enums.{MTDIndividual, MTDUserRole}
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import implicits.ImplicitDateFormatter
-import mocks.auth.MockFrontendAuthorisedFunctions
-import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
-import mocks.services.{MockIncomeSourceDetailsService, MockSessionService}
+import mocks.auth.MockAuthActions
+import mocks.services.MockSessionService
 import models.admin.IncomeSourcesFs
-import org.mockito.Mockito.mock
-import org.scalatest.Assertion
+import play.api
+import play.api.Application
 import play.api.http.Status
 import play.api.http.Status.SEE_OTHER
-import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.UpdateIncomeSourceService
+import services.{DateService, SessionService}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData, notCompletedUIJourneySessionData}
-import testUtils.TestSupport
-import views.html.manageBusinesses.manage.{ConfirmReportingMethod, ManageIncomeSources}
 
-import scala.concurrent.Future
-
-class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredicate
-  with MockIncomeSourceDetailsPredicate
+class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
   with ImplicitDateFormatter
-  with MockIncomeSourceDetailsService
-  with MockNavBarEnumFsPredicate
-  with MockFrontendAuthorisedFunctions
-  with FeatureSwitching
-  with TestSupport
   with MockSessionService {
 
-  object TestConfirmReportingMethodSharedController
-    extends ConfirmReportingMethodSharedController(
-      manageIncomeSources = app.injector.instanceOf[ManageIncomeSources],
-      authorisedFunctions = mockAuthService,
-      updateIncomeSourceService = mock(classOf[UpdateIncomeSourceService]),
-      confirmReportingMethod = app.injector.instanceOf[ConfirmReportingMethod],
-      auditingService = mockAuditingService,
-      dateService = dateService,
-      sessionService = mockSessionService,
-      auth = testAuthenticator
-    )(
-      itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
-      itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
-      mcc = app.injector.instanceOf[MessagesControllerComponents],
-      appConfig = app.injector.instanceOf[FrontendAppConfig],
-      ec = ec
-    )
+  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+    .overrides(
+      api.inject.bind[SessionService].toInstance(mockSessionService),
+      api.inject.bind[DateService].toInstance(dateService)
+    ).build()
 
-  "ConfirmReportingMethodSharedController.show" should {
-    s"return ${Status.SEE_OTHER} and redirect to the home page" when {
-      "the IncomeSources FS is disabled for an Individual" in {
-        val result = runShowTest(isAgent = false, disableIncomeSources = true)
+  val testConfirmReportingMethodSharedController = fakeApplication().injector.instanceOf[ConfirmReportingMethodSharedController]
 
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
-      }
-      "the IncomeSources FS is disabled for an Agent" in {
-        val result = runShowTest(isAgent = true, disableIncomeSources = true)
+  val individual: Boolean = true
+  val agent: Boolean = false
 
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
-      }
-    }
-    s"return ${Status.INTERNAL_SERVER_ERROR}" when {
-      "taxYear parameter has an invalid format for an Individual" in {
-        val result = runShowTest(isAgent = false, taxYear = invalidTaxYear)
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-      "taxYear parameter doesn't match latency details for an Individual" in {
-        val result = runShowTest(isAgent = false, taxYear = invalidTaxYearLatency)
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-      "changeTo parameter has an invalid format for an Individual" in {
-        val result = runShowTest(isAgent = false, changeTo = invalidChangeTo)
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-      "changeTo parameter is outside of Latency Years for an Individual" in {
-        val result = runShowTest(isAgent = false, changeTo = invalidChangeTo)
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-      "the given incomeSourceId cannot be found in the Individual's Sole Trader business income sources" in {
-        val result = runShowTest(isAgent = false, emptyMongo = true)
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-      "taxYear parameter has an invalid format for an Agent" in {
-        val result = runShowTest(isAgent = true, taxYear = invalidTaxYear)
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-      "taxYear parameter doesn't match latency details for an Agent" in {
-        val result = runShowTest(isAgent = true, taxYear = invalidTaxYearLatency)
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-      "changeTo parameter has an invalid format for an Agent" in {
-        val result = runShowTest(isAgent = true, changeTo = invalidChangeTo)
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-      "the given incomeSourceId cannot be found in the Agent's Sole Trader business income sources" in {
-        val result = runShowTest(isAgent = true, emptyMongo = true)
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-    }
-    s"return ${Status.OK}" when {
-      "all query parameters are valid for an Individual" in {
-        val result = runShowTest(isAgent = false)
-        status(result) shouldBe Status.OK
-      }
-      "all query parameters are valid for an Agent" in {
-        val result = runShowTest(isAgent = true)
-        status(result) shouldBe Status.OK
-      }
-    }
-    "redirect to the Cannot Go Back page" when {
-      def setupCompletedManageJourney(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
-        setupMockAuthorisationSuccess(isAgent)
-        mockBothPropertyBothBusiness()
-        setupMockCreateSession(true)
-        setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
-        val result = if (isAgent) TestConfirmReportingMethodSharedController
-          .show(testTaxYear, testChangeToAnnual, isAgent, incomeSourceType)(fakeRequestConfirmedClient())
-        else TestConfirmReportingMethodSharedController
-          .show(testTaxYear, testChangeToAnnual, isAgent, incomeSourceType)(fakeRequestWithActiveSession)
 
-        val expectedRedirectUrl = routes.CannotGoBackErrorController.show(isAgent = isAgent, incomeSourceType).url
+  trait SetupGET {
+    val taxYear: String = "2022-2023"
+    val changeTo: String = "annual"
+    val incomeSourceType: IncomeSourceType
+    val mtdRole: MTDUserRole
 
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(expectedRedirectUrl)
-      }
-
-      "UK Property journey is complete - Individual" in {
-        setupCompletedManageJourney(isAgent = false, UkProperty)
-      }
-      "UK Property journey is complete - Agent" in {
-        setupCompletedManageJourney(isAgent = true, UkProperty)
-      }
-      "Foreign Property journey is complete - Individual" in {
-        setupCompletedManageJourney(isAgent = false, ForeignProperty)
-      }
-      "Foreign Property journey is complete - Agent" in {
-        setupCompletedManageJourney(isAgent = true, ForeignProperty)
-      }
-      "Self Employment journey is complete - Individual" in {
-        setupCompletedManageJourney(isAgent = false, SelfEmployment)
-      }
-      "Self Employment journey is complete - Agent" in {
-        setupCompletedManageJourney(isAgent = true, SelfEmployment)
-      }
+    lazy val action = if (mtdRole == MTDIndividual) {
+      testConfirmReportingMethodSharedController.show(taxYear, changeTo, incomeSourceType)
+    } else {
+      testConfirmReportingMethodSharedController.showAgent(taxYear, changeTo, incomeSourceType)
     }
   }
 
-  "ConfirmReportingMethodSharedController.submit" should {
-    s"return ${Status.SEE_OTHER} and redirect to the home page" when {
-      "the IncomeSources FS is disabled for an Individual" in {
+  Seq(SelfEmployment, UkProperty, ForeignProperty).foreach { testIncomeSourceType =>
+    mtdAllRoles.foreach { testMtdRole =>
+      s"show${if (testMtdRole != MTDIndividual) "Agent"}($testIncomeSourceType)" when {
+        val fakeRequest = fakeGetRequestBasedOnMTDUserType(testMtdRole).withMethod("GET")
+        s"the user is authenticated as s$testMtdRole" should {
+          s"return ${Status.OK}" when {
+            "all query parameters are valid" in new SetupGET {
+              override val incomeSourceType: IncomeSourceType = testIncomeSourceType
+              override val mtdRole: MTDUserRole = testMtdRole
 
-        val result = runSubmitTest(isAgent = false, disableIncomeSources = true)
+              setupMockSuccess(mtdRole)
+              enable(IncomeSourcesFs)
+              mockBothPropertyBothBusinessWithLatency()
 
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
-      }
-      "the IncomeSources FS is disabled for an Agent" in {
+              setupMockCreateSession(true)
+              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
 
-        val result = runSubmitTest(isAgent = true, disableIncomeSources = true)
+              setupMockSetMongoData(true)
 
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
-      }
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.OK
+            }
+          }
+          "redirect to the Cannot Go Back page" when {
+            "Journey is complete" in new SetupGET {
+              override val incomeSourceType: IncomeSourceType = testIncomeSourceType
+              override val mtdRole: MTDUserRole = testMtdRole
+              setupMockSuccess(mtdRole)
+              enable(IncomeSourcesFs)
+              mockBothPropertyBothBusiness()
+              setupMockCreateSession(true)
+              setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
+              val result = action(fakeRequest)
 
-    }
 
-    s"return ${Status.INTERNAL_SERVER_ERROR}" when {
-      "taxYear parameter has an invalid format for an Individual" in {
-        val result = runSubmitTest(isAgent = false, taxYear = invalidTaxYear)
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-      "changeTo parameter has an invalid format for an Individual" in {
-        val result = runSubmitTest(isAgent = false, changeTo = invalidChangeTo)
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-      "taxYear parameter has an invalid format for an Agent" in {
-        val result = runSubmitTest(isAgent = true, taxYear = invalidTaxYear)
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-      "changeTo parameter has an invalid format for an Agent" in {
-        val result = runSubmitTest(isAgent = true, changeTo = invalidChangeTo)
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-    }
+              val expectedRedirectUrl = routes.CannotGoBackErrorController.show(isAgent = mtdRole != MTDIndividual, incomeSourceType).url
 
-    s"return ${Status.BAD_REQUEST}" when {
-      "the form is empty for an Individual" in {
-        val result = runSubmitTest(isAgent = false, SelfEmployment, withValidForm = false)
-        status(result) shouldBe Status.BAD_REQUEST
-      }
-      "the form is empty for an Agent" in {
-        val result = runSubmitTest(isAgent = true, SelfEmployment, withValidForm = false)
-        status(result) shouldBe Status.BAD_REQUEST
-      }
-    }
+              status(result) shouldBe SEE_OTHER
+              redirectLocation(result) shouldBe Some(expectedRedirectUrl)
+            }
+          }
+          s"return ${Status.SEE_OTHER} and redirect to the home page" when {
+            "the IncomeSources FS is disabled" in new SetupGET {
+              override val incomeSourceType: IncomeSourceType = testIncomeSourceType
+              override val mtdRole: MTDUserRole = testMtdRole
+              setupMockSuccess(mtdRole)
+              mockBothPropertyBothBusiness()
+              setupMockCreateSession(true)
+              setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
+              val result = action(fakeRequest)
+              val expectedEndpoint = if (mtdRole == MTDIndividual) {
+                controllers.routes.HomeController.show().url
+              } else {
+                controllers.routes.HomeController.showAgent.url
+              }
 
-    s"return ${Status.SEE_OTHER} and redirect to the Manage Obligations page for a UK property" when {
-      "the Individual's UK property reporting method is updated to annual" in {
-        val result = runSubmitTest(isAgent = false, UkProperty, testChangeToAnnual)
+              status(result) shouldBe Status.SEE_OTHER
 
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe
-          Some(
-            controllers.manageBusinesses.manage.routes
-              .CheckYourAnswersController.show(isAgent = false, UkProperty).url
-          )
-      }
-      "the Agent's UK property reporting method is updated to annual" in {
-        val result = runSubmitTest(isAgent = true, UkProperty, testChangeToAnnual)
+              redirectLocation(result) shouldBe Some(expectedEndpoint)
+            }
+          }
+          s"return ${Status.INTERNAL_SERVER_ERROR}" when {
+            "taxYear parameter has an invalid format " in new SetupGET {
+              override val incomeSourceType: IncomeSourceType = testIncomeSourceType
+              override val mtdRole: MTDUserRole = testMtdRole
+              override val taxYear: String = invalidTaxYear
 
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe
-          Some(
-            controllers.manageBusinesses.manage.routes
-              .CheckYourAnswersController.show(isAgent = true, UkProperty).url
-          )
-      }
-    }
+              setupMockSuccess(mtdRole)
+              enable(IncomeSourcesFs)
+              mockBothPropertyBothBusinessWithLatency()
 
-    s"return ${Status.SEE_OTHER} and redirect to the Manage Obligations page for a Foreign property" when {
-      "the Individual's Foreign property reporting method is updated to quarterly" in {
-        val result = runSubmitTest(isAgent = false, ForeignProperty, testChangeToQuarterly)
+              setupMockCreateSession(true)
+              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
 
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe
-          Some(
-            controllers.manageBusinesses.manage.routes
-              .CheckYourAnswersController.show(isAgent = false, ForeignProperty).url
-          )
-      }
-      "the Agent's Foreign property reporting method is updated to quarterly" in {
-        val result = runSubmitTest(isAgent = true, ForeignProperty, testChangeToQuarterly)
+              setupMockSetMongoData(true)
 
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe
-          Some(
-            controllers.manageBusinesses.manage.routes
-              .CheckYourAnswersController.show(isAgent = true, ForeignProperty).url
-          )
-      }
-    }
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            }
+            "taxYear parameter doesn't match latency details " in new SetupGET {
+              override val incomeSourceType: IncomeSourceType = testIncomeSourceType
+              override val mtdRole: MTDUserRole = testMtdRole
+              override val taxYear: String = invalidTaxYearLatency
 
-    s"return ${Status.SEE_OTHER} and redirect to the Manage Obligations page for a Sole Trader Business" when {
-      "the Individual's Sole Trader Business reporting method is updated to annual" in {
-        val result = runSubmitTest(isAgent = false, SelfEmployment)
+              setupMockSuccess(mtdRole)
+              enable(IncomeSourcesFs)
+              mockBothPropertyBothBusinessWithLatency()
 
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe
-          Some(
-            controllers.manageBusinesses.manage.routes
-              .CheckYourAnswersController.show(isAgent = false, SelfEmployment).url
-          )
-      }
-      "the Agent's Foreign property reporting method is updated to annual" in {
-        val result = runSubmitTest(isAgent = true, ForeignProperty)
+              setupMockCreateSession(true)
+              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
 
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe
-          Some(
-            controllers.manageBusinesses.manage.routes
-              .CheckYourAnswersController.show(isAgent = true, ForeignProperty).url
-          )
+              setupMockSetMongoData(true)
+
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            }
+            "changeTo parameter has an invalid format " in new SetupGET {
+              override val incomeSourceType: IncomeSourceType = testIncomeSourceType
+              override val mtdRole: MTDUserRole = testMtdRole
+              override val changeTo: String = invalidChangeTo
+
+              setupMockSuccess(mtdRole)
+              enable(IncomeSourcesFs)
+              mockBothPropertyBothBusinessWithLatency()
+
+              setupMockCreateSession(true)
+              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
+
+              setupMockSetMongoData(true)
+
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            }
+            if (testIncomeSourceType == SelfEmployment) {
+              "the given incomeSourceId cannot be found in the user's Sole Trader business income sources" in new SetupGET {
+                override val incomeSourceType: IncomeSourceType = testIncomeSourceType
+                override val mtdRole: MTDUserRole = testMtdRole
+
+                setupMockSuccess(mtdRole)
+                enable(IncomeSourcesFs)
+                mockBothPropertyBothBusinessWithLatency()
+
+                setupMockCreateSession(true)
+                setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
+
+                val result = action(fakeRequest)
+                status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+              }
+            }
+          }
+        }
       }
     }
   }
 
 
-  def runShowTest(isAgent: Boolean,
-                  disableIncomeSources: Boolean = false,
-                  changeTo: String = testChangeToAnnual,
-                  taxYear: String = testTaxYear,
-                  incomeSourceType: IncomeSourceType = SelfEmployment,
-                  emptyMongo: Boolean = false
-                 ): Future[Result] = {
+  trait SetupPOST {
+    val taxYear: String = "2022-2023"
+    val changeTo: String = "annual"
+    val incomeSourceType: IncomeSourceType
+    val mtdRole: MTDUserRole
 
-    if (disableIncomeSources)
-      disable(IncomeSourcesFs)
-
-    mockBothPropertyBothBusinessWithLatency()
-    setupMockAuthorisationSuccess(isAgent)
-
-    setupMockCreateSession(true)
-    if (emptyMongo) setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
-    else setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
-
-    setupMockSetMongoData(true)
-
-    TestConfirmReportingMethodSharedController
-      .show(taxYear, changeTo, isAgent, incomeSourceType)(
-        if (isAgent)
-          fakeRequestConfirmedClient()
-        else
-          fakeRequestWithActiveSession
-      )
+    lazy val action = if (mtdRole == MTDIndividual) {
+      testConfirmReportingMethodSharedController.submit(taxYear, changeTo, incomeSourceType)
+    } else {
+      testConfirmReportingMethodSharedController.submitAgent(taxYear, changeTo, incomeSourceType)
+    }
   }
 
-  def runSubmitTest(isAgent: Boolean,
-                    incomeSourceType: IncomeSourceType = SelfEmployment,
-                    changeTo: String = testChangeToAnnual,
-                    taxYear: String = testTaxYear,
-                    withValidForm: Boolean = true,
-                    disableIncomeSources: Boolean = false,
-                    withUpdateIncomeSourceResponseError: Boolean = false
-                   ): Future[Result] = {
+  Seq(SelfEmployment, UkProperty, ForeignProperty).foreach { testIncomeSourceType =>
+    mtdAllRoles.foreach { testMtdRole =>
+      s"submit${if (testMtdRole != MTDIndividual) "Agent"}($testIncomeSourceType)" when {
+        val fakeRequest = fakePostRequestBasedOnMTDUserType(testMtdRole).withMethod("POST")
+        s"the user is authenticated as s$testMtdRole" should {
+          s"return ${Status.SEE_OTHER} and redirect to the Manage Obligations page for a property" when {
+            "the user's property reporting method is updated to annual" in new SetupPOST {
+              override val incomeSourceType: IncomeSourceType = testIncomeSourceType
+              override val mtdRole: MTDUserRole = testMtdRole
 
-    if (disableIncomeSources)
-      disable(IncomeSourcesFs)
+              setupMockSuccess(mtdRole)
+              enable(IncomeSourcesFs)
+              mockBothPropertyBothBusiness()
+              setupMockCreateSession(true)
+              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
+              setupMockSetMongoData(true)
+              val result = action(fakeRequest.withFormUrlEncodedBody(validTestForm))
+              val expectedEndpoint = if (mtdRole == MTDIndividual) {
+                controllers.manageBusinesses.manage.routes
+                  .CheckYourAnswersController.show(isAgent = false, incomeSourceType).url
+              } else {
+                controllers.manageBusinesses.manage.routes
+                  .CheckYourAnswersController.show(isAgent = true, incomeSourceType).url
+              }
 
-    mockBothPropertyBothBusiness()
+              status(result) shouldBe Status.SEE_OTHER
+              redirectLocation(result) shouldBe
+                Some(expectedEndpoint)
+            }
+            "the user's property reporting method is updated to quarterly" in new SetupPOST {
+              override val incomeSourceType: IncomeSourceType = testIncomeSourceType
+              override val mtdRole: MTDUserRole = testMtdRole
+              override val changeTo: String = "quarterly"
+              setupMockSuccess(mtdRole)
+              enable(IncomeSourcesFs)
+              mockBothPropertyBothBusiness()
+              setupMockCreateSession(true)
+              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
+              setupMockSetMongoData(true)
+              val result = action(fakeRequest.withFormUrlEncodedBody(validTestForm))
+              val expectedEndpoint = if (mtdRole == MTDIndividual) {
+                controllers.manageBusinesses.manage.routes
+                  .CheckYourAnswersController.show(isAgent = false, incomeSourceType).url
+              } else {
+                controllers.manageBusinesses.manage.routes
+                  .CheckYourAnswersController.show(isAgent = true, incomeSourceType).url
+              }
 
-    setupMockAuthorisationSuccess(isAgent)
+              status(result) shouldBe Status.SEE_OTHER
+              redirectLocation(result) shouldBe
+                Some(expectedEndpoint)
+            }
 
-    setupMockCreateSession(true)
-    setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
-    setupMockSetMongoData(true)
+          }
+          s"return ${Status.SEE_OTHER} and redirect to the home page" when {
+            "the IncomeSources FS is disabled" in new SetupPOST {
+              override val incomeSourceType: IncomeSourceType = testIncomeSourceType
+              override val mtdRole: MTDUserRole = testMtdRole
+              setupMockSuccess(mtdRole)
+              mockBothPropertyBothBusiness()
+              setupMockCreateSession(true)
+              setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
+              setupMockSetMongoData(true)
+              val result = action(fakeRequest.withFormUrlEncodedBody(validTestForm))
+              val expectedEndpoint = if (mtdRole == MTDIndividual) {
+                controllers.routes.HomeController.show().url
+              } else {
+                controllers.routes.HomeController.showAgent.url
+              }
 
-    TestConfirmReportingMethodSharedController
-      .submit(taxYear, changeTo, isAgent, incomeSourceType)(
-        (if (isAgent)
-          fakePostRequestConfirmedClient()
-        else
-          fakePostRequestWithActiveSession).withFormUrlEncodedBody(
-          if (withValidForm)
-            validTestForm
-          else
-            invalidTestForm
-        )
-      )
+              status(result) shouldBe Status.SEE_OTHER
+
+              redirectLocation(result) shouldBe Some(expectedEndpoint)
+            }
+          }
+          s"return ${Status.INTERNAL_SERVER_ERROR} " when {
+            "The taxYear parameter has an invalid Tax Year format" in new SetupPOST {
+              override val incomeSourceType: IncomeSourceType = testIncomeSourceType
+              override val mtdRole: MTDUserRole = testMtdRole
+              override val taxYear: String = invalidTaxYear
+              setupMockSuccess(mtdRole)
+              enable(IncomeSourcesFs)
+              mockBothPropertyBothBusiness()
+              setupMockCreateSession(true)
+              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
+              setupMockSetMongoData(true)
+              val result = action(fakeRequest.withFormUrlEncodedBody(validTestForm))
+
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            }
+          }
+          s"return ${Status.INTERNAL_SERVER_ERROR} " when {
+            "The taxYear parameter has an invalid ChangeTo format" in new SetupPOST {
+              override val incomeSourceType: IncomeSourceType = testIncomeSourceType
+              override val mtdRole: MTDUserRole = testMtdRole
+              override val changeTo: String = invalidChangeTo
+              setupMockSuccess(mtdRole)
+              enable(IncomeSourcesFs)
+              mockBothPropertyBothBusiness()
+              setupMockCreateSession(true)
+              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
+              setupMockSetMongoData(true)
+              val result = action(fakeRequest.withFormUrlEncodedBody(validTestForm))
+
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            }
+          }
+          s"return ${Status.BAD_REQUEST}" when {
+            "the form is empty " in new SetupPOST {
+              override val incomeSourceType: IncomeSourceType = testIncomeSourceType
+              override val mtdRole: MTDUserRole = testMtdRole
+              setupMockSuccess(mtdRole)
+              enable(IncomeSourcesFs)
+              mockBothPropertyBothBusiness()
+              setupMockCreateSession(true)
+              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
+              setupMockSetMongoData(true)
+              val result = action(fakeRequest.withFormUrlEncodedBody(invalidTestForm))
+
+              status(result) shouldBe Status.BAD_REQUEST
+            }
+          }
+        }
+      }
+    }
   }
 
-  override def beforeEach(): Unit = {
-    disableAllSwitches()
-    enable(IncomeSourcesFs)
-  }
-
-  private lazy val testTaxYear = "2022-2023"
   private lazy val invalidTaxYear = "$$$$-££££"
-  private lazy val invalidTaxYearLatency = "2055-2056"
-  private lazy val invalidChangeTo = "randomText"
-  private lazy val testChangeToAnnual = "annual"
-  private lazy val testChangeToQuarterly = "quarterly"
+    private lazy val invalidTaxYearLatency = "2055-2056"
+    private lazy val invalidChangeTo = "randomText"
   private lazy val validTestForm: (String, String) = ConfirmReportingMethodForm.confirmReportingMethod -> "true"
-  private lazy val invalidTestForm: (String, String) = "INVALID_ENTRY" -> "INVALID_ENTRY"
-}
+    private lazy val invalidTestForm: (String, String) = "INVALID_ENTRY" -> "INVALID_ENTRY"
+  }
