@@ -56,7 +56,7 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
 
               result should have(
                 httpStatus(OK),
-                pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
+                pageTitle(mtdUserRole, "incomeSources.manage.business-manage-details.heading"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Business name"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessTradingName),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Address"),
@@ -86,7 +86,7 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
 
               result should have(
                 httpStatus(OK),
-                pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
+                pageTitle(mtdUserRole, "incomeSources.manage.business-manage-details.heading"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Business name"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessTradingName),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Address"),
@@ -120,7 +120,7 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
 
               result should have(
                 httpStatus(OK),
-                pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
+                pageTitle(mtdUserRole, "incomeSources.manage.business-manage-details.heading"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Business name"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessTradingName),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Address"),
@@ -153,7 +153,7 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
 
               result should have(
                 httpStatus(OK),
-                pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
+                pageTitle(mtdUserRole, "incomeSources.manage.business-manage-details.heading"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Business name"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(messagesUnknown),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Address"),

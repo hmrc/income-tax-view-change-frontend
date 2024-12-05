@@ -71,11 +71,11 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
 
   val manageObligationsShowUKPropertyUrl: String = manageObligationsController
-    .showUKProperty(changeTo = annual, taxYear = taxYear).url
+    .show(changeTo = annual, taxYear = taxYear, UkProperty).url
   val manageObligationsShowForeignPropertyUrl: String = manageObligationsController
-    .showForeignProperty(changeTo = annual, taxYear = taxYear).url
+    .show(changeTo = annual, taxYear = taxYear, ForeignProperty).url
   val manageObligationsShowSelfEmploymentUrl: String = manageObligationsController
-    .showSelfEmployment(changeTo = annual, taxYear = taxYear).url
+    .show(changeTo = annual, taxYear = taxYear, SelfEmployment).url
 
   val prefix: String = "incomeSources.manage.propertyReportingMethod"
 

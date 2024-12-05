@@ -65,7 +65,7 @@ class CannotGoBackErrorControllerISpec extends ControllerISpecHelper {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
                 result should have(
                   httpStatus(OK),
-                  pageTitleIndividual("cannotGoBack.heading")
+                  pageTitle(mtdUserRole, "cannotGoBack.heading")
                 )
               }
             }
