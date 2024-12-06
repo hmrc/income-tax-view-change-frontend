@@ -179,7 +179,7 @@ class AuthActionsSpec extends TestSupport with ScalaFutures with MockOldAuthActi
     "user is an agent" should {
 
       val sessionData = Map(
-        (SessionKeys.confirmedClient, ""),
+        (SessionKeys.confirmedClient, "true"),
         (SessionKeys.clientMTDID, mtdId),
         (SessionKeys.clientFirstName, "Brian"),
         (SessionKeys.clientLastName, "Brianson"),
@@ -398,7 +398,8 @@ class AuthActionsSpec extends TestSupport with ScalaFutures with MockOldAuthActi
   val mockRetrieveClientData: RetrieveClientData = new RetrieveClientData(
     mockSessionDataService,
     errorHandler = app.injector.instanceOf[AgentItvcErrorHandler],
-    appConfig = appConfig
+    appConfig = appConfig,
+    clientDetailsService = mockClientDetailsService
   )
 
   val authActions = new AuthActions(
@@ -410,7 +411,7 @@ class AuthActionsSpec extends TestSupport with ScalaFutures with MockOldAuthActi
     mockAuthActions.agentHasClientDetails,
     app.injector.instanceOf[AgentHasConfirmedClientAction],
     app.injector.instanceOf[AgentIsPrimaryAction],
-    app.injector.instanceOf[AsMtdUser],
+    mockAuthActions.asMtdUser,
     app.injector.instanceOf[NavBarRetrievalAction],
     app.injector.instanceOf[IncomeSourceRetrievalAction],
     mockRetrieveClientData,

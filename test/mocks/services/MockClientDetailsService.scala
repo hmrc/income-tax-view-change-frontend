@@ -22,6 +22,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.mockito.Mockito.mock
 import services.agent.ClientDetailsService
 import services.agent.ClientDetailsService.{ClientDetails, ClientDetailsFailure}
+import testConstants.BaseTestConstants.{testMtditid, testNino}
 import testUtils.UnitSpec
 
 import scala.concurrent.Future
@@ -29,6 +30,8 @@ import scala.concurrent.Future
 trait MockClientDetailsService extends UnitSpec with BeforeAndAfterEach {
 
   lazy val mockClientDetailsService: ClientDetailsService = mock(classOf[ClientDetailsService])
+
+  val testResponse = Future.successful(Right(ClientDetails(Some("Test"), Some("User"), testNino, testMtditid)))
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -38,6 +41,11 @@ trait MockClientDetailsService extends UnitSpec with BeforeAndAfterEach {
   def mockClientDetails(utr: String)(response: Either[ClientDetailsFailure, ClientDetails]): Unit = {
     when(mockClientDetailsService.checkClientDetails(matches(utr))(any()))
       .thenReturn(Future.successful(response))
+  }
+
+  def setupMockGetClientDetailsSuccess(): Unit = {
+    when(mockClientDetailsService.checkClientDetails(any())(any()))
+      .thenReturn(testResponse)
   }
 
 }

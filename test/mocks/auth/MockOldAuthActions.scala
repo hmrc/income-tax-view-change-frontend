@@ -20,7 +20,7 @@ import audit.mocks.MockAuditingService
 import auth.authV2.AuthActions
 import auth.authV2.actions._
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import mocks.services.{MockIncomeSourceDetailsService, MockSessionDataService}
+import mocks.services.{MockClientDetailsService, MockIncomeSourceDetailsService, MockSessionDataService}
 import models.sessionData.SessionDataGetResponse
 import models.sessionData.SessionDataGetResponse.{SessionDataGetSuccess, SessionDataNotFound}
 import org.mockito.ArgumentMatchers.any
@@ -36,7 +36,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{ExecutionContext, Future}
 
 trait MockOldAuthActions extends TestSupport with MockIncomeSourceDetailsService
-  with MockFrontendAuthorisedFunctions with MockAuditingService with MockSessionDataService {
+  with MockFrontendAuthorisedFunctions with MockAuditingService with MockSessionDataService with MockClientDetailsService{
 
   private val authoriseAndRetrieve = new AuthoriseAndRetrieve(
     authorisedFunctions = mockAuthService,
@@ -81,13 +81,15 @@ trait MockOldAuthActions extends TestSupport with MockIncomeSourceDetailsService
   private val asMtdUser = new AsMtdUser()(
     executionContext = ec,
     sessionDataService = mockSessionDataService,
+    clientDetailsService = mockClientDetailsService,
     appConfig = appConfig
   )
 
   private val retrieveClientData = new RetrieveClientData(
     sessionDataService = mockSessionDataService,
     appConfig = appConfig,
-    errorHandler = app.injector.instanceOf[AgentItvcErrorHandler]
+    errorHandler = app.injector.instanceOf[AgentItvcErrorHandler],
+    clientDetailsService = mockClientDetailsService
   )
 
   private val authoriseAndRetrieveMtdAgent = new AuthoriseAndRetrieveMtdAgent(
@@ -116,6 +118,7 @@ trait MockOldAuthActions extends TestSupport with MockIncomeSourceDetailsService
 
   override def setupMockAuthRetrievalSuccess[X, Y](retrievalValue: X ~ Y): Unit = {
     setupMockGetSessionDataSuccess()
+    setupMockGetClientDetailsSuccess()
     when(mockAuthService.authorised(any()))
       .thenReturn(
         new mockAuthService.AuthorisedFunction(EmptyPredicate) {

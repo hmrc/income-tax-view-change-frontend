@@ -41,8 +41,7 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
 
   override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
     .overrides(
-      api.inject.bind[EnterClientsUTR].toInstance(enterClientsUTR),
-      api.inject.bind[ClientDetailsService].toInstance(mockClientDetailsService)
+      api.inject.bind[EnterClientsUTR].toInstance(enterClientsUTR)
     ).build()
 
   val testEnterClientsUTRController = fakeApplication().injector.instanceOf[EnterClientsUTRController]
@@ -327,43 +326,45 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
           ))
           status(result) shouldBe INTERNAL_SERVER_ERROR
         }
-        "the utr entered is valid, there is a client/primary agent relationship but the POST request to session data service is unsuccessful" in {
-          val validUTR: String = "1234567890"
-          setupMockAgentAuthSuccess(agentAuthRetrievalSuccess)
+        if (appConfig.isSessionDataStorageEnabled) {
+          "the utr entered is valid, there is a client/primary agent relationship but the POST request to session data service is unsuccessful" in {
+            val validUTR: String = "1234567890"
+            setupMockAgentAuthSuccess(agentAuthRetrievalSuccess)
 
-          setupMockPostSessionData(Left(SessionDataPostFailure(INTERNAL_SERVER_ERROR, "POST to session data service was unsuccessful TEST")))
+            setupMockPostSessionData(Left(SessionDataPostFailure(INTERNAL_SERVER_ERROR, "POST to session data service was unsuccessful TEST")))
 
-          mockClientDetails(validUTR)(
-            response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
-          )
+            mockClientDetails(validUTR)(
+              response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
+            )
 
-          setupMockPrimaryAgentAuthRetrievalSuccess(agentAuthRetrievalSuccess, testMtditid)
+            setupMockPrimaryAgentAuthRetrievalSuccess(agentAuthRetrievalSuccess, testMtditid)
 
-          val result = testEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
-            ClientsUTRForm.utr -> validUTR
-          ))
+            val result = testEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+              ClientsUTRForm.utr -> validUTR
+            ))
 
-          status(result) shouldBe INTERNAL_SERVER_ERROR
-        }
-        "the utr entered is valid, there is a client/secondary agent relationship but the POST request to session data service is unsuccessful" in {
-          val validUTR: String = "1234567890"
-          setupMockAgentAuthSuccess(agentAuthRetrievalSuccess)
+            status(result) shouldBe INTERNAL_SERVER_ERROR
+          }
+          "the utr entered is valid, there is a client/secondary agent relationship but the POST request to session data service is unsuccessful" in {
+            val validUTR: String = "1234567890"
+            setupMockAgentAuthSuccess(agentAuthRetrievalSuccess)
 
-          setupMockPostSessionData(Left(SessionDataPostFailure(INTERNAL_SERVER_ERROR, "POST to session data service was unsuccessful TEST")))
+            setupMockPostSessionData(Left(SessionDataPostFailure(INTERNAL_SERVER_ERROR, "POST to session data service was unsuccessful TEST")))
 
-          mockClientDetails(validUTR)(
-            response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
-          )
+            mockClientDetails(validUTR)(
+              response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
+            )
 
-          setupMockPrimaryAgentAuthorisationException(testMtditid)
+            setupMockPrimaryAgentAuthorisationException(testMtditid)
 
-          setupMockSecondaryAgentAuthRetrievalSuccess(agentAuthRetrievalSuccess, testMtditid)
+            setupMockSecondaryAgentAuthRetrievalSuccess(agentAuthRetrievalSuccess, testMtditid)
 
-          val result = testEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
-            ClientsUTRForm.utr -> validUTR
-          ))
+            val result = testEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+              ClientsUTRForm.utr -> validUTR
+            ))
 
-          status(result) shouldBe INTERNAL_SERVER_ERROR
+            status(result) shouldBe INTERNAL_SERVER_ERROR
+          }
         }
       }
     }

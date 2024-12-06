@@ -24,7 +24,7 @@ import authV2.AuthActionsTestData._
 import config.featureswitch.FeatureSwitching
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import mocks.MockItvcErrorHandler
-import mocks.services.{MockIncomeSourceDetailsService, MockSessionDataService}
+import mocks.services.{MockClientDetailsService, MockIncomeSourceDetailsService, MockSessionDataService}
 import org.jsoup.Jsoup
 import org.mockito.Mockito.{mock, reset}
 import play.api
@@ -33,6 +33,7 @@ import play.api.http.Status
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{Action, AnyContent}
 import play.api.test.Helpers._
+import services.agent.ClientDetailsService
 import services.{IncomeSourceDetailsService, SessionDataService}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.retrieve.~
@@ -46,6 +47,7 @@ trait MockAuthActions extends
   MockAuditingService with
   MockItvcErrorHandler with
   MockSessionDataService with
+  MockClientDetailsService with
   FeatureSwitching {
 
   override def beforeEach(): Unit = {
@@ -73,7 +75,8 @@ trait MockAuthActions extends
         api.inject.bind[FrontendAuthorisedFunctions].toInstance(mockAuthService),
         api.inject.bind[IncomeSourceDetailsService].toInstance(mockIncomeSourceDetailsService),
         api.inject.bind[AuditingService].toInstance(mockAuditingService),
-        api.inject.bind[SessionDataService].toInstance(mockSessionDataService)
+        api.inject.bind[SessionDataService].toInstance(mockSessionDataService),
+        api.inject.bind[ClientDetailsService].toInstance(mockClientDetailsService)
       )
   }
 
@@ -93,6 +96,7 @@ trait MockAuthActions extends
 
   def setupMockAgentWithClientAuth[X, Y](isSupportingAgent: Boolean): Unit = {
     setupMockGetSessionDataSuccess()
+    setupMockGetClientDetailsSuccess()
     val allEnrolments = getAllEnrolmentsAgent(true, true, hasDelegatedEnrolment = true)
     val retrievalValue = allEnrolments ~ Some(userName) ~ Some(credentials) ~ Some(AffinityGroup.Agent) ~ acceptedConfidenceLevel
     setupMockAgentWithClientAuthSuccess(retrievalValue, mtdId, isSupportingAgent)
@@ -100,6 +104,7 @@ trait MockAuthActions extends
 
   def setupMockAgentWithClientAuthAndIncomeSources[X, Y](isSupportingAgent: Boolean): Unit = {
     setupMockGetSessionDataSuccess()
+    setupMockGetClientDetailsSuccess()
     val allEnrolments = getAllEnrolmentsAgent(true, true, hasDelegatedEnrolment = true)
     val retrievalValue = allEnrolments ~ Some(userName) ~ Some(credentials) ~ Some(AffinityGroup.Agent) ~ acceptedConfidenceLevel
     setupMockAgentWithClientAuthSuccess(retrievalValue, mtdId, isSupportingAgent)
@@ -112,6 +117,7 @@ trait MockAuthActions extends
 
   def setupMockAgentWithClientAuthorisationException(exception: AuthorisationException = new InvalidBearerToken, isSupportingAgent: Boolean): Unit = {
     setupMockGetSessionDataSuccess()
+    setupMockGetClientDetailsSuccess()
     setupMockAgentWithClientAuthException(exception, mtdId, isSupportingAgent)
   }
 
@@ -172,6 +178,7 @@ trait MockAuthActions extends
     s"the $userType is not authenticated" should {
       "redirect to signin" in {
         setupMockGetSessionDataSuccess()
+        setupMockGetClientDetailsSuccess()
         setupMockAgentWithClientAuthException( new InvalidBearerToken, mtdId, isSupportingAgent)
 
         val result = action(fakeRequest)
@@ -184,6 +191,7 @@ trait MockAuthActions extends
     s"the $userType has a session that has timed out" should {
       "redirect to timeout controller" in {
         setupMockGetSessionDataSuccess()
+        setupMockGetClientDetailsSuccess()
         setupMockAgentWithClientAuthException( new BearerTokenExpired, mtdId, isSupportingAgent)
 
         val result = action(fakeRequest)
@@ -196,6 +204,7 @@ trait MockAuthActions extends
     s"the $userType does not have an arn enrolment" should {
       "redirect to AgentError controller" in {
         setupMockGetSessionDataSuccess()
+        setupMockGetClientDetailsSuccess()
         setupMockAgentWithClientAuthException(InsufficientEnrolments("missing HMRC-AS-AGENT enrolment"), mtdId, isSupportingAgent)
 
         val result = action(fakeRequest)
@@ -208,6 +217,7 @@ trait MockAuthActions extends
     s"the $userType does not have a valid delegated MTD enrolment" should {
       "redirect to ClientRelationshipFailureController controller" in {
         setupMockGetSessionDataSuccess()
+        setupMockGetClientDetailsSuccess()
         setupMockAgentWithClientAuthorisationException(exception = InsufficientEnrolments("HMRC-MTD-IT is missing"), isSupportingAgent)
         val result = action(fakeRequest)
 
