@@ -17,7 +17,7 @@
 package connectors
 
 import forms.FeedbackForm
-import mocks.MockHttp
+import mocks.MockHttpV2
 import mocks.services.MockSessionService
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
@@ -28,9 +28,8 @@ import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.partials.HeaderCarrierForPartials
 
-import scala.concurrent.Future
 
-class FeedbackConnectorSpec extends TestSupport with MockHttp with MockSessionService{
+class FeedbackConnectorSpec extends TestSupport with MockHttpV2 with MockSessionService{
 
   val formData: FeedbackForm = FeedbackForm(
     Some("Random Rating"),
@@ -49,16 +48,16 @@ class FeedbackConnectorSpec extends TestSupport with MockHttp with MockSessionSe
     "feedbackReferrer" -> "346446"
   )
 
-  val successResponse = HttpResponse(status = Status.OK, json = feedbackFormData, headers = Map.empty)
-  val badResponse = HttpResponse(status = Status.BAD_REQUEST, body = "RESPONSE status: BAD_REQUEST")
+  val successResponse: HttpResponse = HttpResponse(status = Status.OK, json = feedbackFormData, headers = Map.empty)
+  val badResponse: HttpResponse = HttpResponse(status = Status.BAD_REQUEST, body = "RESPONSE status: BAD_REQUEST")
 
-  val TestFeedbackConnector: FeedbackConnector = new FeedbackConnector(httpClientMock, appConfig, mockItvcHeaderCarrierForPartialsConverter)
+  val TestFeedbackConnector: FeedbackConnector = new FeedbackConnector(mockHttpClientV2, appConfig, mockItvcHeaderCarrierForPartialsConverter)
 
   "FeedbackConnector" should {
     "return OK response" when {
       "when form is successful" in {
 
-        when(httpClientMock.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(successResponse))
+        setupMockHttpV2Post(TestFeedbackConnector.feedbackServiceSubmitUrl.toString)(successResponse)
 
         when(mockItvcHeaderCarrierForPartialsConverter.headerCarrierEncryptingSessionCookieFromRequest)
           .thenReturn(HeaderCarrierForPartials(headerCarrier))
@@ -75,7 +74,7 @@ class FeedbackConnectorSpec extends TestSupport with MockHttp with MockSessionSe
       "return a BAD_REQUEST response" when {
         "when form unsuccessfully completed" in {
 
-          when(httpClientMock.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(badResponse))
+          setupMockHttpV2Post(TestFeedbackConnector.feedbackServiceSubmitUrl.toString)(badResponse)
 
           when(mockItvcHeaderCarrierForPartialsConverter.headerCarrierEncryptingSessionCookieFromRequest)
             .thenReturn(HeaderCarrierForPartials(headerCarrier))
