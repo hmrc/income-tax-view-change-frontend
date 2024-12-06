@@ -32,7 +32,7 @@ case class OptInAuditModel(optInProposition: OptInProposition,
 
   override val auditType: String = enums.AuditType.OptInQuarterlyReportingRequest
 
-  private val outcome: JsObject = {
+  val outcome: JsObject = {
     val outcome = resolvedOutcome match {
       case response: ITSAStatusUpdateResponseFailure => Json.obj("isSuccessful" -> false, "failureCategory" -> response.failures.head.code, "failureReason" -> response.failures.head.reason)
       case _: ITSAStatusUpdateResponseSuccess => Json.obj("isSuccessful" -> true)

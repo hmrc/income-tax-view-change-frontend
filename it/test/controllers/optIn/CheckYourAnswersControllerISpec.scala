@@ -21,7 +21,7 @@ import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import controllers.optIn.CheckYourAnswersControllerISpec._
 import enums.JourneyType.{Opt, OptInJourney}
-import helpers.servicemocks.AuditStub.verifyAuditEvent
+import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import helpers.{ComponentSpecBase, ITSAStatusUpdateConnectorStub}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear, UIJourneySessionData}
@@ -146,7 +146,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
 
         val currentTaxYearOptIn: CurrentOptInTaxYear = CurrentOptInTaxYear(Annual, currentTaxYear)
 
-        verifyAuditEvent(
+        verifyAuditContainsDetail(
           OptInAuditModel(
             OptInProposition(
               currentTaxYearOptIn,
@@ -154,7 +154,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
             ),
             currentTaxYear,
             ITSAStatusUpdateResponseSuccess(OK)
-          )
+          ).detail
         )
 
         result should have(
@@ -186,7 +186,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
 
           val currentTaxYearOptIn: CurrentOptInTaxYear = CurrentOptInTaxYear(Voluntary, currentTaxYear)
 
-          verifyAuditEvent(
+          verifyAuditContainsDetail(
             OptInAuditModel(
               OptInProposition(
                 currentTaxYearOptIn,
@@ -194,7 +194,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
               ),
               currentTaxYear,
               ITSAStatusUpdateResponseFailure.defaultFailure()
-            )
+            ).detail
           )
 
           result should have(
@@ -228,5 +228,4 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
               currentTaxYear.toString, statusToString(currentYearStatus),
               statusToString(nextYearStatus))), Some(intent.toString)))))
   }
-
 }
