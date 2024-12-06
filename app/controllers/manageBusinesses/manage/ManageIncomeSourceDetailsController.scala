@@ -17,22 +17,22 @@
 package controllers.manageBusinesses.manage
 
 import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
+import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney._
-import enums.JourneyType.{IncomeSourceJourneyType, JourneyType, Manage}
+import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.IncomeSourceIdHash.{mkFromQueryString, mkIncomeSourceIdHash}
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
 import models.incomeSourceDetails._
 import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
 import play.api.Logger
+import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services._
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.JourneyCheckerManageBusinesses
 import views.html.manageBusinesses.manage.ManageIncomeSourceDetails
 
 import javax.inject.{Inject, Singleton}
@@ -40,88 +40,155 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSourceDetails,
-                                                    val authorisedFunctions: AuthorisedFunctions,
+                                                    val authActions: AuthActions,
                                                     val itvcErrorHandler: ItvcErrorHandler,
-                                                    implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                                    val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                     val itsaStatusService: ITSAStatusService,
                                                     val dateService: DateService,
                                                     val calculationListService: CalculationListService,
-                                                    val sessionService: SessionService,
-                                                    val auth: AuthenticatorPredicate)
+                                                    val sessionService: SessionService)
                                                    (implicit val ec: ExecutionContext,
-                                                    implicit override val mcc: MessagesControllerComponents,
-                                                    val appConfig: FrontendAppConfig)
-  extends ClientConfirmedController with FeatureSwitching with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
+                                                    val mcc: MessagesControllerComponents,
+                                                    val appConfig: FrontendAppConfig) extends FrontendController(mcc)
+    with I18nSupport with JourneyCheckerManageBusinesses {
 
-  private def backUrl(isAgent: Boolean) = if(isAgent) {
-    controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+  private def getBackUrl(isAgent: Boolean): String =
+    if(isAgent) {
+      controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+    } else {
+      controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+    }
+
+  private def errorHandler(isAgent: Boolean) = if (isAgent) {
+    itvcErrorHandlerAgent
   } else {
-    controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+    itvcErrorHandler
   }
 
 
-  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType, id: Option[String]): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def show(isAgent: Boolean,
+           incomeSourceType: IncomeSourceType,
+           id: Option[String]): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
       withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), InitialPage) { _ =>
         incomeSourceType match {
           case SelfEmployment => id match {
-            case Some(realId) => handleSoleTrader(realId, isAgent)
+            case Some(realId) => handleSoleTrader(realId, getBackUrl(isAgent), isAgent)
             case None => Logger("application")
               .error(s"no incomeSourceId supplied with SelfEmployment isAgent = $isAgent")
-              Future.successful(if (isAgent) {
-                itvcErrorHandlerAgent.showInternalServerError()
-              } else {
-                itvcErrorHandler.showInternalServerError()
-              })
+              Future.successful(errorHandler(isAgent).showInternalServerError())
           }
-          case _ => handleRequest(
+          case _ => handleProperty(
             sources = user.incomeSources,
             isAgent = isAgent,
-            incomeSourceIdHashMaybe = None,
-            backUrl = backUrl(isAgent),
+            backUrl = getBackUrl(isAgent),
             incomeSourceType = incomeSourceType
           )
         }
       }
   }
 
-  def handleSoleTrader(hashIdString: String, isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
-    val incomeSourceIdHash: Either[Throwable, IncomeSourceIdHash] = mkFromQueryString(hashIdString)
-    incomeSourceIdHash match {
-      case Left(exception: Exception) => Future.failed(exception)
-      case Left(_) => Future.failed(new Error(s"Unexpected exception incomeSourceIdHash: <$incomeSourceIdHash>"))
-      case Right(incomeSourceIdHash: IncomeSourceIdHash) =>
+  def showChange(incomeSourceType: IncomeSourceType,
+                 isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
+    implicit user =>
+      withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), InitialPage) { sessionData =>
+        val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
+        val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => mkIncomeSourceIdHash(IncomeSourceId(id)))
+        val backUrl = controllers.manageBusinesses.manage.routes.CheckYourAnswersController.show(isAgent, incomeSourceType).url
+        incomeSourceType match {
+          case SelfEmployment => incomeSourceIdOpt match {
+            case Some(realId) => handleSoleTrader(realId.hash, backUrl, isAgent)
+            case None => Logger("application")
+              .error(s"no incomeSourceId supplied with SelfEmployment isAgent = $isAgent")
+              Future.successful(errorHandler(isAgent).showInternalServerError())
+          }
+          case _ => handleProperty(
+            sources = user.incomeSources,
+            isAgent = isAgent,
+            backUrl = backUrl,
+            incomeSourceType = incomeSourceType
+          )
+        }
+      }
+  }
 
-        val hashCompareResult: Either[Throwable, IncomeSourceId] = user.incomeSources.compareHashToQueryString(incomeSourceIdHash)
+  def handleSoleTrader(hashIdString: String, backUrl: String, isAgent: Boolean)
+                      (implicit user: MtdItUser[_]): Future[Result] = {
 
-        hashCompareResult match {
-          case Left(exception: Exception) => Future.failed(exception)
-          case Left(_) => Future.failed(new Error(s"Unexpected exception incomeSourceIdHash: <$incomeSourceIdHash>"))
-          case Right(incomeSourceId: IncomeSourceId) =>
-            sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, IncomeSourceJourneyType(Manage, SelfEmployment)).flatMap {
-              case Right(_) => handleRequest(
-                sources = user.incomeSources,
-                isAgent = isAgent,
-                backUrl = backUrl(isAgent),
-                incomeSourceIdHashMaybe = Some(incomeSourceIdHash),
-                incomeSourceType = SelfEmployment
-              )
-              case Left(exception) => Future.failed(exception)
-            }.recover {
-              case ex =>
-                Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
-                if (isAgent) {
-                  itvcErrorHandlerAgent.showInternalServerError()
-                } else {
-                  itvcErrorHandler.showInternalServerError()
-                }
-            }
+    def setMongoKey(incomeSourceId: IncomeSourceId): Future[Boolean] = sessionService.setMongoKey(
+      ManageIncomeSourceData.incomeSourceIdField,
+      incomeSourceId.value,
+      IncomeSourceJourneyType(Manage, SelfEmployment)
+    ).flatMap {
+      case Right(keySet) => Future.successful(keySet)
+      case Left(exception) => Future.failed(exception)
+    }
+
+    val result = for {
+      incomeSourceIdHash <- getIncomeSourceIdHash(hashIdString)
+      incomeSourceId <- validateIncomeSourcesContainsIncomeSourceId(incomeSourceIdHash)
+      _ <- setMongoKey(incomeSourceId)
+      viewModel <- getManageIncomeSourceViewModel(
+        sources = user.incomeSources,
+        incomeSourceId = incomeSourceId,
+        isAgent
+      )
+    } yield Ok(view(viewModel = viewModel,
+      isAgent = isAgent,
+      backUrl = backUrl
+    ))
+
+    result.recover{
+      case ex =>
+        Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
+        if (isAgent) {
+          itvcErrorHandlerAgent.showInternalServerError()
+        } else {
+          itvcErrorHandler.showInternalServerError()
         }
     }
   }
 
-  private def getQuarterType(latencyDetails: Option[LatencyDetails], quarterTypeElection: Option[QuarterTypeElection])
-                            (implicit user: MtdItUser[_]): Option[QuarterReportingType] = {
+  def handleProperty(sources: IncomeSourceDetailsModel,
+                     isAgent: Boolean,
+                     backUrl: String,
+                     incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+
+    getManageIncomeSourceViewModelProperty(sources = sources, isAgent = isAgent, incomeSourceType = incomeSourceType)
+      .map { viewModel =>
+        Ok(view(
+          viewModel = viewModel,
+          isAgent = isAgent,
+          backUrl = backUrl
+        ))
+      }.recover {
+        case ex =>
+          Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
+          errorHandler(isAgent).showInternalServerError()
+      }
+  }
+
+  private def getIncomeSourceIdHash(hashIdString: String): Future[IncomeSourceIdHash] = {
+    val incomeSourceIdHash: Either[Throwable, IncomeSourceIdHash] = mkFromQueryString(hashIdString)
+    incomeSourceIdHash match {
+      case Left(exception: Exception) => Future.failed(exception)
+      case Left(_) => Future.failed(new Error(s"Unexpected exception incomeSourceIdHash: <$incomeSourceIdHash>"))
+      case Right(incomeSourceIdHash: IncomeSourceIdHash) => Future.successful(incomeSourceIdHash)
+    }
+  }
+
+  private def validateIncomeSourcesContainsIncomeSourceId(incomeSourceIdHash: IncomeSourceIdHash)
+                                                         (implicit user: MtdItUser[_]): Future[IncomeSourceId] = {
+    val hashCompareResult: Either[Throwable, IncomeSourceId] = user.incomeSources.compareHashToQueryString(incomeSourceIdHash)
+    hashCompareResult match {
+      case Left(exception: Exception) => Future.failed(exception)
+      case Left(_) => Future.failed(new Error(s"Unexpected exception incomeSourceIdHash: <$incomeSourceIdHash>"))
+      case Right(incomeSourceId: IncomeSourceId) => Future.successful(incomeSourceId)
+    }
+  }
+
+  private def getQuarterType(latencyDetails: Option[LatencyDetails],
+                             quarterTypeElection: Option[QuarterTypeElection]): Option[QuarterReportingType] = {
     quarterTypeElection.flatMap(quarterTypeElection => {
       latencyDetails match {
         case Some(latencyDetails: LatencyDetails) =>
@@ -138,7 +205,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
   }
 
   private def getCrystallisationInformation(latencyDetails: Option[LatencyDetails])
-                                           (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[List[Boolean]]] = {
+                                           (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Option[List[Boolean]]] = {
     latencyDetails match {
       case Some(x) =>
         for {
@@ -194,7 +261,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                                               sources: IncomeSourceDetailsModel,
                                               incomeSourceId: IncomeSourceId,
                                               isAgent: Boolean
-                                            )(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, ManageIncomeSourceDetailsViewModel]] = {
+                                            )(implicit user: MtdItUser[_],
+                                              hc: HeaderCarrier, ec: ExecutionContext): Future[ManageIncomeSourceDetailsViewModel] = {
 
     val desiredIncomeSourceMaybe: Option[BusinessDetailsModel] = sources.businesses
       .filterNot(_.isCeased)
@@ -206,7 +274,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
           case Some(latencyDetails) =>
             handleLatencyAndCrystallisationDetails(desiredIncomeSource, latencyDetails)
           case None =>
-            Future.successful(Right(variableViewModelSEBusiness(
+            Future.successful(variableViewModelSEBusiness(
               incomeSource = desiredIncomeSource,
               latencyYearsQuarterly = LatencyYearsQuarterly(
                 firstYear = Some(false),
@@ -216,24 +284,24 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                 firstYear = None,
                 secondYear = None
               )
-            )))
+            ))
         }
       case None =>
-        Future.successful(Left(new Error("Unable to find income source")))
+        Future.failed(new Error("Unable to find income source"))
     }
   }
 
   private def handleLatencyAndCrystallisationDetails(
                                                       desiredIncomeSource: BusinessDetailsModel,
                                                       latencyDetails: LatencyDetails
-                                                    )(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, ManageIncomeSourceDetailsViewModel]] = {
+                                                    )(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[ManageIncomeSourceDetailsViewModel] = {
 
     for {
       (latencyYearOneStatus, latencyYearTwoStatus) <- itsaStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(Some(latencyDetails))
       crystallisationData <- getCrystallisationInformation(Some(latencyDetails))
     } yield crystallisationData match {
       case None =>
-        Right(variableViewModelSEBusiness(
+        variableViewModelSEBusiness(
           incomeSource = desiredIncomeSource,
           latencyYearsQuarterly = LatencyYearsQuarterly(
             firstYear = Some(latencyYearOneStatus),
@@ -243,10 +311,10 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
             firstYear = None,
             secondYear = None
           )
-        ))
+        )
 
       case Some(crystallisationList: List[Boolean]) =>
-        Right(variableViewModelSEBusiness(
+        variableViewModelSEBusiness(
           incomeSource = desiredIncomeSource,
           latencyYearsQuarterly = LatencyYearsQuarterly(
             firstYear = Some(latencyYearOneStatus),
@@ -256,16 +324,17 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
             firstYear = crystallisationList.headOption,
             secondYear = crystallisationList.lastOption
           )
-        ))
+        )
     }
   }
 
 
-  private def getManageIncomeSourceViewModelProperty(
-                                                      sources: IncomeSourceDetailsModel,
+  private def getManageIncomeSourceViewModelProperty(sources: IncomeSourceDetailsModel,
                                                       incomeSourceType: IncomeSourceType,
                                                       isAgent: Boolean
-                                                    )(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, ManageIncomeSourceDetailsViewModel]] = {
+                                                    )(implicit user: MtdItUser[_],
+                                                      hc: HeaderCarrier,
+                                                      ec: ExecutionContext): Future[ManageIncomeSourceDetailsViewModel] = {
 
     val desiredIncomeSourceMaybe: Option[PropertyDetailsModel] = {
       if (incomeSourceType == UkProperty) {
@@ -285,16 +354,16 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
           case Some(latencyDetails) =>
             handleLatencyAndCrystallisationDetailsForProperty(desiredIncomeSource, latencyDetails, incomeSourceType)
           case None =>
-            Future.successful(Right(variableViewModelPropertyBusiness(
+            Future.successful(variableViewModelPropertyBusiness(
               incomeSource = desiredIncomeSource,
               latencyYearsQuarterly = LatencyYearsQuarterly(Some(false), Some(false)),
               latencyYearsCrystallised = LatencyYearsCrystallised(Some(false), Some(false)),
               incomeSourceType = incomeSourceType
-            )))
+            ))
 
         }
       case None =>
-        Future.successful(Left(new Error("Unable to find income source")))
+        Future.failed(new Error("Unable to find income source"))
     }
   }
 
@@ -302,94 +371,26 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                                                                  desiredIncomeSource: PropertyDetailsModel,
                                                                  latencyDetails: LatencyDetails,
                                                                  incomeSourceType: IncomeSourceType
-                                                               )(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, ManageIncomeSourceDetailsViewModel]] = {
+                                                               )(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[ManageIncomeSourceDetailsViewModel] = {
 
     for {
       (latencyYearOneStatus, latencyYearTwoStatus) <- itsaStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(Some(latencyDetails))
       crystallisationData <- getCrystallisationInformation(Some(latencyDetails))
     } yield crystallisationData match {
       case None =>
-        Right(variableViewModelPropertyBusiness(
+        variableViewModelPropertyBusiness(
           incomeSource = desiredIncomeSource,
           latencyYearsQuarterly = LatencyYearsQuarterly(Some(latencyYearOneStatus), Some(latencyYearTwoStatus)),
           latencyYearsCrystallised = LatencyYearsCrystallised(None, None),
           incomeSourceType = incomeSourceType
-        ))
+        )
       case Some(crystallisationList: List[Boolean]) =>
-        Right(variableViewModelPropertyBusiness(
+        variableViewModelPropertyBusiness(
           incomeSource = desiredIncomeSource,
           latencyYearsQuarterly = LatencyYearsQuarterly(Some(latencyYearOneStatus), Some(latencyYearTwoStatus)),
           latencyYearsCrystallised = LatencyYearsCrystallised(crystallisationList.headOption, crystallisationList.lastOption),
           incomeSourceType = incomeSourceType
-        ))
+        )
     }
-  }
-
-
-  def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String, incomeSourceIdHashMaybe: Option[IncomeSourceIdHash],
-                    incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
-
-    withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = InitialPage) { _ =>
-
-      val hashCompareResult: Option[Either[Throwable, IncomeSourceId]] = incomeSourceIdHashMaybe.map(x => user.incomeSources.compareHashToQueryString(x))
-
-      hashCompareResult match {
-        case Some(Left(exception: Exception)) => Future.failed(exception)
-        case _ =>
-          val incomeSourceIdMaybe: Option[IncomeSourceId] = IncomeSourceId.toOption(hashCompareResult)
-
-          for {
-            value <- if (incomeSourceType == SelfEmployment) {
-              getManageIncomeSourceViewModel(sources = sources, incomeSourceId = incomeSourceIdMaybe
-                .getOrElse(throw new Error(s"No incomeSourceId found for user with hash: [${incomeSourceIdHashMaybe.map(x => x.hash)}]")), isAgent = isAgent)
-            } else {
-              getManageIncomeSourceViewModelProperty(sources = sources, isAgent = isAgent, incomeSourceType = incomeSourceType)
-            }
-          } yield {
-            value match {
-              case Right(viewModel) =>
-                Ok(view(viewModel = viewModel,
-                  isAgent = isAgent,
-                  backUrl = backUrl
-                ))
-              case Left(error) =>
-                Logger("application")
-                  .error(s"unable to find income source: $error. isAgent = $isAgent")
-                if (isAgent) {
-                  itvcErrorHandlerAgent.showInternalServerError()
-                } else {
-                  itvcErrorHandler.showInternalServerError()
-                }
-            }
-          }
-      }
-    }
-  }
-
-  def showChange(incomeSourceType: IncomeSourceType, isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
-    implicit user =>
-      withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), InitialPage) { sessionData =>
-        val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
-        val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => mkIncomeSourceIdHash(IncomeSourceId(id)))
-        incomeSourceType match {
-          case SelfEmployment => incomeSourceIdOpt match {
-            case Some(realId) => handleSoleTrader(realId.hash, isAgent)
-            case None => Logger("application")
-              .error(s"no incomeSourceId supplied with SelfEmployment isAgent = $isAgent")
-              Future.successful(if (isAgent) {
-                itvcErrorHandlerAgent.showInternalServerError()
-              } else {
-                itvcErrorHandler.showInternalServerError()
-              })
-          }
-          case _ => handleRequest(
-            sources = user.incomeSources,
-            isAgent = isAgent,
-            incomeSourceIdHashMaybe = None,
-            backUrl = controllers.manageBusinesses.manage.routes.CheckYourAnswersController.show(isAgent, incomeSourceType).url,
-            incomeSourceType = incomeSourceType
-          )
-        }
-      }
   }
 }

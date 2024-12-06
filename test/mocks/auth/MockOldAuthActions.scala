@@ -43,9 +43,7 @@ trait MockOldAuthActions extends TestSupport with MockIncomeSourceDetailsService
     appConfig = appConfig,
     config = conf,
     env = environment,
-    mcc = stubMessagesControllerComponents(),
-    auditingService = mockAuditingService,
-    mockSessionDataService
+    mcc = stubMessagesControllerComponents()
   )
 
   private val authoriseAndRetrieveIndividual = new AuthoriseAndRetrieveIndividual(
@@ -78,13 +76,6 @@ trait MockOldAuthActions extends TestSupport with MockIncomeSourceDetailsService
     appConfig = appConfig
   )
 
-  private val asMtdUser = new AsMtdUser()(
-    executionContext = ec,
-    sessionDataService = mockSessionDataService,
-    clientDetailsService = mockClientDetailsService,
-    appConfig = appConfig
-  )
-
   private val retrieveClientData = new RetrieveClientData(
     sessionDataService = mockSessionDataService,
     appConfig = appConfig,
@@ -109,7 +100,6 @@ trait MockOldAuthActions extends TestSupport with MockIncomeSourceDetailsService
     agentHasClientDetails,
     app.injector.instanceOf[AgentHasConfirmedClientAction],
     app.injector.instanceOf[AgentIsPrimaryAction],
-    asMtdUser,
     app.injector.instanceOf[NavBarRetrievalAction],
     incomeSourceRetrievalAction,
     retrieveClientData,

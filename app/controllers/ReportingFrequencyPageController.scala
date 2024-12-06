@@ -16,11 +16,9 @@
 
 package controllers
 
-import auth.FrontendAuthorisedFunctions
 import auth.authV2.AuthActions
+import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
 import models.ReportingFrequencyViewModel
 import models.admin.ReportingFrequencyPage
 import models.optout.{OptOutMultiYearViewModel, OptOutOneYearViewModel}
@@ -29,6 +27,7 @@ import play.api.mvc._
 import services.DateServiceInterface
 import services.optIn.OptInService
 import services.optout.OptOutService
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.ReportingFrequencyView
 import views.html.errorPages.templates.ErrorTemplate
 
@@ -38,7 +37,6 @@ import scala.concurrent.ExecutionContext
 class ReportingFrequencyPageController @Inject()(
                                                   optOutService: OptOutService,
                                                   optInService: OptInService,
-                                                  val authorisedFunctions: FrontendAuthorisedFunctions,
                                                   val auth: AuthActions,
                                                   errorTemplate: ErrorTemplate,
                                                   view: ReportingFrequencyView
@@ -46,12 +44,10 @@ class ReportingFrequencyPageController @Inject()(
                                                   implicit val appConfig: FrontendAppConfig,
                                                   val dateService: DateServiceInterface,
                                                   mcc: MessagesControllerComponents,
-                                                  val ec: ExecutionContext,
-                                                  val itvcErrorHandler: ItvcErrorHandler,
-                                                  val itvcErrorHandlerAgent: AgentItvcErrorHandler
+                                                  val ec: ExecutionContext
                                                 )
 
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
+  extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
 
   def show(isAgent: Boolean): Action[AnyContent] =
     auth.asIndividualOrAgent(isAgent).async { implicit user =>

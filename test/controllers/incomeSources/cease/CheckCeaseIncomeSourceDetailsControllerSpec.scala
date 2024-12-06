@@ -16,12 +16,10 @@
 
 package controllers.incomeSources.cease
 
-import connectors.UpdateIncomeSourceConnector
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
-import enums.JourneyType.{Cease, IncomeSourceJourneyType, JourneyType}
-import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
 import models.admin.IncomeSourcesFs
 import models.core.IncomeSourceId
@@ -38,7 +36,6 @@ import services.{SessionService, UpdateIncomeSourceService, UpdateIncomeSourceSu
 import testConstants.BaseTestConstants.testMtditid
 import testConstants.UpdateIncomeSourceTestConstants
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
-import uk.gov.hmrc.http.HttpClient
 
 import java.time.LocalDate
 import scala.concurrent.Future

@@ -16,88 +16,78 @@
 
 package controllers.optOut
 
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import mocks.controllers.predicates.MockAuthenticationPredicate
+import enums.MTDIndividual
+import mocks.auth.MockAuthActions
 import mocks.services.MockOptOutService
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.optout.ConfirmedOptOutViewModel
+import play.api
+import play.api.Application
 import play.api.http.Status
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
-import play.api.mvc.{MessagesControllerComponents, Result}
+import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
-import services.optout.{CurrentOptOutTaxYear, OneYearOptOutFollowedByMandated, OptOutTaxYear}
+import services.optout.{CurrentOptOutTaxYear, OneYearOptOutFollowedByMandated, OptOutService, OptOutTaxYear}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
-import testUtils.TestSupport
-import views.html.optOut.ConfirmedOptOut
 
 import scala.concurrent.Future
 
-class ConfirmedOptOutControllerSpec extends TestSupport
-  with MockAuthenticationPredicate with MockOptOutService {
+class ConfirmedOptOutControllerSpec extends MockAuthActions
+  with MockOptOutService {
 
-  object TestConfirmedOptOutController extends ConfirmedOptOutController(
-    auth = testAuthenticator,
-    view = app.injector.instanceOf[ConfirmedOptOut],
-    optOutService = mockOptOutService,
-    authorisedFunctions = mockAuthService)(
-    appConfig = appConfig,
-    ec = ec,
-    itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
-    itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
-    mcc = app.injector.instanceOf[MessagesControllerComponents]) {
-  }
+  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+    .overrides(
+      api.inject.bind[OptOutService].toInstance(mockOptOutService)
+    ).build()
 
-  def tests(isAgent: Boolean): Unit = {
-    val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
-
-    val taxYear = TaxYear.forYearEnd(2024)
-    val optOutYear: OptOutTaxYear = CurrentOptOutTaxYear(ITSAStatus.Voluntary, taxYear)
-    val eligibleTaxYearResponse = Future.successful(Some(ConfirmedOptOutViewModel(optOutYear.taxYear, Some(OneYearOptOutFollowedByMandated))))
-    val noEligibleTaxYearResponse = Future.successful(None)
-    val failedResponse = Future.failed(new Exception("some error"))
+  val testController = fakeApplication().injector.instanceOf[ConfirmedOptOutController]
 
 
-    "show method is invoked" should {
-      s"return result with $OK status" in {
-        setupMockAuthorisationSuccess(isAgent)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        mockOptOutConfirmedPageViewModel(eligibleTaxYearResponse)
+  val taxYear = TaxYear.forYearEnd(2024)
+  val optOutYear: OptOutTaxYear = CurrentOptOutTaxYear(ITSAStatus.Voluntary, taxYear)
+  val eligibleTaxYearResponse = Future.successful(Some(ConfirmedOptOutViewModel(optOutYear.taxYear, Some(OneYearOptOutFollowedByMandated))))
+  val noEligibleTaxYearResponse = Future.successful(None)
+  val failedResponse = Future.failed(new Exception("some error"))
 
-        val result: Future[Result] = TestConfirmedOptOutController.show(isAgent)(requestGET)
-
-        status(result) shouldBe Status.OK
-      }
-
-      s"return result with $INTERNAL_SERVER_ERROR status" when {
-        "there is no tax year eligible for opt out" in {
-          setupMockAuthorisationSuccess(isAgent)
+  mtdAllRoles.foreach { mtdRole =>
+    val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
+    val isAgent = mtdRole != MTDIndividual
+    s"show(isAgent = $isAgent)" when {
+      val action = testController.show(isAgent)
+      s"the user is authenticated as a $mtdRole" should {
+        "render the Confirmed page" in {
+          setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-          mockOptOutConfirmedPageViewModel(noEligibleTaxYearResponse)
+          mockOptOutConfirmedPageViewModel(eligibleTaxYearResponse)
 
-          val result: Future[Result] = TestConfirmedOptOutController.show(isAgent)(requestGET)
+          val result = action(fakeRequest)
 
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          status(result) shouldBe Status.OK
         }
 
-        "opt out service fails" in {
-          setupMockAuthorisationSuccess(isAgent)
-          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-          mockOptOutConfirmedPageViewModel(failedResponse)
+        s"return result with $INTERNAL_SERVER_ERROR status" when {
+          "there is no tax year eligible for opt out" in {
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            mockOptOutConfirmedPageViewModel(noEligibleTaxYearResponse)
 
-          val result: Future[Result] = TestConfirmedOptOutController.show(isAgent)(requestGET)
+            val result = action(fakeRequest)
 
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          }
+
+          "opt out service fails" in {
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            mockOptOutConfirmedPageViewModel(failedResponse)
+
+            val result = action(fakeRequest)
+
+            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          }
         }
       }
+      testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
     }
-  }
-
-
-  "ConfirmOptOutController - Individual" when {
-    tests(isAgent = false)
-  }
-  "ConfirmOptOutController - Agent" when {
-    tests(isAgent = true)
   }
 }

@@ -17,11 +17,13 @@
 package controllers.optIn
 
 
+import controllers.ControllerISpecHelper
 import controllers.optIn.ChooseYearControllerISpec.{descriptionText, headingText, taxYearChoiceOne, taxYearChoiceTwo}
-import enums.JourneyType.{OptInJourney, Opt}
+import enums.JourneyType.{Opt, OptInJourney}
+import enums.{MTDIndividual, MTDUserRole}
 import forms.optIn.ChooseTaxYearForm
-import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.admin.NavBarFs
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Annual, Voluntary}
@@ -40,7 +42,7 @@ object ChooseYearControllerISpec {
   val taxYearChoiceTwo = "2023 to 2024 onwards"
 }
 
-class ChooseYearControllerISpec extends ComponentSpecBase {
+class ChooseYearControllerISpec extends ControllerISpecHelper {
 
   val forYearEnd = 2023
   val currentTaxYear = TaxYear.forYearEnd(forYearEnd)
@@ -53,99 +55,85 @@ class ChooseYearControllerISpec extends ComponentSpecBase {
     repository.clearSession(testSessionId).futureValue shouldBe true
   }
 
-  def testShowHappyCase(isAgent: Boolean): Unit = {
-
-    val chooseOptInTaxYearPageUrl = routes.ChooseYearController.show(isAgent).url
-
-    s"show page, calling GET $chooseOptInTaxYearPageUrl" should {
-      s"successfully render opt-in multi choice page" in {
-
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
-
-        setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual)
-
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.renderChooseOptInTaxYearPageInMultiYearJourney()
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        result should have(
-          httpStatus(OK),
-          elementTextByID("heading")(headingText),
-          elementTextByID("description1")(descriptionText),
-          elementTextBySelector("#whichTaxYear.govuk-fieldset legend.govuk-fieldset__legend.govuk-fieldset__legend--m")("Which tax year do you want to opt in from?"),
-          elementTextBySelector("div.govuk-radios__item:nth-child(1) > label:nth-child(2)")(taxYearChoiceOne),
-          elementTextBySelector("div.govuk-radios__item:nth-child(2) > label:nth-child(2)")(taxYearChoiceTwo),
-        )
-      }
-    }
+  def getPath(mtdRole: MTDUserRole): String = {
+    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    pathStart + "/opt-in/choose-tax-year"
   }
 
-  def testSubmitHappyCase(isAgent: Boolean): Unit = {
+  mtdAllRoles.foreach { case mtdUserRole =>
+    val path = getPath(mtdUserRole)
+    val additionalCookies = getAdditionalCookies(mtdUserRole)
+    s"GET $path" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          "render the choose tax year page" in {
+            disable(NavBarFs)
+            stubAuthorised(mtdUserRole)
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-    val chooseOptOutTaxYearPageUrl = controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent).url
+            setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual)
+            val result = buildGETMTDClient(path, additionalCookies).futureValue
+            verifyIncomeSourceDetailsCall(testMtditid)
 
-    s"submit page form, calling POST $chooseOptOutTaxYearPageUrl" should {
-      s"successfully render opt-in check your answers page" in {
+            result should have(
+              httpStatus(OK),
+              elementTextByID("heading")(headingText),
+              elementTextByID("description1")(descriptionText),
+              elementTextBySelector("#whichTaxYear.govuk-fieldset legend.govuk-fieldset__legend.govuk-fieldset__legend--m")("Which tax year do you want to opt in from?"),
+              elementTextBySelector("div.govuk-radios__item:nth-child(1) > label:nth-child(2)")(taxYearChoiceOne),
+              elementTextBySelector("div.govuk-radios__item:nth-child(2) > label:nth-child(2)")(taxYearChoiceTwo),
+            )
+          }
+        }
+        testAuthFailures(path, mtdUserRole)
+      }
+    }
 
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
-
-        setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual)
-
+    s"POST $path" when {
+      s"a user is a $mtdUserRole" that {
         val formData: Map[String, Seq[String]] = Map(
           ChooseTaxYearForm.choiceField -> Seq(currentTaxYear.toString)
         )
+        "is authenticated, with a valid enrolment" should {
+          "redirect to check your answers page" in {
+            disable(NavBarFs)
+            stubAuthorised(mtdUserRole)
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.submitChoiceOnOptInChooseTaxYear(formData)
-        verifyIncomeSourceDetailsCall(testMtditid)
+            setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual)
 
-        result should have(
-          httpStatus(Status.SEE_OTHER),
-          //todo add more asserts in MISUV-8006
-        )
-      }
-    }
-  }
+            val result = buildPOSTMTDPostClient(path, additionalCookies, body = formData).futureValue
+            verifyIncomeSourceDetailsCall(testMtditid)
 
-  def testSubmitUnhappyCase(isAgent: Boolean): Unit = {
+            result should have(
+              httpStatus(Status.SEE_OTHER),
+              //todo add more asserts in MISUV-8006
+            )
+          }
 
-    val chooseOptOutTaxYearPageUrl = controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent).url
+          "return a BadRequest" when {
+            "the form is invalid" in {
+              val invalidFormData = Map(
+                ChooseTaxYearForm.choiceField -> Seq()
+              )
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+              setupOptInSessionData(currentTaxYear, currentYearStatus = Voluntary, nextYearStatus = Voluntary)
+              val result = buildPOSTMTDPostClient(path, additionalCookies, body = invalidFormData).futureValue
+              verifyIncomeSourceDetailsCall(testMtditid)
 
-    s"no tax-year choice is made and" when {
-      s"submit page form, calling POST $chooseOptOutTaxYearPageUrl" should {
-        s"show page again with error message" in {
-
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
-
-          setupOptInSessionData(currentTaxYear, currentYearStatus = Voluntary, nextYearStatus = Voluntary)
-
-          val formData: Map[String, Seq[String]] = Map(
-            ChooseTaxYearForm.choiceField -> Seq()
-          )
-
-          val result = IncomeTaxViewChangeFrontendManageBusinesses.submitChoiceOnOptInChooseTaxYear(formData)
-          verifyIncomeSourceDetailsCall(testMtditid)
-
-          result should have(
-            httpStatus(Status.BAD_REQUEST),
-            elementTextBySelector(".bold > a:nth-child(1)")("Select the tax year that you want to report quarterly from"),
-            elementTextBySelector("#choice-error")("Error: Select the tax year that you want to report quarterly from")
-          )
+              result should have(
+                httpStatus(Status.BAD_REQUEST),
+                elementTextBySelector(".bold > a:nth-child(1)")("Select the tax year that you want to report quarterly from"),
+                elementTextBySelector("#choice-error")("Error: Select the tax year that you want to report quarterly from")
+              )
+            }
+          }
         }
+        testAuthFailures(path, mtdUserRole, Some(formData))
       }
     }
-
-
-  }
-
-  "ChooseYearController - Individual" when {
-    testShowHappyCase(isAgent = false)
-    testSubmitHappyCase(isAgent = false)
-    testSubmitUnhappyCase(isAgent = false)
-  }
-
-  "ChooseYearController - Agent" when {
-    testShowHappyCase(isAgent = true)
-    testSubmitHappyCase(isAgent = true)
-    testSubmitUnhappyCase(isAgent = true)
   }
 
   private def setupOptInSessionData(currentTaxYear: TaxYear, currentYearStatus: ITSAStatus.Value, nextYearStatus: ITSAStatus.Value): Unit = {

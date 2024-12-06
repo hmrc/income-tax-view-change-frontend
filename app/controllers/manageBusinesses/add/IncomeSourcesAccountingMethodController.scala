@@ -16,20 +16,20 @@
 
 package controllers.manageBusinesses.add
 
-import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.FeatureSwitching
+import auth.MtdItUser
+import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import controllers.agent.predicates.ClientConfirmedController
 import enums.AccountingMethod.fromApiField
 import enums.IncomeSourceJourney._
-import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import forms.incomeSources.add.IncomeSourcesAccountingMethodForm
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.SessionService
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.JourneyCheckerManageBusinesses
 import views.html.errorPages.CustomNotFoundError
 import views.html.manageBusinesses.add.IncomeSourcesAccountingMethod
 
@@ -37,17 +37,16 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
+class IncomeSourcesAccountingMethodController @Inject()(val authActions: AuthActions,
                                                         val view: IncomeSourcesAccountingMethod,
                                                         val customNotFoundErrorView: CustomNotFoundError,
                                                         val sessionService: SessionService,
-                                                        val auth: AuthenticatorPredicate)
-                                                       (implicit val appConfig: FrontendAppConfig,
-                                                        mcc: MessagesControllerComponents,
-                                                        val ec: ExecutionContext,
                                                         val itvcErrorHandler: ItvcErrorHandler,
                                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
+                                                       (implicit val appConfig: FrontendAppConfig,
+                                                        mcc: MessagesControllerComponents,
+                                                        val ec: ExecutionContext)
+  extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses {
 
   private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
@@ -196,7 +195,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
     }).url
   }
 
-  def show(incomeSourceType: IncomeSourceType, isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def show(incomeSourceType: IncomeSourceType, isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
       handleRequest(
         isAgent,
@@ -206,7 +205,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
   }
 
   def submit(incomeSourceType: IncomeSourceType, isAgent: Boolean): Action[AnyContent] =
-    auth.authenticatedAction(isAgent) {
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
       implicit user =>
         handleSubmitRequest(
           isAgent,
@@ -215,7 +214,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
     }
 
   def changeIncomeSourcesAccountingMethod(incomeSourceType: IncomeSourceType, isAgent: Boolean): Action[AnyContent] =
-    auth.authenticatedAction(isAgent) {
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
       implicit user =>
         withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), BeforeSubmissionPage) { sessionData =>
           val accountingMethodOpt = sessionData.addIncomeSourceData.flatMap(_.incomeSourcesAccountingMethod)

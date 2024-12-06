@@ -17,16 +17,16 @@
 package controllers.manageBusinesses.manage
 
 import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
+import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
 import enums.JourneyType.Manage
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
+import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.IncomeSourcesUtils
 import views.html.manageBusinesses.manage.ManageIncomeSources
 
 import javax.inject.{Inject, Singleton}
@@ -34,18 +34,17 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageIncomeSources,
-                                             val authorisedFunctions: AuthorisedFunctions,
+                                             val authActions: AuthActions,
                                              val incomeSourceDetailsService: IncomeSourceDetailsService,
                                              val sessionService: SessionService,
-                                             val auth: AuthenticatorPredicate)
+                                             val itvcErrorHandler: ItvcErrorHandler,
+                                             val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                             (implicit val ec: ExecutionContext,
-                                             implicit override val mcc: MessagesControllerComponents,
-                                             implicit val itvcErrorHandler: ItvcErrorHandler,
-                                             implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                             val appConfig: FrontendAppConfig) extends ClientConfirmedController
-  with FeatureSwitching with IncomeSourcesUtils {
+                                             val mcc: MessagesControllerComponents,
+                                             val appConfig: FrontendAppConfig) extends FrontendController(mcc)
+  with I18nSupport with IncomeSourcesUtils {
 
-  def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
+  def show(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
     handleRequest(
       sources = user.incomeSources,
       isAgent = isAgent,
@@ -80,5 +79,9 @@ class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageInco
           Future(showInternalServerError(isAgent))
       }
     }
+  }
+  private def showInternalServerError(isAgent: Boolean)(implicit user: MtdItUser[_]): Result = {
+    (if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler)
+      .showInternalServerError()
   }
 }

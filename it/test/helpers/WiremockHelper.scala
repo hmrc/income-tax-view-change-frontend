@@ -260,7 +260,8 @@ trait WiremockHelper {
     buildClient(path)
       .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies),
         "X-Session-ID" -> testSessionId
-      ).get()
+      )
+      .get()
 
   def buildPOSTMTDPostClient(path: String,
                              additionalCookies: Map[String, String] = Map.empty,

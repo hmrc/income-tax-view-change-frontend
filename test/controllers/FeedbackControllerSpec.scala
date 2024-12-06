@@ -16,172 +16,42 @@
 
 package controllers
 
-import config.featureswitch.FeatureSwitching
-import config.{FrontendAppConfig, ItvcErrorHandler}
 import connectors.FeedbackConnector
 import controllers.feedback.FeedbackController
-import controllers.predicates.{FeatureSwitchPredicate, NavBarPredicate, SessionTimeoutPredicate}
+import enums.MTDIndividual
 import implicits.ImplicitDateFormatter
-import mocks.MockItvcErrorHandler
-import mocks.auth.MockFrontendAuthorisedFunctions
-import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import mocks.services.MockIncomeSourceDetailsService
+import mocks.auth.MockAuthActions
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
+import play.api
+import play.api.Application
 import play.api.http.Status
-import play.api.http.Status.{OK, SEE_OTHER}
-import play.api.mvc.{MessagesControllerComponents, Result}
+import play.api.http.Status.SEE_OTHER
+import play.api.mvc.{Action, AnyContent, AnyContentAsEmpty, Result}
+import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.HtmlFormat
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
+import testConstants.BaseTestConstants.{agentAuthRetrievalSuccess, testAuthSuccessResponse}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
-import testUtils.TestSupport
-import uk.gov.hmrc.auth.core.BearerTokenExpired
-import uk.gov.hmrc.http.{HttpClient, HttpResponse}
-import views.html.feedback.{Feedback, FeedbackThankYou}
+import uk.gov.hmrc.auth.core.InvalidBearerToken
+import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
+import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
+import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class FeedbackControllerSpec extends MockAuthenticationPredicate
-  with MockIncomeSourceDetailsPredicate with MockIncomeSourceDetailsService
-  with MockFrontendAuthorisedFunctions with MockItvcErrorHandler with ImplicitDateFormatter with TestSupport with FeatureSwitching {
+class FeedbackControllerSpec extends MockAuthActions
+  with ImplicitDateFormatter {
 
-  val mockErrorHandler: ItvcErrorHandler = mock(classOf[ItvcErrorHandler])
-  val mockFeedbackView: Feedback = mock(classOf[Feedback])
-  val mockThankYouView: FeedbackThankYou = mock(classOf[FeedbackThankYou])
-  val mockFeedbackConnector: FeedbackConnector = mock(classOf[FeedbackConnector])
-  val mockHttpClient: HttpClient = mock(classOf[HttpClient])
+  lazy val mockFeedbackConnector: FeedbackConnector = mock(classOf[FeedbackConnector])
 
-  object TestFeedbackController extends FeedbackController()(
-    app.injector.instanceOf[FrontendAppConfig],
-    ec,
-    app.injector.instanceOf[SessionTimeoutPredicate],
-    MockAuthenticationPredicate,
-    mockAuthService,
-    MockIncomeSourceDetailsPredicate,
-    app.injector.instanceOf[NavBarPredicate],
-    mockFeedbackView,
-    mockThankYouView,
-    mockItvcHeaderCarrierForPartialsConverter,
-    mockIncomeSourceDetailsService,
-    app.injector.instanceOf[MessagesControllerComponents],
-    mockErrorHandler,
-    mockItvcErrorHandler,
-    testAuthenticator,
-    mockFeedbackConnector,
-    app.injector.instanceOf[FeatureSwitchPredicate]
-  )
+  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+    .overrides(
+      api.inject.bind[FeedbackConnector].toInstance(mockFeedbackConnector)
+    ).build()
 
-  ".show" when {
-    "called with an authenticated HMRC-MTD-IT user and successfully retrieved income source" when {
-
-      "successfully retrieves income sources and and display feedback page" should {
-        "return an OK (200)" in {
-          disableAllSwitches()
-          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-
-          when(mockFeedbackView(any(), any(), any(), any())(any(), any(), any())).thenReturn(HtmlFormat.empty)
-
-          lazy val result = TestFeedbackController.show()(fakeRequestWithActiveSession)
-
-          status(result) shouldBe Status.OK
-          session(result).get("Referer") shouldBe Some("/test/url")
-
-        }
-      }
-    }
-
-    "Called with an Unauthenticated User" should {
-
-      "return redirect SEE_OTHER (303)" in {
-
-        setupMockAuthorisationException()
-        val result = TestFeedbackController.show()(fakeRequestWithActiveSession)
-        status(result) shouldBe Status.SEE_OTHER
-      }
-    }
-  }
-
-  ".submit" when {
-    "successfully submitted form with no errors" should {
-      "return an SEE_OTHER (303)" in {
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-
-        when(mockFeedbackConnector.submit(any())(any())).thenReturn(Future.successful(Right(())))
-
-        when(mockThankYouView(any(), any(), any())(any(), any(), any())).thenReturn(HtmlFormat.empty)
-
-        lazy val result = TestFeedbackController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(fields.toSeq: _*))
-
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.feedback.routes.FeedbackController.thankYou.url)
-      }
-    }
-
-    "successfully submitted form with no errors for agent" should {
-      "return an SEE_OTHER (303)" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-        mockBothIncomeSources()
-
-        when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(HttpResponse(OK, "test")))
-
-        when(mockFeedbackConnector.submit(any())(any())).thenReturn(Future.successful(Right(())))
-
-        when(mockThankYouView(any(), any(), any())(any(), any(), any())).thenReturn(HtmlFormat.empty)
-        lazy val result = TestFeedbackController.submitAgent()(fakePostRequestConfirmedClient().withFormUrlEncodedBody(fields.toSeq: _*))
-
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.feedback.routes.FeedbackController.thankYouAgent.url)
-      }
-    }
-  }
-
-  "show agent" when {
-    "the user is not authenticated" should {
-      "redirect them to sign in" in {
-        setupMockAgentAuthorisationException(withClientPredicate = false)
-
-        val result: Future[Result] = TestFeedbackController.showAgent()(fakeRequestWithActiveSession)
-
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
-      }
-    }
-    "the user has timed out" should {
-      "redirect to the session timeout page" in {
-        setupMockAgentAuthorisationException(exception = BearerTokenExpired(), withClientPredicate = false)
-
-        val result: Future[Result] = TestFeedbackController.showAgent()(fakeRequestWithClientDetails)
-
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
-      }
-    }
-    "the user does not have an agent reference number" should {
-      "return SEE_OTHER with agent error controller redirect" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccessNoEnrolment, withClientPredicate = false)
-
-        val result: Future[Result] = TestFeedbackController.showAgent()(fakeRequestWithActiveSession)
-
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentErrorController.show.url)
-      }
-    }
-    "all data is returned successfully" should {
-      "show the tax years page" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-        mockBothIncomeSources()
-
-        when(mockFeedbackView(any(), any(), any(), any())(any(), any(), any())).thenReturn(HtmlFormat.empty)
-
-        val result: Future[Result] = TestFeedbackController.showAgent()(fakeRequestConfirmedClient())
-
-        status(result) shouldBe OK
-        contentType(result) shouldBe Some(HTML)
-        session(result).get("Referer") shouldBe Some("/test/url")
-      }
-    }
-  }
+  val testController = fakeApplication().injector.instanceOf[FeedbackController]
 
   val fields = Map(
     "feedback-name" -> "name",
@@ -191,4 +61,178 @@ class FeedbackControllerSpec extends MockAuthenticationPredicate
     "csrfToken" -> "token"
   )
 
+  "show()" when {
+    val action = testController.show()
+    "the user is an enrolled authenticated individual" should {
+      "render the feedback page" in {
+        setupMockAuthorisedUserNoCheckAuthSuccess(testAuthSuccessResponse())
+        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+        val result: Future[Result] = action(fakeRequestWithActiveSession)
+        status(result) shouldBe Status.OK
+        val document: Document = Jsoup.parse(contentAsString(result))
+        document.title shouldBe "Send your feedback - Manage your Income Tax updates - GOV.UK"
+      }
+    }
+    testAuthFailures(action)(fakeRequestWithActiveSession)
+  }
+
+  "showAgent()" when {
+    val action = testController.showAgent()
+    val fakeRequest = fakeRequestWithActiveSession
+    "the user is an agent" should {
+      "render the feedback page" in {
+        setupMockAuthorisedUserNoCheckAuthSuccess(agentAuthRetrievalSuccess)
+        val result: Future[Result] = action(fakeRequest)
+        status(result) shouldBe Status.OK
+        val document: Document = Jsoup.parse(contentAsString(result))
+        document.title shouldBe "Send your feedback - Manage your client’s Income Tax updates - GOV.UK"
+      }
+      testAuthFailures(action)(fakeRequest)
+    }
+  }
+
+  "submit()" when {
+    val action = testController.submit()
+    val fakeRequest = fakePostRequestBasedOnMTDUserType(MTDIndividual)
+
+    "the user is an enrolled authenticated individual" should {
+      "submit the form and redirect to the thank you page" when {
+        "the form has no errors" in {
+          setupMockAuthorisedUserNoCheckAuthSuccess(testAuthSuccessResponse())
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          when(mockFeedbackConnector.submit(any())(any())).thenReturn(Future.successful(Right(())))
+          val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(fields.toSeq: _*))
+          status(result) shouldBe Status.SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.feedback.routes.FeedbackController.thankYou.url)
+        }
+      }
+      "return a BadRequest" when {
+        "the form is incorrectly filled" in {
+          setupMockAuthorisedUserNoCheckAuthSuccess(testAuthSuccessResponse())
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          val result: Future[Result] = action(fakeRequest)
+          status(result) shouldBe Status.BAD_REQUEST
+        }
+      }
+
+      "render the error page" when {
+        "the submit feedback call fails" in {
+          setupMockAuthorisedUserNoCheckAuthSuccess(testAuthSuccessResponse())
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          when(mockFeedbackConnector.submit(any())(any())).thenReturn(Future.successful(Left(500)))
+          val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(fields.toSeq: _*))
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        }
+
+      }
+      testAuthFailures(action)(fakeRequest)
+    }
+  }
+
+  "submitAgent()" when {
+    "the user is an agent" should {
+      val action = testController.submitAgent()
+      val fakeRequest = fakePostRequestWithActiveSession
+      "submit the form and redirect to the thank you page" when {
+        "the form has no errors" in {
+          setupMockAuthorisedUserNoCheckAuthSuccess(agentAuthRetrievalSuccess)
+          when(mockFeedbackConnector.submit(any())(any())).thenReturn(Future.successful(Right(())))
+          val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(fields.toSeq: _*))
+          status(result) shouldBe Status.SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.feedback.routes.FeedbackController.thankYouAgent.url)
+        }
+      }
+      "return a BadRequest" when {
+        "the form is incorrectly filled" in {
+          setupMockAuthorisedUserNoCheckAuthSuccess(agentAuthRetrievalSuccess)
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          val result: Future[Result] = action(fakeRequest)
+          status(result) shouldBe Status.BAD_REQUEST
+        }
+      }
+
+      "render the error page" when {
+        "the submit feedback call fails" in {
+          setupMockAuthorisedUserNoCheckAuthSuccess(agentAuthRetrievalSuccess)
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          when(mockFeedbackConnector.submit(any())(any())).thenReturn(Future.successful(Left(500)))
+          val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(fields.toSeq: _*))
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        }
+      }
+      testAuthFailures(action)(fakeRequest)
+    }
+  }
+
+  "thankyou" when {
+    val action = testController.thankYou
+    "the user is an enrolled authenticated individual" should {
+      "render the thank you page" in {
+        setupMockAuthorisedUserNoCheckAuthSuccess(testAuthSuccessResponse())
+        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+        val result: Future[Result] = action(fakeRequestWithActiveSession)
+        status(result) shouldBe Status.OK
+        val document: Document = Jsoup.parse(contentAsString(result))
+        document.title shouldBe "Thank you - Manage your Income Tax updates - GOV.UK"
+      }
+    }
+    testAuthFailures(action)(fakeRequestWithActiveSession)
+  }
+
+  "thankyouAgent" when {
+    val action = testController.thankYouAgent
+    val fakeRequest = fakeRequestWithActiveSession
+    "the user is an agent" should {
+      "render the thank you page" in {
+        setupMockAuthorisedUserNoCheckAuthSuccess(agentAuthRetrievalSuccess)
+        val result: Future[Result] = action(fakeRequest)
+        status(result) shouldBe Status.OK
+        val document: Document = Jsoup.parse(contentAsString(result))
+        document.title shouldBe "Thank you - Manage your client’s Income Tax updates - GOV.UK"
+      }
+      testAuthFailures(action)(fakeRequest)
+    }
+  }
+
+  def setupMockAuthorisedUserNoCheckAuthSuccess[X, Y](retrievalValue: X ~ Y): Unit = {
+    when(mockAuthService.authorised(any()))
+      .thenReturn(
+        new mockAuthService.AuthorisedFunction(EmptyPredicate) {
+          override def retrieve[A](retrieval: Retrieval[A]) = new mockAuthService.AuthorisedFunctionWithResult[A](EmptyPredicate, retrieval) {
+            override def apply[B](body: A => Future[B])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[B] = body.apply(retrievalValue.asInstanceOf[A])
+          }
+        })
+  }
+
+  private def testAuthFailures(action: Action[AnyContent])(fakeRequest: FakeRequest[AnyContentAsEmpty.type]) = {
+    "redirect to sign in" when {
+      "the user is not authenticated" in {
+        when(mockAuthService.authorised(any()))
+          .thenReturn(
+            new mockAuthService.AuthorisedFunction(EmptyPredicate) {
+              override def apply[A](body: => Future[A])(implicit hc: HeaderCarrier, executionContext: ExecutionContext) = Future.failed(new InvalidBearerToken)
+
+              override def retrieve[A](retrieval: Retrieval[A]) = new mockAuthService.AuthorisedFunctionWithResult[A](EmptyPredicate, retrieval) {
+                override def apply[B](body: A => Future[B])(implicit hc: HeaderCarrier, executionContext: ExecutionContext): Future[B] = Future.failed(new InvalidBearerToken)
+              }
+            }
+          )
+
+        val result: Future[Result] = action(fakeRequest)
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
+      }
+    }
+
+    "redirect to the session timeout page" when {
+      "the user has timed out" in {
+
+        val result: Future[Result] = action(fakeRequestWithTimeoutSession)
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
+      }
+    }
+  }
 }

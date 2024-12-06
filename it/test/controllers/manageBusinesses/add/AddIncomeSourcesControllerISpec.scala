@@ -17,15 +17,14 @@
 package controllers.manageBusinesses.add
 
 import controllers.ControllerISpecHelper
-import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDIndividualAuthStub}
+import enums.{MTDIndividual, MTDUserRole}
+import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.{IncomeSourcesFs, NavBarFs}
 import play.api.http.Status.OK
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesResponse
 
 class AddIncomeSourcesControllerISpec extends ControllerISpecHelper {
-
-  val path = "/manage-your-businesses/add/new-income-sources"
 
   val pageTitleMsgKey = "incomeSources.add.addIncomeSources.heading"
   val soleTraderBusinessName1: String = "business"
@@ -37,30 +36,41 @@ class AddIncomeSourcesControllerISpec extends ControllerISpecHelper {
   val foreignPropertyHeading: String = messagesAPI("incomeSources.add.addIncomeSources.foreignProperty.heading")
   val foreignPropertyLink: String = messagesAPI("incomeSources.add.addIncomeSources.foreignProperty.link")
 
-  s"GET $path" when {
-    "the user is authenticated, with a valid MTD enrolment" should {
-      "render the Add Income Source page for an Individual" in {
-          enable(IncomeSourcesFs)
-          disable(NavBarFs)
-          MTDIndividualAuthStub.stubAuthorised()
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
-          val res = buildGETMTDClient(path).futureValue
-          verifyIncomeSourceDetailsCall(testMtditid)
+  def getPath(mtdRole: MTDUserRole, isChange: Boolean): String = {
+    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    pathStart + "/manage-your-businesses/add/new-income-sources"
+  }
 
-          res should have(
-            httpStatus(OK),
-            pageTitleIndividual(pageTitleMsgKey),
-            elementTextByID("self-employment-h2")(businessNameMessage),
-            elementTextByID("table-row-trading-name-0")(soleTraderBusinessName1),
-            elementTextByID("table-row-trading-name-1")(soleTraderBusinessName2),
-            elementTextByID("self-employment-link")(addBusinessLink),
-            elementTextByID("uk-property-h2")(ukPropertyHeading),
-            elementTextByID("uk-property-link")(addUKPropertyLink),
-            elementTextByID("foreign-property-h2")(foreignPropertyHeading),
-            elementTextByID("foreign-property-link")(foreignPropertyLink)
-          )
+  mtdAllRoles.foreach { case mtdUserRole =>
+    val path = getPath(mtdUserRole, isChange = false)
+    val additionalCookies = getAdditionalCookies(mtdUserRole)
+    s"GET $path" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          "render the Add Income Source page" in {
+            enable(IncomeSourcesFs)
+            disable(NavBarFs)
+            stubAuthorised(mtdUserRole)
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
+            val res = buildGETMTDClient(path, additionalCookies).futureValue
+            verifyIncomeSourceDetailsCall(testMtditid)
+
+            res should have(
+              httpStatus(OK),
+              pageTitle(mtdUserRole, pageTitleMsgKey),
+              elementTextByID("self-employment-h2")(businessNameMessage),
+              elementTextByID("table-row-trading-name-0")(soleTraderBusinessName1),
+              elementTextByID("table-row-trading-name-1")(soleTraderBusinessName2),
+              elementTextByID("self-employment-link")(addBusinessLink),
+              elementTextByID("uk-property-h2")(ukPropertyHeading),
+              elementTextByID("uk-property-link")(addUKPropertyLink),
+              elementTextByID("foreign-property-h2")(foreignPropertyHeading),
+              elementTextByID("foreign-property-link")(foreignPropertyLink),
+            )
+          }
         }
+        testAuthFailures(path, mtdUserRole)
       }
-    testAuthFailuresForMTDIndividual(path)
+    }
   }
 }

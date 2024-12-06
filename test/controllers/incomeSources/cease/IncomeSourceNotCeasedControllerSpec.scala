@@ -16,119 +16,55 @@
 
 package controllers.incomeSources.cease
 
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.MTDIndividual
+import mocks.auth.MockAuthActions
+import models.admin.IncomeSourcesFs
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.api.http.Status.{OK, SEE_OTHER}
-import play.api.mvc.MessagesControllerComponents
+import play.api.http.Status.OK
+import play.api.mvc.Result
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse}
-import testUtils.TestSupport
-import views.html.errorPages.templates.ErrorTemplateWithLink
 
-class IncomeSourceNotCeasedControllerSpec extends TestSupport with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {
+import scala.concurrent.Future
 
-  object TestIncomeSourceNotCeasedController extends IncomeSourceNotCeasedController(
-    mockAuthService,
-    app.injector.instanceOf[ErrorTemplateWithLink],
-    testAuthenticator)(appConfig, app.injector.instanceOf[ItvcErrorHandler],
-    app.injector.instanceOf[AgentItvcErrorHandler],
-    app.injector.instanceOf[MessagesControllerComponents],
-    ec)
+class IncomeSourceNotCeasedControllerSpec extends MockAuthActions {
 
-  val selfEmploymentMessage: String = messages("incomeSources.cease.error.SE.notCeased.text")
-  val ukPropertyMessage: String = messages("incomeSources.cease.error.UK.notCeased.text")
-  val foreignPropertyMessage: String = messages("incomeSources.cease.error.FP.notCeased.text")
+  override def fakeApplication() = applicationBuilderWithAuthBindings()
+    .build()
 
-  "IncomeSourceNotCeasedController.show" should {
-    "200 OK" when {
-      "authenticated user navigates to page with a UK Property income source type in the request" in {
-        disableAllSwitches()
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-        mockUKPropertyIncomeSource()
-        val result = TestIncomeSourceNotCeasedController.show(isAgent = false, UkProperty)(fakeRequestWithActiveSession)
-        val document: Document = Jsoup.parse(contentAsString(result))
+  val testController = fakeApplication().injector.instanceOf[IncomeSourceNotCeasedController]
 
-        status(result) shouldBe OK
-        document.title shouldBe messages("htmlTitle.errorPage", messages("standardError.heading"))
-        document.text() should include(ukPropertyMessage)
+  def getMessage(incomeSourceType: IncomeSourceType): String = incomeSourceType match {
+    case SelfEmployment => messages("incomeSources.cease.error.SE.notCeased.text")
+    case UkProperty => messages("incomeSources.cease.error.UK.notCeased.text")
+    case _ => messages("incomeSources.cease.error.FP.notCeased.text")
+  }
+  val incomeSourceTypes = List(SelfEmployment, UkProperty, ForeignProperty)
+
+
+  mtdAllRoles.foreach { mtdRole =>
+    incomeSourceTypes.foreach { incomeSourceType =>
+      val isAgent = mtdRole != MTDIndividual
+      s"show($isAgent, $incomeSourceType, )" when {
+        val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
+        val action = testController.show(isAgent, incomeSourceType)
+        s"the user is authenticated as a $mtdRole" should {
+          "render the not ceased page" in {
+            setupMockSuccess(mtdRole)
+            enable(IncomeSourcesFs)
+            mockUKPropertyIncomeSource()
+
+            val result: Future[Result] = action(fakeRequest)
+            val document: Document = Jsoup.parse(contentAsString(result))
+
+            status(result) shouldBe OK
+            document.title shouldBe messages("htmlTitle.errorPage", messages("standardError.heading"))
+            document.text() should include(getMessage(incomeSourceType))
+          }
+        }
+        testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
       }
-      "authenticated agent navigates to page with a UK Property income source type in the request" in {
-        disableAllSwitches()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockUKPropertyIncomeSource()
-        val result = TestIncomeSourceNotCeasedController.show(isAgent = true, UkProperty)(fakeRequestConfirmedClient())
-        val document: Document = Jsoup.parse(contentAsString(result))
-
-        status(result) shouldBe OK
-        document.title shouldBe messages("htmlTitle.errorPage", messages("standardError.heading"))
-        document.text() should include(ukPropertyMessage)
-      }
-      "authenticated user navigates to page with a Foreign Property income source type in the request" in {
-        disableAllSwitches()
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-        mockUKPropertyIncomeSource()
-        val result = TestIncomeSourceNotCeasedController.show(isAgent = false, ForeignProperty)(fakeRequestWithActiveSession)
-        val document: Document = Jsoup.parse(contentAsString(result))
-
-        status(result) shouldBe OK
-        document.title shouldBe messages("htmlTitle.errorPage", messages("standardError.heading"))
-        document.text() should include(foreignPropertyMessage)
-      }
-      "authenticated agent navigates to page with a Foreign Property income source type in the request" in {
-        disableAllSwitches()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockUKPropertyIncomeSource()
-        val result = TestIncomeSourceNotCeasedController.show(isAgent = true, ForeignProperty)(fakeRequestConfirmedClient())
-        val document: Document = Jsoup.parse(contentAsString(result))
-
-        status(result) shouldBe OK
-        document.title shouldBe messages("htmlTitle.errorPage", messages("standardError.heading"))
-        document.text() should include(foreignPropertyMessage)
-      }
-      "authenticated user navigates to page with a Self-employment business income source type in the request" in {
-        disableAllSwitches()
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-        mockUKPropertyIncomeSource()
-        val result = TestIncomeSourceNotCeasedController.show(isAgent = false, SelfEmployment)(fakeRequestWithActiveSession)
-        val document: Document = Jsoup.parse(contentAsString(result))
-
-        status(result) shouldBe OK
-        document.title shouldBe messages("htmlTitle.errorPage", messages("standardError.heading"))
-        document.text() should include(selfEmploymentMessage)
-      }
-      "authenticated agent navigates to page with a Self-employment business income source type in the request" in {
-        disableAllSwitches()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockUKPropertyIncomeSource()
-        val result = TestIncomeSourceNotCeasedController.show(isAgent = true, SelfEmployment)(fakeRequestConfirmedClient())
-        val document: Document = Jsoup.parse(contentAsString(result))
-
-        status(result) shouldBe OK
-        document.title shouldBe messages("htmlTitle.errorPage", messages("standardError.heading"))
-        document.text() should include(selfEmploymentMessage)
-      }
-    }
-    "303 SEE_OTHER" when {
-      "unauthenticated user navigates to page" in {
-        disableAllSwitches()
-        setupMockAuthorisationException()
-        mockUKPropertyIncomeSource()
-        val result = TestIncomeSourceNotCeasedController.show(isAgent = false, UkProperty)(fakeRequestWithActiveSession)
-
-        status(result) shouldBe SEE_OTHER
-      }
-      "unauthenticated agent navigates to page" in {
-        disableAllSwitches()
-        setupMockAgentAuthorisationException()
-        mockUKPropertyIncomeSource()
-        val result = TestIncomeSourceNotCeasedController.show(isAgent = true, UkProperty)(fakeRequestConfirmedClient())
-
-        status(result) shouldBe SEE_OTHER
-      }
-
     }
   }
 }

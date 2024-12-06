@@ -17,16 +17,16 @@
 package controllers.manageBusinesses.cease
 
 import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
+import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
 import enums.JourneyType.Manage
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
+import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.IncomeSourcesUtils
 import views.html.manageBusinesses.cease.ViewAllCeasedBusinesses
 
 import javax.inject.{Inject, Singleton}
@@ -34,18 +34,16 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ViewAllCeasedBusinessesController @Inject()(val viewAllCeasedBusinesses: ViewAllCeasedBusinesses,
-                                                  val authorisedFunctions: AuthorisedFunctions,
+                                                  val authActions: AuthActions,
                                                   val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                   val sessionService: SessionService,
-                                                  val auth: AuthenticatorPredicate)
+                                                  val itvcErrorHandler: ItvcErrorHandler,
+                                                  val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                                  (implicit val ec: ExecutionContext,
-                                             implicit override val mcc: MessagesControllerComponents,
-                                             implicit val itvcErrorHandler: ItvcErrorHandler,
-                                             implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                             val appConfig: FrontendAppConfig) extends ClientConfirmedController
-  with FeatureSwitching with IncomeSourcesUtils {
+                                             val mcc: MessagesControllerComponents,
+                                             val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with IncomeSourcesUtils {
 
-  def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
+  def show(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
     val backUrl = if(isAgent) {
       controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
     } else {
@@ -60,6 +58,7 @@ class ViewAllCeasedBusinessesController @Inject()(val viewAllCeasedBusinesses: V
 
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)
                    (implicit user: MtdItUser[_]): Future[Result] = {
+    lazy val errorHandler = if(isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
     withIncomeSourcesFS {
       incomeSourceDetailsService.getCeaseIncomeSourceViewModel(sources) match {
@@ -74,12 +73,12 @@ class ViewAllCeasedBusinessesController @Inject()(val viewAllCeasedBusinesses: V
             case ex: Exception =>
               Logger("application").error(
                 s"Session Error: ${ex.getMessage} - ${ex.getCause}")
-              showInternalServerError(isAgent)
+              errorHandler.showInternalServerError()
           }
         case Left(ex) =>
           Logger("application").error(
             s"Error: ${ex.getMessage} - ${ex.getCause}")
-          Future(showInternalServerError(isAgent))
+          Future(errorHandler.showInternalServerError())
       }
     }
   }

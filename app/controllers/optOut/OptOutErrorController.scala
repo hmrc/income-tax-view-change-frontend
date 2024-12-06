@@ -16,29 +16,27 @@
 
 package controllers.optOut
 
+import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.AuthenticatorPredicate
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.optOut.OptOutError
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class OptOutErrorController @Inject()(val view: OptOutError,
-                                      val auth: AuthenticatorPredicate,
-                                      val authorisedFunctions: AuthorisedFunctions)
+                                      val authActions: AuthActions,
+                                      val itvcErrorHandler: ItvcErrorHandler,
+                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                      (implicit val appConfig: FrontendAppConfig,
                                       val ec: ExecutionContext,
-                                      val itvcErrorHandler: ItvcErrorHandler,
-                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                      override val mcc: MessagesControllerComponents
-                                     ) extends ClientConfirmedController with I18nSupport {
+                                      val mcc: MessagesControllerComponents
+                                     ) extends FrontendController(mcc) with I18nSupport  {
 
 
-  def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def show(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
       Future.successful(Ok(view(isAgent)))
   }

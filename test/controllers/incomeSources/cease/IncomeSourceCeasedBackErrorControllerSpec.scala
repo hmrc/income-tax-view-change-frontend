@@ -16,65 +16,44 @@
 
 package controllers.incomeSources.cease
 
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
+import enums.JourneyType.{Cease, IncomeSourceJourneyType}
+import enums.MTDIndividual
+import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.admin.IncomeSourcesFs
-import org.scalatest.Assertion
-import play.api.mvc.MessagesControllerComponents
+import play.api
+import play.api.http.Status.OK
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
-import testUtils.TestSupport
-import views.html.incomeSources.cease.IncomeSourceCeasedBackError
+import services.SessionService
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.notCompletedUIJourneySessionData
 
-class IncomeSourceCeasedBackErrorControllerSpec extends TestSupport with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockSessionService {
+class IncomeSourceCeasedBackErrorControllerSpec extends MockAuthActions with MockSessionService {
 
-  object TestIncomeSourceCeasedBackErrorController extends IncomeSourceCeasedBackErrorController(
-    mockAuthService,
-    sessionService = mockSessionService,
-    app.injector.instanceOf[IncomeSourceCeasedBackError],
-    testAuthenticator
-  )(appConfig,
-    mcc = app.injector.instanceOf[MessagesControllerComponents],
-    ec,
-    app.injector.instanceOf[ItvcErrorHandler],
-    app.injector.instanceOf[AgentItvcErrorHandler]) {
+  override def fakeApplication() = applicationBuilderWithAuthBindings()
+    .overrides(
+      api.inject.bind[SessionService].toInstance(mockSessionService)
+    ).build()
 
-    def setupOKTest(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
-      disableAllSwitches()
-      enable(IncomeSourcesFs)
-      setupMockAuthorisationSuccess(isAgent)
-      mockUKPropertyIncomeSourceWithLatency2024()
+  val testController = fakeApplication().injector.instanceOf[IncomeSourceCeasedBackErrorController]
 
-      val result = if (isAgent) {
-        TestIncomeSourceCeasedBackErrorController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
-      } else {
-        TestIncomeSourceCeasedBackErrorController.show(incomeSourceType)(fakeRequestWithActiveSession)
-      }
-
-      status(result) shouldBe OK
-    }
-
-    "IncomeSourceCeasedBackErrorController" should {
-      "return 200 OK" when {
-        "Self Employment - Individual" in {
-          setupOKTest(isAgent = false, SelfEmployment)
+  mtdAllRoles.foreach { mtdRole =>
+    List(UkProperty, ForeignProperty).foreach { incomeSourceType =>
+      val isAgent = mtdRole != MTDIndividual
+      s"show${if (isAgent) "Agent"}($incomeSourceType)" when {
+        val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
+        val action = if (!isAgent) testController.show(incomeSourceType) else testController.showAgent(incomeSourceType)
+        s"the user is authenticated as a $mtdRole" should {
+          "return 200 OK" in {
+            setupMockSuccess(mtdRole)
+            enable(IncomeSourcesFs)
+            mockUKPropertyIncomeSourceWithLatency2024()
+            setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
+            val result = action(fakeRequest)
+            status(result) shouldBe OK
+          }
         }
-        "Self Employment - Agent" in {
-          setupOKTest(isAgent = true, SelfEmployment)
-        }
-        "UK Property - Individual" in {
-          setupOKTest(isAgent = false, UkProperty)
-        }
-        "UK Property - Agent" in {
-          setupOKTest(isAgent = true, UkProperty)
-        }
-        "Foreign Property - Individual" in {
-          setupOKTest(isAgent = false, ForeignProperty)
-        }
-        "Foreign Property - Agent" in {
-          setupOKTest(isAgent = true, ForeignProperty)
-        }
+        testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
       }
     }
   }

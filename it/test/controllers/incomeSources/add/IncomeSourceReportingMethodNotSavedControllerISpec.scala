@@ -16,19 +16,16 @@
 
 package controllers.incomeSources.add
 
-import models.admin.IncomeSourcesFs
-import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import helpers.ComponentSpecBase
+import controllers.ControllerISpecHelper
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import play.api.http.Status.OK
+import models.admin.{IncomeSourcesFs, NavBarFs}
+import play.api.http.Status.{OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.testMtditid
-import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
+import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, noPropertyOrBusinessResponse, ukPropertyOnlyResponse}
 
-class IncomeSourceReportingMethodNotSavedControllerISpec extends ComponentSpecBase {
-
-  val selfEmploymentReportingMethodNotSavedShowUrl: String = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show(SelfEmployment).url
-  val ukPropertyReportingMethodNotSavedShowUrl: String = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show(UkProperty).url
-  val foreignPropertyReportingMethodNotSavedShowUrl: String = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show(ForeignProperty).url
+class IncomeSourceReportingMethodNotSavedControllerISpec extends ControllerISpecHelper {
 
   object TestConstants {
     val selfEmployment: String = messagesAPI("incomeSources.add.error.reportingMethodNotSaved.se.incomeSource")
@@ -41,82 +38,78 @@ class IncomeSourceReportingMethodNotSavedControllerISpec extends ComponentSpecBa
     val foreignParagraph: String = messagesAPI("incomeSources.add.error.reportingMethodNotSaved.p1", foreignProperty)
 
     val continueButtonText: String = messagesAPI("base.continue")
-  }
 
-
-  s"calling GET $selfEmploymentReportingMethodNotSavedShowUrl" should {
-    "render the reporting method not saved page" when {
-      "User is authorised" in {
-        Given("Income Sources FS is enabled")
-        enable(IncomeSourcesFs)
-
-        When(s"I call GET $selfEmploymentReportingMethodNotSavedShowUrl")
-
-        And("API 1771 returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-        val result = IncomeTaxViewChangeFrontend.getSEReportingMethodNotSaved(Map.empty)
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        val expectedText: String = messagesAPI("incomeSources.add.error.standardError")
-
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual(expectedText),
-          elementTextByID("paragraph-1")(TestConstants.seParagraph)
-        )
+    def getParagraph(incomeSourceType: IncomeSourceType): String = {
+      incomeSourceType match {
+        case SelfEmployment => seParagraph
+        case UkProperty => ukParagraph
+        case ForeignProperty => foreignParagraph
       }
     }
   }
 
-  s"calling GET $ukPropertyReportingMethodNotSavedShowUrl" should {
-    "render the reporting method not saved page" when {
-      "User is authorised" in {
-        Given("Income Sources FS is enabled")
-        enable(IncomeSourcesFs)
-
-        When(s"I call GET $ukPropertyReportingMethodNotSavedShowUrl")
-
-        And("API 1771 returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
-
-        val result = IncomeTaxViewChangeFrontend.getUkPropertyReportingMethodNotSaved(Map.empty)
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        val expectedText: String = messagesAPI("incomeSources.add.error.standardError")
-
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual(expectedText),
-          elementTextByID("paragraph-1")(TestConstants.ukParagraph)
-        )
-      }
+  def getIncomeSourceDetailsResponse(incomeSourceType: IncomeSourceType) = {
+    incomeSourceType match {
+      case SelfEmployment => businessOnlyResponse
+      case UkProperty => ukPropertyOnlyResponse
+      case ForeignProperty => noPropertyOrBusinessResponse
     }
   }
 
-  s"calling GET $foreignPropertyReportingMethodNotSavedShowUrl" should {
-    "render the reporting method not saved page" when {
-      "User is authorised" in {
-        Given("Income Sources FS is enabled")
-        enable(IncomeSourcesFs)
-
-        When(s"I call GET $foreignPropertyReportingMethodNotSavedShowUrl")
-
-        And("API 1771 returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
-
-        val result = IncomeTaxViewChangeFrontend.getForeignPropertyReportingMethodNotSaved(Map.empty)
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        val expectedText: String = messagesAPI("incomeSources.add.error.standardError")
-
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual(expectedText),
-          elementTextByID("paragraph-1")(TestConstants.foreignParagraph)
-        )
-      }
+  def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType): String = {
+    val pathStart = if(mtdRole == MTDIndividual) "/income-sources/add" else "/agents/income-sources/add"
+    incomeSourceType match {
+      case SelfEmployment => s"$pathStart/error-business-reporting-method-not-saved"
+      case UkProperty => s"$pathStart/error-uk-property-reporting-method-not-saved"
+      case ForeignProperty => s"$pathStart/error-foreign-property-reporting-method-not-saved"
     }
   }
 
+  mtdAllRoles.foreach { case mtdUserRole =>
+    List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
+      val path = getPath(mtdUserRole, incomeSourceType)
+      val additionalCookies = getAdditionalCookies(mtdUserRole)
+      s"GET $path" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            "render the reporting method not saved page" when {
+              "Income Sources FS is enabled" in {
+                enable(IncomeSourcesFs)
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                verifyIncomeSourceDetailsCall(testMtditid)
+
+                val expectedText: String = messagesAPI("incomeSources.add.error.standardError")
+
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, expectedText),
+                  elementTextByID("paragraph-1")(TestConstants.getParagraph(incomeSourceType))
+                )
+              }
+            }
+            "redirect to home page" when {
+              "Income Sources FS is disabled" in {
+                disable(IncomeSourcesFs)
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                verifyIncomeSourceDetailsCall(testMtditid)
+
+                result should have(
+                  httpStatus(SEE_OTHER)
+                )
+              }
+            }
+          }
+          testAuthFailures(path, mtdUserRole)
+        }
+      }
+    }
+  }
 }

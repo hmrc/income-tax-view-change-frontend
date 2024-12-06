@@ -18,6 +18,7 @@ package controllers
 
 import audit.models.NextUpdatesAuditing.NextUpdatesAuditModel
 import auth.MtdItUser
+import enums.MTDIndividual
 import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import helpers.servicemocks._
 import models.admin.OptOutFs
@@ -37,7 +38,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
   val path = "/next-updates"
 
   s"GET $path" when {
-
+    val mtdUserRole = MTDIndividual
     val testPropertyOnlyUser: MtdItUser[_] = MtdItUser(
       testMtditid, testNino, None, ukPropertyOnlyResponse,
       None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
@@ -48,10 +49,9 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
       None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
     )(FakeRequest())
 
-    testAuthFailuresForMTDIndividual(path)
+    testAuthFailures(path, mtdUserRole)
 
     "renderViewNextUpdates" when {
-
       "the user has no obligations" in {
         MTDIndividualAuthStub.stubAuthorised()
 
@@ -440,6 +440,5 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
         }
       }
     }
-
   }
 }

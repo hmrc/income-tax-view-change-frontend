@@ -17,27 +17,27 @@
 package controllers.manageBusinesses.cease
 
 import auth.MtdItUser
+import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.IncomeSourceType
+import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.SessionService
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.JourneyCheckerManageBusinesses
 import views.html.manageBusinesses.cease.IncomeSourceCeasedBackError
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeSourceCeasedBackErrorController @Inject()(val authorisedFunctions: AuthorisedFunctions,
+class IncomeSourceCeasedBackErrorController @Inject()(val authActions: AuthActions,
                                                       val sessionService: SessionService,
                                                       val cannotGoBackCeasedError: IncomeSourceCeasedBackError,
-                                                      val auth: AuthenticatorPredicate)
+                                                      val itvcErrorHandler: ItvcErrorHandler,
+                                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                                      (implicit val appConfig: FrontendAppConfig,
                                                       mcc: MessagesControllerComponents,
-                                                      val ec: ExecutionContext,
-                                                      val itvcErrorHandler: ItvcErrorHandler,
-                                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
+                                                      val ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses {
 
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
@@ -45,7 +45,7 @@ class IncomeSourceCeasedBackErrorController @Inject()(val authorisedFunctions: A
     Future.successful(Ok(cannotGoBackCeasedError(isAgent, incomeSourceType)))
   )
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
       handleRequest(
         isAgent = false,
@@ -53,7 +53,7 @@ class IncomeSourceCeasedBackErrorController @Inject()(val authorisedFunctions: A
       )
   }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit mtdItUser =>
       handleRequest(
         isAgent = true,

@@ -16,115 +16,89 @@
 
 package controllers.optIn
 
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import mocks.controllers.predicates.MockAuthenticationPredicate
-import mocks.services.{MockOptInService, MockOptOutService}
+import enums.MTDIndividual
+import mocks.auth.MockAuthActions
+import mocks.services.MockOptInService
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
+import play.api
+import play.api.Application
 import play.api.http.Status
-import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
+import services.optIn.OptInService
 import services.optIn.core.OptInProposition.createOptInProposition
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
-import testUtils.TestSupport
-import views.html.optIn.OptInCompletedView
 
-class OptInCompletedControllerSpec extends TestSupport
-  with MockAuthenticationPredicate with MockOptOutService with MockOptInService {
+class OptInCompletedControllerSpec extends MockAuthActions
+  with MockOptInService {
 
-  val controller = new OptInCompletedController(
-    view = app.injector.instanceOf[OptInCompletedView],
-    mockOptInService,
-    authorisedFunctions = mockAuthService,
-    auth = testAuthenticator,
-  )(
-    appConfig = appConfig,
-    mcc = app.injector.instanceOf[MessagesControllerComponents],
-    ec = ec,
-    itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
-    itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler]
-  )
+  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+    .overrides(
+      api.inject.bind[OptInService].toInstance(mockOptInService)
+    ).build()
+
+  val testController = fakeApplication().injector.instanceOf[OptInCompletedController]
 
   val endTaxYear = 2023
   val taxYear2023 = TaxYear.forYearEnd(endTaxYear)
 
-  def testShowSuccessCase(isAgent: Boolean): Unit = {
+  mtdAllRoles.foreach { mtdRole =>
+    val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
+    val isAgent = mtdRole != MTDIndividual
+    s"show(isAgent = $isAgent)" when {
+      val action = testController.show(isAgent)
+      s"the user is authenticated as a $mtdRole" should {
+        s"render the optInCompleted page" that {
+          "is for the current year" in {
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-    "show page for current year" should {
-      s"return result with $OK status" in {
+            val proposition = createOptInProposition(taxYear2023, ITSAStatus.Annual, ITSAStatus.Annual)
+            mockFetchOptInProposition(Some(proposition))
+            mockFetchSavedChosenTaxYear(Some(taxYear2023))
 
-        setupMockAuthorisationSuccess(isAgent)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            val result = action(fakeRequest)
+            status(result) shouldBe Status.OK
+          }
 
-        val proposition = createOptInProposition(taxYear2023, ITSAStatus.Annual, ITSAStatus.Annual)
-        mockFetchOptInProposition(Some(proposition))
-        mockFetchSavedChosenTaxYear(Some(taxYear2023))
+          "is for next year" in {
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
-        val result = controller.show(isAgent).apply(requestGET)
-        status(result) shouldBe Status.OK
-      }
-    }
+            val proposition = createOptInProposition(taxYear2023, ITSAStatus.Annual, ITSAStatus.Annual)
+            mockFetchOptInProposition(Some(proposition))
+            mockFetchSavedChosenTaxYear(Some(taxYear2023.nextYear))
 
-    "show page for next year" should {
-      s"return result with $OK status" in {
+            val result = action(fakeRequest)
+            status(result) shouldBe Status.OK
+          }
+        }
+        "render the error page" when {
+          "no proposition returned" in {
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        setupMockAuthorisationSuccess(isAgent)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            mockFetchOptInProposition(None)
+            mockFetchSavedChosenTaxYear(Some(taxYear2023))
 
-        val proposition = createOptInProposition(taxYear2023, ITSAStatus.Annual, ITSAStatus.Annual)
-        mockFetchOptInProposition(Some(proposition))
-        mockFetchSavedChosenTaxYear(Some(taxYear2023.nextYear))
+            val result = action(fakeRequest)
+            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          }
 
-        val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
-        val result = controller.show(isAgent).apply(requestGET)
-        status(result) shouldBe Status.OK
-      }
-    }
-  }
+          "FetchSavedChosenTaxYear fails" in {
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-  def testShowFailCase(isAgent: Boolean): Unit = {
+            val proposition = createOptInProposition(taxYear2023, ITSAStatus.Annual, ITSAStatus.Annual)
+            mockFetchOptInProposition(Some(proposition))
+            mockFetchSavedChosenTaxYear(None)
 
-    "show page in error for current year" should {
-      s"return result with $INTERNAL_SERVER_ERROR status" in {
-
-        setupMockAuthorisationSuccess(isAgent)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-
-        mockFetchOptInProposition(None)
-        mockFetchSavedChosenTaxYear(Some(taxYear2023))
-
-        val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
-        val result = controller.show(isAgent).apply(requestGET)
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-    }
-
-    "show page in error for next year" should {
-      s"return result with $INTERNAL_SERVER_ERROR status" in {
-
-        setupMockAuthorisationSuccess(isAgent)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-
-        val proposition = createOptInProposition(taxYear2023, ITSAStatus.Annual, ITSAStatus.Annual)
-        mockFetchOptInProposition(Some(proposition))
-        mockFetchSavedChosenTaxYear(None)
-
-        val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
-        val result = controller.show(isAgent).apply(requestGET)
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            val result = action(fakeRequest)
+            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          }
+        }
+        testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
       }
     }
   }
-
-  "OptInCompletedController - Individual" when {
-    testShowSuccessCase(isAgent = false)
-    testShowFailCase(isAgent = false)
-  }
-
-  "OptInCompletedController - Agent" when {
-    testShowSuccessCase(isAgent = true)
-    testShowFailCase(isAgent = true)
-  }
-
 }

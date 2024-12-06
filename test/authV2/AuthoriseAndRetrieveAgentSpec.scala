@@ -18,7 +18,7 @@ package authV2
 
 import audit.AuditingService
 import auth.FrontendAuthorisedFunctions
-import auth.authV2.AgentUser
+import auth.authV2.AuthorisedUser
 import auth.authV2.actions._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -53,13 +53,13 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
   }
 
   def defaultAsyncBody(
-                        requestTestCase: AgentUser[_] => Assertion
-                      ): AgentUser[_] => Future[Result] = testRequest => {
+                        requestTestCase: AuthorisedUser[_] => Assertion
+                      ): AuthorisedUser[_] => Future[Result] = testRequest => {
     requestTestCase(testRequest)
     Future.successful(Results.Ok("Successful"))
   }
 
-  def defaultAsync: AgentUser[_] => Future[Result] = (_) => Future.successful(Results.Ok("Successful"))
+  def defaultAsync: AuthorisedUser[_] => Future[Result] = (_) => Future.successful(Results.Ok("Successful"))
 
   lazy val authAction = fakeApplication().injector.instanceOf[AuthoriseAndRetrieveAgent]
 
@@ -69,11 +69,11 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
         s"the user is an Agent enrolled as a HMRC-AS-AGENT" that {
           "has nino and sa enrolment" in {
             val allEnrolments = getAllEnrolmentsAgent(true, true)
-            val expectedResponse = getAgentData(allEnrolments)(fakeRequestWithActiveSession)
+            val expectedResponse = getAuthorisedData(allEnrolments)(fakeRequestWithActiveSession)
 
-            when(mockAuthConnector.authorise[AgentAuthRetrievals](any(), any())(any(), any())).thenReturn(
-              Future.successful[AgentAuthRetrievals](
-                allEnrolments ~ Some(credentials) ~ Some(Agent) ~ acceptedConfidenceLevel
+            when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
+              Future.successful[AuthRetrievals](
+                allEnrolments ~ None ~ Some(credentials) ~ Some(Agent) ~ acceptedConfidenceLevel
               )
             )
 
@@ -87,11 +87,11 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
 
           "has no additional enrolments" in {
             val allEnrolments = getAllEnrolmentsAgent(false, false)
-            val expectedResponse = getAgentData(allEnrolments)(fakeRequestWithActiveSession)
+            val expectedResponse = getAuthorisedData(allEnrolments)(fakeRequestWithActiveSession)
 
-            when(mockAuthConnector.authorise[AgentAuthRetrievals](any(), any())(any(), any())).thenReturn(
-              Future.successful[AgentAuthRetrievals](
-                allEnrolments ~ Some(credentials) ~ Some(Agent) ~ acceptedConfidenceLevel
+            when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
+              Future.successful[AuthRetrievals](
+                allEnrolments ~ None ~ Some(credentials) ~ Some(Agent) ~ acceptedConfidenceLevel
               )
             )
 
@@ -108,8 +108,8 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
       "redirect to AgentError page" when {
         s"the user is an Agent that is not enrolled into HMRC-AS-AGENT" in {
 
-          when(mockAuthConnector.authorise[AgentAuthRetrievals](any(), any())(any(), any())).thenReturn(
-            Future.failed[AgentAuthRetrievals](InsufficientEnrolments())
+          when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
+            Future.failed[AuthRetrievals](InsufficientEnrolments())
           )
 
           val result = authAction.authorise().invokeBlock(
@@ -124,9 +124,9 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
       "redirect to Home page" when {
         List(Individual, Organisation).foreach { affinityGroup =>
           s"the user is an ${affinityGroup.toString}" in {
-            when(mockAuthConnector.authorise[AgentAuthRetrievals](any(), any())(any(), any())).thenReturn(
-              Future.successful[AgentAuthRetrievals](
-                getAllEnrolmentsAgent(false, false) ~ Some(credentials) ~ Some(affinityGroup) ~ notAcceptedConfidenceLevel
+            when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
+              Future.successful[AuthRetrievals](
+                getAllEnrolmentsAgent(false, false) ~ None ~ Some(credentials) ~ Some(affinityGroup) ~ notAcceptedConfidenceLevel
               )
             )
 
@@ -143,8 +143,8 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
       "redirect to Session timed out page" when {
         s"the user is has an expired bearer token" in {
 
-          when(mockAuthConnector.authorise[AgentAuthRetrievals](any(), any())(any(), any())).thenReturn(
-            Future.failed[AgentAuthRetrievals](BearerTokenExpired())
+          when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
+            Future.failed[AuthRetrievals](BearerTokenExpired())
           )
 
           val result = authAction.authorise().invokeBlock(
@@ -159,8 +159,8 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
       "redirect to Signin" when {
         s"the user is not signed in" in {
 
-          when(mockAuthConnector.authorise[AgentAuthRetrievals](any(), any())(any(), any())).thenReturn(
-            Future.failed[AgentAuthRetrievals](MissingBearerToken())
+          when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
+            Future.failed[AuthRetrievals](MissingBearerToken())
           )
 
           val result = authAction.authorise().invokeBlock(
@@ -178,11 +178,11 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
         s"the user is an Agent enrolled as a HMRC-AS-AGENT" that {
           "has nino and sa enrolment" in {
             val allEnrolments = getAllEnrolmentsAgent(true, true)
-            val expectedResponse = getAgentData(allEnrolments)(fakeRequestWithActiveSession)
+            val expectedResponse = getAuthorisedData(allEnrolments)(fakeRequestWithActiveSession)
 
-            when(mockAuthConnector.authorise[AgentAuthRetrievals](any(), any())(any(), any())).thenReturn(
-              Future.successful[AgentAuthRetrievals](
-                allEnrolments ~ Some(credentials) ~ Some(Agent) ~ acceptedConfidenceLevel
+            when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
+              Future.successful[AuthRetrievals](
+                allEnrolments ~ None ~ Some(credentials) ~ Some(Agent) ~ acceptedConfidenceLevel
               )
             )
 
@@ -196,11 +196,11 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
 
           "has no additional enrolments" in {
             val allEnrolments = getAllEnrolmentsAgent(false, false)
-            val expectedResponse = getAgentData(allEnrolments)(fakeRequestWithActiveSession)
+            val expectedResponse = getAuthorisedData(allEnrolments)(fakeRequestWithActiveSession)
 
-            when(mockAuthConnector.authorise[AgentAuthRetrievals](any(), any())(any(), any())).thenReturn(
-              Future.successful[AgentAuthRetrievals](
-                allEnrolments ~ Some(credentials) ~ Some(Agent) ~ acceptedConfidenceLevel
+            when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
+              Future.successful[AuthRetrievals](
+                allEnrolments ~ None ~ Some(credentials) ~ Some(Agent) ~ acceptedConfidenceLevel
               )
             )
 
@@ -214,9 +214,9 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
         }
         s"the user is an Agent that is not enrolled into HMRC-AS-AGENT" in {
 
-          when(mockAuthConnector.authorise[AgentAuthRetrievals](any(), any())(any(), any())).thenReturn(
-            Future.successful[AgentAuthRetrievals](
-              Enrolments(Set.empty) ~ Some(credentials) ~ Some(Agent) ~ acceptedConfidenceLevel
+          when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
+            Future.successful[AuthRetrievals](
+              Enrolments(Set.empty) ~ None ~ Some(credentials) ~ Some(Agent) ~ acceptedConfidenceLevel
             )
           )
 
@@ -232,9 +232,9 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
       "redirect to Home page" when {
         List(Individual, Organisation).foreach { affinityGroup =>
           s"the user is an ${affinityGroup.toString}" in {
-            when(mockAuthConnector.authorise[AgentAuthRetrievals](any(), any())(any(), any())).thenReturn(
-              Future.successful[AgentAuthRetrievals](
-                getAllEnrolmentsAgent(false, false) ~ Some(credentials) ~ Some(affinityGroup) ~ notAcceptedConfidenceLevel
+            when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
+              Future.successful[AuthRetrievals](
+                getAllEnrolmentsAgent(false, false) ~ None ~ Some(credentials) ~ Some(affinityGroup) ~ notAcceptedConfidenceLevel
               )
             )
 
@@ -251,8 +251,8 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
       "redirect to Session timed out page" when {
         s"the user is has an expired bearer token" in {
 
-          when(mockAuthConnector.authorise[AgentAuthRetrievals](any(), any())(any(), any())).thenReturn(
-            Future.failed[AgentAuthRetrievals](BearerTokenExpired())
+          when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
+            Future.failed[AuthRetrievals](BearerTokenExpired())
           )
 
           val result = authAction.authorise(false).invokeBlock(
@@ -267,8 +267,8 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
       "redirect to Signin" when {
         s"the user is not signed in" in {
 
-          when(mockAuthConnector.authorise[AgentAuthRetrievals](any(), any())(any(), any())).thenReturn(
-            Future.failed[AgentAuthRetrievals](MissingBearerToken())
+          when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
+            Future.failed[AuthRetrievals](MissingBearerToken())
           )
 
           val result = authAction.authorise(false).invokeBlock(

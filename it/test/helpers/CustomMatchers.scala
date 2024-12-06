@@ -16,6 +16,7 @@
 
 package helpers
 
+import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.AuthStub.{lang, messagesAPI}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -67,6 +68,14 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
         )
       }
     }
+
+  def pageTitle(mtdUserRole: MTDUserRole, messageKey: String, isInvalidInput: Boolean = false, isErrorPage: Boolean = false): HavePropertyMatcher[WSResponse, String] = {
+    if(mtdUserRole == MTDIndividual) {
+      pageTitleIndividual(messageKey, isInvalidInput, isErrorPage)
+    } else {
+      pageTitleAgent(messageKey, isInvalidInput, isErrorPage)
+    }
+  }
 
   def pageTitleIndividual(messageKey: String, isInvalidInput: Boolean = false, isErrorPage: Boolean = false): HavePropertyMatcher[WSResponse, String] =
     new HavePropertyMatcher[WSResponse, String] {
@@ -203,6 +212,21 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
           s"elementByID($id)",
           expectedValue,
           body.select(s"#$id").text
+        )
+      }
+    }
+
+  def elementTextByClass(className: String)(expectedValue: String): HavePropertyMatcher[WSResponse, String] =
+    new HavePropertyMatcher[WSResponse, String] {
+
+      def apply(response: WSResponse) = {
+        val body = Jsoup.parse(response.body)
+
+        HavePropertyMatchResult(
+          body.getElementsByClass(className).text == expectedValue,
+          s"class",
+          expectedValue,
+          body.getElementsByClass(className).text
         )
       }
     }

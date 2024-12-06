@@ -16,17 +16,19 @@
 
 package controllers.optIn
 
+import controllers.ControllerISpecHelper
 import controllers.optIn.OptInErrorControllerISpec.headingText
-import helpers.ComponentSpecBase
+import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.admin.NavBarFs
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import play.api.http.Status.OK
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
-class OptInErrorControllerISpec extends ComponentSpecBase {
+class OptInErrorControllerISpec extends ControllerISpecHelper {
 
   val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
   val nextTaxYear = currentTaxYear.nextYear
@@ -34,37 +36,35 @@ class OptInErrorControllerISpec extends ComponentSpecBase {
 
   val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
 
-  def testShowErrorPage(isAgent: Boolean): Unit = {
+  def getPath(mtdRole: MTDUserRole): String = {
+    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    pathStart + "/opt-in/error"
+  }
 
-    val optInErrorControllerPageUrl = controllers.optIn.routes.OptInErrorController.show(isAgent).url
+  mtdAllRoles.foreach { case mtdUserRole =>
+    val path = getPath(mtdUserRole)
+    val additionalCookies = getAdditionalCookies(mtdUserRole)
+    s"GET $path" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          "render the optInError page" in {
+            disable(NavBarFs)
+            stubAuthorised(mtdUserRole)
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-    s"calling GET $optInErrorControllerPageUrl" should {
-      s"render page for show error view $optInErrorControllerPageUrl" when {
-        "User is authorised" in {
+            val result = buildGETMTDClient(path, additionalCookies).futureValue
+            verifyIncomeSourceDetailsCall(testMtditid)
 
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
-
-          val result = IncomeTaxViewChangeFrontendManageBusinesses.renderOptInErrorPage()
-          verifyIncomeSourceDetailsCall(testMtditid)
-
-          result should have(
-            httpStatus(OK),
-            elementTextBySelector(".govuk-heading-l")(headingText),
-          )
+            result should have(
+              httpStatus(OK),
+              elementTextBySelector(".govuk-heading-l")(headingText),
+            )
+          }
         }
+        testAuthFailures(path, mtdUserRole)
       }
     }
   }
-
-
-  "OptInErrorController - Individual" when {
-    testShowErrorPage(isAgent = false)
-  }
-
-  "OptInErrorController - Agent" when {
-    testShowErrorPage(isAgent = true)
-  }
-
 }
 
 object OptInErrorControllerISpec {

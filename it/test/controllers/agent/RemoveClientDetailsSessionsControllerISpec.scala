@@ -16,7 +16,9 @@
 
 package controllers.agent
 
-import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDAgentAuthStub}
+import controllers.ControllerISpecHelper
+import enums.{MTDPrimaryAgent, MTDSupportingAgent}
+import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status._
 import testConstants.BaseIntegrationTestConstants.{getAgentClientDetailsForCookie, testMtditid}
 import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
@@ -31,7 +33,7 @@ class RemoveClientDetailsSessionsControllerISpec extends ControllerISpecHelper {
       val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, true)
       "Removing the client details session keys" should {
         "redirect to client UTR page" in {
-          MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+          stubAuthorised(MTDPrimaryAgent)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
           val result = buildMTDClient(path, additionalCookies).futureValue
@@ -55,7 +57,7 @@ class RemoveClientDetailsSessionsControllerISpec extends ControllerISpecHelper {
 
         }
       }
-      testAuthFailuresForMTDAgent(path, isSupportingAgent, false)
+      testAuthFailures(path, MTDPrimaryAgent, requiresConfirmedClient = false)
     }
 
 
@@ -64,7 +66,7 @@ class RemoveClientDetailsSessionsControllerISpec extends ControllerISpecHelper {
       val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, true)
       "Removing the client details session keys" should {
         "redirect to client UTR page" in {
-          MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+          stubAuthorised(MTDSupportingAgent)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
           val result = buildMTDClient(path, additionalCookies).futureValue
@@ -88,7 +90,7 @@ class RemoveClientDetailsSessionsControllerISpec extends ControllerISpecHelper {
 
         }
       }
-      testAuthFailuresForMTDAgent(path, isSupportingAgent, false)
+      testAuthFailures(path, MTDSupportingAgent, requiresConfirmedClient = false)
     }
     testNoClientDataFailure(path)
   }

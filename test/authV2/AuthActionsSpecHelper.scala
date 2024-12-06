@@ -62,23 +62,4 @@ trait AuthActionsSpecHelper extends TestSupport with ScalaFutures {
   type AuthRetrievals =
     Enrolments ~ Option[Name] ~ Option[Credentials] ~ Option[AffinityGroup]  ~ ConfidenceLevel
 
-
-  val authActions = new AuthActions(
-    app.injector.instanceOf[SessionTimeoutAction],
-    app.injector.instanceOf[AuthoriseAndRetrieve],
-    app.injector.instanceOf[AuthoriseAndRetrieveIndividual],
-    app.injector.instanceOf[AuthoriseAndRetrieveAgent],
-    app.injector.instanceOf[AuthoriseAndRetrieveMtdAgent],
-    app.injector.instanceOf[AgentHasClientDetails],
-    app.injector.instanceOf[AgentHasConfirmedClientAction],
-    app.injector.instanceOf[AgentIsPrimaryAction],
-    app.injector.instanceOf[AsMtdUser],
-    app.injector.instanceOf[NavBarRetrievalAction],
-    app.injector.instanceOf[IncomeSourceRetrievalAction],
-    app.injector.instanceOf[RetrieveClientData],
-    app.injector.instanceOf[FeatureSwitchRetrievalAction]
-  )
-
-
-
 }

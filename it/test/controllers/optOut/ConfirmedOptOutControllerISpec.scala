@@ -16,8 +16,11 @@
 
 package controllers.optOut
 
+import controllers.ControllerISpecHelper
+import enums.{MTDIndividual, MTDUserRole}
+import helpers.OptOutSessionRepositoryHelper
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import helpers.{ComponentSpecBase, OptOutSessionRepositoryHelper}
+import models.admin.NavBarFs
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus._
 import play.api.http.Status.OK
@@ -25,10 +28,7 @@ import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
-class ConfirmedOptOutControllerISpec extends ComponentSpecBase {
-  private val isAgent: Boolean = false
-  private val confirmedOptOutPageUrl = controllers.optOut.routes.ConfirmedOptOutController.show(isAgent).url
-
+class ConfirmedOptOutControllerISpec extends ControllerISpecHelper {
   private val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
 
   private val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
@@ -39,27 +39,39 @@ class ConfirmedOptOutControllerISpec extends ComponentSpecBase {
     repository.clearSession(testSessionId).futureValue shouldBe true
   }
 
-  s"calling GET $confirmedOptOutPageUrl" should {
-    s"render confirm single year opt out page $confirmedOptOutPageUrl" when {
-      "User is authorised" in {
+  def getPath(mtdRole: MTDUserRole): String = {
+    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    pathStart + "/optout/confirmed"
+  }
 
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+  mtdAllRoles.foreach { case mtdUserRole =>
+    val path = getPath(mtdUserRole)
+    val additionalCookies = getAdditionalCookies(mtdUserRole)
+    s"GET $path" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          s"render confirm single year opt out page" in {
+            disable(NavBarFs)
+            stubAuthorised(mtdUserRole)
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        helper.stubOptOutInitialState(currentTaxYear,
-          previousYearCrystallised = false,
-          previousYearStatus = Voluntary,
-          currentYearStatus = Mandated,
-          nextYearStatus = Mandated)
+            helper.stubOptOutInitialState(currentTaxYear,
+              previousYearCrystallised = false,
+              previousYearStatus = Voluntary,
+              currentYearStatus = Mandated,
+              nextYearStatus = Mandated)
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.getConfirmedOptOut()
-        verifyIncomeSourceDetailsCall(testMtditid)
+            val result = buildGETMTDClient(path, additionalCookies).futureValue
+            verifyIncomeSourceDetailsCall(testMtditid)
 
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual("optout.confirmedOptOut.heading")
-        )
+            result should have(
+              httpStatus(OK),
+              pageTitle(mtdUserRole, "optout.confirmedOptOut.heading")
+            )
+          }
+        }
+        testAuthFailures(path, mtdUserRole)
       }
     }
   }
-
 }

@@ -16,11 +16,11 @@
 
 package controllers.optIn
 
-import auth.{FrontendAuthorisedFunctions, MtdItUser}
+import auth.MtdItUser
+import auth.authV2.AuthActions
 import cats.data.OptionT
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
 import forms.optIn.ChooseTaxYearForm
 import models.incomeSourceDetails.TaxYear
 import models.optin.ChooseTaxYearViewModel
@@ -28,7 +28,7 @@ import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import services.optIn.OptInService
-import utils.AuthenticatorPredicate
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.optIn.ChooseTaxYearView
 
 import javax.inject.Inject
@@ -36,14 +36,13 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ChooseYearController @Inject()(val optInService: OptInService,
                                      val view: ChooseTaxYearView,
-                                     val authorisedFunctions: FrontendAuthorisedFunctions,
-                                     val auth: AuthenticatorPredicate)
-                                    (implicit val appConfig: FrontendAppConfig,
-                                     mcc: MessagesControllerComponents,
-                                     val ec: ExecutionContext,
+                                     val authActions: AuthActions,
                                      val itvcErrorHandler: ItvcErrorHandler,
                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
+                                    (implicit val appConfig: FrontendAppConfig,
+                                     mcc: MessagesControllerComponents,
+                                     val ec: ExecutionContext)
+  extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
 
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
@@ -55,7 +54,7 @@ class ChooseYearController @Inject()(val optInService: OptInService,
     }
   }
 
-  def show(isAgent: Boolean = false): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def show(isAgent: Boolean = false): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
       withRecover(isAgent) {
 
@@ -76,7 +75,7 @@ class ChooseYearController @Inject()(val optInService: OptInService,
     Ok(view(filledForm, viewModel(taxYears, isAgent))(messages, user))
   }
 
-  def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def submit(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
       optInService.availableOptInTaxYear().flatMap { taxYears =>
         ChooseTaxYearForm(taxYears.map(_.toString)).bindFromRequest().fold(

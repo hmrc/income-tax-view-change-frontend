@@ -16,37 +16,33 @@
 
 package controllers.manageBusinesses.add
 
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
+import enums.MTDIndividual
 import forms.manageBusinesses.add.AddProprertyForm
 import forms.manageBusinesses.add.AddProprertyForm._
-import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.admin.IncomeSourcesFs
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import play.api
+import play.api.Application
 import play.api.http.Status
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import play.api.mvc.{AnyContentAsEmpty, MessagesControllerComponents}
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import testUtils.TestSupport
-import views.html.manageBusinesses.add.AddProperty
+import services.SessionService
 
-class AddPropertyControllerSpec extends TestSupport with MockAuthenticationPredicate
-  with MockIncomeSourceDetailsPredicate with FeatureSwitching with MockSessionService {
+class AddPropertyControllerSpec extends MockAuthActions with MockSessionService {
 
-  object TestAddPropertyController extends AddPropertyController(
-    testAuthenticator,
-    app.injector.instanceOf[AddProperty],
-    mockAuthService,
-  )(appConfig,
-    mcc = app.injector.instanceOf[MessagesControllerComponents],
-    ec,
-    app.injector.instanceOf[ItvcErrorHandler],
-    app.injector.instanceOf[AgentItvcErrorHandler]
-  )
+  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+    .overrides(
+      api.inject.bind[SessionService].toInstance(mockSessionService)
+    ).build()
+
+  val testController = fakeApplication().injector.instanceOf[AddPropertyController]
+
 
   def getRequest(isAgent: Boolean): FakeRequest[AnyContentAsEmpty.type] = {
     if (isAgent) fakeRequestConfirmedClient()
@@ -62,135 +58,135 @@ class AddPropertyControllerSpec extends TestSupport with MockAuthenticationPredi
     s"${messages("htmlTitle.invalidInput", messages("manageBusinesses.type-of-property.heading"))}"
   }
 
-  for (isAgent <- Seq(true, false)) yield {
-    s"AddPropertyController.show: isAgent = $isAgent" should {
-      "redirect to the appropriate page" when {
-        "IncomeSources FS is disabled" in {
-          disableAllSwitches()
-          disable(IncomeSourcesFs)
+  mtdAllRoles.foreach { mtdRole =>
+    val isAgent = mtdRole != MTDIndividual
+    s"show${if (mtdRole != MTDIndividual) "Agent"}" when {
+      val action = testController.show(isAgent)
+      val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
+      s"the user is authenticated as a $mtdRole" should {
+        "display the add property page" when {
+          "IncomeSources FS is enabled" in {
+            enable(IncomeSourcesFs)
+            setupMockSuccess(mtdRole)
+            mockNoIncomeSources()
+            val result = action(fakeRequest)
 
-          mockNoIncomeSources()
-          setupMockAuthorisationSuccess(isAgent)
-
-          val result = TestAddPropertyController.show(isAgent = isAgent)(getRequest(isAgent))
-
-          status(result) shouldBe SEE_OTHER
-          val redirectUrl = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
-          redirectLocation(result) shouldBe Some(redirectUrl)
+            val document: Document = Jsoup.parse(contentAsString(result))
+            document.title should include(messages("manageBusinesses.type-of-property.heading"))
+            val backUrl = if(isAgent) controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url else controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+            document.getElementById("back-fallback").attr("href") shouldBe backUrl
+            status(result) shouldBe OK
+          }
         }
-        "User is not authorised" in {
-          if (isAgent) setupMockAgentAuthorisationException() else setupMockAuthorisationException()
-          val result = TestAddPropertyController.show(isAgent)(getRequest(isAgent))
-          status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
-        }
-      }
-      "display the add property page" when {
-        "IncomeSources FS is enabled" in {
-          disableAllSwitches()
-          enable(IncomeSourcesFs)
-          mockNoIncomeSources()
-          setupMockAuthorisationSuccess(isAgent)
-          val result = TestAddPropertyController.show(isAgent = isAgent)(getRequest(isAgent))
 
-          val document: Document = Jsoup.parse(contentAsString(result))
-          document.title should include(messages("manageBusinesses.type-of-property.heading"))
-          val backUrl = if(isAgent) controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url else controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
-          document.getElementById("back-fallback").attr("href") shouldBe backUrl
-          status(result) shouldBe OK
+        "redirect to the home page" when {
+          "IncomeSources FS is disabled" in {
+            disable(IncomeSourcesFs)
+            setupMockSuccess(mtdRole)
+
+            mockNoIncomeSources()
+
+            val result = action(fakeRequest)
+
+            status(result) shouldBe SEE_OTHER
+            val redirectUrl = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+            redirectLocation(result) shouldBe Some(redirectUrl)
+          }
         }
       }
+      testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
     }
 
-    s"AddPropertyController.submit: isAgent = $isAgent" should {
-      "redirect to the home page" when {
-        "IncomeSources FS is disabled" in {
-          disableAllSwitches()
-          disable(IncomeSourcesFs)
+    s"submit($isAgent)" when {
+      val action = testController.submit(isAgent)
+      val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
+      s"the user is authenticated as a $mtdRole" should {
+        s"return ${Status.SEE_OTHER}: redirect to the correct Add Start Date Page" when {
+          "foreign property selected" in {
+            enable(IncomeSourcesFs)
+            setupMockSuccess(mtdRole)
 
-          mockNoIncomeSources()
-          setupMockAuthorisationSuccess(isAgent)
+            mockNoIncomeSources()
 
-          val result = TestAddPropertyController.submit(isAgent = isAgent)(postRequest(isAgent))
+            val result = action(fakeRequest.withFormUrlEncodedBody(
+              AddProprertyForm.response -> responseUK
+            ))
 
-          status(result) shouldBe SEE_OTHER
-          val redirectUrl = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
-          redirectLocation(result) shouldBe Some(redirectUrl)
+            status(result) shouldBe SEE_OTHER
+            val redirectUrl = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent, isChange = false, UkProperty).url
+            redirectLocation(result) shouldBe Some(redirectUrl)
+          }
+          "uk property selected" in {
+            enable(IncomeSourcesFs)
+            setupMockSuccess(mtdRole)
+
+            mockNoIncomeSources()
+
+            val result = action(fakeRequest.withFormUrlEncodedBody(
+              AddProprertyForm.response -> responseForeign
+            ))
+
+            status(result) shouldBe SEE_OTHER
+            val redirectUrl = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent, isChange = false, ForeignProperty).url
+            redirectLocation(result) shouldBe Some(redirectUrl)
+          }
+        }
+
+        s"return ${Status.BAD_REQUEST}" when {
+          "an invalid form is submitted" in {
+            enable(IncomeSourcesFs)
+            setupMockSuccess(mtdRole)
+
+            mockNoIncomeSources()
+
+            val result = action(fakeRequest.withFormUrlEncodedBody("INVALID" -> "INVALID"))
+
+            status(result) shouldBe BAD_REQUEST
+
+            val document: Document = Jsoup.parse(contentAsString(result))
+            document.title shouldBe getValidationErrorTabTitle()
+          }
+          "an empty form is submitted" in {
+            enable(IncomeSourcesFs)
+            setupMockSuccess(mtdRole)
+
+            mockNoIncomeSources()
+
+            val result = action(fakeRequest.withFormUrlEncodedBody("" -> ""))
+
+            status(result) shouldBe BAD_REQUEST
+
+            val document: Document = Jsoup.parse(contentAsString(result))
+            document.title shouldBe getValidationErrorTabTitle()
+          }
+          "no form is submitted" in {
+            enable(IncomeSourcesFs)
+            setupMockSuccess(mtdRole)
+
+            mockNoIncomeSources()
+
+            val result = action(fakeRequest)
+
+            status(result) shouldBe BAD_REQUEST
+          }
+        }
+
+        "redirect to the home page" when {
+          "IncomeSources FS is disabled" in {
+            disable(IncomeSourcesFs)
+            setupMockSuccess(mtdRole)
+
+            mockNoIncomeSources()
+
+            val result = action(fakeRequest)
+
+            status(result) shouldBe SEE_OTHER
+            val redirectUrl = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+            redirectLocation(result) shouldBe Some(redirectUrl)
+          }
         }
       }
-      s"return ${Status.BAD_REQUEST}" when {
-        "an invalid form is submitted" in {
-          disableAllSwitches()
-          enable(IncomeSourcesFs)
-
-          mockNoIncomeSources()
-          setupMockAuthorisationSuccess(isAgent)
-
-          val result = TestAddPropertyController.submit(isAgent = isAgent)(postRequest(isAgent).withFormUrlEncodedBody("INVALID" -> "INVALID"))
-
-          status(result) shouldBe BAD_REQUEST
-
-          val document: Document = Jsoup.parse(contentAsString(result))
-          document.title shouldBe getValidationErrorTabTitle()
-        }
-        "an empty form is submitted" in {
-          disableAllSwitches()
-          enable(IncomeSourcesFs)
-
-          mockNoIncomeSources()
-          setupMockAuthorisationSuccess(isAgent)
-
-          val result = TestAddPropertyController.submit(isAgent = isAgent)(postRequest(isAgent).withFormUrlEncodedBody("" -> ""))
-
-          status(result) shouldBe BAD_REQUEST
-
-          val document: Document = Jsoup.parse(contentAsString(result))
-          document.title shouldBe getValidationErrorTabTitle()
-        }
-        "no form is submitted" in {
-          disableAllSwitches()
-          enable(IncomeSourcesFs)
-
-          mockNoIncomeSources()
-          setupMockAuthorisationSuccess(isAgent)
-
-          val result = TestAddPropertyController.submit(isAgent = isAgent)(postRequest(isAgent))
-
-          status(result) shouldBe BAD_REQUEST
-        }
-      }
-      s"return ${Status.SEE_OTHER}: redirect to the correct Add Start Date Page" when {
-        "foreign property selected" in {
-          disableAllSwitches()
-          enable(IncomeSourcesFs)
-
-          mockNoIncomeSources()
-          setupMockAuthorisationSuccess(isAgent)
-
-          val result = TestAddPropertyController.submit(isAgent = isAgent)(postRequest(isAgent).withFormUrlEncodedBody(
-            AddProprertyForm.response -> responseUK
-          ))
-
-          status(result) shouldBe SEE_OTHER
-          val redirectUrl = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent, isChange = false, UkProperty).url
-          redirectLocation(result) shouldBe Some(redirectUrl)
-        }
-        "uk property selected" in {
-          disableAllSwitches()
-          enable(IncomeSourcesFs)
-
-          mockNoIncomeSources()
-          setupMockAuthorisationSuccess(isAgent)
-
-          val result = TestAddPropertyController.submit(isAgent = isAgent)(postRequest(isAgent).withFormUrlEncodedBody(
-            AddProprertyForm.response -> responseForeign
-          ))
-
-          status(result) shouldBe SEE_OTHER
-          val redirectUrl = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent, isChange = false, ForeignProperty).url
-          redirectLocation(result) shouldBe Some(redirectUrl)
-        }
-      }
+      testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
     }
   }
 }

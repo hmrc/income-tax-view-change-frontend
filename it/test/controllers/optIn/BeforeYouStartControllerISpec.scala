@@ -16,10 +16,12 @@
 
 package controllers.optIn
 
+import controllers.ControllerISpecHelper
 import controllers.optIn.BeforeYouStartControllerISpec._
-import enums.JourneyType.{OptInJourney, Opt}
-import helpers.ComponentSpecBase
+import enums.JourneyType.{Opt, OptInJourney}
+import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.admin.NavBarFs
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
 import models.optin.{OptInContextData, OptInSessionData}
@@ -29,11 +31,7 @@ import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
-class BeforeYouStartControllerISpec extends ComponentSpecBase {
-  val isAgent: Boolean = false
-  val beforeYouStartControllerPageUrl: String = controllers.optIn.routes.BeforeYouStartController.show(isAgent).url
-  val chooseTaxYearPageUrl: String = controllers.optIn.routes.ChooseYearController.show(isAgent).url
-  val confirmTaxYearPageUrl: String = controllers.optIn.routes.ConfirmTaxYearController.show(isAgent).url
+class BeforeYouStartControllerISpec extends ControllerISpecHelper {
 
   val forYearEnd = 2023
   val currentTaxYear: TaxYear = TaxYear.forYearEnd(forYearEnd)
@@ -45,33 +43,73 @@ class BeforeYouStartControllerISpec extends ComponentSpecBase {
     repository.clearSession(testSessionId).futureValue shouldBe true
   }
 
-  private def show(currentTaxYear: TaxYear, currentYearStatus: ITSAStatus.Value, nextYearStatus: ITSAStatus.Value, redirectPageUrl: String): Unit = {
-    s"calling GET $beforeYouStartControllerPageUrl" should {
-      s"render before you start page $beforeYouStartControllerPageUrl which redirects to $chooseTaxYearPageUrl" when {
-        "User is authorised and both current and next year status as Annual" in {
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+  def getPath(mtdRole: MTDUserRole): String = {
+    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    pathStart + "/opt-in/start"
+  }
 
-          setupOptInSessionData(currentTaxYear, currentYearStatus, nextYearStatus)
+  mtdAllRoles.foreach { case mtdUserRole =>
+    val isAgent = mtdUserRole != MTDIndividual
+    val path = getPath(mtdUserRole)
+    val additionalCookies = getAdditionalCookies(mtdUserRole)
+    s"GET $path" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          "render the before you start page with a button" that {
+            "Redirects to choose tax year page" in {
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-          val result = IncomeTaxViewChangeFrontendManageBusinesses.getBeforeYouStart()
-          verifyIncomeSourceDetailsCall(testMtditid)
+              setupOptInSessionData(currentTaxYear, ITSAStatus.Annual, ITSAStatus.Annual)
 
-          result should have(
-            httpStatus(OK),
-            pageTitleIndividual("optIn.beforeYouStart.heading"),
-            elementTextByID("heading")(headingText),
-            elementTextByID("desc1")(desc1),
-            elementTextByID("desc2")(desc2),
-            elementTextByID("reportQuarterly")(reportQuarterlyText),
-            elementTextByID("voluntaryStatus")(voluntaryStatus),
-            elementTextByID("voluntaryStatus-text")(voluntaryStatusText),
-            elementAttributeBySelector("#start-button", "href")(redirectPageUrl)
+              val result = buildGETMTDClient(path, additionalCookies).futureValue
+              verifyIncomeSourceDetailsCall(testMtditid)
 
-          )
+              result should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, "optIn.beforeYouStart.heading"),
+                elementTextByID("heading")(headingText),
+                elementTextByID("desc1")(desc1),
+                elementTextByID("desc2")(desc2),
+                elementTextByID("reportQuarterly")(reportQuarterlyText),
+                elementTextByID("voluntaryStatus")(voluntaryStatus),
+                elementTextByID("voluntaryStatus-text")(voluntaryStatusText),
+                elementAttributeBySelector("#start-button", "href")(routes.ChooseYearController.show(isAgent).url)
+
+              )
+            }
+
+            "Redirects to confirm tax year page" in {
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+              setupOptInSessionData(currentTaxYear, ITSAStatus.Annual, ITSAStatus.Voluntary)
+
+              val result = buildGETMTDClient(path, additionalCookies).futureValue
+              verifyIncomeSourceDetailsCall(testMtditid)
+
+              result should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, "optIn.beforeYouStart.heading"),
+                elementTextByID("heading")(headingText),
+                elementTextByID("desc1")(desc1),
+                elementTextByID("desc2")(desc2),
+                elementTextByID("reportQuarterly")(reportQuarterlyText),
+                elementTextByID("voluntaryStatus")(voluntaryStatus),
+                elementTextByID("voluntaryStatus-text")(voluntaryStatusText),
+                elementAttributeBySelector("#start-button", "href")(routes.ConfirmTaxYearController.show(isAgent).url)
+              )
+            }
+          }
         }
+        testAuthFailures(path, mtdUserRole)
       }
     }
   }
+
+
 
   private def setupOptInSessionData(currentTaxYear: TaxYear, currentYearStatus: ITSAStatus.Value, nextYearStatus: ITSAStatus.Value): Unit = {
     repository.set(
@@ -82,15 +120,6 @@ class BeforeYouStartControllerISpec extends ComponentSpecBase {
             Some(OptInContextData(
               currentTaxYear.toString, statusToString(currentYearStatus), statusToString(nextYearStatus))), None))))
   }
-
-  "BeforeYouStartController - Redirects to choose tax year page" when {
-    show(currentTaxYear, ITSAStatus.Annual, ITSAStatus.Annual, chooseTaxYearPageUrl)
-  }
-
-  "BeforeYouStartController - Redirects to confirm tax year page" when {
-    show(currentTaxYear, ITSAStatus.Annual, ITSAStatus.Voluntary, confirmTaxYearPageUrl)
-  }
-
 }
 
 object BeforeYouStartControllerISpec {

@@ -28,7 +28,7 @@ import scala.concurrent.Future
 
 trait MockOptOutSessionDataRepository extends UnitSpec with BeforeAndAfterEach {
 
-  val mockOptOutSessionDataRepository: OptOutSessionDataRepository = mock(classOf[OptOutSessionDataRepository])
+  lazy val mockOptOutSessionDataRepository: OptOutSessionDataRepository = mock(classOf[OptOutSessionDataRepository])
 
   override def beforeEach(): Unit = {
     super.beforeEach()

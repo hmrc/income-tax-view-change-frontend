@@ -16,38 +16,26 @@
 
 package controllers.manageBusinesses.cease
 
-import audit.models.CeaseIncomeSourceAuditModel
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import connectors.UpdateIncomeSourceConnector
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Cease, JourneyType}
+import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
-import enums.JourneyType.{Cease, IncomeSourceJourneyType, JourneyType}
-import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
 import models.admin.IncomeSourcesFs
 import models.core.IncomeSourceId
-import models.core.IncomeSourceId.mkIncomeSourceId
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
-import org.scalatest.Assertion
 import play.api
 import play.api.http.Status
 import play.api.http.Status.SEE_OTHER
-import play.api.mvc.{MessagesControllerComponents, Result}
+import play.api.mvc.Result
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.{SessionService, UpdateIncomeSourceService, UpdateIncomeSourceSuccess}
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testMtditid, testPropertyIncomeId, testSelfEmploymentId}
+import testConstants.BaseTestConstants.testMtditid
 import testConstants.UpdateIncomeSourceTestConstants
-import testConstants.UpdateIncomeSourceTestConstants.failureResponse
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
-import testUtils.TestSupport
-import uk.gov.hmrc.http.HttpClient
-import views.html.manageBusinesses.cease.CeaseCheckIncomeSourceDetails
 
 import java.time.LocalDate
 import scala.concurrent.Future

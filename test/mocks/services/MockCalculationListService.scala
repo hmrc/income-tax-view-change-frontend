@@ -28,7 +28,7 @@ import scala.concurrent.Future
 
 trait MockCalculationListService extends UnitSpec with BeforeAndAfterEach {
 
-  val mockCalculationListService: CalculationListService = mock(classOf[CalculationListService])
+  lazy val mockCalculationListService: CalculationListService = mock(classOf[CalculationListService])
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -46,4 +46,12 @@ trait MockCalculationListService extends UnitSpec with BeforeAndAfterEach {
   def setupMockTaxYearCrystallised(): Unit =
     when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.anyInt())(any(), any()))
       .thenReturn(Future.successful(true))
+
+  def setupMockTaxYearCrystallised(year: Int): Unit =
+    when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(year))(any(), any()))
+      .thenReturn(Future.successful(true))
+
+  def setupMockTaxYearNotCrystallised(year: Int): Unit =
+    when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(year))(any(), any()))
+      .thenReturn(Future.successful(false))
 }

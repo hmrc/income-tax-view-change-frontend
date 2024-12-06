@@ -16,17 +16,16 @@
 
 package controllers.constants
 
+import auth.MtdItUser
+import enums.{MTDIndividual, MTDUserRole}
 import models.incomeSourceDetails.TaxYear
+import play.api.test.FakeRequest
 import services.DateService
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
+import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 object ConfirmOptOutControllerConstants {
-
-  val isAgent: Boolean = false
-  val confirmOptOutPageUrl = controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url
-  val submitConfirmOptOutPageUrl = controllers.optOut.routes.ConfirmOptOutController.submit(isAgent).url
-
-  val confirmedPageUrl = controllers.optOut.routes.ConfirmedOptOutController.show(isAgent).url
-  val optOutErrorPageUrl = controllers.optOut.routes.OptOutErrorController.show(isAgent).url
 
   def currentTaxYear(dateService: DateService) = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
 
@@ -38,5 +37,17 @@ object ConfirmOptOutControllerConstants {
   val infoMessage = s"In future, you could be required to report quarterly again if, for example, your income increases or the threshold for reporting quarterly changes. If this happens, we’ll write to you to let you know."
   val emptyBodyString = ""
   val optOutExpectedTitle = "Check your answers"
+
+  def testUser(mtdUserRole: MTDUserRole): MtdItUser[_] = {
+    val (affinityGroup, arn) = if(mtdUserRole == MTDIndividual) {
+      (Individual, None)
+    } else {
+      (Agent, Some("1"))
+    }
+    MtdItUser(
+      testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
+      None, Some("1234567890"), Some("12345-credId"), Some(affinityGroup), arn
+    )(FakeRequest())
+  }
 
 }

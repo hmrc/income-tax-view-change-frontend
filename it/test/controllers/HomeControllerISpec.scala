@@ -18,6 +18,7 @@ package controllers
 
 import audit.models.{HomeAudit, NextUpdatesResponseAuditModel}
 import auth.MtdItUser
+import enums.MTDIndividual
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDIndividualAuthStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
@@ -664,6 +665,6 @@ class HomeControllerISpec extends ControllerISpecHelper {
       }
     }
 
-    testAuthFailuresForMTDIndividual(path)
+    testAuthFailures(path, MTDIndividual)
   }
 }

@@ -16,10 +16,11 @@
 
 package controllers.incomeSources.manage
 
-import models.admin.IncomeSourcesFs
-import enums.IncomeSourceJourney.UkProperty
-import helpers.ComponentSpecBase
+import controllers.ControllerISpecHelper
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.admin.{IncomeSourcesFs, NavBarFs}
 import models.incomeSourceDetails.viewmodels.ObligationsViewModel
 import models.incomeSourceDetails.{ManageIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
@@ -31,20 +32,11 @@ import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.IncomeSourcesObligationsIntegrationTestConstants.{testObligationsModel, testQuarterlyObligationDates}
 
 
-class ManageObligationsControllerISpec extends ComponentSpecBase {
+class ManageObligationsControllerISpec extends ControllerISpecHelper {
 
   val annual = "annual"
   val quarterly = "quarterly"
   val taxYear = "2023-2024"
-
-  val manageSEObligationsShowUrl: String = controllers.incomeSources.manage.routes.ManageObligationsController.showSelfEmployment(annual, taxYear).url
-  val manageUKObligationsShowUrl: String = controllers.incomeSources.manage.routes.ManageObligationsController.showUKProperty(annual, taxYear).url
-  val manageFPObligationsShowUrl: String = controllers.incomeSources.manage.routes.ManageObligationsController.showForeignProperty(annual, taxYear).url
-
-  val manageConfirmShowUrl: String = controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(taxYear, quarterly, incomeSourceType = UkProperty).url
-
-  val manageObligationsSubmitUrl: String = controllers.incomeSources.manage.routes.ManageObligationsController.submit().url
-  val manageIncomeSourcesShowUrl: String = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false).url
 
   val prefix: String = "incomeSources.add.manageObligations"
   val reusedPrefix: String = "business-added"
@@ -56,158 +48,155 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
     testQuarterlyObligationDates, Seq.empty, 2023, showPrevTaxYears = false
   )
 
+  def getIncomeSourceDetailsResponse(incomeSourceType: IncomeSourceType) = {
+    incomeSourceType match {
+      case SelfEmployment => businessOnlyResponse
+      case UkProperty => ukPropertyOnlyResponse
+      case ForeignProperty => foreignPropertyOnlyResponse
+    }
+  }
+
+  def getExpectedHeading(incomeSourceType: IncomeSourceType, isAnnualChange: Boolean): String = {
+    val changeToKey = if(isAnnualChange) "annually" else "quarterly"
+    val messageH1 = messagesAPI(s"$prefix.h1")
+    val messageH2 = messagesAPI(s"$prefix.h2")
+    val commonMessageEnd = messagesAPI(s"$prefix.$changeToKey") + " " + messagesAPI(s"$prefix.tax-year") + " " + "2023 to 2024"
+    val tradingNameOrProperyMessage = incomeSourceType match {
+      case SelfEmployment => business1.tradingName.getOrElse("")
+      case _ => messagesAPI(s"$prefix.${incomeSourceType.messagesSuffix}")
+    }
+    if (messageH1.nonEmpty) {
+      messageH1 + " " + tradingNameOrProperyMessage + " " + messageH2 + " " + commonMessageEnd
+    }
+    else {
+      tradingNameOrProperyMessage + " " + messageH2 + " " + commonMessageEnd
+    }
+  }
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
 
-  s"calling GET $manageSEObligationsShowUrl" should {
-    "render the self employment obligations page" when {
-      "given valid url params" in {
-        Given("Income Sources FS is enabled")
-        enable(IncomeSourcesFs)
-
-        When(s"I call GET $manageSEObligationsShowUrl")
-
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
-          manageIncomeSourceData = Some(ManageIncomeSourceData(Some("123"))))))
-
-        And("API 1771  returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-        And("API 1330 getNextUpdates returns a success response with a valid ObligationsModel")
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
-
-        val result = IncomeTaxViewChangeFrontend.getManageSEObligations(annual, taxYear)
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        val expectedText: String = if (messagesAPI(s"$prefix.h1").nonEmpty) {
-          messagesAPI(s"$prefix.h1") + " " + business1.tradingName.getOrElse("") + " " + messagesAPI(s"$prefix.h2") + " " + messagesAPI(s"$prefix.annually") + " " + messagesAPI(s"$prefix.tax-year") + " " + "2023 to 2024"
-        }
-        else {
-          business1.tradingName.getOrElse("") + " " + messagesAPI(s"$prefix.h2") + " " + messagesAPI(s"$prefix.annually") + " " + messagesAPI(s"$prefix.tax-year") + " " + "2023 to 2024"
-        }
-
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual(expectedText),
-          elementTextByID("continue-button")(continueButtonText)
-        )
-      }
+  def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType): String = {
+    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    val pathEnd = incomeSourceType match {
+      case SelfEmployment => s"/business-will-report"
+      case UkProperty => s"/uk-property-will-report"
+      case ForeignProperty => s"/foreign-property-will-report"
     }
-    "return an error" when {
-      "there is no incomeSourceId in the session storage" in {
-        Given("Income Sources FS is enabled")
-        enable(IncomeSourcesFs)
-
-        When(s"I call GET $manageSEObligationsShowUrl")
-
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
-          manageIncomeSourceData = None)))
-
-        And("API 1771  returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-        And("API 1330 getNextUpdates returns a success response with a valid ObligationsModel")
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
-
-        val result = IncomeTaxViewChangeFrontend.getManageSEObligations(annual, taxYear)
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        result should have(
-          httpStatus(INTERNAL_SERVER_ERROR)
-        )
-      }
-    }
+    pathStart + "/income-sources/manage" + pathEnd
   }
 
-  s"calling GET $manageUKObligationsShowUrl" should {
-    "render the self employment obligations page" when {
-      "given valid url params" in {
-        Given("Income Sources FS is enabled")
-        enable(IncomeSourcesFs)
+  List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
+    mtdAllRoles.foreach { mtdUserRole =>
+      val path = getPath(mtdUserRole, incomeSourceType)
+      val additionalCookies = getAdditionalCookies(mtdUserRole)
+      s"GET $path" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            "render the Manage Obligations Page" when {
+              "valid url parameters provided and change to is annual" in {
+                enable(IncomeSourcesFs)
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
-        When(s"I call GET $manageUKObligationsShowUrl")
+                await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"MANAGE-${incomeSourceType.key}",
+                  manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId), Some(annual), Some(2024), Some(true))))))
+                IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
 
-        And("API 1771  returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
+                val pathWithValidQueryParams = path + s"?changeTo=$annual&taxYear=$taxYear"
+                val result = buildGETMTDClient(pathWithValidQueryParams, additionalCookies).futureValue
+                verifyIncomeSourceDetailsCall(testMtditid)
 
-        And("API 1330 getNextUpdates returns a success response with a valid ObligationsModel")
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
 
-        val result = IncomeTaxViewChangeFrontend.getManageUKObligations(annual, taxYear)
-        verifyIncomeSourceDetailsCall(testMtditid)
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, getExpectedHeading(incomeSourceType, true)),
+                  elementTextByID("continue-button")(continueButtonText)
+                )
+              }
 
-        val expectedText: String = if (messagesAPI(s"$prefix.h1").nonEmpty) {
-          messagesAPI(s"$prefix.h1") + " " + messagesAPI(s"$prefix.uk-property") + " " + messagesAPI(s"$prefix.h2") + " " + messagesAPI(s"$prefix.annually") + " " + messagesAPI(s"$prefix.tax-year") + " " + "2023 to 2024"
+              "valid url parameters provided and change to is quarterly" in {
+                enable(IncomeSourcesFs)
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+
+                await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"MANAGE-${incomeSourceType.key}",
+                  manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId), Some(quarterly), Some(2024), Some(true))))))
+                IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
+
+                val pathWithValidQueryParams = path + s"?changeTo=$quarterly&taxYear=$taxYear"
+                val result = buildGETMTDClient(pathWithValidQueryParams, additionalCookies).futureValue
+                verifyIncomeSourceDetailsCall(testMtditid)
+
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, getExpectedHeading(incomeSourceType, false)),
+                  elementTextByID("continue-button")(continueButtonText)
+                )
+              }
+            }
+
+            "redirect to the home page" when {
+              "the income sources feature switch is disabled" in {
+                disable(IncomeSourcesFs)
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+                val pathWithValidQueryParams = path + s"?changeTo=$quarterly&taxYear=$taxYear"
+                val result = buildGETMTDClient(pathWithValidQueryParams, additionalCookies).futureValue
+
+                result should have(
+                  httpStatus(SEE_OTHER),
+                  redirectURI(homeUrl(mtdUserRole))
+                )
+              }
+            }
+
+            if (incomeSourceType == SelfEmployment) {
+              "render the error page" when {
+                "there is no incomeSourceId in the session" in {
+                  enable(IncomeSourcesFs)
+                  disable(NavBarFs)
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+                  await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"MANAGE-${incomeSourceType.key}",
+                    manageIncomeSourceData = None)))
+                  IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
+
+                  val pathWithValidQueryParams = path + s"?changeTo=$annual&taxYear=$taxYear"
+                  val result = buildGETMTDClient(pathWithValidQueryParams, additionalCookies).futureValue
+                  verifyIncomeSourceDetailsCall(testMtditid)
+
+                  result should have(
+                    httpStatus(INTERNAL_SERVER_ERROR)
+                  )
+                }
+              }
+            }
+          }
+          testAuthFailures(path + s"?changeTo=$annual&taxYear=$taxYear", mtdUserRole)
         }
-        else {
-          messagesAPI(s"$prefix.uk-property") + " " + messagesAPI(s"$prefix.h2") + " " + messagesAPI(s"$prefix.annually") + " " + messagesAPI(s"$prefix.tax-year") + " " + "2023 to 2024"
-        }
-
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual(expectedText),
-          elementTextByID("continue-button")(continueButtonText)
-        )
       }
-    }
-  }
 
-  s"calling GET $manageFPObligationsShowUrl" should {
-    "render the self employment obligations page" when {
-      "given valid url params" in {
-        Given("Income Sources FS is enabled")
-        enable(IncomeSourcesFs)
+      s"POST $path" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            "redirect to ManageIncomeSources" in {
+              enable(IncomeSourcesFs)
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
-        When(s"I call GET $manageFPObligationsShowUrl")
-
-        And("API 1771  returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
-
-        And("API 1330 getNextUpdates returns a success response with a valid ObligationsModel")
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
-
-        val result = IncomeTaxViewChangeFrontend.getManageFPObligations(quarterly, taxYear)
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        val expectedText: String = if (messagesAPI(s"$prefix.h1").nonEmpty) {
-          messagesAPI(s"$prefix.h1") + " " + messagesAPI(s"$prefix.foreign-property") + " " + messagesAPI(s"$prefix.h2") + " " + messagesAPI(s"$prefix.quarterly") + " " + messagesAPI(s"$prefix.tax-year") + " " + "2023 to 2024"
+              val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
+              result should have(
+                httpStatus(SEE_OTHER),
+                redirectURI(routes.ManageIncomeSourceController.show(mtdUserRole != MTDIndividual).url)
+              )
+            }
+          }
+          testAuthFailures(path, mtdUserRole, optBody = Some(Map.empty))
         }
-        else {
-          messagesAPI(s"$prefix.foreign-property") + " " + messagesAPI(s"$prefix.h2") + " " + messagesAPI(s"$prefix.quarterly") + " " + messagesAPI(s"$prefix.tax-year") + " " + "2023 to 2024"
-        }
-
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual(expectedText),
-          elementTextByID("continue-button")(continueButtonText)
-        )
-      }
-    }
-  }
-
-  s"calling POST $manageObligationsSubmitUrl" should {
-    s"redirect to $manageIncomeSourcesShowUrl" when {
-      "called" in {
-        Given("Income Sources FS is enabled")
-        enable(IncomeSourcesFs)
-
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
-
-        val resultSE = IncomeTaxViewChangeFrontend.postManageObligations("business")
-        resultSE should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(s"/report-quarterly/income-and-expenses/view/income-sources/manage/view-and-manage-income-sources")
-        )
-        val resultUK = IncomeTaxViewChangeFrontend.postManageObligations("uk-property")
-        resultUK should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(s"/report-quarterly/income-and-expenses/view/income-sources/manage/view-and-manage-income-sources")
-        )
-        val resultFP = IncomeTaxViewChangeFrontend.postManageObligations("foreign-property")
-        resultFP should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(s"/report-quarterly/income-and-expenses/view/income-sources/manage/view-and-manage-income-sources")
-        )
       }
     }
   }

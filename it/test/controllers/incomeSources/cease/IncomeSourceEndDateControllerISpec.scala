@@ -16,11 +16,12 @@
 
 package controllers.incomeSources.cease
 
-import models.admin.IncomeSourcesFs
-import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import controllers.ControllerISpecHelper
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
-import helpers.ComponentSpecBase
+import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.admin.{IncomeSourcesFs, NavBarFs}
 import models.incomeSourceDetails.CeaseIncomeSourceData.{dateCeasedField, incomeSourceIdField}
 import models.incomeSourceDetails.{CeaseIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -31,30 +32,9 @@ import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse,
 
 import java.time.LocalDate
 
-class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
+class IncomeSourceEndDateControllerISpec extends ControllerISpecHelper {
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
-
-  val dateBusinessShowUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(Some(testSelfEmploymentId), SelfEmployment).url
-  val dateBusinessSubmitUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.submit(Some(testSelfEmploymentId), SelfEmployment).url
-  val dateBusinessShowChangeUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChange(Some(testSelfEmploymentId), SelfEmployment).url
-  val dateBusinessSubmitChangeUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.submitChange(Some(testSelfEmploymentId), SelfEmployment).url
-  val checkCeaseBusinessDetailsShowUrl: String = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.show(SelfEmployment).url
-
-  val dateUKPropertyShowUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, UkProperty).url
-  val dateUKPropertySubmitUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.submit(None, UkProperty).url
-  val dateUKPropertyShowChangeUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChange(None, UkProperty).url
-  val dateUKPropertySubmitChangeUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.submitChange(None, UkProperty).url
-  val checkYourCeaseDetailsUkPropertyShowUrl: String = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.show(UkProperty).url
-
-  val dateForeignPropertyShowUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, ForeignProperty).url
-  val dateForeignPropertySubmitUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.submit(None, ForeignProperty).url
-  val dateForeignPropertyShowChangeUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChange(None, ForeignProperty).url
-  val dateForeignPropertySubmitChangeUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.submitChange(None, ForeignProperty).url
-  val checkYourCeaseDetailsForeignPropertyShowUrl: String = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.show(ForeignProperty).url
-
-  val testSessionEndDateValue: String = "2022-08-27"
-  val testSessionEndDateValueProperty: String = "2022-12-20"
 
   val hintText: String = messagesAPI("dateForm.hint")
   val continueButtonText: String = messagesAPI("base.continue")
@@ -67,402 +47,134 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
     await(sessionService.deleteSession(Cease))
   }
 
-  s"calling GET $dateBusinessShowUrl" should {
-    "render the Date Business Ceased Page" when {
-      "User is authorised" in {
-        Given("I wiremock stub a successful Income Source Details response with a business")
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-        When(s"I call GET $dateBusinessShowUrl")
-        val result = IncomeTaxViewChangeFrontend.getBusinessEndDate
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual("incomeSources.cease.endDate.selfEmployment.heading"),
-          elementTextByID("value-hint")(hintText),
-          elementTextByID("continue-button")(continueButtonText)
-        )
-      }
+  def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType, isChange: Boolean): String = {
+    val pathStart = if(mtdRole == MTDIndividual) "/income-sources/cease" else "/agents/income-sources/cease"
+    val changeIfReq = if(isChange) "/change-" else "/"
+    val endPath = incomeSourceType match {
+      case SelfEmployment => s"business-end-date?id=$testSelfEmploymentIdHashed"
+      case UkProperty =>  "uk-property-end-date"
+      case _ => "foreign-property-end-date"
     }
-  }
-  s"calling POST $dateBusinessSubmitUrl" should {
-    s"redirect to $checkCeaseBusinessDetailsShowUrl" when {
-      "form is filled correctly" in {
-        val formData: Map[String, Seq[String]] = {
-          Map("value.day" -> Seq("10"), "value.month" -> Seq("10"), "value.year" -> Seq("2022"))
-        }
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
-          Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
-
-        val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/cease/business-end-date?id=$testSelfEmploymentIdHashed")(formData)
-
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(checkCeaseBusinessDetailsShowUrl)
-        )
-
-        sessionService.getMongoKey(dateCeasedField, IncomeSourceJourneyType(Cease, SelfEmployment)).futureValue shouldBe Right(Some(LocalDate.parse(testEndDate2022)))
-        sessionService.getMongoKey(incomeSourceIdField, IncomeSourceJourneyType(Cease, SelfEmployment)).futureValue shouldBe Right(Some(testSelfEmploymentId))
-
-      }
-      "form is filled incorrectly" in {
-        val formData: Map[String, Seq[String]] = {
-          Map("value.day" -> Seq("aa"), "value.month" -> Seq("5"), "value.year" -> Seq("2022"))
-        }
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-        val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/cease/business-end-date?id=$testSelfEmploymentIdHashed")(formData)
-
-        result should have(
-          httpStatus(BAD_REQUEST),
-          elementTextByID("value-error")(messagesAPI("base.error-prefix") + ": " +
-            messagesAPI("incomeSources.cease.endDate.selfEmployment.error.invalid"))
-        )
-
-        sessionService.getMongoKey(dateCeasedField, IncomeSourceJourneyType(Cease, SelfEmployment)).futureValue shouldBe Right(None)
-        sessionService.getMongoKey(incomeSourceIdField, IncomeSourceJourneyType(Cease, SelfEmployment)).futureValue shouldBe Right(None)
-
-      }
-    }
+    pathStart + changeIfReq + endPath
   }
 
-  s"calling GET $dateBusinessShowChangeUrl" should {
-    "render the Date Business Ceased Page" when {
-      "User is authorised" in {
-        Given("I wiremock stub a successful Income Source Details response with a business")
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
-          Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = None, journeyIsComplete = Some(false))))))
-
-
-        When(s"I call GET $dateBusinessShowChangeUrl")
-        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/cease/change-business-end-date?id=$testSelfEmploymentIdHashed")
-
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual("incomeSources.cease.endDate.selfEmployment.heading"),
-          elementTextByID("value-hint")(hintText),
-          elementAttributeBySelector("input[id=value.day]", "value")(testChangeDay),
-          elementAttributeBySelector("input[id=value.month]", "value")(testChangeMonth),
-          elementAttributeBySelector("input[id=value.year]", "value")(testChangeYear),
-          elementTextByID("continue-button")(continueButtonText)
-        )
-      }
-    }
+  def getIncomeSourceResponse(incomeSourceType: IncomeSourceType) = incomeSourceType match {
+    case SelfEmployment => businessOnlyResponse
+    case UkProperty => ukPropertyOnlyResponse
+    case ForeignProperty => foreignPropertyOnlyResponse
   }
 
-  s"calling POST $dateBusinessSubmitChangeUrl" should {
-    s"redirect to $checkCeaseBusinessDetailsShowUrl" when {
-      "form is filled correctly" in {
-        val formData: Map[String, Seq[String]] = {
-          Map("value.day" -> Seq("10"), "value.month" -> Seq("10"), "value.year" -> Seq("2022"))
-        }
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
-          Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
-
-        val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/cease/change-business-end-date?id=${testSelfEmploymentIdHashed}")(formData)
-
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(checkCeaseBusinessDetailsShowUrl)
-        )
-
-        sessionService.getMongoKey(dateCeasedField, IncomeSourceJourneyType(Cease, SelfEmployment)).futureValue shouldBe Right(Some(LocalDate.parse(testEndDate2022)))
-        sessionService.getMongoKey(incomeSourceIdField, IncomeSourceJourneyType(Cease, SelfEmployment)).futureValue shouldBe Right(Some(testSelfEmploymentId))
-
-      }
-      "form is filled incorrectly" in {
-        val formData: Map[String, Seq[String]] = {
-          Map("value.day" -> Seq("aa"), "value.month" -> Seq("5"), "value.year" -> Seq("2022"))
-        }
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-        val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/cease/change-business-end-date?id=$testSelfEmploymentIdHashed")(formData)
-
-        result should have(
-          httpStatus(BAD_REQUEST),
-          elementTextByID("value-error")(messagesAPI("base.error-prefix") + ": " +
-            messagesAPI("incomeSources.cease.endDate.selfEmployment.error.invalid"))
-        )
-
-        sessionService.getMongoKey(dateCeasedField, IncomeSourceJourneyType(Cease, SelfEmployment)).futureValue shouldBe Right(None)
-        sessionService.getMongoKey(incomeSourceIdField, IncomeSourceJourneyType(Cease, SelfEmployment)).futureValue shouldBe Right(None)
-
-      }
+  def setupTestMongoData(incomeSourceType: IncomeSourceType) = {
+    val incomeSourceId = incomeSourceType match {
+      case SelfEmployment => testSelfEmploymentId
+      case _ => testPropertyIncomeId
     }
+    await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"CEASE-${incomeSourceType.key}", ceaseIncomeSourceData =
+      Some(CeaseIncomeSourceData(incomeSourceId = Some(incomeSourceId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
   }
 
+  mtdAllRoles.foreach { mtdUserRole =>
+    List(false, true).foreach { isChange =>
+      List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
+        val path = getPath(mtdUserRole, incomeSourceType, isChange)
+        val additionalCookies = getAdditionalCookies(mtdUserRole)
+        s"GET $path" when {
+          s"a user is a $mtdUserRole" that {
+            "is authenticated, with a valid enrolment" should {
+              "render the Date Business Ceased Page" in {
+                stubAuthorised(mtdUserRole)
+                disable(NavBarFs)
+                enable(IncomeSourcesFs)
 
-  s"calling GET $dateUKPropertyShowUrl" should {
-    "render the Date UK Property Ceased Page" when {
-      "User is authorised" in {
-        Given("I wiremock stub a successful Income Source Details response with UK property")
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
 
-        When(s"I call GET $dateUKPropertyShowUrl")
-        val result = IncomeTaxViewChangeFrontend.getUKPropertyEndDate
-        verifyIncomeSourceDetailsCall(testMtditid)
+                if(isChange) {
+                  setupTestMongoData(incomeSourceType)
+                }
 
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual("incomeSources.cease.endDate.ukProperty.heading"),
-          elementTextByID("value-hint")(hintText),
-          elementTextByID("continue-button")(continueButtonText)
-        )
-      }
-    }
-  }
-  s"calling POST $dateUKPropertySubmitUrl" should {
-    "redirect to showUKPropertyEndDateControllerUrl" when {
-      "form is filled correctly" in {
-        val formData: Map[String, Seq[String]] = {
-          Map("value.day" -> Seq("10"), "value.month" -> Seq("10"), "value.year" -> Seq("2022"))
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                verifyIncomeSourceDetailsCall(testMtditid)
+
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, s"incomeSources.cease.endDate.${incomeSourceType.messagesCamel}.heading"),
+                  elementTextByID("value-hint")(hintText),
+                  elementTextByID("continue-button")(continueButtonText)
+                )
+                if (isChange) {
+                  result should have(
+                    elementAttributeBySelector("input[id=value.day]", "value")(testChangeDay),
+                    elementAttributeBySelector("input[id=value.month]", "value")(testChangeMonth),
+                    elementAttributeBySelector("input[id=value.year]", "value")(testChangeYear)
+                  )
+                }
+              }
+            }
+            testAuthFailures(path, mtdUserRole)
+          }
         }
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK", ceaseIncomeSourceData =
-          Some(CeaseIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
+        s"POST $path" when {
+          s"a user is a $mtdUserRole" that {
+            "is authenticated, with a valid enrolment" should {
+              s"redirect to Check income source details" when {
+                "form is filled correctly" in {
+                  val formData: Map[String, Seq[String]] = {
+                    Map("value.day" -> Seq("10"), "value.month" -> Seq("10"), "value.year" -> Seq("2022"))
+                  }
+                  stubAuthorised(mtdUserRole)
+                  disable(NavBarFs)
+                  enable(IncomeSourcesFs)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
 
-        val result = IncomeTaxViewChangeFrontend.post("/income-sources/cease/uk-property-end-date")(formData)
+                  setupTestMongoData(incomeSourceType)
 
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(checkYourCeaseDetailsUkPropertyShowUrl)
-        )
+                  val result = buildPOSTMTDPostClient(path, additionalCookies, formData).futureValue
 
-        sessionService.getMongoKey(dateCeasedField, IncomeSourceJourneyType(Cease, UkProperty)).futureValue shouldBe Right(Some(LocalDate.parse(testEndDate2022)))
-      }
-      "form is filled incorrectly" in {
-        val formData: Map[String, Seq[String]] = {
-          Map("value.day" -> Seq("aa"), "value.month" -> Seq("12"), "value.year" -> Seq("2022"))
+                  val expectedUrl = if (mtdUserRole == MTDIndividual) {
+                    controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.show(incomeSourceType).url
+                  } else {
+                    controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType).url
+                  }
+
+                  result should have(
+                    httpStatus(SEE_OTHER),
+                    redirectURI(expectedUrl)
+                  )
+                  sessionService.getMongoKey(dateCeasedField, IncomeSourceJourneyType(Cease, incomeSourceType)).futureValue shouldBe Right(Some(LocalDate.parse(testEndDate2022)))
+                  if (incomeSourceType == SelfEmployment) {
+                    sessionService.getMongoKey(incomeSourceIdField, IncomeSourceJourneyType(Cease, incomeSourceType)).futureValue shouldBe Right(Some(testSelfEmploymentId))
+                  }
+                }
+              }
+
+              "return a BadRequest" when {
+                "form is filled incorrectly" in {
+                  val formData: Map[String, Seq[String]] = {
+                    Map("value.day" -> Seq("aa"), "value.month" -> Seq("5"), "value.year" -> Seq("2022"))
+                  }
+                  stubAuthorised(mtdUserRole)
+                  disable(NavBarFs)
+                  enable(IncomeSourcesFs)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
+
+                  val result = buildPOSTMTDPostClient(path, additionalCookies, formData).futureValue
+
+                  result should have(
+                    httpStatus(BAD_REQUEST),
+                    elementTextByID("value-error")(messagesAPI("base.error-prefix") + ": " +
+                      messagesAPI(s"incomeSources.cease.endDate.${incomeSourceType.messagesCamel}.error.invalid"))
+                  )
+
+                  sessionService.getMongoKey(dateCeasedField, IncomeSourceJourneyType(Cease, incomeSourceType)).futureValue shouldBe Right(None)
+                  sessionService.getMongoKey(incomeSourceIdField, IncomeSourceJourneyType(Cease, incomeSourceType)).futureValue shouldBe Right(None)
+
+                }
+              }
+            }
+            testAuthFailures(path, mtdUserRole, optBody = Some(Map.empty))
+          }
         }
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
-
-        val result = IncomeTaxViewChangeFrontend.post("/income-sources/cease/uk-property-end-date")(formData)
-
-        result should have(
-          httpStatus(BAD_REQUEST),
-          elementTextByID("value-error")(messagesAPI("base.error-prefix") + ": " +
-            messagesAPI("incomeSources.cease.endDate.ukProperty.error.invalid"))
-        )
-
-        sessionService.getMongoKey(dateCeasedField, IncomeSourceJourneyType(Cease, UkProperty)).futureValue shouldBe Right(None)
-
-      }
-    }
-  }
-
-  s"calling GET $dateUKPropertyShowChangeUrl" should {
-    "render the Date UK Property Ceased Page" when {
-      "User is authorised" in {
-        Given("I wiremock stub a successful Income Source Details response with UK property")
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
-
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK", ceaseIncomeSourceData =
-          Some(CeaseIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
-
-        When(s"I call GET $dateUKPropertyShowChangeUrl")
-        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/cease/change-uk-property-end-date")
-
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual("incomeSources.cease.endDate.ukProperty.heading"),
-          elementTextByID("value-hint")(hintText),
-          elementAttributeBySelector("input[id=value.day]", "value")(testChangeDay),
-          elementAttributeBySelector("input[id=value.month]", "value")(testChangeMonth),
-          elementAttributeBySelector("input[id=value.year]", "value")(testChangeYear),
-          elementTextByID("continue-button")(continueButtonText)
-        )
-      }
-    }
-  }
-  s"calling POST $dateUKPropertySubmitChangeUrl" should {
-    "redirect to showUKPropertyEndDateControllerUrl" when {
-      "form is filled correctly" in {
-        val formData: Map[String, Seq[String]] = {
-          Map("value.day" -> Seq("10"), "value.month" -> Seq("10"), "value.year" -> Seq("2022"))
-        }
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
-
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK", ceaseIncomeSourceData =
-          Some(CeaseIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
-
-        val result = IncomeTaxViewChangeFrontend.post("/income-sources/cease/change-uk-property-end-date")(formData)
-
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(checkYourCeaseDetailsUkPropertyShowUrl)
-        )
-
-        sessionService.getMongoKey(dateCeasedField, IncomeSourceJourneyType(Cease, UkProperty)).futureValue shouldBe Right(Some(LocalDate.parse(testEndDate2022)))
-
-      }
-      "form is filled incorrectly" in {
-        val formData: Map[String, Seq[String]] = {
-          Map("value.day" -> Seq("aa"), "value.month" -> Seq("12"), "value.year" -> Seq("2022"))
-        }
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
-
-        val result = IncomeTaxViewChangeFrontend.post("/income-sources/cease/change-uk-property-end-date")(formData)
-
-        result should have(
-          httpStatus(BAD_REQUEST),
-          elementTextByID("value-error")(messagesAPI("base.error-prefix") + ": " +
-            messagesAPI("incomeSources.cease.endDate.ukProperty.error.invalid"))
-        )
-
-        sessionService.getMongoKey(dateCeasedField, IncomeSourceJourneyType(Cease, UkProperty)).futureValue shouldBe Right(None)
-
-      }
-    }
-  }
-
-  s"calling GET $dateForeignPropertyShowUrl" should {
-    "render the Date Foreign Property Ceased Page" when {
-      "User is authorised" in {
-        Given("I wiremock stub a successful Income Source Details response with Foreign property")
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
-
-        When(s"I call GET $dateForeignPropertyShowUrl")
-        val result = IncomeTaxViewChangeFrontend.getForeignPropertyEndDate
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual("incomeSources.cease.endDate.foreignProperty.heading"),
-          elementTextByID("value-hint")(hintText),
-          elementTextByID("continue-button")(continueButtonText)
-        )
-      }
-    }
-  }
-  s"calling POST $dateForeignPropertySubmitUrl" should {
-    "redirect to showUKPropertyEndDateControllerUrl" when {
-      "form is filled correctly" in {
-        val formData: Map[String, Seq[String]] = {
-          Map("value.day" -> Seq("10"), "value.month" -> Seq("10"), "value.year" -> Seq("2022"))
-        }
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
-
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP", ceaseIncomeSourceData =
-          Some(CeaseIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
-
-        val result = IncomeTaxViewChangeFrontend.post("/income-sources/cease/foreign-property-end-date")(formData)
-
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(checkYourCeaseDetailsForeignPropertyShowUrl)
-        )
-
-        sessionService.getMongoKey(dateCeasedField, IncomeSourceJourneyType(Cease, ForeignProperty)).futureValue shouldBe Right(Some(LocalDate.parse(testEndDate2022)))
-
-      }
-      "form is filled incorrectly" in {
-        val formData: Map[String, Seq[String]] = {
-          Map("value.day" -> Seq("aa"), "value.month" -> Seq("12"), "value.year" -> Seq("2022"))
-        }
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
-
-        val result = IncomeTaxViewChangeFrontend.post("/income-sources/cease/foreign-property-end-date")(formData)
-
-        result should have(
-          httpStatus(BAD_REQUEST),
-          elementTextByID("value-error")(messagesAPI("base.error-prefix") + ": " +
-            messagesAPI("incomeSources.cease.endDate.foreignProperty.error.invalid"))
-        )
-
-        sessionService.getMongoKey(dateCeasedField, IncomeSourceJourneyType(Cease, ForeignProperty)).futureValue shouldBe Right(None)
-
-      }
-    }
-  }
-
-  s"calling GET $dateForeignPropertyShowChangeUrl" should {
-    "render the Date Foreign Property Ceased Page" when {
-      "User is authorised" in {
-        Given("I wiremock stub a successful Income Source Details response with Foreign property")
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
-
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP", ceaseIncomeSourceData =
-          Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
-
-        When(s"I call GET $dateForeignPropertyShowChangeUrl")
-        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/cease/change-foreign-property-end-date")
-
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual("incomeSources.cease.endDate.foreignProperty.heading"),
-          elementTextByID("value-hint")(hintText),
-          elementAttributeBySelector("input[id=value.day]", "value")(testChangeDay),
-          elementAttributeBySelector("input[id=value.month]", "value")(testChangeMonth),
-          elementAttributeBySelector("input[id=value.year]", "value")(testChangeYear),
-          elementTextByID("continue-button")(continueButtonText)
-        )
-      }
-    }
-  }
-  s"calling POST $dateForeignPropertySubmitChangeUrl" should {
-    "redirect to showForeignPropertyEndDateControllerUrl" when {
-      "form is filled correctly" in {
-        val formData: Map[String, Seq[String]] = {
-          Map("value.day" -> Seq("10"), "value.month" -> Seq("10"), "value.year" -> Seq("2022"))
-        }
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
-
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP", ceaseIncomeSourceData =
-          Some(CeaseIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
-
-
-        val result = IncomeTaxViewChangeFrontend.post("/income-sources/cease/change-foreign-property-end-date")(formData)
-
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(checkYourCeaseDetailsForeignPropertyShowUrl)
-        )
-
-        sessionService.getMongoKey(dateCeasedField, IncomeSourceJourneyType(Cease, ForeignProperty)).futureValue shouldBe Right(Some(LocalDate.parse(testEndDate2022)))
-
-      }
-      "form is filled incorrectly" in {
-        val formData: Map[String, Seq[String]] = {
-          Map("value.day" -> Seq("aa"), "value.month" -> Seq("12"), "value.year" -> Seq("2022"))
-        }
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
-
-        val result = IncomeTaxViewChangeFrontend.post("/income-sources/cease/change-foreign-property-end-date")(formData)
-
-        result should have(
-          httpStatus(BAD_REQUEST),
-          elementTextByID("value-error")(messagesAPI("base.error-prefix") + ": " +
-            messagesAPI("incomeSources.cease.endDate.foreignProperty.error.invalid"))
-        )
-
-        sessionService.getMongoKey(dateCeasedField, IncomeSourceJourneyType(Cease, ForeignProperty)).futureValue shouldBe Right(None)
-
       }
     }
   }

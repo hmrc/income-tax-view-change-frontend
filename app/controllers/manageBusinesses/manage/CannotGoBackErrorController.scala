@@ -17,31 +17,33 @@
 package controllers.manageBusinesses.manage
 
 import auth.MtdItUser
+import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.{CannotGoBackPage, IncomeSourceType}
-import enums.JourneyType.{IncomeSourceJourneyType, JourneyType, Manage}
+import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import play.api.Logger
+import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.SessionService
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.JourneyCheckerManageBusinesses
 import views.html.manageBusinesses.YouCannotGoBackError
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CannotGoBackErrorController @Inject()(val authorisedFunctions: AuthorisedFunctions,
+class CannotGoBackErrorController @Inject()(val authActions: AuthActions,
                                             val cannotGoBackError: YouCannotGoBackError,
                                             val sessionService: SessionService,
-                                            val auth: AuthenticatorPredicate)
+                                            val itvcErrorHandler: ItvcErrorHandler,
+                                            val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                            (implicit val appConfig: FrontendAppConfig,
                                             mcc: MessagesControllerComponents,
-                                            val ec: ExecutionContext,
-                                            val itvcErrorHandler: ItvcErrorHandler,
-                                            val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
+                                            val ec: ExecutionContext) extends FrontendController(mcc)
+  with I18nSupport with JourneyCheckerManageBusinesses {
 
-  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def show(isAgent: Boolean,
+           incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
       handleRequest(
         isAgent = isAgent,

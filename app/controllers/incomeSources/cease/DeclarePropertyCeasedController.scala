@@ -16,37 +16,36 @@
 
 package controllers.incomeSources.cease
 
-import auth.{FrontendAuthorisedFunctions, MtdItUser}
+import auth.MtdItUser
+import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates._
-import enums.IncomeSourceJourney.{IncomeSourceType, InitialPage, SelfEmployment}
-import enums.JourneyType.{Cease, IncomeSourceJourneyType, JourneyType}
+import enums.IncomeSourceJourney.{IncomeSourceType, InitialPage}
+import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import play.api.Logger
-import play.api.i18n.{I18nSupport, Messages}
+import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{IncomeSourceDetailsService, SessionService}
+import services.SessionService
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.JourneyChecker
 import views.html.incomeSources.cease.DeclarePropertyCeased
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DeclarePropertyCeasedController @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
+class DeclarePropertyCeasedController @Inject()(val authActions: AuthActions,
                                                 val view: DeclarePropertyCeased,
                                                 val sessionService: SessionService,
-                                                val auth: AuthenticatorPredicate)
+                                                val itvcErrorHandler: ItvcErrorHandler,
+                                                val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                                (implicit val appConfig: FrontendAppConfig,
                                                 mcc: MessagesControllerComponents,
-                                                val ec: ExecutionContext,
-                                                val itvcErrorHandler: ItvcErrorHandler,
-                                                val itvcErrorHandlerAgent: AgentItvcErrorHandler
+                                                val ec: ExecutionContext
                                                )
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyChecker {
+  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with JourneyChecker {
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] =
@@ -74,7 +73,7 @@ class DeclarePropertyCeasedController @Inject()(val authorisedFunctions: Fronten
     }
 
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
       implicit user =>
         handleRequest(
           isAgent = false,
@@ -82,7 +81,7 @@ class DeclarePropertyCeasedController @Inject()(val authorisedFunctions: Fronten
         )
     }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit mtdItUser =>
       handleRequest(
         isAgent = true,
@@ -130,12 +129,12 @@ class DeclarePropertyCeasedController @Inject()(val authorisedFunctions: Fronten
   }
 
 
-  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit request =>
       handleSubmitRequest(isAgent = false, incomeSourceType = incomeSourceType)
   }
 
-  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit mtdItUser =>
       handleSubmitRequest(isAgent = true, incomeSourceType = incomeSourceType)
   }

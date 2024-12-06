@@ -17,34 +17,32 @@
 package controllers.incomeSources.manage
 
 import auth.MtdItUser
+import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates._
 import enums.IncomeSourceJourney.{CannotGoBackPage, IncomeSourceType}
-import enums.JourneyType.{IncomeSourceJourneyType, JourneyType, Manage}
-import models.incomeSourceDetails.{ManageIncomeSourceData, UIJourneySessionData}
+import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import play.api.Logger
+import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{IncomeSourceDetailsService, SessionService}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import uk.gov.hmrc.http.HeaderCarrier
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
+import services.SessionService
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.JourneyChecker
 import views.html.incomeSources.YouCannotGoBackError
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CannotGoBackErrorController @Inject()(val authorisedFunctions: AuthorisedFunctions,
+class CannotGoBackErrorController @Inject()(val authActions: AuthActions,
                                             val cannotGoBackError: YouCannotGoBackError,
                                             val sessionService: SessionService,
-                                            val auth: AuthenticatorPredicate)
+                                            val itvcErrorHandler: ItvcErrorHandler,
+                                            val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                            (implicit val appConfig: FrontendAppConfig,
                                             mcc: MessagesControllerComponents,
-                                            val ec: ExecutionContext,
-                                            val itvcErrorHandler: ItvcErrorHandler,
-                                            val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController with IncomeSourcesUtils with JourneyChecker {
+                                            val ec: ExecutionContext) extends FrontendController(mcc) with JourneyChecker with I18nSupport{
 
-  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def show(isAgent: Boolean,
+           incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
       handleRequest(
         isAgent = isAgent,
@@ -52,24 +50,29 @@ class CannotGoBackErrorController @Inject()(val authorisedFunctions: AuthorisedF
       )
   }
 
-  private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = CannotGoBackPage) { data =>
-    data.manageIncomeSourceData match {
-      case Some(manageData) if manageData.reportingMethod.isDefined && manageData.taxYear.isDefined =>
-        val subheadingContent = getSubheadingContent(incomeSourceType, manageData.reportingMethod.get, manageData.taxYear.get)
-        Future.successful {
-          Ok(cannotGoBackError(isAgent, subheadingContent))
-        }
-      case _ =>
-        val errorPrefix = if (isAgent) "[Agent]"
-        else ""
-        Logger("application").error(errorPrefix + s"Unable to retrieve manage data from Mongo for $incomeSourceType.")
-        Future.successful {
-          errorHandler(isAgent).showInternalServerError()
-        }
-    }
+  private def handleRequest(isAgent: Boolean,
+                            incomeSourceType: IncomeSourceType)
+                           (implicit user: MtdItUser[_]): Future[Result] =
+    withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = CannotGoBackPage) { data =>
+      data.manageIncomeSourceData match {
+        case Some(manageData) if manageData.reportingMethod.isDefined && manageData.taxYear.isDefined =>
+          val subheadingContent = getSubheadingContent(incomeSourceType, manageData.reportingMethod.get, manageData.taxYear.get)
+          Future.successful {
+            Ok(cannotGoBackError(isAgent, subheadingContent))
+          }
+        case _ =>
+          val errorPrefix = if (isAgent) "[Agent]"
+          else ""
+          Logger("application").error(errorPrefix + s"Unable to retrieve manage data from Mongo for $incomeSourceType.")
+          Future.successful {
+            errorHandler(isAgent).showInternalServerError()
+          }
+      }
   }
 
-  def getSubheadingContent(incomeSourceType: IncomeSourceType, reportingMethod: String, taxYear: Int)(implicit request: Request[_]): String = {
+  def getSubheadingContent(incomeSourceType: IncomeSourceType,
+                           reportingMethod: String,
+                           taxYear: Int)(implicit request: Request[_]): String = {
     val methodString = if (reportingMethod == "annual")
       messagesApi.preferred(request)("cannotGoBack.manage.annual")
     else

@@ -17,7 +17,9 @@
 package controllers.agent
 
 import audit.models.ConfirmClientDetailsAuditModel
-import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub, MTDAgentAuthStub}
+import controllers.ControllerISpecHelper
+import enums.{MTDPrimaryAgent, MTDSupportingAgent}
+import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status._
@@ -34,7 +36,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
       val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, false)
       "is authenticated, with a valid agent and client delegated enrolment" should {
         "render the confirm client utr page with an empty black banner" in {
-          MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+          stubAuthorised(MTDPrimaryAgent)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
           val result = buildMTDClient(path, additionalCookies).futureValue
@@ -51,7 +53,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
         }
       }
 
-      testAuthFailuresForMTDAgent(path, isSupportingAgent, false)
+      testAuthFailures(path, MTDPrimaryAgent, requiresConfirmedClient = false)
     }
 
     s"a user is a supporting agent (session data isSupportingAgent = true)" that {
@@ -59,7 +61,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
       val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, false)
       "is authenticated, with a valid agent and client delegated enrolment" should {
         "render the confirm client utr page with an empty black banner" in {
-          MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+          stubAuthorised(MTDSupportingAgent)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
           val result = buildGETMTDClient(path, additionalCookies).futureValue
@@ -76,7 +78,8 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
         }
       }
 
-      testAuthFailuresForMTDAgent(path, isSupportingAgent, false)
+      testAuthFailures(path, MTDSupportingAgent, requiresConfirmedClient = false)
+
     }
 
     testNoClientDataFailure(path)
@@ -88,7 +91,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
       val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, false)
       "is authenticated, with a valid agent and client delegated enrolment" should {
         s"redirect ($SEE_OTHER) to the agent home page" in {
-          MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+          stubAuthorised(MTDPrimaryAgent)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
           val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
@@ -102,8 +105,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
         }
       }
 
-      testAuthFailuresForMTDAgent(path, isSupportingAgent, false, optBody = Some(Map.empty))
-
+      testAuthFailures(path, MTDPrimaryAgent, requiresConfirmedClient = false, optBody = Some(Map.empty))
     }
 
     s"a user is a supporting agent (session data isSupportingAgent = true)" that {
@@ -111,7 +113,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
       val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, false)
       "is authenticated, with a valid agent and client delegated enrolment" should {
         s"redirect ($SEE_OTHER) to the agent home page" in {
-          MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+          stubAuthorised(MTDSupportingAgent)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
           val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
@@ -124,8 +126,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
 
         }
       }
-
-      testAuthFailuresForMTDAgent(path, isSupportingAgent, false, optBody = Some(Map.empty))
+      testAuthFailures(path, MTDSupportingAgent, requiresConfirmedClient = false, optBody = Some(Map.empty))
 
     }
 

@@ -35,13 +35,6 @@ import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.{DateService, SessionService, UpdateIncomeSourceService}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData, notCompletedUIJourneySessionData}
-import mocks.auth.MockAuthActions
-import mocks.services.MockSessionService
-import enums.{MTDIndividual, MTDUserRole}
-import play.api
-import play.api.Application
-import services.{DateService, SessionService, UpdateIncomeSourceService}
-import play.api.mvc.Call
 
 import scala.concurrent.Future
 
@@ -232,17 +225,11 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
     val mtdRole: MTDUserRole
 
     def createEndpoint (testMtd:MTDUserRole, incomeSourceType: IncomeSourceType): String = {
-      val endpointCall = {
-      (testMtd, incomeSourceType) match {
-        case (MTDIndividual, SelfEmployment) => controllers.incomeSources.manage.routes.ManageObligationsController.showSelfEmployment(changeTo, taxYear)
-        case (MTDIndividual, UkProperty) => controllers.incomeSources.manage.routes.ManageObligationsController.showUKProperty(changeTo, taxYear)
-        case (MTDIndividual, ForeignProperty) => controllers.incomeSources.manage.routes.ManageObligationsController.showForeignProperty(changeTo, taxYear)
-        case (_, SelfEmployment) => controllers.incomeSources.manage.routes.ManageObligationsController.showAgentSelfEmployment(changeTo, taxYear)
-        case (_, UkProperty) => controllers.incomeSources.manage.routes.ManageObligationsController.showAgentUKProperty(changeTo, taxYear)
-        case (_, ForeignProperty) => controllers.incomeSources.manage.routes.ManageObligationsController.showAgentForeignProperty(changeTo, taxYear)
-        }
+      if(testMtd == MTDIndividual) {
+        controllers.incomeSources.manage.routes.ManageObligationsController.show(changeTo, taxYear, incomeSourceType).url
+      } else {
+        controllers.incomeSources.manage.routes.ManageObligationsController.showAgent(changeTo, taxYear, incomeSourceType).url
       }
-      endpointCall.url
     }
 
     lazy val action = if (mtdRole == MTDIndividual) {

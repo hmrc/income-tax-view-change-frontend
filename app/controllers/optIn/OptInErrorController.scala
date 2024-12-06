@@ -16,29 +16,25 @@
 
 package controllers.optIn
 
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
+import auth.authV2.AuthActions
+import config.FrontendAppConfig
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.AuthenticatorPredicate
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.optIn.OptInError
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class OptInErrorController @Inject()(val view: OptInError,
-                                     val auth: AuthenticatorPredicate,
-                                     val authorisedFunctions: AuthorisedFunctions)
+                                     val authActions: AuthActions)
                                     (implicit val appConfig: FrontendAppConfig,
                                       val ec: ExecutionContext,
-                                      val itvcErrorHandler: ItvcErrorHandler,
-                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                      override val mcc: MessagesControllerComponents
-                                     ) extends ClientConfirmedController with I18nSupport {
+                                      val mcc: MessagesControllerComponents
+                                     ) extends FrontendController(mcc) with I18nSupport {
 
 
-  def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def show(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
       Future.successful(Ok(view(isAgent)))
   }

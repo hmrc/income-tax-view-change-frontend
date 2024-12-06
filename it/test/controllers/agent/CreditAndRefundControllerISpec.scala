@@ -18,8 +18,9 @@ package controllers.agent
 
 import audit.models.ClaimARefundAuditModel
 import auth.MtdItUser
-import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub, MTDAgentAuthStub}
+import controllers.ControllerISpecHelper
+import enums.MTDPrimaryAgent
+import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.admin.CreditsRefundsRepay
 import models.core.ErrorModel
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
@@ -32,7 +33,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import java.time.LocalDate
 
-class CreditAndRefundControllerISpec extends ComponentSpecBase {
+class CreditAndRefundControllerISpec extends ControllerISpecHelper {
 
   lazy val fixedDate: LocalDate = LocalDate.of(2020, 11, 29)
 
@@ -57,7 +58,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, false)
+    stubAuthorised(MTDPrimaryAgent)
   }
 
   "Navigating to /report-quarterly/income-and-expenses/view/credit-and-refunds" should {
@@ -258,7 +259,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
           response.json)
       })
 
-      val res = IncomeTaxViewChangeFrontend.getCreditAndRefunds(additionalCookies = clientDetailsWithConfirmation)
+      val res = IncomeTaxViewChangeFrontend.getCreditAndRefunds(isAgent = true, additionalCookies = clientDetailsWithConfirmation)
 
 
       Then("I verify Income Source Details was called")

@@ -26,18 +26,26 @@ import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import mocks.MockItvcErrorHandler
 import mocks.services.{MockClientDetailsService, MockIncomeSourceDetailsService, MockSessionDataService}
 import org.jsoup.Jsoup
-import org.mockito.Mockito.{mock, reset}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{mock, reset, when}
 import play.api
 import play.api.Play
 import play.api.http.Status
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, AnyContentAsEmpty}
+import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.agent.ClientDetailsService
 import services.{IncomeSourceDetailsService, SessionDataService}
+import testConstants.BaseTestConstants.{agentAuthRetrievalSuccess, testAuthSuccessResponse}
 import testUtils.TestSupport
-import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
+import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
+import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
 import uk.gov.hmrc.auth.core.{AffinityGroup, AuthorisationException, BearerTokenExpired, InsufficientEnrolments, InvalidBearerToken}
+import uk.gov.hmrc.http.HeaderCarrier
+
+import scala.concurrent.{ExecutionContext, Future}
 
 trait MockAuthActions extends
   TestSupport with
@@ -53,8 +61,13 @@ trait MockAuthActions extends
   override def beforeEach(): Unit = {
     super.beforeEach()
     disableAllSwitches()
-    Play.stop(fakeApplication())
+//    Play.stop(fakeApplication())
     reset(mockAuthService)
+  }
+
+  override def beforeAll(): Unit = {
+    super.beforeAll()
+    Play.stop(fakeApplication())
   }
 
   override def afterEach() = {
@@ -121,10 +134,19 @@ trait MockAuthActions extends
     setupMockAgentWithClientAuthException(exception, mtdId, isSupportingAgent)
   }
 
-  def testMTDIndividualAuthFailures(action: Action[AnyContent], isPost: Boolean = false): Unit = {
-    val fakeRequest = if(isPost) {fakeRequestWithActiveSession.withMethod("POST") }
-    else { fakeRequestWithActiveSession}
-    "the user is not authenticated" should {
+  def testMTDAuthFailuresForRole(action: Action[AnyContent], userRole: MTDUserRole)(fakeRequest: FakeRequest[AnyContentAsEmpty.type]): Unit = {
+    userRole match {
+      case MTDIndividual => testMTDAuthFailuresForIndividual(action, userRole)(fakeRequest)
+      case _ => testMTDAuthFailuresForAgent(action, userRole)(fakeRequest)
+    }
+  }
+
+  def testMTDIndividualAuthFailures(action: Action[AnyContent]): Unit = {
+    testMTDAuthFailuresForIndividual(action, MTDIndividual)(fakeRequestWithActiveSession)
+  }
+
+  def testMTDAuthFailuresForIndividual(action: Action[AnyContent], userRole: MTDUserRole)(fakeRequest: FakeRequest[AnyContentAsEmpty.type]): Unit = {
+    s"the $userRole is not authenticated" should {
       "redirect to signin" in {
         setupMockUserAuthorisationException()
 
@@ -135,7 +157,7 @@ trait MockAuthActions extends
       }
     }
 
-    "the user has a session that has timed out" should {
+    s"the $userRole has a session that has timed out" should {
       "redirect to timeout controller" in {
         setupMockUserAuthorisationException(new BearerTokenExpired)
 
@@ -146,7 +168,7 @@ trait MockAuthActions extends
       }
     }
 
-    "the user is not enrolled into HMRC-MTD-IT" should {
+    s"the $userRole is not enrolled into HMRC-MTD-IT" should {
       "redirect to NotEnrolledController controller" in {
         setupMockUserAuthorisationException(InsufficientEnrolments("missing HMRC-MTD-IT enrolment"))
 
@@ -157,7 +179,7 @@ trait MockAuthActions extends
       }
     }
 
-    "the user is not authenticated and enrolled into HMRC-MTD-IT but doesn't have income source" should {
+    s"the $userRole is not authenticated and enrolled into HMRC-MTD-IT but doesn't have income source" should {
       "render the internal error page" in {
         setupMockUserAuth
         mockErrorIncomeSource()
@@ -171,9 +193,14 @@ trait MockAuthActions extends
     }
   }
 
-  def testMTDAgentAuthFailures(action: Action[AnyContent], isSupportingAgent: Boolean, isPost: Boolean = false): Unit = {
-    val fakeRequest = if(isPost) {fakeRequestConfirmedClient(isSupportingAgent = isSupportingAgent).withMethod("POST") }
-    else { fakeRequestConfirmedClient(isSupportingAgent = isSupportingAgent)}
+  def testMTDAgentAuthFailures(action: Action[AnyContent], isSupportingAgent: Boolean): Unit = {
+    val fakeRequest = fakeRequestConfirmedClient(isSupportingAgent = isSupportingAgent)
+    val mdtUserRole = if (isSupportingAgent) MTDSupportingAgent else MTDPrimaryAgent
+    testMTDAuthFailuresForAgent(action, mdtUserRole)(fakeRequest)
+  }
+
+  def testMTDAuthFailuresForAgent(action: Action[AnyContent], mtdUserRole: MTDUserRole)(fakeRequest: FakeRequest[AnyContentAsEmpty.type]): Unit = {
+    val isSupportingAgent = mtdUserRole == MTDSupportingAgent
     val userType = if(isSupportingAgent) "supporting agent" else "primary agent"
     s"the $userType is not authenticated" should {
       "redirect to signin" in {

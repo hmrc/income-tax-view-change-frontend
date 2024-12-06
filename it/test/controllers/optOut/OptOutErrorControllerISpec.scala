@@ -16,57 +16,53 @@
 
 package controllers.optOut
 
-import controllers.optOut.OptOutErrorControllerISpec.headingText
-import helpers.ComponentSpecBase
+import controllers.ControllerISpecHelper
+import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.admin.NavBarFs
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import play.api.http.Status.OK
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
-class OptOutErrorControllerISpec extends ComponentSpecBase {
+class OptOutErrorControllerISpec extends ControllerISpecHelper {
 
+  val headingText = "Sorry, there is a problem with the service"
   val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
   val nextTaxYear = currentTaxYear.nextYear
   val previousTaxYear = currentTaxYear.previousYear
 
   val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
 
-  def testShowErrorPage(isAgent: Boolean): Unit = {
+  def getPath(mtdRole: MTDUserRole): String = {
+    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
+    pathStart + "/optout/error"
+  }
 
-    val optOutErrorControllerPageUrl = controllers.optOut.routes.OptOutErrorController.show(isAgent).url
+  mtdAllRoles.foreach { case mtdUserRole =>
+    val path = getPath(mtdUserRole)
+    val additionalCookies = getAdditionalCookies(mtdUserRole)
+    s"GET $path" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          "render the optOut error page" in {
+            disable(NavBarFs)
+            stubAuthorised(mtdUserRole)
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-    s"calling GET $optOutErrorControllerPageUrl" should {
-      s"render page for show error view $optOutErrorControllerPageUrl" when {
-        "User is authorised" in {
+            val result = buildGETMTDClient(path, additionalCookies).futureValue
+            verifyIncomeSourceDetailsCall(testMtditid)
 
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
-
-          val result = IncomeTaxViewChangeFrontendManageBusinesses.renderOptOutErrorPage()
-          verifyIncomeSourceDetailsCall(testMtditid)
-
-          result should have(
-            httpStatus(OK),
-            elementTextBySelector(".govuk-heading-l")(headingText),
-          )
+            result should have(
+              httpStatus(OK),
+              elementTextBySelector(".govuk-heading-l")(headingText),
+            )
+          }
         }
+        testAuthFailures(path, mtdUserRole)
       }
     }
   }
-
-
-  "OptOutChooseTaxYearController - Individual" when {
-    testShowErrorPage(isAgent = false)
-  }
-
-  "OptOutChooseTaxYearController - Agent" when {
-    testShowErrorPage(isAgent = true)
-  }
-
-}
-
-object OptOutErrorControllerISpec {
-  val headingText = "Sorry, there is a problem with the service"
 }

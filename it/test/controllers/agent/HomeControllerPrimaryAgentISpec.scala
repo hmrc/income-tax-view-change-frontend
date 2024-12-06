@@ -18,9 +18,10 @@ package controllers.agent
 
 import audit.models.{HomeAudit, NextUpdatesResponseAuditModel}
 import auth.MtdItUser
+import controllers.ControllerISpecHelper
+import enums.MTDPrimaryAgent
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import helpers.servicemocks.AuthStub.titleInternalServer
-import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDAgentAuthStub}
+import helpers.servicemocks.IncomeTaxViewChangeStub
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.admin.{IncomeSourcesFs, IncomeSourcesNewJourney, NavBarFs}
 import models.core.{AccountingPeriodModel, CessationModel}
@@ -73,15 +74,15 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
   import implicitDateFormatter.longDate
 
   "GET /" when {
-      val isSupportingAgent = false
-      val additionalCookies = getAgentClientDetailsForCookie(false, true)
+    val additionalCookies = getAgentClientDetailsForCookie(false, true)
+    val mtdUserRole = MTDPrimaryAgent
       s"there is a primary agent" that {
         s"is a authenticated for a client" should {
           "render the home page" which {
             "displays the next upcoming payment and charge" when {
               "there are payments upcoming and nothing is overdue" in {
                 disable(NavBarFs)
-                MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+                stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   status = OK,
                   response = incomeSourceDetailsModel
@@ -138,7 +139,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
 
                 result should have(
                   httpStatus(OK),
-                  pageTitleAgent("home.agent.heading"),
+                  pageTitle(mtdUserRole, "home.agent.heading"),
                   elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
                   elementTextBySelector("#payments-tile p:nth-child(2)")(currentDate.toLongDate)
                 )
@@ -151,7 +152,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
             "displays no upcoming payment" when {
               "there are no upcoming payments" in {
                 disable(NavBarFs)
-                MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+                stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   status = OK,
                   response = incomeSourceDetailsModel
@@ -207,7 +208,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
 
                 result should have(
                   httpStatus(OK),
-                  pageTitleAgent("home.agent.heading"),
+                  pageTitle(mtdUserRole, "home.agent.heading"),
                   elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
                   elementTextBySelector("#payments-tile p:nth-child(2)")(noPaymentsDue)
                 )
@@ -220,7 +221,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
             "displays an overdue payment and an overdue obligation" when {
               "there is a single payment overdue and a single obligation overdue" in {
                 disable(NavBarFs)
-                MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+                stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   status = OK,
                   response = incomeSourceDetailsModel
@@ -278,7 +279,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
 
                 result should have(
                   httpStatus(OK),
-                  pageTitleAgent("home.agent.heading"),
+                  pageTitle(mtdUserRole, "home.agent.heading"),
                   elementTextBySelector("#updates-tile p:nth-child(2)")(s"$overdue ${currentDate.minusDays(1).toLongDate}"),
                   elementTextBySelector("#payments-tile p:nth-child(2)")(s"$overdue ${currentDate.minusDays(1).toLongDate}")
                 )
@@ -289,7 +290,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
 
               "there is a single payment overdue and a single obligation overdue and one overdue CESA " in {
                 disable(NavBarFs)
-                MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+                stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   status = OK,
                   response = incomeSourceDetailsModel
@@ -347,7 +348,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
 
                 result should have(
                   httpStatus(OK),
-                  pageTitleAgent("home.agent.heading"),
+                  pageTitle(mtdUserRole, "home.agent.heading"),
                   elementTextBySelector("#updates-tile p:nth-child(2)")(s"$overdue ${currentDate.minusDays(1).toLongDate}"),
                   elementTextBySelector("#payments-tile p:nth-child(2)")(overduePayments(numberOverdue = "2"))
                 )
@@ -359,7 +360,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
             "display a count of the overdue payments a count of overdue obligations" when {
               "there is more than one payment overdue and more than one obligation overdue" in {
                 disable(NavBarFs)
-                MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+                stubAuthorised(mtdUserRole)
 
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   status = OK,
@@ -438,7 +439,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
 
                 result should have(
                   httpStatus(OK),
-                  pageTitleAgent("home.agent.heading"),
+                  pageTitle(mtdUserRole, "home.agent.heading"),
                   elementTextBySelector("#updates-tile p:nth-child(2)")(overdueUpdates(numberOverdue = "2")),
                   elementTextBySelector("#payments-tile p:nth-child(2)")(overduePayments(numberOverdue = "2"))
                 )
@@ -450,7 +451,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
             "display Income Sources tile" when {
               "IncomeSources feature switch is enabled" in {
                 disable(NavBarFs)
-                MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+                stubAuthorised(mtdUserRole)
                 enable(IncomeSourcesFs)
 
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -510,7 +511,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
 
                 result should have(
                   httpStatus(OK),
-                  pageTitleAgent("home.agent.heading"),
+                  pageTitle(mtdUserRole, "home.agent.heading"),
                   elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
                   elementTextBySelector("#payments-tile p:nth-child(2)")(currentDate.toLongDate),
                   elementTextBySelector("#income-sources-tile h2:nth-child(1)")("Income Sources")
@@ -520,7 +521,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
             "display Your Businesses tile" when {
               "IncomeSources and IncomeSourcesNewJourney feature switches are enabled" in {
                 disable(NavBarFs)
-                MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+                stubAuthorised(mtdUserRole)
                 enable(IncomeSourcesFs)
                 enable(IncomeSourcesNewJourney)
 
@@ -581,7 +582,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
 
                 result should have(
                   httpStatus(OK),
-                  pageTitleAgent("home.agent.heading"),
+                  pageTitle(mtdUserRole, "home.agent.heading"),
                   elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
                   elementTextBySelector("#payments-tile p:nth-child(2)")(currentDate.toLongDate),
                   elementTextBySelector("#income-sources-tile h2:nth-child(1)")("Your businesses")
@@ -594,7 +595,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
 
             "retrieving the charges was unsuccessful" in {
               disable(NavBarFs)
-              MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+              stubAuthorised(mtdUserRole)
 
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                 status = OK,
@@ -627,7 +628,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
 
               result should have(
                 httpStatus(INTERNAL_SERVER_ERROR),
-                pageTitleAgent(titleInternalServer, isErrorPage = true)
+                pageTitle(mtdUserRole, titleInternalServer, isErrorPage = true)
               )
 
               verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
@@ -635,7 +636,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
           }
           "retrieving the obligations was unsuccessful" in {
             disable(NavBarFs)
-            MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+            stubAuthorised(mtdUserRole)
 
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
               status = OK,
@@ -648,13 +649,13 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
 
             result should have(
               httpStatus(INTERNAL_SERVER_ERROR),
-              pageTitleAgent(titleInternalServer, isErrorPage = true)
+              pageTitle(mtdUserRole, titleInternalServer, isErrorPage = true)
             )
           }
           "retrieving the income sources was unsuccessful" in {
             disable(NavBarFs)
             enable(IncomeSourcesFs)
-            MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, isSupportingAgent)
+            stubAuthorised(mtdUserRole)
 
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsErrorResponse(testMtditid)(
               status = INTERNAL_SERVER_ERROR)
@@ -668,7 +669,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
           }
         }
 
-        testAuthFailuresForMTDAgent(path, isSupportingAgent)
+        testAuthFailures(path, mtdUserRole)
       }
     testNoClientDataFailure(path)
   }

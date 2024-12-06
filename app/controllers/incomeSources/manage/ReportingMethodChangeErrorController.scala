@@ -16,44 +16,41 @@
 
 package controllers.incomeSources.manage
 
-import audit.AuditingService
 import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
+import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates._
-import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{IncomeSourceJourneyType, JourneyType, Manage}
+import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
+import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import exceptions.MissingSessionKey
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.ManageIncomeSourceData
 import play.api.Logger
+import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{IncomeSourceDetailsService, SessionService, UpdateIncomeSourceService}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
+import services.{SessionService, UpdateIncomeSourceService}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.IncomeSourcesUtils
 import views.html.incomeSources.manage.{ManageIncomeSources, ReportingMethodChangeError}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: ManageIncomeSources,
-                                                     val authorisedFunctions: AuthorisedFunctions,
+                                                     val authActions: AuthActions,
                                                      val updateIncomeSourceService: UpdateIncomeSourceService,
                                                      val reportingMethodChangeError: ReportingMethodChangeError,
                                                      val sessionService: SessionService,
-                                                     val auth: AuthenticatorPredicate)
+                                                     val itvcErrorHandler: ItvcErrorHandler,
+                                                     val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                                     (implicit val ec: ExecutionContext,
-                                                     implicit val itvcErrorHandler: ItvcErrorHandler,
-                                                     implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                                     implicit override val mcc: MessagesControllerComponents,
-                                                     implicit val appConfig: FrontendAppConfig) extends ClientConfirmedController
-  with FeatureSwitching with IncomeSourcesUtils {
+                                                     val mcc: MessagesControllerComponents,
+                                                     implicit val appConfig: FrontendAppConfig) extends FrontendController(mcc)
+  with I18nSupport with IncomeSourcesUtils {
 
   def show(isAgent: Boolean,
            incomeSourceType: IncomeSourceType
-          ): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
+          ): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
     withIncomeSourcesFS {
       if (incomeSourceType == SelfEmployment) {
         sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, IncomeSourceJourneyType(Manage, incomeSourceType)).flatMap {

@@ -799,7 +799,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
               lpiWithDunningLock = None
             )) {
           document.select(".govuk-summary-list").text() shouldBe "Due date N/A Amount £0.00 Still to pay £0.00"
-          print( document.select("p"))
           document.select("p").get(3).text shouldBe "View what you owe to check if you have any other charges to pay."
           document.select("#payment-history-table").isEmpty shouldBe true
           document.select("#heading-payment-breakdown").isEmpty shouldBe true

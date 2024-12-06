@@ -16,7 +16,7 @@
 
 package authV2
 
-import auth.authV2.AgentUser
+import auth.authV2.AuthorisedUser
 import auth.authV2.actions.ClientDataRequest
 import auth.{MtdItUser, MtdItUserOptionNino}
 import controllers.agent.sessionUtils.SessionKeys
@@ -132,11 +132,12 @@ object AuthActionsTestData {
     isSupportingAgent = isSupportingAgent
   )(request)
 
-  def getAgentData(enrolments: Enrolments)(implicit request: Request[_]) = AgentUser(
+  def getAuthorisedData(enrolments: Enrolments)(implicit request: Request[_]) = AuthorisedUser(
     enrolments,
     Some(AffinityGroup.Agent),
     acceptedConfidenceLevel,
-    Some(credentials)
+    Some(credentials),
+    None
   )(request)
 
   def getSessionCookieData(isSupportingAgent: Boolean, confirmed: Boolean) = {

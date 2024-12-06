@@ -18,10 +18,13 @@ package controllers.optIn
 
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
+import controllers.ControllerISpecHelper
 import controllers.optIn.CheckYourAnswersControllerISpec._
-import enums.JourneyType.{OptInJourney, Opt}
+import enums.JourneyType.{Opt, OptInJourney}
+import enums.{MTDIndividual, MTDUserRole}
+import helpers.ITSAStatusUpdateConnectorStub
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import helpers.{ComponentSpecBase, ITSAStatusUpdateConnectorStub}
+import models.admin.NavBarFs
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Annual, Voluntary}
@@ -50,7 +53,7 @@ object CheckYourAnswersControllerISpec {
   val emptyBodyString = ""
 }
 
-class CheckYourAnswersControllerISpec extends ComponentSpecBase {
+class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
 
   val forYearEnd = dateService.getCurrentTaxYear.endYear
   val currentTaxYear = TaxYear.forYearEnd(forYearEnd)
@@ -64,129 +67,122 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
     repository.clearSession(testSessionId).futureValue shouldBe true
   }
 
-  def testShowHappyCase(isAgent: Boolean): Unit = {
-
-    val chooseOptInTaxYearPageUrl = routes.CheckYourAnswersController.show(isAgent).url
-
-    s"show page, calling GET $chooseOptInTaxYearPageUrl" should {
-
-      s"successfully render opt-in check-your-answers page" in {
-
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
-
-        val intent = currentTaxYear
-        setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual, intent).futureValue shouldBe true
-
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.renderCheckYourAnswersOptInJourney()
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        result should have(
-          httpStatus(OK),
-          elementTextByID("heading")(headingText),
-
-          elementTextBySelector(".govuk-summary-list__key")(optin),
-          elementTextBySelector(".govuk-summary-list__value")(selectTaxYear),
-          elementTextBySelector("#change")(change),
-
-          elementTextBySelector("#optIn-summary")(optInSummary),
-
-          elementTextByID("confirm-button")("Confirm and save"),
-          elementTextByID("cancel-button")("Cancel"),
-        )
-      }
-
-      s"successfully render opt-in check-your-answers page 2" in {
-
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
-
-        val intent = currentTaxYear.nextYear
-        setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual, intent).futureValue shouldBe true
-
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.renderCheckYourAnswersOptInJourney()
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        result should have(
-          httpStatus(OK),
-          elementTextByID("heading")(headingText),
-
-          elementTextBySelector(".govuk-summary-list__key")(optin),
-          elementTextBySelector(".govuk-summary-list__value")(selectTaxYearNextYear),
-          elementTextBySelector("#change")(change),
-
-          elementTextBySelector("#optIn-summary")(optInSummaryNextYear),
-
-          elementTextByID("confirm-button")("Confirm and save"),
-          elementTextByID("cancel-button")("Cancel"),
-        )
-      }
-    }
+  def getPath(mtdRole: MTDUserRole): String = {
+    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    pathStart + "/opt-in/check-your-answers"
   }
 
-  def testSubmitHappyCase(isAgent: Boolean): Unit = {
+  mtdAllRoles.foreach { case mtdUserRole =>
+    val isAgent = mtdUserRole != MTDIndividual
+    val path = getPath(mtdUserRole)
+    val additionalCookies = getAdditionalCookies(mtdUserRole)
+    s"GET $path" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          s"render opt-in check-your-answers page" in {
+            disable(NavBarFs)
+            stubAuthorised(mtdUserRole)
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-    val chooseOptOutTaxYearPageUrl = controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent).url
+            val intent = currentTaxYear
+            setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual, intent).futureValue shouldBe true
 
-    s"submit page form, calling POST $chooseOptOutTaxYearPageUrl" should {
-      s"successfully render opt-in check your answers page" in {
+            val result = buildGETMTDClient(path, additionalCookies).futureValue
+            verifyIncomeSourceDetailsCall(testMtditid)
 
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+            result should have(
+              httpStatus(OK),
+              elementTextByID("heading")(headingText),
 
-        setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual, currentTaxYear)
+              elementTextBySelector(".govuk-summary-list__key")(optin),
+              elementTextBySelector(".govuk-summary-list__value")(selectTaxYear),
+              elementTextBySelector("#change")(change),
 
-        ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
-          Status.NO_CONTENT, emptyBodyString
-        )
+              elementTextBySelector("#optIn-summary")(optInSummary),
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.submitCheckYourAnswersOptInJourney()
-        verifyIncomeSourceDetailsCall(testMtditid)
+              elementTextByID("confirm-button")("Confirm and save"),
+              elementTextByID("cancel-button")("Cancel"),
+            )
+          }
 
-        result should have(
-          httpStatus(Status.SEE_OTHER),
-          //todo add more asserts in MISUV-8007
-        )
+          s"render opt-in check-your-answers page 2" in {
+            disable(NavBarFs)
+            stubAuthorised(mtdUserRole)
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+            val intent = currentTaxYear.nextYear
+            setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual, intent).futureValue shouldBe true
+
+            val result = buildGETMTDClient(path, additionalCookies).futureValue
+            verifyIncomeSourceDetailsCall(testMtditid)
+
+            result should have(
+              httpStatus(OK),
+              elementTextByID("heading")(headingText),
+
+              elementTextBySelector(".govuk-summary-list__key")(optin),
+              elementTextBySelector(".govuk-summary-list__value")(selectTaxYearNextYear),
+              elementTextBySelector("#change")(change),
+
+              elementTextBySelector("#optIn-summary")(optInSummaryNextYear),
+
+              elementTextByID("confirm-button")("Confirm and save"),
+              elementTextByID("cancel-button")("Cancel"),
+            )
+          }
+        }
+        testAuthFailures(path, mtdUserRole)
       }
     }
-  }
 
-  def testSubmitUnhappyCase(isAgent: Boolean): Unit = {
+    s"POST $path" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          "redirect to optIn complete page" in {
+            disable(NavBarFs)
+            stubAuthorised(mtdUserRole)
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-    val chooseOptOutTaxYearPageUrl = routes.CheckYourAnswersController.show(isAgent).url
+            setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual, currentTaxYear)
 
-    s"no tax-year choice is made and" when {
-      s"submit page form, calling POST $chooseOptOutTaxYearPageUrl" should {
-        s"show page again with error message" in {
+            ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
+              Status.NO_CONTENT, emptyBodyString
+            )
 
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+            val result = buildPOSTMTDPostClient(path, additionalCookies, body = Map.empty).futureValue
+            verifyIncomeSourceDetailsCall(testMtditid)
 
-          setupOptInSessionData(currentTaxYear, currentYearStatus = Voluntary, nextYearStatus = Voluntary, currentTaxYear)
+            result should have(
+              httpStatus(Status.SEE_OTHER),
+              redirectURI(controllers.optIn.routes.OptInCompletedController.show(isAgent).url)
+            )
+          }
 
-          ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
-            BAD_REQUEST, Json.toJson(ITSAStatusUpdateResponseFailure.defaultFailure()).toString()
-          )
+          "redirect to the optIn error page" when {
+            "no tax-year choice is made" in {
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-          val result = IncomeTaxViewChangeFrontendManageBusinesses.submitCheckYourAnswersOptInJourney()
-          verifyIncomeSourceDetailsCall(testMtditid)
+              setupOptInSessionData(currentTaxYear, currentYearStatus = Voluntary, nextYearStatus = Voluntary, currentTaxYear)
 
-          result should have(
-            httpStatus(Status.SEE_OTHER),
-          )
+              ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
+                BAD_REQUEST, Json.toJson(ITSAStatusUpdateResponseFailure.defaultFailure()).toString()
+              )
+
+              val result = buildPOSTMTDPostClient(path, additionalCookies, body = Map.empty).futureValue
+              verifyIncomeSourceDetailsCall(testMtditid)
+
+              result should have(
+                httpStatus(Status.SEE_OTHER),
+                redirectURI(controllers.optIn.routes.OptInErrorController.show(isAgent).url)
+              )
+            }
+          }
+          testAuthFailures(path, mtdUserRole, optBody = Some(Map.empty))
         }
       }
     }
-
-
-  }
-
-  "ChooseYearController - Individual" when {
-    testShowHappyCase(isAgent = false)
-    testSubmitHappyCase(isAgent = false)
-    testSubmitUnhappyCase(isAgent = false)
-  }
-
-  "ChooseYearController - Agent" when {
-    testShowHappyCase(isAgent = true)
-    testSubmitHappyCase(isAgent = true)
-    testSubmitUnhappyCase(isAgent = true)
   }
 
   private def setupOptInSessionData(currentTaxYear: TaxYear, currentYearStatus: ITSAStatus.Value,

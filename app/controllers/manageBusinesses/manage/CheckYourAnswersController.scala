@@ -19,11 +19,10 @@ package controllers.manageBusinesses.manage
 import audit.AuditingService
 import audit.models.ManageIncomeSourceCheckYourAnswersAuditModel
 import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
+import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney._
-import enums.JourneyType.{IncomeSourceJourneyType, JourneyType, Manage}
+import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{AnnualReportingMethod, QuarterlyReportingMethod, ReportingMethod}
 import exceptions.MissingSessionKey
 import models.core.IncomeSourceId
@@ -31,11 +30,12 @@ import models.incomeSourceDetails.viewmodels.CheckYourAnswersViewModel
 import models.incomeSourceDetails.{ManageIncomeSourceData, TaxYear}
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
+import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{SessionService, UpdateIncomeSourceService}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.JourneyCheckerManageBusinesses
 import views.html.manageBusinesses.manage.CheckYourAnswers
 
 import javax.inject.{Inject, Singleton}
@@ -43,52 +43,66 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswers,
-                                           val authorisedFunctions: AuthorisedFunctions,
+                                           val authActions: AuthActions,
                                            val updateIncomeSourceService: UpdateIncomeSourceService,
                                            val sessionService: SessionService,
                                            val auditingService: AuditingService,
-                                           val auth: AuthenticatorPredicate)
+                                           val itvcErrorHandler: ItvcErrorHandler,
+                                           val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                           (implicit val ec: ExecutionContext,
-                                           implicit override val mcc: MessagesControllerComponents,
-                                           implicit val itvcErrorHandler: ItvcErrorHandler,
-                                           implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                           val appConfig: FrontendAppConfig) extends ClientConfirmedController
-  with FeatureSwitching with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
+                                           val mcc: MessagesControllerComponents,
+                                           val appConfig: FrontendAppConfig) extends FrontendController(mcc)
+  with I18nSupport with JourneyCheckerManageBusinesses {
 
-  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
-    withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
-      val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
-      val chnageToStringOpt = sessionData.manageIncomeSourceData.flatMap(_.reportingMethod)
-      val taxYearStringOpt = sessionData.manageIncomeSourceData.flatMap(_.taxYear)
-      val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
-      handleShowRequest(taxYearStringOpt,
-        chnageToStringOpt,
-        isAgent,
-        incomeSourceType,
-        incomeSourceIdOpt,
-        backUrl = {
-          if (isAgent) controllers.routes.HomeController.showAgent
-          else controllers.routes.HomeController.show()
-        }.url
-      )
-    }
+  def show(isAgent: Boolean,
+           incomeSourceType: IncomeSourceType): Action[AnyContent] =
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
+      withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
+        val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
+        val chnageToStringOpt = sessionData.manageIncomeSourceData.flatMap(_.reportingMethod)
+        val taxYearStringOpt = sessionData.manageIncomeSourceData.flatMap(_.taxYear)
+        val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
+        handleShowRequest(taxYearStringOpt,
+          chnageToStringOpt,
+          isAgent,
+          incomeSourceType,
+          incomeSourceIdOpt,
+          backUrl = {
+            if (isAgent) controllers.routes.HomeController.showAgent
+            else controllers.routes.HomeController.show()
+          }.url
+        )
+      }
   }
 
-  private def handleShowRequest(taxYearStringOpt: Option[Int], chnageToStringOpt: Option[String], isAgent: Boolean, incomeSourceType: IncomeSourceType, incomeSourceIdOpt: Option[IncomeSourceId], backUrl: String)(implicit user: MtdItUser[_]): Future[Result] = {
-    val maybeIncomeSourceId: Option[IncomeSourceId] = user.incomeSources.getIncomeSourceId(incomeSourceType, incomeSourceIdOpt.map(m => m.value))
+  private def handleShowRequest(taxYearStringOpt: Option[Int],
+                                chnageToStringOpt: Option[String],
+                                isAgent: Boolean,
+                                incomeSourceType: IncomeSourceType,
+                                incomeSourceIdOpt: Option[IncomeSourceId],
+                                backUrl: String)(implicit user: MtdItUser[_]): Future[Result] = {
+    val maybeIncomeSourceId: Option[IncomeSourceId] =
+      user.incomeSources.getIncomeSourceId(incomeSourceType, incomeSourceIdOpt.map(m => m.value))
     withIncomeSourcesFS {
       Future.successful(
         (taxYearStringOpt, chnageToStringOpt, maybeIncomeSourceId) match {
-          case (Some(taxYearStringOpt), Some(changeToStringOpt), Some(id)) => {
+          case (Some(taxYearStringOpt), Some(changeToStringOpt), Some(id)) =>
             Ok(checkYourAnswers(
               isAgent,
               backUrl,
-              CheckYourAnswersViewModel(id, changeToStringOpt, TaxYear(startYear = taxYearStringOpt - 1, endYear = taxYearStringOpt), incomeSourceType),
+              CheckYourAnswersViewModel(
+                id,
+                changeToStringOpt,
+                TaxYear(startYear = taxYearStringOpt - 1, endYear = taxYearStringOpt),
+                incomeSourceType
+              ),
               incomeSourceType
             )
             )
-          }
-          case (_, _, _) => logAndShowError(isAgent, s"[handleShowRequest]: Could not parse the values from session taxYear, changeTo and incomesourceId: $taxYearStringOpt, $chnageToStringOpt and $maybeIncomeSourceId")
+          case (_, _, _) =>
+            logAndShowError(isAgent,
+              s"[handleShowRequest]: Could not parse the values from session taxYear," +
+                s" changeTo and incomesourceId: $taxYearStringOpt, $chnageToStringOpt and $maybeIncomeSourceId")
         }
       )
     }
@@ -100,7 +114,8 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
   }
 
 
-  def submit(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
+  def submit(isAgent: Boolean,
+             incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
 
     val successCall = getSuccessCall(isAgent, incomeSourceType)
     val errorCall = getErrorCall(incomeSourceType, isAgent)
@@ -113,7 +128,9 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
             val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
             val incomeSourceId: Option[IncomeSourceId] = user.incomeSources.getIncomeSourceId(incomeSourceType, incomeSourceIdOpt.map(m => m.value))
 
-            handleSubmitRequest(errorCall, isAgent, successCall, TaxYear(startYear = taxYear - 1, endYear = taxYear), incomeSourceId, ReportingMethod(reportingMethod), incomeSourceBusinessName, incomeSourceType)
+            handleSubmitRequest(errorCall, isAgent, successCall,
+              TaxYear(startYear = taxYear - 1, endYear = taxYear),
+              incomeSourceId, ReportingMethod(reportingMethod), incomeSourceBusinessName, incomeSourceType)
           case _ => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Missing session values"))
         }
       }
@@ -138,7 +155,7 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
       case _: UpdateIncomeSourceResponseModel =>
         incomeSourceIdMaybe match {
           case Some(incomeSourceId) =>
-            handleSuccessfulUpdate(errorCall, successCall, isAgent, reportingMethod, taxYear, incomeSourceId, incomeSourceBusinessName, incomeSourceType)
+            handleSuccessfulUpdate(successCall, reportingMethod, taxYear, incomeSourceId, incomeSourceBusinessName, incomeSourceType)
           case _ => Future.failed(MissingSessionKey(ManageIncomeSourceData.incomeSourceIdField))
         }
     } recover {
@@ -170,9 +187,7 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
     Future.successful(Redirect(errorCall))
   }
 
-  private def handleSuccessfulUpdate(errorCall: Call,
-                                     successCall: Call,
-                                     isAgent: Boolean,
+  private def handleSuccessfulUpdate(successCall: Call,
                                      reportingMethod: ReportingMethod,
                                      taxYear: TaxYear,
                                      incomeSourceId: IncomeSourceId,
@@ -202,7 +217,10 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
   }
 
 
-  private def updateIncomeSource(taxYearEnd: Int, incomeSourceIdMaybe: Option[IncomeSourceId], reportingMethod: ReportingMethod)(implicit user: MtdItUser[_], hc: HeaderCarrier) = {
+  private def updateIncomeSource(taxYearEnd: Int,
+                                 incomeSourceIdMaybe: Option[IncomeSourceId],
+                                 reportingMethod: ReportingMethod)
+                                (implicit user: MtdItUser[_], hc: HeaderCarrier) = {
     val updateIncomeSourceResFuture = for {
       updateIncomeSourceRes <- incomeSourceIdMaybe match {
         case Some(incomeSourceId) => updateIncomeSourceService.updateTaxYearSpecific(

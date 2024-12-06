@@ -174,7 +174,7 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
   val testAgentAuthRetrievalSuccess = new ~(new ~(new ~(Enrolments(Set(arnEnrolment)), Some(AffinityGroup.Agent)), testConfidenceLevel), testCredentials)
   val testAgentAuthRetrievalSuccessNoEnrolment = new ~(new ~(new ~(Enrolments(Set()), Some(AffinityGroup.Agent)), testConfidenceLevel), testCredentials)
 
-  val agentAuthRetrievalSuccess = new ~(new ~(new ~(Enrolments(Set(arnEnrolment)), testCredentials), Some(AffinityGroup.Agent)), testConfidenceLevel)
+  val agentAuthRetrievalSuccess = new ~(new ~(new ~(new ~(Enrolments(Set(arnEnrolment)), None),  testCredentials), Some(AffinityGroup.Agent)), testConfidenceLevel)
 
   val testReferrerUrl = "/test/url"
 

@@ -16,45 +16,49 @@
 
 package controllers.manageBusinesses.cease
 
-import helpers.ComponentSpecBase
+import controllers.ControllerISpecHelper
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.admin.{IncomeSourcesFs, NavBarFs}
 import play.api.http.Status.OK
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.ukPropertyOnlyResponse
 
-class IncomeSourceNotCeasedControllerISpec extends ComponentSpecBase {
+class IncomeSourceNotCeasedControllerISpec extends ControllerISpecHelper {
 
-  "The IncomeSourceNotCeasedController.show - Individual" should {
-    "200 OK" when {
-      "user is authorised with a business income source type in the request" in {
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
+  def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType): String = {
+    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
+    incomeSourceType match {
+      case SelfEmployment => pathStart + "/manage-your-businesses/cease/error-business-not-ceased"
+      case UkProperty => pathStart + "/manage-your-businesses/cease/error-uk-property-not-ceased"
+      case _ => pathStart + "/manage-your-businesses/cease/error-foreign-property-not-ceased"
+    }
+  }
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(uri = "/manage-your-businesses/cease/error-business-not-ceased")
+  mtdAllRoles.foreach { mtdUserRole =>
+    List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
+      val path = getPath(mtdUserRole, incomeSourceType)
+      val additionalCookies = getAdditionalCookies(mtdUserRole)
+      s"GET $path" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            "render the not ceased page" in {
+              stubAuthorised(mtdUserRole)
+              disable(NavBarFs)
+              enable(IncomeSourcesFs)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual("standardError.heading", isErrorPage = true)
-        )
-      }
-      "user is authorised with a UK property income source type in the request" in {
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
+              val result = buildGETMTDClient(path, additionalCookies).futureValue
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(uri = "/manage-your-businesses/cease/error-uk-property-not-ceased")
-
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual("standardError.heading", isErrorPage = true)
-        )
-      }
-      "user is authorised with a foreign property income source type in the request" in {
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
-
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(uri = "/manage-your-businesses/cease/error-foreign-property-not-ceased")
-
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual("standardError.heading", isErrorPage = true)
-        )
+              result should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, "standardError.heading", isErrorPage = true)
+              )
+            }
+          }
+          testAuthFailures(path, mtdUserRole)
+        }
       }
     }
   }

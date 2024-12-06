@@ -16,49 +16,36 @@
 
 package controllers.optOut
 
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import mocks.auth.MockFrontendAuthorisedFunctions
-import mocks.controllers.predicates.MockAuthenticationPredicate
+import enums.MTDIndividual
+import mocks.auth.MockAuthActions
+import play.api.Application
 import play.api.http.Status
-import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
-import testUtils.TestSupport
-import views.html.optOut.OptOutError
 
-import scala.concurrent.Future
+class OptOutErrorControllerSpec extends MockAuthActions {
 
-class OptOutErrorControllerSpec extends TestSupport
-  with MockAuthenticationPredicate with MockFrontendAuthorisedFunctions {
+  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+    .build()
 
-  val view: OptOutError = app.injector.instanceOf[OptOutError]
-  val itvcErrorHandler: ItvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler]
-  val itvcErrorHandlerAgent: AgentItvcErrorHandler = app.injector.instanceOf[AgentItvcErrorHandler]
-  val mcc: MessagesControllerComponents = app.injector.instanceOf[MessagesControllerComponents]
+  val testController = fakeApplication().injector.instanceOf[OptOutErrorController]
 
-  val controller = new OptOutErrorController(view, testAuthenticator, mockAuthService)(appConfig, ec, itvcErrorHandler, itvcErrorHandlerAgent, mcc)
+  mtdAllRoles.foreach { mtdRole =>
+    val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
+    val isAgent = mtdRole != MTDIndividual
+    s"show(isAgent = $isAgent)" when {
+      val action = testController.show(isAgent)
+      s"the user is authenticated as a $mtdRole" should {
+        s"render the opt out error page" in {
+          setupMockSuccess(mtdRole)
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-  "OptOutErrorController - Individual" when {
-    view(isAgent = false)
-  }
+          val result = action(fakeRequest)
 
-  "OptOutErrorController - Agent" when {
-    view(isAgent = true)
-  }
-
-  def view(isAgent: Boolean): Unit = {
-
-    "OptOutErrorController show" should {
-      s"return error page" in {
-
-        setupMockAuthorisationSuccess(isAgent)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-
-        val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
-        val result: Future[Result] = controller.show(isAgent)(requestGET)
-
-        status(result) shouldBe Status.OK
+          status(result) shouldBe Status.OK
+        }
       }
+      testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
     }
   }
 }

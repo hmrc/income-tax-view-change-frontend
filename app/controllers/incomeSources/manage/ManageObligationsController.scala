@@ -17,56 +17,53 @@
 package controllers.incomeSources.manage
 
 import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
+import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney._
-import enums.JourneyType.{IncomeSourceJourneyType, JourneyType, Manage}
+import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{AnnualReportingMethod, QuarterlyReportingMethod}
+import exceptions.MissingSessionKey
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.ManageIncomeSourceData
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
 import play.api.Logger
+import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, NextUpdatesService, SessionService}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.IncomeSourcesUtils
 import views.html.incomeSources.manage.ManageObligations
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedFunctions,
-                                            implicit val itvcErrorHandler: ItvcErrorHandler,
-                                            implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                            val incomeSourceDetailsService: IncomeSourceDetailsService,
+class ManageObligationsController @Inject()(val authActions: AuthActions,
+                                            val itvcErrorHandler: ItvcErrorHandler,
+                                            val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                             val obligationsView: ManageObligations,
                                             val sessionService: SessionService,
-                                            nextUpdatesService: NextUpdatesService,
-                                            val auth: AuthenticatorPredicate)
+                                            nextUpdatesService: NextUpdatesService)
                                            (implicit val ec: ExecutionContext,
-                                            implicit override val mcc: MessagesControllerComponents,
-                                            val appConfig: FrontendAppConfig) extends ClientConfirmedController
-  with FeatureSwitching with IncomeSourcesUtils {
+                                            val mcc: MessagesControllerComponents,
+                                            val appConfig: FrontendAppConfig) extends FrontendController(mcc)
+  with I18nSupport with IncomeSourcesUtils {
 
   private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-  def showSelfEmployment(changeTo: String, taxYear: String): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(changeTo: String, taxYear: String, incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
       withIncomeSourcesFS {
-        sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, IncomeSourceJourneyType(Manage, SelfEmployment)).flatMap {
-          case Right(incomeSourceIdMaybe) =>
-            val incomeSourceIdOption: Option[IncomeSourceId] = incomeSourceIdMaybe.map(id => IncomeSourceId(id))
-            handleRequest(
-              incomeSourceType = SelfEmployment,
-              isAgent = false,
-              taxYear,
-              changeTo,
-              incomeSourceIdOption
-            )
-          case Left(ex) =>
-            Logger("application").error(s"${ex.getMessage}")
+        getOptIncomeSourceId(incomeSourceType).flatMap { incomeSourceIdOption =>
+          handleRequest(
+            incomeSourceType = incomeSourceType,
+            isAgent = false,
+            taxYear,
+            changeTo,
+            incomeSourceIdOption
+          )
+        }.recoverWith {
+          case ex => Logger("application").error(s"${ex.getMessage}")
             Future.successful {
               errorHandler(false).showInternalServerError()
             }
@@ -74,70 +71,26 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
       }
   }
 
-  def showAgentSelfEmployment(changeTo: String, taxYear: String): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent(changeTo: String,
+                taxYear: String,
+                incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit user =>
       withIncomeSourcesFS {
-        sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, IncomeSourceJourneyType(Manage, SelfEmployment)).flatMap {
-          case Right(incomeSourceIdMaybe) =>
-            val incomeSourceIdOption: Option[IncomeSourceId] = incomeSourceIdMaybe.map(id => IncomeSourceId(id))
-            handleRequest(
-              incomeSourceType = SelfEmployment,
-              isAgent = true,
-              taxYear,
-              changeTo,
-              incomeSourceIdOption
-            )
-          case Left(ex) =>
-            Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
+        getOptIncomeSourceId(incomeSourceType).flatMap { incomeSourceIdOption =>
+          handleRequest(
+            incomeSourceType = incomeSourceType,
+            isAgent = true,
+            taxYear,
+            changeTo,
+            incomeSourceIdOption
+          )
+        }.recoverWith {
+          case ex => Logger("application").error(s"${ex.getMessage}")
             Future.successful {
               errorHandler(true).showInternalServerError()
             }
         }
       }
-  }
-
-  def showUKProperty(changeTo: String, taxYear: String): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-    implicit user =>
-      handleRequest(
-        incomeSourceType = UkProperty,
-        isAgent = false,
-        taxYear,
-        changeTo,
-        None
-      )
-  }
-
-  def showAgentUKProperty(changeTo: String, taxYear: String): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
-    implicit mtdItUser =>
-      handleRequest(
-        incomeSourceType = UkProperty,
-        isAgent = true,
-        taxYear,
-        changeTo,
-        None
-      )
-  }
-
-  def showForeignProperty(changeTo: String, taxYear: String): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-    implicit user =>
-      handleRequest(
-        incomeSourceType = ForeignProperty,
-        isAgent = false,
-        taxYear,
-        changeTo,
-        None
-      )
-  }
-
-  def showAgentForeignProperty(changeTo: String, taxYear: String): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
-    implicit mtdItUser =>
-      handleRequest(
-        incomeSourceType = ForeignProperty,
-        isAgent = true,
-        taxYear,
-        changeTo,
-        None
-      )
   }
 
   private lazy val successPostUrl = (isAgent: Boolean) => {
@@ -166,7 +119,7 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
     }
   }
 
-  def showError(isAgent: Boolean, message: String)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+  def showError(isAgent: Boolean, message: String)(implicit user: MtdItUser[_]): Future[Result] = {
     Logger("application").error(
       s"${if (isAgent) "[Agent]"}$message")
     Future.successful {
@@ -206,14 +159,24 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
     }
   }
 
+  private def getOptIncomeSourceId(incomeSourceType: IncomeSourceType)
+                                  (implicit hc: HeaderCarrier): Future[Option[IncomeSourceId]] = {
+    if(incomeSourceType == SelfEmployment) {
+      sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, IncomeSourceJourneyType(Manage, incomeSourceType)).flatMap {
+        case Right(incomeSourceIdMaybe) => Future.successful(incomeSourceIdMaybe.map(id => IncomeSourceId(id)))
+        case Left(_) => Future.failed(MissingSessionKey(ManageIncomeSourceData.incomeSourceIdField))
+      }
+    } else {
+      Future.successful(None)
+    }
+  }
 
-  def submit: Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-    implicit request =>
+
+  def submit: Action[AnyContent] = authActions.asMTDIndividual.async { _ =>
       Future.successful(Redirect(controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false)))
   }
 
-  def agentSubmit: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
-    implicit mtdItUser =>
+  def agentSubmit: Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {_ =>
       Future.successful(Redirect(controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true)))
   }
 }

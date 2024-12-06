@@ -17,7 +17,7 @@
 package controllers.incomeSources.add
 
 import enums.IncomeSourceJourney.SelfEmployment
-import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import forms.incomeSources.add.BusinessNameForm
 import mocks.auth.MockAuthActions

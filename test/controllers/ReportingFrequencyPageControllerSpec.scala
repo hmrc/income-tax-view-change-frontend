@@ -16,150 +16,125 @@
 
 package controllers
 
-import auth.FrontendAuthorisedFunctions
-import auth.authV2.actions._
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import mocks.auth.MockOldAuthActions
-import mocks.controllers.predicates.MockIncomeSourceDetailsPredicate
+import config.FrontendAppConfig
+import enums.MTDIndividual
+import mocks.auth.MockAuthActions
+import mocks.services.{MockOptInService, MockOptOutService}
 import models.ReportingFrequencyViewModel
 import models.admin.ReportingFrequencyPage
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
-import models.optout.{NextUpdatesQuarterlyReportingContentChecks, OptOutMultiYearViewModel}
+import models.optout.OptOutMultiYearViewModel
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
-import play.api.mvc.MessagesControllerComponents
+import play.api
+import play.api.Application
+import play.api.http.Status
+import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
 import services.DateService
 import services.optIn.OptInService
 import services.optout.{OptOutProposition, OptOutService}
-import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testNino
 import testConstants.BusinessDetailsTestConstants.{business1, testMtdItId}
 import views.html.ReportingFrequencyView
-import views.html.errorPages.templates.ErrorTemplate
 
 import scala.concurrent.Future
 
 
-class ReportingFrequencyPageControllerSpec extends MockOldAuthActions with MockIncomeSourceDetailsPredicate with MockitoSugar {
+class ReportingFrequencyPageControllerSpec extends MockAuthActions
+  with MockOptOutService with MockOptInService with MockitoSugar {
 
   val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
-  val mockOptOutService: OptOutService = mock[OptOutService]
-  val mockOptInService: OptInService = mock[OptInService]
-  val mockFrontendAuthorisedFunctions: FrontendAuthorisedFunctions = mock[FrontendAuthorisedFunctions]
-  val mockNonAgentItvcErrorHandler: ItvcErrorHandler = mock[ItvcErrorHandler]
-  val mockAgentItvcErrorHandler: AgentItvcErrorHandler = mock[AgentItvcErrorHandler]
-  val mockDateService: DateService = mock[DateService]
 
-  val errorTemplateView: ErrorTemplate = app.injector.instanceOf[ErrorTemplate]
-  val reportingFrequencyView: ReportingFrequencyView = app.injector.instanceOf[ReportingFrequencyView]
+  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+    .overrides(
+      api.inject.bind[OptOutService].toInstance(mockOptOutService),
+      api.inject.bind[OptInService].toInstance(mockOptInService),
+      api.inject.bind[DateService].toInstance(dateService)
+    ).configure(Map("feature-switches.read-from-mongo" -> "false"))
+    .build()
 
-  val controller =
-    new ReportingFrequencyPageController(
-      optOutService = mockOptOutService,
-      optInService = mockOptInService,
-      authorisedFunctions = mockFrontendAuthorisedFunctions,
-      auth = mockAuthActions,
-      errorTemplate = errorTemplateView,
-      view = reportingFrequencyView
-    )(
-      appConfig = mockFrontendAppConfig,
-      dateService = dateService,
-      mcc = app.injector.instanceOf[MessagesControllerComponents],
-      ec = ec,
-      itvcErrorHandler = mockNonAgentItvcErrorHandler,
-      itvcErrorHandlerAgent = mockAgentItvcErrorHandler
-    )
+  val testController = fakeApplication().injector.instanceOf[ReportingFrequencyPageController]
+  val reportingFrequencyView = fakeApplication().injector.instanceOf[ReportingFrequencyView]
 
-
-  "ReportingFrequencyPageController" when {
-
-    ".show()" when {
-
-      "Reporting Frequency feature switch is enabled" should {
-
-        "show the ReportingFrequencyPage" in {
-
-          disableAllSwitches()
-          enable(ReportingFrequencyPage)
-
-          val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2017"), List(business1), Nil)
-
-          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-
-          val optOutProposition: OptOutProposition = OptOutProposition.createOptOutProposition(
-            currentYear = TaxYear(2024, 2025),
-            previousYearCrystallised = false,
-            previousYearItsaStatus = Mandated,
-            currentYearItsaStatus = Voluntary,
-            nextYearItsaStatus = Mandated
-          )
-
-          when(mockOptInService.availableOptInTaxYear()(any(), any(), any())).thenReturn(
-            Future(Seq(TaxYear(2024, 2025)))
-          )
-
-          when(mockOptOutService.reportingFrequencyViewModels()(any(), any(), any())).thenReturn(
-            Future((optOutProposition, Some(OptOutMultiYearViewModel())))
-          )
-
-          when(mockFrontendAppConfig.readFeatureSwitchesFromMongo).thenReturn(false)
-
-          when(
-            mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
-          ).thenReturn(Future(singleBusinessIncome))
-
-          val result = controller.show(false)(fakeRequestWithActiveSession)
-
-          status(result) shouldBe OK
-          contentAsString(result) shouldBe
-            reportingFrequencyView(
-              ReportingFrequencyViewModel(
-                isAgent = false,
-                Some(controllers.optOut.routes.OptOutChooseTaxYearController.show(false).url),
-                optOutTaxYears = Seq(TaxYear(2024, 2025)),
-                optInTaxYears = Seq(TaxYear(2024, 2025))
-              )
-            ).toString
-        }
-      }
-
-      "Reporting Frequency feature switch is disabled" should {
-
-        "show an Error page" in {
-
-          disableAllSwitches()
-          disable(ReportingFrequencyPage)
-          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-
-          val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2017"), List(business1), Nil)
-
-          when(mockOptOutService.nextUpdatesPageOptOutViewModels()(any(), any(), any())).thenReturn(
-            Future(
-              (
-                NextUpdatesQuarterlyReportingContentChecks(currentYearItsaStatus = true, previousYearItsaStatus = true, previousYearCrystallisedStatus = true),
-                Some(OptOutMultiYearViewModel())
-              )
+  mtdAllRoles.foreach { mtdRole =>
+    val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
+    val isAgent = mtdRole != MTDIndividual
+    s"show(isAgent = $isAgent)" when {
+      val action = testController.show(isAgent)
+      s"the user is authenticated as a $mtdRole" should {
+        "render the reporting frequency page" when {
+          "the reporting frequency feature switch is enabled" in {
+            enable(ReportingFrequencyPage)
+            setupMockSuccess(mtdRole)
+            val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2017"), List(business1), Nil)
+            val optOutProposition: OptOutProposition = OptOutProposition.createOptOutProposition(
+              currentYear = TaxYear(2024, 2025),
+              previousYearCrystallised = false,
+              previousYearItsaStatus = Mandated,
+              currentYearItsaStatus = Voluntary,
+              nextYearItsaStatus = Mandated
             )
-          )
 
-          when(mockFrontendAppConfig.readFeatureSwitchesFromMongo)
-            .thenReturn(false)
+            when(mockOptInService.availableOptInTaxYear()(any(), any(), any())).thenReturn(
+              Future(Seq(TaxYear(2024, 2025)))
+            )
+            when(mockOptOutService.reportingFrequencyViewModels()(any(), any(), any())).thenReturn(
+              Future((optOutProposition, Some(OptOutMultiYearViewModel())))
+            )
+            when(
+              mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
+            ).thenReturn(Future(singleBusinessIncome))
 
-          when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
-            .thenReturn(Future(singleBusinessIncome))
+            val result = action(fakeRequest)
 
-          val result = controller.show(false)(fakeRequestWithActiveSession)
+            status(result) shouldBe Status.OK
+            contentAsString(result) shouldBe
+              reportingFrequencyView(
+                ReportingFrequencyViewModel(
+                  isAgent = isAgent,
+                  Some(controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent).url),
+                  optOutTaxYears = Seq(TaxYear(2024, 2025)),
+                  optInTaxYears = Seq(TaxYear(2024, 2025))
+                )
+              ).toString
+          }
+        }
 
-          status(result) shouldBe INTERNAL_SERVER_ERROR
-          contentAsString(result).contains("Sorry, there is a problem with the service") shouldBe true
+        "render the error page" when {
+          "the reporting frequency feature switch is disabled" in {
+            disable(ReportingFrequencyPage)
+            setupMockSuccess(mtdRole)
+            val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2017"), List(business1), Nil)
+            val optOutProposition: OptOutProposition = OptOutProposition.createOptOutProposition(
+              currentYear = TaxYear(2024, 2025),
+              previousYearCrystallised = false,
+              previousYearItsaStatus = Mandated,
+              currentYearItsaStatus = Voluntary,
+              nextYearItsaStatus = Mandated
+            )
+
+            when(mockOptInService.availableOptInTaxYear()(any(), any(), any())).thenReturn(
+              Future(Seq(TaxYear(2024, 2025)))
+            )
+            when(mockOptOutService.reportingFrequencyViewModels()(any(), any(), any())).thenReturn(
+              Future((optOutProposition, Some(OptOutMultiYearViewModel())))
+            )
+            when(
+              mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
+            ).thenReturn(Future(singleBusinessIncome))
+
+            val result = action(fakeRequest)
+
+            status(result) shouldBe INTERNAL_SERVER_ERROR
+            contentAsString(result).contains("Sorry, there is a problem with the service") shouldBe true
+          }
         }
       }
-
+      testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
     }
   }
 }

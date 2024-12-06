@@ -18,308 +18,209 @@ package controllers.manageBusinesses.add
 
 import audit.models.CreateIncomeSourceAuditModel
 import auth.MtdItUser
-import models.admin.IncomeSourcesFs
+import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
-import helpers.ComponentSpecBase
+import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
+import models.admin.{IncomeSourcesFs, NavBarFs}
 import models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
-import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
-import models.incomeSourceDetails.{AddIncomeSourceData, Address, UIJourneySessionData}
+import models.incomeSourceDetails.UIJourneySessionData
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSelfEmploymentId, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.{emptyUIJourneySessionData, multipleBusinessesAndPropertyResponse, noPropertyOrBusinessResponse}
-import uk.gov.hmrc.auth.core.AffinityGroup.Individual
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
-import java.time.LocalDate
+class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 
-class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
+  import helpers.IncomeSourceCheckDetailsConstants._
 
-  def checkBusinessDetailsShowUrl(incomeSourceType: IncomeSourceType): String = controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(incomeSourceType).url
+  def errorPageUrl(incomeSourceType: IncomeSourceType, mtdUserRole: MTDUserRole): String = {
+    if(mtdUserRole == MTDIndividual) {
+      controllers.manageBusinesses.add.routes.IncomeSourceNotAddedController.show(incomeSourceType).url
+    } else {
+      controllers.manageBusinesses.add.routes.IncomeSourceNotAddedController.showAgent(incomeSourceType).url
+    }
+  }
 
-  def checkBusinessDetailsSubmitUrl(incomeSourceType: IncomeSourceType): String = controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.submit(incomeSourceType).url
-
-  val addBusinessReportingFrequencyUrl: String = routes.IncomeSourceReportingMethodController.show(isAgent = false, SelfEmployment).url
-
-  val addForeignPropReportingFrequencyUrl: String = routes.IncomeSourceReportingMethodController.show(isAgent = false, ForeignProperty).url
-
-  val addUkPropReportingFrequencyUrl: String = routes.IncomeSourceReportingMethodController.show(isAgent = false, UkProperty).url
-
-  def errorPageUrl(incomeSourceType: IncomeSourceType): String = controllers.manageBusinesses.add.routes.IncomeSourceNotAddedController.show(incomeSourceType).url
-
-  val testBusinessId: String = testSelfEmploymentId
-  val testBusinessName: String = "Test Business"
-  val testBusinessStartDate: LocalDate = LocalDate.of(2023, 1, 1)
-  val testBusinessTrade: String = "Plumbing"
-  val testBusinessAddressLine1: String = "Test Road"
-  val testBusinessPostCode: String = "B32 1PQ"
-  val testBusinessCountryCodeView: String = "United Kingdom"
-  val testBusinessAccountingMethod: String = "CASH"
-  val testBusinessAccountingMethodView: String = "Cash basis accounting"
-  val testAccountingPeriodEndDate: LocalDate = LocalDate.of(2023, 11, 11)
-  val testCountryCode = "GB"
-  val noAccountingMethod: String = ""
   val continueButtonText: String = messagesAPI("base.confirm-and-continue")
-  val testBusinessAddress: Address = Address(lines = Seq(testBusinessAddressLine1), postcode = Some(testBusinessPostCode))
-  val testErrorReason: String = "Failed to create incomeSources: CreateIncomeSourceErrorResponse(500,Error creating incomeSource: [{\"status\":500,\"reason\":\"INTERNAL_SERVER_ERROR\"}])"
-
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
 
-  val testUser: MtdItUser[_] = MtdItUser(
-    testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
-    None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
-  )(FakeRequest())
+  def testUser(mtdUserRole: MTDUserRole): MtdItUser[_] = {
+    val (affinityGroup, arn) = if(mtdUserRole == MTDIndividual) {
+      (Individual, None)
+    } else {
+      (Agent, Some("1"))
+    }
+    MtdItUser(
+      testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
+      None, Some("1234567890"), Some("12345-credId"), Some(affinityGroup), arn
+    )(FakeRequest())
+  }
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     await(sessionService.deleteSession(Add))
   }
 
-  val testSEViewModel: CheckDetailsViewModel = CheckBusinessDetailsViewModel(
-    businessName = Some(testBusinessName),
-    businessStartDate = Some(testBusinessStartDate),
-    accountingPeriodEndDate = (testAccountingPeriodEndDate),
-    businessTrade = testBusinessTrade,
-    businessAddressLine1 = testBusinessAddressLine1,
-    businessAddressLine2 = None,
-    businessAddressLine3 = None,
-    businessAddressLine4 = None,
-    businessPostalCode = Some(testBusinessPostCode),
-    businessCountryCode = Some(testCountryCode),
-    incomeSourcesAccountingMethod = Some(testBusinessAccountingMethod),
-    cashOrAccrualsFlag = "CASH",
-    showedAccountingMethod = false
-  )
-
-  val testUKPropertyViewModel = CheckPropertyViewModel(
-    tradingStartDate = testBusinessStartDate,
-    cashOrAccrualsFlag = "CASH",
-    incomeSourceType = UkProperty
-  )
-
-  val testForeignPropertyViewModel = CheckPropertyViewModel(
-    tradingStartDate = testBusinessStartDate,
-    cashOrAccrualsFlag = "CASH",
-    incomeSourceType = ForeignProperty
-  )
-
-
-  val testAddBusinessData: AddIncomeSourceData = AddIncomeSourceData(
-    businessName = Some(testBusinessName),
-    businessTrade = Some(testBusinessTrade),
-    dateStarted = Some(testBusinessStartDate),
-    incomeSourceId = Some(testBusinessId),
-    address = Some(testBusinessAddress),
-    countryCode = Some(testCountryCode),
-    accountingPeriodEndDate = Some(testAccountingPeriodEndDate),
-    incomeSourcesAccountingMethod = Some(testBusinessAccountingMethod)
-  )
-
-  val testAddBusinessDataError: AddIncomeSourceData = AddIncomeSourceData(
-    businessName = Some(testBusinessName),
-    businessTrade = Some(testBusinessTrade),
-    dateStarted = None,
-    incomeSourceId = Some(testBusinessId),
-    address = Some(testBusinessAddress),
-    countryCode = Some(testCountryCode),
-    accountingPeriodEndDate = Some(testAccountingPeriodEndDate),
-    incomeSourcesAccountingMethod = Some(testBusinessAccountingMethod)
-  )
-
-  val testAddPropertyData: AddIncomeSourceData = AddIncomeSourceData(
-    dateStarted = Some(testBusinessStartDate),
-    incomeSourcesAccountingMethod = Some(testBusinessAccountingMethod)
-  )
-
   def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
     journeyType = IncomeSourceJourneyType(Add, incomeSourceType).toString,
     addIncomeSourceData = Some(if (incomeSourceType == SelfEmployment) testAddBusinessData else testAddPropertyData))
 
-  def testUIJourneySessionDataError(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
-    sessionId = testSessionId,
-    journeyType = IncomeSourceJourneyType(Add, incomeSourceType).toString,
-    addIncomeSourceData = Some(if (incomeSourceType == SelfEmployment) testAddBusinessDataError else testAddPropertyData))
-
-  def testUIJourneySessionDataNoAccountingMethod(incomeSourceType: IncomeSourceType): UIJourneySessionData =
-    testUIJourneySessionData(incomeSourceType).copy(
-      addIncomeSourceData = Some({
-        if (incomeSourceType == SelfEmployment) testAddBusinessData else testAddPropertyData
-      }.copy(
-        incomeSourcesAccountingMethod = None)))
-
-  def uriSegment(incomeSourceType: IncomeSourceType): String = incomeSourceType match {
-    case SelfEmployment => "sole-trader"
-    case UkProperty => "uk-property"
-    case ForeignProperty => "foreign-property"
+  def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType): String = {
+    val pathStart = if(mtdRole == MTDIndividual) "/manage-your-businesses" else "/agents/manage-your-businesses"
+    incomeSourceType match {
+      case SelfEmployment => s"$pathStart/add-sole-trader/business-check-answers"
+      case UkProperty => s"$pathStart/add-uk-property/check-answers"
+      case ForeignProperty => s"$pathStart/add-foreign-property/check-answers"
+    }
   }
 
-  def uriDetailsSegment(incomeSourceType: IncomeSourceType): String = incomeSourceType match {
-    case SelfEmployment => "business-"
-    case UkProperty => ""
-    case ForeignProperty => ""
-  }
+  mtdAllRoles.foreach { case mtdUserRole =>
+    List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
+      val path = getPath(mtdUserRole, incomeSourceType)
+      val additionalCookies = getAdditionalCookies(mtdUserRole)
+      s"GET $path" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            "render the Check Business details page with accounting method" when {
+              "the user has no existing businesses" in {
+                enable(IncomeSourcesFs)
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-  def getRedirectUrl(incomeSourceType: IncomeSourceType): String = incomeSourceType match {
-    case SelfEmployment => addBusinessReportingFrequencyUrl
-    case UkProperty => addUkPropReportingFrequencyUrl
-    case ForeignProperty => addForeignPropReportingFrequencyUrl
-  }
+                val response = List(CreateIncomeSourceResponse(testSelfEmploymentId))
+                IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, response)
 
-  def runShowtest(incomeSourceType: IncomeSourceType): Unit = {
-    s"calling GET ${checkBusinessDetailsShowUrl(incomeSourceType)}" should {
-      "render the Check Business details page with accounting method" when {
-        "User is authorised and has no existing businesses" in {
-          Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
-          enable(IncomeSourcesFs)
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+                await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
 
-          val response = List(CreateIncomeSourceResponse(testSelfEmploymentId))
-          IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, response)
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
 
-          await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
+                incomeSourceType match {
+                  case SelfEmployment =>
+                    result should have(
+                      httpStatus(OK),
+                      pageTitle(mtdUserRole, "check-details.title"),
+                      elementTextBySelectorList(".govuk-summary-list__value", "dd:nth-of-type(1)")(testBusinessName),
+                      elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(2) dd:nth-of-type(1)")("1 January 2023"),
+                      elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(3) dd:nth-of-type(1)")(testBusinessTrade),
+                      elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(4) dd:nth-of-type(1)")(testBusinessAddressLine1 + " " + testBusinessPostCode + " " + testBusinessCountryCode),
+                      elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(5) dd:nth-of-type(1)")(testBusinessAccountingMethodView),
+                      elementTextByID("confirm-button")(continueButtonText)
+                    )
 
-          val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/add-${uriSegment(incomeSourceType)}/${uriDetailsSegment(incomeSourceType)}check-answers")
+                  case UkProperty =>
+                    result should have(
+                      httpStatus(OK),
+                      pageTitle(mtdUserRole,"check-details-uk.title"),
+                      elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(1) dd:nth-of-type(1)")("1 January 2023"),
+                      elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(2) dd:nth-of-type(1)")(testBusinessAccountingMethodView),
+                      elementTextByID("confirm-button")(continueButtonText)
+                    )
 
-          incomeSourceType match {
-            case SelfEmployment =>
-              result should have(
-                httpStatus(OK),
-                pageTitleIndividual("check-details.title"),
-                elementTextBySelectorList(".govuk-summary-list__value", "dd:nth-of-type(1)")(testBusinessName),
-                elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(2) dd:nth-of-type(1)")("1 January 2023"),
-                elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(3) dd:nth-of-type(1)")(testBusinessTrade),
-                elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(4) dd:nth-of-type(1)")(testBusinessAddressLine1 + " " + testBusinessPostCode + " " + testBusinessCountryCodeView),
-                elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(5) dd:nth-of-type(1)")(testBusinessAccountingMethodView),
-                elementTextByID("confirm-button")(continueButtonText)
-              )
-
-            case UkProperty =>
-              result should have(
-                httpStatus(OK),
-                pageTitleIndividual("check-details-uk.title"),
-                elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(1) dd:nth-of-type(1)")("1 January 2023"),
-                elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(2) dd:nth-of-type(1)")(testBusinessAccountingMethodView),
-                elementTextByID("confirm-button")(continueButtonText)
-              )
-
-            case ForeignProperty =>
-              result should have(
-                httpStatus(OK),
-                pageTitleIndividual("check-details-fp.title"),
-                elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(1) dd:nth-of-type(1)")("1 January 2023"),
-                elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(2) dd:nth-of-type(1)")(testBusinessAccountingMethodView),
-                elementTextByID("confirm-button")(continueButtonText)
-              )
+                  case _ =>
+                    result should have(
+                      httpStatus(OK),
+                      pageTitle(mtdUserRole, "check-details-fp.title"),
+                      elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(1) dd:nth-of-type(1)")("1 January 2023"),
+                      elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(2) dd:nth-of-type(1)")(testBusinessAccountingMethodView),
+                      elementTextByID("confirm-button")(continueButtonText)
+                    )
+                }
+              }
+            }
           }
+          testAuthFailures(path, mtdUserRole)
+        }
+      }
+
+      s"POST $path" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            "redirect to IncomeSourceReportingMethodController" when {
+              "user selects 'confirm and continue'" in {
+                enable(IncomeSourcesFs)
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                val response = List(CreateIncomeSourceResponse(testSelfEmploymentId))
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+                IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, response)
+                await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
+                val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
+
+                incomeSourceType match {
+                  case SelfEmployment => AuditStub.verifyAuditContainsDetail(
+                    CreateIncomeSourceAuditModel(SelfEmployment, testSEViewModel, None, None, Some(CreateIncomeSourceResponse(testSelfEmploymentId)))(testUser(mtdUserRole)).detail)
+
+                  case UkProperty => AuditStub.verifyAuditContainsDetail(
+                    CreateIncomeSourceAuditModel(UkProperty, testUKPropertyViewModel, None, None, Some(CreateIncomeSourceResponse(testSelfEmploymentId)))(testUser(mtdUserRole)).detail)
+
+                  case ForeignProperty => AuditStub.verifyAuditContainsDetail(
+                    CreateIncomeSourceAuditModel(ForeignProperty, testForeignPropertyViewModel, None, None, Some(CreateIncomeSourceResponse(testSelfEmploymentId)))(testUser(mtdUserRole)).detail)
+                }
+
+                result should have(
+                  httpStatus(SEE_OTHER),
+                  redirectURI(controllers.manageBusinesses.add.routes.IncomeSourceReportingMethodController.show(isAgent = mtdUserRole != MTDIndividual, incomeSourceType).url)
+                )
+              }
+            }
+
+            "render the error page" when {
+              "error in response from API" in {
+                enable(IncomeSourcesFs)
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                val response = List(CreateIncomeSourceErrorResponse(500, "INTERNAL_SERVER_ERROR"))
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+                IncomeTaxViewChangeStub.stubCreateBusinessDetailsErrorResponseNew(testMtditid)(response)
+                await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
+
+                val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
+
+                incomeSourceType match {
+                  case SelfEmployment => AuditStub.verifyAuditContainsDetail(
+                    CreateIncomeSourceAuditModel(SelfEmployment, testSEViewModel, Some("API_FAILURE"), Some(testErrorReason), None)(testUser(mtdUserRole)).detail)
+
+                  case UkProperty => AuditStub.verifyAuditContainsDetail(
+                    CreateIncomeSourceAuditModel(UkProperty, testUKPropertyViewModel, Some("API_FAILURE"), Some(testErrorReason), None)(testUser(mtdUserRole)).detail)
+
+                  case ForeignProperty => AuditStub.verifyAuditContainsDetail(
+                    CreateIncomeSourceAuditModel(ForeignProperty, testForeignPropertyViewModel, Some("API_FAILURE"), Some(testErrorReason), None)(testUser(mtdUserRole)).detail)
+                }
+
+                result should have(
+                  httpStatus(SEE_OTHER),
+                  redirectURI(errorPageUrl(incomeSourceType, mtdUserRole))
+                )
+              }
+
+              "user session has no details" in {
+                enable(IncomeSourcesFs)
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
+                await(sessionService.setMongoData(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, incomeSourceType))))
+
+                val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
+
+                result should have(
+                  httpStatus(SEE_OTHER),
+                  redirectURI(errorPageUrl(incomeSourceType, mtdUserRole))
+                )
+              }
+            }
+          }
+          testAuthFailures(path, mtdUserRole, optBody = Some(Map.empty))
         }
       }
     }
   }
-
-  "Calling the GET urls" should {
-    runShowtest(SelfEmployment)
-    runShowtest(UkProperty)
-    runShowtest(ForeignProperty)
-  }
-
-  def runSubmitSuccessTest(incomeSourceType: IncomeSourceType): Unit = {
-    s"calling POST ${checkBusinessDetailsSubmitUrl(incomeSourceType)}" should {
-      "user selects 'confirm and continue'" in {
-        enable(IncomeSourcesFs)
-        val response = List(CreateIncomeSourceResponse(testSelfEmploymentId))
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-        IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, response)
-        await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.post(s"/manage-your-businesses/add-${uriSegment(incomeSourceType)}/${uriDetailsSegment(incomeSourceType)}check-answers")(Map.empty)
-
-        incomeSourceType match {
-          case SelfEmployment => AuditStub.verifyAuditContainsDetail(
-            CreateIncomeSourceAuditModel(SelfEmployment, testSEViewModel, None, None, Some(CreateIncomeSourceResponse(testSelfEmploymentId)))(testUser).detail)
-
-          case UkProperty => AuditStub.verifyAuditContainsDetail(
-            CreateIncomeSourceAuditModel(UkProperty, testUKPropertyViewModel, None, None, Some(CreateIncomeSourceResponse(testSelfEmploymentId)))(testUser).detail)
-
-          case ForeignProperty => AuditStub.verifyAuditContainsDetail(
-            CreateIncomeSourceAuditModel(ForeignProperty, testForeignPropertyViewModel, None, None, Some(CreateIncomeSourceResponse(testSelfEmploymentId)))(testUser).detail)
-        }
-
-
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(getRedirectUrl(incomeSourceType))
-        )
-      }
-    }
-  }
-
-  def businessNotAddedTest(incomeSourceType: IncomeSourceType): Unit = {
-    s"calling POST ${checkBusinessDetailsSubmitUrl(incomeSourceType)}" should {
-      "error in response from API" in {
-        enable(IncomeSourcesFs)
-        val response = List(CreateIncomeSourceErrorResponse(500, "INTERNAL_SERVER_ERROR"))
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-        IncomeTaxViewChangeStub.stubCreateBusinessDetailsErrorResponseNew(testMtditid)(response)
-        await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
-
-        When(s"I call ${checkBusinessDetailsSubmitUrl(incomeSourceType)}")
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.post(s"/manage-your-businesses/add-${uriSegment(incomeSourceType)}/${uriDetailsSegment(incomeSourceType)}check-answers")(Map.empty)
-
-
-        incomeSourceType match {
-          case SelfEmployment => AuditStub.verifyAuditContainsDetail(
-            CreateIncomeSourceAuditModel(SelfEmployment, testSEViewModel, Some("API_FAILURE"), Some(testErrorReason), None)(testUser).detail)
-
-          case UkProperty => AuditStub.verifyAuditContainsDetail(
-            CreateIncomeSourceAuditModel(UkProperty, testUKPropertyViewModel, Some("API_FAILURE"), Some(testErrorReason), None)(testUser).detail)
-
-          case ForeignProperty => AuditStub.verifyAuditContainsDetail(
-            CreateIncomeSourceAuditModel(ForeignProperty, testForeignPropertyViewModel, Some("API_FAILURE"), Some(testErrorReason), None)(testUser).detail)
-        }
-
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(errorPageUrl(incomeSourceType))
-        )
-      }
-    }
-  }
-
-  def noUserDetailsTest(incomeSourceType: IncomeSourceType): Unit = {
-    s"calling POST ${checkBusinessDetailsSubmitUrl(incomeSourceType)}" should {
-      "user session has no details" in {
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-
-        await(sessionService.setMongoData(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, incomeSourceType))))
-
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.post(s"/manage-your-businesses/add-${uriSegment(incomeSourceType)}/${uriDetailsSegment(incomeSourceType)}check-answers")(Map.empty)
-
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(errorPageUrl(incomeSourceType))
-        )
-      }
-    }
-  }
-
-  "Calling the POST urls" should {
-    runSubmitSuccessTest(SelfEmployment)
-    runSubmitSuccessTest(UkProperty)
-    runSubmitSuccessTest(ForeignProperty)
-
-    businessNotAddedTest(SelfEmployment)
-    businessNotAddedTest(UkProperty)
-    businessNotAddedTest(ForeignProperty)
-
-    noUserDetailsTest(SelfEmployment)
-    noUserDetailsTest(UkProperty)
-    noUserDetailsTest(ForeignProperty)
-
-  }
-
 }

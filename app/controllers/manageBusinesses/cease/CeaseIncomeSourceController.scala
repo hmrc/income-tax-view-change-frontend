@@ -27,7 +27,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
+import utils.IncomeSourcesUtils
 import views.html.manageBusinesses.cease.CeaseIncomeSources
 
 import javax.inject.Inject
@@ -38,8 +38,7 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
                                             val itvcErrorHandler: ItvcErrorHandler,
                                             val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                             val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                            val sessionService: SessionService,
-                                            val auth: AuthenticatorPredicate)
+                                            val sessionService: SessionService)
                                            (implicit val ec: ExecutionContext,
                                             val mcc: MessagesControllerComponents,
                                             val appConfig: FrontendAppConfig)

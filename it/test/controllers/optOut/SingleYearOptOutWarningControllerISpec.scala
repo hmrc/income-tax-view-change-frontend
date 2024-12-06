@@ -17,6 +17,7 @@
 package controllers.optOut
 
 import controllers.ControllerISpecHelper
+import enums.MTDIndividual
 import forms.optOut.ConfirmOptOutSingleTaxYearForm
 import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDIndividualAuthStub}
 import helpers.OptOutSessionRepositoryHelper
@@ -88,7 +89,7 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
       }
     }
 
-    testAuthFailuresForMTDIndividual(path)
+    testAuthFailures(path, MTDIndividual)
   }
 
   s"calling POST $path" should {

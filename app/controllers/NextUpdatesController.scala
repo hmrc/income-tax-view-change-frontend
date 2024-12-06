@@ -47,7 +47,7 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
                                       val appConfig: FrontendAppConfig,
                                       val authActions: AuthActions)
                                      (implicit mcc: MessagesControllerComponents,
-                                      implicit val agentItvcErrorHandler: AgentItvcErrorHandler,
+                                      val agentItvcErrorHandler: AgentItvcErrorHandler,
                                       val ec: ExecutionContext)
   extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
 
