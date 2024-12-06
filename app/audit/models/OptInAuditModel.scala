@@ -20,7 +20,7 @@ import audit.Utilities
 import auth.MtdItUser
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import models.incomeSourceDetails.TaxYear
-import play.api.libs.json.{Format, JsObject, JsValue, Json}
+import play.api.libs.json.{JsObject, JsValue, Json}
 import services.optIn.core.OptInProposition
 
 case class OptInAuditModel(optInProposition: OptInProposition,
