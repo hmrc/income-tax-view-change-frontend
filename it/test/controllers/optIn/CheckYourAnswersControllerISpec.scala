@@ -16,10 +16,12 @@
 
 package controllers.optIn
 
+import audit.models.OptInAuditModel
 import connectors.itsastatus.ITSAStatusUpdateConnector
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import controllers.optIn.CheckYourAnswersControllerISpec._
-import enums.JourneyType.{OptInJourney, Opt}
+import enums.JourneyType.{Opt, OptInJourney}
+import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import helpers.{ComponentSpecBase, ITSAStatusUpdateConnectorStub}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear, UIJourneySessionData}
@@ -32,6 +34,7 @@ import play.mvc.Http.Status
 import play.mvc.Http.Status.BAD_REQUEST
 import repositories.ITSAStatusRepositorySupport._
 import repositories.UIJourneySessionDataRepository
+import services.optIn.core.{CurrentOptInTaxYear, NextOptInTaxYear, OptInProposition}
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
@@ -127,7 +130,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
     val chooseOptOutTaxYearPageUrl = controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent).url
 
     s"submit page form, calling POST $chooseOptOutTaxYearPageUrl" should {
-      s"successfully render opt-in check your answers page" in {
+      s"successfully render opt-in check your answers page and send audit event" in {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -139,6 +142,20 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses.submitCheckYourAnswersOptInJourney()
         verifyIncomeSourceDetailsCall(testMtditid)
+
+
+        val currentTaxYearOptIn: CurrentOptInTaxYear = CurrentOptInTaxYear(Annual, currentTaxYear)
+
+        verifyAuditContainsDetail(
+          OptInAuditModel(
+            OptInProposition(
+              currentTaxYearOptIn,
+              NextOptInTaxYear(Annual, nextTaxYear, currentTaxYearOptIn)
+            ),
+            currentTaxYear,
+            ITSAStatusUpdateResponseSuccess(OK)
+          ).detail
+        )
 
         result should have(
           httpStatus(Status.SEE_OTHER),
@@ -154,7 +171,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
 
     s"no tax-year choice is made and" when {
       s"submit page form, calling POST $chooseOptOutTaxYearPageUrl" should {
-        s"show page again with error message" in {
+        s"show page again with error message and send an audit with a failure" in {
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -167,14 +184,25 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
           val result = IncomeTaxViewChangeFrontendManageBusinesses.submitCheckYourAnswersOptInJourney()
           verifyIncomeSourceDetailsCall(testMtditid)
 
+          val currentTaxYearOptIn: CurrentOptInTaxYear = CurrentOptInTaxYear(Voluntary, currentTaxYear)
+
+          verifyAuditContainsDetail(
+            OptInAuditModel(
+              OptInProposition(
+                currentTaxYearOptIn,
+                NextOptInTaxYear(Voluntary, nextTaxYear, currentTaxYearOptIn)
+              ),
+              currentTaxYear,
+              ITSAStatusUpdateResponseFailure.defaultFailure()
+            ).detail
+          )
+
           result should have(
             httpStatus(Status.SEE_OTHER),
           )
         }
       }
     }
-
-
   }
 
   "ChooseYearController - Individual" when {
@@ -200,5 +228,4 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
               currentTaxYear.toString, statusToString(currentYearStatus),
               statusToString(nextYearStatus))), Some(intent.toString)))))
   }
-
 }

@@ -16,13 +16,15 @@
 
 package services.optIn
 
+import audit.AuditingService
+import audit.models.OptInAuditModel
 import auth.MtdItUser
 import cats.data.OptionT
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure}
-import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import controllers.routes
-import enums.JourneyType.{OptInJourney, Opt}
+import enums.JourneyType.{Opt, OptInJourney}
+import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
 import models.optin.{ConfirmTaxYearViewModel, MultiYearCheckYourAnswersViewModel, OptInSessionData}
@@ -32,7 +34,6 @@ import services.optIn.core.OptInProposition._
 import services.optIn.core.{OptInInitialState, OptInProposition}
 import services.{DateServiceInterface, ITSAStatusService}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.OptInJourney
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,7 +42,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnector,
                              itsaStatusService: ITSAStatusService,
                              dateService: DateServiceInterface,
-                             repository: UIJourneySessionDataRepository) {
+                             repository: UIJourneySessionDataRepository,
+                             auditingService: AuditingService) {
 
   def saveIntent(intent: TaxYear)(implicit user: MtdItUser[_],
                                   hc: HeaderCarrier,
@@ -82,9 +84,14 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
 
     fetchSavedChosenTaxYear() flatMap {
       case Some(intentTaxYear) => itsaStatusUpdateConnector.optIn(taxYear = intentTaxYear, user.nino)
+        .map { res =>
+          fetchOptInProposition().map { proposition =>
+            auditingService.extendedAudit(OptInAuditModel(proposition, intentTaxYear, res))
+          }
+          res
+        }
       case None => Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure())
     }
-
   }
 
   private def fetchSavedOptInSessionData()(implicit user: MtdItUser[_],
