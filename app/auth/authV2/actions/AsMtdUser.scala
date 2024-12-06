@@ -93,9 +93,9 @@ class AsMtdUser @Inject()
 
     for {
       mtdAndUtr <- getClientMtdidAndUtr
-      clientName <- getClientName(mtdAndUtr._2)
+      (optMtdId, optUtr) = mtdAndUtr
+      clientName <- getClientName(optUtr)
     } yield {
-      val optMtdId = mtdAndUtr._1
       optMtdId.map(id => MtdItUserOptionNino(
           mtditid = id,
           nino = request.nino,
