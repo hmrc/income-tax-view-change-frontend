@@ -143,10 +143,6 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontendManageBusinesses.submitCheckYourAnswersOptInJourney()
         verifyIncomeSourceDetailsCall(testMtditid)
 
-        result should have(
-          httpStatus(Status.SEE_OTHER),
-          //todo add more asserts in MISUV-8007
-        )
 
         val currentTaxYearOptIn: CurrentOptInTaxYear = CurrentOptInTaxYear(Annual, currentTaxYear)
 
@@ -159,6 +155,11 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
             currentTaxYear,
             ITSAStatusUpdateResponseSuccess(OK)
           )
+        )
+
+        result should have(
+          httpStatus(Status.SEE_OTHER),
+          //todo add more asserts in MISUV-8007
         )
       }
     }
@@ -183,10 +184,6 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
           val result = IncomeTaxViewChangeFrontendManageBusinesses.submitCheckYourAnswersOptInJourney()
           verifyIncomeSourceDetailsCall(testMtditid)
 
-          result should have(
-            httpStatus(Status.SEE_OTHER),
-          )
-
           val currentTaxYearOptIn: CurrentOptInTaxYear = CurrentOptInTaxYear(Voluntary, currentTaxYear)
 
           verifyAuditEvent(
@@ -198,6 +195,10 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
               currentTaxYear,
               ITSAStatusUpdateResponseFailure.defaultFailure()
             )
+          )
+
+          result should have(
+            httpStatus(Status.SEE_OTHER),
           )
         }
       }
