@@ -17,6 +17,8 @@
 package controllers.agent.claimToAdjustPoa
 
 import helpers.agent.ComponentSpecBase
+import helpers.servicemocks.BusinessDetailsStub.stubGetBusinessDetails
+import helpers.servicemocks.CitizenDetailsStub.stubGetCitizenDetails
 import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDPrimaryAgentAuthStub, SessionDataStub}
 import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.PoaAmendmentData
@@ -50,6 +52,8 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
     super.beforeEach()
     await(sessionService.setMongoData(Some(PoaAmendmentData(poaAdjustmentReason = None, newPoaAmount = None))))
     SessionDataStub.stubGetSessionDataResponseSuccess()
+    stubGetCitizenDetails()
+    stubGetBusinessDetails()()
     MTDPrimaryAgentAuthStub.stubAuthorised()
   }
 

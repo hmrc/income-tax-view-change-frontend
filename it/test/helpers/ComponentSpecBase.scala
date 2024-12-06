@@ -171,6 +171,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.contact-frontend.port" -> mockPort,
     "microservice.services.income-tax-session-data.host" -> mockHost,
     "microservice.services.income-tax-session-data.port" -> mockPort,
+    "microservice.services.citizen-details.host" -> mockHost,
+    "microservice.services.citizen-details.port" -> mockPort,
     "feature-switches.read-from-mongo" -> "false",
     "feature-switch.enable-time-machine" -> "false",
     "time-machine.add-years" -> "0",

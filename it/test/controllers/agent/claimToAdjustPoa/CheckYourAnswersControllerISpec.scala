@@ -23,6 +23,8 @@ import controllers.claimToAdjustPoa.routes
 import controllers.claimToAdjustPoa.routes.{ApiFailureSubmittingPoaController, PoaAdjustedController}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
+import helpers.servicemocks.BusinessDetailsStub.stubGetBusinessDetails
+import helpers.servicemocks.CitizenDetailsStub.stubGetCitizenDetails
 import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDPrimaryAgentAuthStub, SessionDataStub}
 import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.ClaimToAdjustPoaResponse.ClaimToAdjustPoaSuccess
@@ -92,6 +94,8 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
     setupGetIncomeSourceDetails()
     await(sessionService.setMongoData(None))
     SessionDataStub.stubGetSessionDataResponseSuccess()
+    stubGetCitizenDetails()
+    stubGetBusinessDetails()()
     MTDPrimaryAgentAuthStub.stubAuthorised()
   }
 

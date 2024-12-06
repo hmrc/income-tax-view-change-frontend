@@ -534,33 +534,6 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
           pageTitleIndividual(titleInternalServer, isErrorPage = true)
         )
       }
-
-      "there was a failed future when posting data to the income tax session data service" in {
-        val validUTR: String = "1234567890"
-        stubAgentAuthorisedUser(true)
-        CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
-          status = OK,
-          response = CitizenDetailsStub.validCitizenDetailsResponse(
-            firstName = "testFirstName",
-            lastName = "testLastName",
-            nino = testNino
-          )
-        )
-        IncomeTaxViewChangeStub.stubGetBusinessDetails(testNino)(
-          status = OK,
-          response = Json.toJson(singleBusinessResponse)
-        )
-
-        stubPrimaryAuthorisedAgentUser(testMtdItId, true)
-
-        val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some(validUTR))
-
-        Then(s"ISE is shown with status $INTERNAL_SERVER_ERROR")
-        result should have(
-          httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitleIndividual(titleInternalServer, isErrorPage = true)
-        )
-      }
     }
   }
 }

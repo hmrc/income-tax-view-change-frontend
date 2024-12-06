@@ -76,13 +76,6 @@ trait MockOldAuthActions extends TestSupport with MockIncomeSourceDetailsService
     appConfig = appConfig
   )
 
-  private val asMtdUser = new AsMtdUser()(
-    executionContext = ec,
-    sessionDataService = mockSessionDataService,
-    clientDetailsService = mockClientDetailsService,
-    appConfig = appConfig
-  )
-
   private val retrieveClientData = new RetrieveClientData(
     sessionDataService = mockSessionDataService,
     appConfig = appConfig,
@@ -107,7 +100,6 @@ trait MockOldAuthActions extends TestSupport with MockIncomeSourceDetailsService
     agentHasClientDetails,
     app.injector.instanceOf[AgentHasConfirmedClientAction],
     app.injector.instanceOf[AgentIsPrimaryAction],
-    asMtdUser,
     app.injector.instanceOf[NavBarRetrievalAction],
     incomeSourceRetrievalAction,
     retrieveClientData,
@@ -117,8 +109,6 @@ trait MockOldAuthActions extends TestSupport with MockIncomeSourceDetailsService
   override def setupMockAuthRetrievalSuccess[X, Y](retrievalValue: X ~ Y): Unit = {
     setupMockGetSessionDataSuccess()
     setupMockGetClientDetailsSuccess()
-    stubGetCitizenDetails()
-    stubGetBusinessDetails()()
     when(mockAuthService.authorised(any()))
       .thenReturn(
         new mockAuthService.AuthorisedFunction(EmptyPredicate) {

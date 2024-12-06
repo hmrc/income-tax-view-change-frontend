@@ -17,6 +17,8 @@
 package controllers.agent.claimToAdjustPoa
 
 import helpers.agent.ComponentSpecBase
+import helpers.servicemocks.BusinessDetailsStub.stubGetBusinessDetails
+import helpers.servicemocks.CitizenDetailsStub.stubGetCitizenDetails
 import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDPrimaryAgentAuthStub, SessionDataStub}
 import models.admin.AdjustPaymentsOnAccount
 import org.scalatest.Assertion
@@ -38,6 +40,8 @@ class ApiFailureSubmittingPoaControllerISpec extends ComponentSpecBase {
     super.beforeEach()
     SessionDataStub.stubGetSessionDataResponseSuccess()
     MTDPrimaryAgentAuthStub.stubAuthorised()
+    stubGetCitizenDetails()
+    stubGetBusinessDetails()()
     Given("Income Source Details with multiple business and property")
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
       OK, multipleBusinessesResponse

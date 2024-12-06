@@ -17,6 +17,8 @@
 package controllers.agent.claimToAdjustPoa
 
 import helpers.agent.ComponentSpecBase
+import helpers.servicemocks.BusinessDetailsStub.stubGetBusinessDetails
+import helpers.servicemocks.CitizenDetailsStub.stubGetCitizenDetails
 import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDPrimaryAgentAuthStub, SessionDataStub}
 import models.admin.AdjustPaymentsOnAccount
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
@@ -33,6 +35,8 @@ class AmendablePoaControllerISpec extends ComponentSpecBase {
       "User is authorised" in {
         SessionDataStub.stubGetSessionDataResponseSuccess()
         MTDPrimaryAgentAuthStub.stubAuthorised()
+        stubGetCitizenDetails()
+        stubGetBusinessDetails()()
         enable(AdjustPaymentsOnAccount)
 
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
@@ -59,6 +63,8 @@ class AmendablePoaControllerISpec extends ComponentSpecBase {
     s"return status $SEE_OTHER and redirect to the home page" when {
       "AdjustPaymentsOnAccount FS is disabled" in {
         SessionDataStub.stubGetSessionDataResponseSuccess()
+        stubGetCitizenDetails()
+        stubGetBusinessDetails()()
         MTDPrimaryAgentAuthStub.stubAuthorised()
         disable(AdjustPaymentsOnAccount)
 
@@ -88,6 +94,8 @@ class AmendablePoaControllerISpec extends ComponentSpecBase {
   s"return $INTERNAL_SERVER_ERROR" when {
     "no non-crystallised financial details are found" in {
       SessionDataStub.stubGetSessionDataResponseSuccess()
+      stubGetCitizenDetails()
+      stubGetBusinessDetails()()
       MTDPrimaryAgentAuthStub.stubAuthorised()
       enable(AdjustPaymentsOnAccount)
 

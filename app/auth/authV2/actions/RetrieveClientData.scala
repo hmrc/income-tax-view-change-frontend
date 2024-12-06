@@ -24,6 +24,7 @@ import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Request, Result}
 import services.SessionDataService
+import services.agent.ClientDetailsService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
@@ -31,6 +32,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RetrieveClientData @Inject()(sessionDataService: SessionDataService,
+                                   clientDetailsService: ClientDetailsService,
                                    errorHandler: AgentItvcErrorHandler,
                                    appConfig: FrontendAppConfig)
                                   (implicit val executionContext: ExecutionContext) extends ActionRefiner[Request, ClientDataRequest] {
