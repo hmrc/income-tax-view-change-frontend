@@ -56,6 +56,7 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
     checkSessionTimeout andThen
       retrieveClientData andThen
       authoriseAndRetrieveMtdAgent andThen
+      agentHasClientDetails andThen
       agentHasConfirmedClientAction andThen
       retrieveNinoWithIncomeSources andThen
       retrieveFeatureSwitches

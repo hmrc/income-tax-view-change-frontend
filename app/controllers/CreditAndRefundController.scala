@@ -55,7 +55,7 @@ class CreditAndRefundController @Inject()(val authActions: AuthActions,
   extends FrontendBaseController with FeatureSwitching with I18nSupport with ErrorRecovery {
 
   def show(origin: Option[String] = None): Action[AnyContent] =
-    authActions.asMTDIndividualOrAgentWithClient(isAgent = false) async {
+    authActions.asIndividualOrAgent(isAgent = false) async {
       implicit user =>
         handleRequest(
           backUrl = controllers.routes.HomeController.show(origin).url,
