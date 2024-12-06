@@ -196,6 +196,8 @@ class SelectYourReasonControllerSpec extends TestSupport
           setupTest(
             sessionResponse = Right(Some(PoaAmendmentData(poaAdjustmentReason = Some(MoreTaxedAtSource)))),
             claimToAdjustResponse = testPoa1Maybe)
+          setupMockGetSessionDataSuccess()
+          setupMockGetClientDetailsSuccess()
           val result = TestSelectYourReasonController.show(isAgent = true, mode = NormalMode)(fakeRequestConfirmedClient())
 
           setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
