@@ -61,8 +61,13 @@ trait MockAuthActions extends
   override def beforeEach(): Unit = {
     super.beforeEach()
     disableAllSwitches()
-    Play.stop(fakeApplication())
+//    Play.stop(fakeApplication())
     reset(mockAuthService)
+  }
+
+  override def beforeAll(): Unit = {
+    super.beforeAll()
+    Play.stop(fakeApplication())
   }
 
   override def afterEach() = {
