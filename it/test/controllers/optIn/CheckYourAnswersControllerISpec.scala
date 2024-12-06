@@ -194,5 +194,4 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
               currentTaxYear.toString, statusToString(currentYearStatus),
               statusToString(nextYearStatus))), Some(intent.toString)))))
   }
-
 }
