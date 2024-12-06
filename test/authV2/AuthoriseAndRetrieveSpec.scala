@@ -119,7 +119,7 @@ class AuthoriseAndRetrieveSpec extends AuthActionsSpecHelper {
       }
     }
 
-    s"the user is an Individual that is not enrolled into HMRC-AS-AGENT" in {
+    s"the user is an Individual" in {
       when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
         Future.successful[AuthRetrievals](
           Enrolments(Set.empty) ~ None ~ Some(credentials) ~ Some(Individual) ~ acceptedConfidenceLevel
@@ -133,24 +133,20 @@ class AuthoriseAndRetrieveSpec extends AuthActionsSpecHelper {
       status(result) shouldBe OK
       contentAsString(result) shouldBe "Successful"
     }
-  }
 
-  "redirect to Home page" when {
-    List(Individual, Organisation).foreach { affinityGroup =>
-      s"the user is an ${affinityGroup.toString}" in {
-        when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
-          Future.successful[AuthRetrievals](
-            getAllEnrolmentsAgent(false, false) ~ None ~ Some(credentials) ~ Some(affinityGroup) ~ notAcceptedConfidenceLevel
-          )
+    s"the user is an Organisation" in {
+      when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
+        Future.successful[AuthRetrievals](
+          Enrolments(Set.empty) ~ None ~ Some(credentials) ~ Some(Organisation) ~ acceptedConfidenceLevel
         )
+      )
 
-        val result = authAction.invokeBlock(
-          fakeRequestWithActiveSession,
-          defaultAsync)
+      val result = authAction.invokeBlock(
+        fakeRequestWithActiveSession,
+        defaultAsync)
 
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view")
-      }
+      status(result) shouldBe OK
+      contentAsString(result) shouldBe "Successful"
     }
   }
 
