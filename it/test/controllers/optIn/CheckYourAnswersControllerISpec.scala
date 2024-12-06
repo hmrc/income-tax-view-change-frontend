@@ -99,7 +99,6 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
               elementTextBySelector("#change")(change),
 
               elementTextBySelector("#optIn-summary")(optInSummary),
-
               elementTextByID("confirm-button")("Confirm and save"),
               elementTextByID("cancel-button")("Cancel"),
             )
