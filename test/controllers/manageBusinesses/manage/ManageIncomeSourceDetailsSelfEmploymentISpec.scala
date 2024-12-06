@@ -31,7 +31,7 @@ class ManageIncomeSourceDetailsSelfEmploymentISpec extends ManageIncomeSourceDet
   mtdAllRoles.foreach { mtdUserRole =>
     val isAgent = mtdUserRole != MTDIndividual
     List(false, true).foreach { isChange =>
-      s"show($isAgent, $SelfEmployment)" when {
+      s"show${if (isChange) "Change"}($isAgent, $SelfEmployment)" when {
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
         val action = if (isChange) {
           testController.showChange(SelfEmployment, isAgent)

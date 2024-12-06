@@ -31,7 +31,7 @@ class ManageIncomeSourceDetailsUkPropertyISpec extends ManageIncomeSourceDetails
   mtdAllRoles.foreach { mtdUserRole =>
     val isAgent = mtdUserRole != MTDIndividual
     List(false, true).foreach { isChange =>
-      s"show($isAgent, $UkProperty)" when {
+      s"show${if (isChange) "Change"}($isAgent, $UkProperty)" when {
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
         val action = if (isChange) {
           testController.showChange(UkProperty, isAgent)
