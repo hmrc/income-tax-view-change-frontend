@@ -16,11 +16,12 @@
 
 package services.optIn
 
+import audit.AuditingService
 import auth.MtdItUser
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import controllers.routes
-import enums.JourneyType.{OptInJourney, Opt}
+import enums.JourneyType.{Opt, OptInJourney}
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockITSAStatusUpdateConnector}
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Voluntary}
@@ -62,8 +63,9 @@ class OptInServiceSpec extends UnitSpec
   val optOutConnector: ITSAStatusUpdateConnector = mock(classOf[ITSAStatusUpdateConnector])
   val nextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
   val repository: UIJourneySessionDataRepository = mock(classOf[UIJourneySessionDataRepository])
+  val mockAuditingService: AuditingService = mock(classOf[AuditingService])
 
-  val service: OptInService = new OptInService(optOutConnector, mockITSAStatusService, mockDateService, repository)
+  val service: OptInService = new OptInService(optOutConnector, mockITSAStatusService, mockDateService, repository, mockAuditingService)
 
   val forYearEnd = 2023
   val currentTaxYear = TaxYear.forYearEnd(forYearEnd)
