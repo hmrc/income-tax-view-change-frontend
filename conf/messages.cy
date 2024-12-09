@@ -2236,7 +2236,7 @@ optin.optInError.home-bullet-2                     = hafan
 
 # opt-in completed
 optin.completedOptIn.heading                                = Optio i mewn wedi’i gwblhau
-optin.completedOptIn.overdueUpdates.inset                   = Mae gennych ddiweddariadau hwyr ar gyfer blwyddyn dreth 2024 i 2025. Mae’n rhaid i chi gyflwyno’r diweddariadau hyn, ynghyd â’r holl incwm a threuliau sydd eu hangen, gan ddefnyddio’ch meddalwedd sy’n cydweddu
+optin.completedOptIn.overdueUpdates.inset                   = Mae gennych ddiweddariadau hwyr ar gyfer blwyddyn dreth 2024 i 2025. Mae’n rhaid i chi gyflwyno’r diweddariadau hyn, ynghyd â’r holl incwm a threuliau sydd eu hangen, gan ddefnyddio’ch meddalwedd sy’n cydweddu.
 optin.completedOptIn.cy.heading.desc                        = Rydych bellach yn cyflwyno adroddiadau’n chwarterol o flwyddyn dreth {0} i {1} ymlaen
 optin.completedOptIn.ny.heading.desc                        = Gwnaethoch optio i mewn i adrodd yn chwarterol o flwyddyn dreth {0} i {1} ymlaen
 optin.completedOptIn.followingVoluntary.heading.desc        = Rydych bellach yn cyflwyno adroddiadau’n chwarterol o’r flwyddyn dreth {0} i {1}

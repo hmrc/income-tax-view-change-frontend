@@ -2236,7 +2236,7 @@ optin.optInError.home-bullet-2                     = homepage
 
 # opt-in completed
 optin.completedOptIn.heading                                    = Opt in completed
-optin.completedOptIn.overdueUpdates.inset                       = You may have overdue updates for the 2024 to 2025 tax year. You must submit these updates with all required income and expenses through your compatible software
+optin.completedOptIn.overdueUpdates.inset                       = You may have overdue updates for the 2024 to 2025 tax year. You must submit these updates with all required income and expenses through your compatible software.
 optin.completedOptIn.cy.heading.desc                            = You are now reporting quarterly from {0} to {1} tax year onwards
 optin.completedOptIn.ny.heading.desc                            = You opted in to quarterly reporting from {0} to {1} tax year onwards
 optin.completedOptIn.followingVoluntary.heading.desc            = You are now reporting quarterly for {0} to {1} tax year
