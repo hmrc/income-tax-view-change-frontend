@@ -16,46 +16,33 @@
 
 package controllers.feedback
 
+import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.FeedbackConnector
-import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates._
 import controllers.predicates.agent.AgentAuthenticationPredicate.defaultAgentPredicates
 import forms.FeedbackForm
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.IncomeSourceDetailsService
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import uk.gov.hmrc.play.partials.HeaderCarrierForPartialsConverter
-import utils.AuthenticatorPredicate
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.feedback.{Feedback, FeedbackThankYou}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
-                                   implicit val ec: ExecutionContext,
-                                   val checkSessionTimeout: SessionTimeoutPredicate,
-                                   val authenticate: AuthenticationPredicate,
-                                   val authorisedFunctions: AuthorisedFunctions,
-                                   val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                                   val retrieveBtaNavBar: NavBarPredicate,
+class FeedbackController @Inject()(val authActions: AuthActions,
                                    val feedbackView: Feedback,
                                    val feedbackThankYouView: FeedbackThankYou,
-                                   val itvcHeaderCarrierForPartialsConverter: HeaderCarrierForPartialsConverter,
-                                   val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                   mcc: MessagesControllerComponents,
                                    val itvcErrorHandler: ItvcErrorHandler,
                                    val agentItvcErrorHandler: AgentItvcErrorHandler,
-                                   val auth: AuthenticatorPredicate,
-                                   val feedbackConnector : FeedbackConnector,
-                                   val featureSwitchPredicate: FeatureSwitchPredicate
-                                  ) extends ClientConfirmedController with I18nSupport {
+                                   val feedbackConnector : FeedbackConnector)
+                                  (implicit val config: FrontendAppConfig,
+                                    mcc: MessagesControllerComponents,
+                                    ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
 
-  def show: Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show: Action[AnyContent] = authActions.asAuthorisedUser.async {
     implicit request =>
       val feedback = feedbackView(FeedbackForm.form, postAction = routes.FeedbackController.submit)
       request.headers.get(REFERER) match {
@@ -64,14 +51,7 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
       }
   }
 
-  lazy val notAnAgentPredicate = {
-    val redirectNotAnAgent = Future.successful(Redirect(controllers.agent.errors.routes.AgentErrorController.show))
-    defaultAgentPredicates(onMissingARN = redirectNotAnAgent)
-  }
-
-  def showAgent: Action[AnyContent] = Authenticated.asyncWithoutClientAuth(notAnAgentPredicate) {
-    implicit request =>
-      implicit user =>
+  def showAgent: Action[AnyContent] = authActions.asAuthorisedUser.async { implicit request =>
         val feedback = feedbackView(FeedbackForm.form, postAction = routes.FeedbackController.submitAgent, isAgent = true)
         request.headers.get(REFERER) match {
           case Some(ref) => Future.successful(Ok(feedback).withSession(request.session + (REFERER -> ref)))
@@ -79,7 +59,7 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
         }
   }
 
-  def submit: Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def submit: Action[AnyContent] = authActions.asAuthorisedUser.async {
     implicit request =>
       FeedbackForm.form.bindFromRequest().fold(
         hasErrors => Future.successful(BadRequest(feedbackView(feedbackForm = hasErrors,
@@ -99,39 +79,36 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
         }
   }
 
-  def submitAgent: Action[AnyContent] = Authenticated.asyncWithoutClientAuth(notAnAgentPredicate) {
+  def submitAgent: Action[AnyContent] = authActions.asAuthorisedUser.async {
     implicit request =>
-      implicit agent =>
-        FeedbackForm.form.bindFromRequest().fold(
-          hasErrors => Future.successful(BadRequest(feedbackView(feedbackForm = hasErrors,
-            postAction = routes.FeedbackController.submitAgent))),
-          formData =>
-            feedbackConnector.submit(formData).flatMap {
-              case Right(_) =>
-                Future.successful(Redirect(routes.FeedbackController.thankYouAgent))
-              case Left(status) =>
-                Logger("application").error(s"[Agent] Unexpected status code from feedback form: $status")
-                throw new Error(s"Failed to on post request: ${status}")
-            }).recover {
-            case ex: Exception =>
-              Logger("application")
-                .error(s"[Agent] Unexpected error code from feedback form: ${ex.getMessage} - ${ex.getCause}")
-              itvcErrorHandler.showInternalServerError()
-          }
+      FeedbackForm.form.bindFromRequest().fold(
+        hasErrors => Future.successful(BadRequest(feedbackView(feedbackForm = hasErrors,
+          postAction = routes.FeedbackController.submitAgent))),
+        formData =>
+          feedbackConnector.submit(formData).flatMap {
+            case Right(_) =>
+              Future.successful(Redirect(routes.FeedbackController.thankYouAgent))
+            case Left(status) =>
+              Logger("application").error(s"[Agent] Unexpected status code from feedback form: $status")
+              throw new Error(s"Failed to on post request: ${status}")
+          }).recover {
+          case ex: Exception =>
+            Logger("application")
+              .error(s"[Agent] Unexpected error code from feedback form: ${ex.getMessage} - ${ex.getCause}")
+            agentItvcErrorHandler.showInternalServerError()
+        }
   }
 
-  def thankYou: Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen featureSwitchPredicate andThen retrieveBtaNavBar) {
+  def thankYou: Action[AnyContent] = authActions.asAuthorisedUser {
     implicit request =>
       val referer = request.session.get(REFERER).getOrElse(config.baseUrl)
       Ok(feedbackThankYouView(referer)).withSession(request.session - REFERER)
   }
 
-  def thankYouAgent: Action[AnyContent] = Authenticated.asyncWithoutClientAuth(notAnAgentPredicate) {
+  def thankYouAgent: Action[AnyContent] = authActions.asAuthorisedUser.async {
     implicit request =>
-      implicit user =>
-        val referer = request.session.get(REFERER).getOrElse(config.agentBaseUrl)
-        Future.successful(Ok(feedbackThankYouView(referer, isAgent = true)).withSession(request.session - REFERER))
+      val referer = request.session.get(REFERER).getOrElse(config.agentBaseUrl)
+      Future.successful(Ok(feedbackThankYouView(referer, isAgent = true)).withSession(request.session - REFERER))
   }
 
 }

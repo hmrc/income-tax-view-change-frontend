@@ -16,30 +16,26 @@
 
 package controllers.manageBusinesses.cease
 
-import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
+import auth.MtdItUser
+import auth.authV2.AuthActions
+import config.FrontendAppConfig
 import enums.IncomeSourceJourney.IncomeSourceType
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import utils.AuthenticatorPredicate
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.errorPages.templates.ErrorTemplateWithLink
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeSourceNotCeasedController @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
-                                                val errorTemplate: ErrorTemplateWithLink,
-                                                val auth: AuthenticatorPredicate)
+class IncomeSourceNotCeasedController @Inject()(val authActions: AuthActions,
+                                                val errorTemplate: ErrorTemplateWithLink)
                                                (implicit val appConfig: FrontendAppConfig,
-                                                implicit val itvcErrorHandler: ItvcErrorHandler,
-                                                implicit val agentItvcErrorHandler: AgentItvcErrorHandler,
-                                                implicit override val mcc: MessagesControllerComponents,
-                                                implicit val ec: ExecutionContext)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
+                                                val mcc: MessagesControllerComponents,
+                                                val ec: ExecutionContext)
+  extends FrontendController(mcc) with I18nSupport  {
 
-  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
       handleRequest(isAgent, incomeSourceType)
   }

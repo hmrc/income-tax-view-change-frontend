@@ -34,15 +34,15 @@ package connectors
 
 import audit.mocks.MockAuditingService
 import config.FrontendAppConfig
-import mocks.{MockHttp, MockHttpV2}
+import mocks.MockHttpV2
 import models.itsaStatus.{ITSAStatusResponse, ITSAStatusResponseError, ITSAStatusResponseModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.when
 import org.mockito.stubbing.OngoingStubbing
 import play.api.Configuration
-import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR}
+import play.api.http.Status.INTERNAL_SERVER_ERROR
 import testConstants.BaseTestConstants._
-import testConstants.ITSAStatusTestConstants.{badJsonErrorITSAStatusError, errorITSAStatusError}
+import testConstants.ITSAStatusTestConstants.badJsonErrorITSAStatusError
 import testUtils.TestSupport
 import uk.gov.hmrc.http.client.RequestBuilder
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig

@@ -16,58 +16,48 @@
 
 package controllers.incomeSources.add
 
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
-import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import enums.MTDIndividual
+import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.admin.IncomeSourcesFs
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.jsoup.Jsoup
+import play.api
+import play.api.Application
 import play.api.http.Status.{OK, SEE_OTHER}
-import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testSessionId}
+import services.SessionService
+import testConstants.BaseTestConstants.testSessionId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
-import testUtils.TestSupport
-import views.html.incomeSources.YouCannotGoBackError
 
-import scala.concurrent.Future
+class ReportingMethodSetBackErrorControllerSpec extends MockAuthActions with MockSessionService {
 
-class ReportingMethodSetBackErrorControllerSpec extends TestSupport with MockAuthenticationPredicate
-  with MockIncomeSourceDetailsPredicate with FeatureSwitching with MockSessionService {
+  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+    .overrides(
+      api.inject.bind[SessionService].toInstance(mockSessionService)
+    ).build()
 
+  val testController = fakeApplication().injector.instanceOf[ReportingMethodSetBackErrorController]
 
-  object TestReportingMethodSetBackController extends ReportingMethodSetBackErrorController(
-    mockAuthService,
-    app.injector.instanceOf[YouCannotGoBackError],
-    testAuthenticator
-  )(appConfig,
-    mcc = app.injector.instanceOf[MessagesControllerComponents],
-    ec,
-    app.injector.instanceOf[ItvcErrorHandler],
-    app.injector.instanceOf[AgentItvcErrorHandler],
-    mockSessionService) {
+  val title: String = messages("cannotGoBack.heading")
+  val messageSE: String = messages("cannotGoBack.soleTraderAdded")
+  val messageUK: String = messages("cannotGoBack.ukPropertyAdded")
+  val messageFP: String = messages("cannotGoBack.foreignPropertyAdded")
 
-    val title: String = messages("cannotGoBack.heading")
-    val messageSE: String = messages("cannotGoBack.soleTraderAdded")
-    val messageUK: String = messages("cannotGoBack.ukPropertyAdded")
-    val messageFP: String = messages("cannotGoBack.foreignPropertyAdded")
-
-    def getTitle(incomeSourceType: IncomeSourceType, isAgent: Boolean): String = {
-      (isAgent, incomeSourceType) match {
-        case (false, _) => messages("htmlTitle", s"$title")
-        case (true, _) => messages("htmlTitle.agent", s"$title")
-      }
+  def getTitle(incomeSourceType: IncomeSourceType, isAgent: Boolean): String = {
+    (isAgent, incomeSourceType) match {
+      case (false, _) => messages("htmlTitle", s"$title")
+      case (true, _) => messages("htmlTitle.agent", s"$title")
     }
+  }
 
-    def getSubHeading(incomeSourceType: IncomeSourceType): String = {
-      incomeSourceType match {
-        case SelfEmployment => messageSE
-        case UkProperty => messageUK
-        case ForeignProperty => messageFP
-      }
+  def getSubHeading(incomeSourceType: IncomeSourceType): String = {
+    incomeSourceType match {
+      case SelfEmployment => messageSE
+      case UkProperty => messageUK
+      case ForeignProperty => messageFP
     }
   }
 
@@ -80,60 +70,42 @@ class ReportingMethodSetBackErrorControllerSpec extends TestSupport with MockAut
     setupMockGetSessionKeyMongoTyped[String](Right(Some("1234")))
   }
 
-  def authenticate(isAgent: Boolean): Unit = {
-    if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-    else setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-  }
-
-  for (incomeSourceType <- incomeSourceTypes) yield {
-    for (isAgent <- Seq(true, false)) yield {
-      s"ReportingMethodSetBackErrorController ($incomeSourceType, ${if (isAgent) "Agent" else "Individual"})" should {
-        "redirect a user back to the custom error page" when {
-          "the user is not authenticated" should {
-            "redirect them to sign in" in {
-              if (isAgent) setupMockAgentAuthorisationException() else setupMockAuthorisationException()
-              val result = if (isAgent) TestReportingMethodSetBackController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
-              else TestReportingMethodSetBackController.show(incomeSourceType)(fakeRequestWithActiveSession)
-              status(result) shouldBe SEE_OTHER
-              redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
-            }
-          }
-        }
-
-        "feature switch is disabled" should {
-          "redirect to home page" in {
-            disableAllSwitches()
-
-            authenticate(isAgent)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-
-            val result: Future[Result] = if (isAgent) TestReportingMethodSetBackController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
-            else TestReportingMethodSetBackController.show(incomeSourceType)(fakeRequestWithActiveSession)
-            status(result) shouldBe SEE_OTHER
-            val homeUrl = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
-            redirectLocation(result) shouldBe Some(homeUrl)
-          }
-        }
-
-        ".show" should {
-          "Display the you cannot go back error page" in {
-            disableAllSwitches()
+  mtdAllRoles.foreach { mtdRole =>
+    val isAgent = mtdRole != MTDIndividual
+    incomeSourceTypes.foreach { incomeSourceType =>
+      s"show${if (mtdRole != MTDIndividual) "Agent"}($incomeSourceType)" when {
+        val action = if (mtdRole == MTDIndividual) testController.show(incomeSourceType) else testController.showAgent(incomeSourceType)
+        val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
+        s"the user is authenticated as a $mtdRole" should {
+          "render the you cannot go back error page" in {
             enable(IncomeSourcesFs)
-
-            authenticate(isAgent)
+            setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
             mockMongo(IncomeSourceJourneyType(Add, incomeSourceType))
 
-            val result = if (isAgent) TestReportingMethodSetBackController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
-            else TestReportingMethodSetBackController.show(incomeSourceType)(fakeRequestWithActiveSession)
-            val document = Jsoup.parse(contentAsString(result))
+            val result = action(fakeRequest)
 
             status(result) shouldBe OK
-            document.title shouldBe TestReportingMethodSetBackController.getTitle(incomeSourceType, isAgent)
-            document.getElementById("subheading").text() shouldBe TestReportingMethodSetBackController.getSubHeading(incomeSourceType)
+            val document = Jsoup.parse(contentAsString(result))
+            document.title shouldBe getTitle(incomeSourceType, isAgent)
+            document.getElementById("subheading").text() shouldBe getSubHeading(incomeSourceType)
+          }
+
+          "redirect to home page" when {
+             "feature switch is disabled"in {
+               setupMockSuccess(mtdRole)
+               setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+               val result = action(fakeRequest)
+
+               status(result) shouldBe SEE_OTHER
+               val homeUrl = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+               redirectLocation(result) shouldBe Some(homeUrl)
+             }
           }
         }
+        testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
       }
     }
   }

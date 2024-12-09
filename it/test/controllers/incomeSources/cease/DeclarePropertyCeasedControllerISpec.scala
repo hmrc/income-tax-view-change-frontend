@@ -16,37 +16,26 @@
 
 package controllers.incomeSources.cease
 
-import models.admin.IncomeSourcesFs
-import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
+import controllers.ControllerISpecHelper
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, UkProperty}
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
-import helpers.ComponentSpecBase
+import enums.{MTDIndividual, MTDUserRole}
+import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.admin.{IncomeSourcesFs, NavBarFs}
 import models.incomeSourceDetails.CeaseIncomeSourceData.ceaseIncomeSourceDeclare
 import models.incomeSourceDetails.UIJourneySessionData
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import repositories.UIJourneySessionDataRepository
 import services.SessionService
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
 
-class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
+class DeclarePropertyCeasedControllerISpec extends ControllerISpecHelper {
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
-  val repository = app.injector.instanceOf[UIJourneySessionDataRepository]
 
-  val showUKPropertyEndDateControllerUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, UkProperty).url
-  val showDeclareUKPropertyCeasedControllerUrl: String = controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.show(UkProperty).url
-  val showForeignPropertyEndDateControllerUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, ForeignProperty).url
-  val showDeclareForeignPropertyCeasedControllerUrl: String = controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.show(ForeignProperty).url
-  val checkboxErrorMessageUK: String = messagesAPI("incomeSources.cease.UK.checkboxError")
-  val checkboxLabelMessageUK: String = messagesAPI("incomeSources.cease.UK.checkboxLabel")
-  val checkboxErrorMessageFP: String = messagesAPI("incomeSources.cease.FP.checkboxError")
-  val checkboxLabelMessageFP: String = messagesAPI("incomeSources.cease.FP.checkboxLabel")
-  val pageTitleMsgKeyFP = "incomeSources.cease.FP.heading"
-  val pageTitleMsgKeyUK = "incomeSources.cease.UK.heading"
   val buttonLabel: String = messagesAPI("base.continue")
-
   val stringTrue: String = "true"
 
   override def beforeEach(): Unit = {
@@ -54,109 +43,96 @@ class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
     await(sessionService.deleteSession(Cease))
   }
 
-  s"calling GET ${showDeclareUKPropertyCeasedControllerUrl}" should {
-    "render the Cease UK Property Page" when {
-      "User is authorised" in {
-        Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-        When(s"I call GET ${showDeclareUKPropertyCeasedControllerUrl}")
-        val res = IncomeTaxViewChangeFrontend.getCeaseUKProperty
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        res should have(
-          httpStatus(OK),
-          pageTitleIndividual(pageTitleMsgKeyUK),
-          elementTextBySelector("label")(checkboxLabelMessageUK),
-          elementTextByID("continue-button")(buttonLabel)
-        )
-      }
+  def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType): String = {
+    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    incomeSourceType match {
+      case UkProperty => pathStart + "/income-sources/cease/uk-property-declare"
+      case _ => pathStart + "/income-sources/cease/foreign-property-declare"
     }
   }
 
-  s"calling POST ${controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.submit(UkProperty).url}" should {
-    "redirect to showUKPropertyEndDateControllerUrl" when {
-      "form is filled correctly" in {
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+  mtdAllRoles.foreach { mtdUserRole =>
+    List(UkProperty, ForeignProperty).foreach { incomeSourceType =>
+      val path = getPath(mtdUserRole, incomeSourceType)
+      val additionalCookies = getAdditionalCookies(mtdUserRole)
+      s"GET $path" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            "render the Cease Property Page" in {
+              stubAuthorised(mtdUserRole)
+              disable(NavBarFs)
+              enable(IncomeSourcesFs)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+              val result = buildGETMTDClient(path, additionalCookies).futureValue
+              verifyIncomeSourceDetailsCall(testMtditid)
 
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK")))
+              val checkboxLabelMessage: String = messagesAPI(s"incomeSources.cease.${incomeSourceType.key}.checkboxLabel")
 
-        val result = IncomeTaxViewChangeFrontend.postCeaseUKProperty(Some("true"))
-        result.status shouldBe SEE_OTHER
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(showUKPropertyEndDateControllerUrl)
-        )
-
-        sessionService.getMongoKey(ceaseIncomeSourceDeclare, IncomeSourceJourneyType(Cease, UkProperty)).futureValue shouldBe Right(Some(stringTrue))
-
+              result should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, s"incomeSources.cease.${incomeSourceType.key}.heading"),
+                elementTextBySelector("label")(checkboxLabelMessage),
+                elementTextByID("continue-button")(buttonLabel)
+              )
+            }
+          }
+          testAuthFailures(path, mtdUserRole)
+        }
       }
-      "form is filled incorrectly" in {
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK")))
+      s"POST $path" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            "redirect to IncomeSourceEndDateControllerUrl" when {
+              "form is filled correctly" in {
+                stubAuthorised(mtdUserRole)
+                disable(NavBarFs)
+                enable(IncomeSourcesFs)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+                await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"CEASE-${incomeSourceType.key}")))
 
-        val result = IncomeTaxViewChangeFrontend.postCeaseUKProperty(None)
-        result should have(
-          httpStatus(BAD_REQUEST),
-          elementTextByID("cease-income-source-declaration-error")(messagesAPI("base.error-prefix") + " " + checkboxErrorMessageUK)
-        )
-      }
-    }
-  }
+                val result = buildPOSTMTDPostClient(path,
+                  additionalCookies,
+                  body = DeclareIncomeSourceCeasedForm(Some("true"), "csrfToken").toFormMap).futureValue
 
-  s"calling GET $showDeclareForeignPropertyCeasedControllerUrl" should {
-    "render the Cease Foreign Property Page" when {
-      "User is authorised" in {
-        Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-        When(s"I call GET $showDeclareForeignPropertyCeasedControllerUrl")
-        val res = IncomeTaxViewChangeFrontend.getCeaseForeignProperty
-        verifyIncomeSourceDetailsCall(testMtditid)
+                val expectedRedirectUrl = if(mtdUserRole == MTDIndividual) {
+                  controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, incomeSourceType).url
+                } else {
+                  controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(None, incomeSourceType).url
+                }
 
-        res should have(
-          httpStatus(OK),
-          pageTitleIndividual(pageTitleMsgKeyFP),
-          elementTextBySelector("label")(checkboxLabelMessageFP),
-          elementTextByID("continue-button")(buttonLabel)
-        )
-      }
-    }
-  }
+                result should have(
+                  httpStatus(SEE_OTHER),
+                  redirectURI(expectedRedirectUrl)
+                )
+                sessionService.getMongoKey(ceaseIncomeSourceDeclare, IncomeSourceJourneyType(Cease, incomeSourceType)).futureValue shouldBe Right(Some(stringTrue))
 
-  s"calling POST ${controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.submit(ForeignProperty).url}" should {
-    "redirect to showForeignPropertyEndDateControllerUrl" when {
-      "form is filled correctly" in {
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+              }
+            }
+            "return a BadRequest" when {
+              "form is filled incorrectly" in {
+                stubAuthorised(mtdUserRole)
+                disable(NavBarFs)
+                enable(IncomeSourcesFs)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP")))
+                await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"CEASE-${incomeSourceType.key}")))
 
-        val result = IncomeTaxViewChangeFrontend.postCeaseForeignProperty(Some("true"))
-        result.status shouldBe SEE_OTHER
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(showForeignPropertyEndDateControllerUrl)
-        )
+                val result = buildPOSTMTDPostClient(path,
+                  additionalCookies,
+                  body = Map.empty).futureValue
 
-        sessionService.getMongoKey(ceaseIncomeSourceDeclare, IncomeSourceJourneyType(Cease, ForeignProperty)).futureValue shouldBe Right(Some(stringTrue))
+                val checkboxErrorMessage: String = messagesAPI(s"incomeSources.cease.${incomeSourceType.key}.checkboxError")
 
-      }
-      "form is filled incorrectly" in {
-        enable(IncomeSourcesFs)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP")))
-
-        val result = IncomeTaxViewChangeFrontend.postCeaseForeignProperty(None)
-
-        result should have(
-          httpStatus(BAD_REQUEST),
-          elementTextByID("cease-income-source-declaration-error")(messagesAPI("base.error-prefix") + " " + checkboxErrorMessageFP)
-        )
+                result should have(
+                  httpStatus(BAD_REQUEST),
+                  elementTextByID("cease-income-source-declaration-error")(messagesAPI("base.error-prefix") + " " + checkboxErrorMessage)
+                )
+              }
+            }
+          }
+          testAuthFailures(path, mtdUserRole, optBody = Some(Map.empty))
+        }
       }
     }
   }

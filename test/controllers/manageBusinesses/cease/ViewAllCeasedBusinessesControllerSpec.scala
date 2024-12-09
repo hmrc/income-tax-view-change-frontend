@@ -16,113 +16,78 @@
 
 package controllers.manageBusinesses.cease
 
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.SelfEmployment
-import enums.JourneyType.{Cease, IncomeSourceJourneyType, JourneyType}
+import enums.JourneyType.{Cease, IncomeSourceJourneyType}
+import enums.MTDIndividual
 import exceptions.MissingFieldException
 import implicits.ImplicitDateFormatter
-import mocks.auth.MockFrontendAuthorisedFunctions
-import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
-import mocks.services.{MockIncomeSourceDetailsService, MockSessionService}
+import mocks.auth.MockAuthActions
+import mocks.services.MockSessionService
 import models.admin.IncomeSourcesFs
 import models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import play.api
 import play.api.http.Status
-import play.api.mvc.{MessagesControllerComponents, Result}
+import play.api.mvc.Result
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse}
+import services.SessionService
 import testConstants.BusinessDetailsTestConstants._
 import testConstants.PropertyDetailsTestConstants.{ceaseForeignPropertyDetailsViewModel, ceaseUkPropertyDetailsViewModel}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.notCompletedUIJourneySessionData
-import testUtils.TestSupport
 
 import scala.concurrent.Future
 
-class ViewAllCeasedBusinessesControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with ImplicitDateFormatter
-  with MockIncomeSourceDetailsService with MockNavBarEnumFsPredicate with MockFrontendAuthorisedFunctions with FeatureSwitching with TestSupport
+class ViewAllCeasedBusinessesControllerSpec extends MockAuthActions
+  with ImplicitDateFormatter
   with MockSessionService {
 
-  val controller = new ViewAllCeasedBusinessesController(
-    app.injector.instanceOf[views.html.manageBusinesses.cease.ViewAllCeasedBusinesses],
-    mockAuthService,
-    mockIncomeSourceDetailsService,
-    sessionService = mockSessionService,
-    testAuthenticator
-  )(
-    ec,
-    app.injector.instanceOf[MessagesControllerComponents],
-    app.injector.instanceOf[ItvcErrorHandler],
-    app.injector.instanceOf[AgentItvcErrorHandler],
-    app.injector.instanceOf[FrontendAppConfig]
-  )
+  override def fakeApplication() = applicationBuilderWithAuthBindings()
+    .overrides(
+      api.inject.bind[SessionService].toInstance(mockSessionService)
+    ).build()
 
-  "The ViewAllCeasedBusinessesController" should {
+  val testController = fakeApplication().injector.instanceOf[ViewAllCeasedBusinessesController]
 
-    "redirect user to the your ceased businesses page" when {
-      def testCeaseIncomeSourcePage(isAgent: Boolean): Unit = {
-        disableAllSwitches()
-        enable(IncomeSourcesFs)
-        mockBothIncomeSources()
-        setupMockCreateSession(true)
-        setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Cease, SelfEmployment)))))
-        setupMockDeleteSession(true)
+  mtdAllRoles.foreach { mtdRole =>
+    val isAgent = mtdRole != MTDIndividual
+    s"show($isAgent)" when {
+      val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
+      val action = testController.show(isAgent)
+      s"the user is authenticated as a $mtdRole" should {
+        "render the view all ceased businesses page" in {
+          setupMockSuccess(mtdRole)
+          enable(IncomeSourcesFs)
+          mockBothIncomeSources()
+          setupMockCreateSession(true)
+          setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Cease, SelfEmployment)))))
+          setupMockDeleteSession(true)
 
-        when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any()))
-          .thenReturn(Right(CeaseIncomeSourcesViewModel(
-            soleTraderBusinesses = List(ceaseBusinessDetailsViewModel, ceaseBusinessDetailsViewModel2),
-            ukProperty = Some(ceaseUkPropertyDetailsViewModel),
-            foreignProperty = Some(ceaseForeignPropertyDetailsViewModel),
-            ceasedBusinesses = List(ceasedBusinessDetailsViewModel, ceasedForeignPropertyDetailsViewModel, ceasedUkPropertyDetailsViewModel))))
+          when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any()))
+            .thenReturn(Right(CeaseIncomeSourcesViewModel(
+              soleTraderBusinesses = List(ceaseBusinessDetailsViewModel, ceaseBusinessDetailsViewModel2),
+              ukProperty = Some(ceaseUkPropertyDetailsViewModel),
+              foreignProperty = Some(ceaseForeignPropertyDetailsViewModel),
+              ceasedBusinesses = List(ceasedBusinessDetailsViewModel, ceasedForeignPropertyDetailsViewModel, ceasedUkPropertyDetailsViewModel))))
 
-        if (isAgent) {
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-          val result = controller.show(isAgent)(fakeRequestConfirmedClient("AB123456C"))
-          status(result) shouldBe Status.OK
-        } else {
-          setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-          val result = controller.show(isAgent)(fakeRequestWithActiveSession)
+          val result: Future[Result] = action(fakeRequest)
           status(result) shouldBe Status.OK
         }
 
-      }
+        "show error page" when {
+          "get incomeSourceCeased details returns an error" in {
+            setupMockSuccess(mtdRole)
+            enable(IncomeSourcesFs)
+            mockBothIncomeSources()
 
-      "user is an individual and has a sole trader business and a UK property" in {
-        testCeaseIncomeSourcePage(isAgent = false)
-      }
+            when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any()))
+              .thenReturn(Left(MissingFieldException("Trading Name")))
 
-      "user is an agent and the client has a sole trader business and a UK property" in {
-        testCeaseIncomeSourcePage(isAgent = true)
-      }
-    }
-
-    "show error page" when {
-      def testErrorResponse(isAgent: Boolean): Unit = {
-        disableAllSwitches()
-        enable(IncomeSourcesFs)
-        mockBothIncomeSources()
-
-        when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any()))
-          .thenReturn(Left(MissingFieldException("Trading Name")))
-
-        if (isAgent) {
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-          val result: Future[Result] = controller.show(isAgent)(fakeRequestConfirmedClient("AB123456C"))
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        } else {
-          setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-          val result: Future[Result] = controller.show(isAgent)(fakeRequestWithActiveSession)
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            val result: Future[Result] = action(fakeRequest)
+            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          }
         }
-      }
-
-      "error response from service for individual" in {
-        testErrorResponse(isAgent = false)
-      }
-
-      "error response from service for agent" in {
-        testErrorResponse(isAgent = true)
+        testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
       }
     }
   }

@@ -16,32 +16,31 @@
 
 package controllers.optIn
 
-import auth.{FrontendAuthorisedFunctions, MtdItUser}
+import auth.MtdItUser
+import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
 import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.optIn.OptInService
-import utils.AuthenticatorPredicate
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.optIn.BeforeYouStart
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class BeforeYouStartController @Inject()(val beforeYouStart: BeforeYouStart,
-                                         val optInService: OptInService)
+class BeforeYouStartController @Inject()(authActions: AuthActions,
+                                         val beforeYouStart: BeforeYouStart,
+                                         val optInService: OptInService,
+                                         val itvcErrorHandler: ItvcErrorHandler,
+                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                         (implicit val appConfig: FrontendAppConfig,
                                          val ec: ExecutionContext,
-                                         val auth: AuthenticatorPredicate,
-                                         val authorisedFunctions: FrontendAuthorisedFunctions,
-                                         val itvcErrorHandler: ItvcErrorHandler,
-                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                         override val mcc: MessagesControllerComponents
+                                         mcc: MessagesControllerComponents
                                         )
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
+  extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
 
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
@@ -62,7 +61,7 @@ class BeforeYouStartController @Inject()(val beforeYouStart: BeforeYouStart,
     }
   }
 
-  def show(isAgent: Boolean = false): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def show(isAgent: Boolean = false): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
       withRecover(isAgent) {
         optInService.availableOptInTaxYear().flatMap { availableYears =>

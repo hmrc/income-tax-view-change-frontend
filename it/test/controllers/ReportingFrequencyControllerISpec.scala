@@ -16,342 +16,289 @@
 
 package controllers
 
-import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
-import helpers.servicemocks.{AuthStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
-import models.admin.FeatureSwitchName.allFeatureSwitches
+import enums.{MTDIndividual, MTDUserRole}
+import helpers.WiremockHelper
+import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.admin.{OptOutFs, ReportingFrequencyPage}
 import models.itsaStatus.ITSAStatus.{Annual, Mandated, Voluntary}
 import org.jsoup.Jsoup
-import play.api.http.HeaderNames
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import repositories.UIJourneySessionDataRepository
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSessionId}
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants.businessAndPropertyResponseWoMigration
-import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.{HttpResponse, StringContextOps}
 
-class ReportingFrequencyControllerISpec extends ControllerISpecBase with FeatureSwitching {
+class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
 
   override val appConfig: FrontendAppConfig = testAppConfig
-
-  lazy val httpClient: HttpClientV2 = app.injector.instanceOf(classOf[HttpClientV2])
   val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
+
+  val previousStartYear = dateService.getCurrentTaxYear.previousYear.startYear.toString
+  val previousEndYear = dateService.getCurrentTaxYear.previousYear.endYear.toString
+  val currentStartYear = dateService.getCurrentTaxYear.startYear.toString
+  val currentEndYear = dateService.getCurrentTaxYear.endYear.toString
+  val nextStartYear = dateService.getCurrentTaxYear.nextYear.startYear.toString
+  val nextEndYear = dateService.getCurrentTaxYear.nextYear.endYear.toString
+
+
 
   def bullet(i: Int): String = s"#main-content > div > div > div > ul > li:nth-child($i) > a"
 
-  override def beforeAll(): Unit = {
-    super.beforeAll()
-    startWiremock()
+  def getPath(mtdRole: MTDUserRole): String = {
+    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
+    pathStart + "/reporting-frequency"
   }
 
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    WireMock.reset()
-    cache.removeAll()
-    repository.clearSession(testSessionId).futureValue shouldBe true
+  def  stubCalculationListResponseBody(taxYearEnd: String) = {
+    val responseBody = """
+      |{
+      |  "calculationId": "TEST_ID",
+      |  "calculationTimestamp": "TEST_STAMP",
+      |  "calculationType": "TEST_TYPE",
+      |  "crystallised": false
+      |}
+      |""".stripMargin
+    WiremockHelper.stubGet(s"/income-tax-view-change/list-of-calculation-results/$testNino/$taxYearEnd", OK, responseBody)
   }
 
-  override def afterAll(): Unit = {
-    stopWiremock()
-    super.afterAll()
-  }
+  mtdAllRoles.foreach { case mtdUserRole =>
+    val path = getPath(mtdUserRole)
+    val additionalCookies = getAdditionalCookies(mtdUserRole)
+    s"GET $path" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          s"render reporting frequency page" that {
+            "just has generic link for opt out" when {
+              "CY is Quaterly and CY+1 is Quaterly" in {
+                enable(ReportingFrequencyPage)
+                enable(OptOutFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
+                  dateService.getCurrentTaxYear,
+                  Mandated,
+                  Voluntary,
+                  Voluntary
+                )
+                stubCalculationListResponseBody("2022")
 
-  "GET - /report-quarterly/income-and-expenses/view/reporting-frequency" when {
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "reporting.frequency.title"),
+                  elementTextBySelector(bullet(1))("Opt out of quarterly reporting and report annually")
+                )
+              }
+            }
 
-    "ReportingFrequencyPage feature switch is enabled" when {
+            "just has generic link for opt out" when {
+              "CY is Annual and CY+1 is Annual" in {
+                enable(ReportingFrequencyPage)
+                enable(OptOutFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
+                  dateService.getCurrentTaxYear,
+                  Mandated,
+                  Annual,
+                  Annual
+                )
+                stubCalculationListResponseBody("2022")
 
-      "the user is authorised" should {
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "reporting.frequency.title"),
+                  elementTextBySelector(bullet(1))("Opt in to quarterly reporting")
+                )
+              }
+            }
 
-        "CY is Quaterly and CY+1 is Quaterly" when {
+            "has tax year link for opt out and onwards link for opt in" when {
+              "CY is Quaterly and CY+1 is Annual" in {
+                enable(ReportingFrequencyPage)
+                enable(OptOutFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
+                  dateService.getCurrentTaxYear,
+                  Mandated,
+                  Voluntary,
+                  Annual
+                )
+                stubCalculationListResponseBody("2022")
 
-          "return page with OK - 200 with just generic link for opt out" in {
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "reporting.frequency.title"),
+                  elementTextBySelector(bullet(1))(s"Opt out of quarterly reporting and report annually for the $currentStartYear to $currentEndYear tax year"),
+                  elementTextBySelector(bullet(2))(s"Opt in to quarterly reporting from the $nextStartYear to $nextEndYear tax year onwards")
+                )
+              }
+            }
 
-            allFeatureSwitches.foreach(switch => disable(switch))
-            enable(ReportingFrequencyPage)
-            enable(OptOutFs)
+            "has tax year link for opt in and onwards link for opt out" when {
+              "CY is Annual and CY+1 is Quaterly" in {
+                enable(ReportingFrequencyPage)
+                enable(OptOutFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
+                  dateService.getCurrentTaxYear,
+                  Mandated,
+                  Annual,
+                  Voluntary
+                )
 
-            AuthStub.stubAuthorised()
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
-            ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
-              dateService.getCurrentTaxYear,
-              Mandated,
-              Voluntary,
-              Voluntary
-            )
+                stubCalculationListResponseBody("2022")
 
-            val res =
-              httpClient
-                .get(url"http://localhost:$port/report-quarterly/income-and-expenses/view/reporting-frequency")
-                .setHeader(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ clientDetailsWithConfirmation), "X-Session-ID" -> testSessionId)
-                .execute[HttpResponse]
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "reporting.frequency.title"),
+                  elementTextBySelector(bullet(1))(s"Opt in to quarterly reporting for the $currentStartYear to $currentEndYear tax year"),
+                  elementTextBySelector(bullet(2))(s"Opt out of quarterly reporting and report annually from the $nextStartYear to $nextEndYear tax year onwards")
+                )
+              }
+            }
 
-            res.futureValue.status shouldBe OK
-            Jsoup.parse(res.futureValue.body).title shouldBe "Your reporting frequency - Manage your Income Tax updates - GOV.UK"
-            Jsoup.parse(res.futureValue.body).body().select(bullet(1)).text() shouldBe "Opt out of quarterly reporting and report annually"
+            "just has tax year link for opt in" when {
+              "CY is Annual and CY+1 is Quaterly Mandated" in {
+                enable(ReportingFrequencyPage)
+                enable(OptOutFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
+                  dateService.getCurrentTaxYear,
+                  Mandated,
+                  Annual,
+                  Mandated
+                )
+
+                stubCalculationListResponseBody("2022")
+
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "reporting.frequency.title"),
+                  elementTextBySelector(bullet(1))(s"Opt in to quarterly reporting for the $currentStartYear to $currentEndYear tax year")
+                )
+              }
+
+              "CY is Quaterly Mandated and CY+1 is Annual" in {
+                enable(ReportingFrequencyPage)
+                enable(OptOutFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
+                  dateService.getCurrentTaxYear,
+                  Mandated,
+                  Mandated,
+                  Annual
+                )
+                stubCalculationListResponseBody("2022")
+
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "reporting.frequency.title"),
+                  elementTextBySelector(bullet(1))(s"Opt in to quarterly reporting from the $nextStartYear to $nextEndYear tax year onwards")
+                )
+              }
+            }
+
+            "just has tax year onwards link for opt out" when {
+              "CY is Quaterly Mandated and CY+1 is Quaterly" in {
+                enable(ReportingFrequencyPage)
+                enable(OptOutFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
+                  dateService.getCurrentTaxYear,
+                  Mandated,
+                  Mandated,
+                  Voluntary
+                )
+
+                stubCalculationListResponseBody("2022")
+
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "reporting.frequency.title"),
+                  elementTextBySelector(bullet(1))(s"Opt out of quarterly reporting and report annually from the $nextStartYear to $nextEndYear tax year onwards")
+                )
+              }
+            }
+
+            "has generic link for opt out and tax year onward link for opt in" when {
+              "CY-1 is Quaterly, CY is Quaterly and CY+1 is Annual" in {
+                enable(ReportingFrequencyPage)
+                enable(OptOutFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
+                  dateService.getCurrentTaxYear,
+                  Voluntary,
+                  Voluntary,
+                  Annual
+                )
+
+                stubCalculationListResponseBody("2022")
+
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "reporting.frequency.title"),
+                  elementTextBySelector(bullet(1))("Opt out of quarterly reporting and report annually"),
+                  elementTextBySelector(bullet(2))(s"Opt in to quarterly reporting from the $nextStartYear to $nextEndYear tax year onwards")
+                )
+              }
+            }
+
+            "has tax year link for opt out and generic link for opt in" when {
+              "CY-1 is Quaterly, CY is Annual and CY+1 is Annual" in {
+                enable(ReportingFrequencyPage)
+                enable(OptOutFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
+                  dateService.getCurrentTaxYear,
+                  Voluntary,
+                  Annual,
+                  Annual
+                )
+
+                stubCalculationListResponseBody("2022")
+
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "reporting.frequency.title"),
+                  elementTextBySelector(bullet(1))(s"Opt out of quarterly reporting and report annually for the $previousStartYear to $previousEndYear tax year"),
+                  elementTextBySelector(bullet(2))(s"Opt in to quarterly reporting")
+                )
+              }
+            }
+          }
+
+          "render the error page" when {
+            "ReportingFrequencyPage feature switch is disabled" in {
+              disable(ReportingFrequencyPage)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+              stubCalculationListResponseBody("2022")
+              val result = buildGETMTDClient(path, additionalCookies).futureValue
+              result should have(
+                httpStatus(INTERNAL_SERVER_ERROR)
+              )
+              Jsoup.parse(result.body).title shouldBe "Sorry, there is a problem with the service - GOV.UK"
+
+            }
           }
         }
-
-        "CY is Annual and CY+1 is Annual" when {
-
-          "return page with OK - 200 with just generic link for opt in" in {
-
-            allFeatureSwitches.foreach(switch => disable(switch))
-            enable(ReportingFrequencyPage)
-            enable(OptOutFs)
-
-            AuthStub.stubAuthorised()
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
-            ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
-              dateService.getCurrentTaxYear,
-              Mandated,
-              Annual,
-              Annual
-            )
-
-            val res =
-              httpClient
-                .get(url"http://localhost:$port/report-quarterly/income-and-expenses/view/reporting-frequency")
-                .setHeader(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ clientDetailsWithConfirmation), "X-Session-ID" -> testSessionId)
-                .execute[HttpResponse]
-
-            res.futureValue.status shouldBe OK
-            Jsoup.parse(res.futureValue.body).title shouldBe "Your reporting frequency - Manage your Income Tax updates - GOV.UK"
-            Jsoup.parse(res.futureValue.body).body().select(bullet(1)).text() shouldBe "Opt in to quarterly reporting"
-          }
-        }
-
-        "CY is Quaterly and CY+1 is Annual" when {
-
-          "return page with OK - 200 with tax year link for opt out and onwards link for opt in" in {
-
-            allFeatureSwitches.foreach(switch => disable(switch))
-            enable(ReportingFrequencyPage)
-            enable(OptOutFs)
-
-            AuthStub.stubAuthorised()
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
-            ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
-              dateService.getCurrentTaxYear,
-              Mandated,
-              Voluntary,
-              Annual
-            )
-
-            val res =
-              httpClient
-                .get(url"http://localhost:$port/report-quarterly/income-and-expenses/view/reporting-frequency")
-                .setHeader(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ clientDetailsWithConfirmation), "X-Session-ID" -> testSessionId)
-                .execute[HttpResponse]
-
-            res.futureValue.status shouldBe OK
-            Jsoup.parse(res.futureValue.body).title shouldBe "Your reporting frequency - Manage your Income Tax updates - GOV.UK"
-            Jsoup.parse(res.futureValue.body).body().select(bullet(1)).text() shouldBe s"Opt out of quarterly reporting and report annually for the ${dateService.getCurrentTaxYear.startYear} to ${dateService.getCurrentTaxYear.endYear} tax year"
-            Jsoup.parse(res.futureValue.body).body().select(bullet(2)).text() shouldBe s"Opt in to quarterly reporting from the ${dateService.getCurrentTaxYear.nextYear.startYear} to ${dateService.getCurrentTaxYear.nextYear.endYear} tax year onwards"
-          }
-        }
-
-        "CY is Annual and CY+1 is Quaterly" when {
-
-          "return page with OK - 200 with tax year link for opt in and onwards link for opt out" in {
-
-            allFeatureSwitches.foreach(switch => disable(switch))
-            enable(ReportingFrequencyPage)
-            enable(OptOutFs)
-
-            AuthStub.stubAuthorised()
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
-            ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
-              dateService.getCurrentTaxYear,
-              Mandated,
-              Annual,
-              Voluntary
-            )
-
-            val res =
-              httpClient
-                .get(url"http://localhost:$port/report-quarterly/income-and-expenses/view/reporting-frequency")
-                .setHeader(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ clientDetailsWithConfirmation), "X-Session-ID" -> testSessionId)
-                .execute[HttpResponse]
-
-            res.futureValue.status shouldBe OK
-            Jsoup.parse(res.futureValue.body).title shouldBe "Your reporting frequency - Manage your Income Tax updates - GOV.UK"
-            Jsoup.parse(res.futureValue.body).body().select(bullet(1)).text() shouldBe s"Opt in to quarterly reporting for the ${dateService.getCurrentTaxYear.startYear} to ${dateService.getCurrentTaxYear.endYear} tax year"
-            Jsoup.parse(res.futureValue.body).body().select(bullet(2)).text() shouldBe s"Opt out of quarterly reporting and report annually from the ${dateService.getCurrentTaxYear.nextYear.startYear} to ${dateService.getCurrentTaxYear.nextYear.endYear} tax year onwards"
-          }
-        }
-
-        "CY is Annual and CY+1 is Quaterly Mandated" when {
-
-          "return page with OK - 200 with just tax year link for opt in" in {
-
-            allFeatureSwitches.foreach(switch => disable(switch))
-            enable(ReportingFrequencyPage)
-            enable(OptOutFs)
-
-            AuthStub.stubAuthorised()
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
-            ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
-              dateService.getCurrentTaxYear,
-              Mandated,
-              Annual,
-              Mandated
-            )
-
-            val res =
-              httpClient
-                .get(url"http://localhost:$port/report-quarterly/income-and-expenses/view/reporting-frequency")
-                .setHeader(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ clientDetailsWithConfirmation), "X-Session-ID" -> testSessionId)
-                .execute[HttpResponse]
-
-            res.futureValue.status shouldBe OK
-            Jsoup.parse(res.futureValue.body).title shouldBe "Your reporting frequency - Manage your Income Tax updates - GOV.UK"
-            Jsoup.parse(res.futureValue.body).body().select(bullet(1)).text() shouldBe s"Opt in to quarterly reporting for the ${dateService.getCurrentTaxYear.startYear} to ${dateService.getCurrentTaxYear.endYear} tax year"
-          }
-        }
-
-        "CY is Quaterly Mandated and CY+1 is Annual" when {
-
-          "return page with OK - 200 with just tax year onwards link for opt in" in {
-
-            allFeatureSwitches.foreach(switch => disable(switch))
-            enable(ReportingFrequencyPage)
-            enable(OptOutFs)
-
-            AuthStub.stubAuthorised()
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
-            ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
-              dateService.getCurrentTaxYear,
-              Mandated,
-              Mandated,
-              Annual
-            )
-
-            val res =
-              httpClient
-                .get(url"http://localhost:$port/report-quarterly/income-and-expenses/view/reporting-frequency")
-                .setHeader(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ clientDetailsWithConfirmation), "X-Session-ID" -> testSessionId)
-                .execute[HttpResponse]
-
-            res.futureValue.status shouldBe OK
-            Jsoup.parse(res.futureValue.body).title shouldBe "Your reporting frequency - Manage your Income Tax updates - GOV.UK"
-            Jsoup.parse(res.futureValue.body).body().select(bullet(1)).text() shouldBe s"Opt in to quarterly reporting from the ${dateService.getCurrentTaxYear.nextYear.startYear} to ${dateService.getCurrentTaxYear.nextYear.endYear} tax year onwards"
-          }
-        }
-
-        "CY is Quaterly Mandated and CY+1 is Quaterly" when {
-
-          "return page with OK - 200 with just tax year onwards link for opt out" in {
-
-            allFeatureSwitches.foreach(switch => disable(switch))
-            enable(ReportingFrequencyPage)
-            enable(OptOutFs)
-
-            AuthStub.stubAuthorised()
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
-            ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
-              dateService.getCurrentTaxYear,
-              Mandated,
-              Mandated,
-              Voluntary
-            )
-
-            val res =
-              httpClient
-                .get(url"http://localhost:$port/report-quarterly/income-and-expenses/view/reporting-frequency")
-                .setHeader(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ clientDetailsWithConfirmation), "X-Session-ID" -> testSessionId)
-                .execute[HttpResponse]
-
-            res.futureValue.status shouldBe OK
-            Jsoup.parse(res.futureValue.body).title shouldBe "Your reporting frequency - Manage your Income Tax updates - GOV.UK"
-            Jsoup.parse(res.futureValue.body).body().select(bullet(1)).text() shouldBe s"Opt out of quarterly reporting and report annually from the ${dateService.getCurrentTaxYear.nextYear.startYear} to ${dateService.getCurrentTaxYear.nextYear.endYear} tax year onwards"
-          }
-        }
-
-        "CY-1 is Quaterly, CY is Quaterly and CY+1 is Annual" when {
-
-          "return page with OK - 200 with generic link for opt out and tax year onward link for opt in" in {
-
-            allFeatureSwitches.foreach(switch => disable(switch))
-            enable(ReportingFrequencyPage)
-            enable(OptOutFs)
-
-            AuthStub.stubAuthorised()
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
-            ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
-              dateService.getCurrentTaxYear,
-              Voluntary,
-              Voluntary,
-              Annual
-            )
-
-            val res =
-              httpClient
-                .get(url"http://localhost:$port/report-quarterly/income-and-expenses/view/reporting-frequency")
-                .setHeader(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ clientDetailsWithConfirmation), "X-Session-ID" -> testSessionId)
-                .execute[HttpResponse]
-
-            res.futureValue.status shouldBe OK
-            Jsoup.parse(res.futureValue.body).title shouldBe "Your reporting frequency - Manage your Income Tax updates - GOV.UK"
-            Jsoup.parse(res.futureValue.body).body().select(bullet(1)).text() shouldBe s"Opt out of quarterly reporting and report annually"
-            Jsoup.parse(res.futureValue.body).body().select(bullet(2)).text() shouldBe s"Opt in to quarterly reporting from the ${dateService.getCurrentTaxYear.nextYear.startYear} to ${dateService.getCurrentTaxYear.nextYear.endYear} tax year onwards"
-          }
-        }
-
-        "CY-1 is Quaterly, CY is Annual and CY+1 is Annual" when {
-
-          "return page with OK - 200 with tax year link for opt out and generic link for opt in" in {
-
-            allFeatureSwitches.foreach(switch => disable(switch))
-            enable(ReportingFrequencyPage)
-            enable(OptOutFs)
-
-            AuthStub.stubAuthorised()
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
-            ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
-              dateService.getCurrentTaxYear,
-              Voluntary,
-              Annual,
-              Annual
-            )
-
-            val res =
-              httpClient
-                .get(url"http://localhost:$port/report-quarterly/income-and-expenses/view/reporting-frequency")
-                .setHeader(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ clientDetailsWithConfirmation), "X-Session-ID" -> testSessionId)
-                .execute[HttpResponse]
-
-            res.futureValue.status shouldBe OK
-            Jsoup.parse(res.futureValue.body).title shouldBe "Your reporting frequency - Manage your Income Tax updates - GOV.UK"
-            Jsoup.parse(res.futureValue.body).body().select(bullet(1)).text() shouldBe s"Opt out of quarterly reporting and report annually for the ${dateService.getCurrentTaxYear.previousYear.startYear} to ${dateService.getCurrentTaxYear.previousYear.endYear} tax year"
-            Jsoup.parse(res.futureValue.body).body().select(bullet(2)).text() shouldBe s"Opt in to quarterly reporting"
-          }
-        }
-      }
-    }
-
-    "ReportingFrequencyPage feature switch is disabled" when {
-
-      "the user is authorised" should {
-
-        "return error page, INTERNAL_SERVER_ERROR - 500" in {
-
-          AuthStub.stubAuthorised()
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
-
-          disable(ReportingFrequencyPage)
-
-          val res =
-            httpClient
-              .get(url"http://localhost:$port/report-quarterly/income-and-expenses/view/reporting-frequency")
-              .setHeader(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ clientDetailsWithConfirmation), "X-Session-ID" -> testSessionId)
-              .execute[HttpResponse]
-
-          res.futureValue.status shouldBe INTERNAL_SERVER_ERROR
-          Jsoup.parse(res.futureValue.body).title shouldBe "Sorry, there is a problem with the service - GOV.UK"
-        }
+        testAuthFailures(path, mtdUserRole)
       }
     }
   }

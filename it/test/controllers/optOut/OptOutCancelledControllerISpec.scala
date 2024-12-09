@@ -16,141 +16,112 @@
 
 package controllers.optOut
 
-import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
-import controllers.ControllerISpecBase
-import helpers.servicemocks.{AuthStub, CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
-import models.admin.FeatureSwitchName.allFeatureSwitches
+import controllers.ControllerISpecHelper
+import enums.{MTDIndividual, MTDUserRole}
+import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.itsaStatus.ITSAStatus
-import org.jsoup.Jsoup
-import play.api.http.HeaderNames
-import play.api.http.Status.{OK, INTERNAL_SERVER_ERROR}
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testNino, testSessionId}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants.businessAndPropertyResponseWoMigration
-import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.{HttpResponse, StringContextOps}
 
-class OptOutCancelledControllerISpec extends ControllerISpecBase with FeatureSwitching {
+class OptOutCancelledControllerISpec extends ControllerISpecHelper with FeatureSwitching {
 
   override val appConfig: FrontendAppConfig = testAppConfig
 
   lazy val httpClient: HttpClientV2 = app.injector.instanceOf(classOf[HttpClientV2])
 
-  override def beforeAll(): Unit = {
-    super.beforeAll()
-    startWiremock()
+  def getPath(mtdRole: MTDUserRole): String = {
+    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
+    pathStart + "/optout/cancelled"
   }
 
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    WireMock.reset()
-    cache.removeAll()
-  }
+  mtdAllRoles.foreach { case mtdUserRole =>
+    val path = getPath(mtdUserRole)
+    val additionalCookies = getAdditionalCookies(mtdUserRole)
+    s"GET $path" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          "render the choose tax year page" when {
+            "only single tax year is voluntary, CY-1 = Mandated, CY = Voluntary, CY+1 = Mandated" in {
+              val previousTaxYear = dateService.getCurrentTaxYearEnd - 1
+              stubAuthorised(mtdUserRole)
 
-  override def afterAll(): Unit = {
-    stopWiremock()
-    super.afterAll()
-  }
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
 
-  "GET - /report-quarterly/income-and-expenses/view/optout/cancelled" when {
+              CalculationListStub.stubGetLegacyCalculationList(testNino, previousTaxYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
 
-    "the user is authorised" when {
+              ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
+                taxYear = dateService.getCurrentTaxYear,
+                `itsaStatusCY-1` = ITSAStatus.Mandated,
+                itsaStatusCY = ITSAStatus.Voluntary,
+                `itsaStatusCY+1` = ITSAStatus.Mandated
+              )
 
-      "only single tax year is voluntary, CY-1 = Mandated, CY = Voluntary, CY+1 = Mandated" should {
+              val result = buildGETMTDClient(path, additionalCookies).futureValue
 
-        "return the OptOutCancelled page, OK - 200" in {
+              result should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, "optout.cancelled.title")
+              )
+            }
+          }
 
-          allFeatureSwitches.foreach(switch => disable(switch))
+          "render the error page" when {
 
-          val previousTaxYear = dateService.getCurrentTaxYearEnd - 1
+            "no tax year is voluntary, CY-1 = Mandated, CY = Mandated, CY+1 = Mandated" in {
+              val previousTaxYear = dateService.getCurrentTaxYearEnd - 1
 
-          AuthStub.stubAuthorised()
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
 
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+              CalculationListStub.stubGetLegacyCalculationList(testNino, previousTaxYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
 
-          CalculationListStub.stubGetLegacyCalculationList(testNino, previousTaxYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
-          
-          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
-            taxYear = dateService.getCurrentTaxYear,
-            `itsaStatusCY-1` = ITSAStatus.Mandated,
-            itsaStatusCY = ITSAStatus.Voluntary,
-            `itsaStatusCY+1` = ITSAStatus.Mandated
-          )
+              ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
+                taxYear = dateService.getCurrentTaxYear,
+                `itsaStatusCY-1` = ITSAStatus.Mandated,
+                itsaStatusCY = ITSAStatus.Mandated,
+                `itsaStatusCY+1` = ITSAStatus.Mandated
+              )
 
-          val res =
-            httpClient
-              .get(url"http://localhost:$port/report-quarterly/income-and-expenses/view/optout/cancelled")
-              .setHeader(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ clientDetailsWithConfirmation), "X-Session-ID" -> testSessionId)
-              .execute[HttpResponse]
+              val result = buildGETMTDClient(path, additionalCookies).futureValue
 
-          res.futureValue.status shouldBe OK
-          Jsoup.parse(res.futureValue.body).title shouldBe "Opt out cancelled - Manage your Income Tax updates - GOV.UK"
+              result should have(
+                httpStatus(INTERNAL_SERVER_ERROR),
+                pageTitleCustom("Sorry, there is a problem with the service - GOV.UK")
+              )
+            }
+
+            "multiple tax years are voluntary, CY-1 = Mandated, CY = Voluntary, CY+1 = Voluntary" in {
+
+              val previousTaxYear = dateService.getCurrentTaxYearEnd - 1
+
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+
+              CalculationListStub.stubGetLegacyCalculationList(testNino, previousTaxYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+
+              ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
+                taxYear = dateService.getCurrentTaxYear,
+                `itsaStatusCY-1` = ITSAStatus.Mandated,
+                itsaStatusCY = ITSAStatus.Voluntary,
+                `itsaStatusCY+1` = ITSAStatus.Voluntary
+              )
+
+              val result = buildGETMTDClient(path, additionalCookies).futureValue
+
+              result should have(
+                httpStatus(INTERNAL_SERVER_ERROR),
+                pageTitleCustom("Sorry, there is a problem with the service - GOV.UK")
+              )
+
+            }
+          }
         }
-      }
-
-      "no tax year is voluntary, CY-1 = Mandated, CY = Mandated, CY+1 = Mandated" should {
-
-        "return the Error template page, OK - 500" in {
-
-          allFeatureSwitches.foreach(switch => disable(switch))
-
-          val previousTaxYear = dateService.getCurrentTaxYearEnd - 1
-
-          AuthStub.stubAuthorised()
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
-
-          CalculationListStub.stubGetLegacyCalculationList(testNino, previousTaxYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
-
-          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
-            taxYear = dateService.getCurrentTaxYear,
-            `itsaStatusCY-1` = ITSAStatus.Mandated,
-            itsaStatusCY = ITSAStatus.Mandated,
-            `itsaStatusCY+1` = ITSAStatus.Mandated
-          )
-
-          val res =
-            httpClient
-              .get(url"http://localhost:$port/report-quarterly/income-and-expenses/view/optout/cancelled")
-              .setHeader(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ clientDetailsWithConfirmation), "X-Session-ID" -> testSessionId)
-              .execute[HttpResponse]
-
-          res.futureValue.status shouldBe INTERNAL_SERVER_ERROR
-          Jsoup.parse(res.futureValue.body).title shouldBe "Sorry, there is a problem with the service - GOV.UK"
-        }
-      }
-
-      "multiple tax years are voluntary, CY-1 = Mandated, CY = Voluntary, CY+1 = Voluntary" should {
-
-        "return the Error template page, OK - 500" in {
-
-          allFeatureSwitches.foreach(switch => disable(switch))
-
-          val previousTaxYear = dateService.getCurrentTaxYearEnd - 1
-
-          AuthStub.stubAuthorised()
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
-
-          CalculationListStub.stubGetLegacyCalculationList(testNino, previousTaxYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
-
-          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
-            taxYear = dateService.getCurrentTaxYear,
-            `itsaStatusCY-1` = ITSAStatus.Mandated,
-            itsaStatusCY = ITSAStatus.Voluntary,
-            `itsaStatusCY+1` = ITSAStatus.Voluntary
-          )
-
-          val res =
-            httpClient
-              .get(url"http://localhost:$port/report-quarterly/income-and-expenses/view/optout/cancelled")
-              .setHeader(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ clientDetailsWithConfirmation), "X-Session-ID" -> testSessionId)
-              .execute[HttpResponse]
-
-          res.futureValue.status shouldBe INTERNAL_SERVER_ERROR
-          Jsoup.parse(res.futureValue.body).title shouldBe "Sorry, there is a problem with the service - GOV.UK"
-        }
+        testAuthFailures(path, mtdUserRole)
       }
     }
   }

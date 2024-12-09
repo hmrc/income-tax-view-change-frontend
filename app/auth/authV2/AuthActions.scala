@@ -32,8 +32,7 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
                             val agentHasClientDetails: AgentHasClientDetails,
                             val agentHasConfirmedClientAction: AgentHasConfirmedClientAction,
                             val agentIsPrimaryAction: AgentIsPrimaryAction,
-                            val asMtdUser: AsMtdUser,
-                            val retrieveBtaNavBar: NavBarRetrievalAction,
+                            val retrieveNavBar: NavBarRetrievalAction,
                             val retrieveNinoWithIncomeSources: IncomeSourceRetrievalAction,
                             val retrieveClientData: RetrieveClientData,
                             val retrieveFeatureSwitches: FeatureSwitchRetrievalAction) {
@@ -43,10 +42,10 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
       authoriseAndRetrieveIndividual andThen
       retrieveNinoWithIncomeSources andThen
       retrieveFeatureSwitches andThen
-      retrieveBtaNavBar
+      retrieveNavBar
   }
 
-  def asAgent(arnRequired: Boolean = true): ActionBuilder[AgentUser, AnyContent] = checkSessionTimeout andThen authoriseAndRetrieveAgent.authorise(arnRequired)
+  def asAgent(arnRequired: Boolean = true): ActionBuilder[AuthorisedUser, AnyContent] = checkSessionTimeout andThen authoriseAndRetrieveAgent.authorise(arnRequired)
 
   def asIndividualOrAgent(isAgent: Boolean): ActionBuilder[MtdItUser, AnyContent] = {
     if (isAgent) asMTDAgentWithConfirmedClient
@@ -81,7 +80,7 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
       retrieveFeatureSwitches
   }
 
-  def asMDTIndividualOrAgentWithClient(isAgent: Boolean): ActionBuilder[MtdItUser, AnyContent] = {
+  def asMTDIndividualOrAgentWithClient(isAgent: Boolean): ActionBuilder[MtdItUser, AnyContent] = {
     if(isAgent) {
       asMTDAgentWithConfirmedClient
     } else {
@@ -89,12 +88,16 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
     }
   }
 
-  def asMDTIndividualOrPrimaryAgentWithClient(isAgent: Boolean): ActionBuilder[MtdItUser, AnyContent] = {
+  def asMTDIndividualOrPrimaryAgentWithClient(isAgent: Boolean): ActionBuilder[MtdItUser, AnyContent] = {
     if(isAgent) {
       asMTDPrimaryAgent
     } else {
       asMTDIndividual
     }
+  }
+
+  def asAuthorisedUser: ActionBuilder[AuthorisedUser, AnyContent] = {
+    checkSessionTimeout andThen authoriseAndRetrieve
   }
 }
 

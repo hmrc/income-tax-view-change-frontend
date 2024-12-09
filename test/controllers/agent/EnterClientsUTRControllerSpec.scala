@@ -68,7 +68,6 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
     "the user does not have an agent reference number" should {
       "redirect them to the error page" in {
         setupMockAgentAuthException(InsufficientEnrolments())
-        mockShowOkTechnicalDifficulties()
 
         val result = testEnterClientsUTRController.show()(fakeRequestWithActiveSession)
 

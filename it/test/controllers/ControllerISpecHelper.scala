@@ -16,20 +16,90 @@
 
 package controllers
 
+import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import helpers.ComponentSpecBase
-import helpers.servicemocks.MTDIndividualAuthStub
+import helpers.servicemocks.BusinessDetailsStub.stubGetBusinessDetails
+import helpers.servicemocks.CitizenDetailsStub.stubGetCitizenDetails
+import helpers.servicemocks._
 import play.api.http.Status.SEE_OTHER
+import testConstants.BaseIntegrationTestConstants.getAgentClientDetailsForCookie
 
 trait ControllerISpecHelper extends ComponentSpecBase {
 
   override val haveDefaultAuthMocks: Boolean = false
 
-  def testAuthFailuresForMTDIndividual(requestPath: String,
-                                  optBody: Option[Map[String, Seq[String]]] = None): Unit = {
+  val mtdAllRoles = List(MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent)
+
+  def homeUrl(mtdUserRole: MTDUserRole): String = mtdUserRole match {
+    case MTDIndividual => controllers.routes.HomeController.show().url
+    case _ => controllers.routes.HomeController.showAgent.url
+  }
+
+  def stubAuthorised(mtdRole: MTDUserRole): Unit = {
+    if(mtdRole != MTDIndividual) {
+      SessionDataStub.stubGetSessionDataResponseSuccess()
+      stubGetCitizenDetails()
+      stubGetBusinessDetails()()
+    }
+    getMTDAuthStub(mtdRole).stubAuthorised()
+  }
+
+  def getMTDAuthStub(mtdUserRole: MTDUserRole): MTDAuthStub = mtdUserRole match {
+    case MTDIndividual => MTDIndividualAuthStub
+    case MTDPrimaryAgent => MTDPrimaryAgentAuthStub
+    case _ => MTDSupportingAgentAuthStub
+  }
+
+  def getAdditionalCookies(mtdUserRole: MTDUserRole, requiresConfirmedClient: Boolean = true) = mtdUserRole match {
+    case MTDIndividual => Map.empty[String, String]
+    case MTDPrimaryAgent => getAgentClientDetailsForCookie(false, requiresConfirmedClient)
+    case _ => getAgentClientDetailsForCookie(true, requiresConfirmedClient)
+  }
+
+
+  def testNoClientDataFailure(requestPath: String, optBody: Option[Map[String, Seq[String]]] = None): Unit = {
+    "the user does not have client session data" should {
+      s"redirect ($SEE_OTHER) to ${controllers.agent.routes.EnterClientsUTRController.show.url}" in {
+        SessionDataStub.stubGetSessionDataResponseNotFound()
+        val result = buildMTDClient(requestPath, optBody = optBody).futureValue
+
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.agent.routes.EnterClientsUTRController.show.url)
+        )
+      }
+    }
+
+    "the user has client session data but citizen details not found" should {
+      s"redirect ($SEE_OTHER) to ${controllers.agent.routes.EnterClientsUTRController.show.url}" in {
+        SessionDataStub.stubGetSessionDataResponseSuccess()
+        stubGetCitizenDetails(status = 404)
+        val result = buildMTDClient(requestPath, optBody = optBody).futureValue
+
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.agent.routes.EnterClientsUTRController.show.url)
+        )
+      }
+    }
+  }
+
+  def testAuthFailures(requestPath: String,
+                                  mtdUserRole: MTDUserRole,
+                                  optBody: Option[Map[String, Seq[String]]] = None,
+                                  requiresConfirmedClient: Boolean = true): Unit = {
+    val mtdAuthStub = getMTDAuthStub(mtdUserRole)
+    val additionalCookies = getAdditionalCookies(mtdUserRole, requiresConfirmedClient)
+
     "does not have a valid session" should {
       s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" in {
-        MTDIndividualAuthStub.stubUnauthorised()
-        val result = buildMTDClient(requestPath, optBody = optBody).futureValue
+        if(mtdUserRole != MTDIndividual) {
+          SessionDataStub.stubGetSessionDataResponseSuccess()
+          stubGetCitizenDetails()
+          stubGetBusinessDetails()()
+        }
+        mtdAuthStub.stubUnauthorised()
+        val result = buildMTDClient(requestPath, additionalCookies, optBody).futureValue
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -40,8 +110,13 @@ trait ControllerISpecHelper extends ComponentSpecBase {
 
     "has an expired bearerToken" should {
       s"redirect ($SEE_OTHER) to ${controllers.timeout.routes.SessionTimeoutController.timeout.url}" in {
-        MTDIndividualAuthStub.stubBearerTokenExpired()
-        val result = buildMTDClient(requestPath, optBody = optBody).futureValue
+        if(mtdUserRole != MTDIndividual) {
+          SessionDataStub.stubGetSessionDataResponseSuccess()
+          stubGetCitizenDetails()
+          stubGetBusinessDetails()()
+        }
+        mtdAuthStub.stubBearerTokenExpired()
+        val result = buildMTDClient(requestPath, additionalCookies, optBody).futureValue
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -50,6 +125,15 @@ trait ControllerISpecHelper extends ComponentSpecBase {
       }
     }
 
+    mtdAuthStub match {
+      case authStub: MTDAgentAuthStub =>
+        testAgentAuthFailures(authStub, requestPath, additionalCookies, optBody, requiresConfirmedClient)
+      case _ => testIndividualAuthFailures(requestPath, optBody)
+    }
+  }
+
+  def testIndividualAuthFailures(requestPath: String,
+                                 optBody: Option[Map[String, Seq[String]]]): Unit = {
     "does not have HMRC-MTD-IT enrolment" should {
       s"redirect ($SEE_OTHER) to ${controllers.errors.routes.NotEnrolledController.show.url}" in {
         MTDIndividualAuthStub.stubInsufficientEnrolments()
@@ -86,4 +170,59 @@ trait ControllerISpecHelper extends ComponentSpecBase {
     }
   }
 
+  def testAgentAuthFailures(authStub: MTDAgentAuthStub,
+                            requestPath: String,
+                            additionalCookies: Map[String, String],
+                            optBody: Option[Map[String, Seq[String]]],
+                            requiresConfirmedClient: Boolean): Unit = {
+    "does not have arn enrolment" should {
+      s"redirect ($SEE_OTHER) to ${controllers.agent.errors.routes.AgentErrorController.show.url}" in {
+        SessionDataStub.stubGetSessionDataResponseSuccess()
+        stubGetCitizenDetails()
+        stubGetBusinessDetails()()
+
+        authStub.stubNoAgentEnrolmentError()
+        val result = buildMTDClient(requestPath, additionalCookies, optBody).futureValue
+
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.agent.errors.routes.AgentErrorController.show.url)
+        )
+      }
+    }
+
+    "does not have a valid delegated MTD enrolment" should {
+      s"redirect ($SEE_OTHER) to ${controllers.agent.routes.ClientRelationshipFailureController.show.url}" in {
+        SessionDataStub.stubGetSessionDataResponseSuccess()
+        stubGetCitizenDetails()
+        stubGetBusinessDetails()()
+        authStub.stubMissingDelegatedEnrolment()
+        val result = buildMTDClient(requestPath, additionalCookies, optBody).futureValue
+
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.agent.routes.ClientRelationshipFailureController.show.url)
+        )
+      }
+    }
+
+    "is not an agent" should {
+      "redirect to the home controller" in {
+        SessionDataStub.stubGetSessionDataResponseSuccess()
+        stubGetCitizenDetails()
+        stubGetBusinessDetails()()
+        authStub.stubNotAnAgent()
+
+        val result = buildMTDClient(requestPath, additionalCookies, optBody).futureValue
+
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.routes.HomeController.show().url)
+        )
+      }
+    }
+    if(requiresConfirmedClient) {
+      testNoClientDataFailure(requestPath, optBody)
+    }
+  }
 }

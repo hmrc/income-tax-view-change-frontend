@@ -16,105 +16,96 @@
 
 package controllers.optIn
 
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
+import enums.MTDIndividual
 import forms.optIn.ChooseTaxYearForm
-import mocks.controllers.predicates.MockAuthenticationPredicate
-import mocks.services.{MockOptInService, MockOptOutService}
+import mocks.auth.MockAuthActions
+import mocks.services.MockOptInService
 import models.incomeSourceDetails.TaxYear
+import play.api
+import play.api.Application
 import play.api.http.Status
-import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
+import services.optIn.OptInService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
-import testUtils.TestSupport
-import views.html.optIn.ChooseTaxYearView
 
-class ChooseYearControllerSpec extends TestSupport
-  with MockAuthenticationPredicate with MockOptOutService with MockOptInService {
+class ChooseYearControllerSpec extends MockAuthActions
+  with MockOptInService {
 
-  val controller = new ChooseYearController(
-    mockOptInService,
-    view = app.injector.instanceOf[ChooseTaxYearView], authorisedFunctions = mockAuthService, auth = testAuthenticator,
-  )(
-    appConfig = appConfig,
-    ec = ec,
-    itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
-    itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
-    mcc = app.injector.instanceOf[MessagesControllerComponents]
-  )
+  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+    .overrides(
+      api.inject.bind[OptInService].toInstance(mockOptInService)
+    ).build()
+
+  val testController = fakeApplication().injector.instanceOf[ChooseYearController]
 
   val endTaxYear = 2023
   val taxYear2023 = TaxYear.forYearEnd(endTaxYear)
 
-  def tests(isAgent: Boolean): Unit = {
-    "show page" should {
-      s"return result with $OK status" in {
-        setupMockAuthorisationSuccess(isAgent)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        mockAvailableOptInTaxYear(List(taxYear2023, taxYear2023.nextYear))
-        mockFetchSavedChosenTaxYear(Some(taxYear2023))
+  mtdAllRoles.foreach { mtdRole =>
+    val isAgent = mtdRole != MTDIndividual
+    s"show(isAgent = $isAgent)" when {
+      val action = testController.show(isAgent)
+      val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
+      s"the user is authenticated as a $mtdRole" should {
+        "render the check your answers page" in {
+          setupMockSuccess(mtdRole)
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          mockAvailableOptInTaxYear(List(taxYear2023, taxYear2023.nextYear))
+          mockFetchSavedChosenTaxYear(Some(taxYear2023))
 
-        val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
-        val result = controller.show(isAgent).apply(requestGET)
-        status(result) shouldBe Status.OK
+          val result = action(fakeRequest)
+          status(result) shouldBe Status.OK
+        }
       }
+      testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
     }
 
-    "submit page" when {
-
-      val requestPOST = if (isAgent) fakePostRequestConfirmedClient() else fakePostRequestWithNinoAndOrigin("PTA")
-      val requestPOSTWithChoice = requestPOST.withFormUrlEncodedBody(
-        ChooseTaxYearForm.choiceField -> taxYear2023.toString
-      )
-
-      "with selection made" should {
-        s"return result with $SEE_OTHER status" in {
-
-          setupMockAuthorisationSuccess(isAgent)
+    s"submit(isAgent = $isAgent)" when {
+      val action = testController.submit(isAgent)
+      val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
+      s"the user is authenticated as a $mtdRole" should {
+        "redirect to Check Your Answers" in {
+          setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
           mockAvailableOptInTaxYear(List(taxYear2023, taxYear2023.nextYear))
           mockSaveIntent(taxYear2023)
+          val result = action(fakeRequest.withFormUrlEncodedBody(
+            ChooseTaxYearForm.choiceField -> taxYear2023.toString
+          ))
 
-          val result = controller.submit(isAgent).apply(requestPOSTWithChoice)
           status(result) shouldBe Status.SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.optIn.routes.CheckYourAnswersController.show(isAgent).url)
         }
-      }
 
-      "without selection made" should {
-        s"return result with $BAD_REQUEST status" in {
-          setupMockAuthorisationSuccess(isAgent)
-          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-          mockAvailableOptInTaxYear(List(taxYear2023, taxYear2023.nextYear))
-          mockSaveIntent(taxYear2023)
-          val requestPOST = if (isAgent) fakePostRequestConfirmedClient() else fakePostRequestWithNinoAndOrigin("PTA")
-          val requestPOSTWithChoice = requestPOST.withFormUrlEncodedBody(
-            ChooseTaxYearForm.choiceField -> ""
-          )
+        "return a BadRequest" when {
+          "the form is invalid" in {
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            mockAvailableOptInTaxYear(List(taxYear2023, taxYear2023.nextYear))
+            mockSaveIntent(taxYear2023)
+            val result = action(fakeRequest.withFormUrlEncodedBody(
+              ChooseTaxYearForm.choiceField -> ""
+            ))
 
-          val result = controller.submit(isAgent).apply(requestPOSTWithChoice)
-          status(result) shouldBe Status.BAD_REQUEST
+            status(result) shouldBe Status.BAD_REQUEST
+          }
         }
-      }
 
-      "failed save intent" should {
-        s"return result with $INTERNAL_SERVER_ERROR status" in {
-          setupMockAuthorisationSuccess(isAgent)
-          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-          mockAvailableOptInTaxYear(List(taxYear2023, taxYear2023.nextYear))
-          mockSaveIntent(taxYear2023, isSuccessful = false)
+        s"render the error page" when {
+          "failed save intent" in {
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            mockAvailableOptInTaxYear(List(taxYear2023, taxYear2023.nextYear))
+            mockSaveIntent(taxYear2023, isSuccessful = false)
 
-          val result = controller.submit(isAgent).apply(requestPOSTWithChoice)
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            val result = action(fakeRequest.withFormUrlEncodedBody(
+              ChooseTaxYearForm.choiceField -> taxYear2023.toString
+            ))
+            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          }
         }
+        testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
       }
     }
   }
-
-  "OptInChooseYearController - Individual" when {
-    tests(isAgent = false)
-  }
-
-  "OptInChooseYearController - Agent" when {
-    tests(isAgent = true)
-  }
-
 }

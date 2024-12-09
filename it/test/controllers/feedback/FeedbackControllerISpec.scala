@@ -16,117 +16,114 @@
 
 package controllers.feedback
 
-import helpers.servicemocks.IncomeTaxViewChangeStub
-import helpers.{ComponentSpecBase, FeedbackConnectorStub}
+import controllers.ControllerISpecHelper
+import enums.MTDIndividual
+import helpers.FeedbackConnectorStub
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import testConstants.BaseIntegrationTestConstants.testMtditid
-import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
 
-class FeedbackControllerISpec extends ComponentSpecBase {
+class FeedbackControllerISpec extends ControllerISpecHelper {
 
-  "calling GET /report-quarterly/income-and-expenses/view/feedback" should {
-    "render the Feedback page" when {
-      "User is authorised" in {
-
-        isAuthorisedUser(authorised = true)
-
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-
-        When(s"I call GET /report-quarterly/income-and-expenses/view/feedback")
-        val res: WSResponse = IncomeTaxViewChangeFrontendManageBusinesses.getFeedbackPage
-
-        res should have(
-          httpStatus(OK),
-          pageTitleIndividual("feedback.heading")
-        )
-      }
-    }
+  def getPath(isAgent: Boolean, isThankyou: Boolean = false): String = {
+    val pathStart = if (isAgent) "/agents" else ""
+    val pathEnd = if(isThankyou) "/thankyou" else "/feedback"
+    pathStart + pathEnd
   }
 
-  "calling POST to submit feedback form" should {
-    "return OK and redirect to thankyou page" when {
-      "user is authorised and all fields filled in" in {
+  mtdAllRoles.foreach { case mtdUserRole =>
+    val isAgent = mtdUserRole != MTDIndividual
+    val feedbackPath = getPath(isAgent)
+    val thankyouPath = getPath(isAgent, true)
+    val authStub = getMTDAuthStub(mtdUserRole)
 
-        isAuthorisedUser(authorised = true)
-        stubUserDetails()
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-        FeedbackConnectorStub.stubPostFeedback(OK)
+    s"calling GET $feedbackPath" should {
+      "render the Feedback page" when {
+        s"User is an authorised $mtdUserRole" in {
+          authStub.stubAuthorisedWhenNoChecks()
+          val result = buildGETMTDClient(feedbackPath, Map.empty).futureValue
 
-
-        val formData: Map[String, Seq[String]] = {
-          Map(
-            "feedback-rating" -> Seq("Test Business"),
-            "feedback-name" -> Seq("Albert Einstein"),
-            "feedback-email" -> Seq("alberteinstein@gmail.com"),
-            "feedback-comments" -> Seq("MCXSIMMKZC"),
-            "csrfToken" -> Seq("mdkdmskd"),
-            "referrer" -> Seq("MCXSIMMKZC")
+          result should have(
+            httpStatus(OK),
+            pageTitle(mtdUserRole, "feedback.heading")
           )
         }
-
-        When(s"I call POST /report-quarterly/income-and-expenses/view/feedback")
-        val res: WSResponse = IncomeTaxViewChangeFrontendManageBusinesses.post("/feedback")(formData)
-
-        res should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.feedback.routes.FeedbackController.thankYou.url)
-        )
-
       }
     }
-  }
 
-  "calling POST to submit feedback form" should {
-    "return an error" when {
-      "missing data" in {
+    s"POST $feedbackPath" should {
+      "redirect to thankyou page" when {
+        s"user is an authorised $mtdUserRole and all fields filled in" in {
+          authStub.stubAuthorisedWhenNoChecks()
+          FeedbackConnectorStub.stubPostFeedback(OK)
 
-        isAuthorisedUser(authorised = true)
-        stubUserDetails()
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-        FeedbackConnectorStub.stubPostFeedback(OK)
+          val formData: Map[String, Seq[String]] = {
+            Map(
+              "feedback-rating" -> Seq("Test Business"),
+              "feedback-name" -> Seq("Albert Einstein"),
+              "feedback-email" -> Seq("alberteinstein@gmail.com"),
+              "feedback-comments" -> Seq("MCXSIMMKZC"),
+              "csrfToken" -> Seq("mdkdmskd"),
+              "referrer" -> Seq("MCXSIMMKZC")
+            )
+          }
 
-        When("Full name is missing")
-        val formData: Map[String, Seq[String]] = {
-          Map(
-                "feedback-rating" -> Seq("Test Business"),
-                "feedback-email" -> Seq("alberteinstein@gmail.com"),
-                "feedback-comments" -> Seq("MCXSIMMKZC"),
-                "csrfToken" -> Seq(""),
-                "referrer" -> Seq("MCXSIMMKZC")
+          val res = buildPOSTMTDPostClient(feedbackPath, Map.empty, formData).futureValue
+
+          val expectedRedirectLocation = if (isAgent) {
+            controllers.feedback.routes.FeedbackController.thankYouAgent.url
+          } else {
+            controllers.feedback.routes.FeedbackController.thankYou.url
+          }
+
+          res should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(expectedRedirectLocation)
           )
         }
+      }
 
-        When(s"I call POST /report-quarterly/income-and-expenses/view/feedback")
-        val res: WSResponse = IncomeTaxViewChangeFrontendManageBusinesses.post("/feedback")(formData)
+      "return an error" when {
+        s"user is an authorised $mtdUserRole and missing form data" in {
+          authStub.stubAuthorisedWhenNoChecks()
 
-        res should have(
-          httpStatus(BAD_REQUEST),
-          pageTitleIndividual("feedback.heading", isInvalidInput = true)
-        )
+          FeedbackConnectorStub.stubPostFeedback(OK)
+
+          When("Full name is missing")
+          val formData: Map[String, Seq[String]] = {
+            Map(
+              "feedback-rating" -> Seq("Test Business"),
+              "feedback-email" -> Seq("alberteinstein@gmail.com"),
+              "feedback-comments" -> Seq("MCXSIMMKZC"),
+              "csrfToken" -> Seq(""),
+              "referrer" -> Seq("MCXSIMMKZC")
+            )
+          }
+
+          val res = buildPOSTMTDPostClient(feedbackPath, Map.empty, formData).futureValue
+
+          res should have(
+            httpStatus(BAD_REQUEST),
+            pageTitle(mtdUserRole, "feedback.heading", isInvalidInput = true)
+          )
+        }
+      }
+    }
+
+    s"GET $thankyouPath" should {
+      "render the Thankyou page" when {
+        s"user is an authorised $mtdUserRole" in {
+          authStub.stubAuthorisedWhenNoChecks()
+          FeedbackConnectorStub.stubPostThankyou(OK)
+
+          val res: WSResponse = buildGETMTDClient(thankyouPath, Map.empty).futureValue
+
+          res should have(
+            httpStatus(OK),
+            pageTitle(mtdUserRole, "feedback.thankYou")
+          )
+        }
       }
     }
   }
-
-  "calling GET /report-quarterly/income-and-expenses/view/feedback" should {
-    "render the Thankyou page" when {
-      "form was completed" in {
-
-        isAuthorisedUser(authorised = true)
-        stubUserDetails()
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-        FeedbackConnectorStub.stubPostThankyou(OK)
-
-        When(s"I call POST /report-quarterly/income-and-expenses/view/thankyou")
-        val res: WSResponse = IncomeTaxViewChangeFrontendManageBusinesses.getThankyouPage
-
-        res should have(
-          httpStatus(OK),
-          pageTitleIndividual("feedback.thankYou")
-        )
-      }
-    }
-  }
-
 }
 

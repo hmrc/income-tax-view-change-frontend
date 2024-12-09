@@ -16,96 +16,91 @@
 
 package controllers.optIn
 
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import mocks.controllers.predicates.MockAuthenticationPredicate
-import mocks.services.{MockDateService, MockOptInService}
+import enums.MTDIndividual
+import mocks.auth.MockAuthActions
+import mocks.services.MockOptInService
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
+import play.api
+import play.api.Application
 import play.api.http.Status
-import play.api.http.Status.OK
-import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
+import services.optIn.OptInService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
-import testUtils.TestSupport
-import views.html.optIn.BeforeYouStart
 
 import scala.concurrent.Future
 
-class BeforeYouStartControllerSpec extends TestSupport
-  with MockAuthenticationPredicate with MockOptInService with MockDateService {
+class BeforeYouStartControllerSpec extends MockAuthActions with MockOptInService {
 
-  val beforeYouStartController = new BeforeYouStartController(
-    beforeYouStart = app.injector.instanceOf[BeforeYouStart],
-    optInService = mockOptInService
-  )(
-    appConfig = appConfig,
-    ec = ec,
-    auth = testAuthenticator,
-    authorisedFunctions = mockAuthService,
-    itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
-    itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
-    mcc = app.injector.instanceOf[MessagesControllerComponents]
-  )
+  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+    .overrides(
+      api.inject.bind[OptInService].toInstance(mockOptInService)
+    ).build()
+
+  val testController = fakeApplication().injector.instanceOf[BeforeYouStartController]
 
   val endTaxYear = 2025
   val taxYear2024: TaxYear = TaxYear.forYearEnd(endTaxYear - 1)
   val taxYear2025: TaxYear = TaxYear.forYearEnd(endTaxYear)
 
-  def show(isAgent: Boolean, redirectPageURL: String, availableOptInTaxYear: Seq[TaxYear]): Unit = {
-    "show page" should {
+  mtdAllRoles.foreach { mtdRole =>
+    val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
+    val isAgent = mtdRole != MTDIndividual
+    s"show(isAgent = $isAgent)" when {
+      val action = testController.show(isAgent)
+      s"the user is authenticated as a $mtdRole" should {
+        s"render the before you start page" that {
+          "contains a button to redirect to choose tax year" when {
+            "there are multiple optIn tax years" in {
+              setupMockSuccess(mtdRole)
+              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-      s"return result with $OK status" in {
-        setupMockAuthorisationSuccess(isAgent)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+              when(mockOptInService.availableOptInTaxYear()(any(), any(), any()))
+                .thenReturn(Future.successful(Seq(taxYear2024, taxYear2025)))
 
-        when(mockOptInService.availableOptInTaxYear()(any(), any(), any()))
-          .thenReturn(Future.successful(availableOptInTaxYear))
+              val buttonUrl = controllers.optIn.routes.ChooseYearController.show(isAgent).url
 
-        val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
-        val result = beforeYouStartController.show(isAgent).apply(requestGET)
-        val doc: Document = Jsoup.parse(contentAsString(result))
-        doc.getElementById("start-button").attr("href") shouldBe redirectPageURL
-        status(result) shouldBe Status.OK
-      }
+              val result = action(fakeRequest)
+              val doc: Document = Jsoup.parse(contentAsString(result))
+              doc.getElementById("start-button").attr("href") shouldBe buttonUrl
+              status(result) shouldBe Status.OK
+            }
+          }
 
-      s"return result with $INTERNAL_SERVER_ERROR status when exception is thrown" in {
-        setupMockAuthorisationSuccess(isAgent)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          "contains a button to redirect to confirm tax year page" when {
+            "there is one optIn tax year" in {
+              setupMockSuccess(mtdRole)
+              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        when(mockOptInService.availableOptInTaxYear()(any(), any(), any()))
-          .thenReturn(Future.failed(new Exception("Some error")))
+              when(mockOptInService.availableOptInTaxYear()(any(), any(), any()))
+                .thenReturn(Future.successful(Seq(taxYear2024)))
 
-        val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
-        val result = beforeYouStartController.show(isAgent).apply(requestGET)
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+              val buttonUrl = controllers.optIn.routes.ConfirmTaxYearController.show(isAgent).url
+
+              val result = action(fakeRequest)
+              val doc: Document = Jsoup.parse(contentAsString(result))
+              doc.getElementById("start-button").attr("href") shouldBe buttonUrl
+              status(result) shouldBe Status.OK
+            }
+          }
+        }
+        "render the error page" when {
+          "the call to get available optInTaxYear fails" in {
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+            when(mockOptInService.availableOptInTaxYear()(any(), any(), any()))
+              .thenReturn(Future.failed(new Exception("Some error")))
+
+            val result = action(fakeRequest)
+            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          }
+        }
+        testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
       }
     }
-  }
-
-  "BeforeYouStartController with start button redirects to choose tax year page- Individual" when {
-    val chooseTaxYearPageURL = controllers.optIn.routes.ChooseYearController.show(false).url
-    val availableOptInTaxYear = Seq(taxYear2024, taxYear2025)
-    show(isAgent = false, redirectPageURL = chooseTaxYearPageURL, availableOptInTaxYear = availableOptInTaxYear)
-  }
-
-  "BeforeYouStartController with start button redirects to confirm tax year page- Individual" when {
-    val confirmTaxYearPageURL = controllers.optIn.routes.ConfirmTaxYearController.show(false).url
-    val availableOptInTaxYear = Seq(taxYear2024)
-    show(isAgent = false, redirectPageURL = confirmTaxYearPageURL, availableOptInTaxYear = availableOptInTaxYear)
-  }
-
-  "BeforeYouStartController with start button redirects to choose tax year page- Agent" when {
-    val chooseTaxYearPageURL = controllers.optIn.routes.ChooseYearController.show(true).url
-    val availableOptInTaxYear = Seq(taxYear2024, taxYear2025)
-    show(isAgent = true, redirectPageURL = chooseTaxYearPageURL, availableOptInTaxYear = availableOptInTaxYear)
-  }
-
-  "BeforeYouStartController with start button redirects to confirm tax year page- Agent" when {
-    val confirmTaxYearPageURL = controllers.optIn.routes.ConfirmTaxYearController.show(true).url
-    val availableOptInTaxYear = Seq(taxYear2024)
-    show(isAgent = true, redirectPageURL = confirmTaxYearPageURL, availableOptInTaxYear = availableOptInTaxYear)
   }
 }

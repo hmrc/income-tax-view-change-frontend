@@ -19,12 +19,13 @@ package controllers.incomeSources.cease
 import audit.models.CeaseIncomeSourceAuditModel
 import auth.MtdItUser
 import controllers.ControllerISpecHelper
-import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.Cease
-import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub, MTDIndividualAuthStub}
+import enums.{MTDIndividual, MTDUserRole}
+import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.admin.{IncomeSourcesFs, NavBarFs}
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.{CeaseIncomeSourceData, UIJourneySessionData}
+import models.incomeSourceDetails.{CeaseIncomeSourceData, IncomeSourceDetailsModel, UIJourneySessionData}
 import models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
@@ -33,7 +34,7 @@ import play.api.test.Helpers._
 import services.SessionService
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
-import uk.gov.hmrc.auth.core.AffinityGroup.Individual
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 import java.time.LocalDate
 
@@ -46,296 +47,347 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
   val testBusinessName = "business"
   val timestamp = "2023-01-31T09:26:17Z"
 
-  val selfEmploymentPath = "/income-sources/cease/business-check-details"
-  val ukPropertyPath = "/income-sources/cease/uk-property-check-details"
-  val foreignPropertyPath = "/income-sources/cease/foreign-property-check-details"
+  def getExpectedFormAction(mtdUserRole: MTDUserRole, incomeSourceType: IncomeSourceType) = {
+    if(mtdUserRole == MTDIndividual) {
+      controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submit(incomeSourceType).url
+    } else {
+      controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(incomeSourceType).url
+    }
+  }
 
-  val formActionSE = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submit(SelfEmployment).url
+  def getExpectedRedirectUri(mtdUserRole: MTDUserRole, incomeSourceType: IncomeSourceType) = {
+    if(mtdUserRole == MTDIndividual) {
+      controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(incomeSourceType).url
+    } else {
+      controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(incomeSourceType).url
+    }
+  }
 
   val businessAddressLabel = messagesAPI("incomeSources.ceaseBusiness.checkDetails.businessAddress")
   val pageTitleMsgKey = messagesAPI("incomeSources.ceaseBusiness.checkDetails.heading")
   val unknown: String = messagesAPI("incomeSources.ceaseBusiness.checkDetails.unknown")
 
-  val redirectUriSE = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(SelfEmployment).url
-
-  val formActionUK = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submit(UkProperty).url
   val pageTitleMsgKeyUK = messagesAPI("incomeSources.ceaseUKProperty.checkDetails.heading")
-  val redirectUriUK = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(UkProperty).url
 
-  val formActionFP = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submit(ForeignProperty).url
-  val redirectUriFP = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(ForeignProperty).url
-
-  val testUser: MtdItUser[_] = MtdItUser(
-    testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
-    None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
-  )(FakeRequest())
+  def testUser(mtdUserRole: MTDUserRole, incomeSourceDetailsModel: IncomeSourceDetailsModel): MtdItUser[_] = {
+    val (affinityGroup, arn) = if(mtdUserRole == MTDIndividual) {
+      (Individual, None)
+    } else {
+      (Agent, Some("1"))
+    }
+    MtdItUser(
+      testMtditid, testNino, None, incomeSourceDetailsModel,
+      None, Some("1234567890"), Some("12345-credId"), Some(affinityGroup), arn
+    )(FakeRequest())
+  }
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     await(sessionService.deleteSession(Cease))
   }
 
-  s"GET $selfEmploymentPath" when {
-    "the user is authenticated, with a valid MTD enrolment" should {
-      "render the Cease Business Page" when {
-        "Income source is enabled" in {
-          enable(IncomeSourcesFs)
-          disable(NavBarFs)
-          MTDIndividualAuthStub.stubAuthorised()
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-            status = OK,
-            response = businessOnlyResponse
-          )
+  def getIncomeSourceDetailsResponse(incomeSourceType: IncomeSourceType) = {
+    incomeSourceType match {
+      case SelfEmployment => businessOnlyResponse
+      case UkProperty => ukPropertyOnlyResponse
+      case ForeignProperty => foreignPropertyOnlyResponse
+    }
+  }
 
-          await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
-            Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = None, journeyIsComplete = Some(false))))))
+  def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType): String = {
+    val pathStart = if(mtdRole == MTDIndividual) "/income-sources/cease" else "/agents/income-sources/cease"
+    incomeSourceType match {
+      case SelfEmployment => s"$pathStart/business-check-details"
+      case UkProperty => s"$pathStart/uk-property-check-details"
+      case ForeignProperty => s"$pathStart/foreign-property-check-details"
+    }
+  }
 
-          When(s"I call GET $selfEmploymentPath")
-          val result = buildGETMTDClient(selfEmploymentPath).futureValue
-          verifyIncomeSourceDetailsCall(testMtditid)
+  mtdAllRoles.foreach { mtdUserRole =>
+    val additionalCookies = getAdditionalCookies(mtdUserRole)
+    val pathStart = if (mtdUserRole == MTDIndividual) "" else "/agents"
+    val selfEmploymentPath = s"$pathStart/income-sources/cease/business-check-details"
+    val ukPropertyPath = s"$pathStart/income-sources/cease/uk-property-check-details"
+    val foreignPropertyPath = s"$pathStart/income-sources/cease/foreign-property-check-details"
+    s"calling GET ${selfEmploymentPath}" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          "render the Cease Business Details Page" when {
+            "income source is enabled" in {
+              enable(IncomeSourcesFs)
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-          result should have(
-            httpStatus(OK),
-            pageTitleIndividual(pageTitleMsgKey),
-            elementTextBySelectorList(".govuk-summary-list__key", "dt:nth-of-type(1)")(messagesAPI("incomeSources.ceaseBusiness.checkDetails.dateStopped")),
-            elementTextBySelectorList(".govuk-summary-list__value", "dd:nth-of-type(1)")(testLongEndDate2022),
-            elementTextByID("change")(changeLink),
+              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
+                Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = None, journeyIsComplete = Some(false))))))
 
-            elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(2) dt:nth-of-type(1)")(messagesAPI("incomeSources.ceaseBusiness.checkDetails.businessName")),
-            elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(2) dd:nth-of-type(1)")(testBusinessName),
-            elementAttributeBySelector("form", "action")(formActionSE)
-          )
-        }
-      }
-      "render the Cease Business Page with unknown address and title" when {
-        "Income source is enabled" in {
-          enable(IncomeSourcesFs)
-          disable(NavBarFs)
-          MTDIndividualAuthStub.stubAuthorised()
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponseWithUnknownAddressName)
+              When(s"I call GET ${selfEmploymentPath}")
+              val result = buildGETMTDClient(selfEmploymentPath, additionalCookies).futureValue
+              verifyIncomeSourceDetailsCall(testMtditid)
 
-          await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
-            Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = None, journeyIsComplete = Some(false))))))
+              result should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, pageTitleMsgKey),
+                elementTextBySelectorList(".govuk-summary-list__key", "dt:nth-of-type(1)")(messagesAPI("incomeSources.ceaseBusiness.checkDetails.dateStopped")),
+                elementTextBySelectorList(".govuk-summary-list__value", "dd:nth-of-type(1)")(testLongEndDate2022),
+                elementTextByID("change")(changeLink),
 
-          When(s"I call GET ${selfEmploymentPath}")
-          val result = buildGETMTDClient(selfEmploymentPath).futureValue
-          verifyIncomeSourceDetailsCall(testMtditid)
+                elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(2) dt:nth-of-type(1)")(messagesAPI("incomeSources.ceaseBusiness.checkDetails.businessName")),
+                elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(2) dd:nth-of-type(1)")(testBusinessName),
+                elementAttributeBySelector("form", "action")(getExpectedFormAction(mtdUserRole, SelfEmployment))
+              )
+            }
+          }
+          "render the Cease Business Page with unknown address and title and trade" when {
+            "income source is enabled" in {
+              enable(IncomeSourcesFs)
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponseWithUnknownAddressName)
 
-          result should have(
-            httpStatus(OK),
-            pageTitleIndividual(pageTitleMsgKey),
-            elementTextBySelectorList(".govuk-summary-list__key", "dt:nth-of-type(1)")(messagesAPI("incomeSources.ceaseBusiness.checkDetails.dateStopped")),
-            elementTextBySelectorList(".govuk-summary-list__value", "dd:nth-of-type(1)")(testLongEndDate2022),
-            elementTextByID("change")(changeLink),
+              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
+                Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = None, journeyIsComplete = Some(false))))))
 
-            elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(2) dt:nth-of-type(1)")(messagesAPI("incomeSources.ceaseBusiness.checkDetails.businessName")),
-            elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(2) dd:nth-of-type(1)")(unknown),
+              When(s"I call GET ${selfEmploymentPath}")
+              val result = buildGETMTDClient(selfEmploymentPath, additionalCookies).futureValue
+              verifyIncomeSourceDetailsCall(testMtditid)
 
-            elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(3) dt:nth-of-type(1)")(businessAddressLabel),
-            elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(3) dd:nth-of-type(1)")(unknown),
-            elementAttributeBySelector("form", "action")(formActionSE)
-          )
-        }
-      }
-      "redirect to Home Page" when {
-        "Income source is disabled" in {
-          disable(IncomeSourcesFs)
-          disable(NavBarFs)
-          MTDIndividualAuthStub.stubAuthorised()
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-            status = OK,
-            response = businessAndPropertyResponse
-          )
+              result should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, pageTitleMsgKey),
+                elementTextBySelectorList(".govuk-summary-list__key", "dt:nth-of-type(1)")(messagesAPI("incomeSources.ceaseBusiness.checkDetails.dateStopped")),
+                elementTextBySelectorList(".govuk-summary-list__value", "dd:nth-of-type(1)")(testLongEndDate2022),
+                elementTextByID("change")(changeLink),
 
-          await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
-            Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = None, journeyIsComplete = Some(false))))))
+                elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(2) dt:nth-of-type(1)")(messagesAPI("incomeSources.ceaseBusiness.checkDetails.businessName")),
+                elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(2) dd:nth-of-type(1)")(unknown),
 
-          When(s"I call GET ${selfEmploymentPath}")
-          val result = buildGETMTDClient(selfEmploymentPath).futureValue
-          verifyIncomeSourceDetailsCall(testMtditid)
+                elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(3) dt:nth-of-type(1)")(businessAddressLabel),
+                elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(3) dd:nth-of-type(1)")(unknown),
+                elementAttributeBySelector("form", "action")(getExpectedFormAction(mtdUserRole, SelfEmployment))
+              )
+            }
+          }
+          "redirect to Home Page" when {
+            "Income source is disabled" in {
+              disable(IncomeSourcesFs)
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                status = OK,
+                response = businessAndPropertyResponse
+              )
 
-          result should have(
-            httpStatus(SEE_OTHER),
-            redirectURI(controllers.routes.HomeController.show().url)
-          )
+              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
+                Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = None, journeyIsComplete = Some(false))))))
+
+              When(s"I call GET ${selfEmploymentPath}")
+              val result = buildGETMTDClient(selfEmploymentPath, additionalCookies).futureValue
+              verifyIncomeSourceDetailsCall(testMtditid)
+
+              result should have(
+                httpStatus(SEE_OTHER),
+                redirectURI(homeUrl(mtdUserRole))
+              )
+            }
+          }
+          testAuthFailures(selfEmploymentPath, mtdUserRole)
         }
       }
     }
-    testAuthFailuresForMTDIndividual(selfEmploymentPath)
-  }
-
-  s"GET $ukPropertyPath" when {
-    "the user is authenticated, with a valid MTD enrolment" should {
-      "render the Cease Business Page" when {
-        "Income source is enabled" in {
-          enable(IncomeSourcesFs)
-          disable(NavBarFs)
-          MTDIndividualAuthStub.stubAuthorised()
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
-
-          await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK", ceaseIncomeSourceData =
-            Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
-
-          When(s"I call GET $ukPropertyPath")
-          val result = buildGETMTDClient(ukPropertyPath).futureValue
-          verifyIncomeSourceDetailsCall(testMtditid)
-
-          result should have(
-            httpStatus(OK),
-            pageTitleIndividual(pageTitleMsgKeyUK),
-            elementTextBySelectorList(".govuk-summary-list__key", "dt:nth-of-type(1)")(messagesAPI("incomeSources.ceaseUKProperty.checkDetails.dateStopped")),
-            elementTextBySelectorList(".govuk-summary-list__value", "dd:nth-of-type(1)")(testLongEndDate2022),
-            elementTextByID("change")(changeLink),
-            elementAttributeBySelector("form", "action")(formActionUK)
-          )
-        }
-      }
-      "redirect to Home Page" when {
-        "Income source is disabled" in {
-          disable(IncomeSourcesFs)
-          disable(NavBarFs)
-          MTDIndividualAuthStub.stubAuthorised()
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
-
-          await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK", ceaseIncomeSourceData =
-            Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
 
 
-          When(s"I call GET $ukPropertyPath")
-          val result = buildGETMTDClient(ukPropertyPath).futureValue
-          verifyIncomeSourceDetailsCall(testMtditid)
+    s"calling GET ${ukPropertyPath}" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          "render the Cease UK Property Details Page" when {
+            "income source is enabled" in {
+              enable(IncomeSourcesFs)
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
-          result should have(
-            httpStatus(SEE_OTHER),
-            redirectURI(controllers.routes.HomeController.show().url)
-          )
-        }
-      }
-    }
-    testAuthFailuresForMTDIndividual(ukPropertyPath)
-  }
+              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK", ceaseIncomeSourceData =
+                Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
 
-  s"GET $foreignPropertyPath" when {
-    "the user is authenticated, with a valid MTD enrolment" should {
-      "render the Cease Business Page" when {
-        "Income source is enabled" in {
-          enable(IncomeSourcesFs)
-          disable(NavBarFs)
-          MTDIndividualAuthStub.stubAuthorised()
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
+              When(s"I call GET ${ukPropertyPath}")
+              val result = buildGETMTDClient(ukPropertyPath, additionalCookies).futureValue
+              verifyIncomeSourceDetailsCall(testMtditid)
 
-          await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP", ceaseIncomeSourceData =
-            Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
+              result should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, pageTitleMsgKeyUK),
+                elementTextBySelectorList(".govuk-summary-list__key", "dt:nth-of-type(1)")(messagesAPI("incomeSources.ceaseUKProperty.checkDetails.dateStopped")),
+                elementTextBySelectorList(".govuk-summary-list__value", "dd:nth-of-type(1)")(testLongEndDate2022),
+                elementTextByID("change")(changeLink),
+                elementAttributeBySelector("form", "action")(getExpectedFormAction(mtdUserRole, UkProperty))
+              )
+            }
+          }
+          "redirect to Home Page" when {
+            "Income source is disabled" in {
+              disable(IncomeSourcesFs)
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
-          When(s"I call GET $foreignPropertyPath")
-          val result = buildGETMTDClient(foreignPropertyPath).futureValue
-          verifyIncomeSourceDetailsCall(testMtditid)
+              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK", ceaseIncomeSourceData =
+                Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
 
-          result should have(
-            httpStatus(OK),
-            pageTitleIndividual(pageTitleMsgKeyUK),
-            elementTextBySelectorList(".govuk-summary-list__key", "dt:nth-of-type(1)")(messagesAPI("incomeSources.ceaseForeignProperty.checkDetails.dateStopped")),
-            elementTextBySelectorList(".govuk-summary-list__value", "dd:nth-of-type(1)")(testLongEndDate2022),
-            elementTextByID("change")(changeLink),
-            elementAttributeBySelector("form", "action")(formActionFP)
-          )
-        }
-      }
-      "redirect to Home Page" when {
-        "Income source is disabled" in {
-          disable(IncomeSourcesFs)
-          disable(NavBarFs)
-          MTDIndividualAuthStub.stubAuthorised()
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
-          await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP", ceaseIncomeSourceData =
-            Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
+              When(s"I call GET $ukPropertyPath")
+              val result = buildGETMTDClient(ukPropertyPath, additionalCookies).futureValue
+              verifyIncomeSourceDetailsCall(testMtditid)
 
-          When(s"I call GET $foreignPropertyPath")
-          val result = buildGETMTDClient(foreignPropertyPath).futureValue
-          verifyIncomeSourceDetailsCall(testMtditid)
-
-          result should have(
-            httpStatus(SEE_OTHER),
-            redirectURI(controllers.routes.HomeController.show().url)
-          )
+              result should have(
+                httpStatus(SEE_OTHER),
+                redirectURI(homeUrl(mtdUserRole))
+              )
+            }
+          }
+          testAuthFailures(ukPropertyPath, mtdUserRole)
         }
       }
     }
-    testAuthFailuresForMTDIndividual(foreignPropertyPath)
-  }
 
-  s"POST ${selfEmploymentPath}" should {
-    s"redirect to $redirectUriSE" when {
-      "User is authorised" in {
-        enable(IncomeSourcesFs)
-        disable(NavBarFs)
-        MTDIndividualAuthStub.stubAuthorised()
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-        IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+    s"calling GET ${foreignPropertyPath}" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          "render the Cease Foreign Property Details Page" when {
+            "income sources is enabled" in {
+              enable(IncomeSourcesFs)
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
-          Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = None, journeyIsComplete = Some(false))))))
+              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP", ceaseIncomeSourceData =
+                Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
 
-        val result = buildPOSTMTDPostClient(selfEmploymentPath, Map.empty, Map.empty).futureValue
+              When(s"I call GET ${foreignPropertyPath}")
+              val result = buildGETMTDClient(foreignPropertyPath, additionalCookies).futureValue
+              verifyIncomeSourceDetailsCall(testMtditid)
 
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(redirectUriSE),
-        )
+              result should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, pageTitleMsgKeyUK),
+                elementTextBySelectorList(".govuk-summary-list__key", "dt:nth-of-type(1)")(messagesAPI("incomeSources.ceaseForeignProperty.checkDetails.dateStopped")),
+                elementTextBySelectorList(".govuk-summary-list__value", "dd:nth-of-type(1)")(testLongEndDate2022),
+                elementTextByID("change")(changeLink),
+                elementAttributeBySelector("form", "action")(getExpectedFormAction(mtdUserRole, ForeignProperty))
+              )
+            }
+          }
+          "redirect to Home Page" when {
+            "Income source is disabled" in {
+              disable(IncomeSourcesFs)
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
-        AuditStub.verifyAuditContainsDetail(CeaseIncomeSourceAuditModel(SelfEmployment, testEndDate2022, mkIncomeSourceId(testSelfEmploymentId), None)(testUser, hc).detail)
+              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP", ceaseIncomeSourceData =
+                Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
+
+              When(s"I call GET $foreignPropertyPath")
+              val result = buildGETMTDClient(foreignPropertyPath, additionalCookies).futureValue
+              verifyIncomeSourceDetailsCall(testMtditid)
+
+              result should have(
+                httpStatus(SEE_OTHER),
+                redirectURI(homeUrl(mtdUserRole))
+              )
+            }
+          }
+          testAuthFailures(foreignPropertyPath, mtdUserRole)
+        }
       }
     }
-    testAuthFailuresForMTDIndividual(selfEmploymentPath)
-  }
 
-  s"calling POST ${ukPropertyPath}" should {
-    s"redirect to $redirectUriUK" when {
-      "User is authorised" in {
-        enable(IncomeSourcesFs)
-        disable(NavBarFs)
-        MTDIndividualAuthStub.stubAuthorised()
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
-        IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+    s"calling POST ${selfEmploymentPath}" when {
+      val redirectUrl = getExpectedRedirectUri(mtdUserRole, SelfEmployment)
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          s"redirect to $redirectUrl" when {
+            "User is authorised" in {
+              enable(IncomeSourcesFs)
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+              IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK", ceaseIncomeSourceData =
-          Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
+              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
+                Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = None, journeyIsComplete = Some(false))))))
 
-        val result = buildPOSTMTDPostClient(ukPropertyPath, Map.empty, Map.empty).futureValue
+              val result = buildPOSTMTDPostClient(selfEmploymentPath, additionalCookies, Map.empty).futureValue
 
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(redirectUriUK),
-        )
+              result should have(
+                httpStatus(SEE_OTHER),
+                redirectURI(redirectUrl),
+              )
 
-        AuditStub.verifyAuditContainsDetail(CeaseIncomeSourceAuditModel(UkProperty, testEndDate2022, mkIncomeSourceId(testPropertyIncomeId), None)(testUser, hc).detail)
+              AuditStub.verifyAuditContainsDetail(CeaseIncomeSourceAuditModel(SelfEmployment, testEndDate2022, mkIncomeSourceId(testSelfEmploymentId), None)(testUser(mtdUserRole, businessOnlyResponse), hc).detail)
+            }
+          }
+          testAuthFailures(selfEmploymentPath, mtdUserRole, optBody = Some(Map.empty))
+        }
       }
     }
-    testAuthFailuresForMTDIndividual(ukPropertyPath)
-  }
 
-  s"calling POST ${foreignPropertyPath}" should {
-    s"redirect to $redirectUriFP" when {
-      "User is authorised" in {
-        enable(IncomeSourcesFs)
-        disable(NavBarFs)
-        MTDIndividualAuthStub.stubAuthorised()
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
-        IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+    s"calling POST ${ukPropertyPath}" when {
+      val redirectUrl = getExpectedRedirectUri(mtdUserRole, UkProperty)
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          s"redirect to $redirectUrl" when {
+            "User is authorised" in {
+              enable(IncomeSourcesFs)
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
+              IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP", ceaseIncomeSourceData =
-          Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
+              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK", ceaseIncomeSourceData =
+                Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
 
-        val result = buildPOSTMTDPostClient(foreignPropertyPath, Map.empty, Map.empty).futureValue
+              val result = buildPOSTMTDPostClient(ukPropertyPath, additionalCookies, Map.empty).futureValue
 
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(redirectUriFP),
-        )
-        AuditStub.verifyAuditContainsDetail(CeaseIncomeSourceAuditModel(ForeignProperty, testEndDate2022, mkIncomeSourceId(testPropertyIncomeId), None)(testUser, hc).detail)
+              result should have(
+                httpStatus(SEE_OTHER),
+                redirectURI(redirectUrl),
+              )
+
+              AuditStub.verifyAuditContainsDetail(CeaseIncomeSourceAuditModel(UkProperty, testEndDate2022, mkIncomeSourceId(testPropertyIncomeId), None)(testUser(mtdUserRole, ukPropertyOnlyResponse), hc).detail)
+            }
+          }
+          testAuthFailures(ukPropertyPath, mtdUserRole, optBody = Some(Map.empty))
+        }
       }
     }
-    testAuthFailuresForMTDIndividual(foreignPropertyPath)
-  }
+
+    s"calling POST ${foreignPropertyPath}" when {
+      val redirectUrl = getExpectedRedirectUri(mtdUserRole, ForeignProperty)
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          s"redirect to $redirectUrl" in {
+              enable(IncomeSourcesFs)
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
+              IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+
+              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP", ceaseIncomeSourceData =
+                Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
+
+              val result = buildPOSTMTDPostClient(foreignPropertyPath, additionalCookies, Map.empty).futureValue
+
+              result should have(
+                httpStatus(SEE_OTHER),
+                redirectURI(redirectUrl),
+              )
+              AuditStub.verifyAuditContainsDetail(CeaseIncomeSourceAuditModel(ForeignProperty, testEndDate2022, mkIncomeSourceId(testPropertyIncomeId), None)(testUser(mtdUserRole, foreignPropertyOnlyResponse), hc).detail)
+            }
+          }
+          testAuthFailures(foreignPropertyPath, mtdUserRole, optBody = Some(Map.empty))
+        }
+      }
+    }
 }

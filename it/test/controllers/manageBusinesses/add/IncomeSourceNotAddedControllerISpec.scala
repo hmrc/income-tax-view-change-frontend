@@ -16,133 +16,79 @@
 
 package controllers.manageBusinesses.add
 
-import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import helpers.ComponentSpecBase
+import controllers.ControllerISpecHelper
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.IncomeSourcesFs
+import models.admin.{IncomeSourcesFs, NavBarFs}
 import play.api.http.Status.{OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.testMtditid
-import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
+import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, noPropertyOrBusinessResponse, ukPropertyOnlyResponse}
 
-class IncomeSourceNotAddedControllerISpec extends ComponentSpecBase {
-
-  private lazy val incomeSourceNotAddedController = controllers.manageBusinesses.add.routes.IncomeSourceNotAddedController
-
-  val selfEmploymentNotSavedErrorUrl: String = incomeSourceNotAddedController.show(incomeSourceType = SelfEmployment).url
-  val ukPropertyNotSavedErrorUrl: String = incomeSourceNotAddedController.show(incomeSourceType = UkProperty).url
-  val foreignPropertyNotSavedErrorUrl: String = incomeSourceNotAddedController.show(incomeSourceType = ForeignProperty).url
+class IncomeSourceNotAddedControllerISpec extends ControllerISpecHelper {
 
   val continueButtonText: String = messagesAPI("")
   val pageTitle: String = messagesAPI("standardError.heading")
 
-  s"calling GET $selfEmploymentNotSavedErrorUrl" should {
-    "render the self employment business not added error page" when {
-      "Income Sources FS is enabled" in {
-        enable(IncomeSourcesFs)
-
-        And("API 1771  returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-        val result = IncomeTaxViewChangeFrontendManageBusinesses
-          .get(s"/manage-your-businesses/add-sole-trader/error-business-not-added")
-
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual(pageTitle)
-        )
-      }
-    }
-    "Income Sources FS is disabled" in {
-      Given("Income Sources FS is enabled")
-      disable(IncomeSourcesFs)
-
-      And("API 1771  returns a success response")
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-      val result = IncomeTaxViewChangeFrontendManageBusinesses
-        .get(s"/manage-your-businesses/add-sole-trader/error-business-not-added")
-
-      verifyIncomeSourceDetailsCall(testMtditid)
-
-      result should have(
-        httpStatus(SEE_OTHER)
-      )
+  def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType): String = {
+    val pathStart = if(mtdRole == MTDIndividual) "/manage-your-businesses" else "/agents/manage-your-businesses"
+    incomeSourceType match {
+      case SelfEmployment => s"$pathStart/add-sole-trader/error-business-not-added"
+      case UkProperty => s"$pathStart/add-uk-property/error-uk-property-not-added"
+      case ForeignProperty => s"$pathStart/add-foreign-property/error-foreign-property-not-added"
     }
   }
 
-  s"calling GET $ukPropertyNotSavedErrorUrl" should {
-    "render the UK Property not added error page" when {
-      "Income Sources FS is enabled" in {
-        enable(IncomeSourcesFs)
-
-        And("API 1771  returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
-
-        val result = IncomeTaxViewChangeFrontendManageBusinesses
-          .get(s"/manage-your-businesses/add-uk-property/error-uk-property-not-added")
-
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual(pageTitle)
-        )
-      }
-    }
-    "Income Sources FS is disabled" in {
-      Given("Income Sources FS is enabled")
-      disable(IncomeSourcesFs)
-
-      And("API 1771  returns a success response")
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
-
-      val result = IncomeTaxViewChangeFrontendManageBusinesses
-        .get(s"/manage-your-businesses/add-uk-property/error-uk-property-not-added")
-
-      verifyIncomeSourceDetailsCall(testMtditid)
-
-      result should have(
-        httpStatus(SEE_OTHER)
-      )
+  def getIncomeSourceDetailsResponse(incomeSourceType: IncomeSourceType) = {
+    incomeSourceType match {
+      case SelfEmployment => businessOnlyResponse
+      case UkProperty => ukPropertyOnlyResponse
+      case ForeignProperty => noPropertyOrBusinessResponse
     }
   }
 
-  s"calling GET $foreignPropertyNotSavedErrorUrl" should {
-    "render the Foreign property not added error page" when {
-      "Income Sources FS is enabled" in {
-        enable(IncomeSourcesFs)
+  mtdAllRoles.foreach { case mtdUserRole =>
+    List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
+      val path = getPath(mtdUserRole, incomeSourceType)
+      val additionalCookies = getAdditionalCookies(mtdUserRole)
+      s"GET $path" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            "render the self employment business not added error page" when {
+              "Income Sources FS is enabled" in {
+                enable(IncomeSourcesFs)
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
-        And("API 1771  returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                verifyIncomeSourceDetailsCall(testMtditid)
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses
-          .get(s"/manage-your-businesses/add-foreign-property/error-foreign-property-not-added")
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole,pageTitle)
+                )
+              }
+            }
+            "redirect to home page" when {
+              "Income Sources FS is disabled" in {
+                disable(IncomeSourcesFs)
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-        verifyIncomeSourceDetailsCall(testMtditid)
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                verifyIncomeSourceDetailsCall(testMtditid)
 
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual(pageTitle)
-        )
+                result should have(
+                  httpStatus(SEE_OTHER)
+                )
+              }
+            }
+          }
+          testAuthFailures(path, mtdUserRole)
+        }
       }
-    }
-    "Income Sources FS is disabled" in {
-      Given("Income Sources FS is enabled")
-      disable(IncomeSourcesFs)
-
-      And("API 1771  returns a success response")
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
-
-      val result = IncomeTaxViewChangeFrontendManageBusinesses
-        .get(s"/manage-your-businesses/add-foreign-property/error-foreign-property-not-added")
-
-      verifyIncomeSourceDetailsCall(testMtditid)
-
-      result should have(
-        httpStatus(SEE_OTHER)
-      )
     }
   }
 }

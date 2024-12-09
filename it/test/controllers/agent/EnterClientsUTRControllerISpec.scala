@@ -498,8 +498,6 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
 
         stubPrimaryAuthorisedAgentUser(testMtdItId, true)
-
-        Then(s"I stub the session-data service call to return status $INTERNAL_SERVER_ERROR")
         stubPostSessionDataResponseFailure()
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some(validUTR))

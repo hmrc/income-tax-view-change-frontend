@@ -17,41 +17,40 @@
 package controllers.manageBusinesses.manage
 
 import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
+import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
-import enums.JourneyType.{IncomeSourceJourneyType, JourneyType, Manage}
+import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import exceptions.MissingSessionKey
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.ManageIncomeSourceData
 import play.api.Logger
+import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{SessionService, UpdateIncomeSourceService}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.IncomeSourcesUtils
 import views.html.manageBusinesses.manage.{ManageIncomeSources, ReportingMethodChangeError}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: ManageIncomeSources,
-                                                     val authorisedFunctions: AuthorisedFunctions,
+                                                     val authActions: AuthActions,
                                                      val updateIncomeSourceService: UpdateIncomeSourceService,
                                                      val reportingMethodChangeError: ReportingMethodChangeError,
                                                      val sessionService: SessionService,
-                                                     val auth: AuthenticatorPredicate)
-                                                    (implicit val ec: ExecutionContext,
                                                      implicit val itvcErrorHandler: ItvcErrorHandler,
-                                                     implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                                     implicit override val mcc: MessagesControllerComponents,
-                                                     implicit val appConfig: FrontendAppConfig) extends ClientConfirmedController
-  with FeatureSwitching with IncomeSourcesUtils {
+                                                     implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                                    (implicit val ec: ExecutionContext,
+                                                     val mcc: MessagesControllerComponents,
+                                                     implicit val appConfig: FrontendAppConfig) extends FrontendController(mcc)
+  with I18nSupport with IncomeSourcesUtils {
 
   def show(isAgent: Boolean,
            incomeSourceType: IncomeSourceType
-          ): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
+          ): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
     withIncomeSourcesFS {
       if (incomeSourceType == SelfEmployment) {
         sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, IncomeSourceJourneyType(Manage, incomeSourceType)).flatMap {
@@ -94,7 +93,8 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
 
   private def getManageIncomeSourceDetailsUrl(incomeSourceId: IncomeSourceId, isAgent: Boolean, incomeSourceType: IncomeSourceType): String = {
     (incomeSourceType match {
-      case SelfEmployment => routes.ManageIncomeSourceDetailsController.show(isAgent, incomeSourceType, Some(incomeSourceId.value))
+      case SelfEmployment =>
+        routes.ManageIncomeSourceDetailsController.show(isAgent, incomeSourceType, Some(incomeSourceId.value))
       case _ => routes.ManageIncomeSourceDetailsController.show(isAgent, incomeSourceType, None)
     }).url
   }

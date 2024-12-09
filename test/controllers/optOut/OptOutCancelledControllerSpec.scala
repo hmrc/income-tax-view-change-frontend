@@ -16,131 +16,109 @@
 
 package controllers.optOut
 
-import auth.FrontendAuthorisedFunctions
-import auth.authV2.actions._
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import mocks.auth.MockOldAuthActions
-import mocks.controllers.predicates.MockIncomeSourceDetailsPredicate
+import config.FrontendAppConfig
+import enums.MTDIndividual
+import mocks.auth.MockAuthActions
+import mocks.services.MockOptOutService
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
 import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, isA}
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.http.Status.{OK, INTERNAL_SERVER_ERROR}
-import play.api.mvc.MessagesControllerComponents
+import play.api
+import play.api.Application
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
 import services.optout.{OptOutProposition, OptOutService}
-import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testNino
 import testConstants.BusinessDetailsTestConstants.{business1, testMtdItId}
-import views.html.errorPages.templates.ErrorTemplate
 import views.html.optOut.OptOutCancelledView
 
 import scala.concurrent.Future
 
 
-class OptOutCancelledControllerSpec extends MockOldAuthActions with MockIncomeSourceDetailsPredicate with MockitoSugar {
+class OptOutCancelledControllerSpec extends MockAuthActions with MockOptOutService with MockitoSugar {
 
-  val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
-  val mockOptOutService: OptOutService = mock[OptOutService]
+  def config: Map[String, Object] = Map(
+    "feature-switches.read-from-mongo" -> "false"
+  )
 
-  val mockFrontendAuthorisedFunctions: FrontendAuthorisedFunctions = mock[FrontendAuthorisedFunctions]
-  val mockNonAgentItvcErrorHandler: ItvcErrorHandler = mock[ItvcErrorHandler]
-  val mockAgentItvcErrorHandler: AgentItvcErrorHandler = mock[AgentItvcErrorHandler]
-  val mockAuthoriseAndRetrieve: AuthoriseAndRetrieve = mock[AuthoriseAndRetrieve]
-
-  val optOutCancelledView: OptOutCancelledView = app.injector.instanceOf[OptOutCancelledView]
-  val errorTemplateView: ErrorTemplate = app.injector.instanceOf[ErrorTemplate]
-
-  val controller =
-    new OptOutCancelledController(
-      authorisedFunctions = mockFrontendAuthorisedFunctions,
-      auth = mockAuthActions,
-      optOutService = mockOptOutService,
-      view = optOutCancelledView,
-      errorTemplate = errorTemplateView
-    )(
-      appConfig = mockFrontendAppConfig,
-      mcc = app.injector.instanceOf[MessagesControllerComponents],
-      ec = ec,
-      itvcErrorHandler = mockNonAgentItvcErrorHandler,
-      itvcErrorHandlerAgent = mockAgentItvcErrorHandler
+  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+    .overrides(
+      api.inject.bind[OptOutService].toInstance(mockOptOutService)
     )
+    .configure(config)
+    .build()
 
+  val testController = fakeApplication().injector.instanceOf[OptOutCancelledController]
+  val optOutCancelledView = fakeApplication().injector.instanceOf[OptOutCancelledView]
 
-  "OptOutCancelledPageController" when {
+  mtdAllRoles.foreach { mtdRole =>
+    val isAgent = mtdRole != MTDIndividual
+    s"show(isAgent = $isAgent)" when {
+      val action = if (isAgent) testController.showAgent() else testController.show()
+      val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
+      s"the user is authenticated as a $mtdRole" should {
+        s"render the opt out cancelled page" in {
+          val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2017"), List(business1), Nil)
+          setupMockSuccess(mtdRole)
+          when(
+            mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
+          ).thenReturn(Future(singleBusinessIncome))
 
-    ".show()" should {
-
-      "show the OptOutCancelled view and return OK - 200" in {
-
-        disableAllSwitches()
-
-        val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2017"), List(business1), Nil)
-
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-
-        when(mockFrontendAppConfig.readFeatureSwitchesFromMongo).thenReturn(false)
-
-        when(
-          mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
-        ).thenReturn(Future(singleBusinessIncome))
-
-        when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(
-          Future(
-            OptOutProposition.createOptOutProposition(
-              currentYear = TaxYear(2024, 2025),
-              previousYearCrystallised = false,
-              previousYearItsaStatus = Mandated,
-              currentYearItsaStatus = Voluntary,
-              nextYearItsaStatus = Mandated
+          when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(
+            Future(
+              OptOutProposition.createOptOutProposition(
+                currentYear = TaxYear(2024, 2025),
+                previousYearCrystallised = false,
+                previousYearItsaStatus = Mandated,
+                currentYearItsaStatus = Voluntary,
+                nextYearItsaStatus = Mandated
+              )
             )
           )
-        )
 
-        val result = controller.show()(fakeRequestWithActiveSession)
+          val result = action(fakeRequest)
 
-        status(result) shouldBe OK
-        contentAsString(result) shouldBe
-          optOutCancelledView(
-            isAgent = false,
-            currentTaxYearStart = "2024",
-            currentTaxYearEnd = "2025"
-          ).toString
-      }
+          status(result) shouldBe OK
+          contentAsString(result) shouldBe
+            optOutCancelledView(
+              isAgent = isAgent,
+              currentTaxYearStart = "2024",
+              currentTaxYearEnd = "2025"
+            ).toString
+        }
 
-      "show the Error Template view and return Internal Server Error - 500" in {
+        "show the Error Template view" when {
+          "and return Internal Server Error - 500" in {
+            val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2017"), List(business1), Nil)
 
-        disableAllSwitches()
+            setupMockSuccess(mtdRole)
 
-        val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2017"), List(business1), Nil)
+            when(
+              mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
+            ).thenReturn(Future(singleBusinessIncome))
 
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-
-        when(mockFrontendAppConfig.readFeatureSwitchesFromMongo).thenReturn(false)
-
-        when(
-          mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
-        ).thenReturn(Future(singleBusinessIncome))
-
-        when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(
-          Future(
-            OptOutProposition.createOptOutProposition(
-              currentYear = TaxYear(2024, 2025),
-              previousYearCrystallised = false,
-              previousYearItsaStatus = Mandated,
-              currentYearItsaStatus = Voluntary,
-              nextYearItsaStatus = Voluntary
+            when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(
+              Future(
+                OptOutProposition.createOptOutProposition(
+                  currentYear = TaxYear(2024, 2025),
+                  previousYearCrystallised = false,
+                  previousYearItsaStatus = Mandated,
+                  currentYearItsaStatus = Voluntary,
+                  nextYearItsaStatus = Voluntary
+                )
+              )
             )
-          )
-        )
+            val result = action(fakeRequest)
 
-        val result = controller.show()(fakeRequestWithActiveSession)
-
-        status(result) shouldBe INTERNAL_SERVER_ERROR
-        contentAsString(result).contains("Sorry, there is a problem with the service") shouldBe true
+            status(result) shouldBe INTERNAL_SERVER_ERROR
+            contentAsString(result).contains("Sorry, there is a problem with the service") shouldBe true
+          }
+        }
       }
+      testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
     }
   }
 }

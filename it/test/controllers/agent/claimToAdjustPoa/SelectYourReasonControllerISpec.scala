@@ -18,7 +18,9 @@ package controllers.agent.claimToAdjustPoa
 
 import forms.adjustPoa.SelectYourReasonFormProvider
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDAgentAuthStub}
+import helpers.servicemocks.BusinessDetailsStub.stubGetBusinessDetails
+import helpers.servicemocks.CitizenDetailsStub.stubGetCitizenDetails
+import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDPrimaryAgentAuthStub, SessionDataStub}
 import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.{Increase, MainIncomeLower, PoaAmendmentData, SelectYourReason}
 import models.core.NormalMode
@@ -45,7 +47,10 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
   override def beforeEach(): Unit = {
     super.beforeEach()
     await(sessionService.setMongoData(None))
-    MTDAgentAuthStub.stubAuthorisedMTDAgent(testMtditid, false)
+    SessionDataStub.stubGetSessionDataResponseSuccess()
+    stubGetCitizenDetails()
+    stubGetBusinessDetails()()
+    MTDPrimaryAgentAuthStub.stubAuthorised()
   }
 
   def get(url: String): WSResponse = {
