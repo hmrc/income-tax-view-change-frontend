@@ -1195,6 +1195,7 @@ object IncomeSourceIntegrationTestConstants {
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29",
+        "documentDueDate" -> "2018-03-29",
         "interestFromDate" -> "2018-03-29",
         "interestEndDate" -> "2018-03-29",
         "latePaymentInterestAmount" -> latePaymentInterestAmount,
@@ -1208,6 +1209,7 @@ object IncomeSourceIntegrationTestConstants {
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29",
+        "documentDueDate" -> "2018-03-29",
         "effectiveDateOfPayment" -> dueDate
       ),
       Json.obj(
@@ -1217,6 +1219,7 @@ object IncomeSourceIntegrationTestConstants {
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29",
+        "documentDueDate" -> "2018-03-29",
         "effectiveDateOfPayment" -> dueDate
       ),
       Json.obj(
@@ -1226,6 +1229,7 @@ object IncomeSourceIntegrationTestConstants {
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29",
+        "documentDueDate" -> "2018-03-29",
         "effectiveDateOfPayment" -> dueDate
       ),
       Json.obj(
@@ -1235,6 +1239,7 @@ object IncomeSourceIntegrationTestConstants {
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29",
+        "documentDueDate" -> "2018-03-29",
         "effectiveDateOfPayment" -> dueDate
       ),
       Json.obj(
@@ -1244,6 +1249,7 @@ object IncomeSourceIntegrationTestConstants {
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29",
+        "documentDueDate" -> "2018-03-29",
         "effectiveDateOfPayment" -> dueDate
       )
     ),
@@ -1372,6 +1378,7 @@ object IncomeSourceIntegrationTestConstants {
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29",
+        "documentDueDate" -> "2018-03-29",
         "interestFromDate" -> "2018-03-29",
         "interestEndDate" -> "2018-03-29",
         "latePaymentInterestAmount" -> latePaymentInterestAmount,
@@ -1385,6 +1392,7 @@ object IncomeSourceIntegrationTestConstants {
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29",
+        "documentDueDate" -> "2018-03-29",
         "effectiveDateOfPayment" -> dueDate
       ),
       Json.obj(
@@ -1394,6 +1402,7 @@ object IncomeSourceIntegrationTestConstants {
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29",
+        "documentDueDate" -> "2018-03-29",
         "effectiveDateOfPayment" -> dueDate
       ),
       Json.obj(
@@ -1403,6 +1412,7 @@ object IncomeSourceIntegrationTestConstants {
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29",
+        "documentDueDate" -> "2018-03-29",
         "effectiveDateOfPayment" -> dueDate
       ),
       Json.obj(
@@ -1412,6 +1422,7 @@ object IncomeSourceIntegrationTestConstants {
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29",
+        "documentDueDate" -> "2018-03-29",
         "effectiveDateOfPayment" -> dueDate
       )
     ),

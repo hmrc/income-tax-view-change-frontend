@@ -41,14 +41,14 @@ class CreditHistoryService @Inject()(financialDetailsConnector: FinancialDetails
       case financialDetailsModel: FinancialDetailsModel =>
         val fdRes = financialDetailsModel.getPairedDocumentDetails().flatMap {
           case (document: DocumentDetail, financialDetail: FinancialDetail) =>
-            (financialDetail.getCreditType, document.credit.isDefined) match {
-              case (Some(CutOverCreditType), true) =>
+            (document.documentDueDate.isDefined, financialDetail.getCreditType, document.credit.isDefined) match {
+              case (true, Some(CutOverCreditType), true) =>
                 // if we didn't find CutOverCredit dueDate then we "lost" this document
                 financialDetailsModel.getDueDateForFinancialDetail(financialDetail)
                   .map(dueDate => CreditDetailModel(date = dueDate, document, CutOverCreditType, Some(financialDetailsModel.balanceDetails)))
-              case (Some(creditType), true) =>
-                Some(CreditDetailModel(date = document.documentDate, document, creditType, Some(financialDetailsModel.balanceDetails)))
-              case (_, _) => None
+              case (true, Some(creditType), true) =>
+                Some(CreditDetailModel(date = document.documentDueDate.get, document, creditType, Some(financialDetailsModel.balanceDetails)))
+              case (_, _, _) => None
             }
         }
         Future {
