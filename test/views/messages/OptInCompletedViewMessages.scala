@@ -24,6 +24,8 @@ object OptInCompletedViewMessages {
 
   val panelBodyContent = "You opted in to quarterly reporting from 2022 to 2023 tax year onwards"
 
+  val overdueUpdatesGenericInset = "You may have overdue updates for the 2024 to 2025 tax year. You must submit these updates with all required income and expenses through your compatible software"
+
   val yourRevisedDeadlineH2 = "Your revised deadlines"
 
   val yourRevisedDeadlineInset = "Your revised deadlines will be available in the next few minutes."
