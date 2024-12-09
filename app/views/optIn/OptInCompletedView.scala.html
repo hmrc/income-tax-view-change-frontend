@@ -109,6 +109,12 @@
 
 @yourRevisedDeadlineContent = {
 
+    @govukInsetText(
+        InsetText(
+            id=Some("your-revised-deadline-inset"),
+            content = HtmlContent(messages("optin.completedOptIn.overdueUpdates.inset"))
+        )
+    )
     <div class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
     @h2(msg = "optin.completedOptIn.yourRevisedDeadline.h2", optId = Some("your-revised-deadline-heading"))
 
