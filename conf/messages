@@ -2276,6 +2276,7 @@ optin.completedOptIn.futureReporting.desc2                  = If this happens, w
 optin.completedOptIn.incomeThreshold.desc.a     = You can check the threshold for qualifying income in the
 optin.completedOptIn.incomeThreshold.desc.b     = criteria for people who will need to sign up for Making Tax Digital for Income Tax (opens in new tab).
 optin.completedOptIn.incomeThreshold.desc.b.url = https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up
+optin.completedOptIn.overdueUpdates.inset                       = You may have overdue updates for the 2024 to 2025 tax year. You must submit these updates with all required income and expenses through your compatible software
 
 # opt in confirm tax year
 optIn.confirmTaxYear.heading                        = Confirm and opt in for {0} to {1} tax year
