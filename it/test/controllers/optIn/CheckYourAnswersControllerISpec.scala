@@ -16,13 +16,15 @@
 
 package controllers.optIn
 
+import audit.models.OptInAuditModel
 import connectors.itsastatus.ITSAStatusUpdateConnector
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import controllers.ControllerISpecHelper
 import controllers.optIn.CheckYourAnswersControllerISpec._
 import enums.JourneyType.{Opt, OptInJourney}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.ITSAStatusUpdateConnectorStub
+import helpers.servicemocks.AuditStub.verifyAuditEvent
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.NavBarFs
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
@@ -35,6 +37,7 @@ import play.mvc.Http.Status
 import play.mvc.Http.Status.BAD_REQUEST
 import repositories.ITSAStatusRepositorySupport._
 import repositories.UIJourneySessionDataRepository
+import services.optIn.core.{CurrentOptInTaxYear, NextOptInTaxYear, OptInProposition}
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
@@ -149,6 +152,18 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
 
             val result = buildPOSTMTDPostClient(path, additionalCookies, body = Map.empty).futureValue
             verifyIncomeSourceDetailsCall(testMtditid)
+            val currentTaxYearOptIn: CurrentOptInTaxYear = CurrentOptInTaxYear(Annual, currentTaxYear)
+
+            verifyAuditEvent(
+              OptInAuditModel(
+                OptInProposition(
+                  currentTaxYearOptIn,
+                  NextOptInTaxYear(Annual, nextTaxYear, currentTaxYearOptIn)
+                ),
+                currentTaxYear,
+                ITSAStatusUpdateResponseSuccess(OK)
+              )
+            )
 
             result should have(
               httpStatus(Status.SEE_OTHER),
@@ -170,6 +185,19 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
 
               val result = buildPOSTMTDPostClient(path, additionalCookies, body = Map.empty).futureValue
               verifyIncomeSourceDetailsCall(testMtditid)
+
+              val currentTaxYearOptIn: CurrentOptInTaxYear = CurrentOptInTaxYear(Voluntary, currentTaxYear)
+
+              verifyAuditEvent(
+                OptInAuditModel(
+                  OptInProposition(
+                    currentTaxYearOptIn,
+                    NextOptInTaxYear(Voluntary, nextTaxYear, currentTaxYearOptIn)
+                  ),
+                  currentTaxYear,
+                  ITSAStatusUpdateResponseFailure.defaultFailure()
+                )
+              )
 
               result should have(
                 httpStatus(Status.SEE_OTHER),
