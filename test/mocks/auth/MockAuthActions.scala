@@ -266,4 +266,16 @@ trait MockAuthActions extends
       }
     }
   }
+
+  def testSupportingAgentDeniedAccess(action: Action[AnyContent])(fakeRequest: FakeRequest[AnyContentAsEmpty.type]): Unit = {
+    "render the supporting agent unauthorised page" in {
+      setupMockSuccess(MTDSupportingAgent)
+
+      val result = action(fakeRequest)
+
+      status(result) shouldBe Status.UNAUTHORIZED
+      val unauthorisedPage = Jsoup.parse(contentAsString(result))
+      unauthorisedPage.title shouldEqual "You are not authorised to access this page - Manage your client’s Income Tax updates - GOV.UK"
+    }
+  }
 }

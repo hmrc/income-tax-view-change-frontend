@@ -28,7 +28,7 @@ import models.core.{Mode, NormalMode}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.claimToAdjust.{ClaimToAdjustUtils, WithSessionAndPoa}
 import views.html.claimToAdjustPoa.SelectYourReasonView
 
@@ -42,13 +42,13 @@ class SelectYourReasonController @Inject()(val authActions: AuthActions,
                                            val poaSessionService: PaymentOnAccountSessionService,
                                            val claimToAdjustService: ClaimToAdjustService)
                                           (implicit val appConfig: FrontendAppConfig,
-                                           implicit val individualErrorHandler: ItvcErrorHandler,
-                                           implicit val agentErrorHandler: AgentItvcErrorHandler,
-                                           implicit override val controllerComponents: MessagesControllerComponents,
+                                           val individualErrorHandler: ItvcErrorHandler,
+                                           val agentErrorHandler: AgentItvcErrorHandler,
+                                           val mcc: MessagesControllerComponents,
                                            val ec: ExecutionContext)
-  extends FrontendBaseController with I18nSupport with ClaimToAdjustUtils with WithSessionAndPoa {
+  extends FrontendController(mcc) with I18nSupport with ClaimToAdjustUtils with WithSessionAndPoa {
 
-  def show(isAgent: Boolean, mode: Mode): Action[AnyContent] = authActions.asIndividualOrAgent(isAgent) async {
+  def show(isAgent: Boolean, mode: Mode): Action[AnyContent] = authActions.asMDTIndividualOrPrimaryAgentWithClient(isAgent) async {
     implicit user =>
       withSessionDataAndPoa() { (session, poa) =>
         session.newPoaAmount match {
@@ -66,7 +66,7 @@ class SelectYourReasonController @Inject()(val authActions: AuthActions,
       } recover logAndRedirect
   }
 
-  def submit(isAgent: Boolean, mode: Mode): Action[AnyContent] = authActions.asIndividualOrAgent(isAgent) async {
+  def submit(isAgent: Boolean, mode: Mode): Action[AnyContent] = authActions.asMDTIndividualOrPrimaryAgentWithClient(isAgent) async {
     implicit user =>
       withSessionDataAndPoa() { (_, poa) =>
         formProvider.apply()

@@ -27,7 +27,7 @@ import models.core.{CheckMode, Mode, Nino, NormalMode}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.ErrorRecovery
 import utils.claimToAdjust.{ClaimToAdjustUtils, JourneyCheckerClaimToAdjust}
 import views.html.claimToAdjustPoa.EnterPoaAmountView
@@ -41,14 +41,14 @@ class EnterPoaAmountController @Inject()(val authActions: AuthActions,
                                          view: EnterPoaAmountView,
                                          val claimToAdjustService: ClaimToAdjustService)
                                         (implicit val appConfig: FrontendAppConfig,
-                                         implicit val individualErrorHandler: ItvcErrorHandler,
-                                         implicit val agentErrorHandler: AgentItvcErrorHandler,
-                                         override implicit val controllerComponents: MessagesControllerComponents,
+                                         val individualErrorHandler: ItvcErrorHandler,
+                                         val agentErrorHandler: AgentItvcErrorHandler,
+                                         val mcc: MessagesControllerComponents,
                                          val ec: ExecutionContext)
-  extends FrontendBaseController with FeatureSwitching with ClaimToAdjustUtils with I18nSupport with JourneyCheckerClaimToAdjust with ErrorRecovery {
+  extends FrontendController(mcc) with FeatureSwitching with ClaimToAdjustUtils with I18nSupport with JourneyCheckerClaimToAdjust with ErrorRecovery {
 
   def show(isAgent: Boolean, mode: Mode): Action[AnyContent] =
-    authActions.asIndividualOrAgent(isAgent) async {
+    authActions.asMDTIndividualOrPrimaryAgentWithClient(isAgent) async {
       implicit user =>
         ifAdjustPoaIsEnabled(user.isAgent()) {
           withSessionData() { session =>
@@ -65,7 +65,7 @@ class EnterPoaAmountController @Inject()(val authActions: AuthActions,
         } recover logAndRedirect
     }
 
-  def submit(isAgent: Boolean, mode: Mode): Action[AnyContent] = authActions.asIndividualOrAgent(isAgent) async {
+  def submit(isAgent: Boolean, mode: Mode): Action[AnyContent] = authActions.asMDTIndividualOrPrimaryAgentWithClient(isAgent) async {
     implicit user =>
       ifAdjustPoaIsEnabled(user.isAgent()) {
         claimToAdjustService.getPoaViewModelWithAdjustmentReason(Nino(user.nino)).flatMap {

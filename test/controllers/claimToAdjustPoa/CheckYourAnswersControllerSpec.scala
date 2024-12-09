@@ -19,15 +19,19 @@ package controllers.claimToAdjustPoa
 import audit.AuditingService
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import mocks.auth.MockOldAuthActions
+import mocks.auth.{MockAuthActions, MockOldAuthActions}
 import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
 import mocks.services.{MockCalculationListService, MockClaimToAdjustPoaCalculationService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.{Increase, MainIncomeLower, PaymentOnAccountViewModel, PoaAmendmentData}
 import models.incomeSourceDetails.TaxYear
+import play.api
+import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{OK, contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import services.claimToAdjustPoa.ClaimToAdjustPoaCalculationService
+import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testUtils.TestSupport
@@ -35,30 +39,19 @@ import views.html.claimToAdjustPoa.CheckYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class CheckYourAnswersControllerSpec extends TestSupport
-  with FeatureSwitching
+class CheckYourAnswersControllerSpec extends MockAuthActions
   with MockClaimToAdjustService
   with MockPaymentOnAccountSessionService
-  with MockCalculationListService
-  with MockCalculationListConnector
-  with MockFinancialDetailsConnector
-  with MockClaimToAdjustPoaCalculationService
-  with MockOldAuthActions {
+  with MockClaimToAdjustPoaCalculationService {
 
-  object TestCheckYourAnswersController extends CheckYourAnswersController(
-    authActions = mockAuthActions,
-    poaSessionService = mockPaymentOnAccountSessionService,
-    checkYourAnswers = app.injector.instanceOf[CheckYourAnswers],
-    claimToAdjustService = mockClaimToAdjustService,
-    ctaCalculationService = mockClaimToAdjustPoaCalculationService,
-    auditingService = app.injector.instanceOf[AuditingService]
-  )(
-    appConfig = app.injector.instanceOf[FrontendAppConfig],
-    individualErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
-    agentErrorHandler = app.injector.instanceOf[AgentItvcErrorHandler],
-    controllerComponents = app.injector.instanceOf[MessagesControllerComponents],
-    ec = app.injector.instanceOf[ExecutionContext]
-  )
+  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+    .overrides(
+      api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService),
+      api.inject.bind[ClaimToAdjustPoaCalculationService].toInstance(mockClaimToAdjustPoaCalculationService),
+      api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService)
+    ).build()
+
+  val testController = fakeApplication().injector.instanceOf[CheckYourAnswersController]
 
   val poa: Option[PaymentOnAccountViewModel] = Some(
     PaymentOnAccountViewModel(

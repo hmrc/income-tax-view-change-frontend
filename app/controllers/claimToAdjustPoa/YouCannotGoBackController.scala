@@ -25,7 +25,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.claimToAdjustPoa.RecalculatePoaHelper
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.claimToAdjust.WithSessionAndPoa
 import views.html.claimToAdjustPoa.YouCannotGoBackView
 
@@ -37,13 +37,13 @@ class YouCannotGoBackController @Inject()(val authActions: AuthActions,
                                           val poaSessionService: PaymentOnAccountSessionService,
                                           val view: YouCannotGoBackView)
                                          (implicit val appConfig: FrontendAppConfig,
-                                          implicit val individualErrorHandler: ItvcErrorHandler,
-                                          implicit val agentErrorHandler: AgentItvcErrorHandler,
-                                          override implicit val controllerComponents: MessagesControllerComponents,
+                                          val individualErrorHandler: ItvcErrorHandler,
+                                          val agentErrorHandler: AgentItvcErrorHandler,
+                                          val mcc: MessagesControllerComponents,
                                           val ec: ExecutionContext)
-  extends FrontendBaseController with I18nSupport with FeatureSwitching with RecalculatePoaHelper with WithSessionAndPoa {
+  extends FrontendController(mcc) with I18nSupport with FeatureSwitching with RecalculatePoaHelper with WithSessionAndPoa {
 
-  def show(isAgent: Boolean): Action[AnyContent] = authActions.asIndividualOrAgent(isAgent) async {
+  def show(isAgent: Boolean): Action[AnyContent] = authActions.asMDTIndividualOrPrimaryAgentWithClient(isAgent) async {
     implicit user =>
       withSessionDataAndPoa(journeyState = CannotGoBackPage) {(_, poa) =>
         EitherT.rightT(Ok(view(

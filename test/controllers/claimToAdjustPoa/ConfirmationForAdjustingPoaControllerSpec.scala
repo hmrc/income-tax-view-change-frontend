@@ -19,30 +19,28 @@ package controllers.claimToAdjustPoa
 import audit.AuditingService
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import mocks.auth.MockOldAuthActions
+import mocks.auth.{MockAuthActions, MockOldAuthActions}
 import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
 import mocks.services._
 import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.{MainIncomeLower, PoaAmendmentData}
+import play.api
+import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
+import services.claimToAdjustPoa.ClaimToAdjustPoaCalculationService
+import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import testConstants.BaseTestConstants
 import testUtils.TestSupport
 import views.html.claimToAdjustPoa.ConfirmationForAdjustingPoa
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ConfirmationForAdjustingPoaControllerSpec extends TestSupport
-  with FeatureSwitching
+class ConfirmationForAdjustingPoaControllerSpec extends MockAuthActions
   with MockClaimToAdjustService
-  with MockCalculationListService
-  with MockCalculationListConnector
-  with MockFinancialDetailsConnector
-  with MockSessionService
   with MockPaymentOnAccountSessionService
-  with MockClaimToAdjustPoaCalculationService
-  with MockOldAuthActions {
+  with MockClaimToAdjustPoaCalculationService {
 
   val poa: PoaAmendmentData = PoaAmendmentData(
     None,
@@ -52,20 +50,14 @@ class ConfirmationForAdjustingPoaControllerSpec extends TestSupport
   val validSession: PoaAmendmentData = PoaAmendmentData(Some(MainIncomeLower), Some(BigDecimal(1000.00)))
   val emptySession: PoaAmendmentData = PoaAmendmentData(None, None)
 
-  object TestConfirmationForAdjustingPoaController extends ConfirmationForAdjustingPoaController(
-    authActions = mockAuthActions,
-    claimToAdjustService = mockClaimToAdjustService,
-    ctaCalculationService = mockClaimToAdjustPoaCalculationService,
-    view = app.injector.instanceOf[ConfirmationForAdjustingPoa],
-    poaSessionService = mockPaymentOnAccountSessionService,
-    auditingService = app.injector.instanceOf[AuditingService]
-  )(
-    appConfig = app.injector.instanceOf[FrontendAppConfig],
-    individualErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
-    agentErrorHandler = app.injector.instanceOf[AgentItvcErrorHandler],
-    controllerComponents = app.injector.instanceOf[MessagesControllerComponents],
-    ec = app.injector.instanceOf[ExecutionContext]
-  )
+  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+    .overrides(
+      api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService),
+      api.inject.bind[ClaimToAdjustPoaCalculationService].toInstance(mockClaimToAdjustPoaCalculationService),
+      api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService)
+    ).build()
+
+  val testController = fakeApplication().injector.instanceOf[ConfirmationForAdjustingPoaController]
 
   "ConfirmationForAdjustingPoaController.show" should {
     "redirect to the home page" when {

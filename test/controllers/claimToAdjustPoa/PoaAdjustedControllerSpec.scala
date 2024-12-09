@@ -17,17 +17,19 @@
 package controllers.claimToAdjustPoa
 
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import mocks.auth.MockOldAuthActions
+import mocks.auth.{MockAuthActions, MockOldAuthActions}
 import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
-import mocks.services.{MockCalculationListService, MockClaimToAdjustService}
+import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockDateService, MockPaymentOnAccountSessionService}
 import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.PoaAmendmentData
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
+import play.api
+import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.{DateService, PaymentOnAccountSessionService}
+import services.{ClaimToAdjustService, DateService, PaymentOnAccountSessionService}
 import testConstants.BaseTestConstants
 import testUtils.TestSupport
 import views.html.claimToAdjustPoa.PoaAdjustedView
@@ -35,29 +37,20 @@ import views.html.claimToAdjustPoa.PoaAdjustedView
 import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
-class PoaAdjustedControllerSpec extends TestSupport
+class PoaAdjustedControllerSpec extends MockAuthActions
   with MockClaimToAdjustService
   with MockCalculationListService
-  with MockCalculationListConnector
-  with MockFinancialDetailsConnector
-  with MockOldAuthActions {
+  with MockPaymentOnAccountSessionService
+  with MockDateService {
 
-  val mockPoaSessionService = mock(classOf[PaymentOnAccountSessionService])
-  val mockDateService: DateService = mock(classOf[DateService])
+  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+    .overrides(
+      api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService),
+      api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService),
+      api.inject.bind[DateService].toInstance(mockDateService)
+    ).build()
 
-  object TestController extends PoaAdjustedController(
-    authActions = mockAuthActions,
-    claimToAdjustService = mockClaimToAdjustService,
-    view = app.injector.instanceOf[PoaAdjustedView],
-    poaSessionService = mockPoaSessionService,
-    dateService = mockDateService
-  )(
-    controllerComponents = app.injector.instanceOf[MessagesControllerComponents],
-    individualErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
-    agentErrorHandler = app.injector.instanceOf[AgentItvcErrorHandler],
-    appConfig = app.injector.instanceOf[FrontendAppConfig],
-    ec = app.injector.instanceOf[ExecutionContext]
-  )
+  val testController = fakeApplication().injector.instanceOf[PoaAdjustedController]
 
   val startOfTaxYear: LocalDate = LocalDate.of(2023,4,7)
   val endOfTaxYear: LocalDate = LocalDate.of(2024,4,4)

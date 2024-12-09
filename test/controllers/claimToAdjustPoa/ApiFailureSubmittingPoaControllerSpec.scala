@@ -16,103 +16,65 @@
 
 package controllers.claimToAdjustPoa
 
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import mocks.auth.MockOldAuthActions
+import enums.{MTDIndividual, MTDSupportingAgent}
+import mocks.auth.MockAuthActions
 import models.admin.AdjustPaymentsOnAccount
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.api.http.Status
+import play.api.Application
 import play.api.http.Status.SEE_OTHER
-import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{HTML, OK, contentAsString, contentType, defaultAwaitTimeout, redirectLocation, status}
-import testConstants.BaseTestConstants
-import testUtils.TestSupport
-import views.html.claimToAdjustPoa.ApiFailureSubmittingPoaView
 
-import scala.concurrent.{ExecutionContext, Future}
+class ApiFailureSubmittingPoaControllerSpec extends MockAuthActions {
 
-class ApiFailureSubmittingPoaControllerSpec extends TestSupport with FeatureSwitching with MockOldAuthActions {
+  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+    .build()
 
-  object TestApiFailureSubmittingPoaController extends ApiFailureSubmittingPoaController(
-    authActions = mockAuthActions,
-    view = app.injector.instanceOf[ApiFailureSubmittingPoaView],
-    itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
-    itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler]
-  )(appConfig = app.injector.instanceOf[FrontendAppConfig],
-    controllerComponents = app.injector.instanceOf[MessagesControllerComponents],
-    ec = app.injector.instanceOf[ExecutionContext]
-  )
+  val testController = fakeApplication().injector.instanceOf[ApiFailureSubmittingPoaController]
 
   val firstParagraphView = "Your payments on account could not be updated."
 
-  def setupTests(isAgent: Boolean): Unit = {
-    if (isAgent) setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
-    else setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-    mockBusinessIncomeSource()
-  }
+  mtdAllRoles.foreach { mtdRole =>
+    val isAgent = mtdRole != MTDIndividual
+    val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
+    s"show(isAgent = $isAgent)" when {
+      val action = testController.show(isAgent)
+      s"the user is authenticated as a $mtdRole" should {
+        if (mtdRole == MTDSupportingAgent) {
+          testSupportingAgentDeniedAccess(action)(fakeRequest)
+        } else {
+          s"render the submitting POA API failure page" when {
+            "called when the AdjustPaymentsOnAccount FS is on" in {
+              enable(AdjustPaymentsOnAccount)
+              setupMockSuccess(mtdRole)
+              mockBusinessIncomeSource()
 
-  "Individual - ApiFailureSubmittingPoaController.show" should {
-    s"return status: $OK" when {
-      "called when the AdjustPaymentsOnAccount FS is on" in {
-        enable(AdjustPaymentsOnAccount)
-        setupTests(isAgent = false)
+              val result = action(fakeRequest)
+              val document: Document = Jsoup.parse(contentAsString(result))
 
-        val result = TestApiFailureSubmittingPoaController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val document: Document = Jsoup.parse(contentAsString(result))
+              status(result) shouldBe OK
+              contentType(result) shouldBe Some(HTML)
+              document.getElementById("paragraph-text-1").text() shouldBe firstParagraphView
+            }
+          }
+          s"redirect to the home page" when {
+            "called when the AdjustPaymentsOnAccount FS is off" in {
+              disable(AdjustPaymentsOnAccount)
+              setupMockSuccess(mtdRole)
+              mockBusinessIncomeSource()
 
-        status(result) shouldBe OK
-        contentType(result) shouldBe Some(HTML)
-        document.getElementById("paragraph-text-1").text() shouldBe firstParagraphView
-      }
-    }
-    s"return status: $SEE_OTHER" when {
-      "called when the AdjustPaymentsOnAccount FS is off" in {
-        disable(AdjustPaymentsOnAccount)
-        setupTests(isAgent = false)
+              val result = action(fakeRequest)
 
-        val result = TestApiFailureSubmittingPoaController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
-      }
-      "called with an unauthenticated user" in {
-        setupTests(isAgent = false)
-        setupMockAuthorisationException()
-        val result: Future[Result] = TestApiFailureSubmittingPoaController.show(isAgent = false)(fakeRequestWithActiveSession)
-        status(result) shouldBe Status.SEE_OTHER
-      }
-    }
-  }
-
-  "Agent - ApiFailureSubmittingPoaController.show" should {
-    s"return status: $OK" when {
-      "called when the AdjustPaymentsOnAccount FS is on" in {
-        enable(AdjustPaymentsOnAccount)
-        setupTests(isAgent = true)
-
-        val result = TestApiFailureSubmittingPoaController.show(isAgent = true)(fakeRequestConfirmedClient())
-        val document: Document = Jsoup.parse(contentAsString(result))
-
-        status(result) shouldBe OK
-        contentType(result) shouldBe Some(HTML)
-        document.getElementById("paragraph-text-1").text() shouldBe firstParagraphView
-      }
-    }
-    s"return status: $SEE_OTHER" when {
-      "called when the AdjustPaymentsOnAccount FS is off" in {
-        disable(AdjustPaymentsOnAccount)
-        setupTests(isAgent = true)
-
-        val result = TestApiFailureSubmittingPoaController.show(isAgent = true)(fakeRequestConfirmedClient())
-
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
-      }
-      "called with an unauthenticated user" in {
-        setupMockAgentAuthorisationException()
-        val result: Future[Result] = TestApiFailureSubmittingPoaController.show(isAgent = true)(fakeRequestConfirmedClient())
-        status(result) shouldBe Status.SEE_OTHER
+              status(result) shouldBe SEE_OTHER
+              val expectedRedirectUrl = if (isAgent) {
+                controllers.routes.HomeController.showAgent.url
+              } else {
+                controllers.routes.HomeController.show().url
+              }
+              redirectLocation(result) shouldBe Some(expectedRedirectUrl)
+            }
+          }
+        }
       }
     }
   }
