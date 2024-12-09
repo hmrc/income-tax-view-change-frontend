@@ -17,6 +17,7 @@
 package controllers.optIn
 
 import audit.models.OptInAuditModel
+import auth.MtdItUser
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import controllers.ControllerISpecHelper
@@ -33,13 +34,15 @@ import models.itsaStatus.ITSAStatus.{Annual, Voluntary}
 import models.optin.{OptInContextData, OptInSessionData}
 import play.api.http.Status.OK
 import play.api.libs.json.Json
+import play.api.test.FakeRequest
 import play.mvc.Http.Status
 import play.mvc.Http.Status.BAD_REQUEST
 import repositories.ITSAStatusRepositorySupport._
 import repositories.UIJourneySessionDataRepository
 import services.optIn.core.{CurrentOptInTaxYear, NextOptInTaxYear, OptInProposition}
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
-import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSessionId}
+import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, propertyOnlyResponse}
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 import scala.concurrent.Future
 
@@ -73,6 +76,18 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
   def getPath(mtdRole: MTDUserRole): String = {
     val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
     pathStart + "/opt-in/check-your-answers"
+  }
+
+  def testUser(mtdUserRole: MTDUserRole): MtdItUser[_] = {
+    val (affinityGroup, arn) = if(mtdUserRole == MTDIndividual) {
+      (Individual, None)
+    } else {
+      (Agent, Some("1"))
+    }
+    MtdItUser(
+      testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
+      None, Some("1234567890"), Some("12345-credId"), Some(affinityGroup), arn
+    )(FakeRequest())
   }
 
   mtdAllRoles.foreach { case mtdUserRole =>
@@ -162,7 +177,7 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
                 ),
                 currentTaxYear,
                 ITSAStatusUpdateResponseSuccess(OK)
-              )
+              )(testUser(mtdUserRole))
             )
 
             result should have(
@@ -196,7 +211,7 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
                   ),
                   currentTaxYear,
                   ITSAStatusUpdateResponseFailure.defaultFailure()
-                )
+                )(testUser(mtdUserRole))
               )
 
               result should have(
