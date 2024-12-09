@@ -16,11 +16,12 @@
 
 package services.optIn
 
-import auth.MtdItUser
+import audit.mocks.MockAuditingService
+import audit.models.OptInAuditModel
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import controllers.routes
-import enums.JourneyType.{OptInJourney, Opt}
+import enums.JourneyType.{Opt, OptInJourney}
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockITSAStatusUpdateConnector}
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Voluntary}
@@ -30,16 +31,16 @@ import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.{BeforeAndAfter, OneInstancePerTest}
+import play.api.http.Status.OK
 import repositories.ITSAStatusRepositorySupport._
 import repositories.UIJourneySessionDataRepository
 import services.NextUpdatesService
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import services.optIn.OptInServiceSpec.statusDetailWith
+import services.optIn.core.{CurrentOptInTaxYear, NextOptInTaxYear, OptInProposition}
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
-import utils.OptInJourney
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
 object OptInServiceSpec {
@@ -54,16 +55,16 @@ class OptInServiceSpec extends UnitSpec
   with MockCalculationListService
   with MockDateService
   with OneInstancePerTest
-  with MockITSAStatusUpdateConnector {
+  with MockITSAStatusUpdateConnector
+  with MockAuditingService {
 
-  implicit val user: MtdItUser[_] = mock(classOf[MtdItUser[_]])
   implicit val hc: HeaderCarrier = mock(classOf[HeaderCarrier])
 
   val optOutConnector: ITSAStatusUpdateConnector = mock(classOf[ITSAStatusUpdateConnector])
   val nextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
   val repository: UIJourneySessionDataRepository = mock(classOf[UIJourneySessionDataRepository])
 
-  val service: OptInService = new OptInService(optOutConnector, mockITSAStatusService, mockDateService, repository)
+  val service: OptInService = new OptInService(optOutConnector, mockITSAStatusService, mockDateService, repository, mockAuditingService)
 
   val forYearEnd = 2023
   val currentTaxYear = TaxYear.forYearEnd(forYearEnd)
@@ -148,7 +149,6 @@ class OptInServiceSpec extends UnitSpec
 
       "return tax years ending 2023, 2024" in {
 
-        //mockRepository(Annual, Annual)
         mockRepository(Some(OptInContextData(currentTaxYear.toString, statusToString(Annual), statusToString(Annual))))
         when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
 
@@ -195,25 +195,52 @@ class OptInServiceSpec extends UnitSpec
   "OptInService.makeOptInCall" should {
 
     "success response case" in {
-
-      mockRepository(selectedOptInYear = Some(currentTaxYear.toString))
+      val optInContext = Some(OptInContextData(currentTaxYear.toString, statusToString(Annual), statusToString(Voluntary)))
+      mockRepository(optInContext, Some(currentTaxYear.toString))
 
       when(optOutConnector.optIn(any(), any())(any()))
-        .thenReturn(Future.successful(ITSAStatusUpdateResponseSuccess()))
+        .thenReturn(Future.successful(ITSAStatusUpdateResponseSuccess(OK)))
 
-      val result = service.makeOptInCall()(user, hc, executionContext()).futureValue
+      val result = service.makeOptInCall().futureValue
+
+      val currentTaxYearOptIn: CurrentOptInTaxYear = CurrentOptInTaxYear(Annual, currentTaxYear)
+
+      verifyExtendedAudit(
+        OptInAuditModel(
+          OptInProposition(
+            currentTaxYearOptIn,
+            NextOptInTaxYear(Voluntary, nextTaxYear, currentTaxYearOptIn)
+          ),
+          currentTaxYear,
+          ITSAStatusUpdateResponseSuccess(OK)
+        )
+      )
 
       result.isInstanceOf[ITSAStatusUpdateResponseSuccess] shouldBe true
     }
 
     "fail response case" in {
 
-      mockRepository(selectedOptInYear = Some(currentTaxYear.toString))
+      val optInContext = Some(OptInContextData(currentTaxYear.toString, statusToString(Annual), statusToString(Voluntary)))
+      mockRepository(optInContext, Some(currentTaxYear.toString))
 
       when(optOutConnector.optIn(any(), any())(any()))
         .thenReturn(Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure()))
 
-      val result = service.makeOptInCall()(user, hc, executionContext()).futureValue
+      val result = service.makeOptInCall().futureValue
+
+      val currentTaxYearOptIn: CurrentOptInTaxYear = CurrentOptInTaxYear(Annual, currentTaxYear)
+
+      verifyExtendedAudit(
+        OptInAuditModel(
+          OptInProposition(
+            currentTaxYearOptIn,
+            NextOptInTaxYear(Voluntary, nextTaxYear, currentTaxYearOptIn)
+          ),
+          currentTaxYear,
+          ITSAStatusUpdateResponseFailure.defaultFailure()
+        )
+      )
 
       result.isInstanceOf[ITSAStatusUpdateResponseFailure] shouldBe true
     }
@@ -225,7 +252,7 @@ class OptInServiceSpec extends UnitSpec
       when(optOutConnector.makeITSAStatusUpdate(any(), any(), any())(any()))
         .thenReturn(Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure()))
 
-      val result = service.makeOptInCall()(user, hc, executionContext()).futureValue
+      val result = service.makeOptInCall().futureValue
 
       result.isInstanceOf[ITSAStatusUpdateResponseFailure] shouldBe true
     }

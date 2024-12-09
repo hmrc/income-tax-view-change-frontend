@@ -23,9 +23,10 @@ import controllers.optIn.CheckYourAnswersControllerISpec._
 import enums.JourneyType.{Opt, OptInJourney}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.ITSAStatusUpdateConnectorStub
+import helpers.servicemocks.AuditStub.verifyAudit
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.NavBarFs
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear, UIJourneySessionData}
+import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Annual, Voluntary}
 import models.optin.{OptInContextData, OptInSessionData}
@@ -99,12 +100,10 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
               elementTextBySelector("#change")(change),
 
               elementTextBySelector("#optIn-summary")(optInSummary),
-
               elementTextByID("confirm-button")("Confirm and save"),
               elementTextByID("cancel-button")("Cancel"),
             )
           }
-
           s"render opt-in check-your-answers page 2" in {
             disable(NavBarFs)
             stubAuthorised(mtdUserRole)
@@ -145,12 +144,13 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
 
             setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual, currentTaxYear)
 
-            ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
+            ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.nino,
               Status.NO_CONTENT, emptyBodyString
             )
 
             val result = buildPOSTMTDPostClient(path, additionalCookies, body = Map.empty).futureValue
             verifyIncomeSourceDetailsCall(testMtditid)
+            verifyAudit()
 
             result should have(
               httpStatus(Status.SEE_OTHER),
@@ -166,12 +166,13 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
 
               setupOptInSessionData(currentTaxYear, currentYearStatus = Voluntary, nextYearStatus = Voluntary, currentTaxYear)
 
-              ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
+              ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.nino,
                 BAD_REQUEST, Json.toJson(ITSAStatusUpdateResponseFailure.defaultFailure()).toString()
               )
 
               val result = buildPOSTMTDPostClient(path, additionalCookies, body = Map.empty).futureValue
               verifyIncomeSourceDetailsCall(testMtditid)
+              verifyAudit()
 
               result should have(
                 httpStatus(Status.SEE_OTHER),
@@ -196,5 +197,4 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
               currentTaxYear.toString, statusToString(currentYearStatus),
               statusToString(nextYearStatus))), Some(intent.toString)))))
   }
-
 }
