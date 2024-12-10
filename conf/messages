@@ -2207,7 +2207,17 @@ optIn.beforeYouStart.button.start              = Start
 
 # opt in choose tax year
 optin.chooseOptInTaxYear.heading                     = Voluntarily opting in to reporting quarterly
-optin.chooseOptInTaxYear.desc1                       = If you opt in to the next tax year, you will not have to submit a quarterly update until then.
+optin.chooseOptInTaxYear.desc1                       = Opting in to the current tax year may result in you having overdue quarterly updates.
+optin.chooseOptInTaxYear.desc2.heading               = Voluntarily reporting quarterly and overdue updates
+optin.chooseOptInTaxYear.desc2.insetText             = Because you would be voluntarily opted in, there would be no penalties for overdue quarterly updates.
+optin.chooseOptInTaxYear.desc2.text                  = If in future you are no longer voluntary and reporting quarterly is mandatory, then penalties would apply. We will send you a letter if reporting quarterly becomes mandatory for you.
+optin.chooseOptInTaxYear.dropDown.heading            = How to submit overdue updates
+optin.chooseOptInTaxYear.dropDown.insetText.p1       = A single quarterly update covers a 3-month period for one of your income sources. For example, if you have 2 income sources and have missed 2 quarters, you would have 4 overdue updates.
+optin.chooseOptInTaxYear.dropDown.insetText.p2       = Depending on the compatible software you use, you may need to:
+optin.chooseOptInTaxYear.dropDown.insetText.p2.list1 = submit each quarterly update separately in chronological order
+optin.chooseOptInTaxYear.dropDown.insetText.p2.list2 = provide all your overdue updates as one submission
+optin.chooseOptInTaxYear.radiobutton.hint1           = This could result in immediate overdue quarterly updates.
+optin.chooseOptInTaxYear.radiobutton.hint2           = There will be no quarterly updates to submit until then.
 optin.chooseOptInTaxYear.whichTaxYear                = Which tax year do you want to opt in from?
 optin.chooseOptInTaxYear.taxYearOnwards              = {0} to {1} onwards
 optin.chooseOptInTaxYear.continue                    = Continue
