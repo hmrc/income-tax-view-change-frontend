@@ -16,9 +16,8 @@
 
 package controllers.optIn
 
-
 import controllers.ControllerISpecHelper
-import controllers.optIn.ChooseYearControllerISpec.{descriptionText, headingText, taxYearChoiceOne, taxYearChoiceTwo}
+import controllers.optIn.ChooseYearControllerISpec._
 import enums.JourneyType.{Opt, OptInJourney}
 import enums.{MTDIndividual, MTDUserRole}
 import forms.optIn.ChooseTaxYearForm
@@ -37,9 +36,19 @@ import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
 object ChooseYearControllerISpec {
   val headingText = "Voluntarily opting in to reporting quarterly"
-  val descriptionText = "If you opt in to the next tax year, you will not have to submit a quarterly update until then."
+  val descriptionText = "Opting in to the current tax year may result in you having overdue quarterly updates."
+  val description2TextHeading = "Voluntarily reporting quarterly and overdue updates"
+  val description2InsetText = "Because you would be voluntarily opted in, there would be no penalties for overdue quarterly updates."
+  val description2Text = "If in future you are no longer voluntary and reporting quarterly is mandatory, then penalties would apply. We will send you a letter if reporting quarterly becomes mandatory for you."
+  val dropdownHeading = "How to submit overdue updates"
+  val dropdownInsetText1 = "A single quarterly update covers a 3-month period for one of your income sources. For example, if you have 2 income sources and have missed 2 quarters, you would have 4 overdue updates."
+  val dropdownInsetText2 = "Depending on the compatible software you use, you may need to:"
+  val dropdownBulletText1 = "submit each quarterly update separately in chronological order"
+  val dropdownBulletText2 = "provide all your overdue updates as one submission"
   val taxYearChoiceOne = "2022 to 2023 onwards"
+  val taxYearChoiceOneHint = "This could result in immediate overdue quarterly updates."
   val taxYearChoiceTwo = "2023 to 2024 onwards"
+  val taxYearChoiceTwoHint = "There will be no quarterly updates to submit until then."
 }
 
 class ChooseYearControllerISpec extends ControllerISpecHelper {
@@ -56,7 +65,7 @@ class ChooseYearControllerISpec extends ControllerISpecHelper {
   }
 
   def getPath(mtdRole: MTDUserRole): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
     pathStart + "/opt-in/choose-tax-year"
   }
 
@@ -79,9 +88,19 @@ class ChooseYearControllerISpec extends ControllerISpecHelper {
               httpStatus(OK),
               elementTextByID("heading")(headingText),
               elementTextByID("description1")(descriptionText),
+              elementTextByID("description2-heading")(description2TextHeading),
+              elementTextByID("description2-insettext")(description2InsetText),
+              elementTextByID("description2-text")(description2Text),
+              elementTextBySelector("summary.govuk-details__summary:nth-child(1) > span:nth-child(1)")(dropdownHeading),
+              elementTextByID("dropdown-insettext-p1")(dropdownInsetText1),
+              elementTextByID("dropdown-insettext-p2")(dropdownInsetText2),
+              elementTextByID("dropdown-insettext-p2-listitems1")(dropdownBulletText1),
+              elementTextByID("dropdown-insettext-p2-listitems2")(dropdownBulletText2),
               elementTextBySelector("#whichTaxYear.govuk-fieldset legend.govuk-fieldset__legend.govuk-fieldset__legend--m")("Which tax year do you want to opt in from?"),
               elementTextBySelector("div.govuk-radios__item:nth-child(1) > label:nth-child(2)")(taxYearChoiceOne),
+              elementTextByID("choice-year-0-item-hint")(taxYearChoiceOneHint),
               elementTextBySelector("div.govuk-radios__item:nth-child(2) > label:nth-child(2)")(taxYearChoiceTwo),
+              elementTextByID("choice-year-1-item-hint")(taxYearChoiceTwoHint)
             )
           }
         }

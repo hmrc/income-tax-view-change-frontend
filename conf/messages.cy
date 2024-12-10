@@ -2207,7 +2207,17 @@ optIn.beforeYouStart.button.start              = Dechrau
 
 # opt in choose tax year
 optin.chooseOptInTaxYear.heading                          = Optio i mewn yn wirfoddol i adrodd yn chwarterol
-optin.chooseOptInTaxYear.desc1                            = Os byddwch yn optio i mewn ar gyfer y flwyddyn dreth nesaf, ni fydd yn rhaid i chi gyflwyno diweddariad chwarterol tan hynny.
+optin.chooseOptInTaxYear.desc1                            = Gallai optio i mewn ar gyfer y flwyddyn dreth bresennol golygu y bydd gennych ddiweddariadau chwarterol hwyr.
+optin.chooseOptInTaxYear.desc2.heading                    = Adrodd yn chwarterol yn wirfoddol a diweddariadau sy’n hwyr
+optin.chooseOptInTaxYear.desc2.insetText                  = Gan eich bod wedi optio i mewn yn wirfoddol, ni chodir unrhyw gosbau am gyflwyno diweddariadau chwarterol yn hwyr.
+optin.chooseOptInTaxYear.desc2.text                       = Os, yn y dyfodol, nad ydych bellach yn wirfoddol ac y mae’n orfodol i adrodd yn chwarterol, codir cosbau am gyflwyno diweddariadau yn hwyr. Os bydd hi’n dod yn orfodol i chi adrodd yn chwarterol, byddwn yn anfon llythyr atoch.
+optin.chooseOptInTaxYear.dropDown.heading                 = Sut i gyflwyno diweddariadau sy’n hwyr
+optin.chooseOptInTaxYear.dropDown.insetText.p1            = Mae diweddariad chwarterol unigol yn cwmpasu cyfnod o 3 mis ar gyfer un o’ch ffynonellau incwm. Er enghraifft, os oes gennych 2 ffynhonnell incwm, a’ch bod wedi methu 2 chwarter, byddai gennych 4 diweddariad hwyr.
+optin.chooseOptInTaxYear.dropDown.insetText.p2            = Yn dibynnu ar y feddalwedd sy’n cydweddu yr ydych yn ei defnyddio, efallai y bydd angen i chi wneud y canlynol:
+optin.chooseOptInTaxYear.dropDown.insetText.p2.list1      = cyflwyno pob diweddariad chwarter ar wahân, yn nhrefn gronolegol
+optin.chooseOptInTaxYear.dropDown.insetText.p2.list2      = cyflwyno pob un o’ch diweddariadau sy’n hwyr fel un swmp
+optin.chooseOptInTaxYear.radiobutton.hint1                = Gallai hyn arwain at ddiweddariadau chwarterol sy’n hwyr yn barod.
+optin.chooseOptInTaxYear.radiobutton.hint2                = Ni fydd yna ddiweddariadau chwarterol i’w cyflwyno tan hynny.
 optin.chooseOptInTaxYear.whichTaxYear                     = O ba flwyddyn dreth ymlaen rydych eisiau optio i mewn?
 optin.chooseOptInTaxYear.taxYearOnwards                   = {0} i {1} ymlaen
 optin.chooseOptInTaxYear.continue                         = Yn eich blaen
