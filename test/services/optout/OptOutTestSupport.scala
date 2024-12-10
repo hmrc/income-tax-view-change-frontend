@@ -68,12 +68,12 @@ object OptOutTestSupport {
 
     val previousTaxYearOptOut = PreviousOptOutTaxYear(Voluntary, previousYear,  crystallised = false)
     val currentTaxYearOptOut = CurrentOptOutTaxYear(Mandated, currentYear)
-    val extTaxYearOptOut = NextOptOutTaxYear(Mandated, nextYear, currentTaxYearOptOut)
+    val nextTaxYearOptOut = NextOptOutTaxYear(Mandated, nextYear, currentTaxYearOptOut)
 
     OptOutProposition(
       previousTaxYearOptOut,
       currentTaxYearOptOut,
-      extTaxYearOptOut
+      nextTaxYearOptOut
     )
   }
 
@@ -85,12 +85,12 @@ object OptOutTestSupport {
 
     val previousTaxYearOptOut = PreviousOptOutTaxYear(Voluntary, previousYear,  crystallised = true)
     val currentTaxYearOptOut = CurrentOptOutTaxYear(Voluntary, currentYear)
-    val extTaxYearOptOut = NextOptOutTaxYear(Mandated, nextYear, currentTaxYearOptOut)
+    val nextTaxYearOptOut = NextOptOutTaxYear(Mandated, nextYear, currentTaxYearOptOut)
 
     OptOutProposition(
       previousTaxYearOptOut,
       currentTaxYearOptOut,
-      extTaxYearOptOut
+      nextTaxYearOptOut
     )
   }
 
@@ -102,12 +102,12 @@ object OptOutTestSupport {
 
     val previousTaxYearOptOut = PreviousOptOutTaxYear(Voluntary, previousYear,  crystallised = true)
     val currentTaxYearOptOut = CurrentOptOutTaxYear(Mandated, currentYear)
-    val extTaxYearOptOut = NextOptOutTaxYear(Voluntary, nextYear, currentTaxYearOptOut)
+    val nextTaxYearOptOut = NextOptOutTaxYear(Voluntary, nextYear, currentTaxYearOptOut)
 
     OptOutProposition(
       previousTaxYearOptOut,
       currentTaxYearOptOut,
-      extTaxYearOptOut
+      nextTaxYearOptOut
     )
   }
 
@@ -119,12 +119,12 @@ object OptOutTestSupport {
 
     val previousTaxYearOptOut = PreviousOptOutTaxYear(Voluntary, previousYear,  crystallised = false)
     val currentTaxYearOptOut = CurrentOptOutTaxYear(Voluntary, currentYear)
-    val extTaxYearOptOut = NextOptOutTaxYear(Voluntary, nextYear, currentTaxYearOptOut)
+    val nextTaxYearOptOut = NextOptOutTaxYear(Voluntary, nextYear, currentTaxYearOptOut)
 
     OptOutProposition(
       previousTaxYearOptOut,
       currentTaxYearOptOut,
-      extTaxYearOptOut
+      nextTaxYearOptOut
     )
   }
 
@@ -153,12 +153,12 @@ object OptOutTestSupport {
 
     val previousTaxYearOptOut = PreviousOptOutTaxYear(Voluntary, previousYear,  crystallised = false)
     val currentTaxYearOptOut = CurrentOptOutTaxYear(Voluntary, currentYear)
-    val extTaxYearOptOut = NextOptOutTaxYear(Mandated, nextYear, currentTaxYearOptOut)
+    val nextTaxYearOptOut = NextOptOutTaxYear(Mandated, nextYear, currentTaxYearOptOut)
 
     OptOutProposition(
       previousTaxYearOptOut,
       currentTaxYearOptOut,
-      extTaxYearOptOut
+      nextTaxYearOptOut
     )
   }
 

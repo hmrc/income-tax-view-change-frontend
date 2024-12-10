@@ -145,3 +145,7 @@ case object AdjustPaymentsOnAccount extends TransactionName {
 case object OptOutQuarterlyReportingRequest extends TransactionName {
   val name = "opt-out-quarterly-reporting-request"
 }
+
+case object OptInQuarterlyReportingRequest extends TransactionName {
+  val name = "opt-in-quarterly-reporting-request"
+}
