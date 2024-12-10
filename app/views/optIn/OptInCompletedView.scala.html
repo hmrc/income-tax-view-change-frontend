@@ -113,7 +113,7 @@
         @govukInsetText(
         InsetText(
             id = Some("overdue-updates-inset"),
-            content = HtmlContent(messages("optin.completedOptIn.overdueUpdates.inset"))
+            content = HtmlContent(messages("optin.completedOptIn.overdueUpdates.inset", model.startYear, model.endYear))
         ))
     }
     <div class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
