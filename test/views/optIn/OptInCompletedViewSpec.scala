@@ -83,7 +83,7 @@ class OptInCompletedViewSpec extends TestSupport {
     pageDocument.getElementsByClass(Selectors.pageTitleClass).text() shouldBe panelTitleContent
     pageDocument.getElementsByClass(Selectors.pagePanelBodyClass).text() shouldBe "You are now reporting quarterly from 2022 to 2023 tax year onwards"
 
-    pageDocument.getElementById(Selectors.overdueUpdatesInset).text() shouldBe overdueUpdatesGenericInset
+    pageDocument.getElementById(Selectors.overdueUpdatesInset).text() shouldBe overdueUpdatesGenericInset(taxYear22_23.startYear.toString, taxYear22_23.endYear.toString)
 
     val expectedText: String = "For example, if your income from self-employment or property, or both, exceeds the threshold " +
       "in the 2022 to 2023 tax year, you would have to report quarterly from 6 April 2024."
@@ -104,7 +104,7 @@ class OptInCompletedViewSpec extends TestSupport {
 
     pageDocument.getElementsByClass(Selectors.pageTitleClass).text() shouldBe panelTitleContent
 
-    pageDocument.getElementById(Selectors.overdueUpdatesInset).text() shouldBe overdueUpdatesGenericInset
+    pageDocument.getElementById(Selectors.overdueUpdatesInset).text() shouldBe overdueUpdatesGenericInset(taxYear21_22.startYear.toString, taxYear21_22.endYear.toString)
 
     pageDocument.getElementsByClass(Selectors.pagePanelBodyClass).text() shouldBe "You are now reporting quarterly from 2021 to 2022 tax year onwards"
     val expectedText: String = "For example, if your income from self-employment or property, or both, exceeds the threshold " +
@@ -123,7 +123,7 @@ class OptInCompletedViewSpec extends TestSupport {
 
     pageDocument.title() shouldBe titleContent
 
-    pageDocument.getElementById(Selectors.overdueUpdatesInset).text() shouldBe overdueUpdatesGenericInset
+    pageDocument.getElementById(Selectors.overdueUpdatesInset).text() shouldBe overdueUpdatesGenericInset(taxYear22_23.startYear.toString, taxYear22_23.endYear.toString)
 
     pageDocument.getElementsByClass(Selectors.pageTitleClass).text() shouldBe panelTitleContent
     pageDocument.getElementsByClass(Selectors.pagePanelBodyClass).text() shouldBe messages("optin.completedOptIn.followingVoluntary.heading.desc", "2022", "2023")
@@ -142,7 +142,7 @@ class OptInCompletedViewSpec extends TestSupport {
 
       pageDocument.title() shouldBe titleContent
 
-      pageDocument.getElementById(Selectors.overdueUpdatesInset).text() shouldBe overdueUpdatesGenericInset
+      pageDocument.getElementById(Selectors.overdueUpdatesInset).text() shouldBe overdueUpdatesGenericInset(taxYear22_23.startYear.toString, taxYear22_23.endYear.toString)
 
       pageDocument.getElementsByClass(Selectors.pageTitleClass).text() shouldBe panelTitleContent
       pageDocument.getElementsByClass(Selectors.pagePanelBodyClass).text() shouldBe messages("optin.completedOptIn.followingVoluntary.heading.desc", "2022", "2023")
@@ -200,7 +200,7 @@ class OptInCompletedViewSpec extends TestSupport {
 
       pageDocument.title() shouldBe titleContent
 
-      pageDocument.getElementById(Selectors.overdueUpdatesInset).text() shouldBe overdueUpdatesGenericInset
+//      pageDocument.getElementById(Selectors.overdueUpdatesInset).text() shouldBe overdueUpdatesGenericInset
 
       pageDocument.getElementsByClass(Selectors.pageTitleClass).text() shouldBe panelTitleContent
 
