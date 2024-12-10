@@ -198,9 +198,9 @@ class SelectYourReasonControllerSpec extends TestSupport
             claimToAdjustResponse = testPoa1Maybe)
           setupMockGetSessionDataSuccess()
           setupMockGetClientDetailsSuccess()
-          val result = TestSelectYourReasonController.show(isAgent = true, mode = NormalMode)(fakeRequestConfirmedClient())
-
           setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+
+          val result = TestSelectYourReasonController.show(isAgent = true, mode = NormalMode)(fakeRequestConfirmedClient())
           status(result) shouldBe OK
           Jsoup.parse(contentAsString(result)).select("#value-4[checked]").toArray should have length 1
         }
