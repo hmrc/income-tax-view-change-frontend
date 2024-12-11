@@ -2325,3 +2325,12 @@ reporting.frequency.compatibleSoftware.link      = https://www.gov.uk/guidance/f
 reporting.frequency.compatibleSoftware.link.text = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
 reporting.frequency.compatibleSoftware.p2        =
 reporting.frequency.compatibleSoftware.p3        = Gallwch chi, neu’ch asiant, ddewis o blith amrywiaeth o becynnau meddalwedd, gan gynnwys rhai sy’n rhad ac am ddim a rhai y mae angen talu amdanynt.
+
+reporting.frequency.table.h2                                        = Pa mor aml y mae angen i chi gyflwyno adroddiadau
+reporting.frequency.table.heading.taxyear                           = Blwyddyn Dreth
+reporting.frequency.table.heading.status                            = Amlder cyflwyno adroddiadau
+
+reporting.frequency.table.taxYear                                   = {0} i {1}
+reporting.frequency.table.mandated                                  = Yn chwarterol (gorfodol)
+reporting.frequency.table.voluntary                                 = Yn chwarterol
+reporting.frequency.table.annual                                    = Yn flynyddol
