@@ -2245,47 +2245,47 @@ optin.optInError.home-bullet-1                     = go back to the
 optin.optInError.home-bullet-2                     = homepage
 
 # opt-in completed
-optin.completedOptIn.heading                       = Opt in completed
+optin.completedOptIn.heading                                    = Opt in completed
+optin.completedOptIn.overdueUpdates.inset                       = You may have overdue updates for the {0} to {1} tax year. You must submit these updates with all required income and expenses through your compatible software.
+optin.completedOptIn.cy.heading.desc                            = You are now reporting quarterly from {0} to {1} tax year onwards
+optin.completedOptIn.ny.heading.desc                            = You opted in to quarterly reporting from {0} to {1} tax year onwards
+optin.completedOptIn.followingVoluntary.heading.desc            = You are now reporting quarterly for {0} to {1} tax year
 
-optin.completedOptIn.cy.heading.desc                     = You are now reporting quarterly from {0} to {1} tax year onwards
-optin.completedOptIn.ny.heading.desc                     = You opted in to quarterly reporting from {0} to {1} tax year onwards
-optin.completedOptIn.followingVoluntary.heading.desc     = You are now reporting quarterly for {0} to {1} tax year
+optin.completedOptIn.yourRevisedDeadline.inset                  = Your revised deadlines will be available in the next few minutes.
 
-optin.completedOptIn.yourRevisedDeadline.inset = Your revised deadlines will be available in the next few minutes.
+optin.completedOptIn.yourRevisedDeadline.h2                     = Your revised deadlines
+optin.completedOptIn.yourRevisedDeadline.p1.a                   = Even if they are not displayed right away on the
+optin.completedOptIn.yourRevisedDeadline.p1.b                   = page, your account has been updated.
+optin.completedOptIn.yourRevisedDeadline.p1.link                = updates and deadlines
 
-optin.completedOptIn.yourRevisedDeadline.h2      = Your revised deadlines
-optin.completedOptIn.yourRevisedDeadline.p1.a    = Even if they are not displayed right away on the
-optin.completedOptIn.yourRevisedDeadline.p1.b    = page, your account has been updated.
-optin.completedOptIn.yourRevisedDeadline.p1.link = updates and deadlines
+optin.completedOptIn.yourRevisedDeadline.p2.a                   = You can decide at any time to opt out of reporting quarterly for all your businesses on
+optin.completedOptIn.yourRevisedDeadline.p2.b                   =  page.
+optin.completedOptIn.yourRevisedDeadline.p2.link                = your reporting frequency
 
-optin.completedOptIn.yourRevisedDeadline.p2.a    = You can decide at any time to opt out of reporting quarterly for all your businesses on
-optin.completedOptIn.yourRevisedDeadline.p2.b    =  page.
-optin.completedOptIn.yourRevisedDeadline.p2.link = your reporting frequency
+optin.completedOptIn.submitUpdates                              = Submit updates in software
+optin.completedOptIn.submitUpdates.desc1.a                      = For any tax year you are reporting quarterly, you will need
+optin.completedOptIn.submitUpdates.desc1.b                      = software compatible with Making Tax Digital for Income Tax (opens in new tab).
+optin.completedOptIn.submitUpdates.desc1.b.url                  = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax
 
-optin.completedOptIn.submitUpdates              = Submit updates in software
-optin.completedOptIn.submitUpdates.desc1.a      = For any tax year you are reporting quarterly, you will need
-optin.completedOptIn.submitUpdates.desc1.b      = software compatible with Making Tax Digital for Income Tax (opens in new tab).
-optin.completedOptIn.submitUpdates.desc1.b.url  = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax
+optin.completedOptIn.submitUpdates.annualReportingAdvice        = When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software.
 
-optin.completedOptIn.submitUpdates.annualReportingAdvice     = When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software.
+optin.completedOptIn.futureReporting                            = Reporting in the future
+optin.completedOptIn.nymandated.futureReporting                 = Reporting quarterly from next tax year onwards
+optin.completedOptIn.cy.futureReporting.desc1                   = You have just chosen to voluntarily report quarterly from the {0} to {1} tax year onwards, but in the future it could be mandatory for you if:
+optin.completedOptIn.ny.futureReporting.desc1                   = You are voluntarily opted in to reporting quarterly from the next tax year onwards, but in the future it could be mandatory for you if:
+optin.completedOptIn.nymandated.futureReporting.desc1           = You have just chosen to voluntarily report quarterly from the {0} to {1} tax year.
+optin.completedOptIn.nymandated.futureReporting.desc2           = This could be because:
+optin.completedOptIn.nymandated.futureReporting.bullet.p1       = HMRC lowered the income threshold for Making Tax Digital for Income Tax
+optin.completedOptIn.nymandated.futureReporting.bullet.p2       = you reported an increase in your qualifying income in a tax return
+optin.completedOptIn.nymandated.inset                           = From {0}, you’ll be required to send quarterly updates through compatible software.
+optin.completedOptIn.futureReporting.p1                         = HMRC lowers the income threshold for Making Tax Digital for Income Tax
+optin.completedOptIn.futureReporting.p2                         = you report an increase in your qualifying income in a tax return
+optin.completedOptIn.futureReporting.scenario                   = For example, if your income from self-employment or property, or both, exceeds the threshold in the {0} to {1} tax year, you would have to report quarterly from 6 April {2}.
+optin.completedOptIn.futureReporting.desc2                      = If this happens, we will write to you to let you know.
 
-optin.completedOptIn.futureReporting                        = Reporting in the future
-optin.completedOptIn.nymandated.futureReporting             = Reporting quarterly from next tax year onwards
-optin.completedOptIn.cy.futureReporting.desc1               = You have just chosen to voluntarily report quarterly from the {0} to {1} tax year onwards, but in the future it could be mandatory for you if:
-optin.completedOptIn.ny.futureReporting.desc1               = You are voluntarily opted in to reporting quarterly from the next tax year onwards, but in the future it could be mandatory for you if:
-optin.completedOptIn.nymandated.futureReporting.desc1       = You have just chosen to voluntarily report quarterly from the {0} to {1} tax year.
-optin.completedOptIn.nymandated.futureReporting.desc2       = This could be because:
-optin.completedOptIn.nymandated.futureReporting.bullet.p1   = HMRC lowered the income threshold for Making Tax Digital for Income Tax
-optin.completedOptIn.nymandated.futureReporting.bullet.p2   = you reported an increase in your qualifying income in a tax return
-optin.completedOptIn.nymandated.inset                       = From {0}, you’ll be required to send quarterly updates through compatible software.
-optin.completedOptIn.futureReporting.p1                     = HMRC lowers the income threshold for Making Tax Digital for Income Tax
-optin.completedOptIn.futureReporting.p2                     = you report an increase in your qualifying income in a tax return
-optin.completedOptIn.futureReporting.scenario               = For example, if your income from self-employment or property, or both, exceeds the threshold in the {0} to {1} tax year, you would have to report quarterly from 6 April {2}.
-optin.completedOptIn.futureReporting.desc2                  = If this happens, we will write to you to let you know.
-
-optin.completedOptIn.incomeThreshold.desc.a     = You can check the threshold for qualifying income in the
-optin.completedOptIn.incomeThreshold.desc.b     = criteria for people who will need to sign up for Making Tax Digital for Income Tax (opens in new tab).
-optin.completedOptIn.incomeThreshold.desc.b.url = https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up
+optin.completedOptIn.incomeThreshold.desc.a                     = You can check the threshold for qualifying income in the
+optin.completedOptIn.incomeThreshold.desc.b                     = criteria for people who will need to sign up for Making Tax Digital for Income Tax (opens in new tab).
+optin.completedOptIn.incomeThreshold.desc.b.url                 = https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up
 
 # opt in confirm tax year
 optIn.confirmTaxYear.heading                        = Confirm and opt in for {0} to {1} tax year

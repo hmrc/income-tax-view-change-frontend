@@ -2245,27 +2245,27 @@ optin.optInError.home-bullet-1                     = mynd yn ôl i’r
 optin.optInError.home-bullet-2                     = hafan
 
 # opt-in completed
-optin.completedOptIn.heading = Optio i mewn wedi’i gwblhau
+optin.completedOptIn.heading                                = Optio i mewn wedi’i gwblhau
+optin.completedOptIn.overdueUpdates.inset                   = Mae gennych ddiweddariadau hwyr ar gyfer blwyddyn dreth {0} i {1}. Mae’n rhaid i chi gyflwyno’r diweddariadau hyn, ynghyd â’r holl incwm a threuliau sydd eu hangen, gan ddefnyddio’ch meddalwedd sy’n cydweddu.
+optin.completedOptIn.cy.heading.desc                        = Rydych bellach yn cyflwyno adroddiadau’n chwarterol o flwyddyn dreth {0} i {1} ymlaen
+optin.completedOptIn.ny.heading.desc                        = Gwnaethoch optio i mewn i adrodd yn chwarterol o flwyddyn dreth {0} i {1} ymlaen
+optin.completedOptIn.followingVoluntary.heading.desc        = Rydych bellach yn cyflwyno adroddiadau’n chwarterol o’r flwyddyn dreth {0} i {1}
 
-optin.completedOptIn.cy.heading.desc                     = Rydych bellach yn cyflwyno adroddiadau’n chwarterol o flwyddyn dreth {0} i {1} ymlaen
-optin.completedOptIn.ny.heading.desc                     = Gwnaethoch optio i mewn i adrodd yn chwarterol o flwyddyn dreth {0} i {1} ymlaen
-optin.completedOptIn.followingVoluntary.heading.desc     = Rydych bellach yn cyflwyno adroddiadau’n chwarterol o’r flwyddyn dreth {0} i {1}
+optin.completedOptIn.yourRevisedDeadline.inset              = Bydd eich dyddiadau cau diwygiedig ar gael yn y munudau nesaf.
 
-optin.completedOptIn.yourRevisedDeadline.inset   = Bydd eich dyddiadau cau diwygiedig ar gael yn y munudau nesaf.
+optin.completedOptIn.yourRevisedDeadline.h2                 = Eich dyddiadau cau sydd wedi’u haddasu
+optin.completedOptIn.yourRevisedDeadline.p1.a               = Hyd yn oed os nad ydynt yn cael eu harddangos ar unwaith ar y dudalen
+optin.completedOptIn.yourRevisedDeadline.p1.b               = mae’ch cyfrif wedi’i ddiweddaru.
+optin.completedOptIn.yourRevisedDeadline.p1.link            = diweddariadau a dyddiadau cau,
 
-optin.completedOptIn.yourRevisedDeadline.h2      = Eich dyddiadau cau sydd wedi’u haddasu
-optin.completedOptIn.yourRevisedDeadline.p1.a    = Hyd yn oed os nad ydynt yn cael eu harddangos ar unwaith ar y dudalen
-optin.completedOptIn.yourRevisedDeadline.p1.b    = mae’ch cyfrif wedi’i ddiweddaru.
-optin.completedOptIn.yourRevisedDeadline.p1.link = diweddariadau a dyddiadau cau,
+optin.completedOptIn.yourRevisedDeadline.p2.a               = Gallwch, ar unrhyw adeg, optio allan o adrodd yn chwarterol ar gyfer pob un o’ch busnesau. Gallwch wneud hyn drwy fynd i’r dudalen ynghylch
+optin.completedOptIn.yourRevisedDeadline.p2.b               =  .
+optin.completedOptIn.yourRevisedDeadline.p2.link            = amlder eich adroddiadau
 
-optin.completedOptIn.yourRevisedDeadline.p2.a    = Gallwch, ar unrhyw adeg, optio allan o adrodd yn chwarterol ar gyfer pob un o’ch busnesau. Gallwch wneud hyn drwy fynd i’r dudalen ynghylch
-optin.completedOptIn.yourRevisedDeadline.p2.b    =  .
-optin.completedOptIn.yourRevisedDeadline.p2.link = amlder eich adroddiadau
-
-optin.completedOptIn.submitUpdates              = Cyflwyno diweddariadau drwy ddefnyddio meddalwedd
-optin.completedOptIn.submitUpdates.desc1.a      = Os ydych yn adrodd am flwyddyn dreth yn chwarterol, bydd angen i chi ddefnyddio
-optin.completedOptIn.submitUpdates.desc1.b      = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd).
-optin.completedOptIn.submitUpdates.desc1.b.url  = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax.cy
+optin.completedOptIn.submitUpdates                          = Cyflwyno diweddariadau drwy ddefnyddio meddalwedd
+optin.completedOptIn.submitUpdates.desc1.a                  = Os ydych yn adrodd am flwyddyn dreth yn chwarterol, bydd angen i chi ddefnyddio
+optin.completedOptIn.submitUpdates.desc1.b                  = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd).
+optin.completedOptIn.submitUpdates.desc1.b.url              = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax.cy
 
 optin.completedOptIn.submitUpdates.annualReportingAdvice    = Wrth adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth yn uniongyrchol drwy’ch cyfrif ar-lein CThEF neu drwy ddefnyddio meddalwedd sy’n cydweddu.
 
@@ -2283,9 +2283,9 @@ optin.completedOptIn.futureReporting.p2                     = rydych yn adrodd a
 optin.completedOptIn.futureReporting.scenario               = Er enghraifft, pe bai eich incwm o hunangyflogaeth neu eiddo, neu o’r ddau, yn uwch na’r trothwy ym mlwyddyn dreth {0} i {1}, byddai’n rhaid i chi gyflwyno adroddiadau’n chwarterol o 6 Ebrill {2} ymlaen.
 optin.completedOptIn.futureReporting.desc2                  = Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
 
-optin.completedOptIn.incomeThreshold.desc.a     = Gallwch wirio’r trothwy ar gyfer incwm cymhwysol yn y
-optin.completedOptIn.incomeThreshold.desc.b     = meini prawf ar gyfer pobl y bydd angen iddynt gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd).
-optin.completedOptIn.incomeThreshold.desc.b.url = https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax.cy#pwy-fydd-angen-cofrestru
+optin.completedOptIn.incomeThreshold.desc.a                 = Gallwch wirio’r trothwy ar gyfer incwm cymhwysol yn y
+optin.completedOptIn.incomeThreshold.desc.b                 = meini prawf ar gyfer pobl y bydd angen iddynt gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd).
+optin.completedOptIn.incomeThreshold.desc.b.url             = https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax.cy#pwy-fydd-angen-cofrestru
 
 # opt in confirm tax year
 optIn.confirmTaxYear.heading                        = Cadarnhau ac optio i mewn ar gyfer blwyddyn dreth {0} i {1}
