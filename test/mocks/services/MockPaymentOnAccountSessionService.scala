@@ -27,7 +27,7 @@ import scala.concurrent.Future
 
 trait MockPaymentOnAccountSessionService extends UnitSpec with BeforeAndAfterEach {
 
-  val mockPaymentOnAccountSessionService: PaymentOnAccountSessionService = mock(classOf[PaymentOnAccountSessionService])
+  lazy val mockPaymentOnAccountSessionService: PaymentOnAccountSessionService = mock(classOf[PaymentOnAccountSessionService])
 
   override def beforeEach(): Unit = {
     super.beforeEach()

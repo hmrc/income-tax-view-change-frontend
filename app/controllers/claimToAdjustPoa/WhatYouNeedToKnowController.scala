@@ -25,7 +25,7 @@ import models.core.NormalMode
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.ErrorRecovery
 import utils.claimToAdjust.{ClaimToAdjustUtils, WithSessionAndPoa}
 import views.html.claimToAdjustPoa.WhatYouNeedToKnow
@@ -39,11 +39,11 @@ class WhatYouNeedToKnowController @Inject()(val authActions: AuthActions,
                                             val claimToAdjustService: ClaimToAdjustService,
                                             val poaSessionService: PaymentOnAccountSessionService)
                                            (implicit val appConfig: FrontendAppConfig,
-                                            implicit val individualErrorHandler: ItvcErrorHandler,
-                                            implicit val agentErrorHandler: AgentItvcErrorHandler,
-                                            override implicit val controllerComponents: MessagesControllerComponents,
+                                            val individualErrorHandler: ItvcErrorHandler,
+                                            val agentErrorHandler: AgentItvcErrorHandler,
+                                            val mcc: MessagesControllerComponents,
                                             val ec: ExecutionContext)
-  extends FrontendBaseController with I18nSupport with ClaimToAdjustUtils with WithSessionAndPoa with ErrorRecovery {
+  extends FrontendController(mcc) with I18nSupport with ClaimToAdjustUtils with WithSessionAndPoa with ErrorRecovery {
 
   def getRedirect(poa: PaymentOnAccountViewModel)(implicit user: MtdItUser[_]): String = {
     (if (poa.totalAmountLessThanPoa) {
@@ -53,7 +53,7 @@ class WhatYouNeedToKnowController @Inject()(val authActions: AuthActions,
     }).url
   }
 
-  def show(isAgent: Boolean): Action[AnyContent] = authActions.asIndividualOrAgent(isAgent) async {
+  def show(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async {
     implicit user =>
       withSessionDataAndPoa() { (_, poa) =>
         val viewModel = WhatYouNeedToKnowViewModel(poa.taxYear, poa.partiallyPaidAndTotalAmountLessThanPoa, getRedirect(poa))

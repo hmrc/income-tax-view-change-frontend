@@ -21,7 +21,7 @@ import helpers.ComponentSpecBase
 import helpers.servicemocks.BusinessDetailsStub.stubGetBusinessDetails
 import helpers.servicemocks.CitizenDetailsStub.stubGetCitizenDetails
 import helpers.servicemocks._
-import play.api.http.Status.SEE_OTHER
+import play.api.http.Status.{SEE_OTHER, UNAUTHORIZED}
 import testConstants.BaseIntegrationTestConstants.getAgentClientDetailsForCookie
 
 trait ControllerISpecHelper extends ComponentSpecBase {
@@ -223,6 +223,19 @@ trait ControllerISpecHelper extends ComponentSpecBase {
     }
     if(requiresConfirmedClient) {
       testNoClientDataFailure(requestPath, optBody)
+    }
+  }
+
+  def testSupportingAgentAccessDenied(requestPath: String,
+                                      additionalCookies: Map[String, String],
+                                      optBody: Option[Map[String, Seq[String]]] = None): Unit = {
+    "render the supporting agent unauthorised page" in {
+      stubAuthorised(MTDSupportingAgent)
+      val result = buildMTDClient(requestPath, additionalCookies, optBody).futureValue
+      result should have(
+        httpStatus(UNAUTHORIZED),
+        pageTitle(MTDSupportingAgent, "agent-unauthorised.heading", isErrorPage = true)
+      )
     }
   }
 }

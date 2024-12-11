@@ -23,10 +23,10 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import models.claimToAdjustPoa.ConfirmationForAdjustingPoaViewModel
 import play.api.i18n.I18nSupport
-import play.api.mvc.{MessagesControllerComponents, _}
+import play.api.mvc._
 import services.claimToAdjustPoa.{ClaimToAdjustPoaCalculationService, RecalculatePoaHelper}
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.claimToAdjust.WithSessionAndPoa
 import views.html.claimToAdjustPoa.ConfirmationForAdjustingPoa
 
@@ -41,13 +41,13 @@ class ConfirmationForAdjustingPoaController @Inject()(val authActions: AuthActio
                                                       val view: ConfirmationForAdjustingPoa,
                                                       val auditingService: AuditingService)
                                                      (implicit val appConfig: FrontendAppConfig,
-                                                      implicit val individualErrorHandler: ItvcErrorHandler,
-                                                      implicit val agentErrorHandler: AgentItvcErrorHandler,
-                                                      override implicit val controllerComponents: MessagesControllerComponents,
+                                                      val individualErrorHandler: ItvcErrorHandler,
+                                                      val agentErrorHandler: AgentItvcErrorHandler,
+                                                      val mcc: MessagesControllerComponents,
                                                       val ec: ExecutionContext)
-  extends FrontendBaseController with I18nSupport with FeatureSwitching with RecalculatePoaHelper with WithSessionAndPoa {
+  extends FrontendController(mcc) with I18nSupport with FeatureSwitching with RecalculatePoaHelper with WithSessionAndPoa {
 
-  def show(isAgent: Boolean): Action[AnyContent] = authActions.asIndividualOrAgent(isAgent) async {
+  def show(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async {
     implicit user =>
       withSessionDataAndPoa() { (sessionData, poa) =>
         sessionData.newPoaAmount match {
@@ -62,7 +62,7 @@ class ConfirmationForAdjustingPoaController @Inject()(val authActions: AuthActio
       } recover logAndRedirect
   }
 
-  def submit(isAgent: Boolean): Action[AnyContent] = authActions.asIndividualOrAgent(isAgent) async {
+  def submit(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async {
     implicit user =>
       handleSubmitPoaData(
         claimToAdjustService = claimToAdjustService,

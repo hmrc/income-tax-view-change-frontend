@@ -28,7 +28,7 @@ import scala.concurrent.Future
 
 trait MockClaimToAdjustPoaCalculationService extends UnitSpec with BeforeAndAfterEach {
 
-  val mockClaimToAdjustPoaCalculationService: ClaimToAdjustPoaCalculationService = mock(classOf[ClaimToAdjustPoaCalculationService])
+  lazy val mockClaimToAdjustPoaCalculationService: ClaimToAdjustPoaCalculationService = mock(classOf[ClaimToAdjustPoaCalculationService])
 
   override def beforeEach(): Unit = {
     super.beforeEach()

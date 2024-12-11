@@ -61,7 +61,6 @@ trait MockAuthActions extends
   override def beforeEach(): Unit = {
     super.beforeEach()
     disableAllSwitches()
-//    Play.stop(fakeApplication())
     reset(mockAuthService)
   }
 
@@ -134,10 +133,12 @@ trait MockAuthActions extends
     setupMockAgentWithClientAuthException(exception, mtdId, isSupportingAgent)
   }
 
-  def testMTDAuthFailuresForRole(action: Action[AnyContent], userRole: MTDUserRole)(fakeRequest: FakeRequest[AnyContentAsEmpty.type]): Unit = {
+  def testMTDAuthFailuresForRole(action: Action[AnyContent],
+                                 userRole: MTDUserRole,
+                                 supportingAgentAccessAllowed: Boolean = true)(fakeRequest: FakeRequest[AnyContentAsEmpty.type]): Unit = {
     userRole match {
       case MTDIndividual => testMTDAuthFailuresForIndividual(action, userRole)(fakeRequest)
-      case _ => testMTDAuthFailuresForAgent(action, userRole)(fakeRequest)
+      case _ => testMTDAuthFailuresForAgent(action, userRole, supportingAgentAccessAllowed)(fakeRequest)
     }
   }
 
@@ -196,10 +197,12 @@ trait MockAuthActions extends
   def testMTDAgentAuthFailures(action: Action[AnyContent], isSupportingAgent: Boolean): Unit = {
     val fakeRequest = fakeRequestConfirmedClient(isSupportingAgent = isSupportingAgent)
     val mdtUserRole = if (isSupportingAgent) MTDSupportingAgent else MTDPrimaryAgent
-    testMTDAuthFailuresForAgent(action, mdtUserRole)(fakeRequest)
+    testMTDAuthFailuresForAgent(action, mdtUserRole, true)(fakeRequest)
   }
 
-  def testMTDAuthFailuresForAgent(action: Action[AnyContent], mtdUserRole: MTDUserRole)(fakeRequest: FakeRequest[AnyContentAsEmpty.type]): Unit = {
+  def testMTDAuthFailuresForAgent(action: Action[AnyContent],
+                                  mtdUserRole: MTDUserRole,
+                                  supportingAgentAccessAllowed: Boolean)(fakeRequest: FakeRequest[AnyContentAsEmpty.type]): Unit = {
     val isSupportingAgent = mtdUserRole == MTDSupportingAgent
     val userType = if(isSupportingAgent) "supporting agent" else "primary agent"
     s"the $userType is not authenticated" should {
@@ -253,17 +256,36 @@ trait MockAuthActions extends
       }
     }
 
-    s"the $userType is not authenticated and has delegated enrolment but doesn't have income source" should {
-      "render the internal error page" in {
-        setupMockAgentWithClientAuth(isSupportingAgent)
-        mockErrorIncomeSource()
+    val incomeSourceRequired = mtdUserRole match {
+      case MTDSupportingAgent => supportingAgentAccessAllowed
+      case _ => true
+    }
 
-        val result = action(fakeRequest)
+    if(incomeSourceRequired) {
+      s"the $userType is not authenticated and has delegated enrolment but doesn't have income source" should {
+        "render the internal error page" in {
+          setupMockAgentWithClientAuth(isSupportingAgent)
+          mockErrorIncomeSource()
 
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        val errorPage = Jsoup.parse(contentAsString(result))
-        errorPage.title shouldEqual "Sorry, there is a problem with the service - GOV.UK"
+          val result = action(fakeRequest)
+
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          val errorPage = Jsoup.parse(contentAsString(result))
+          errorPage.title shouldEqual "Sorry, there is a problem with the service - GOV.UK"
+        }
       }
+    }
+  }
+
+  def testSupportingAgentDeniedAccess(action: Action[AnyContent])(fakeRequest: FakeRequest[AnyContentAsEmpty.type]): Unit = {
+    "render the supporting agent unauthorised page" in {
+      setupMockSuccess(MTDSupportingAgent)
+
+      val result = action(fakeRequest)
+
+      status(result) shouldBe Status.UNAUTHORIZED
+      val unauthorisedPage = Jsoup.parse(contentAsString(result))
+      unauthorisedPage.title shouldEqual "You are not authorised to access this page - GOV.UK"
     }
   }
 }
