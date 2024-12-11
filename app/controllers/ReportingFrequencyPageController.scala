@@ -21,18 +21,19 @@ import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import models.ReportingFrequencyViewModel
 import models.admin.ReportingFrequencyPage
+import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, Voluntary}
 import models.optout.{OptOutMultiYearViewModel, OptOutOneYearViewModel}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.DateServiceInterface
 import services.optIn.OptInService
-import services.optout.OptOutService
+import services.optout.{OptOutProposition, OptOutService, PreviousOptOutTaxYear}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.ReportingFrequencyView
 import views.html.errorPages.templates.ErrorTemplate
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class ReportingFrequencyPageController @Inject()(
                                                   optOutService: OptOutService,
@@ -57,7 +58,7 @@ class ReportingFrequencyPageController @Inject()(
         optInTaxYears <- optInService.availableOptInTaxYear()
 
       } yield {
-        if (isEnabled(ReportingFrequencyPage)) {
+        if (isEnabled(ReportingFrequencyPage) && itsaStatusTable(optOutProposition).nonEmpty) {
 
           val optOutUrl: Option[String] = {
             optOutJourneyType.map {
@@ -73,7 +74,8 @@ class ReportingFrequencyPageController @Inject()(
               isAgent = user.isAgent(),
               optOutJourneyUrl = optOutUrl,
               optOutTaxYears = optOutProposition.availableTaxYearsForOptOut,
-              optInTaxYears = optInTaxYears
+              optInTaxYears = optInTaxYears,
+              itsaStatusTable = itsaStatusTable(optOutProposition)
             )
           ))
         } else {
@@ -88,4 +90,28 @@ class ReportingFrequencyPageController @Inject()(
         }
       }
     }
+
+  private def itsaStatusString(ITSAStatus: ITSAStatus): Option[String] = {
+    ITSAStatus match {
+      case Mandated => Some("Quarterly (mandatory)")
+      case Voluntary => Some("Quarterly")
+      case Annual => Some("Annual")
+      case _ => None
+    }
+  }
+
+  private def itsaStatusTable(optOutProposition: OptOutProposition): Seq[(String, Option[String])] = {
+    if(optOutProposition.previousTaxYear.crystallised) {
+      Seq(
+        (optOutProposition.currentTaxYear.taxYear.taxYearWithToString, itsaStatusString(optOutProposition.currentTaxYear.status)),
+        (optOutProposition.nextTaxYear.taxYear.taxYearWithToString, itsaStatusString(optOutProposition.nextTaxYear.status))
+      ).filter(_._2.nonEmpty)
+    } else {
+      Seq(
+        (optOutProposition.previousTaxYear.taxYear.taxYearWithToString, itsaStatusString(optOutProposition.previousTaxYear.status)),
+        (optOutProposition.currentTaxYear.taxYear.taxYearWithToString, itsaStatusString(optOutProposition.currentTaxYear.status)),
+        (optOutProposition.nextTaxYear.taxYear.taxYearWithToString, itsaStatusString(optOutProposition.nextTaxYear.status))
+      ).filter(_._2.nonEmpty)
+    }
+  }
 }

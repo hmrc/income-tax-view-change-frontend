@@ -23,7 +23,8 @@ case class ReportingFrequencyViewModel(
                                         isAgent: Boolean,
                                         optOutJourneyUrl: Option[String],
                                         optOutTaxYears: Seq[TaxYear],
-                                        optInTaxYears: Seq[TaxYear]
+                                        optInTaxYears: Seq[TaxYear],
+                                        itsaStatusTable: Seq[(String, Option[String])]
                                       )(implicit dateService: DateServiceInterface) {
 
   val isOptInLinkOnward: Boolean =
