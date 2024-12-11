@@ -16,7 +16,8 @@
 
 package controllers.claimToAdjustPoa
 
-import helpers.ComponentSpecBase
+import controllers.ControllerISpecHelper
+import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.PoaAmendmentData
@@ -24,266 +25,229 @@ import models.core.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
-import play.api.libs.ws.WSResponse
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.PaymentOnAccountSessionService
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testDate, testMtditid, testNino}
+import testConstants.BaseIntegrationTestConstants.{testDate, testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
 
-class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
-
-  val isAgent = false
-
-  def whatYouNeedToKnowUrl: String = controllers.claimToAdjustPoa.routes.WhatYouNeedToKnowController.show(isAgent).url
+class WhatYouNeedToKnowControllerISpec extends ControllerISpecHelper {
 
   val testTaxYear = 2024
-
-  def enterPoaAmountUrl: String = controllers.claimToAdjustPoa.routes.EnterPoaAmountController.show(isAgent, NormalMode).url
-
-  def selectReasonUrl: String = controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, NormalMode).url
-
   val sessionService: PaymentOnAccountSessionService = app.injector.instanceOf[PaymentOnAccountSessionService]
-
-  def homeUrl: String = controllers.routes.HomeController.show().url
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     await(sessionService.setMongoData(Some(PoaAmendmentData(poaAdjustmentReason = None, newPoaAmount = None))))
   }
 
-  def get(url: String): WSResponse = {
-    IncomeTaxViewChangeFrontend.get(url, additionalCookies = clientDetailsWithConfirmation)
+  def getPath(mtdUserRole: MTDUserRole): String = {
+    val pathStart = if (mtdUserRole == MTDIndividual) "" else "/agents"
+    pathStart + "/adjust-poa/what-you-need-to-know"
   }
 
-  s"calling GET $whatYouNeedToKnowUrl" should {
-    s"return status $OK and render the What You Need To Know page (with correct link)" when {
-      s"User is authorised and has originalAmount >= relevantAmount" in {
-        enable(AdjustPaymentsOnAccount)
+  mtdAllRoles.foreach { case mtdUserRole =>
+    val path = getPath(mtdUserRole)
+    val additionalCookies = getAdditionalCookies(mtdUserRole)
+    val isAgent = mtdUserRole != MTDIndividual
+    s"GET $path" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          if (mtdUserRole == MTDSupportingAgent) {
+            testSupportingAgentAccessDenied(path, additionalCookies)
+          } else {
+            s"render the What you need to know page" when {
+              s"User has originalAmount >= relevantAmount" in {
+                enable(AdjustPaymentsOnAccount)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+                )
+                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+                  OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
+                )
+                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+                  OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
+                )
 
-        Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
-        )
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                result should have(
+                  httpStatus(OK)
+                )
+                sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData()))
+                val document: Document = Jsoup.parse(result.body)
+                val continueButton = document.getElementById("continue")
+                continueButton.attr("href") shouldBe routes.SelectYourReasonController.show(isAgent, NormalMode).url
 
-        And("I wiremock stub financial details for multiple years with POAs")
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
-        )
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
-        )
+                val increaseAfterPaymentContent = Option(document.getElementById("p6"))
+                increaseAfterPaymentContent.isDefined shouldBe false
+              }
 
-        When(s"I call GET $whatYouNeedToKnowUrl")
-        val res = get("/adjust-poa/what-you-need-to-know")
+              "User has originalAmount < relevantAmount" that {
+                "is not paid or partially paid" in {
+                  enable(AdjustPaymentsOnAccount)
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                    OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+                  )
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+                    OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
+                  )
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+                    OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
+                  )
 
-        val document: Document = Jsoup.parse(res.body)
-        val continueButton = document.getElementById("continue")
+                  val result = buildGETMTDClient(path, additionalCookies).futureValue
+                  result should have(
+                    httpStatus(OK)
+                  )
+                  sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData()))
+                  val document: Document = Jsoup.parse(result.body)
+                  val continueButton = document.getElementById("continue")
+                  continueButton.attr("href") shouldBe routes.EnterPoaAmountController.show(isAgent, NormalMode).url
 
-        res should have(
-          httpStatus(OK)
-        )
-        sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData()))
-        continueButton.attr("href") shouldBe selectReasonUrl
+                  val increaseAfterPaymentContent = Option(document.getElementById("p6"))
+                  increaseAfterPaymentContent.isDefined shouldBe false
+                }
 
-        val increaseAfterPaymentContent = Option(document.getElementById("p6"))
-        increaseAfterPaymentContent.isDefined shouldBe false
-      }
+                "is partially paid should display additional content" in {
+                  enable(AdjustPaymentsOnAccount)
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                    OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+                  )
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+                    OK, testValidFinancialDetailsModelJson(
+                      originalAmount = 2000,
+                      outstandingAmount = 1000,
+                      taxYear = (testTaxYear - 1).toString,
+                      dueDate = testDate.toString,
+                      poaRelevantAmount = Some(3000))
+                  )
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+                    OK, testValidFinancialDetailsModelJson(
+                      originalAmount = 2000,
+                      outstandingAmount = 1000,
+                      taxYear = (testTaxYear - 1).toString,
+                      dueDate = testDate.toString,
+                      poaRelevantAmount = Some(3000))
+                  )
 
-      "User is authorised and has originalAmount < relevantAmount" when {
+                  val result = buildGETMTDClient(path, additionalCookies).futureValue
+                  result should have(
+                    httpStatus(OK)
+                  )
+                  sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData()))
+                  val document: Document = Jsoup.parse(result.body)
+                  val continueButton = document.getElementById("continue")
+                  continueButton.attr("href") shouldBe routes.EnterPoaAmountController.show(isAgent, NormalMode).url
 
-        "not paid or partially paid" in {
-          enable(AdjustPaymentsOnAccount)
+                  val increaseAfterPaymentContent = Option(document.getElementById("p6"))
+                  increaseAfterPaymentContent.isDefined shouldBe true
+                }
+              }
 
-          Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-            OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
-          )
+              "user has POAs that are fully paid" in {
+                enable(AdjustPaymentsOnAccount)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+                )
+                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+                  OK, testValidFinancialDetailsModelJson(
+                    originalAmount = 2000,
+                    outstandingAmount = 0,
+                    taxYear = (testTaxYear - 1).toString,
+                    dueDate = testDate.toString,
+                    poaRelevantAmount = Some(3000))
+                )
+                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+                  OK, testValidFinancialDetailsModelJson(
+                    originalAmount = 2000,
+                    outstandingAmount = 0,
+                    taxYear = (testTaxYear - 1).toString,
+                    dueDate = testDate.toString,
+                    poaRelevantAmount = Some(3000))
+                )
 
-          And("I wiremock stub financial details for multiple years with POAs")
-          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-            OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
-          )
-          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-            OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
-          )
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                result should have(
+                  httpStatus(OK)
+                )
+                sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData()))
+                val document: Document = Jsoup.parse(result.body)
+                val continueButton = document.getElementById("continue")
+                continueButton.attr("href") shouldBe routes.EnterPoaAmountController.show(isAgent, NormalMode).url
 
-          When(s"I call GET $whatYouNeedToKnowUrl")
-          val res = get("/adjust-poa/what-you-need-to-know")
+                val increaseAfterPaymentContent = Option(document.getElementById("p6"))
+                increaseAfterPaymentContent.isDefined shouldBe true
+              }
+            }
 
-          val document: Document = Jsoup.parse(res.body)
-          val continueButton = document.getElementById("continue")
+            s"return status $SEE_OTHER and redirect to the home page" when {
+              "AdjustPaymentsOnAccount FS is disabled" in {
+                disable(AdjustPaymentsOnAccount)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+                )
+                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+                  OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString)
+                )
+                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+                  OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString)
+                )
 
-          res should have(
-            httpStatus(OK)
-          )
-          sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData()))
-          continueButton.attr("href") shouldBe enterPoaAmountUrl
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                result should have(
+                  httpStatus(SEE_OTHER),
+                  redirectURI(homeUrl(mtdUserRole))
+                )
+              }
+            }
+            s"return status $SEE_OTHER and redirect to the You Cannot Go Back page" when {
+              "journeyCompleted flag is true and the user tries to access the page" in {
+                enable(AdjustPaymentsOnAccount)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+                )
+                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+                  OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
+                )
+                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+                  OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
+                )
+                await(sessionService.setMongoData(Some(PoaAmendmentData(poaAdjustmentReason = None, newPoaAmount = None, journeyCompleted = true))))
 
-          val increaseAfterPaymentContent = Option(document.getElementById("p6"))
-          increaseAfterPaymentContent.isDefined shouldBe false
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                result should have(
+                  httpStatus(SEE_OTHER),
+                  redirectURI(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(isAgent).url)
+                )
+              }
+            }
+
+            s"return $INTERNAL_SERVER_ERROR" when {
+              "no non-crystallised financial details are found" in {
+                enable(AdjustPaymentsOnAccount)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+                  OK, testEmptyFinancialDetailsModelJson
+                )
+                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+                  OK, testEmptyFinancialDetailsModelJson
+                )
+
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                result should have(
+                  httpStatus(INTERNAL_SERVER_ERROR)
+                )
+              }
+            }
+          }
         }
-
-        "partially paid should display additional content" in {
-          enable(AdjustPaymentsOnAccount)
-
-          Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-            OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
-          )
-
-          And("I wiremock stub financial details for multiple years with POAs")
-          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-            OK, testValidFinancialDetailsModelJson(
-              originalAmount = 2000,
-              outstandingAmount = 1000,
-              taxYear = (testTaxYear - 1).toString,
-              dueDate = testDate.toString,
-              poaRelevantAmount = Some(3000))
-          )
-          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-            OK, testValidFinancialDetailsModelJson(
-              originalAmount = 2000,
-              outstandingAmount = 1000,
-              taxYear = (testTaxYear - 1).toString,
-              dueDate = testDate.toString,
-              poaRelevantAmount = Some(3000))
-          )
-
-          When(s"I call GET $whatYouNeedToKnowUrl")
-          val res = get("/adjust-poa/what-you-need-to-know")
-
-          val document: Document = Jsoup.parse(res.body)
-          val continueButton = document.getElementById("continue")
-
-          res should have(
-            httpStatus(OK)
-          )
-          sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData()))
-          continueButton.attr("href") shouldBe enterPoaAmountUrl
-
-          val increaseAfterPaymentContent = Option(document.getElementById("p6"))
-          increaseAfterPaymentContent.isDefined shouldBe true
-        }
+        testAuthFailures(path, mtdUserRole)
       }
-
-      "user has POAs that are fully paid" in {
-        enable(AdjustPaymentsOnAccount)
-
-        Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
-        )
-
-        And("I wiremock stub financial details for multiple years with POAs")
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-          OK, testValidFinancialDetailsModelJson(
-            originalAmount = 2000,
-            outstandingAmount = 0,
-            taxYear = (testTaxYear - 1).toString,
-            dueDate = testDate.toString,
-            poaRelevantAmount = Some(3000))
-        )
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-          OK, testValidFinancialDetailsModelJson(
-            originalAmount = 2000,
-            outstandingAmount = 0,
-            taxYear = (testTaxYear - 1).toString,
-            dueDate = testDate.toString,
-            poaRelevantAmount = Some(3000))
-        )
-
-        When(s"I call GET $whatYouNeedToKnowUrl")
-        val res = get("/adjust-poa/what-you-need-to-know")
-
-        val document: Document = Jsoup.parse(res.body)
-        val continueButton = document.getElementById("continue")
-
-        res should have(
-          httpStatus(OK)
-        )
-        sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData()))
-        continueButton.attr("href") shouldBe enterPoaAmountUrl
-
-        val increaseAfterPaymentContent = Option(document.getElementById("p6"))
-        increaseAfterPaymentContent.isDefined shouldBe true
-      }
-    }
-
-    s"return status $SEE_OTHER and redirect to the home page" when {
-      "AdjustPaymentsOnAccount FS is disabled" in {
-        disable(AdjustPaymentsOnAccount)
-
-        Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
-        )
-
-        And("I wiremock stub financial details for multiple years with POAs")
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString)
-        )
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString)
-        )
-
-        When(s"I call GET $whatYouNeedToKnowUrl")
-        val res = get("/adjust-poa/what-you-need-to-know")
-
-        res should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(homeUrl)
-        )
-      }
-    }
-  }
-  s"return status $SEE_OTHER and redirect to the You Cannot Go Back page" when {
-    "journeyCompleted flag is true and the user tries to access the page" in {
-      enable(AdjustPaymentsOnAccount)
-
-      Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-        OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
-      )
-
-      And("I wiremock stub financial details for multiple years with POAs")
-      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-        OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
-      )
-      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-        OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
-      )
-
-      And("A session has been created with journeyCompleted flag set to true")
-      await(sessionService.setMongoData(Some(PoaAmendmentData(poaAdjustmentReason = None, newPoaAmount = None, journeyCompleted = true))))
-
-      When(s"I call GET $whatYouNeedToKnowUrl")
-      val res = get("/adjust-poa/what-you-need-to-know")
-
-      res should have(
-        httpStatus(SEE_OTHER),
-        redirectURI(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(isAgent).url)
-      )
-    }
-  }
-
-  s"return $INTERNAL_SERVER_ERROR" when {
-    "no non-crystallised financial details are found" in {
-      enable(AdjustPaymentsOnAccount)
-
-      And("I wiremock stub empty financial details response")
-      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-        OK, testEmptyFinancialDetailsModelJson
-      )
-      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-        OK, testEmptyFinancialDetailsModelJson
-      )
-
-      When(s"I call GET $whatYouNeedToKnowUrl")
-      val res = get("/adjust-poa/what-you-need-to-know")
-
-      res should have(
-        httpStatus(INTERNAL_SERVER_ERROR)
-      )
     }
   }
 }

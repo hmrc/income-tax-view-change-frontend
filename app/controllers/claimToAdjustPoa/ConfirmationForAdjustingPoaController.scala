@@ -47,7 +47,7 @@ class ConfirmationForAdjustingPoaController @Inject()(val authActions: AuthActio
                                                       val ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with FeatureSwitching with RecalculatePoaHelper with WithSessionAndPoa {
 
-  def show(isAgent: Boolean): Action[AnyContent] = authActions.asMDTIndividualOrPrimaryAgentWithClient(isAgent) async {
+  def show(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async {
     implicit user =>
       withSessionDataAndPoa() { (sessionData, poa) =>
         sessionData.newPoaAmount match {
@@ -62,7 +62,7 @@ class ConfirmationForAdjustingPoaController @Inject()(val authActions: AuthActio
       } recover logAndRedirect
   }
 
-  def submit(isAgent: Boolean): Action[AnyContent] = authActions.asMDTIndividualOrPrimaryAgentWithClient(isAgent) async {
+  def submit(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async {
     implicit user =>
       handleSubmitPoaData(
         claimToAdjustService = claimToAdjustService,

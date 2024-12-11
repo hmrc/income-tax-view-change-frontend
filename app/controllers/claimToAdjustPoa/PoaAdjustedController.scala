@@ -48,7 +48,7 @@ class PoaAdjustedController @Inject()(val authActions: AuthActions,
                                       val ec: ExecutionContext)
   extends FrontendController(mcc) with ClaimToAdjustUtils with I18nSupport with WithSessionAndPoa with ErrorRecovery {
 
-  def show(isAgent: Boolean): Action[AnyContent] = authActions.asMDTIndividualOrPrimaryAgentWithClient(isAgent) async {
+  def show(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async {
     implicit user =>
       withSessionDataAndPoa(journeyState = AfterSubmissionPage) { (session, poa) =>
         checkAndLogAPIDataSet(session, poa)

@@ -92,8 +92,12 @@ class YouCannotGoBackControllerSpec extends MockAuthActions
               setupMockSuccess(mtdRole)
               val result = action(fakeRequest)
               status(result) shouldBe SEE_OTHER
-              redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
-
+              val expectedRedirectUrl = if (isAgent) {
+                controllers.routes.HomeController.showAgent.url
+              } else {
+                controllers.routes.HomeController.show().url
+              }
+              redirectLocation(result) shouldBe Some(expectedRedirectUrl)
             }
           }
 
@@ -137,6 +141,7 @@ class YouCannotGoBackControllerSpec extends MockAuthActions
           }
         }
       }
+      testMTDAuthFailuresForRole(action, mtdRole, false)(fakeRequest)
     }
   }
 }

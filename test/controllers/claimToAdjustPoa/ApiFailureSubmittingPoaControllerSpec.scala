@@ -76,6 +76,7 @@ class ApiFailureSubmittingPoaControllerSpec extends MockAuthActions {
           }
         }
       }
+      testMTDAuthFailuresForRole(action, mtdRole, false)(fakeRequest)
     }
   }
 }

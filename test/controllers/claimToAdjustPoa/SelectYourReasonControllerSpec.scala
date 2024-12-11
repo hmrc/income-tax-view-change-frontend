@@ -16,12 +16,8 @@
 
 package controllers.claimToAdjustPoa
 
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.{MTDIndividual, MTDSupportingAgent}
-import forms.adjustPoa.SelectYourReasonFormProvider
-import mocks.auth.{MockAuthActions, MockOldAuthActions}
-import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
+import mocks.auth.MockAuthActions
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa._
@@ -31,16 +27,11 @@ import org.jsoup.Jsoup
 import play.api
 import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, SEE_OTHER}
-import play.api.mvc.MessagesControllerComponents
-import play.api.test.FakeRequest
-import play.api.test.Helpers.{OK, POST, contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.{CalculationListService, ClaimToAdjustService, PaymentOnAccountSessionService}
-import testConstants.BaseTestConstants
+import play.api.test.Helpers.{OK, contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.testPoa1Maybe
-import testUtils.{TestSupport, ViewSpec}
-import views.html.claimToAdjustPoa.SelectYourReasonView
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class SelectYourReasonControllerSpec extends MockAuthActions
   with MockClaimToAdjustService
@@ -223,11 +214,12 @@ class SelectYourReasonControllerSpec extends MockAuthActions
             }
           }
         }
+        testMTDAuthFailuresForRole(action, mtdRole, false)(fakeRequest)
       }
 
       s"submit(isAgent = $isAgent, mode = $mode)" when {
         val action = testController.submit(isAgent, mode)
-        val fakeRequest = fakePostRequestConfirmedClient(mtdRole, false)
+        val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
         s"the user is authenticated as a $mtdRole" should {
           if (mtdRole == MTDSupportingAgent) {
             testSupportingAgentDeniedAccess(action)(fakeRequest)
@@ -276,7 +268,7 @@ class SelectYourReasonControllerSpec extends MockAuthActions
                   setupMockSuccess(mtdRole)
                   val result = action(fakeRequest.withFormUrlEncodedBody("value" -> "MainIncomeLower"))
                   status(result) shouldBe SEE_OTHER
-                  redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/adjust-poa/enter-poa-amount")
+                  redirectLocation(result) shouldBe Some(routes.EnterPoaAmountController.show(isAgent, NormalMode).url)
                 }
               }
             }
@@ -294,6 +286,7 @@ class SelectYourReasonControllerSpec extends MockAuthActions
             }
           }
         }
+        testMTDAuthFailuresForRole(action, mtdRole, false)(fakeRequest)
       }
     }
   }

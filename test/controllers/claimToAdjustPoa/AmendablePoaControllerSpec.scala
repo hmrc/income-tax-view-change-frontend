@@ -127,6 +127,7 @@ class AmendablePoaControllerSpec
 
             "Error creating mongo session" in {
               enable(AdjustPaymentsOnAccount)
+              setupMockSuccess(mtdRole)
 
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true)))))
@@ -142,6 +143,7 @@ class AmendablePoaControllerSpec
           }
         }
       }
+      testMTDAuthFailuresForRole(action, mtdRole, false)(fakeRequest)
     }
   }
 }

@@ -16,70 +16,63 @@
 
 package controllers.claimToAdjustPoa
 
-import helpers.ComponentSpecBase
+import controllers.ControllerISpecHelper
+import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.AdjustPaymentsOnAccount
-import org.scalatest.Assertion
 import play.api.http.Status.{OK, SEE_OTHER}
-import play.api.libs.ws.WSResponse
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid}
+import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesResponse
 
-class ApiFailureSubmittingPoaControllerISpec extends ComponentSpecBase {
+class ApiFailureSubmittingPoaControllerISpec extends ControllerISpecHelper {
 
-  val isAgent = false
-
-  def apiFailureSubmittingPoaUrl: String = controllers.claimToAdjustPoa.routes.ApiFailureSubmittingPoaController.show(isAgent).url
-
-  def amendablePoaUrl: String = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent).url
-
-  def homeUrl: String =
-    controllers.routes.HomeController.show().url
-
-
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    Given("Income Source Details with multiple business and property")
-    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-      OK, multipleBusinessesResponse
-    )
+  def getPath(mtdUserRole: MTDUserRole) = {
+    val pathStart = if(mtdUserRole == MTDIndividual) "" else "/agents"
+    pathStart + "/adjust-poa/error-poa-not-updated"
   }
 
-  def checkPageTitleOk(res: WSResponse): Assertion = {
-    res should have(
-      pageTitleIndividual("claimToAdjustPoa.apiFailure.heading")
-    )
-  }
+  mtdAllRoles.foreach { case mtdUserRole =>
+    val path = getPath(mtdUserRole)
+    val additionalCookies = getAdditionalCookies(mtdUserRole)
+    s"GET $path" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          if (mtdUserRole == MTDSupportingAgent) {
+            testSupportingAgentAccessDenied(path, additionalCookies)
+          } else {
+            s"render the Adjusting your payments on account page" when {
+              s"AdjustPaymentsOnAccount FS enabled" in {
+                enable(AdjustPaymentsOnAccount)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  OK, multipleBusinessesResponse
+                )
 
-  def get(url: String): WSResponse = {
-    IncomeTaxViewChangeFrontend.get(url, additionalCookies = clientDetailsWithConfirmation)
-  }
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "claimToAdjustPoa.apiFailure.heading")
+                )
+              }
+            }
+            s"redirect to home page" when {
+              s"AdjustPaymentsOnAccount FS disabled" in {
+                disable(AdjustPaymentsOnAccount)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  OK, multipleBusinessesResponse
+                )
 
-  "calling GET" should {
-    s"return status $OK" when {
-      s"user visits $apiFailureSubmittingPoaUrl with the AdjustPaymentsOnAccount FS enabled" in {
-        enable(AdjustPaymentsOnAccount)
-
-        When(s"I call GET")
-        val res = get("/adjust-poa/error-poa-not-updated")
-
-        res should have(
-          httpStatus(OK)
-        )
-        checkPageTitleOk(res)
-      }
-    }
-    s"return status $SEE_OTHER" when {
-      s"user visits $apiFailureSubmittingPoaUrl with the AdjustPaymentsOnAccount FS disabled" in {
-        disable(AdjustPaymentsOnAccount)
-
-        When(s"I call GET")
-        val res = get("/adjust-poa/error-poa-not-updated")
-
-        res should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(homeUrl)
-        )
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                result should have(
+                  httpStatus(SEE_OTHER),
+                  redirectURI(homeUrl(mtdUserRole))
+                )
+              }
+            }
+          }
+        }
+        testAuthFailures(path, mtdUserRole)
       }
     }
   }

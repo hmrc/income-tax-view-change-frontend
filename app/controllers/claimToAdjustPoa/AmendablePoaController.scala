@@ -49,7 +49,7 @@ class AmendablePoaController @Inject()(val authActions: AuthActions,
     with WithSessionAndPoa with ErrorRecovery {
 
   def show(isAgent: Boolean): Action[AnyContent] =
-    authActions.asMDTIndividualOrPrimaryAgentWithClient(isAgent) async {
+    authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async {
       implicit user =>
         withSessionData(journeyState = InitialPage) { _ => {
           for {
