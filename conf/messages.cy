@@ -2318,3 +2318,12 @@ reporting.frequency.mandatoryReporting.inset      = Mae angen adrodd yn chwarter
 reporting.frequency.mandatoryReporting.text       = Gallwch wirio’r trothwy ar gyfer pryd y bydd adrodd yn chwarterol yn ofynnol yn y
 reporting.frequency.mandatoryReporting.link.text  = meini prawf ar gyfer pobl y bydd angen iddynt gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
 reporting.frequency.mandatoryReporting.link       = https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax.cy#pwy-fydd-angen-cofrestru
+
+reporting.frequency.table.h2                                        = Pa mor aml y mae angen i chi gyflwyno adroddiadau
+reporting.frequency.table.heading.taxyear                           = Blwyddyn Dreth
+reporting.frequency.table.heading.status                            = Amlder cyflwyno adroddiadau
+
+reporting.frequency.table.taxYear                                   = {0} i {1}
+reporting.frequency.table.mandated                                  = Yn chwarterol (gorfodol)
+reporting.frequency.table.voluntary                                 = Yn chwarterol
+reporting.frequency.table.annual                                    = Yn flynyddol
