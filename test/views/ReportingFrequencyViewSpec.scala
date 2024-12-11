@@ -43,6 +43,29 @@ class ReportingFrequencyViewSpec extends TestSupport {
     val h2 = "manage-reporting-frequency-heading"
     val p1 = "change-reporting-frequency"
     val p2 = "what-you-can-do"
+    val mandatoryReportingH2 = "mandatory-reporting-heading"
+    val mandatoryReportingInset = "mandatory-reporting-inset"
+    val mandatoryReportingLink = "mandatory-reporting-link"
+    val mandatoryReportingText = "mandatory-reporting-text"
+  }
+
+  def testContentByIds(pageDocument: Document, additionalIdsAndContent: Seq[(String, String)] = Seq()): Unit = {
+    val expectedContent: Seq[(String, String)] =
+      Seq(
+        Selectors.h1 -> h1Content,
+        Selectors.h2 -> h2Content,
+        Selectors.p1 -> p1Content,
+        Selectors.p2 -> p2Content,
+        Selectors.mandatoryReportingH2 -> mandatoryReportingHeading,
+        Selectors.mandatoryReportingInset -> mandatoryReportingInset,
+        Selectors.mandatoryReportingLink -> mandatoryReportingLink,
+        Selectors.mandatoryReportingText -> mandatoryReportingText
+      ) ++ additionalIdsAndContent
+
+    expectedContent.foreach {
+      case (selectors, content) =>
+        pageDocument.getElementById(selectors).text() shouldBe content
+    }
   }
 
   "ReportingFrequencyView" when {
@@ -70,23 +93,9 @@ class ReportingFrequencyViewSpec extends TestSupport {
             )
           )
 
-        def testContentByIds(idsAndContent: Seq[(String, String)]): Unit =
-          idsAndContent.foreach {
-            case (selectors, content) =>
-              pageDocument.getElementById(selectors).text() shouldBe content
-          }
-
-        val expectedContent: Seq[(String, String)] =
-          Seq(
-            Selectors.h1 -> h1Content,
-            Selectors.h2 -> h2Content,
-            Selectors.p1 -> p1Content,
-            Selectors.p2 -> p2Content,
-          )
-
         pageDocument.title() shouldBe agentTitle
 
-        testContentByIds(expectedContent)
+        testContentByIds(pageDocument)
 
         pageDocument.select(bullet(1)).text() shouldBe optOutGenericContent
 
@@ -117,24 +126,9 @@ class ReportingFrequencyViewSpec extends TestSupport {
             )
           )
 
-
-        def testContentByIds(idsAndContent: Seq[(String, String)]): Unit =
-          idsAndContent.foreach {
-            case (selectors, content) =>
-              pageDocument.getElementById(selectors).text() shouldBe content
-          }
-
-        val expectedContent: Seq[(String, String)] =
-          Seq(
-            Selectors.h1 -> h1Content,
-            Selectors.h2 -> h2Content,
-            Selectors.p1 -> p1Content,
-            Selectors.p2 -> p2Content,
-          )
-
         pageDocument.title() shouldBe agentTitle
 
-        testContentByIds(expectedContent)
+        testContentByIds(pageDocument)
 
         pageDocument.select(bullet(1)).text() shouldBe optOutContentWithTaxYearOnwards
 
@@ -165,24 +159,9 @@ class ReportingFrequencyViewSpec extends TestSupport {
             )
           )
 
-
-        def testContentByIds(idsAndContent: Seq[(String, String)]): Unit =
-          idsAndContent.foreach {
-            case (selectors, content) =>
-              pageDocument.getElementById(selectors).text() shouldBe content
-          }
-
-        val expectedContent: Seq[(String, String)] =
-          Seq(
-            Selectors.h1 -> h1Content,
-            Selectors.h2 -> h2Content,
-            Selectors.p1 -> p1Content,
-            Selectors.p2 -> p2Content,
-          )
-
         pageDocument.title() shouldBe agentTitle
 
-        testContentByIds(expectedContent)
+        testContentByIds(pageDocument)
 
         pageDocument.select(bullet(1)).text() shouldBe optOutContentWithTaxYear
 
@@ -217,23 +196,9 @@ class ReportingFrequencyViewSpec extends TestSupport {
             )
           )
 
-        def testContentByIds(idsAndContent: Seq[(String, String)]): Unit =
-          idsAndContent.foreach {
-            case (selectors, content) =>
-              pageDocument.getElementById(selectors).text() shouldBe content
-          }
-
-        val expectedContent: Seq[(String, String)] =
-          Seq(
-            Selectors.h1 -> h1Content,
-            Selectors.h2 -> h2Content,
-            Selectors.p1 -> p1Content,
-            Selectors.p2 -> p2Content,
-          )
-
         pageDocument.title() shouldBe title
 
-        testContentByIds(expectedContent)
+        testContentByIds(pageDocument)
 
         pageDocument.select(bullet(1)).text() shouldBe optOutGenericContent
 

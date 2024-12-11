@@ -31,4 +31,8 @@ object ReportingFrequencyViewMessages {
   val optOutContentWithTaxYear = "Opt out of quarterly reporting and report annually for the 2023 to 2024 tax year"
   val optOutContentWithTaxYearOnwards = "Opt out of quarterly reporting and report annually from the 2024 to 2025 tax year onwards"
 
+  val mandatoryReportingHeading = "When reporting quarterly is mandatory"
+  val mandatoryReportingInset = "Reporting quarterly is required if your income from self-employment or property, or both, exceeds the income threshold."
+  val mandatoryReportingText = "You can check the threshold for when reporting quarterly is mandatory in the criteria for people who will need to sign up for Making Tax Digital for Income Tax (opens in new tab)"
+  val mandatoryReportingLink = "criteria for people who will need to sign up for Making Tax Digital for Income Tax (opens in new tab)"
 }
