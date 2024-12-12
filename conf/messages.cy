@@ -2312,3 +2312,10 @@ reporting.frequency.manageReportingFrequency.optOut.link.taxyear = Optio allan o
 reporting.frequency.manageReportingFrequency.optOut.link.onwards = Optio allan o adrodd yn chwarterol, a mynd ati i adrodd yn flynyddol o flwyddyn dreth {0} i {1} ymlaen
 reporting.frequency.manageReportingFrequency.b1.link = Optio i mewn i adrodd yn chwarterol ar gyfer blwyddyn dreth {0} i {1}
 reporting.frequency.manageReportingFrequency.b2.link = Optio allan o adrodd yn chwarterol, a mynd ati i adrodd yn flynyddol o flwyddyn dreth {0} i {1} ymlaen
+
+reporting.frequency.compatibleSoftware.heading   = Pan fydd angen meddalwedd sy’n cydweddu
+reporting.frequency.compatibleSoftware.p1        = Os ydych yn adrodd yn chwarterol, bydd angen i chi ddefnyddio
+reporting.frequency.compatibleSoftware.link      = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax.cy
+reporting.frequency.compatibleSoftware.link.text = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+reporting.frequency.compatibleSoftware.p2        =
+reporting.frequency.compatibleSoftware.p3        = Gallwch chi, neu’ch asiant, ddewis o blith amrywiaeth o becynnau meddalwedd, gan gynnwys rhai sy’n rhad ac am ddim a rhai y mae angen talu amdanynt.
