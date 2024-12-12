@@ -22,7 +22,7 @@ import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney._
-import enums.JourneyType.{IncomeSourceJourneyType, JourneyType, Manage}
+import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.ReportingMethod
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import models.core.IncomeSourceId

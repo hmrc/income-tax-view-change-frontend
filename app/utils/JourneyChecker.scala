@@ -18,7 +18,7 @@ package utils
 
 import auth.MtdItUser
 import enums.IncomeSourceJourney.{BeforeSubmissionPage, CannotGoBackPage, InitialPage, JourneyState}
-import enums.JourneyType.{Add, Cease, IncomeSourceJourneyType, JourneyType, Manage}
+import enums.JourneyType.{Add, Cease, IncomeSourceJourneyType, Manage}
 import models.incomeSourceDetails.UIJourneySessionData
 import play.api.Logger
 import play.api.mvc.Result
