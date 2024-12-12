@@ -17,7 +17,7 @@
 package views.incomeSources.add
 
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType, Manage}
+import enums.JourneyType.{Add, IncomeSourceJourneyType, Manage}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.Assertion
