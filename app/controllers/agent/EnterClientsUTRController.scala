@@ -37,7 +37,6 @@ import services.agent.ClientDetailsService.{BusinessDetailsNotFound, CitizenDeta
 import uk.gov.hmrc.auth.core.Enrolment
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve.~
-import utils.SessionCookieUtil
 import views.html.agent.EnterClientsUTR
 
 import javax.inject.{Inject, Singleton}
@@ -54,7 +53,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
                                           val appConfig: FrontendAppConfig,
                                           val itvcErrorHandler: AgentItvcErrorHandler,
                                           val ec: ExecutionContext)
-  extends BaseAgentController with I18nSupport with FeatureSwitching with SessionCookieUtil {
+  extends BaseAgentController with I18nSupport with FeatureSwitching {
 
   def show: Action[AnyContent] = authActions.asAgent().async { implicit user =>
     Future.successful(Ok(enterClientsUTR(
