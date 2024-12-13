@@ -31,7 +31,6 @@ import models.sessionData.SessionCookieData
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
-import services.SessionDataService
 import services.agent.ClientDetailsService
 import services.agent.ClientDetailsService.{BusinessDetailsNotFound, CitizenDetailsNotFound}
 import uk.gov.hmrc.auth.core.Enrolment
@@ -47,8 +46,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
                                           clientDetailsService: ClientDetailsService,
                                           val authorisedFunctions: FrontendAuthorisedFunctions,
                                           val authActions: AuthActions,
-                                          val auditingService: AuditingService,
-                                          val sessionDataService: SessionDataService)
+                                          val auditingService: AuditingService)
                                          (implicit mcc: MessagesControllerComponents,
                                           val appConfig: FrontendAppConfig,
                                           val itvcErrorHandler: AgentItvcErrorHandler,
