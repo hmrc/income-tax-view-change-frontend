@@ -19,6 +19,7 @@ package controllers.agent
 import audit.models.ConfirmClientDetailsAuditModel
 import controllers.ControllerISpecHelper
 import enums.{MTDPrimaryAgent, MTDSupportingAgent}
+import helpers.servicemocks.SessionDataStub.{stubPostSessionDataResponseFailure, stubPostSessionDataResponseOkResponse}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -89,10 +90,12 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
     s"a user is a primary agent (session data isSupportingAgent = false)" that {
       val isSupportingAgent = false
       val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, false)
-      "is authenticated, with a valid agent and client delegated enrolment" should {
+      "is authenticated, with a valid agent and client delegated enrolment and session data service post returns an OK response" should {
         s"redirect ($SEE_OTHER) to the agent home page" in {
           stubAuthorised(MTDPrimaryAgent)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+          Then(s"I stub the session-data service call to return status $OK")
+          stubPostSessionDataResponseOkResponse()
 
           val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
 
@@ -104,6 +107,36 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
 
         }
       }
+      if (appConfig.isSessionDataStorageEnabled) {
+        "is authenticated, with a valid agent but the income tax session data post call returned an error" should {
+          "redirect to an error page" in {
+            stubAuthorised(MTDPrimaryAgent)
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+            Then(s"I stub the session-data service call to return status $INTERNAL_SERVER_ERROR")
+            stubPostSessionDataResponseFailure()
+
+            val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
+
+            result should have(
+              httpStatus(INTERNAL_SERVER_ERROR),
+              pageTitleAgent(titleInternalServer, isErrorPage = true)
+            )
+          }
+        }
+        "is authenticated, with a valid agent but the income tax session data post call returned no response" should {
+          "redirect to an error page" in {
+            stubAuthorised(MTDPrimaryAgent)
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+
+            val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
+
+            result should have(
+              httpStatus(INTERNAL_SERVER_ERROR),
+              pageTitleAgent(titleInternalServer, isErrorPage = true)
+            )
+          }
+        }
+      }
 
       testAuthFailures(path, MTDPrimaryAgent, requiresConfirmedClient = false, optBody = Some(Map.empty))
     }
@@ -111,10 +144,12 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
     s"a user is a supporting agent (session data isSupportingAgent = true)" that {
       val isSupportingAgent = true
       val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, false)
-      "is authenticated, with a valid agent and client delegated enrolment" should {
+      "is authenticated, with a valid agent and client delegated enrolment and session data service post returns an OK response" should {
         s"redirect ($SEE_OTHER) to the agent home page" in {
           stubAuthorised(MTDSupportingAgent)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+          Then(s"I stub the session-data service call to return status $OK")
+          stubPostSessionDataResponseOkResponse() //NEED TO ADD TESTS THAT I REMOVED FROM ENTERCLIENTSUTR
 
           val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
 
