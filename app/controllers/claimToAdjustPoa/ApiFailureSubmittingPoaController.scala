@@ -21,7 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.claimToAdjust.ClaimToAdjustUtils
 import views.html.claimToAdjustPoa.ApiFailureSubmittingPoaView
 
@@ -34,12 +34,12 @@ class ApiFailureSubmittingPoaController @Inject()(val authActions: AuthActions,
                                                   implicit val itvcErrorHandler: ItvcErrorHandler,
                                                   implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                                  (implicit val appConfig: FrontendAppConfig,
-                                                  implicit override val controllerComponents: MessagesControllerComponents,
+                                                  val mcc: MessagesControllerComponents,
                                                   val ec: ExecutionContext)
-  extends FrontendBaseController with I18nSupport with FeatureSwitching with ClaimToAdjustUtils {
+  extends FrontendController(mcc) with I18nSupport with FeatureSwitching with ClaimToAdjustUtils {
 
   def show(isAgent: Boolean): Action[AnyContent] = {
-    authActions.asIndividualOrAgent(isAgent) async {
+    authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async {
       implicit user =>
         ifAdjustPoaIsEnabled(user.isAgent()) {
           Future.successful(Ok(view(user.isAgent())))

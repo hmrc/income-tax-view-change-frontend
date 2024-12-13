@@ -17,7 +17,7 @@
 package utils
 
 import auth.MtdItUser
-import enums.JourneyType.{OptInJourney, JourneyType, Opt, OptOutJourney}
+import enums.JourneyType.{OptInJourney, Opt, OptOutJourney}
 import models.incomeSourceDetails.UIJourneySessionData
 import play.api.mvc.Result
 import services.SessionService
