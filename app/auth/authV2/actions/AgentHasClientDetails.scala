@@ -40,7 +40,7 @@ class AgentHasClientDetails @Inject()(implicit val executionContext: ExecutionCo
 
   override protected def refine[A](request: MtdItUserOptionNino[A]): Future[Either[Result, MtdItUserOptionNino[A]]] = {
 
-    val hasConfirmedClient: Boolean = request.session.get(SessionKeys.confirmedClient).nonEmpty
+    val hasConfirmedClient: Boolean = appConfig.isSessionDataStorageEnabled || request.session.get(SessionKeys.confirmedClient).nonEmpty
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter
       .fromRequestAndSession(request, request.session)
