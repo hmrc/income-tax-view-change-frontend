@@ -94,7 +94,7 @@ class RetrieveClientDataSpec extends AuthActionsSpecHelper with MockClientDetail
             fakeRequestWithSession,
             defaultAsyncBody { res =>
               res.isSupportingAgent shouldBe false
-              res.confirmed shouldBe false
+              res.confirmed shouldBe appConfig.isSessionDataStorageEnabled
             })
 
           status(result) shouldBe OK
