@@ -60,10 +60,8 @@ class RetrieveClientData @Inject()(sessionDataService: SessionDataService,
               sessionData.utr,
               getBooleanFromSession(SessionKeys.isSupportingAgent),
               confirmed = {
-                r.session.get(SessionKeys.confirmedClient) match {
-                  case Some(value) if value != "" => value.toBoolean
-                  case _ => useSessionDataService
-                }
+                if (appConfig.isSessionDataStorageEnabled) true
+                else getBooleanFromSession(SessionKeys.confirmedClient)
               }
             ))
           case Left(error) =>

@@ -43,7 +43,7 @@ class ConfirmClientUTRController @Inject()(confirmClient: confirmClient,
                                            val appConfig: FrontendAppConfig,
                                            val itvcErrorHandler: AgentItvcErrorHandler,
                                            val ec: ExecutionContext)
-  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with SessionCookieUtil{
+  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with SessionCookieUtil {
 
   def show: Action[AnyContent] = authActions.asMTDAgentWithUnconfirmedClient { implicit user =>
     Ok(confirmClient(
@@ -58,7 +58,7 @@ class ConfirmClientUTRController @Inject()(confirmClient: confirmClient,
     val clientName = user.optClientNameAsString.getOrElse("")
     val names = clientName.split(" ")
     handleSessionCookies(SessionCookieData(user.mtditid, user.nino, user.saUtr.getOrElse(""),
-      names.headOption, names.lastOption, user.isSupportingAgent)){ _ =>
+      names.headOption, names.lastOption, user.isSupportingAgent)) { _ =>
       auditingService.extendedAudit(ConfirmClientDetailsAuditModel(
         clientName = clientName,
         nino = user.nino,
@@ -67,9 +67,13 @@ class ConfirmClientUTRController @Inject()(confirmClient: confirmClient,
         saUtr = user.saUtr.getOrElse(""),
         credId = user.credId
       ))
-      Future.successful(Redirect(controllers.routes.HomeController.showAgent.url).addingToSession(
-        SessionKeys.confirmedClient -> "true"
-      ))
+
+      val redirect = if (appConfig.isSessionDataStorageEnabled)
+        Redirect(controllers.routes.HomeController.showAgent.url)
+      else
+        Redirect(controllers.routes.HomeController.showAgent.url).addingToSession(SessionKeys.confirmedClient -> "true")
+
+      Future.successful(redirect)
     }
   }
 
