@@ -71,12 +71,7 @@ class ConfirmClientUTRController @Inject()(confirmClient: confirmClient,
         credId = user.credId
       ))
 
-      val redirect = if (appConfig.isSessionDataStorageEnabled)
-        Redirect(controllers.routes.HomeController.showAgent.url)
-      else
-        Redirect(controllers.routes.HomeController.showAgent.url).addingToSession(SessionKeys.confirmedClient -> "true")
-
-      Future.successful(redirect)
+      Future.successful(Redirect(controllers.routes.HomeController.showAgent.url).addingToSession(SessionKeys.confirmedClient -> "true"))
     }
   }
 
