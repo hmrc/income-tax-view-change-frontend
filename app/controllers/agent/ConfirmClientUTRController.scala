@@ -22,10 +22,12 @@ import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.sessionUtils.SessionKeys
+import models.sessionData.SessionCookieData
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.SessionDataService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.AuthenticatorPredicate
+import utils.{AuthenticatorPredicate, SessionCookieUtil}
 import views.html.agent.confirmClient
 
 import javax.inject.{Inject, Singleton}
@@ -35,12 +37,13 @@ import scala.concurrent.{ExecutionContext, Future}
 class ConfirmClientUTRController @Inject()(confirmClient: confirmClient,
                                            val authActions: AuthActions,
                                            val auditingService: AuditingService,
-                                           val auth: AuthenticatorPredicate)
+                                           val auth: AuthenticatorPredicate,
+                                           val sessionDataService: SessionDataService)
                                           (implicit mcc: MessagesControllerComponents,
                                            val appConfig: FrontendAppConfig,
                                            val itvcErrorHandler: AgentItvcErrorHandler,
                                            val ec: ExecutionContext)
-  extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
+  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with SessionCookieUtil{
 
   def show: Action[AnyContent] = authActions.asMTDAgentWithUnconfirmedClient { implicit user =>
     Ok(confirmClient(
@@ -51,18 +54,23 @@ class ConfirmClientUTRController @Inject()(confirmClient: confirmClient,
     ))
   }
 
-  def submit: Action[AnyContent] = authActions.asMTDAgentWithUnconfirmedClient { implicit user =>
-    auditingService.extendedAudit(ConfirmClientDetailsAuditModel(
-      clientName = user.optClientNameAsString.getOrElse(""),
-      nino = user.nino,
-      mtditid = user.mtditid,
-      arn = user.arn.getOrElse(""),
-      saUtr = user.saUtr.getOrElse(""),
-      credId = user.credId
-    ))
-    Redirect(controllers.routes.HomeController.showAgent.url).addingToSession(
-      SessionKeys.confirmedClient -> "true"
-    )
+  def submit: Action[AnyContent] = authActions.asMTDAgentWithUnconfirmedClient.async { implicit user =>
+    val clientName = user.optClientNameAsString.getOrElse("")
+    val names = clientName.split(" ")
+    handleSessionCookies(SessionCookieData(user.mtditid, user.nino, user.saUtr.getOrElse(""),
+      names.headOption, names.lastOption, user.isSupportingAgent)){ _ =>
+      auditingService.extendedAudit(ConfirmClientDetailsAuditModel(
+        clientName = clientName,
+        nino = user.nino,
+        mtditid = user.mtditid,
+        arn = user.arn.getOrElse(""),
+        saUtr = user.saUtr.getOrElse(""),
+        credId = user.credId
+      ))
+      Future.successful(Redirect(controllers.routes.HomeController.showAgent.url).addingToSession(
+        SessionKeys.confirmedClient -> "true"
+      ))
+    }
   }
 
   lazy val backUrl: String = controllers.agent.routes.EnterClientsUTRController.show.url
