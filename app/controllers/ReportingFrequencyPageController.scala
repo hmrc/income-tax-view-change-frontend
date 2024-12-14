@@ -40,7 +40,7 @@ class ReportingFrequencyPageController @Inject()(
                                                   optInService: OptInService,
                                                   val auth: AuthActions,
                                                   errorTemplate: ErrorTemplate,
-                                                  reportingFrequencyService: ReportingFrequencyViewUtils,
+                                                  reportingFrequencyViewUtils: ReportingFrequencyViewUtils,
                                                   view: ReportingFrequencyView
                                                 )(
                                                   implicit val appConfig: FrontendAppConfig,
@@ -59,7 +59,7 @@ class ReportingFrequencyPageController @Inject()(
         optInTaxYears <- optInService.availableOptInTaxYear()
 
       } yield {
-        if (isEnabled(ReportingFrequencyPage) && reportingFrequencyService.itsaStatusTable(optOutProposition).nonEmpty) {
+        if (isEnabled(ReportingFrequencyPage) && reportingFrequencyViewUtils.itsaStatusTable(optOutProposition).nonEmpty) {
 
           val optOutUrl: Option[String] = {
             optOutJourneyType.map {
@@ -76,7 +76,7 @@ class ReportingFrequencyPageController @Inject()(
               optOutJourneyUrl = optOutUrl,
               optOutTaxYears = optOutProposition.availableTaxYearsForOptOut,
               optInTaxYears = optInTaxYears,
-              itsaStatusTable = reportingFrequencyService.itsaStatusTable(optOutProposition)
+              itsaStatusTable = reportingFrequencyViewUtils.itsaStatusTable(optOutProposition)
             )
           ))
         } else {
