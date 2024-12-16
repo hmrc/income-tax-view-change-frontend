@@ -43,7 +43,7 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
           TestSessionService.getMongo(IncomeSourceJourneyType(Add, SelfEmployment))(headerCarrier, ec).futureValue shouldBe Right(Some(sessionData))
         }
 
-        "return the correct session value for given key when encryption is enabled" in {
+        "return the correct session value for given key if encryption is enabled" in {
           val sessionData = UIJourneySessionData("session-123456", "ADD-SE")
           when(mockFrontendAppConfig.encryptionIsEnabled).thenReturn(true)
           mockRepositoryGetSensitive(Some(sessionData))
@@ -83,6 +83,14 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
           val result: Boolean = TestSessionService.setMongoData(UIJourneySessionData("session-1", "ADD-SE"))(headerCarrier, ec)
             .futureValue
           result shouldBe true
+        }
+        "return a future boolean value if encryption is enabled" in {
+          mockRepositorySetSensitive(response = true)
+          when(mockFrontendAppConfig.encryptionIsEnabled).thenReturn(true)
+          val result: Boolean = TestSessionService.setMongoData(UIJourneySessionData("session-1", "ADD-SE"))(headerCarrier, ec)
+            .futureValue
+          result shouldBe true
+          reset(mockFrontendAppConfig)
         }
         "return a future error" in {
           mockRepositorySet(response = true, withFailureResult = true)
