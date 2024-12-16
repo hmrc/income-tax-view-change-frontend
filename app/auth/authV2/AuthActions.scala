@@ -35,7 +35,6 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
                             val retrieveNavBar: NavBarRetrievalAction,
                             val retrieveNinoWithIncomeSources: IncomeSourceRetrievalAction,
                             val retrieveClientData: RetrieveClientData,
-                            val retrieveClientDataFromCookies: RetrieveClientDataFromCookies,
                             val retrieveFeatureSwitches: FeatureSwitchRetrievalAction) {
 
   def asMTDIndividual: ActionBuilder[MtdItUser, AnyContent] = {
@@ -55,7 +54,7 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
 
   def asMTDAgentWithConfirmedClient: ActionBuilder[MtdItUser, AnyContent] = {
     checkSessionTimeout andThen
-      retrieveClientData andThen
+      retrieveClientData.authorise() andThen
       authoriseAndRetrieveMtdAgent andThen
       agentHasClientDetails andThen
       agentHasConfirmedClientAction andThen
@@ -65,7 +64,7 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
 
   def asMTDAgentWithUnconfirmedClient: ActionBuilder[MtdItUser, AnyContent] = {
     checkSessionTimeout andThen
-      retrieveClientDataFromCookies andThen
+      retrieveClientData.authorise(useCookies = true) andThen
       authoriseAndRetrieveMtdAgent andThen
       retrieveNinoWithIncomeSources andThen
       retrieveFeatureSwitches
@@ -73,7 +72,7 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
 
   def asMTDPrimaryAgent: ActionBuilder[MtdItUser, AnyContent] = {
     checkSessionTimeout andThen
-      retrieveClientData andThen
+      retrieveClientData.authorise() andThen
       authoriseAndRetrieveMtdAgent andThen
       agentHasConfirmedClientAction andThen
       agentIsPrimaryAction andThen

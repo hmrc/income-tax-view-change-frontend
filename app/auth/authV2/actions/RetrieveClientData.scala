@@ -16,16 +16,18 @@
 
 package auth.authV2.actions
 
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.routes
 import controllers.agent.sessionUtils.SessionKeys
 import models.sessionData.SessionDataGetResponse.SessionDataNotFound
-import play.api.Logger
+import play.api.{Configuration, Environment, Logger}
 import play.api.mvc.Results.Redirect
-import play.api.mvc.{ActionRefiner, Request, Result}
+import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Request, Result}
 import services.SessionDataService
 import services.agent.ClientDetailsService
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.Inject
@@ -34,25 +36,32 @@ import scala.concurrent.{ExecutionContext, Future}
 class RetrieveClientData @Inject()(sessionDataService: SessionDataService,
                                    clientDetailsService: ClientDetailsService,
                                    errorHandler: AgentItvcErrorHandler,
+                                   override val env: Environment,
+                                   override val config: Configuration,
+                                   mcc: MessagesControllerComponents,
                                    appConfig: FrontendAppConfig)
-                                  (implicit val executionContext: ExecutionContext) extends ActionRefiner[Request, ClientDataRequest] {
+                                  (implicit val executionContext: ExecutionContext) extends AuthRedirects {
 
   lazy val logger: Logger = Logger(getClass)
 
   lazy val noClientDetailsRoute: Result = Redirect(routes.EnterClientsUTRController.show)
 
-  override protected def refine[A](request: Request[A]): Future[Either[Result, ClientDataRequest[A]]] = {
+  def authorise(useCookies: Boolean = false): ActionRefiner[Request, ClientDataRequest] = new ActionRefiner[Request, ClientDataRequest] {
 
-    implicit val r: Request[A] = request
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter
-      .fromRequestAndSession(request, request.session)
+    implicit val executionContext: ExecutionContext = mcc.executionContext
 
-    val useSessionDataService = appConfig.isSessionDataStorageEnabled
+    override protected def refine[A](request: Request[A]): Future[Either[Result, ClientDataRequest[A]]] = {
 
-    sessionDataService.getSessionData(useCookie = !useSessionDataService).flatMap {
-      case Right(sessionData) =>
-        clientDetailsService.checkClientDetails(sessionData.utr).map {
-          case Right(name) => Right(ClientDataRequest(
+      implicit val r: Request[A] = request
+      implicit val hc: HeaderCarrier = HeaderCarrierConverter
+        .fromRequestAndSession(request, request.session)
+
+      val useSessionDataService = appConfig.isSessionDataStorageEnabled
+
+      sessionDataService.getSessionData(useCookie = useCookies || !useSessionDataService).flatMap {
+        case Right(sessionData) =>
+          clientDetailsService.checkClientDetails(sessionData.utr).map {
+            case Right(name) => Right(ClientDataRequest(
               sessionData.mtditid,
               name.firstName,
               name.lastName,
@@ -64,18 +73,17 @@ class RetrieveClientData @Inject()(sessionDataService: SessionDataService,
                 else getBooleanFromSession(SessionKeys.confirmedClient)
               }
             ))
-          case Left(error) =>
-            Logger("error").error(s"unable to find client with UTR: ${sessionData.utr} " + error)
-            Left(Redirect(routes.EnterClientsUTRController.show))
-        }
-      case Left(_: SessionDataNotFound) => Future.successful(Left(Redirect(routes.EnterClientsUTRController.show)))
-      case Left(_) => Future.successful(Left(errorHandler.showInternalServerError()))
+            case Left(error) =>
+              Logger("error").error(s"unable to find client with UTR: ${sessionData.utr} " + error)
+              Left(Redirect(routes.EnterClientsUTRController.show))
+          }
+        case Left(_: SessionDataNotFound) => Future.successful(Left(Redirect(routes.EnterClientsUTRController.show)))
+        case Left(_) => Future.successful(Left(errorHandler.showInternalServerError()))
+      }
+    }
+
+    private def getBooleanFromSession(key: String)(implicit r: Request[_]): Boolean = {
+      r.session.get(key).fold(false)(_.toBoolean)
     }
   }
-
-  private def getBooleanFromSession(key: String)(implicit r: Request[_]): Boolean = {
-    r.session.get(key).fold(false)(_.toBoolean)
-  }
-
-
 }
