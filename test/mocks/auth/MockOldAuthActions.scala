@@ -80,7 +80,10 @@ trait MockOldAuthActions extends TestSupport with MockIncomeSourceDetailsService
     sessionDataService = mockSessionDataService,
     appConfig = appConfig,
     errorHandler = app.injector.instanceOf[AgentItvcErrorHandler],
-    clientDetailsService = mockClientDetailsService
+    clientDetailsService = mockClientDetailsService,
+    config = conf,
+    env = environment,
+    mcc = stubMessagesControllerComponents()
   )
 
   private val authoriseAndRetrieveMtdAgent = new AuthoriseAndRetrieveMtdAgent(

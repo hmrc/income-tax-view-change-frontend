@@ -122,8 +122,6 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
           val validUTR: String = "1234567890"
           setupMockAgentAuthSuccess(agentAuthRetrievalSuccess)
 
-          setupMockPostSessionData(Right(SessionDataPostSuccess(OK)))
-
           mockClientDetails(validUTR)(
             response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
           )
@@ -149,8 +147,6 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
         "the utr entered is valid, there is a client/secondary agent relationship and the POST request to session data service is successful" in {
           val validUTR: String = "1234567890"
           setupMockAgentAuthSuccess(agentAuthRetrievalSuccess)
-
-          setupMockPostSessionData(Right(SessionDataPostSuccess(OK)))
 
           mockClientDetails(validUTR)(
             response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
@@ -181,7 +177,6 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
           val utrWithSpaces: String = " 1 2 3 4 5 6 7 8 9 0 "
 
           setupMockAgentAuthSuccess(agentAuthRetrievalSuccess)
-          setupMockPostSessionData(Right(SessionDataPostSuccess(OK)))
 
           mockClientDetails(validUTR)(
             response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
@@ -211,7 +206,6 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
           val utrWithSpaces: String = " 1 2 3 4 5 6 7 8 9 0 "
 
           setupMockAgentAuthSuccess(agentAuthRetrievalSuccess)
-          setupMockPostSessionData(Right(SessionDataPostSuccess(OK)))
 
           mockClientDetails(validUTR)(
             response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
@@ -324,46 +318,6 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
             ClientsUTRForm.utr -> validUTR
           ))
           status(result) shouldBe INTERNAL_SERVER_ERROR
-        }
-        if (appConfig.isSessionDataStorageEnabled) {
-          "the utr entered is valid, there is a client/primary agent relationship but the POST request to session data service is unsuccessful" in {
-            val validUTR: String = "1234567890"
-            setupMockAgentAuthSuccess(agentAuthRetrievalSuccess)
-
-            setupMockPostSessionData(Left(SessionDataPostFailure(INTERNAL_SERVER_ERROR, "POST to session data service was unsuccessful TEST")))
-
-            mockClientDetails(validUTR)(
-              response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
-            )
-
-            setupMockPrimaryAgentAuthRetrievalSuccess(agentAuthRetrievalSuccess, testMtditid)
-
-            val result = testEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
-              ClientsUTRForm.utr -> validUTR
-            ))
-
-            status(result) shouldBe INTERNAL_SERVER_ERROR
-          }
-          "the utr entered is valid, there is a client/secondary agent relationship but the POST request to session data service is unsuccessful" in {
-            val validUTR: String = "1234567890"
-            setupMockAgentAuthSuccess(agentAuthRetrievalSuccess)
-
-            setupMockPostSessionData(Left(SessionDataPostFailure(INTERNAL_SERVER_ERROR, "POST to session data service was unsuccessful TEST")))
-
-            mockClientDetails(validUTR)(
-              response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
-            )
-
-            setupMockPrimaryAgentAuthorisationException(testMtditid)
-
-            setupMockSecondaryAgentAuthRetrievalSuccess(agentAuthRetrievalSuccess, testMtditid)
-
-            val result = testEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
-              ClientsUTRForm.utr -> validUTR
-            ))
-
-            status(result) shouldBe INTERNAL_SERVER_ERROR
-          }
         }
       }
     }
