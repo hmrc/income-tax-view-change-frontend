@@ -48,6 +48,11 @@ trait MockUIJourneySessionDataRepository extends UnitSpec with BeforeAndAfterEac
       .thenReturn(Future.successful(response))
   }
 
+  def mockRepositoryGetSensitive(response: Option[UIJourneySessionData]): Unit = {
+    when(mockSensitiveUIJourneySessionDataRepository.get(ArgumentMatchers.anyString(), ArgumentMatchers.any()))
+      .thenReturn(Future.successful(response))
+  }
+
   def mockRepositorySet(response: Boolean, withFailureResult: Boolean = false): Unit = {
     when(mockUIJourneySessionDataRepository.set(ArgumentMatchers.any()))
       .thenReturn({

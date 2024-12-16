@@ -20,6 +20,7 @@ import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import mocks.repositories.MockUIJourneySessionDataRepository
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
+import org.mockito.Mockito.{reset, when}
 import testUtils.TestSupport
 
 import java.time.LocalDate
@@ -41,6 +42,15 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
           mockRepositoryGet(Some(sessionData))
           TestSessionService.getMongo(IncomeSourceJourneyType(Add, SelfEmployment))(headerCarrier, ec).futureValue shouldBe Right(Some(sessionData))
         }
+
+        "return the correct session value for given key when encryption is enabled" in {
+          val sessionData = UIJourneySessionData("session-123456", "ADD-SE")
+          when(mockFrontendAppConfig.encryptionIsEnabled).thenReturn(true)
+          mockRepositoryGetSensitive(Some(sessionData))
+          TestSessionService.getMongo(IncomeSourceJourneyType(Add, SelfEmployment))(headerCarrier, ec).futureValue shouldBe Right(Some(sessionData))
+          reset(mockFrontendAppConfig)
+        }
+
       }
 
       "getMongoKey method " should {
