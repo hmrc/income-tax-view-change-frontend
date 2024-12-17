@@ -89,9 +89,6 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
                   calendarYear = calendarYear2018
                 ).toString
 
-                println("*********************")
-                println(backUrl)
-
                 val result = action(fakeRequest.withHeaders(
                   HeaderNames.REFERER -> backUrl
                 ))
