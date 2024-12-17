@@ -29,7 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class UpliftSuccessController @Inject()(authActions: AuthActions,
                                         mcc: MessagesControllerComponents,
-                                        val auditingService: AuditingService,
+                                        val auditingService: AuditingService
                                        )(implicit val appConfig: FrontendAppConfig,
                                          executionContext: ExecutionContext) extends FrontendController(mcc) with FeatureSwitching {
 
