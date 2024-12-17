@@ -17,49 +17,55 @@
 package controllers
 
 import auth.MtdItUser
+import auth.authV2.AuthActions
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig}
-import controllers.agent.predicates.ClientConfirmedController
 import models.admin.ITSASubmissionIntegration
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.DateServiceInterface
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import uk.gov.hmrc.http.HeaderCarrier
-import utils.AuthenticatorPredicate
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.TaxYears
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success, Try}
 
 class TaxYearsController @Inject()(taxYearsView: TaxYears,
-                                   val authorisedFunctions: AuthorisedFunctions,
-                                   implicit val dateService: DateServiceInterface,
-                                   val auth: AuthenticatorPredicate)
+                                   val authActions: AuthActions,
+                                   itvcErrorHandler: ItvcErrorHandler,
+                                   agentItvcErrorHandler: AgentItvcErrorHandler)
                                   (implicit val appConfig: FrontendAppConfig,
                                    mcc: MessagesControllerComponents,
-                                   implicit val ec: ExecutionContext,
-                                   val itvcErrorHandler: AgentItvcErrorHandler
-                                  ) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
+                                   val ec: ExecutionContext,
+                                   val dateService: DateServiceInterface
+                                  ) extends FrontendController(mcc)
+  with I18nSupport with FeatureSwitching {
 
   private val earliestSubmissionTaxYear = 2023
   def handleRequest(backUrl: String,
                     isAgent: Boolean,
                     origin: Option[String] = None)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
-
-    Future.successful(Ok(taxYearsView(
-      taxYears = user.incomeSources.orderedTaxYearsByAccountingPeriods.reverse,
-      backUrl,
-      isAgent = isAgent,
-      utr = user.saUtr,
-      itsaSubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
-      earliestSubmissionTaxYear = earliestSubmissionTaxYear,
-      btaNavPartial = user.btaNavPartial,
-      origin = origin)))
+                   (implicit user: MtdItUser[_]): Future[Result] = {
+    Try {
+      taxYearsView(
+        taxYears = user.incomeSources.orderedTaxYearsByAccountingPeriods.reverse,
+        backUrl,
+        isAgent = isAgent,
+        utr = user.saUtr,
+        itsaSubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
+        earliestSubmissionTaxYear = earliestSubmissionTaxYear,
+        btaNavPartial = user.btaNavPartial,
+        origin = origin)
+    } match {
+      case Success(taxView) => Future.successful(Ok(taxView))
+      case Failure(_) =>
+        val errorHandler = if(isAgent) agentItvcErrorHandler else itvcErrorHandler
+        Future.successful(errorHandler.showInternalServerError())
+    }
   }
 
-  def showTaxYears(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def showTaxYears(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
       handleRequest(
         backUrl = controllers.routes.HomeController.show(origin).url,
@@ -68,7 +74,7 @@ class TaxYearsController @Inject()(taxYearsView: TaxYears,
       )
   }
 
-  def showAgentTaxYears: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgentTaxYears: Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
     implicit mtdItUser =>
       handleRequest(
         backUrl = controllers.routes.HomeController.showAgent.url,

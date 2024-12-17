@@ -17,20 +17,17 @@
 package controllers
 
 import audit.models.ForecastIncomeAuditModel
-import auth.MtdItUserWithNino
-import helpers.ComponentSpecBase
+import auth.MtdItUser
+import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks._
 import models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
 import play.api.http.Status._
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
+import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, multipleBusinessesAndUkProperty}
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
-import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 object ForecastIncomeSummaryControllerTestConstants {
-  val mtdItUser: MtdItUserWithNino[_] = MtdItUserWithNino(testMtditid, testNino, None, None, Some("1234567890"),
-    Some("12345-credId"), Some(Individual), None)(FakeRequest())
-
   val taxableIncome = 12500
 
   val endOfYearEstimate: EndOfYearEstimate = EndOfYearEstimate(
@@ -65,35 +62,50 @@ object ForecastIncomeSummaryControllerTestConstants {
   )
 }
 
-class ForecastIncomeSummaryControllerISpec extends ComponentSpecBase {
 
-  "Calling the ForecastIncomeSummaryController.show(taxYear)" when {
+class ForecastIncomeSummaryControllerISpec extends ControllerISpecHelper {
 
-    "isAuthorisedUser with an active enrolment, valid nino and tax year, valid CalcDisplayModel response, " should {
-      "return the correct forecast income summary page and audit event" in {
+  lazy val testUser: MTDUserRole => MtdItUser[_] = mtdUserRole =>
+    getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)
+  (FakeRequest())
 
-        And("I stub a successful calculation response for 2017-18")
-        IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018")(
-          status = OK,
-          body = liabilityCalculationModelSuccessful
-        )
+  def getPath(mtdRole: MTDUserRole): String = {
+    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    pathStart + s"/$testYear/forecast-income"
+  }
 
-        When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/income/forecast")
-        val res = IncomeTaxViewChangeFrontend.getForecastIncomeSummary(testYear)
+  mtdAllRoles.foreach { case mtdUserRole =>
+    val path = getPath(mtdUserRole)
+    val additionalCookies = getAdditionalCookies(mtdUserRole)
+    s"GET $path" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          if (mtdUserRole == MTDSupportingAgent) {
+            testSupportingAgentAccessDenied(path, additionalCookies)
+          } else {
+            "render the forecast income summary page" in {
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
+              IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018")(
+                status = OK,
+                body = liabilityCalculationModelSuccessful
+              )
+              val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-        IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, "2018")
+              IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, "2018")
 
-        AuditStub.verifyAuditEvent(ForecastIncomeAuditModel(ForecastIncomeSummaryControllerTestConstants.mtdItUser,
-          ForecastIncomeSummaryControllerTestConstants.endOfYearEstimate))
+              AuditStub.verifyAuditEvent(ForecastIncomeAuditModel(testUser(mtdUserRole),
+                ForecastIncomeSummaryControllerTestConstants.endOfYearEstimate))
 
-        res should have(
-          httpStatus(OK),
-          pageTitleIndividual("forecast_income.heading")
-        )
+              res should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, "forecast_income.heading")
+              )
+            }
+          }
+        }
+        testAuthFailures(path, mtdUserRole)
       }
     }
-
-    unauthorisedTest("/" + testYear + "/forecast-income")
-
   }
 }

@@ -16,119 +16,103 @@
 
 package controllers
 
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
-import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import enums.{MTDIndividual, MTDSupportingAgent}
+import forms.utils.SessionKeys
+import mocks.auth.MockAuthActions
 import mocks.services.MockCalculationPollingService
+import play.api
+import play.api.Application
 import play.api.http.Status
-import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testTaxYear}
-import testUtils.TestSupport
-import uk.gov.hmrc.play.language.LanguageUtils
+import services.CalculationPollingService
+import testConstants.BaseTestConstants.testTaxYear
 
-class CalculationPollingControllerSpec extends TestSupport with MockCalculationPollingService
-  with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with FeatureSwitching {
+class CalculationPollingControllerSpec extends MockAuthActions with MockCalculationPollingService {
 
-  object TestCalculationPollingController extends CalculationPollingController(
-    mockAuthService,
-    mockCalculationPollingService,
-    app.injector.instanceOf[ItvcErrorHandler],
-    app.injector.instanceOf[AgentItvcErrorHandler],
-    testAuthenticator
-  )(appConfig,
-    app.injector.instanceOf[MessagesControllerComponents],
-    ec,
-    app.injector.instanceOf[LanguageUtils])
+  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+    .overrides(
+      api.inject.bind[CalculationPollingService].toInstance(mockCalculationPollingService)
+    ).build()
 
-  "The CalculationPollingController.calculationPoller(year) action" when {
-    "Called with an Unauthenticated User" should {
-      "return redirect SEE_OTHER (303)" in {
-        setupMockAuthorisationException()
-        val result = TestCalculationPollingController.calculationPoller(testTaxYear, isFinalCalc = false)(fakeRequestWithNinoAndCalc)
-        status(result) shouldBe Status.SEE_OTHER
+  val testController = fakeApplication().injector.instanceOf[CalculationPollingController]
+
+  mtdAllRoles.foreach { mtdRole =>
+    val isAgent = mtdRole != MTDIndividual
+    val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
+    s"calculationPoller${if (isAgent) "Agent"}" when {
+      def action(isFinalCalc: Boolean = false) = if (isAgent) {
+        testController.calculationPollerAgent(testTaxYear, isFinalCalc)
+      } else {
+        testController.calculationPoller(testTaxYear, isFinalCalc)
       }
-    }
 
-    "the calculation returned from the calculation service is found" should {
-      "return the redirect to calculation page" in {
-        mockCalculationPollingSuccess()
+      s"the user is authenticated as a $mtdRole" should {
+        if (mtdRole == MTDSupportingAgent) {
+          testSupportingAgentDeniedAccess(action())(fakeRequest)
+        } else {
+          s"redirect to Tax summary controller" when {
+            "the session key contains calculationId, request is not final calc" in {
+              setupMockSuccess(mtdRole)
+              mockBusinessIncomeSource()
+              mockCalculationPollingSuccess()
+              val result = action()(fakeRequest.addingToSession(SessionKeys.calculationId -> testCalcId))
+              status(result) shouldBe Status.SEE_OTHER
+              val expectedUrl = if (isAgent) {
+                routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(testTaxYear).url
+              } else {
+                routes.TaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear).url
+              }
+              redirectLocation(result) shouldBe Some(expectedUrl)
+            }
+          }
 
-        val result = TestCalculationPollingController.calculationPoller(testTaxYear, isFinalCalc = false)(fakeRequestWithNinoAndCalc)
+          s"redirect to Final Tax Calculation controller" when {
+            "the session key contains calculationId, and request is final calc" in {
+              setupMockSuccess(mtdRole)
+              mockBusinessIncomeSource()
+              mockCalculationPollingSuccess()
+              val result = action(true)(fakeRequest.addingToSession(SessionKeys.calculationId -> testCalcId))
+              status(result) shouldBe Status.SEE_OTHER
+              val expectedUrl = if (isAgent) {
+                routes.FinalTaxCalculationController.showAgent(testTaxYear).url
+              } else {
+                routes.FinalTaxCalculationController.show(testTaxYear).url
+              }
+              redirectLocation(result) shouldBe Some(expectedUrl)
+            }
+          }
 
-        status(result) shouldBe Status.SEE_OTHER
+          "render the error page" when {
+            "the calculationId is missing from the session" in {
+              setupMockSuccess(mtdRole)
+              mockBusinessIncomeSource()
+
+              val result = action()(fakeRequest)
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+              contentType(result) shouldBe Some("text/html")
+            }
+
+            "the calculation returned from the calculation service was not found" in {
+              setupMockSuccess(mtdRole)
+              mockBusinessIncomeSource()
+              mockCalculationPollingRetryableError()
+              val result = action(true)(fakeRequest)
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+              contentType(result) shouldBe Some("text/html")
+            }
+
+            "the calculation returned from the calculation service was an error" in {
+              setupMockSuccess(mtdRole)
+              mockBusinessIncomeSource()
+              mockCalculationPollingNonRetryableError()
+              val result = action(true)(fakeRequest)
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+              contentType(result) shouldBe Some("text/html")
+            }
+          }
+        }
       }
-    }
-
-    "the calculation returned from the calculation service was not found" should {
-      "return the internal server error page" in {
-        mockCalculationPollingRetryableError()
-
-        val result = TestCalculationPollingController.calculationPoller(testTaxYear, isFinalCalc = false)(fakeRequestWithNinoAndCalc)
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        contentType(result) shouldBe Some("text/html")
-      }
-    }
-
-    "the calculation returned from the calculation service was an error" should {
-      "return the internal server error page" in {
-        mockCalculationPollingNonRetryableError()
-
-        val result = TestCalculationPollingController.calculationPoller(testTaxYear, isFinalCalc = false)(fakeRequestWithActiveSession)
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        contentType(result) shouldBe Some("text/html")
-      }
-    }
-  }
-
-  "The CalculationPollingController.calculationPollerAgent(year) action" when {
-    "Called with an Unauthenticated User" should {
-      "return redirect SEE_OTHER (303)" in {
-        setupMockAgentAuthorisationException()
-        val result = TestCalculationPollingController.calculationPollerAgent(testTaxYear, isFinalCalc = false)(fakeRequestConfirmedClient("AB123456C"))
-        status(result) shouldBe Status.SEE_OTHER
-      }
-    }
-
-    "the calculation returned from the calculation service is found" should {
-      "return the redirect to calculation page" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockCalculationPollingSuccess()
-
-        val result = TestCalculationPollingController.calculationPollerAgent(
-          testTaxYear,
-          isFinalCalc = false
-        )(fakeRequestConfirmedClientWithCalculationId("AB123456C"))
-
-        status(result) shouldBe Status.SEE_OTHER
-      }
-    }
-
-    "the calculation returned from the calculation service was not found" should {
-      "return the internal server error page" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockCalculationPollingRetryableError()
-
-        val result = TestCalculationPollingController.calculationPollerAgent(testTaxYear, isFinalCalc = false)(fakeRequestConfirmedClient("AB123456C"))
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        contentType(result) shouldBe Some("text/html")
-      }
-    }
-
-    "the calculation returned from the calculation service was an error" should {
-      "return the internal server error page" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockCalculationPollingNonRetryableError()
-
-        val result = TestCalculationPollingController.calculationPollerAgent(testTaxYear, isFinalCalc = false)(fakeRequestConfirmedClient("AB123456C"))
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        contentType(result) shouldBe Some("text/html")
-      }
+      testMTDAuthFailuresForRole(action(), mtdRole, false)(fakeRequest)
     }
   }
 }

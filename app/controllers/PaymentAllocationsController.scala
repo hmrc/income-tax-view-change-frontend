@@ -19,23 +19,22 @@ package controllers
 import audit.AuditingService
 import audit.models.PaymentAllocationsResponseAuditModel
 import auth.MtdItUser
+import auth.authV2.AuthActions
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import controllers.agent.predicates.ClientConfirmedController
 import enums.GatewayPage.GatewayPage
 import forms.utils.SessionKeys.gatewayPage
 import implicits.ImplicitDateFormatterImpl
 import models.admin.CreditsRefundsRepay
 import models.core.Nino
 import models.paymentAllocationCharges.{PaymentAllocationError, PaymentAllocationViewModel}
-import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import play.mvc.Http
-import services.{IncomeSourceDetailsService, PaymentAllocationsService}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import services.PaymentAllocationsService
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{AuthenticatorPredicate, FallBackBackLinks}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.FallBackBackLinks
 import views.html.PaymentAllocation
 
 import java.time.LocalDate
@@ -44,31 +43,29 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentAllocation,
-                                             val authorisedFunctions: AuthorisedFunctions,
-                                             val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                             val authActions: AuthActions,
                                              itvcErrorHandler: ItvcErrorHandler,
-                                             implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                             val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                              paymentAllocations: PaymentAllocationsService,
-                                             auditingService: AuditingService,
-                                             val auth: AuthenticatorPredicate)
-                                            (implicit override val mcc: MessagesControllerComponents,
+                                             auditingService: AuditingService)
+                                            (implicit val mcc: MessagesControllerComponents,
                                              val ec: ExecutionContext,
                                              val implicitDateFormatter: ImplicitDateFormatterImpl,
-                                             val appConfig: FrontendAppConfig) extends ClientConfirmedController
+                                             val appConfig: FrontendAppConfig) extends FrontendController(mcc)
   with I18nSupport with FeatureSwitching with FallBackBackLinks {
 
   private lazy val redirectUrlIndividual: String = controllers.errors.routes.NotFoundDocumentIDLookupController.show.url
   private lazy val redirectUrlAgent: String = controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show.url
 
-  def viewPaymentAllocation(documentNumber: String, origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def viewPaymentAllocation(documentNumber: String, origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
-        handleRequest(
-          itvcErrorHandler = itvcErrorHandler,
-          documentNumber = documentNumber,
-          redirectUrl = redirectUrlIndividual,
-          isAgent = false,
-          origin = origin
-        )
+      handleRequest(
+        itvcErrorHandler = itvcErrorHandler,
+        documentNumber = documentNumber,
+        redirectUrl = redirectUrlIndividual,
+        isAgent = false,
+        origin = origin
+      )
 
   }
 
@@ -101,14 +98,14 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
   }
 
   def viewPaymentAllocationAgent(documentNumber: String): Action[AnyContent] = {
-    auth.authenticatedAction(isAgent = true) {
+    authActions.asMTDPrimaryAgent.async {
       implicit mtdItUser =>
-          handleRequest(
-            itvcErrorHandler = itvcErrorHandlerAgent,
-            documentNumber = documentNumber,
-            redirectUrl = redirectUrlAgent,
-            isAgent = true
-          )
-        }
+        handleRequest(
+          itvcErrorHandler = itvcErrorHandlerAgent,
+          documentNumber = documentNumber,
+          redirectUrl = redirectUrlAgent,
+          isAgent = true
+        )
     }
+  }
 }

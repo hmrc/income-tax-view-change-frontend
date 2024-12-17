@@ -17,61 +17,65 @@
 package controllers
 
 import config.featureswitch.FeatureSwitching
-import helpers.ComponentSpecBase
+import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks._
 import play.api.http.Status._
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 
-class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
+class TaxYearsControllerISpec extends ControllerISpecHelper with FeatureSwitching {
 
-  "Calling the TaxYearsController.viewTaxYears" when {
+  def getPath(mtdRole: MTDUserRole): String = {
+    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    pathStart + s"/tax-years"
+  }
+  mtdAllRoles.foreach { case mtdUserRole =>
+    val path = getPath(mtdUserRole)
+    val additionalCookies = getAdditionalCookies(mtdUserRole)
+    s"GET $path" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          if (mtdUserRole == MTDSupportingAgent) {
+            testSupportingAgentAccessDenied(path, additionalCookies)
+          } else {
+            "render the forecast income summary page" when {
+              "the user has firstAccountingPeriodEndDate and hence valid tax years" in {
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
 
-    "isAuthorisedUser with an active enrolment and income source has retrieved successfully" when {
+                val res = buildGETMTDClient(path, additionalCookies).futureValue
+                verifyIncomeSourceDetailsCall(testMtditid)
 
-      "no firstAccountingPeriodEndDate does not exists for both business and property" should {
+                Then("The view should have the correct headings and all tax years display")
+                res should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "taxYears.heading"),
+                  nElementsWithClass("govuk-summary-list__row")(6),
+                  elementTextBySelectorList("dl", "div:nth-child(1)", "dt")(
+                    expectedValue = s"6 April ${getCurrentTaxYearEnd.getYear - 1} to 5 April ${getCurrentTaxYearEnd.getYear}"
+                  )
+                )
+              }
+            }
 
-        "return 500 Internal Server " in {
+            "return 500 Internal Server " when {
+              "no firstAccountingPeriodEndDate exists for both business and property" in {
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-          And("I wiremock stub a successful Income Source Details response with single Business and Property income")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+                val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-          When(s"I call GET /report-quarterly/income-and-expenses/view/tax-years")
-          val res = IncomeTaxViewChangeFrontend.getTaxYears
+                verifyIncomeSourceDetailsCall(testMtditid)
 
-          verifyIncomeSourceDetailsCall(testMtditid)
-
-          res should have(
-            httpStatus(INTERNAL_SERVER_ERROR)
-          )
+                res should have(
+                  httpStatus(INTERNAL_SERVER_ERROR)
+                )
+              }
+            }
+          }
         }
-      }
-
-      "income sources has firstAccountingPeriodEndDate and hence valid tax years" should {
-
-        "return 200 OK " in {
-
-          And("I wiremock stub a successful Income Source Details response with single Business and Property income")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
-
-          When(s"I call GET /report-quarterly/income-and-expenses/view/tax-years")
-          val res = IncomeTaxViewChangeFrontend.getTaxYears
-
-          verifyIncomeSourceDetailsCall(testMtditid)
-
-          Then("The view should have the correct headings and all tax years display")
-          res should have(
-            httpStatus(OK),
-            pageTitleIndividual("taxYears.heading"),
-            nElementsWithClass("govuk-summary-list__row")(6),
-            elementTextBySelectorList("dl", "div:nth-child(1)", "dt")(
-              expectedValue = s"6 April ${getCurrentTaxYearEnd.getYear - 1} to 5 April ${getCurrentTaxYearEnd.getYear}"
-            )
-          )
-        }
+        testAuthFailures(path, mtdUserRole)
       }
     }
   }
-
-  unauthorisedTest("/tax-years")
 }

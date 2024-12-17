@@ -64,8 +64,8 @@ trait MockAuthActions extends
     reset(mockAuthService)
   }
 
-  override def beforeAll(): Unit = {
-    super.beforeAll()
+  override def afterAll(): Unit = {
+    super.afterAll()
     Play.stop(fakeApplication())
   }
 
@@ -92,8 +92,6 @@ trait MockAuthActions extends
       )
   }
 
-  val mockAuthActions: AuthActions = app.injector.instanceOf[AuthActions]
-
   def setupMockSuccess[X, Y](mtdUserRole: MTDUserRole): Unit = mtdUserRole match {
     case MTDIndividual => setupMockUserAuth
     case MTDPrimaryAgent => setupMockAgentWithClientAuth(false)
@@ -102,6 +100,12 @@ trait MockAuthActions extends
 
   def setupMockUserAuth[X, Y]: Unit = {
     val allEnrolments = getAllEnrolmentsIndividual(true, true)
+    val retrievalValue = allEnrolments ~ Some(userName) ~ Some(credentials) ~ Some(AffinityGroup.Individual) ~ acceptedConfidenceLevel
+    setupMockUserAuthSuccess(retrievalValue)
+  }
+
+  def setupMockUserAuthNoSAUtr[X, Y]: Unit = {
+    val allEnrolments = getAllEnrolmentsIndividual(true, false)
     val retrievalValue = allEnrolments ~ Some(userName) ~ Some(credentials) ~ Some(AffinityGroup.Individual) ~ acceptedConfidenceLevel
     setupMockUserAuthSuccess(retrievalValue)
   }

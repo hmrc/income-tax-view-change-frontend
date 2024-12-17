@@ -16,651 +16,396 @@
 
 package controllers
 
-import audit.mocks.MockAuditingService
-import config.featureswitch._
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import enums.AmendedReturnReversalReason
-import enums.ChargeType.{ITSA_ENGLAND_AND_NI, NIC4_WALES}
-import implicits.ImplicitDateFormatter
-import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import mocks.services.MockIncomeSourceDetailsService
+import enums.{MTDIndividual, MTDSupportingAgent}
 import models.admin.{ChargeHistory, ReviewAndReconcilePoa}
-import models.chargeHistory._
-import models.financialDetails.{ChargeItem, FinancialDetail, FinancialDetailsResponseModel, PoaOneReconciliationCredit, PoaTwoReconciliationCredit, TransactionType}
-import models.incomeSourceDetails.TaxYear
+import models.financialDetails.PoaTwoReconciliationCredit
 import models.repaymentHistory.RepaymentHistoryUtils
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, when}
+import play.api
+import play.api.Application
 import play.api.http.Status
-import play.api.mvc.{MessagesControllerComponents, Result}
+import play.api.mvc.Result
 import play.api.test.Helpers._
-import services.{ChargeHistoryService, DateService, FinancialDetailsService}
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testTaxYear}
-import testConstants.ChargeConstants
+import services.{ChargeHistoryService, FinancialDetailsService}
+import testConstants.BaseTestConstants.testTaxYear
 import testConstants.FinancialDetailsTestConstants._
-import testUtils.TestSupport
 
-import java.time.LocalDate
 import scala.concurrent.Future
 
+class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
-class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
-  with MockIncomeSourceDetailsPredicate
-  with ImplicitDateFormatter
-  with MockIncomeSourceDetailsService
-  with MockAuditingService
-  with FeatureSwitching
-  with TestSupport
-  with ChargeConstants {
+  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+    .overrides(
+      api.inject.bind[ChargeHistoryService].toInstance(mockChargeHistoryService),
+      api.inject.bind[FinancialDetailsService].toInstance(mockFinancialDetailsService)
+    ).build()
 
-  def financialDetailsWithLocks(taxYear: Int): List[FinancialDetail] = List(
-    financialDetail(taxYear = taxYear, chargeType = ITSA_ENGLAND_AND_NI),
-    financialDetail(taxYear = taxYear, chargeType = NIC4_WALES, dunningLock = Some("Stand over order"))
-  )
+  val testController = fakeApplication().injector.instanceOf[ChargeSummaryController]
 
-  val mockChargeHistoryService: ChargeHistoryService = mock(classOf[ChargeHistoryService])
+  val endYear: Int = 2018
+  val startYear: Int = endYear - 1
 
-  def mockGetReviewAndReconcileCredit(transactionType: TransactionType): Unit =
-    when(mockChargeHistoryService.getReviewAndReconcileCredit(any(), any(), any()))
-      .thenReturn(Some(
-        ChargeItem(
-          transactionId = "transactionId",
-          taxYear = TaxYear(2017, 2018),
-          transactionType = transactionType,
-          subTransactionType = None,
-          documentDate = LocalDate.of(2018, 1, 1),
-          dueDate = Some(LocalDate.of(2018, 1, 1)),
-          originalAmount = 1000,
-          outstandingAmount = 0,
-          interestOutstandingAmount = None,
-          latePaymentInterestAmount = None,
-          interestFromDate = None,
-          interestEndDate = None,
-          interestRate = None,
-          lpiWithDunningLock = None,
-          amountCodedOut = None,
-          dunningLock = false,
-          poaRelevantAmount = None
-        )
-      ))
+  mtdAllRoles.foreach { mtdUserRole =>
+    val isAgent = mtdUserRole != MTDIndividual
 
-  def testChargeHistoryModel(): ChargesHistoryModel = ChargesHistoryModel("NINO", "AB123456C", "ITSA", None)
-
-  def emptyAdjustmentHistoryModel: AdjustmentHistoryModel = AdjustmentHistoryModel(AdjustmentModel(1000, None, AmendedReturnReversalReason), List())
-
-  class Setup(financialDetails: FinancialDetailsResponseModel,
-              adjustmentHistoryModel: AdjustmentHistoryModel = emptyAdjustmentHistoryModel,
-              chargeHistoryResponse: Either[ChargesHistoryErrorModel, List[ChargeHistoryModel]] = Right(List()),
-              enableReviewAndReconcile: Boolean = false,
-              isAgent: Boolean = false) {
-    val financialDetailsService: FinancialDetailsService = mock(classOf[FinancialDetailsService])
-
-    if (enableReviewAndReconcile) enable(ReviewAndReconcilePoa)
-    else disable(ReviewAndReconcilePoa)
-
-
-    when(financialDetailsService.getAllFinancialDetails(any(), any(), any()))
-      .thenReturn(Future.successful(List((2018, financialDetails))))
-
-    when(mockChargeHistoryService.chargeHistoryResponse(any(), any(), any(), any())(any(), any(), any()))
-      .thenReturn(Future.successful(chargeHistoryResponse))
-
-    when(mockChargeHistoryService.getAdjustmentHistory(any(), any()))
-      .thenReturn(adjustmentHistoryModel)
-
-    mockGetReviewAndReconcileCredit(PoaOneReconciliationCredit)
-
-    mockBothIncomeSources()
-    if (isAgent) {
-      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+    def action(id: String, isInterestCharge: Boolean = false) = if (isAgent) {
+      testController.showAgent(testTaxYear, id, isInterestCharge)
+    } else {
+      testController.show(testTaxYear, id, isInterestCharge)
     }
 
-    val controller = new ChargeSummaryController(
-      testAuthenticator,
-      financialDetailsService,
-      mockAuditingService,
-      app.injector.instanceOf[ItvcErrorHandler],
-      app.injector.instanceOf[views.html.ChargeSummary],
-      mockIncomeSourceDetailsService,
-      mockChargeHistoryService,
-      mockAuthService,
-      app.injector.instanceOf[views.html.errorPages.CustomNotFoundError]
-    )(
-      app.injector.instanceOf[FrontendAppConfig],
-      app.injector.instanceOf[DateService],
-      languageUtils,
-      app.injector.instanceOf[MessagesControllerComponents],
-      ec,
-      app.injector.instanceOf[AgentItvcErrorHandler]
-    )
-  }
-
-  val errorHeading: String = messages("standardError.heading")
-  val successHeadingForPOA1 = s"2017 to 2018 tax year ${messages("chargeSummary.paymentOnAccount1.text")}"
-  val successHeadingForBCD = s"2017 to 2018 tax year ${messages("chargeSummary.balancingCharge.text")}"
-
-  def successHeadingForRAR1(startYear: String, endYear: String) = s"$startYear to $endYear tax year ${messages("chargeSummary.reviewAndReconcilePoa1.text")}"
-
-  def successHeadingForRAR2(startYear: String, endYear: String) = s"$startYear to $endYear tax year ${messages("chargeSummary.reviewAndReconcilePoa2.text")}"
-
-  def successHeadingRAR1Interest(startYear: String, endYear: String) = s"$startYear to $endYear tax year ${messages("chargeSummary.lpi.reviewAndReconcilePoa1.text")}"
-
-  val dunningLocksBannerHeading: String = messages("chargeSummary.dunning.locks.banner.title")
-  val paymentBreakdownHeading: String = messages("chargeSummary.paymentBreakdown.heading")
-  val paymentHistoryHeadingForPOA1Charge: String = messages("chargeSummary.chargeHistory.Poa1heading")
-  val paymentHistoryHeadingForRARCharge: String = messages("chargeSummary.chargeHistory.heading")
-  val lpiHistoryHeading: String = messages("chargeSummary.chargeHistory.lateInterestPayment")
-  val lateInterestSuccessHeading = s"2017 to 2018 tax year ${messages("chargeSummary.lpi.paymentOnAccount1.text")}"
-  val paymentprocessingbullet1: String = s"${messages("chargeSummary.payments-bullet1-1")} ${messages("chargeSummary.payments-bullet1-2")} ${messages("pagehelp.opensInNewTabText")} ${messages("chargeSummary.payments-bullet2")}"
-  val paymentprocessingbullet1Agent: String = s"${messages("chargeSummary.payments-bullet1-1")} ${messages("chargeSummary.payments-bullet1-2-agent")} ${messages("pagehelp.opensInNewTabText")} ${messages("chargeSummary.payments-bullet2-agent")}"
-  val warningText: String = "Warning " + messages("chargeSummary.reviewAndReconcilePoa.warning")
-  val explanationTextForRAR1: String = messages("chargeSummary.reviewAndReconcilePoa.p1") + " " + messages("chargeSummary.reviewAndReconcilePoa1.linkText") + " " + messages("chargeSummary.reviewAndReconcilePoa.p2")
-  val explanationTextForRAR2: String = messages("chargeSummary.reviewAndReconcilePoa.p1") + " " + messages("chargeSummary.reviewAndReconcilePoa2.linkText") + " " + messages("chargeSummary.reviewAndReconcilePoa.p2")
-  val descriptionTextForRAR1: String = messages("chargeSummary.chargeHistory.created.reviewAndReconcilePoa1.text")
-  val descriptionTextForRAR2: String = messages("chargeSummary.chargeHistory.created.reviewAndReconcilePoa2.text")
-  val descriptionTextRAR1Interest: String = messages("chargeSummary.poa1ExtraAmountInterest.p1")
-
-  "The ChargeSummaryController for Individuals" should {
-
-    "redirect a user back to the home page" when {
-
-      "the charge id provided does not match any charges in the response" in new Setup(financialDetailsModel()) {
-        val result: Future[Result] = controller.show(testTaxYear, "fakeId")(fakeRequestWithNinoAndOrigin("PTA"))
-
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.errors.routes.NotFoundDocumentIDLookupController.show.url)
-      }
-    }
-
-    "load the page" when {
-
-      "provided with an id associated to a Review & Reconcile Debit Charge for POA1" in new Setup(
-        testFinancialDetailsModelWithReviewAndReconcileAndPoas,
-        enableReviewAndReconcile = true) {
-        enable(ChargeHistory)
-        enable(ReviewAndReconcilePoa)
-
-        val endYear: Int = 2018
-        val startYear: Int = endYear - 1
-
-        val result: Future[Result] = controller.show(testTaxYear, id1040000123)(fakeRequestWithNinoAndOrigin("PTA"))
-
-        status(result) shouldBe Status.OK
-        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeadingForRAR1(startYear.toString, endYear.toString)
-        JsoupParse(result).toHtmlDocument.getElementsByClass("govuk-warning-text__text").text() shouldBe warningText
-        JsoupParse(result).toHtmlDocument.getElementById("rar-poa1-explanation").text() shouldBe explanationTextForRAR1
-        JsoupParse(result).toHtmlDocument.getElementById("charge-history-h3").text() shouldBe paymentHistoryHeadingForRARCharge
-        JsoupParse(result).toHtmlDocument.getElementById("poa1-link").attr("href") shouldBe
-          controllers.routes.ChargeSummaryController.show(testTaxYear, id1040000125).url
-
-        JsoupParse(result).toHtmlDocument
-          .getElementById("payment-history-table")
-          .getElementsByClass("govuk-table__body")
-          .first()
-          .getElementsByClass("govuk-table__cell")
-          .get(1)
-          .text() shouldBe descriptionTextForRAR1
-      }
-
-      "provided with an id associated to a Review & Reconcile Debit Charge for POA2" in new Setup(testFinancialDetailsModelWithReviewAndReconcileAndPoas) {
-        enable(ChargeHistory)
-        enable(ReviewAndReconcilePoa)
-
-        val endYear: Int = 2018
-        val startYear: Int = endYear - 1
-
-        val result: Future[Result] = controller.show(testTaxYear, id1040000124)(fakeRequestWithNinoAndOrigin("PTA"))
-
-        status(result) shouldBe Status.OK
-        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeadingForRAR2(startYear.toString, endYear.toString)
-        JsoupParse(result).toHtmlDocument.getElementsByClass("govuk-warning-text__text").text() shouldBe warningText
-        JsoupParse(result).toHtmlDocument.getElementById("rar-poa2-explanation").text() shouldBe explanationTextForRAR2
-        JsoupParse(result).toHtmlDocument.getElementById("charge-history-h3").text() shouldBe paymentHistoryHeadingForRARCharge
-        JsoupParse(result).toHtmlDocument.getElementById("poa2-link").attr("href") shouldBe
-          controllers.routes.ChargeSummaryController.show(testTaxYear, id1040000126).url
-        JsoupParse(result).toHtmlDocument
-          .getElementById("payment-history-table")
-          .getElementsByClass("govuk-table__body")
-          .first()
-          .getElementsByClass("govuk-table__cell")
-          .get(1)
-          .text() shouldBe descriptionTextForRAR2
-      }
-
-      "provided with an id associated to interest on a Review & Reconcile Debit Charge for POA" in new Setup(testFinancialDetailsModelWithReviewAndReconcileInterest) {
-        enable(ChargeHistory)
-        enable(ReviewAndReconcilePoa)
-
-        val endYear: Int = 2018
-        val startYear: Int = endYear - 1
-
-        val result: Future[Result] = controller.show(testTaxYear, id1040000123, isInterestCharge = true)(fakeRequestWithNinoAndOrigin("PTA"))
-
-        status(result) shouldBe Status.OK
-        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeadingRAR1Interest(startYear.toString, endYear.toString)
-        JsoupParse(result).toHtmlDocument.getElementById("poa1-extra-charge-p1").text() shouldBe descriptionTextRAR1Interest
-      }
-
-      "provided with an id that matches a charge in the financial response" in new Setup(financialDetailsModel()) {
-        enable(ChargeHistory)
-        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithNinoAndOrigin("PTA"))
-
-        status(result) shouldBe Status.OK
-        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeadingForPOA1
-        JsoupParse(result).toHtmlDocument.select("#dunningLocksBanner").size() shouldBe 1
-        JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
-        JsoupParse(result).toHtmlDocument.select("main h3").text() shouldBe paymentHistoryHeadingForPOA1Charge
-      }
-
-
-      "the late payment interest flag is enabled" in new Setup(
-        financialDetailsModel(lpiWithDunningLock = None)) {
-        enable(ChargeHistory)
-
-        val result: Future[Result] = controller.show(testTaxYear, "1040000123", isInterestCharge = true)(fakeRequestWithNinoAndOrigin("PTA"))
-
-        status(result) shouldBe Status.OK
-        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe lateInterestSuccessHeading
-        JsoupParse(result).toHtmlDocument.select("#dunningLocksBanner").size() shouldBe 0
-        JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe lpiHistoryHeading
-      }
-
-      "provided with dunning locks and late payment interest flag, not showing the locks banner" in new Setup(
-        financialDetailsModel(lpiWithDunningLock = None).copy(financialDetails = financialDetailsWithLocks(testTaxYear))) {
-
-        val result: Future[Result] = controller.show(testTaxYear, "1040000123", isInterestCharge = true)(fakeRequestWithNinoAndOrigin("PTA"))
-
-        status(result) shouldBe Status.OK
-        JsoupParse(result).toHtmlDocument.select("#dunningLocksBanner").size() shouldBe 0
-        JsoupParse(result).toHtmlDocument.select("#heading-payment-breakdown").size() shouldBe 0
-      }
-
-      "provided with dunning locks, showing the locks banner" in new Setup(
-        financialDetailsModel().copy(financialDetails = financialDetailsWithLocks(testTaxYear))) {
-
-        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithNinoAndOrigin("PTA"))
-
-        status(result) shouldBe Status.OK
-        JsoupParse(result).toHtmlDocument.select("#dunningLocksBanner h2").text() shouldBe dunningLocksBannerHeading
-        JsoupParse(result).toHtmlDocument.select("#heading-payment-breakdown").text() shouldBe paymentBreakdownHeading
-      }
-
-      "allocations present" in new Setup(
-        chargesWithAllocatedPaymentModel()) {
-        disable(ChargeHistory)
-        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithNinoAndOrigin("PTA"))
-
-        status(result) shouldBe Status.OK
-        val doc = JsoupParse(result).toHtmlDocument
-        doc.select("h1").text() shouldBe successHeadingForPOA1
-        doc.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
-        doc.select("main h3").text() shouldBe paymentHistoryHeadingForPOA1Charge
-
-        val allocationLink = doc.select("#payment-history-table").select("tr").get(1).select("a").attr("href")
-        allocationLink shouldBe s"/report-quarterly/income-and-expenses/view/payment-made-to-hmrc?documentNumber=${id1040000124}"
-      }
-
-      "without allocations" in new Setup(
-        chargesWithAllocatedPaymentModel()) {
-        disable(ChargeHistory)
-        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithNinoAndOrigin("PTA"))
-
-        status(result) shouldBe Status.OK
-        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeadingForPOA1
-        JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
-        JsoupParse(result).toHtmlDocument.select("main h3").text() shouldBe paymentHistoryHeadingForPOA1Charge
-      }
-
-      "displays link to poa extra charge on poa page when reconciliation charge exists" in new Setup(financialDetailsModelWithPoaExtraCharge()) {
-        enable(ReviewAndReconcilePoa)
-
-        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithNinoAndOrigin("PTA"))
-
-        status(result) shouldBe Status.OK
-        JsoupParse(result).toHtmlDocument.select("#poa-extra-charge-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(testTaxYear, "123456").url
-      }
-      "not display link to poa extra charge if no charge exists" in new Setup(financialDetailsModel()) {
-        enable(ReviewAndReconcilePoa)
-
-        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithNinoAndOrigin("PTA"))
-
-        status(result) shouldBe Status.OK
-        JsoupParse(result).toHtmlDocument.select("#poa-extra-charge-link").attr("href") shouldBe ""
-      }
-
-      "display the payment processing info if the charge is not Review & Reconcile" in new Setup(
-        financialDetailsModel(documentDescription = Some("ITSA BCD"), mainTransaction = "4910")) {
-        disable(ChargeHistory)
-        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithNinoAndOrigin("PTA"))
-
-        status(result) shouldBe Status.OK
-        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeadingForBCD
-      }
-
-      "hide payment processing info" in new Setup(financialDetailsReviewAndReconcile) {
-        disable(ChargeHistory)
-        enable(ReviewAndReconcilePoa)
-
-        val endYear: Int = 2023
-        val startYear: Int = endYear - 1
-
-        val result: Future[Result] = controller.show(testTaxYear, id1040000123)(fakeRequestWithNinoAndOrigin("PTA"))
-
-        status(result) shouldBe Status.OK
-        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeadingForRAR1(startYear.toString, endYear.toString)
-        JsoupParse(result).toHtmlDocument.select("#payment-processing-bullets").isEmpty shouldBe true
-      }
-
-      "display the Review & Reconcile credit for POA1 when present in the user's financial details" in new Setup(
-        financialDetailsModelWithPoaOneAndTwoWithRarCredits(), enableReviewAndReconcile = true) {
-        enable(ChargeHistory)
-        val result: Future[Result] = controller.show(testTaxYear, id1040000125)(fakeRequestWithNinoAndOrigin("PTA"))
-
-        status(result) shouldBe Status.OK
-        JsoupParse(result).toHtmlDocument.getElementById("rar-charge-link").text() shouldBe "First payment on account: credit from your tax return"
-        JsoupParse(result).toHtmlDocument.getElementById("rar-charge-link").attr("href") shouldBe
-          RepaymentHistoryUtils.getPoaChargeLinkUrl(isAgent = false, testTaxYear, "transactionId")
-        JsoupParse(result).toHtmlDocument.getElementById("rar-total-amount").text() shouldBe "£1,000.00"
-        JsoupParse(result).toHtmlDocument.getElementById("rar-due-date").text() shouldBe "1 Jan 2018"
-      }
-
-      "display the Review & Reconcile credit for POA2 when present in the user's financial details" in new Setup(
-        financialDetailsModelWithPoaOneAndTwoWithRarCredits(), enableReviewAndReconcile = true) {
-        enable(ChargeHistory)
-        val result: Future[Result] = controller.show(testTaxYear, id1040000126)(fakeRequestWithNinoAndOrigin("PTA"))
-
-        mockGetReviewAndReconcileCredit(PoaTwoReconciliationCredit)
-
-        status(result) shouldBe Status.OK
-        JsoupParse(result).toHtmlDocument.getElementById("rar-charge-link").text() shouldBe "Second payment on account: credit from your tax return"
-        JsoupParse(result).toHtmlDocument.getElementById("rar-charge-link").attr("href") shouldBe
-          RepaymentHistoryUtils.getPoaChargeLinkUrl(isAgent = false, testTaxYear, "transactionId")
-        JsoupParse(result).toHtmlDocument.getElementById("rar-total-amount").text() shouldBe "£1,000.00"
-        JsoupParse(result).toHtmlDocument.getElementById("rar-due-date").text() shouldBe "1 Jan 2018"
-      }
-    }
-
-    "load an error page" when {
-
-      "the charge history response is an error" in new Setup(
-        financialDetailsModel(), chargeHistoryResponse = Left(ChargesHistoryErrorModel(INTERNAL_SERVER_ERROR, "Failure"))) {
-        enable(ChargeHistory)
-        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithNinoAndOrigin("PTA"))
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe errorHeading
-      }
-
-      "the financial details response is an error" in new Setup(testFinancialDetailsErrorModelParsing) {
-        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithNinoAndOrigin("PTA"))
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe errorHeading
-      }
-
-      "no related tax year financial details found" in new Setup(testFinancialDetailsModelWithPayeSACodingOut()) {
-        val result: Future[Result] = controller.show(2020, "CODINGOUT01")(fakeRequestWithNinoAndOrigin("PTA"))
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe errorHeading
-      }
-    }
-
-    "Displays an MFA Debit charge" when {
-      "the charge is an MFA Debit" in new Setup(
-        financialDetailsModelWithMFADebit()) {
-        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithNinoAndOrigin("PTA"))
-
-        status(result) shouldBe Status.OK
-        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe "2017 to 2018 tax year " +
-          messages("chargeSummary.hmrcAdjustment.text")
-      }
-    }
-  }
-
-  "The ChargeSummaryController for Agents" should {
-
-    "display the Review & Reconcile credit for POA1 when present in the user's financial details" in new Setup(
-      financialDetailsModelWithPoaOneAndTwoWithRarCredits(), isAgent = true, enableReviewAndReconcile = true) {
-      val result: Future[Result] = controller.showAgent(testTaxYear, id1040000125)(fakeRequestConfirmedClient("AB123456C"))
-
-      status(result) shouldBe Status.OK
-      JsoupParse(result).toHtmlDocument.getElementById("rar-charge-link").text() shouldBe "First payment on account: credit from your tax return"
-      JsoupParse(result).toHtmlDocument.getElementById("rar-charge-link").attr("href") shouldBe
-        RepaymentHistoryUtils.getPoaChargeLinkUrl(isAgent = true, testTaxYear, "transactionId")
-      JsoupParse(result).toHtmlDocument.getElementById("rar-total-amount").text() shouldBe "£1,000.00"
-      JsoupParse(result).toHtmlDocument.getElementById("rar-due-date").text() shouldBe "1 Jan 2018"
-    }
-
-    "display the Review & Reconcile credit for POA2 when present in the user's financial details" in new Setup(
-      financialDetailsModelWithPoaOneAndTwoWithRarCredits(), isAgent = true, enableReviewAndReconcile = true) {
-
-      mockGetReviewAndReconcileCredit(PoaTwoReconciliationCredit)
-
-      val result: Future[Result] = controller.showAgent(testTaxYear, id1040000126)(fakeRequestConfirmedClient("AB123456C"))
-
-      status(result) shouldBe Status.OK
-      JsoupParse(result).toHtmlDocument.getElementById("rar-charge-link").text() shouldBe "Second payment on account: credit from your tax return"
-      JsoupParse(result).toHtmlDocument.getElementById("rar-charge-link").attr("href") shouldBe
-        RepaymentHistoryUtils.getPoaChargeLinkUrl(isAgent = true, testTaxYear, "transactionId")
-      JsoupParse(result).toHtmlDocument.getElementById("rar-total-amount").text() shouldBe "£1,000.00"
-      JsoupParse(result).toHtmlDocument.getElementById("rar-due-date").text() shouldBe "1 Jan 2018"
-    }
-
-    "hide payment processing info" in new Setup(financialDetailsReviewAndReconcile, isAgent = true) {
-      disable(ChargeHistory)
-      enable(ReviewAndReconcilePoa)
-
-      val endYear: Int = 2023
-      val startYear: Int = endYear - 1
-
-      val result: Future[Result] = controller.showAgent(testTaxYear, id1040000123)(fakeRequestConfirmedClient("AB123456C"))
-
-      status(result) shouldBe Status.OK
-      JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeadingForRAR1(startYear.toString, endYear.toString)
-      JsoupParse(result).toHtmlDocument.select("#payment-processing-bullets").isEmpty shouldBe true
-    }
-
-
-    "redirect a user back to the home page" when {
-
-      "the charge id provided does not match any charges in the response" in new Setup(financialDetailsModel(), isAgent = true) {
-        val result: Future[Result] = controller.showAgent(testTaxYear, "fakeId")(fakeRequestConfirmedClient("AB123456C"))
-
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show.url)
-      }
-    }
-
-    "redirect a user back to the custom error page" when {
-
-      "display any payments you make with contents for agent" in new Setup(
-        financialDetailsModel(), isAgent = true) {
-        disable(ChargeHistory)
-        val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123")(fakeRequestConfirmedClient("AB123456C"))
-
-        status(result) shouldBe Status.OK
-        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeadingForPOA1
-      }
-    }
-
-    "load the page" when {
-
-      "provided with an id associated to a Review and Reconcile Debit Charge for POA1" in new Setup(testFinancialDetailsModelWithReviewAndReconcileAndPoas, isAgent = true) {
-        enable(ChargeHistory)
-        enable(ReviewAndReconcilePoa)
-
-        val endYear: Int = 2018
-        val startYear: Int = endYear - 1
-
-        val result: Future[Result] = controller.showAgent(testTaxYear, id1040000123)(fakeRequestConfirmedClient("AB123456C"))
-
-        status(result) shouldBe Status.OK
-        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeadingForRAR1(startYear.toString, endYear.toString)
-        JsoupParse(result).toHtmlDocument.getElementsByClass("govuk-warning-text__text").text() shouldBe warningText
-        JsoupParse(result).toHtmlDocument.getElementById("rar-poa1-explanation").text() shouldBe explanationTextForRAR1
-        JsoupParse(result).toHtmlDocument.getElementById("charge-history-h3").text() shouldBe paymentHistoryHeadingForRARCharge
-        JsoupParse(result).toHtmlDocument.getElementById("poa1-link").attr("href") shouldBe
-          controllers.routes.ChargeSummaryController.showAgent(testTaxYear, id1040000125).url
-        JsoupParse(result).toHtmlDocument
-          .getElementById("payment-history-table")
-          .getElementsByClass("govuk-table__body")
-          .first()
-          .getElementsByClass("govuk-table__cell")
-          .get(1)
-          .text() shouldBe descriptionTextForRAR1
-      }
-    }
-
-      "provided with an id associated to a Review and Reconcile Debit Charge for POA2" in new Setup(testFinancialDetailsModelWithReviewAndReconcileAndPoas, isAgent = true) {
-        enable(ChargeHistory)
-        enable(ReviewAndReconcilePoa)
-
-        val endYear: Int = 2018
-        val startYear: Int = endYear - 1
-
-        val result: Future[Result] = controller.showAgent(testTaxYear, id1040000124)(fakeRequestConfirmedClient("AB123456C"))
-
-        status(result) shouldBe Status.OK
-        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeadingForRAR2(startYear.toString, endYear.toString)
-        JsoupParse(result).toHtmlDocument.getElementsByClass("govuk-warning-text__text").text() shouldBe warningText
-        JsoupParse(result).toHtmlDocument.getElementById("rar-poa2-explanation").text() shouldBe explanationTextForRAR2
-        JsoupParse(result).toHtmlDocument.getElementById("charge-history-h3").text() shouldBe paymentHistoryHeadingForRARCharge
-        JsoupParse(result).toHtmlDocument.getElementById("poa2-link").attr("href") shouldBe
-          controllers.routes.ChargeSummaryController.showAgent(testTaxYear, id1040000126).url
-        JsoupParse(result).toHtmlDocument
-          .getElementById("payment-history-table")
-          .getElementsByClass("govuk-table__body")
-          .first()
-          .getElementsByClass("govuk-table__cell")
-          .get(1)
-          .text() shouldBe descriptionTextForRAR2
-      }
-
-      "provided with an id that matches a charge in the financial response" in new Setup(financialDetailsModel(), isAgent = true) {
-        enable(ChargeHistory)
-        val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123")(fakeRequestConfirmedClient("AB123456C"))
-
-        status(result) shouldBe Status.OK
-        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeadingForPOA1
-        JsoupParse(result).toHtmlDocument.select("#dunningLocksBanner").size() shouldBe 1
-        JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
-        JsoupParse(result).toHtmlDocument.select("main h3").text() shouldBe paymentHistoryHeadingForPOA1Charge
-      }
-
-      "the late payment interest flag is enabled" in new Setup(
-        financialDetailsModel(lpiWithDunningLock = None), isAgent = true) {
-        enable(ChargeHistory)
-        val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123", isInterestCharge = true)(fakeRequestConfirmedClient("AB123456C"))
-
-        status(result) shouldBe Status.OK
-        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe lateInterestSuccessHeading
-        JsoupParse(result).toHtmlDocument.select("#dunningLocksBanner").size() shouldBe 0
-        JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe lpiHistoryHeading
-      }
-
-      "displays link to poa extra charge" in new Setup(financialDetailsModelWithPoaExtraCharge(), isAgent = true) {
-        enable(ReviewAndReconcilePoa)
-
-        val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123")(fakeRequestConfirmedClient("AB123456C"))
-
-        status(result) shouldBe Status.OK
-        JsoupParse(result).toHtmlDocument.select("#poa-extra-charge-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(testTaxYear, "123456").url
-      }
-      "not display link to poa extra charge if no charge exists" in new Setup(financialDetailsModel(), isAgent = true) {
-        enable(ReviewAndReconcilePoa)
-
-        val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123")(fakeRequestConfirmedClient("AB123456C"))
-
-        status(result) shouldBe Status.OK
-        JsoupParse(result).toHtmlDocument.select("#poa-extra-charge-link").attr("href") shouldBe ""
-      }
-
-      "provided with dunning locks, showing the locks banner" in new Setup(
-        financialDetailsModel().copy(financialDetails = financialDetailsWithLocks(testTaxYear)), isAgent = true) {
-
-        val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123")(fakeRequestConfirmedClient("AB123456C"))
-
-        status(result) shouldBe Status.OK
-        JsoupParse(result).toHtmlDocument.select("#dunningLocksBanner h2").text() shouldBe dunningLocksBannerHeading
-        JsoupParse(result).toHtmlDocument.select("#heading-payment-breakdown").text() shouldBe paymentBreakdownHeading
-      }
-
-      "provided with dunning locks and a late payment interest flag, not showing the locks banner" in new Setup(
-        financialDetailsModel(lpiWithDunningLock = None).copy(financialDetails = financialDetailsWithLocks(testTaxYear)), isAgent = true) {
-
-        val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123", isInterestCharge = true)(fakeRequestConfirmedClient("AB123456C"))
-
-        status(result) shouldBe Status.OK
-        JsoupParse(result).toHtmlDocument.select("#dunningLocksBanner").size() shouldBe 0
-        JsoupParse(result).toHtmlDocument.select("#heading-payment-breakdown").size() shouldBe 0
-      }
-
-
-      "the Charge History FS disabled" when {
-        "allocations present" in new Setup(
-          chargesWithAllocatedPaymentModel(), isAgent = true) {
-          disable(ChargeHistory)
-          val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123")(fakeRequestConfirmedClient("AB123456C"))
-
-          status(result) shouldBe Status.OK
-          JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeadingForPOA1
-          JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
-          JsoupParse(result).toHtmlDocument.select("main h3").text() shouldBe paymentHistoryHeadingForPOA1Charge
-        }
-
-        // TODO: Setup is same as above test - needs a model without payment allocations, and paymentHistoryHeading should be absent?
-        "allocations not present" in new Setup(
-          chargesWithAllocatedPaymentModel(), isAgent = true) {
-          disable(ChargeHistory)
-          val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123")(fakeRequestConfirmedClient("AB123456C"))
-
-          status(result) shouldBe Status.OK
-          JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeadingForPOA1
-          JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
-          JsoupParse(result).toHtmlDocument.select("main h3").text() shouldBe paymentHistoryHeadingForPOA1Charge
+    val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
+    s"show${if (isAgent) "Agent"}" when {
+      s"is an authenticated $mtdUserRole " should {
+        if (mtdUserRole == MTDSupportingAgent) {
+          testSupportingAgentDeniedAccess(action(id1040000123))(fakeRequest)
+        } else {
+          "render the charge summary page" when {
+            "charge history feature is enabled and there is a user" that {
+              "provided with an id associated to a Review & Reconcile Debit Charge for POA1" in new Setup(
+                testFinancialDetailsModelWithReviewAndReconcileAndPoas) {
+                enable(ReviewAndReconcilePoa)
+                enable(ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action(id1040000123)(fakeRequest)
+                val chargeSummaryUrl = if(isAgent) {
+                  routes.ChargeSummaryController.showAgent(testTaxYear, id1040000125).url
+                } else {
+                  routes.ChargeSummaryController.show(testTaxYear, id1040000125).url
+                }
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+                document.select("h1").text() shouldBe successHeadingForRAR1(startYear.toString, endYear.toString)
+                document.getElementsByClass("govuk-warning-text__text").text() shouldBe warningText
+                document.getElementById("rar-poa1-explanation").text() shouldBe explanationTextForRAR1
+                document.getElementById("charge-history-h3").text() shouldBe paymentHistoryHeadingForRARCharge
+                document.getElementById("poa1-link").attr("href") shouldBe chargeSummaryUrl
+
+                document
+                  .getElementById("payment-history-table")
+                  .getElementsByClass("govuk-table__body")
+                  .first()
+                  .getElementsByClass("govuk-table__cell")
+                  .get(1)
+                  .text() shouldBe descriptionTextForRAR1
+              }
+
+              "provided with an id associated to a Review & Reconcile Debit Charge for POA2" in new Setup(testFinancialDetailsModelWithReviewAndReconcileAndPoas) {
+                enable(ReviewAndReconcilePoa)
+                enable(ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockBothIncomeSources()
+                val result: Future[Result] = action(id1040000124)(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+                val chargeSummaryUrl = if(isAgent) {
+                  routes.ChargeSummaryController.showAgent(testTaxYear, id1040000126).url
+                } else {
+                  routes.ChargeSummaryController.show(testTaxYear, id1040000126).url
+                }
+
+                document.select("h1").text() shouldBe successHeadingForRAR2(startYear.toString, endYear.toString)
+                document.getElementsByClass("govuk-warning-text__text").text() shouldBe warningText
+                document.getElementById("rar-poa2-explanation").text() shouldBe explanationTextForRAR2
+                document.getElementById("charge-history-h3").text() shouldBe paymentHistoryHeadingForRARCharge
+                document.getElementById("poa2-link").attr("href") shouldBe chargeSummaryUrl
+                document
+                  .getElementById("payment-history-table")
+                  .getElementsByClass("govuk-table__body")
+                  .first()
+                  .getElementsByClass("govuk-table__cell")
+                  .get(1)
+                  .text() shouldBe descriptionTextForRAR2
+              }
+
+              "provided with an id associated to interest on a Review & Reconcile Debit Charge for POA" in new Setup(testFinancialDetailsModelWithReviewAndReconcileInterest) {
+                enable(ReviewAndReconcilePoa)
+                enable(ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockBothIncomeSources()
+
+                val endYear: Int = 2018
+                val startYear: Int = endYear - 1
+
+                val result: Future[Result] = action(id1040000123, isInterestCharge = true)(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+
+                document.select("h1").text() shouldBe successHeadingRAR1Interest(startYear.toString, endYear.toString)
+                document.getElementById("poa1-extra-charge-p1").text() shouldBe descriptionTextRAR1Interest
+              }
+
+              "provided with an id that matches a charge in the financial response" in new Setup(financialDetailsModel()) {
+                enable(ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockBothIncomeSources()
+                val result: Future[Result] = action(id1040000123)(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+
+                document.select("h1").text() shouldBe successHeadingForPOA1
+                document.select("#dunningLocksBanner").size() shouldBe 1
+                document.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
+                document.select("main h3").text() shouldBe paymentHistoryHeadingForPOA1Charge
+              }
+
+
+              "the late payment interest flag is enabled" in new Setup(
+                financialDetailsModel(lpiWithDunningLock = None)) {
+                enable(ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action(id1040000123, isInterestCharge = true)(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+                document.select("h1").text() shouldBe lateInterestSuccessHeading
+                document.select("#dunningLocksBanner").size() shouldBe 0
+                document.select("main h2").text() shouldBe lpiHistoryHeading
+              }
+            }
+            "charge history feature is disabled and there is a user" that {
+              "provided with dunning locks and late payment interest flag, not showing the locks banner" in new Setup(
+                financialDetailsModel(lpiWithDunningLock = None).copy(financialDetails = financialDetailsWithLocks(testTaxYear))) {
+                disable(ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockBothIncomeSources()
+                val result: Future[Result] = action(id1040000123, isInterestCharge = true)(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+
+                document.select("#dunningLocksBanner").size() shouldBe 0
+                document.select("#heading-payment-breakdown").size() shouldBe 0
+              }
+
+              "provided with dunning locks, showing the locks banner" in new Setup(
+                financialDetailsModel().copy(financialDetails = financialDetailsWithLocks(testTaxYear))) {
+                disable(ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action(id1040000123)(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+
+                document.select("#dunningLocksBanner h2").text() shouldBe dunningLocksBannerHeading
+                document.select("#heading-payment-breakdown").text() shouldBe paymentBreakdownHeading
+              }
+
+              "allocations present" in new Setup(
+                chargesWithAllocatedPaymentModel()) {
+                disable(ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action(id1040000123)(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val doc = JsoupParse(result).toHtmlDocument
+                doc.select("h1").text() shouldBe successHeadingForPOA1
+                doc.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
+                doc.select("main h3").text() shouldBe paymentHistoryHeadingForPOA1Charge
+
+                val allocationsUrl = if(isAgent) {
+                  routes.PaymentAllocationsController.viewPaymentAllocationAgent(id1040000124).url
+                } else {
+                  routes.PaymentAllocationsController.viewPaymentAllocation(id1040000124).url
+                }
+                val allocationLink = doc.select("#payment-history-table").select("tr").get(1).select("a").attr("href")
+                allocationLink shouldBe allocationsUrl
+              }
+
+              "without allocations" in new Setup(
+                chargesWithAllocatedPaymentModel()) {
+                disable(ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action(id1040000123)(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+
+                document.select("h1").text() shouldBe successHeadingForPOA1
+                document.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
+                document.select("main h3").text() shouldBe paymentHistoryHeadingForPOA1Charge
+              }
+
+              "displays link to poa extra charge on poa page when reconciliation charge exists" in new Setup(financialDetailsModelWithPoaExtraCharge()) {
+                enable(ReviewAndReconcilePoa)
+                disable(ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action(id1040000123)(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val chargeSummaryUrl = if(isAgent) {
+                  routes.ChargeSummaryController.showAgent(testTaxYear, "123456").url
+                } else {
+                  routes.ChargeSummaryController.show(testTaxYear, "123456").url
+                }
+                JsoupParse(result).toHtmlDocument.select("#poa-extra-charge-link").attr("href") shouldBe chargeSummaryUrl
+              }
+              "not display link to poa extra charge if no charge exists" in new Setup(financialDetailsModel()) {
+                enable(ReviewAndReconcilePoa)
+                disable(ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action(id1040000123)(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                JsoupParse(result).toHtmlDocument.select("#poa-extra-charge-link").attr("href") shouldBe ""
+              }
+
+              "display the payment processing info if the charge is not Review & Reconcile" in new Setup(
+                financialDetailsModel(documentDescription = Some("ITSA BCD"), mainTransaction = "4910")) {
+                disable(ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action(id1040000123)(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeadingForBCD
+              }
+
+              "hide payment processing info" in new Setup(financialDetailsReviewAndReconcile) {
+                disable(ChargeHistory)
+                enable(ReviewAndReconcilePoa)
+                setupMockSuccess(mtdUserRole)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action(id1040000123)(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+
+                document.select("h1").text() shouldBe successHeadingForRAR1("2022", "2023")
+                document.select("#payment-processing-bullets").isEmpty shouldBe true
+              }
+
+              "display the Review & Reconcile credit for POA1 when present in the user's financial details" in new Setup(
+                financialDetailsModelWithPoaOneAndTwoWithRarCredits()) {
+                enable(ReviewAndReconcilePoa)
+                enable(ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action(id1040000125)(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+
+                document.getElementById("rar-charge-link").text() shouldBe "First payment on account: credit from your tax return"
+                document.getElementById("rar-charge-link").attr("href") shouldBe
+                  RepaymentHistoryUtils.getPoaChargeLinkUrl(isAgent = isAgent, testTaxYear, "transactionId")
+                document.getElementById("rar-total-amount").text() shouldBe "£1,000.00"
+                document.getElementById("rar-due-date").text() shouldBe "1 Jan 2018"
+              }
+
+              "display the Review & Reconcile credit for POA2 when present in the user's financial details" in new Setup(
+                financialDetailsModelWithPoaOneAndTwoWithRarCredits()) {
+                enable(ReviewAndReconcilePoa)
+                enable(ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action(id1040000126)(fakeRequest)
+
+                mockGetReviewAndReconcileCredit(PoaTwoReconciliationCredit)
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+                document.getElementById("rar-charge-link").text() shouldBe "Second payment on account: credit from your tax return"
+                document.getElementById("rar-charge-link").attr("href") shouldBe
+                  RepaymentHistoryUtils.getPoaChargeLinkUrl(isAgent = isAgent, testTaxYear, "transactionId")
+                document.getElementById("rar-total-amount").text() shouldBe "£1,000.00"
+                document.getElementById("rar-due-date").text() shouldBe "1 Jan 2018"
+              }
+
+              "the charge is an MFA Debit" in new Setup(
+                financialDetailsModelWithMFADebit()) {
+                disable(ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action(id1040000123)(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe "2017 to 2018 tax year " +
+                  messages("chargeSummary.hmrcAdjustment.text")
+              }
+            }
+          }
+          "Redirect the user to NotFoundDocumentIDLookup" when {
+            "the charge id provided does not match any charges in the response" in new Setup(financialDetailsModel()) {
+              disable(ChargeHistory)
+              setupMockSuccess(mtdUserRole)
+              mockBothIncomeSources()
+
+              val result: Future[Result] = action("fakeId")(fakeRequest)
+
+              val notFoundDocumentIDUrl = if(isAgent) {
+                controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show.url
+              } else {
+                controllers.errors.routes.NotFoundDocumentIDLookupController.show.url
+              }
+              status(result) shouldBe Status.SEE_OTHER
+              redirectLocation(result) shouldBe Some(notFoundDocumentIDUrl)
+            }
+          }
+
+          "render the error page" when {
+            "the charge history response is an error" in new Setup(
+              financialDetailsModel(), chargeHistoryHasError = true) {
+              enable(ChargeHistory)
+              disable(ChargeHistory)
+              setupMockSuccess(mtdUserRole)
+              mockBothIncomeSources()
+
+              val result: Future[Result] = action(id1040000123)(fakeRequest)
+
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+              JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe errorHeading
+            }
+
+            "the financial details response is an error" in new Setup(testFinancialDetailsErrorModelParsing) {
+              disable(ChargeHistory)
+              setupMockSuccess(mtdUserRole)
+              mockBothIncomeSources()
+
+              val result: Future[Result] = action(id1040000123)(fakeRequest)
+
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+              JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe errorHeading
+            }
+
+            if (mtdUserRole == MTDIndividual) {
+              "no related tax year financial details found" in new Setup(testFinancialDetailsModelWithPayeSACodingOut()) {
+                disable(ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = testController.show(2020, "CODINGOUT01")(fakeRequest)
+
+                status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+                JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe errorHeading
+              }
+            }
+          }
         }
       }
-
-      "with the Charge History FS disabled" in new Setup(
-        financialDetailsModel(), isAgent = true) {
-        disable(ChargeHistory)
-        val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123")(fakeRequestConfirmedClient("AB123456C"))
-
-        status(result) shouldBe Status.OK
-        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeadingForPOA1
-        JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
-        JsoupParse(result).toHtmlDocument.select("main h3").size() shouldBe 0
-      }
+      testMTDAuthFailuresForRole(action(id1040000123), mtdUserRole, false)(fakeRequest)
     }
-
-    "load an error page" when {
-
-      "the charge history response is an error" in new Setup(
-        financialDetailsModel(), chargeHistoryResponse = Left(ChargesHistoryErrorModel(INTERNAL_SERVER_ERROR, "Failure")), isAgent = true) {
-        enable(ChargeHistory)
-        val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123")(fakeRequestConfirmedClient("AB123456C"))
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe errorHeading
-      }
-
-      "the financial details response is an error" in new Setup(testFinancialDetailsErrorModelParsing, isAgent = true) {
-        val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123")(fakeRequestConfirmedClient("AB123456C"))
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe errorHeading
-      }
-    }
-
-    "Display an MFA Debit charge" when {
-      "the charge is an MFA Debit" in new Setup(
-        financialDetailsModelWithMFADebit(), isAgent = true) {
-        val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123")(fakeRequestConfirmedClient("AB123456C"))
-
-        status(result) shouldBe Status.OK
-        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe "2017 to 2018 tax year " +
-          messages("chargeSummary.hmrcAdjustment.text")
-      }
-    }
+  }
 }

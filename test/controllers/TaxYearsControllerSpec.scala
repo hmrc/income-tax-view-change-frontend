@@ -16,157 +16,68 @@
 
 package controllers
 
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
+import enums.{MTDIndividual, MTDSupportingAgent}
 import implicits.ImplicitDateFormatter
-import mocks.MockItvcErrorHandler
-import mocks.auth.MockFrontendAuthorisedFunctions
-import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import mocks.services.MockIncomeSourceDetailsService
-import mocks.views.agent.MockTaxYears
-import org.mockito.Mockito.mock
+import mocks.auth.MockAuthActions
+import play.api.Application
 import play.api.http.Status
-import play.api.http.Status.{OK, SEE_OTHER}
-import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
-import play.twirl.api.HtmlFormat
-import services.CalculationService
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
-import testUtils.TestSupport
-import uk.gov.hmrc.auth.core.BearerTokenExpired
-import uk.gov.hmrc.http.InternalServerException
-import views.html.TaxYears
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{ukPropertyOnlyIncomeSourceWithFirstAccountPeriodEnd, _}
 
-import scala.concurrent.Future
+class TaxYearsControllerSpec extends MockAuthActions with ImplicitDateFormatter {
 
-class TaxYearsControllerSpec extends MockAuthenticationPredicate
-  with MockIncomeSourceDetailsPredicate with MockIncomeSourceDetailsService
-  with MockFrontendAuthorisedFunctions with MockItvcErrorHandler with MockTaxYears with ImplicitDateFormatter with TestSupport with FeatureSwitching {
+  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+    .build()
 
-  val calculationService: CalculationService = mock(classOf[CalculationService])
+  val testController = fakeApplication().injector.instanceOf[TaxYearsController]
 
-  object TestTaxYearsController extends TaxYearsController(
-    app.injector.instanceOf[TaxYears],
-    mockAuthService,
-    dateService,
-    testAuthenticator
-  )(
-    app.injector.instanceOf[FrontendAppConfig],
-    app.injector.instanceOf[MessagesControllerComponents],
-    ec,
-    mockItvcErrorHandler,
-  )
+  mtdAllRoles.foreach { case mtdUserRole =>
+    val isAgent = mtdUserRole != MTDIndividual
+    val action = if (isAgent) testController.showAgentTaxYears() else testController.showTaxYears()
+    val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
+    s"show${if (isAgent) "Agent"}TaxYears" when {
+      s"the $mtdUserRole is authenticated" should {
+        if (mtdUserRole == MTDSupportingAgent) {
+          testSupportingAgentDeniedAccess(action)(fakeRequest)
+        } else {
+          "render the Tax years page" when {
+            "income source details contains a business firstAccountingPeriodEndDate" in {
+              setupMockSuccess(mtdUserRole)
+              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    disableAllSwitches()
-  }
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.OK
+            }
 
-  ".viewTaxYears" when {
-    "called with an authenticated HMRC-MTD-IT user and successfully retrieved income source" when {
-      "and firstAccountingPeriodEndDate is missing from income sources" should {
-        "return an Internal Server Error (500)" in {
+            "income source details contains a propery firstAccountingPeriodEndDate" in {
+              setupMockSuccess(mtdUserRole)
+              setupMockGetIncomeSourceDetails()(ukPropertyOnlyIncomeSourceWithFirstAccountPeriodEnd)
 
-          setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.OK
+            }
+          }
 
-          lazy val result = TestTaxYearsController.showTaxYears()(fakeRequestWithActiveSession)
+          "render the error page" when {
+            "there is no firstAccountingPeriodEndDate for business or property in incomeSources" in {
+              setupMockSuccess(mtdUserRole)
+              setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
 
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            }
+
+            "income source retrieval returns an error" in {
+              setupMockSuccess(mtdUserRole)
+              mockErrorIncomeSource()
+
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            }
+          }
         }
       }
-
-
-      "successfully retrieves income sources and and display tax year page" should {
-        "return an OK (200)" in {
-          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-
-          lazy val result = TestTaxYearsController.showTaxYears()(fakeRequestWithActiveSession)
-
-          status(result) shouldBe Status.OK
-        }
-      }
-
-    }
-
-    "Called with an Unauthenticated User" should {
-
-      "return redirect SEE_OTHER (303)" in {
-
-        setupMockAuthorisationException()
-        val result = TestTaxYearsController.showTaxYears()(fakeRequestWithActiveSession)
-        status(result) shouldBe Status.SEE_OTHER
-      }
-    }
-  }
-
-  "show agent tax years" when {
-    "the user is not authenticated" should {
-      "redirect them to sign in" in {
-        setupMockAgentAuthorisationException(withClientPredicate = false)
-
-        val result: Future[Result] = TestTaxYearsController.showAgentTaxYears()(fakeRequestWithActiveSession)
-
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
-      }
-    }
-    "the user has timed out" should {
-      "redirect to the session timeout page" in {
-        setupMockAgentAuthorisationException(exception = BearerTokenExpired())
-
-        val result: Future[Result] = TestTaxYearsController.showAgentTaxYears()(fakeRequestWithClientDetails)
-
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
-      }
-    }
-    "the user does not have an agent reference number" should {
-      "return Ok with technical difficulties" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccessNoEnrolment, withClientPredicate = false)
-        mockShowOkTechnicalDifficulties()
-
-        val result: Future[Result] = TestTaxYearsController.showAgentTaxYears()(fakeRequestWithActiveSession)
-
-        status(result) shouldBe OK
-        contentType(result) shouldBe Some(HTML)
-      }
-    }
-    "there was a problem retrieving income source details for the user" should {
-      "throw an internal server exception" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockErrorIncomeSource()
-        mockShowInternalServerError()
-
-        val result = TestTaxYearsController.showAgentTaxYears()(fakeRequestConfirmedClient()).failed.futureValue
-        result shouldBe an[InternalServerException]
-        result.getMessage shouldBe "IncomeSourceDetailsModel not created"
-      }
-    }
-    "there is no firstAccountingPeriodEndDate from income source details" should {
-      "throw and exception" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockNoIncomeSources()
-
-        mockTaxYears(years = List(2022, 2021, 2020, 2019, 2018), controllers.routes.HomeController.showAgent.url)(HtmlFormat.empty)
-
-        val result: Future[Result] = TestTaxYearsController.showAgentTaxYears()(fakeRequestConfirmedClient())
-
-        the[Exception] thrownBy status(result) should have message "User missing first accounting period information"
-      }
-    }
-    "all data is returned successfully" should {
-      "show the tax years page" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockBothIncomeSources()
-
-        mockTaxYears(years = List(2022, 2021, 2020, 2019, 2018), controllers.routes.HomeController.showAgent.url)(HtmlFormat.empty)
-
-        val result: Future[Result] = TestTaxYearsController.showAgentTaxYears()(fakeRequestConfirmedClient())
-
-        status(result) shouldBe OK
-        contentType(result) shouldBe Some(HTML)
-      }
+      testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
     }
   }
 }

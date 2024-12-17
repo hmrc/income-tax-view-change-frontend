@@ -29,7 +29,7 @@ import scala.concurrent.Future
 
 trait MockRepaymentHistoryConnector extends UnitSpec with BeforeAndAfterEach {
 
-  val mockRepaymentHistoryConnector: RepaymentHistoryConnector = mock(classOf[RepaymentHistoryConnector])
+  lazy val mockRepaymentHistoryConnector: RepaymentHistoryConnector = mock(classOf[RepaymentHistoryConnector])
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockRepaymentHistoryConnector)

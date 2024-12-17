@@ -18,21 +18,20 @@ package controllers
 
 import audit.AuditingService
 import auth.MtdItUser
+import auth.authV2.AuthActions
 import config._
-import config.featureswitch.FeatureSwitching
-import controllers.agent.predicates.ClientConfirmedController
 import forms.utils.SessionKeys.calcPagesBackPage
 import implicits.ImplicitDateFormatter
 import models.liabilitycalculation.viewmodels.IncomeBreakdownViewModel
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import play.api.Logger
-import play.api.i18n.{I18nSupport, Messages}
+import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{CalculationService, IncomeSourceDetailsService}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import services.CalculationService
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
-import utils.{AuthenticatorPredicate, TaxCalcFallBackBackLink}
+import utils.TaxCalcFallBackBackLink
 import views.html.IncomeBreakdown
 
 import javax.inject.{Inject, Singleton}
@@ -40,25 +39,23 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
-                                        val authorisedFunctions: AuthorisedFunctions,
-                                        val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                        val authActions: AuthActions,
                                         val calculationService: CalculationService,
                                         val auditingService: AuditingService,
                                         val itvcErrorHandler: ItvcErrorHandler,
-                                        implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                        val auth: AuthenticatorPredicate)
+                                        val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                        (implicit val ec: ExecutionContext,
                                         val languageUtils: LanguageUtils,
                                         val appConfig: FrontendAppConfig,
-                                        implicit override val mcc: MessagesControllerComponents)
-  extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport with TaxCalcFallBackBackLink {
+                                        val mcc: MessagesControllerComponents)
+  extends FrontendController(mcc) with I18nSupport with ImplicitDateFormatter with TaxCalcFallBackBackLink {
 
 
   def handleRequest(origin: Option[String] = None,
                     itcvErrorHandler: ShowInternalServerError,
                     taxYear: Int,
                     isAgent: Boolean)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
+                   (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     calculationService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case liabilityCalc: LiabilityCalculationResponse =>
         val viewModel = IncomeBreakdownViewModel(liabilityCalc.calculation)
@@ -66,7 +63,7 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
           liabilityCalc.metadata.crystallised.getOrElse(false), taxYear, origin)
         viewModel match {
           case Some(model) => Ok(incomeBreakdown(model, taxYear, backUrl = fallbackBackUrl, isAgent = isAgent,
-            btaNavPartial = user.btaNavPartial)(implicitly, messages))
+            btaNavPartial = user.btaNavPartial))
           case _ =>
             Logger("application").warn(s"[$taxYear] No income data could be retrieved. Not found")
             itvcErrorHandler.showInternalServerError()
@@ -81,7 +78,7 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
     }
   }
 
-  def showIncomeSummary(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def showIncomeSummary(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
       handleRequest(
         origin = origin,
@@ -91,7 +88,7 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
       )
   }
 
-  def showIncomeSummaryAgent(taxYear: Int): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showIncomeSummaryAgent(taxYear: Int): Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
     implicit mtdItUser =>
       handleRequest(
         itcvErrorHandler = itvcErrorHandlerAgent,
