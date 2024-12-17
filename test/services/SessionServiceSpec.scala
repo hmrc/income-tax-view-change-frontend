@@ -128,6 +128,12 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
           val result: Boolean = TestSessionService.deleteMongoData(IncomeSourceJourneyType(Add, SelfEmployment))(headerCarrier).futureValue
           result shouldBe true
         }
+        "return a future boolean value if encryption is enabled" in {
+          when(mockFrontendAppConfig.encryptionIsEnabled).thenReturn(true)
+          mockDeleteOne(isSensitive = true)
+          val result: Boolean = TestSessionService.deleteMongoData(IncomeSourceJourneyType(Add, SelfEmployment))(headerCarrier).futureValue
+          result shouldBe true
+        }
       }
 
       "deleteSession method" should {
