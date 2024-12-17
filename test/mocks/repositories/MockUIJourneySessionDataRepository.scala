@@ -44,13 +44,13 @@ trait MockUIJourneySessionDataRepository extends UnitSpec with BeforeAndAfterEac
     reset(mockFrontendAppConfig)
   }
 
-  def mockRepositoryGet(response: Option[UIJourneySessionData]): Unit = {
+  def mockRepositoryGet(response: Option[UIJourneySessionData], isSensitive: Boolean = false): Unit = {
+    if (isSensitive) {
+      when(mockSensitiveUIJourneySessionDataRepository.get(ArgumentMatchers.anyString(), ArgumentMatchers.any()))
+        .thenReturn(Future.successful(response))
+    }
+    else
     when(mockUIJourneySessionDataRepository.get(ArgumentMatchers.anyString(), ArgumentMatchers.any()))
-      .thenReturn(Future.successful(response))
-  }
-
-  def mockRepositoryGetSensitive(response: Option[UIJourneySessionData]): Unit = {
-    when(mockSensitiveUIJourneySessionDataRepository.get(ArgumentMatchers.anyString(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
 
