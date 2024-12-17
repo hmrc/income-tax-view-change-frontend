@@ -53,26 +53,20 @@ trait MockUIJourneySessionDataRepository extends UnitSpec with BeforeAndAfterEac
     when(mockUIJourneySessionDataRepository.get(ArgumentMatchers.anyString(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
-
-  def mockRepositorySet(response: Boolean, withFailureResult: Boolean = false): Unit = {
-    when(mockUIJourneySessionDataRepository.set(ArgumentMatchers.any()))
-      .thenReturn({
-        if (withFailureResult){
+  def mockRepositorySet(response: Boolean, withFailureResult: Boolean = false, isSensitive: Boolean = false): Unit = {
+    val repository = if (isSensitive) {
+      mockSensitiveUIJourneySessionDataRepository.set _
+    } else {
+      mockUIJourneySessionDataRepository.set _
+    }
+    when(repository(ArgumentMatchers.any()))
+      .thenReturn(
+        if (withFailureResult) {
           Future.failed(new Exception("Error while set data"))
         } else {
           Future.successful(response)
         }
-      })
-  }
-  def mockRepositorySetSensitive(response: Boolean, withFailureResult: Boolean = false): Unit = {
-    when(mockSensitiveUIJourneySessionDataRepository.set(ArgumentMatchers.any()))
-      .thenReturn({
-        if (withFailureResult){
-          Future.failed(new Exception("Error while set data"))
-        } else {
-          Future.successful(response)
-        }
-      })
+      )
   }
 
   def mockRepositoryUpdateData(): Unit = {
