@@ -16,167 +16,90 @@
 
 package controllers
 
-import audit.AuditingService
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
-import mocks.MockItvcErrorHandler
-import mocks.auth.MockFrontendAuthorisedFunctions
-import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import mocks.services.{MockCalculationService, MockIncomeSourceDetailsService}
+import enums.{MTDIndividual, MTDSupportingAgent}
+import mocks.auth.MockAuthActions
+import mocks.services.MockCalculationService
 import mocks.views.agent.MockIncomeSummary
-import models.liabilitycalculation.viewmodels.IncomeBreakdownViewModel
+import play.api
+import play.api.Application
 import play.api.http.Status
-import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
-import play.twirl.api.HtmlFormat
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testMtditid, testNino, testTaxYear}
+import services.CalculationService
+import testConstants.BaseTestConstants.{testMtditid, testTaxYear}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome2018and2019
-import testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessful
-import testUtils.TestSupport
-import uk.gov.hmrc.http.InternalServerException
-import views.html.IncomeBreakdown
 
-import scala.concurrent.Future
-
-class IncomeSummaryControllerSpec extends TestSupport with MockCalculationService
-  with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockIncomeSourceDetailsService
-  with MockItvcErrorHandler with MockIncomeSummary with MockFrontendAuthorisedFunctions with FeatureSwitching {
+class IncomeSummaryControllerSpec extends MockAuthActions
+  with MockCalculationService
+  with MockIncomeSummary {
 
   val testYear: Int = 2020
-  val isAgent: Boolean = true
 
-  object TestIncomeSummaryController extends IncomeSummaryController(
-    app.injector.instanceOf[IncomeBreakdown],
-    mockAuthService,
-    mockIncomeSourceDetailsService,
-    mockCalculationService,
-    app.injector.instanceOf[AuditingService],
-    app.injector.instanceOf[ItvcErrorHandler],
-    app.injector.instanceOf[AgentItvcErrorHandler],
-    testAuthenticator
-  )(
-    ec,
-    languageUtils,
-    appConfig,
-    app.injector.instanceOf[MessagesControllerComponents])
+  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+    .overrides(
+      api.inject.bind[CalculationService].toInstance(mockCalculationService)
+    ).build()
+
+  val testController = fakeApplication().injector.instanceOf[IncomeSummaryController]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     disableAllSwitches()
   }
 
-  "showIncomeSummary" when {
+  mtdAllRoles.foreach { mtdUserRole =>
+    val isAgent = mtdUserRole != MTDIndividual
+    val action = if (isAgent) testController.showIncomeSummaryAgent(testTaxYear) else testController.showIncomeSummary(testTaxYear)
+    val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
+    s"showIncomeSummary${if (isAgent) "Agent"}" when {
+      s"the $mtdUserRole is authenticated" should {
+        if (mtdUserRole == MTDSupportingAgent) {
+          testSupportingAgentDeniedAccess(action)(fakeRequest)
+        } else {
+          "render the income summary page" when {
+            "the given tax year is present in ETMP" in {
+              setupMockSuccess(mtdUserRole)
+              mockCalculationSuccessfulNew(testMtditid)
+              setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
 
-    lazy val resultIndividual = TestIncomeSummaryController.showIncomeSummary(testTaxYear)(fakeRequestWithActiveSession)
-    lazy val document = resultIndividual.toHtmlDocument
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.OK
+              contentType(result) shouldBe Some("text/html")
+              charset(result) shouldBe Some("utf-8")
+              lazy val document = result.toHtmlDocument
+              val title = messages("income_breakdown.heading")
+              document.title() shouldBe messages({
+                if (isAgent) "htmlTitle.agent" else "htmlTitle"
+              }, title)
+            }
+          }
 
-    "given a tax year which can be found in ETMP" should {
+          "render the error page" when {
+            "given a tax year which can not be found in ETMP" in {
+              setupMockSuccess(mtdUserRole)
+              mockCalculationNotFoundNew(testMtditid)
+              setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            }
+            "there is a downstream error which return NOT_FOUND" in {
+              setupMockSuccess(mtdUserRole)
+              mockCalculationNotFoundNew(testMtditid)
+              setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            }
 
-      "return Status OK (200)" in {
-        mockCalculationSuccessfulNew(testMtditid)
-        setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
-        status(resultIndividual) shouldBe Status.OK
+            "there is a downstream error which return INTERNAL_SERVER_ERROR" in {
+              setupMockSuccess(mtdUserRole)
+              mockCalculationErrorNew(testMtditid)
+              setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            }
+          }
+        }
       }
-
-      "return HTML" in {
-        contentType(resultIndividual) shouldBe Some("text/html")
-        charset(resultIndividual) shouldBe Some("utf-8")
-      }
-
-      "render the IncomeBreakdown page" in {
-        document.title() shouldBe messages("htmlTitle", messages("income_breakdown.heading"))
-      }
-    }
-    "given a tax year which can not be found in ETMP" should {
-
-      lazy val result = TestIncomeSummaryController.showIncomeSummary(testTaxYear)(fakeRequestWithActiveSession)
-
-      "return Status Internal Server Error (500)" in {
-        mockCalculationNotFoundNew(testMtditid)
-        setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-
-    }
-
-    "there is a downstream error which return NOT_FOUND" should {
-
-      lazy val result = TestIncomeSummaryController.showIncomeSummary(testTaxYear)(fakeRequestWithActiveSession)
-
-      "return Status Internal Server Error (500)" in {
-        mockCalculationNotFoundNew(testMtditid)
-        setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-    }
-
-    "there is a downstream error which return INTERNAL_SERVER_ERROR" should {
-
-      lazy val result = TestIncomeSummaryController.showIncomeSummary(testTaxYear)(fakeRequestWithActiveSession)
-
-      "return Status Internal Server Error (500)" in {
-        mockCalculationErrorNew(testMtditid)
-        setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-    }
-
-  }
-
-  "showIncomeSummaryAgent" when {
-    "given a tax year which can be found in ETMP" should {
-      "return Status OK (200) with html content and right title" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockBothIncomeSources()
-        setupMockGetCalculationNew("XAIT00000000015", testNino, testYear)(liabilityCalculationModelSuccessful)
-        mockIncomeBreakdown(testYear, IncomeBreakdownViewModel(liabilityCalculationModelSuccessful.calculation).get,
-          controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(testYear).url, isAgent)(HtmlFormat.empty)
-
-        lazy val result: Future[Result] = TestIncomeSummaryController.showIncomeSummaryAgent(testYear)(fakeRequestConfirmedClient(testNino))
-
-        status(result) shouldBe OK
-        contentType(result) shouldBe Some(HTML)
-      }
-    }
-    "there was a problem retrieving income source details for the user" should {
-      "throw an internal server exception" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockErrorIncomeSource()
-        setupMockGetCalculationNew("XAIT00000000015", testNino, testYear)(liabilityCalculationModelSuccessful)
-        mockShowInternalServerError()
-        val exception = TestIncomeSummaryController.showIncomeSummaryAgent(testYear)(fakeRequestConfirmedClient(testNino)).failed.futureValue
-        exception shouldBe an[InternalServerException]
-        exception.getMessage shouldBe "IncomeSourceDetailsModel not created"
-      }
-
-    }
-
-    "there is a downstream error which returns NOT_FOUND" should {
-      "return Status Internal Server Error (500)" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockBothIncomeSources()
-        mockCalculationNotFoundNew(nino = testNino, year = testYear)
-        mockShowInternalServerError()
-
-        lazy val result = TestIncomeSummaryController.showIncomeSummaryAgent(testYear)(fakeRequestConfirmedClient(testNino))
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-    }
-
-    "there is a downstream error which returns INTERNAL_SERVER_ERROR" should {
-      "return Status Internal Server Error (500)" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockBothIncomeSources()
-        mockCalculationErrorNew(nino = testNino, year = testYear)
-        mockShowInternalServerError()
-
-        lazy val result: Future[Result] = TestIncomeSummaryController.showIncomeSummaryAgent(testYear)(fakeRequestConfirmedClient(testNino))
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
+      testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
     }
   }
 }
-

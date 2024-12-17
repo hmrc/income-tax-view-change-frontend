@@ -17,14 +17,13 @@
 package controllers
 
 import auth.MtdItUser
+import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import controllers.agent.predicates.ClientConfirmedController
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.AuthenticatorPredicate
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.notMigrated.NotMigratedUser
 
 import javax.inject.{Inject, Singleton}
@@ -32,14 +31,13 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class NotMigratedUserController @Inject()(val notMigrated: NotMigratedUser,
-                                          val authorisedFunctions: AuthorisedFunctions,
+                                          val authActions: AuthActions,
                                           val itvcErrorHandler: ItvcErrorHandler,
-                                          implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                          val auth: AuthenticatorPredicate)
+                                          val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                          (implicit val ec: ExecutionContext,
                                           mcc: MessagesControllerComponents,
-                                          val appConfig: FrontendAppConfig) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
-
+                                          val appConfig: FrontendAppConfig) extends FrontendController(mcc)
+  with I18nSupport with FeatureSwitching {
 
   def handleShowRequest(errorHandler: ShowInternalServerError, isAgent: Boolean, backUrl: String)
                        (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
@@ -49,17 +47,18 @@ class NotMigratedUserController @Inject()(val notMigrated: NotMigratedUser,
           Ok(notMigrated(isAgent, backUrl))
         }
       } else {
-        Future.failed(new Exception("Migrated user not allowed to access this page"))
+        Logger("application").error("Migrated user not allowed to access this page")
+        Future.successful(errorHandler.showInternalServerError())
       }
     } .recover {
-        case ex =>
-          Logger("application")
-            .error(s"error, ${ex.getMessage} - ${ex.getCause}")
-          itvcErrorHandler.showInternalServerError()
-      }
+      case ex =>
+        Logger("application")
+          .error(s"error, ${ex.getMessage} - ${ex.getCause}")
+        itvcErrorHandler.showInternalServerError()
+    }
   }
 
-  def show(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
       handleShowRequest(errorHandler = itvcErrorHandler, isAgent = false,
         backUrl = controllers.routes.HomeController.show().url)
@@ -73,7 +72,7 @@ class NotMigratedUserController @Inject()(val notMigrated: NotMigratedUser,
     Redirect("https://www.gov.uk/government/collections/hmrc-online-services-for-agents#hmrc-online-services-for-agents-account")
   }
 
-  def showAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent(): Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
     implicit user =>
       handleShowRequest(errorHandler = itvcErrorHandlerAgent,
         isAgent = true,

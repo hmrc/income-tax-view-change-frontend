@@ -18,134 +18,152 @@ package controllers
 
 import audit.models.IncomeSourceDetailsResponseAuditModel
 import auth.MtdItUserOptionNino
+import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import helpers.CreditsSummaryDataHelper
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
-import helpers.{ComponentSpecBase, CreditsSummaryDataHelper}
 import play.api.http.Status.OK
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testValidFinancialDetailsModelCreditAndRefundsJson, testValidFinancialDetailsModelCreditAndRefundsJsonV2}
-import uk.gov.hmrc.auth.core.AffinityGroup.Individual
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
-class CreditsSummaryControllerISpec extends ComponentSpecBase with CreditsSummaryDataHelper {
+class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSummaryDataHelper {
 
   val calendarYear = "2018"
   implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
   implicit val msgs: MessagesApi = app.injector.instanceOf[MessagesApi]
+  val incomeSources = propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
 
-  val testUser = MtdItUserOptionNino(
-    mtditid = testMtditid,
-    nino = Some(testNino),
-    userName = None,
-    btaNavPartial = None,
-    saUtr = None,
-    credId = Some("12345-credId"),
-    userType = Some(Individual),
-    arn = None
-  )(FakeRequest())
-
-  s"Navigating to /report-quarterly/income-and-expenses/view/credits-from-hmrc/$testTaxYear" should {
-    "display the credit summary page" when {
-      "a valid response is received" in {
-        import audit.models.CreditSummaryAuditing._
-
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
-          propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
-
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
-          testNino,
-          s"${testTaxYear - 1}-04-06",
-          s"$testTaxYear-04-05")(
-          OK,
-          testValidFinancialDetailsModelCreditAndRefundsJson(
-            -1400,
-            -1400,
-            testTaxYear.toString,
-            fixedDate.plusYears(1).toString)
-        )
-
-        val res = IncomeTaxViewChangeFrontend.getCreditsSummary(calendarYear)
-
-        verifyIncomeSourceDetailsCall(testMtditid, 1)
-        IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
-
-        AuditStub.verifyAuditContainsDetail(
-          IncomeSourceDetailsResponseAuditModel(
-            mtdItUser = testUser,
-            selfEmploymentIds = List.empty,
-            propertyIncomeIds = Nil,
-            yearOfMigration = None
-          ).detail
-        )
-
-        res should have(
-          httpStatus(OK),
-          pageTitleIndividual(messages("credits.heading", s"$calendarYear"))
-        )
-
-        AuditStub.verifyAuditContainsDetail(
-          CreditsSummaryModel(
-            saUTR = testSaUtr,
-            nino = testNino,
-            userType = testUserTypeIndividual.toString,
-            credId = credId,
-            mtdRef = testMtditid,
-            creditOnAccount = "5",
-            creditDetails = toCreditSummaryDetailsSeq(chargesList)(msgs)
-          ).detail
-        )
-      }
+  def testUser(mtdUserRole: MTDUserRole): MtdItUserOptionNino[_] = {
+    val (affinityGroup, arn) = if (mtdUserRole == MTDIndividual) {
+      (Individual, None)
+    } else {
+      (Agent, Some("1"))
     }
+    MtdItUserOptionNino(
+      testMtditid, Some(testNino), None,
+      None, Some("1234567890"), Some("12345-credId"), Some(affinityGroup), arn
+    )(FakeRequest())
+  }
 
-    "correctly audit a list of credits" when {
-      "the list contains Balancing Charge Credits" in {
-        import audit.models.CreditSummaryAuditing._
+  def getPath(mtdRole: MTDUserRole): String = {
+    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
+    pathStart + s"/credits-from-hmrc/$calendarYear"
+  }
 
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
-          propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+  mtdAllRoles.foreach { case mtdUserRole =>
+    val path = getPath(mtdUserRole)
+    val additionalCookies = getAdditionalCookies(mtdUserRole)
+    s"GET $path" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          if (mtdUserRole == MTDSupportingAgent) {
+            testSupportingAgentAccessDenied(path, additionalCookies)
+          } else {
+            "render the credit summary page" when {
+              "a valid response is received" in {
+                import audit.models.CreditSummaryAuditing._
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, incomeSources)
+                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                  testNino,
+                  s"${testTaxYear - 1}-04-06",
+                  s"$testTaxYear-04-05")(
+                  OK,
+                  testValidFinancialDetailsModelCreditAndRefundsJson(
+                    -1400,
+                    -1400,
+                    testTaxYear.toString,
+                    fixedDate.plusYears(1).toString)
+                )
 
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
-          testNino,
-          s"${testTaxYear - 1}-04-06",
-          s"$testTaxYear-04-05")(
-          OK,
-          testValidFinancialDetailsModelCreditAndRefundsJsonV2(
-            -1400,
-            -1400,
-            testTaxYear.toString,
-            fixedDate.plusYears(1).toString)
-        )
+                val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-        val res = IncomeTaxViewChangeFrontend.getCreditsSummary(calendarYear)
+                verifyIncomeSourceDetailsCall(testMtditid, 1)
+                IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
 
-        verifyIncomeSourceDetailsCall(testMtditid, 1)
-        IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                AuditStub.verifyAuditContainsDetail(
+                  IncomeSourceDetailsResponseAuditModel(
+                    mtdItUser = testUser(mtdUserRole),
+                    selfEmploymentIds = List.empty,
+                    propertyIncomeIds = List("1234"),
+                    yearOfMigration = Some(testTaxYear.toString)
+                  ).detail
+                )
 
-        AuditStub.verifyAuditContainsDetail(
-          IncomeSourceDetailsResponseAuditModel(
-            mtdItUser = testUser,
-            selfEmploymentIds = List.empty,
-            propertyIncomeIds = Nil,
-            yearOfMigration = None
-          ).detail
-        )
+                res should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, messages("credits.heading", s"$calendarYear"))
+                )
 
-        res should have(
-          httpStatus(OK),
-          pageTitleIndividual(messages("credits.heading", s"$calendarYear"))
-        )
+                AuditStub.verifyAuditContainsDetail(
+                  CreditsSummaryModel(
+                    saUTR = testSaUtr,
+                    nino = testNino,
+                    userType = {if(mtdUserRole == MTDIndividual) Individual else Agent}.toString,
+                    credId = credId,
+                    mtdRef = testMtditid,
+                    creditOnAccount = "5",
+                    creditDetails = toCreditSummaryDetailsSeq(chargesList)(msgs)
+                  ).detail
+                )
+              }
+            }
 
-        AuditStub.verifyAuditContainsDetail(
-          CreditsSummaryModel(
-            saUTR = testSaUtr,
-            nino = testNino,
-            userType = testUserTypeIndividual.toString,
-            credId = credId,
-            mtdRef = testMtditid,
-            creditOnAccount = "5",
-            creditDetails = toCreditSummaryDetailsSeq(chargesListV2)(msgs)
-          ).detail
-        )
+            "correctly audit a list of credits" when {
+              "the list contains Balancing Charge Credits" in {
+                import audit.models.CreditSummaryAuditing._
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, incomeSources)
+
+                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                  testNino,
+                  s"${testTaxYear - 1}-04-06",
+                  s"$testTaxYear-04-05")(
+                  OK,
+                  testValidFinancialDetailsModelCreditAndRefundsJsonV2(
+                    -1400,
+                    -1400,
+                    testTaxYear.toString,
+                    fixedDate.plusYears(1).toString)
+                )
+
+                val res = buildGETMTDClient(path, additionalCookies).futureValue
+
+                verifyIncomeSourceDetailsCall(testMtditid, 1)
+                IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+
+                AuditStub.verifyAuditContainsDetail(
+                  IncomeSourceDetailsResponseAuditModel(
+                    mtdItUser = testUser(mtdUserRole),
+                    selfEmploymentIds = List.empty,
+                    propertyIncomeIds = Nil,
+                    yearOfMigration = None
+                  ).detail
+                )
+
+                res should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, messages("credits.heading", s"$calendarYear"))
+                )
+
+                AuditStub.verifyAuditContainsDetail(
+                  CreditsSummaryModel(
+                    saUTR = testSaUtr,
+                    nino = testNino,
+                    userType = {if(mtdUserRole == MTDIndividual) Individual else Agent}.toString,
+                    credId = credId,
+                    mtdRef = testMtditid,
+                    creditOnAccount = "5",
+                    creditDetails = toCreditSummaryDetailsSeq(chargesListV2)(msgs)
+                  ).detail
+                )
+              }
+            }
+          }
+        }
+        testAuthFailures(path, mtdUserRole)
       }
     }
   }

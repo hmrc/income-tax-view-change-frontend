@@ -19,9 +19,9 @@ package controllers
 import audit.AuditingService
 import audit.models._
 import auth.MtdItUser
+import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import controllers.agent.predicates.ClientConfirmedController
 import forms.utils.SessionKeys.calcPagesBackPage
 import implicits.ImplicitDateFormatter
 import models.liabilitycalculation.viewmodels._
@@ -30,28 +30,28 @@ import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.CalculationService
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
-import utils.{AuthenticatorPredicate, TaxCalcFallBackBackLink}
+import utils.TaxCalcFallBackBackLink
 import views.html.TaxCalcBreakdown
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TaxDueSummaryController @Inject()(val authorisedFunctions: AuthorisedFunctions,
+class TaxDueSummaryController @Inject()(val authActions: AuthActions,
                                         val calculationService: CalculationService,
                                         val itvcErrorHandler: ItvcErrorHandler,
-                                        implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                        val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                         val taxCalcBreakdown: TaxCalcBreakdown,
-                                        val auditingService: AuditingService,
-                                        val auth: AuthenticatorPredicate)
+                                        val auditingService: AuditingService)
                                        (implicit val appConfig: FrontendAppConfig,
                                         val languageUtils: LanguageUtils,
                                         mcc: MessagesControllerComponents,
-                                        implicit val ec: ExecutionContext
-                                       ) extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport with TaxCalcFallBackBackLink {
+                                        val ec: ExecutionContext
+                                       ) extends FrontendController(mcc)
+  with ImplicitDateFormatter with FeatureSwitching with I18nSupport with TaxCalcFallBackBackLink {
 
   def handleRequest(origin: Option[String] = None,
                     itcvErrorHandler: ShowInternalServerError,
@@ -78,17 +78,17 @@ class TaxDueSummaryController @Inject()(val authorisedFunctions: AuthorisedFunct
   }
 
 
-  def showTaxDueSummary(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-      implicit user =>
-        handleRequest(
-          origin = origin,
-          itcvErrorHandler = itvcErrorHandler,
-          taxYear = taxYear,
-          isAgent = false
-        )
+  def showTaxDueSummary(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async {
+    implicit user =>
+      handleRequest(
+        origin = origin,
+        itcvErrorHandler = itvcErrorHandler,
+        taxYear = taxYear,
+        isAgent = false
+      )
   }
 
-  def showTaxDueSummaryAgent(taxYear: Int): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showTaxDueSummaryAgent(taxYear: Int): Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
     implicit mtdItUser =>
       handleRequest(
         itcvErrorHandler = itvcErrorHandlerAgent,

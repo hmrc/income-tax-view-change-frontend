@@ -27,7 +27,7 @@ import views.html.IncomeBreakdown
 trait MockIncomeSummary extends BeforeAndAfterEach {
   self: Suite =>
 
-  val incomeBreakdown: IncomeBreakdown = mock(classOf[IncomeBreakdown])
+  lazy val incomeBreakdown: IncomeBreakdown = mock(classOf[IncomeBreakdown])
 
   override def beforeEach(): Unit = {
     super.beforeEach()

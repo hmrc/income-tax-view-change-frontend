@@ -18,57 +18,64 @@ package controllers
 
 import audit.AuditingService
 import audit.models.InitiatePayNowAuditModel
-import auth.FrontendAuthorisedFunctions
-import config.{AgentItvcErrorHandler, FrontendAppConfig}
+import auth.MtdItUser
+import auth.authV2.AuthActions
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.PayApiConnector
-import controllers.agent.predicates.ClientConfirmedController
 import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel, PaymentJourneyResponse}
 import play.api.Logger
+import play.api.i18n.I18nSupport
 import play.api.mvc._
-import uk.gov.hmrc.auth.core.AffinityGroup
-import uk.gov.hmrc.auth.core.AffinityGroup.Agent
-import utils.AuthenticatorPredicate
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PaymentController @Inject()(payApiConnector: PayApiConnector,
+class PaymentController @Inject()(val authActions: AuthActions,
+                                  payApiConnector: PayApiConnector,
                                   val auditingService: AuditingService,
-                                  val authorisedFunctions: FrontendAuthorisedFunctions,
-                                  val auth: AuthenticatorPredicate
+                                  val itvcErrorHandler: ItvcErrorHandler,
+                                  val itvcAgentErrorHandler: AgentItvcErrorHandler
                                  )(implicit val appConfig: FrontendAppConfig,
                                    mcc: MessagesControllerComponents,
-                                   implicit val ec: ExecutionContext,
-                                   val itvcErrorHandler: AgentItvcErrorHandler) extends ClientConfirmedController {
+                                   implicit val ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
-  def handleHandoff(mtditid: String, nino: Option[String], saUtr: Option[String], credId: Option[String],
-                    userType: Option[AffinityGroup], paymentAmountInPence: Long, isAgent: Boolean,
-                    origin: Option[String] = None)
-                   (implicit request: Request[_]): Future[Result] = {
+  def handleHandoff(paymentAmountInPence: Long, origin: Option[String] = None)
+                   (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
     auditingService.extendedAudit(
-      InitiatePayNowAuditModel(mtditid, nino, saUtr, credId, userType)
+      InitiatePayNowAuditModel(mtdItUser.mtditid, mtdItUser.nino, mtdItUser.saUtr, mtdItUser.credId, mtdItUser.userType)
     )
-    saUtr match {
+    mtdItUser.saUtr match {
       case Some(utr) =>
-        payApiConnector.startPaymentJourney(utr, paymentAmountInPence, isAgent).map {
+        payApiConnector.startPaymentJourney(utr, paymentAmountInPence, mtdItUser.isAgent()).map {
           case model: PaymentJourneyModel => Redirect(model.nextUrl)
-          case PaymentJourneyErrorResponse(status, message) => throw new Exception(s"Failed to start payments journey due to downstream response, status: $status, message: $message")
-          case _: PaymentJourneyResponse => throw new Exception("Failed to start payments journey due to downstream response")
+          case PaymentJourneyErrorResponse(status, message) => logAndHandleError(s"Failed to start payments journey due to downstream response, status: $status, message: $message")
+          case _: PaymentJourneyResponse => logAndHandleError("Failed to start payments journey due to downstream response")
+        }.recover{
+          case ex => logAndHandleError(ex.getMessage)
         }
-      case _ =>
-        Logger("application").error("Failed to start payments journey due to missing UTR")
-        Future.failed(new Exception("Failed to start payments journey due to missing UTR"))
+      case _ => Future.successful(
+        logAndHandleError("Failed to start payments journey due to missing UTR")
+      )
     }
   }
 
-  def paymentHandoff(amountInPence: Long, origin: Option[String] = None): Action[AnyContent] = auth.authenticatedActionOptionNino {
+  def paymentHandoff(amountInPence: Long, origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
-      handleHandoff(user.mtditid, user.nino, user.saUtr, user.credId, user.userType, amountInPence, isAgent = false, origin = origin)
+      handleHandoff(amountInPence, origin = origin)
   }
 
-  val agentPaymentHandoff: Long => Action[AnyContent] = paymentAmountInPence => auth.authenticatedActionWithNinoAgent {
-    implicit response =>
-        handleHandoff(getClientMtditid(response.request), Some(getClientNino(response.request)), getClientUtr(response.request), response.agent.credId, Some(Agent), paymentAmountInPence, isAgent = true)(response.request)
+  val agentPaymentHandoff: Long => Action[AnyContent] = paymentAmountInPence => authActions.asMTDPrimaryAgent.async {
+    implicit user =>
+      handleHandoff(paymentAmountInPence)
   }
+
+  def logAndHandleError(message: String)
+                       (implicit mtdItUser: MtdItUser[_]): Result = {
+    Logger("application").error(message)
+    val errorHandler = if(mtdItUser.isAgent()) itvcAgentErrorHandler else itvcErrorHandler
+    errorHandler.showInternalServerError()
+  }
+
 }
