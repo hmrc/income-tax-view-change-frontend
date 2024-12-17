@@ -142,6 +142,12 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
           val result: Boolean = TestSessionService.deleteSession(Add)(headerCarrier).futureValue
           result shouldBe true
         }
+        "return a future boolean value if encryption is enabled" in {
+          when(mockFrontendAppConfig.encryptionIsEnabled).thenReturn(true)
+          mockDeleteSession(isSensitive = true)
+          val result: Boolean = TestSessionService.deleteSession(Add)(headerCarrier).futureValue
+          result shouldBe true
+        }
       }
 
       "clearSession method" should {

@@ -114,8 +114,13 @@ trait MockUIJourneySessionDataRepository extends UnitSpec with BeforeAndAfterEac
 
   }
 
-  def mockDeleteSession(): Unit = {
-    when(mockUIJourneySessionDataRepository.deleteJourneySession(anyString(), any[Operation]())).thenReturn(Future.successful(true))
+  def mockDeleteSession(isSensitive: Boolean = false): Unit = {
+    if (isSensitive) {
+      when(mockSensitiveUIJourneySessionDataRepository.deleteJourneySession(anyString(), any[Operation]())).thenReturn(Future.successful(true))
+    }
+    else {
+      when(mockUIJourneySessionDataRepository.deleteJourneySession(anyString(), any[Operation]())).thenReturn(Future.successful(true))
+    }
   }
 
   def mockClearSession(sessionId: String)(response: Future[Boolean]): Unit = {
