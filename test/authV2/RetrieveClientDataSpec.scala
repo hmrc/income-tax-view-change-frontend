@@ -73,7 +73,7 @@ class RetrieveClientDataSpec extends AuthActionsSpecHelper with MockClientDetail
               .thenReturn(Future.successful(Right(sessionGetSuccessResponse)))
             setupMockGetClientDetailsSuccess()
 
-            val result = action.invokeBlock(
+            val result = action.authorise().invokeBlock(
               fakeRequestWithSession,
               defaultAsyncBody { res =>
                 res.isSupportingAgent shouldBe true
@@ -90,11 +90,11 @@ class RetrieveClientDataSpec extends AuthActionsSpecHelper with MockClientDetail
             .thenReturn(Future.successful(Right(sessionGetSuccessResponse)))
           setupMockGetClientDetailsSuccess()
 
-          val result = action.invokeBlock(
+          val result = action.authorise().invokeBlock(
             fakeRequestWithSession,
             defaultAsyncBody { res =>
               res.isSupportingAgent shouldBe false
-              res.confirmed shouldBe false
+              res.confirmed shouldBe appConfig.isSessionDataStorageEnabled
             })
 
           status(result) shouldBe OK
@@ -109,7 +109,7 @@ class RetrieveClientDataSpec extends AuthActionsSpecHelper with MockClientDetail
         when(mockSessionDataService.getSessionData(any())(any(), any()))
           .thenReturn(Future.successful(Left(SessionDataNotFound("no data"))))
 
-        val result = action.invokeBlock(
+        val result = action.authorise().invokeBlock(
           fakeRequestWithActiveSession,
           defaultAsync)
 
@@ -127,7 +127,7 @@ class RetrieveClientDataSpec extends AuthActionsSpecHelper with MockClientDetail
         when(mockAgentErrorHandler.showInternalServerError()(any()))
           .thenReturn(InternalServerError("ERROR PAGE"))
 
-        val result = action.invokeBlock(
+        val result = action.authorise().invokeBlock(
           fakeRequestWithActiveSession,
           defaultAsync)
 

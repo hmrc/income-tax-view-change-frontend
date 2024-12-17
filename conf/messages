@@ -2312,3 +2312,9 @@ reporting.frequency.manageReportingFrequency.optOut.link.taxyear = Opt out of qu
 reporting.frequency.manageReportingFrequency.optOut.link.onwards = Opt out of quarterly reporting and report annually from the {0} to {1} tax year onwards
 reporting.frequency.manageReportingFrequency.b1.link = Opt in to quarterly reporting for the {0} to {1} tax year
 reporting.frequency.manageReportingFrequency.b2.link = Opt out of quarterly reporting and report annually from the {0} to {1} tax year onwards
+
+reporting.frequency.mandatoryReporting.heading    = When reporting quarterly is mandatory
+reporting.frequency.mandatoryReporting.inset      = Reporting quarterly is required if your income from self-employment or property, or both, exceeds the income threshold.
+reporting.frequency.mandatoryReporting.text       = You can check the threshold for when reporting quarterly is mandatory in the
+reporting.frequency.mandatoryReporting.link.text  = criteria for people who will need to sign up for Making Tax Digital for Income Tax
+reporting.frequency.mandatoryReporting.link       = https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up
