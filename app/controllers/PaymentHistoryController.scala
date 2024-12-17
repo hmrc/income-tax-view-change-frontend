@@ -19,50 +19,41 @@ package controllers
 import audit.AuditingService
 import audit.models.PaymentHistoryResponseAuditModel
 import auth.MtdItUser
+import auth.authV2.AuthActions
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates._
 import enums.GatewayPage.PaymentHistoryPage
 import forms.utils.SessionKeys.gatewayPage
 import implicits.ImplicitDateFormatter
 import models.admin.{CreditsRefundsRepay, PaymentHistoryRefunds, ReviewAndReconcilePoa}
 import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
 import models.repaymentHistory.RepaymentHistoryUtils
-import play.api.i18n.{I18nSupport, Messages}
+import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{DateServiceInterface, PaymentHistoryService, RepaymentService}
-import uk.gov.hmrc.auth.core.AffinityGroup.Agent
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
-import utils.AuthenticatorPredicate
-import views.html.{CreditAndRefunds, PaymentHistory}
+import views.html.PaymentHistory
 import views.html.errorPages.CustomNotFoundError
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
-                                         val authorisedFunctions: AuthorisedFunctions,
+class PaymentHistoryController @Inject()(authActions: AuthActions,
                                          auditingService: AuditingService,
                                          itvcErrorHandler: ItvcErrorHandler,
+                                         itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                          paymentHistoryService: PaymentHistoryService,
-                                         val auth: AuthenticatorPredicate,
-                                         val retrieveBtaNavBar: NavBarPredicate,
-                                         val authenticate: AuthenticationPredicate,
-                                         val checkSessionTimeout: SessionTimeoutPredicate,
                                          val repaymentService: RepaymentService,
-                                         val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate)
-                                        (implicit val appConfig: FrontendAppConfig,
-                                         dateService: DateServiceInterface,
-                                         val languageUtils: LanguageUtils,
-                                         mcc: MessagesControllerComponents,
-                                         val ec: ExecutionContext,
-                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                         val view: CreditAndRefunds,
-                                         val customNotFoundErrorView: CustomNotFoundError) extends ClientConfirmedController
+                                         paymentHistoryView: PaymentHistory,
+                                         val customNotFoundErrorView: CustomNotFoundError
+                                        )(implicit val appConfig: FrontendAppConfig,
+                                          dateService: DateServiceInterface,
+                                          val languageUtils: LanguageUtils,
+                                          mcc: MessagesControllerComponents,
+                                          val ec: ExecutionContext) extends FrontendController(mcc)
   with I18nSupport with FeatureSwitching with ImplicitDateFormatter {
 
   def handleRequest(backUrl: String,
@@ -106,7 +97,7 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
       case _ => itvcErrorHandler.showInternalServerError()
     }
 
-  def show(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
       handleRequest(
         itvcErrorHandler = itvcErrorHandler,
@@ -116,7 +107,7 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
       )
   }
 
-  def showAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent(): Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
     implicit mtdItUser =>
       handleRequest(
         itvcErrorHandler = itvcErrorHandlerAgent,
@@ -125,32 +116,15 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
       )
   }
 
-  private def handleStatusRefundRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
-                                       (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
-    repaymentService.view(user.nino).flatMap {
-      case _ if !isEnabled(PaymentHistoryRefunds) =>
-        Future.successful(Ok(customNotFoundErrorView()(user, messages)))
-      case Right(nextUrl) =>
-        Future.successful(Redirect(nextUrl))
-      case Left(_) =>
-        Future.successful(itvcErrorHandler.showInternalServerError())
-    }
-
-  }
-
-  def refundStatus(isAgent: Boolean): Action[AnyContent] =
-    auth.authenticatedAction(isAgent) {
-      implicit user =>
-        user.userType match {
-          case _ if !isEnabled(PaymentHistoryRefunds) =>
-            Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
-          case Some(Agent) => Future.successful(itvcErrorHandlerAgent.showInternalServerError())
-          case _ =>
-            handleStatusRefundRequest(
-              backUrl = "",
-              itvcErrorHandler = itvcErrorHandler,
-              isAgent = false
-            )
+  def refundStatus: Action[AnyContent] =
+    authActions.asMTDIndividual.async { implicit user =>
+      if (isEnabled(PaymentHistoryRefunds)) {
+        repaymentService.view(user.nino).map {
+          case Right(nextUrl) => Redirect(nextUrl)
+          case Left(_) => itvcErrorHandler.showInternalServerError()
         }
+      } else {
+        Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
+      }
     }
 }

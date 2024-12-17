@@ -97,6 +97,7 @@ object IncomeSourceDetailsTestConstants {
   val twoActiveForeignPropertyIncomes = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2018"), Nil, List(foreignPropertyDetails, foreignPropertyDetails2))
   val foreignPropertyIncomeWithCeasedForiegnPropertyIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2018"), Nil, List(foreignPropertyDetails, ceasedForeignPropertyDetailsCessation2023))
   val twoActiveUkPropertyIncomes = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2018"), Nil, List(uKPropertyDetails, uKPropertyDetails2))
+  val ukPropertyOnlyIncomeSourceWithFirstAccountPeriodEnd = ukPropertyIncome.copy(properties = List(uKPropertyDetails2))
 
   val ceaseBusinessDetailsModel = CeaseIncomeSourcesViewModel(
     soleTraderBusinesses = List(ceaseBusinessDetailsViewModel, ceaseBusinessDetailsViewModel2),

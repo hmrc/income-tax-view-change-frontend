@@ -60,13 +60,13 @@ object MTDIndividualAuthStub extends MTDAuthStub {
     )
   }
 
-  def stubAuthorisedWithName(): Unit = {
+  def stubAuthorisedWithNoName(): Unit = {
 
     stubPostWithRequest(
       url = postAuthoriseUrl,
       requestBody = getAuthRequest,
       status = Status.OK,
-      responseBody = mtdIndividualUserSuccessResponse(hasName = true)
+      responseBody = mtdIndividualUserSuccessResponse(hasName = false)
     )
   }
 
@@ -142,7 +142,7 @@ object MTDIndividualAuthStub extends MTDAuthStub {
   def mtdIndividualUserSuccessResponse(optConfidenceLevel: Option[Int] = None,
                                        hasNinoEnrolment: Boolean = true,
                                        hasSaEnrolment: Boolean = true,
-                                       hasName: Boolean = false): String = {
+                                       hasName: Boolean = true): String = {
     val confidenceLevel: Int = optConfidenceLevel.getOrElse(requiredConfidenceLevel)
 
     val userNameJsObj = if(hasName) {

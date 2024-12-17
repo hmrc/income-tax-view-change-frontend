@@ -78,16 +78,6 @@ trait GenericStubMethods extends CustomMatchers {
     }
   }
 
-  def stubUserDetails(): Unit = {
-    And("I wiremock stub a response from the User Details service")
-    UserDetailsStub.stubGetUserDetails()
-  }
-
-  def stubUserDetailsError(): Unit = {
-    And("I wiremock stub a Error Response from the User Details service")
-    UserDetailsStub.stubGetUserDetailsError()
-  }
-
   def verifyIncomeSourceDetailsCall(mtditid: String, noOfCalls: Int = 1): Unit = {
     Then(s"Verify that Income Source Details has been called for MTDITID = $mtditid")
     IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(mtditid, noOfCalls)

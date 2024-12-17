@@ -25,7 +25,7 @@ import testConstants.BaseTestConstants.{testPropertyIncomeId, testPropertyIncome
 import testConstants.BusinessDetailsTestConstants.{quarterTypeElectionCalendar, quarterTypeElectionStandard, testLatencyDetails4, testLatencyDetails5, testStartDate3}
 import testConstants.NextUpdatesTestConstants.fakeNextUpdatesModel
 
-import java.time.LocalDate
+import java.time.{LocalDate, Month}
 
 object PropertyDetailsTestConstants {
 
@@ -120,7 +120,7 @@ object PropertyDetailsTestConstants {
   val uKPropertyDetails2 = PropertyDetailsModel(
     incomeSourceId = testPropertyIncomeId2,
     accountingPeriod = Some(testPropertyAccountingPeriod),
-    firstAccountingPeriodEndDate = None,
+    firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
     incomeSourceType = Some(ukIncomeType),
     tradingStartDate = Some(testStartDate),
     cessation = None,

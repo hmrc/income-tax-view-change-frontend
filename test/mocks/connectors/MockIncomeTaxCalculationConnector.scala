@@ -28,7 +28,7 @@ import scala.concurrent.Future
 
 trait MockIncomeTaxCalculationConnector extends UnitSpec with BeforeAndAfterEach {
 
-  val mockIncomeTaxCalculationConnector: IncomeTaxCalculationConnector = mock(classOf[IncomeTaxCalculationConnector])
+  lazy val mockIncomeTaxCalculationConnector: IncomeTaxCalculationConnector = mock(classOf[IncomeTaxCalculationConnector])
 
   def mockGetCalculationResponse(mtditid: String, nino: String, taxYear: String)(response: LiabilityCalculationResponseModel): Unit = {
     when(mockIncomeTaxCalculationConnector.getCalculationResponse(

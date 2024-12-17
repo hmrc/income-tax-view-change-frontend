@@ -18,10 +18,10 @@ package controllers
 
 import audit.AuditingService
 import audit.models.WhatYouOweResponseAuditModel
-import auth.{FrontendAuthorisedFunctions, MtdItUser}
+import auth.MtdItUser
+import auth.authV2.AuthActions
 import config._
 import config.featureswitch._
-import controllers.agent.predicates.ClientConfirmedController
 import enums.GatewayPage.WhatYouOwePage
 import forms.utils.SessionKeys.gatewayPage
 import models.admin._
@@ -32,25 +32,24 @@ import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{ClaimToAdjustService, DateServiceInterface, WhatYouOweService}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.AuthenticatorPredicate
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.WhatYouOwe
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
+class WhatYouOweController @Inject()(val authActions: AuthActions,
+                                     val whatYouOweService: WhatYouOweService,
                                      val claimToAdjustService: ClaimToAdjustService,
                                      val itvcErrorHandler: ItvcErrorHandler,
-                                     implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                     val authorisedFunctions: FrontendAuthorisedFunctions,
+                                     val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                      val auditingService: AuditingService,
                                      val dateService: DateServiceInterface,
-                                     implicit val appConfig: FrontendAppConfig,
-                                     implicit override val mcc: MessagesControllerComponents,
-                                     implicit val ec: ExecutionContext,
-                                     whatYouOwe: WhatYouOwe,
-                                     val auth: AuthenticatorPredicate
-                                    ) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
+                                     whatYouOwe: WhatYouOwe
+                                    )(implicit val appConfig: FrontendAppConfig,
+                                      val mcc: MessagesControllerComponents,
+                                      val ec: ExecutionContext) extends FrontendController(mcc)
+  with I18nSupport with FeatureSwitching {
 
   def handleRequest(backUrl: String,
                     itvcErrorHandler: ShowInternalServerError,
@@ -67,7 +66,6 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
 
       val hasOverdueCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isOverdue()(dateService))
       val hasAccruingInterestReviewAndReconcileCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isAccruingInterest()(dateService))
-
       Ok(whatYouOwe(
         currentDate = dateService.getCurrentDate,
         hasOverdueOrAccruingInterestCharges = hasOverdueCharges || hasAccruingInterestReviewAndReconcileCharges,
@@ -100,7 +98,7 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
     }
   }
 
-  def show(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
       handleRequest(
         backUrl = controllers.routes.HomeController.show(origin).url,
@@ -110,7 +108,7 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
       )
   }
 
-  def showAgent: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent: Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
     implicit mtdItUser =>
       handleRequest(
         backUrl = controllers.routes.HomeController.showAgent.url,

@@ -18,22 +18,22 @@ package controllers
 
 import audit.AuditingService
 import audit.models.IvOutcomeSuccessAuditModel
+import auth.authV2.AuthActions
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
-import controllers.predicates.{AuthenticationPredicate, NinoPredicate}
-import javax.inject.Inject
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class UpliftSuccessController @Inject()(implicit val appConfig: FrontendAppConfig,
+class UpliftSuccessController @Inject()(authActions: AuthActions,
                                         mcc: MessagesControllerComponents,
                                         val auditingService: AuditingService,
-                                        implicit val executionContext: ExecutionContext,
-                                        val authenticate: AuthenticationPredicate,
-                                        val retrieveNino: NinoPredicate) extends BaseController()(mcc) with FeatureSwitching {
+                                       )(implicit val appConfig: FrontendAppConfig,
+                                         executionContext: ExecutionContext) extends FrontendController(mcc) with FeatureSwitching {
 
-  def success(origin: String): Action[AnyContent] = (authenticate andThen retrieveNino).async {
+  def success(origin: String): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
       auditingService.audit(IvOutcomeSuccessAuditModel(user.nino))
       Future.successful(Redirect(controllers.routes.HomeController.show().url).addingToSession("origin" -> origin))

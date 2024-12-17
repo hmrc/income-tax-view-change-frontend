@@ -16,44 +16,42 @@
 
 package controllers
 
-import audit.mocks.MockAuditingService
 import audit.models.RefundToTaxPayerResponseAuditModel
-import config.featureswitch.FeatureSwitching
-import config.{FrontendAppConfig, ItvcErrorHandler}
-import mocks.MockItvcErrorHandler
+import connectors.RepaymentHistoryConnector
+import enums.{MTDIndividual, MTDSupportingAgent}
+import mocks.auth.MockAuthActions
 import mocks.connectors.MockRepaymentHistoryConnector
-import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import models.admin.PaymentHistoryRefunds
 import models.repaymentHistory._
+import play.api
+import play.api.Application
 import play.api.http.Status
-import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testMtditid}
-import uk.gov.hmrc.http.InternalServerException
+import testConstants.BaseTestConstants.testMtditid
 import views.html.RefundToTaxPayer
 
 import java.time.LocalDate
-import scala.concurrent.Future
 
-class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
-  with MockIncomeSourceDetailsPredicate with MockItvcErrorHandler
-  with MockRepaymentHistoryConnector with FeatureSwitching with MockAuditingService {
+class RefundToTaxPayerControllerSpec extends MockAuthActions
+  with MockRepaymentHistoryConnector {
 
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    disableAllSwitches()
-  }
+  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+    .overrides(
+      api.inject.bind[RepaymentHistoryConnector].toInstance(mockRepaymentHistoryConnector)
+    ).build()
 
-  override def afterEach(): Unit = {
-    super.afterEach()
-    disable(PaymentHistoryRefunds)
-  }
+  val testController = fakeApplication().injector.instanceOf[RefundToTaxPayerController]
 
   val repaymentRequestNumber: String = "023942042349"
   val testNino: String = "AB123456C"
 
-  val paymentRefundHistoryBackLink: String = "/report-quarterly/income-and-expenses/view/payment-refund-history"
-  val paymentRefundHistoryBackLinkAgent: String = "/report-quarterly/income-and-expenses/view/agents/payment-refund-history"
+  lazy val paymentRefundHistoryBackLink: Boolean => String = isAgent => {
+    if(isAgent) {
+      "/report-quarterly/income-and-expenses/view/agents/payment-refund-history"
+    } else {
+      "/report-quarterly/income-and-expenses/view/payment-refund-history"
+    }
+  }
 
   val refundToTaxPayerView: RefundToTaxPayer = app.injector.instanceOf[RefundToTaxPayer]
 
@@ -93,201 +91,66 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
     )
   )
 
-  trait Test {
+  mtdAllRoles.foreach { case mtdUserRole =>
+    val isAgent = mtdUserRole != MTDIndividual
+    val action = if (isAgent) testController.showAgent(repaymentRequestNumber) else testController.show(repaymentRequestNumber)
+    val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
+    s"show${if (isAgent) "Agent"}" when {
+      s"the $mtdUserRole is authenticated" should {
+        if (mtdUserRole == MTDSupportingAgent) {
+          testSupportingAgentDeniedAccess(action)(fakeRequest)
+        } else {
+          "render the refund to tax payer page" when {
+            "PaymentHistoryRefunds FS is enabled" in {
+              enable(PaymentHistoryRefunds)
+              setupMockSuccess(mtdUserRole)
+              mockSingleBusinessIncomeSource()
+              setupGetRepaymentHistoryByRepaymentId(testNino, repaymentRequestNumber)(testRepaymentHistoryModel)
 
-    val controller =
-      new RefundToTaxPayerController(
-        refundToTaxPayerView = refundToTaxPayerView,
-        repaymentHistoryConnector = mockRepaymentHistoryConnector,
-        authorisedFunctions = mockAuthService,
-        itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
-        auditingService = mockAuditingService,
-        auth = testAuthenticator
-      )(app.injector.instanceOf[MessagesControllerComponents],
-        ec,
-        app.injector.instanceOf[FrontendAppConfig],
-        mockItvcErrorHandler
-      )
-  }
+              val expectedContent: String = refundToTaxPayerView(
+                backUrl = paymentRefundHistoryBackLink(isAgent),
+                repaymentHistoryModel = testRepaymentHistoryModel,
+                saUtr = Some(testMtditid),
+                paymentHistoryRefundsEnabled = true,
+                isAgent = isAgent
+              ).toString
 
-  "The RefundToTaxPayerController.show function" when {
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.OK
+              contentAsString(result) shouldBe expectedContent
+              contentType(result) shouldBe Some(HTML)
 
-    "obtaining a users repayments when PaymentHistoryRefunds FS is on" should {
-      "send the user to the refund to tax payer page with data" in new Test {
-        enable(PaymentHistoryRefunds)
-        mockSingleBusinessIncomeSource()
-        setupGetRepaymentHistoryByRepaymentId(testNino, repaymentRequestNumber)(testRepaymentHistoryModel)
+              verifyExtendedAudit(RefundToTaxPayerResponseAuditModel(testRepaymentHistoryModel))
+            }
+          }
 
-        val expectedContent: String = refundToTaxPayerView(
-          backUrl = paymentRefundHistoryBackLink,
-          repaymentHistoryModel = testRepaymentHistoryModel,
-          saUtr = Some(testMtditid),
-          paymentHistoryRefundsEnabled = true,
-          isAgent = false
-        ).toString
+          "redirect to the home page" when {
+            "PaymentHistoryRefunds FS is disabled" in {
+              disable(PaymentHistoryRefunds)
+              setupMockSuccess(mtdUserRole)
+              mockSingleBusinessIncomeSource()
 
-        val result: Future[Result] = controller.show(repaymentRequestNumber)(fakeRequestWithActiveSession)
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.SEE_OTHER
+              val homeUrl = if(isAgent) routes.HomeController.showAgent else routes.HomeController.show()
+              redirectLocation(result) shouldBe Some(homeUrl.url)
+            }
+          }
 
-        status(result) shouldBe Status.OK
-        contentAsString(result) shouldBe expectedContent
-        contentType(result) shouldBe Some(HTML)
+          "render the error page" when {
+            "Failing to retrieve a user's re-payments history" in {
+              enable(PaymentHistoryRefunds)
+              setupMockSuccess(mtdUserRole)
+              mockSingleBusinessIncomeSource()
+              setupGetRepaymentHistoryByRepaymentIdError(testNino, repaymentRequestNumber)(RepaymentHistoryErrorModel(404, "Not found"))
+
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            }
+          }
+        }
       }
-
-      "raise an audit event and send the user to the refund to tax payer page with data" in new Test {
-        enable(PaymentHistoryRefunds)
-        mockSingleBusinessIncomeSource()
-        setupGetRepaymentHistoryByRepaymentId(testNino, repaymentRequestNumber)(testRepaymentHistoryModel)
-
-        val expectedContent: String = refundToTaxPayerView(
-          backUrl = paymentRefundHistoryBackLink,
-          repaymentHistoryModel = testRepaymentHistoryModel,
-          saUtr = Some(testMtditid),
-          paymentHistoryRefundsEnabled = true,
-          isAgent = false
-        ).toString
-
-        val result: Future[Result] = controller.show(repaymentRequestNumber)(fakeRequestWithActiveSession)
-
-        status(result) shouldBe Status.OK
-        contentAsString(result) shouldBe expectedContent
-        contentType(result) shouldBe Some(HTML)
-
-        verifyExtendedAudit(RefundToTaxPayerResponseAuditModel(testRepaymentHistoryModel))
-      }
-
-
-    }
-
-    "Failing to retrieve a user's re-payments history" should {
-      "send the user to the internal service error page" in new Test {
-        enable(PaymentHistoryRefunds)
-        mockSingleBusinessIncomeSource()
-        setupGetRepaymentHistoryByRepaymentIdError(testNino, repaymentRequestNumber)(RepaymentHistoryErrorModel(404, "Not found"))
-
-        val result: Future[Result] = controller.show(repaymentRequestNumber)(fakeRequestWithActiveSession)
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-
-    }
-
-    "Failing to retrieve income sources" should {
-      "send the user to internal server error page" in new Test {
-        mockErrorIncomeSource()
-
-        val result: Future[Result] = controller.show(repaymentRequestNumber)(fakeRequestWithActiveSession)
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-    }
-
-    "User fails to be authorised" should {
-      "redirect the user to the login page" in new Test {
-        setupMockAuthorisationException()
-
-        val result: Future[Result] = controller.show(repaymentRequestNumber)(fakeRequestWithActiveSession)
-
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/sign-in")
-      }
-    }
-  }
-
-  "PaymentHistoryRefunds feature switch is disabled" should {
-    "not obtaining a users repayments" should {
-      "redirect the user to the home page" in new Test {
-        disable(PaymentHistoryRefunds)
-        mockSingleBusinessIncomeSource()
-
-        val result: Future[Result] = controller.show(repaymentRequestNumber)(fakeRequestWithActiveSession)
-
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
-      }
-    }
-
-  }
-
-
-  "The RefundToTaxPayerController.showAgent function" when {
-
-    "obtaining a users repayments when PaymentHistoryRefunds FS is on" should {
-      "send the user to the refund to tax payer page with data" in new Test {
-        enable(PaymentHistoryRefunds)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockSingleBusinessIncomeSource()
-        setupGetRepaymentHistoryByRepaymentId(testNino, repaymentRequestNumber)(testRepaymentHistoryModel)
-
-        val expectedContent: String = refundToTaxPayerView(
-          backUrl = paymentRefundHistoryBackLinkAgent,
-          repaymentHistoryModel = testRepaymentHistoryModel,
-          saUtr = Some(testMtditid),
-          paymentHistoryRefundsEnabled = true,
-          isAgent = true
-        ).toString
-
-        val result = controller.showAgent(repaymentRequestNumber)(fakeRequestConfirmedClient(testNino))
-
-        status(result) shouldBe Status.OK
-        contentAsString(result) shouldBe expectedContent
-        contentType(result) shouldBe Some(HTML)
-      }
-
-      "raise an audit event and send the user to the refund to tax payer page with data" in new Test {
-        enable(PaymentHistoryRefunds)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockSingleBusinessIncomeSource()
-        setupGetRepaymentHistoryByRepaymentId(testNino, repaymentRequestNumber)(testRepaymentHistoryModel)
-
-        val expectedContent: String = refundToTaxPayerView(
-          backUrl = paymentRefundHistoryBackLinkAgent,
-          repaymentHistoryModel = testRepaymentHistoryModel,
-          saUtr = Some(testMtditid),
-          paymentHistoryRefundsEnabled = true,
-          isAgent = true
-        ).toString
-
-        val result = controller.showAgent(repaymentRequestNumber)(fakeRequestConfirmedClient(testNino))
-
-        status(result) shouldBe Status.OK
-        contentAsString(result) shouldBe expectedContent
-        contentType(result) shouldBe Some(HTML)
-
-        verifyExtendedAudit(RefundToTaxPayerResponseAuditModel(testRepaymentHistoryModel))
-      }
-
-    }
-
-    "Failing to retrieve a user's payments" should {
-      "send the user to the internal service error page" in new Test {
-        enable(PaymentHistoryRefunds)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockErrorIncomeSource()
-
-        val result: Future[Result] = controller.showAgent(repaymentRequestNumber)(fakeRequestConfirmedClient(testNino))
-        result.failed.futureValue shouldBe an[InternalServerException]
-      }
-
-    }
-
-    "Failing to retrieve income sources" should {
-      "send the user to internal server error page" in new Test {
-        enable(PaymentHistoryRefunds)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockErrorIncomeSource()
-
-        val result: Future[Result] = controller.showAgent(repaymentRequestNumber)(fakeRequestConfirmedClient(testNino))
-        result.failed.futureValue shouldBe an[InternalServerException]
-      }
-    }
-
-    "User fails to be authorised" in new Test {
-      enable(PaymentHistoryRefunds)
-      setupMockAgentAuthorisationException(withClientPredicate = false)
-
-      val result: Future[Result] = controller.showAgent(repaymentRequestNumber)(fakeRequestWithActiveSession)
-
-      status(result) shouldBe Status.SEE_OTHER
+      testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
     }
   }
 }

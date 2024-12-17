@@ -19,18 +19,16 @@ package controllers
 import audit.AuditingService
 import audit.models.CreditSummaryAuditing
 import auth.MtdItUser
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
-import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates._
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import models.creditDetailModel.CreditDetailModel
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{CreditHistoryService, IncomeSourceDetailsService}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import services.CreditHistoryService
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.AuthenticatorPredicate
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.CreditsSummary
 
 import java.net.URI
@@ -38,23 +36,16 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
-                                         val authorisedFunctions: AuthorisedFunctions,
-                                         incomeSourceDetailsService: IncomeSourceDetailsService,
+                                         val authActions: AuthActions,
                                          creditHistoryService: CreditHistoryService,
                                          itvcErrorHandler: ItvcErrorHandler,
-                                         checkSessionTimeout: SessionTimeoutPredicate,
-                                         retrieveBtaNavBar: NavBarPredicate,
-                                         authenticate: AuthenticationPredicate,
-                                         retrieveNino: NinoPredicate,
-                                         retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                                         auth: AuthenticatorPredicate)
-                                        (implicit val appConfig: FrontendAppConfig,
-                                         mcc: MessagesControllerComponents,
-                                         msgApi: MessagesApi,
-                                         val ec: ExecutionContext,
-                                         val agentItvcErrorHandler: AgentItvcErrorHandler,
-                                         val auditingService: AuditingService
-                                        ) extends ClientConfirmedController with FeatureSwitching with I18nSupport{
+                                         agentItvcErrorHandler: AgentItvcErrorHandler
+                                        )(implicit val appConfig: FrontendAppConfig,
+                                          mcc: MessagesControllerComponents,
+                                          msgApi: MessagesApi,
+                                          val auditingService: AuditingService,
+                                          ec: ExecutionContext
+                                        ) extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
 
   private def creditsSummaryUrl(calendarYear: Int, origin: Option[String]): String =
     controllers.routes.CreditsSummaryController.showCreditsSummary(calendarYear, origin).url
@@ -91,16 +82,17 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
                     isAgent: Boolean,
                     origin: Option[String] = None)
                    (implicit user: MtdItUser[_],
-                    hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
+                    hc: HeaderCarrier): Future[Result] = {
     creditHistoryService.getCreditsHistory(calendarYear, user.nino).flatMap {
       case Right(credits) =>
         val charges: List[CreditDetailModel] = credits.sortBy(_.date.toEpochDay)
         val maybeAvailableCredit: Option[BigDecimal] =
           credits.flatMap(_.balanceDetails.flatMap(_.availableCredit.filter(_ > 0.00))).headOption
         auditCreditSummary(maybeAvailableCredit, charges)
+        val backUrl = if (isAgent) getAgentBackURL(user.headers.get(REFERER), calendarYear) else getBackURL(user.headers.get(REFERER), origin, calendarYear)
         Future.successful(Ok(creditsView(
           calendarYear = calendarYear,
-          backUrl = if (isAgent) getAgentBackURL(user.headers.get(REFERER), calendarYear) else getBackURL(user.headers.get(REFERER), origin, calendarYear),
+          backUrl = backUrl,
           isAgent = isAgent,
           utr = user.saUtr,
           btaNavPartial = user.btaNavPartial,
@@ -121,7 +113,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
   }
 
   def showCreditsSummary(calendarYear: Int, origin: Option[String] = None): Action[AnyContent] = {
-    auth.authenticatedAction(isAgent = false) {
+    authActions.asMTDIndividual.async {
       implicit user =>
         handleRequest(
           calendarYear = calendarYear,
@@ -132,7 +124,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
   }
 
   def showAgentCreditsSummary(calendarYear: Int): Action[AnyContent] = {
-    auth.authenticatedAction(isAgent = true) { implicit mtdItUser =>
+    authActions.asMTDPrimaryAgent.async { implicit mtdItUser =>
       handleRequest(
         calendarYear = calendarYear,
         isAgent = true

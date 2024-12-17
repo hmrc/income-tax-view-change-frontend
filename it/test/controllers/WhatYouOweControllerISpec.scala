@@ -18,14 +18,13 @@ package controllers
 
 import audit.models.WhatYouOweResponseAuditModel
 import auth.MtdItUser
-import helpers.ComponentSpecBase
+import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.admin._
 import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
 import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
-import play.api.test.FakeRequest
 import services.DateServiceInterface
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSaUtr}
 import testConstants.ChargeConstants
@@ -33,21 +32,17 @@ import testConstants.FinancialDetailsIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.OutstandingChargesIntegrationTestConstants._
 import testConstants.messages.WhatYouOweMessages.hmrcAdjustment
-import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate
 import java.time.Month.APRIL
 
-class WhatYouOweControllerISpec extends ComponentSpecBase with ChargeConstants with TransactionUtils {
+class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstants with TransactionUtils {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
   }
 
-  val testUser: MtdItUser[_] = MtdItUser(
-    testMtditid, testNino, None, paymentHistoryBusinessAndPropertyResponse,
-    None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
-  )(FakeRequest())
+  def testUser(mtdUserRole: MTDUserRole): MtdItUser[_] = getTestUser(mtdUserRole, paymentHistoryBusinessAndPropertyResponse)
 
   val testTaxYear: Int = getCurrentTaxYearEnd.getYear - 1
   val testTaxYearPoa: Int = getCurrentTaxYearEnd.getYear
@@ -104,862 +99,735 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with ChargeConstants w
     override def getCurrentTaxYear: TaxYear = TaxYear.forYearEnd(getCurrentTaxYearEnd)
   }
 
-  "Navigating to /report-quarterly/income-and-expenses/view/payments-owed" when {
-
-    "Authorised" when {
-
-      "render the payments due totals" in {
-        disable(NavBarFs)
-        Given("Display Totals feature is enabled")
-
-        And("I wiremock stub a successful Income Source Details response with multiple business and property without year of migration")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
-          propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
-
-
-        And("I wiremock stub a financial details response with coded out documents")
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
-          testValidFinancialDetailsModelJsonCodingOut(2000, 2000, (testTaxYear - 1).toString, testDate.plusYears(1).toString))
-
-        IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-          "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
-
-        When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
-        val res = IncomeTaxViewChangeFrontend.getPaymentsDue
-
-        AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweFinancialDetailsEmptyBCDCharge, testDateService).detail)
-
-        verifyIncomeSourceDetailsCall(testMtditid)
-        IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
-        IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
-
-        Then("the result should have a HTTP status of OK (200) and the payments due page")
-        res should have(
-          httpStatus(OK),
-          pageTitleIndividual("whatYouOwe.heading"),
-        )
-      }
-
-      "YearOfMigration exists" when {
-        "render the payments due page with a multiple charge from financial details and BCD and ACI charges from CESA" in {
-
-          Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
-
-
-          And("I wiremock stub a multiple financial details and outstanding charges response")
-          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
-            testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString))
-          IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-            "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
-
-
-          When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
-          val res = IncomeTaxViewChangeFrontend.getPaymentsDue
-
-          AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataWithDataDueIn30DaysIt, dateService).detail)
-
-          verifyIncomeSourceDetailsCall(testMtditid)
-          IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
-          IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
-
-          Then("the result should have a HTTP status of OK (200) and the payments due page")
-
-          res should have(
-            httpStatus(OK),
-            pageTitleIndividual("whatYouOwe.heading"),
-            isElementVisibleById("balancing-charge-type-0")(expectedValue = true),
-            isElementVisibleById("balancing-charge-type-1")(expectedValue = true),
-            isElementVisibleById("due-0")(expectedValue = true),
-            isElementVisibleById("due-1")(expectedValue = true),
-            isElementVisibleById("payment-button")(expectedValue = true),
-            isElementVisibleById("sa-note-migrated")(expectedValue = true),
-            isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
-            isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
-            isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
-          )
-
-        }
-
-        "render the payments due page with a multiple charge, without BCD and ACI charges from CESA" in {
-
-          Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
-
-
-          And("I wiremock stub a multiple financial details response")
-          val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, testDate.minusDays(15).toString)
-          val financialDetailsModel = financialDetailsResponseJson.as[FinancialDetailsModel]
-
-          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
-            financialDetailsResponseJson)
-          IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-            "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
-
-
-          When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
-          val res = IncomeTaxViewChangeFrontend.getPaymentsDue
-
-          val whatYouOweChargesList = {
-            val documentDetailsForTestTaxYear = financialDetailsModel.documentDetailsFilterByTaxYear(testTaxYear)
-
-            val financialDetails = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear)
-            val chargeItems = financialDetails.toChargeItem()
-
-            WhatYouOweChargesList(
-              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-              chargesList = chargeItems
-            )
-          }
-          AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList, dateService))
-
-          verifyIncomeSourceDetailsCall(testMtditid)
-          IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
-          IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
-
-          Then("the result should have a HTTP status of OK (200) and the payments due page")
-          res should have(
-            httpStatus(OK),
-            pageTitleIndividual("whatYouOwe.heading"),
-            isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
-            isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
-            isElementVisibleById("due-0")(expectedValue = true),
-            isElementVisibleById("charge-interest-0")(expectedValue = false),
-            isElementVisibleById("due-1")(expectedValue = true),
-            isElementVisibleById("charge-interest-1")(expectedValue = false),
-            isElementVisibleById(s"payment-button")(expectedValue = true),
-            isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-            isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
-            isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
-            isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
-          )
-
-        }
-
-        "render the payments due page with multiple charges and one charge equals zero" in {
-
-          Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
-
-
-          And("I wiremock stub a single financial details response")
-          val mixedJson = Json.obj(
-            "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
-            "documentDetails" -> Json.arr(
-              documentDetailJson(3400.00, 1000.00, testTaxYear - 1, "ITSA- POA 1", transactionId = "transId1"),
-              documentDetailJson(1000.00, 100.00, testTaxYear - 1, "ITSA- POA 1", transactionId = "transId2", dueDate = testDate.plusDays(1).toString),
-              documentDetailJson(1000.00, 0.00, testTaxYear - 1, "ITSA - POA 2", transactionId = "transId3", dueDate = testDate.minusDays(1).toString)
-            ),
-            "financialDetails" -> Json.arr(
-              financialDetailJson((testTaxYear - 1).toString, transactionId = "transId1"),
-              financialDetailJson((testTaxYear - 1).toString, "SA Payment on Account 1", "4920", testDate.plusDays(1).toString, "transId2"),
-              financialDetailJson((testTaxYear - 1).toString, "SA Payment on Account 2", "4930", testDate.minusDays(1).toString, "transId3")
-            )
-          )
-
-          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
-          IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-            "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, testValidOutStandingChargeResponseJsonWithAciAndBcdCharges)
-
-
-          When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
-          val res = IncomeTaxViewChangeFrontend.getPaymentsDue
-
-          AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweWithAZeroOutstandingAmount(), dateService).detail)
-
-          verifyIncomeSourceDetailsCall(testMtditid)
-          IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
-          IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
-
-          Then("the result should have a HTTP status of OK (200) and the payments due page")
-          res should have(
-            httpStatus(OK),
-            pageTitleIndividual("whatYouOwe.heading"),
-            isElementVisibleById("balancing-charge-type-0")(expectedValue = true),
-            isElementVisibleById("balancing-charge-type-1")(expectedValue = true),
-            isElementVisibleById("due-0")(expectedValue = true),
-            isElementVisibleById("due-1")(expectedValue = true),
-            isElementVisibleById("due-2")(expectedValue = false),
-            isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-            isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
-            isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
-            isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
-          )
-        }
-
-        "render the payments due page with no dunningLocks" in {
-
-          Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
-
-
-          And("I wiremock stub a multiple financial details response")
-          val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, testDate.minusDays(15).toString, dunningLock = noDunningLock)
-          val financialDetailsModel = financialDetailsResponseJson.as[FinancialDetailsModel]
-
-          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
-            financialDetailsResponseJson)
-          IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-            "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
-
-          When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
-          val res = IncomeTaxViewChangeFrontend.getPaymentsDue
-
-          val whatYouOweChargesList = {
-            val documentDetailsForTestTaxYear = financialDetailsModel.documentDetailsFilterByTaxYear(testTaxYear)
-            val financialDetails = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear)
-            val chargeItems = financialDetails.toChargeItem()
-
-            WhatYouOweChargesList(
-              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-              chargesList = chargeItems
-            )
-          }
-          AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList, dateService))
-
-          verifyIncomeSourceDetailsCall(testMtditid)
-          IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
-          IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
-
-          Then("the result should have a HTTP status of OK (200) and the payments due page")
-          res should have(
-            httpStatus(OK),
-            pageTitleIndividual("whatYouOwe.heading"),
-            isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = false)
-          )
-        }
-
-        "render the payments due page with a dunningLocks against a charge" in {
-
-          Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
-
-
-          And("I wiremock stub a multiple financial details response")
-          val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, testDate.minusDays(15).toString, dunningLock = oneDunningLock)
-          val financialDetailsModel = financialDetailsResponseJson.as[FinancialDetailsModel]
-
-          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
-            financialDetailsResponseJson)
-          IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-            "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
-
-          When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
-          val res = IncomeTaxViewChangeFrontend.getPaymentsDue
-
-          val whatYouOweChargesList = {
-            val documentDetailsForTestTaxYear = financialDetailsModel.documentDetailsFilterByTaxYear(testTaxYear)
-
-            val financialDetails = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear)
-            val chargeItems = financialDetails.toChargeItem()
-
-
-            WhatYouOweChargesList(
-              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-              chargesList = chargeItems
-            )
-          }
-          AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList, dateService))
-
-          verifyIncomeSourceDetailsCall(testMtditid)
-          IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
-          IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
-
-          Then("the result should have a HTTP status of OK (200) and the payments due page")
-          res should have(
-            httpStatus(OK),
-            pageTitleIndividual("whatYouOwe.heading"),
-            isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = true)
-          )
-        }
-
-        "render the payments due page with multiple dunningLocks" in {
-
-          Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
-
-
-          And("I wiremock stub a multiple financial details response")
-          val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, testDate.minusDays(15).toString, dunningLock = twoDunningLocks)
-          val financialDetailsModel = financialDetailsResponseJson.as[FinancialDetailsModel]
-
-          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
-            financialDetailsResponseJson)
-          IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-            "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
-
-          When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
-          val res = IncomeTaxViewChangeFrontend.getPaymentsDue
-
-          val whatYouOweChargesList = {
-            val documentDetailsForTestTaxYear = financialDetailsModel.documentDetailsFilterByTaxYear(testTaxYear)
-            val financialDetails = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear)
-            val chargeItems = financialDetails.toChargeItem()
-
-            WhatYouOweChargesList(
-              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-              chargesList = chargeItems)
-          }
-          AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList, dateService))
-
-          verifyIncomeSourceDetailsCall(testMtditid)
-          IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
-          IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
-
-          Then("the result should have a HTTP status of OK (200) and the payments due page")
-          res should have(
-            httpStatus(OK),
-            pageTitleIndividual("whatYouOwe.heading"),
-            isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = true)
-          )
-        }
-
-        "redirect to an internal server error page when both connectors return internal server error" in {
-
-          Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
-            propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
-
-
-          And("I wiremock stub a single financial details response")
-          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino,
-            s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(INTERNAL_SERVER_ERROR, testFinancialDetailsErrorModelJson())
-          IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-            "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(INTERNAL_SERVER_ERROR, testOutstandingChargesErrorModelJson)
-
-
-          When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
-          val res = IncomeTaxViewChangeFrontend.getPaymentsDue
-
-          verifyIncomeSourceDetailsCall(testMtditid)
-          IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
-
-          Then("the result should have a HTTP status of INTERNAL_SERVER_ERROR(500)")
-          res should have(
-            httpStatus(INTERNAL_SERVER_ERROR)
-          )
-
-        }
-
-        "redirect to an internal server error page when financial connector return internal server error" in {
-
-          Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
-            propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
-
-
-          And("I wiremock stub a single financial details response")
-          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino,
-            s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(INTERNAL_SERVER_ERROR, testFinancialDetailsErrorModelJson())
-          IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-            "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
-
-
-          When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
-          val res = IncomeTaxViewChangeFrontend.getPaymentsDue
-
-          verifyIncomeSourceDetailsCall(testMtditid)
-          IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
-
-          Then("the result should have a HTTP status of INTERNAL_SERVER_ERROR(500)")
-          res should have(
-            httpStatus(INTERNAL_SERVER_ERROR)
-          )
-
-        }
-
-        "redirect to an internal server error page when Outstanding charges connector return internal server error" in {
-
-          Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
-            propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
-
-
-          And("I wiremock stub a single financial details response")
-          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
-            testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, testDate.toString))
-          IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-            "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(INTERNAL_SERVER_ERROR, testOutstandingChargesErrorModelJson)
-
-
-          When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
-          val res = IncomeTaxViewChangeFrontend.getPaymentsDue
-
-          verifyIncomeSourceDetailsCall(testMtditid)
-          IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
-
-          Then("the result should have a HTTP status of INTERNAL_SERVER_ERROR(500)")
-          res should have(
-            httpStatus(INTERNAL_SERVER_ERROR)
-          )
-
-        }
-      }
-
-      "YearOfMigration does not exists" when {
-        "render the payments due page with a no charge" in {
-
-
-          Given("I wiremock stub a successful Income Source Details response with multiple business and property without year of migration")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, None))
-
-          And("I wiremock stub a single financial details response")
-          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06",
-            s"$testTaxYear-04-05")(OK, testEmptyFinancialDetailsModelJson)
-
-
-          When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
-          val res = IncomeTaxViewChangeFrontend.getPaymentsDue
-
-          AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweNoChargeList, dateService).detail)
-
-          verifyIncomeSourceDetailsCall(testMtditid)
-
-          Then("the result should have a HTTP status of OK (200) and the payments due page")
-          res should have(
-            httpStatus(OK),
-            pageTitleIndividual("whatYouOwe.heading"),
-            isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
-            isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
-            isElementVisibleById(s"payment-button")(expectedValue = false),
-            isElementVisibleById("no-payments-due")(expectedValue = true),
-            isElementVisibleById("sa-note-migrated")(expectedValue = true),
-            isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
-            isElementVisibleById(s"payments-made-bullets")(expectedValue = false),
-            isElementVisibleById(s"sa-tax-bill")(expectedValue = false)
-          )
-        }
-      }
-
-      "YearOfMigration exists but not the first year" when {
-        "render the payments due page with a no charge" in {
-
-          Given("I wiremock stub a successful Income Source Details response with multiple business and property without year of migration")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
-
-
-          And("I wiremock stub a single financial details response")
-          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino,
-            s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, testEmptyFinancialDetailsModelJson)
-          IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-            "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
-
-
-          When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
-          val res = IncomeTaxViewChangeFrontend.getPaymentsDue
-
-          AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweNoChargeList, dateService).detail)
-
-          verifyIncomeSourceDetailsCall(testMtditid)
-
-          Then("the result should have a HTTP status of OK (200) and the payments due page")
-          res should have(
-            httpStatus(OK),
-            pageTitleIndividual("whatYouOwe.heading"),
-            isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
-            isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
-            isElementVisibleById(s"payment-button")(expectedValue = false),
-            isElementVisibleById("no-payments-due")(expectedValue = true),
-            isElementVisibleById("sa-note-migrated")(expectedValue = true),
-            isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
-            isElementVisibleById(s"payments-made-bullets")(expectedValue = false),
-            isElementVisibleById(s"sa-tax-bill")(expectedValue = false)
-          )
-
-        }
-      }
-
-      "YearOfMigration exists and No valid charges exists" when {
-        "render the payments due page with a no charge" in {
-
-          Given("I wiremock stub a successful Income Source Details response with multiple business and property without year of migration")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
-            propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
-
-
-          And("I wiremock stub a mixed financial details response")
-          val mixedJson = Json.obj(
-            "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
-            "documentDetails" -> Json.arr(
-            ),
-            "financialDetails" -> Json.arr(
-
-            )
-          )
-
-          IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-            "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
-
-          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
-
-
-          When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
-          val res = IncomeTaxViewChangeFrontend.getPaymentsDue
-
-          verifyIncomeSourceDetailsCall(testMtditid)
-          IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
-          IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
-
-          AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweNoChargeList, dateService).detail)
-
-          Then("the result should have a HTTP status of OK (200) and the payments due page")
-          res should have(
-            httpStatus(OK),
-            pageTitleIndividual("whatYouOwe.heading"),
-            isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
-            isElementVisibleById(s"payment-button")(expectedValue = false),
-            isElementVisibleById("no-payments-due")(expectedValue = true),
-            isElementVisibleById("sa-note-migrated")(expectedValue = true),
-            isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
-            isElementVisibleById(s"payments-made-bullets")(expectedValue = false),
-            isElementVisibleById(s"sa-tax-bill")(expectedValue = false)
-          )
-
-        }
-      }
-
-      "YearOfMigration exists with Invalid financial details charges and valid outstanding charges" when {
-        "render the payments due page with ACI and BCD charge" in {
-
-          Given("I wiremock stub a successful Income Source Details response with multiple business and property without year of migration")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
-            propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
-
-          And("I wiremock stub a mixed financial details response")
-          val mixedJson = Json.obj(
-            "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
-            "documentDetails" -> Json.arr(
-              documentDetailJson(3400.00, 1000.00, testTaxYear, transactionId = "transId1"),
-              documentDetailJson(1000.00, 0, testTaxYear, transactionId = "transId2"),
-              documentDetailJson(1000.00, 3000.00, testTaxYear, transactionId = "transId3")
-            ),
-            "financialDetails" -> Json.arr(
-              financialDetailJson(testTaxYear.toString, transactionId = "transId4"),
-              financialDetailJson(testTaxYear.toString, transactionId = "transId5"),
-              financialDetailJson(testTaxYear.toString, transactionId = "transId6")
-            ))
-
-          IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-            "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
-
-          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
-
-
-          When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
-          val res = IncomeTaxViewChangeFrontend.getPaymentsDue
-
-          AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweOutstandingChargesOnly, dateService).detail)
-
-          verifyIncomeSourceDetailsCall(testMtditid)
-          IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
-          IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
-
-          Then("the result should have a HTTP status of OK (200) and the payments due page")
-          res should have(
-            httpStatus(OK),
-            pageTitleIndividual("whatYouOwe.heading"),
-            isElementVisibleById("balancing-charge-type-0")(expectedValue = true),
-            isElementVisibleById("balancing-charge-type-1")(expectedValue = true),
-            isElementVisibleById(s"payment-button")(expectedValue = true),
-            isElementVisibleById(s"no-payments-due")(expectedValue = false),
-            isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-            isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
-            isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
-            isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
-          )
-
-        }
-      }
-
-      "YearOfMigration exists with valid financial details charges and invalid outstanding charges" when {
-        "render the payments due page with empty BCD charge" in {
-
-          Given("I wiremock stub a successful Income Source Details response with multiple business and property without year of migration")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
-            propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
-
-
-          And("I wiremock stub a mixed financial details response")
-          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
-            testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, testDate.plusYears(1).toString))
-
-          IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-            "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
-
-
-          When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
-          val res = IncomeTaxViewChangeFrontend.getPaymentsDue
-
-          AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweFinancialDetailsEmptyBCDCharge, dateService).detail)
-
-          verifyIncomeSourceDetailsCall(testMtditid)
-          IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
-          IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
-
-          Then("the result should have a HTTP status of OK (200) and the payments due page")
-          res should have(
-            httpStatus(OK),
-            pageTitleIndividual("whatYouOwe.heading"),
-            isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
-            isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
-            isElementVisibleById(s"payment-button")(expectedValue = true),
-            isElementVisibleById(s"no-payments-due")(expectedValue = false),
-            isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-            isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
-            isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
-            isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
-          )
-
-        }
-      }
-
-      "CodingOut FS is enabled" when {
-
-        "render the payments owed with a Coding out banner" in {
-          Given("Coding Out feature is enabled")
-
-          And("I wiremock stub a successful Income Source Details response with multiple business and property without year of migration")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
-            propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
-
-
-          And("I wiremock stub a financial details response with coded out documents")
-          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
-            testValidFinancialDetailsModelJsonCodingOut(2000, 2000, testTaxYear.toString,
-              testDate.toString, 0, (getCurrentTaxYearEnd.getYear - 1).toString, 2000))
-
-          IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-            "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
-
-
-          When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
-          val res = IncomeTaxViewChangeFrontend.getPaymentsDue
-
-          verifyIncomeSourceDetailsCall(testMtditid)
-          IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
-          IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
-
-          Then("the result should have a HTTP status of OK (200) and the payments due page")
-          res should have(
-            httpStatus(OK),
-            pageTitleIndividual("whatYouOwe.heading"),
-            isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
-            isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
-            isElementVisibleById(s"payment-button")(expectedValue = true),
-            isElementVisibleById(s"no-payments-due")(expectedValue = false),
-            isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-            isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
-            isElementVisibleById("coding-out-notice")(expectedValue = true),
-            isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
-            isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
-          )
-        }
-
-        "render the payments due page with a multiple charges ~ TxM extension" in {
-          Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
-
-          And("I wiremock stub a multiple financial details and outstanding charges response")
-          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
-            testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, isClass2Nic = true))
-
-          IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-            "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
-
-          When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
-          val res = IncomeTaxViewChangeFrontend.getPaymentsDue
-
-          AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataWithDataDueInSomeDays, dateService).detail)
-
-          verifyIncomeSourceDetailsCall(testMtditid)
-          IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
-          IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
-
-          Then("the result should have a HTTP status of OK (200) and the payments due page")
-
-          res should have(
-            httpStatus(OK),
-            pageTitleIndividual("whatYouOwe.heading"),
-            isElementVisibleById("balancing-charge-type-0")(expectedValue = true),
-            isElementVisibleById("balancing-charge-type-1")(expectedValue = true),
-            isElementVisibleById("due-0")(expectedValue = true),
-            isElementVisibleById("due-1")(expectedValue = true),
-            isElementVisibleById("payment-button")(expectedValue = true),
-            isElementVisibleById("sa-note-migrated")(expectedValue = true),
-            isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
-            isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
-            isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
-          )
-
-        }
-      }
-
-      "MFA Debits" should {
-        "render the payments owed" when {
-          def testMFADebits(): Unit = {
-
-            And("I wiremock stub a successful Income Source Details response with multiple business and property")
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
-
-            And("I wiremock stub a multiple financial details response")
-            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
-              testValidFinancialDetailsModelMFADebitsJson(2000, 2000, testTaxYear.toString, testDate.plusYears(1).toString))
-            IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-              "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
-
-            When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
-            val res = IncomeTaxViewChangeFrontend.getPaymentsDue
-            verifyIncomeSourceDetailsCall(testMtditid)
-            IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
-            IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
-            Then("The expected result is returned")
-              res should have(
-                httpStatus(OK),
-                pageTitleIndividual("whatYouOwe.heading"),
-                elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment 1"),
-                elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment 2"),
-                elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(3)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment 3"),
-                elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(4)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment 4"))
-          }
-
-          "show What You Owe page with MFA Debits on the Payment Tab" in {
-            testMFADebits()
-          }
-        }
-      }
-      "Claim to adjust POA section" should {
-        "show" when {
-          "The user has valid POAs and the FS is Enabled" in {
-            enable(AdjustPaymentsOnAccount)
-
-            Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYearPoa - 1, Some(testTaxYearPoa.toString)))
-
-            And("I wiremock stub financial details for multiple years with POAs")
-            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 1}-04-06", s"$testTaxYearPoa-04-05")(OK,
-              testValidFinancialDetailsModelJson(2000, 2000, (testTaxYearPoa - 1).toString, testDate.toString))
-            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 2}-04-06", s"${testTaxYearPoa - 1}-04-05")(OK,
-              testValidFinancialDetailsModelJson(2000, 2000, (testTaxYearPoa - 1).toString, testDate.toString))
-
-            When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
-            val res = IncomeTaxViewChangeFrontend.getPaymentsDue
-
-            res should have(
-              httpStatus(OK),
-              pageTitleIndividual("whatYouOwe.heading"),
-              isElementVisibleById("adjust-poa-link")(expectedValue = true),
-              isElementVisibleById("adjust-poa-content")(expectedValue = true))
-          }
-
-          "user has valid POAs that have been paid in full, and the FS is Enabled" in {
-            enable(AdjustPaymentsOnAccount)
-
-            Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYearPoa - 1, Some(testTaxYearPoa.toString)))
-
-            And("I wiremock stub financial details for multiple years with POAs")
-            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 1}-04-06", s"$testTaxYearPoa-04-05")(OK,
-              testValidFinancialDetailsModelJson(2000, 0, (testTaxYearPoa - 1).toString, testDate.toString))
-            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 2}-04-06", s"${testTaxYearPoa - 1}-04-05")(OK,
-              testValidFinancialDetailsModelJson(2000, 0, (testTaxYearPoa - 1).toString, testDate.toString))
-
-            When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
-            val res = IncomeTaxViewChangeFrontend.getPaymentsDue
-
-            res should have(
-              httpStatus(OK),
-              pageTitleIndividual("whatYouOwe.heading"),
-              isElementVisibleById("adjust-poa-link")(expectedValue = true),
-              isElementVisibleById("adjust-paid-poa-content")(expectedValue = true))
+  def getPath(mtdRole: MTDUserRole): String = {
+    if(mtdRole == MTDIndividual) {
+      "/what-you-owe?origin=PTA"
+    } else {
+      "/agents/what-your-client-owes"
+    }
+  }
+  mtdAllRoles.foreach { case mtdUserRole =>
+    val path = getPath(mtdUserRole)
+    val additionalCookies = getAdditionalCookies(mtdUserRole)
+    s"GET $path" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          if (mtdUserRole == MTDSupportingAgent) {
+            testSupportingAgentAccessDenied(path, additionalCookies)
+          } else {
+            "render the what you owe page" which {
+              "displays the payments due totals" in {
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
+                  propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
+                  testValidFinancialDetailsModelJsonCodingOut(2000, 2000, (testTaxYear - 1).toString, testDate.plusYears(1).toString))
+                IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                  "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+                val res = buildGETMTDClient(path, additionalCookies).futureValue
+
+                AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweFinancialDetailsEmptyBCDCharge, testDateService).detail)
+
+                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+
+                res should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, s"whatYouOwe.heading${if(mtdUserRole != MTDIndividual) "-agent" else ""}")
+                )
+              }
+
+              "has a multiple charge from financial details and BCD and ACI charges from CESA" in {
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
+                  testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString))
+                IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                  "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
+
+                val res = buildGETMTDClient(path, additionalCookies).futureValue
+
+                AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweDataWithDataDueIn30DaysIt, dateService).detail)
+
+                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+
+                res should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, s"whatYouOwe.heading${if(mtdUserRole != MTDIndividual) "-agent" else ""}"),
+                  isElementVisibleById("balancing-charge-type-0")(expectedValue = true),
+                  isElementVisibleById("balancing-charge-type-1")(expectedValue = true),
+                  isElementVisibleById("due-0")(expectedValue = true),
+                  isElementVisibleById("due-1")(expectedValue = true),
+                  isElementVisibleById("payment-button")(expectedValue = mtdUserRole == MTDIndividual),
+                  isElementVisibleById("sa-note-migrated")(expectedValue = true),
+                  isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
+                  isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
+                  isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
+                )
+
+              }
+
+              "has a multiple charge, without BCD and ACI charges from CESA" in {
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+
+                val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, testDate.minusDays(15).toString)
+                val financialDetailsModel = financialDetailsResponseJson.as[FinancialDetailsModel]
+
+                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
+                  financialDetailsResponseJson)
+                IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                  "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+                val res = buildGETMTDClient(path, additionalCookies).futureValue
+
+                val whatYouOweChargesList = {
+                  val documentDetailsForTestTaxYear = financialDetailsModel.documentDetailsFilterByTaxYear(testTaxYear)
+
+                  val financialDetails = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear)
+                  val chargeItems = financialDetails.toChargeItem()
+
+                  WhatYouOweChargesList(
+                    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+                    chargesList = chargeItems
+                  )
+                }
+                AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweChargesList, dateService))
+
+                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+
+                Then("the result should have a HTTP status of OK (200) and the payments due page")
+                res should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, s"whatYouOwe.heading${if(mtdUserRole != MTDIndividual) "-agent" else ""}"),
+                  isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
+                  isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
+                  isElementVisibleById("due-0")(expectedValue = true),
+                  isElementVisibleById("charge-interest-0")(expectedValue = false),
+                  isElementVisibleById("due-1")(expectedValue = true),
+                  isElementVisibleById("charge-interest-1")(expectedValue = false),
+                  isElementVisibleById(s"payment-button")(expectedValue = mtdUserRole == MTDIndividual),
+                  isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
+                  isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
+                  isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
+                  isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
+                )
+
+              }
+
+              "has multiple charges and one charge equals zero" in {
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+
+                val mixedJson = Json.obj(
+                  "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
+                  "documentDetails" -> Json.arr(
+                    documentDetailJson(3400.00, 1000.00, testTaxYear - 1, "ITSA- POA 1", transactionId = "transId1"),
+                    documentDetailJson(1000.00, 100.00, testTaxYear - 1, "ITSA- POA 1", transactionId = "transId2", dueDate = testDate.plusDays(1).toString),
+                    documentDetailJson(1000.00, 0.00, testTaxYear - 1, "ITSA - POA 2", transactionId = "transId3", dueDate = testDate.minusDays(1).toString)
+                  ),
+                  "financialDetails" -> Json.arr(
+                    financialDetailJson((testTaxYear - 1).toString, transactionId = "transId1"),
+                    financialDetailJson((testTaxYear - 1).toString, "SA Payment on Account 1", "4920", testDate.plusDays(1).toString, "transId2"),
+                    financialDetailJson((testTaxYear - 1).toString, "SA Payment on Account 2", "4930", testDate.minusDays(1).toString, "transId3")
+                  )
+                )
+
+                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
+                IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                  "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, testValidOutStandingChargeResponseJsonWithAciAndBcdCharges)
+
+
+                val res = buildGETMTDClient(path, additionalCookies).futureValue
+
+                AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweWithAZeroOutstandingAmount(), dateService).detail)
+
+                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+
+                Then("the result should have a HTTP status of OK (200) and the payments due page")
+                res should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, s"whatYouOwe.heading${if(mtdUserRole != MTDIndividual) "-agent" else ""}"),
+                  isElementVisibleById("balancing-charge-type-0")(expectedValue = true),
+                  isElementVisibleById("balancing-charge-type-1")(expectedValue = true),
+                  isElementVisibleById("due-0")(expectedValue = true),
+                  isElementVisibleById("due-1")(expectedValue = true),
+                  isElementVisibleById("due-2")(expectedValue = false),
+                  isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
+                  isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
+                  isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
+                  isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
+                )
+              }
+
+              "has no dunningLocks" in {
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+
+                val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, testDate.minusDays(15).toString, dunningLock = noDunningLock)
+                val financialDetailsModel = financialDetailsResponseJson.as[FinancialDetailsModel]
+
+                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
+                  financialDetailsResponseJson)
+                IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                  "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+                val res = buildGETMTDClient(path, additionalCookies).futureValue
+
+                val whatYouOweChargesList = {
+                  val documentDetailsForTestTaxYear = financialDetailsModel.documentDetailsFilterByTaxYear(testTaxYear)
+                  val financialDetails = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear)
+                  val chargeItems = financialDetails.toChargeItem()
+
+                  WhatYouOweChargesList(
+                    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+                    chargesList = chargeItems
+                  )
+                }
+                AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweChargesList, dateService))
+
+                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+
+                res should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, s"whatYouOwe.heading${if(mtdUserRole != MTDIndividual) "-agent" else ""}"),
+                  isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = false)
+                )
+              }
+
+              "has a dunningLocks against a charge" in {
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+
+                val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, testDate.minusDays(15).toString, dunningLock = oneDunningLock)
+                val financialDetailsModel = financialDetailsResponseJson.as[FinancialDetailsModel]
+
+                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
+                  financialDetailsResponseJson)
+                IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                  "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+                val res = buildGETMTDClient(path, additionalCookies).futureValue
+
+                val whatYouOweChargesList = {
+                  val documentDetailsForTestTaxYear = financialDetailsModel.documentDetailsFilterByTaxYear(testTaxYear)
+
+                  val financialDetails = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear)
+                  val chargeItems = financialDetails.toChargeItem()
+
+
+                  WhatYouOweChargesList(
+                    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+                    chargesList = chargeItems
+                  )
+                }
+                AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweChargesList, dateService))
+
+                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+
+                res should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, s"whatYouOwe.heading${if(mtdUserRole != MTDIndividual) "-agent" else ""}"),
+                  isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = true)
+                )
+              }
+
+              "has multiple dunningLocks" in {
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+                val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, testDate.minusDays(15).toString, dunningLock = twoDunningLocks)
+                val financialDetailsModel = financialDetailsResponseJson.as[FinancialDetailsModel]
+
+                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
+                  financialDetailsResponseJson)
+                IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                  "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+                val res = buildGETMTDClient(path, additionalCookies).futureValue
+
+                val whatYouOweChargesList = {
+                  val documentDetailsForTestTaxYear = financialDetailsModel.documentDetailsFilterByTaxYear(testTaxYear)
+                  val financialDetails = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear)
+                  val chargeItems = financialDetails.toChargeItem()
+
+                  WhatYouOweChargesList(
+                    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+                    chargesList = chargeItems)
+                }
+                AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweChargesList, dateService))
+
+                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+
+                Then("the result should have a HTTP status of OK (200) and the payments due page")
+                res should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, s"whatYouOwe.heading${if(mtdUserRole != MTDIndividual) "-agent" else ""}"),
+                  isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = true)
+                )
+              }
+
+              "no charge" when {
+                "YearOfMigration does not exists" in {
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, None))
+
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06",
+                    s"$testTaxYear-04-05")(OK, testEmptyFinancialDetailsModelJson)
+
+                  val res = buildGETMTDClient(path, additionalCookies).futureValue
+
+                  AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweNoChargeList, dateService).detail)
+
+                  verifyIncomeSourceDetailsCall(testMtditid)
+
+                  res should have(
+                    httpStatus(OK),
+                    pageTitle(mtdUserRole, s"whatYouOwe.heading${if(mtdUserRole != MTDIndividual) "-agent" else ""}"),
+                    isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
+                    isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
+                    isElementVisibleById(s"payment-button")(expectedValue = false),
+                    isElementVisibleById("no-payments-due")(expectedValue = true),
+                    isElementVisibleById("sa-note-migrated")(expectedValue = true),
+                    isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
+                    isElementVisibleById(s"payments-made-bullets")(expectedValue = false),
+                    isElementVisibleById(s"sa-tax-bill")(expectedValue = false)
+                  )
+                }
+
+                "YearOfMigration exists but not the first year" in {
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino,
+                    s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, testEmptyFinancialDetailsModelJson)
+                  IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                    "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+                  val res = buildGETMTDClient(path, additionalCookies).futureValue
+
+                  AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweNoChargeList, dateService).detail)
+
+                  verifyIncomeSourceDetailsCall(testMtditid)
+                  res should have(
+                    httpStatus(OK),
+                    pageTitle(mtdUserRole, s"whatYouOwe.heading${if(mtdUserRole != MTDIndividual) "-agent" else ""}"),
+                    isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
+                    isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
+                    isElementVisibleById(s"payment-button")(expectedValue = false),
+                    isElementVisibleById("no-payments-due")(expectedValue = true),
+                    isElementVisibleById("sa-note-migrated")(expectedValue = true),
+                    isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
+                    isElementVisibleById(s"payments-made-bullets")(expectedValue = false),
+                    isElementVisibleById(s"sa-tax-bill")(expectedValue = false)
+                  )
+                }
+
+                "YearOfMigration exists and No valid charges exists" in {
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
+                    propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+
+                  val mixedJson = Json.obj(
+                    "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
+                    "documentDetails" -> Json.arr(
+                    ),
+                    "financialDetails" -> Json.arr(
+
+                    )
+                  )
+                  IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                    "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
+
+                  val res = buildGETMTDClient(path, additionalCookies).futureValue
+
+                  verifyIncomeSourceDetailsCall(testMtditid)
+                  IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                  IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+
+                  AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweNoChargeList, dateService).detail)
+
+                  res should have(
+                    httpStatus(OK),
+                    pageTitle(mtdUserRole, s"whatYouOwe.heading${if(mtdUserRole != MTDIndividual) "-agent" else ""}"),
+                    isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
+                    isElementVisibleById(s"payment-button")(expectedValue = false),
+                    isElementVisibleById("no-payments-due")(expectedValue = true),
+                    isElementVisibleById("sa-note-migrated")(expectedValue = true),
+                    isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
+                    isElementVisibleById(s"payments-made-bullets")(expectedValue = false),
+                    isElementVisibleById(s"sa-tax-bill")(expectedValue = false)
+                  )
+
+                }
+              }
+
+              "has ACI and BCD charge" when {
+
+                "YearOfMigration exists with Invalid financial details charges and valid outstanding charges" in {
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
+                    propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+                  val mixedJson = Json.obj(
+                    "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
+                    "documentDetails" -> Json.arr(
+                      documentDetailJson(3400.00, 1000.00, testTaxYear, transactionId = "transId1"),
+                      documentDetailJson(1000.00, 0, testTaxYear, transactionId = "transId2"),
+                      documentDetailJson(1000.00, 3000.00, testTaxYear, transactionId = "transId3")
+                    ),
+                    "financialDetails" -> Json.arr(
+                      financialDetailJson(testTaxYear.toString, transactionId = "transId4"),
+                      financialDetailJson(testTaxYear.toString, transactionId = "transId5"),
+                      financialDetailJson(testTaxYear.toString, transactionId = "transId6")
+                    ))
+
+                  IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                    "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
+
+                  val res = buildGETMTDClient(path, additionalCookies).futureValue
+
+                  AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweOutstandingChargesOnly, dateService).detail)
+
+                  verifyIncomeSourceDetailsCall(testMtditid)
+                  IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                  IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+
+                  res should have(
+                    httpStatus(OK),
+                    pageTitle(mtdUserRole, s"whatYouOwe.heading${if(mtdUserRole != MTDIndividual) "-agent" else ""}"),
+                    isElementVisibleById("balancing-charge-type-0")(expectedValue = true),
+                    isElementVisibleById("balancing-charge-type-1")(expectedValue = true),
+                    isElementVisibleById(s"payment-button")(expectedValue = mtdUserRole == MTDIndividual),
+                    isElementVisibleById(s"no-payments-due")(expectedValue = false),
+                    isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
+                    isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
+                    isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
+                    isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
+                  )
+                }
+              }
+
+              "has empty BCD charge" when {
+                "YearOfMigration exists with valid financial details charges and invalid outstanding charges" in {
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
+                    propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
+                    testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, testDate.plusYears(1).toString))
+                  IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                    "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+                  val res = buildGETMTDClient(path, additionalCookies).futureValue
+
+                  AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweFinancialDetailsEmptyBCDCharge, dateService).detail)
+
+                  verifyIncomeSourceDetailsCall(testMtditid)
+                  IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                  IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+
+                  res should have(
+                    httpStatus(OK),
+                    pageTitle(mtdUserRole, s"whatYouOwe.heading${if(mtdUserRole != MTDIndividual) "-agent" else ""}"),
+                    isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
+                    isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
+                    isElementVisibleById(s"payment-button")(expectedValue = mtdUserRole == MTDIndividual),
+                    isElementVisibleById(s"no-payments-due")(expectedValue = false),
+                    isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
+                    isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
+                    isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
+                    isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
+                  )
+                }
+              }
+
+              "has a Coding out banner" when {
+                "CodingOut FS is enabled" in {
+                  isEnabled(FilterCodedOutPoas)
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
+                    propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
+                    testValidFinancialDetailsModelJsonCodingOut(2000, 2000, testTaxYear.toString,
+                      testDate.toString, 0, (getCurrentTaxYearEnd.getYear - 1).toString, 2000))
+                  IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                    "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+                  val res = buildGETMTDClient(path, additionalCookies).futureValue
+
+                  verifyIncomeSourceDetailsCall(testMtditid)
+                  IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                  IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+
+                  res should have(
+                    httpStatus(OK),
+                    pageTitle(mtdUserRole, s"whatYouOwe.heading${if(mtdUserRole != MTDIndividual) "-agent" else ""}"),
+                    isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
+                    isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
+                    isElementVisibleById(s"payment-button")(expectedValue = mtdUserRole == MTDIndividual),
+                    isElementVisibleById(s"no-payments-due")(expectedValue = false),
+                    isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
+                    isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
+                    isElementVisibleById("coding-out-notice")(expectedValue = true),
+                    isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
+                    isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
+                  )
+                }
+              }
+
+              "has a multiple charges ~ TxM extension" in {
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
+                  testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, isClass2Nic = true))
+                IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                  "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
+
+                val res = buildGETMTDClient(path, additionalCookies).futureValue
+
+                AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweDataWithDataDueInSomeDays, dateService).detail)
+
+                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+
+                res should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, s"whatYouOwe.heading${if(mtdUserRole != MTDIndividual) "-agent" else ""}"),
+                  isElementVisibleById("balancing-charge-type-0")(expectedValue = true),
+                  isElementVisibleById("balancing-charge-type-1")(expectedValue = true),
+                  isElementVisibleById("due-0")(expectedValue = true),
+                  isElementVisibleById("due-1")(expectedValue = true),
+                  isElementVisibleById("payment-button")(expectedValue = mtdUserRole == MTDIndividual),
+                  isElementVisibleById("sa-note-migrated")(expectedValue = true),
+                  isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
+                  isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
+                  isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
+                )
+              }
+
+              "has MFA Debits on the Payment Tab" in {
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
+                  testValidFinancialDetailsModelMFADebitsJson(2000, 2000, testTaxYear.toString, testDate.plusYears(1).toString))
+                IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                  "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+                val res = buildGETMTDClient(path, additionalCookies).futureValue
+
+                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+                Then("The expected result is returned")
+                res should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, s"whatYouOwe.heading${if(mtdUserRole != MTDIndividual) "-agent" else ""}"),
+                  elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment 1"),
+                  elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment 2"),
+                  elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(3)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment 3"),
+                  elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(4)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment 4"))
+              }
+
+              "has a POA section" when {
+                "AdjustPaymentsOnAccount FS is enabled and a user" that {
+                  "has valid POAs" in {
+                    enable(AdjustPaymentsOnAccount)
+                    stubAuthorised(mtdUserRole)
+                    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYearPoa - 1, Some(testTaxYearPoa.toString)))
+                    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 1}-04-06", s"$testTaxYearPoa-04-05")(OK,
+                      testValidFinancialDetailsModelJson(2000, 2000, (testTaxYearPoa - 1).toString, testDate.toString))
+                    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 2}-04-06", s"${testTaxYearPoa - 1}-04-05")(OK,
+                      testValidFinancialDetailsModelJson(2000, 2000, (testTaxYearPoa - 1).toString, testDate.toString))
+
+                    val res = buildGETMTDClient(path, additionalCookies).futureValue
+
+                    res should have(
+                      httpStatus(OK),
+                      pageTitle(mtdUserRole, s"whatYouOwe.heading${if(mtdUserRole != MTDIndividual) "-agent" else ""}"),
+                      isElementVisibleById("adjust-poa-link")(expectedValue = true),
+                      isElementVisibleById("adjust-poa-content")(expectedValue = true))
+                  }
+
+                  "has valid POAs that have been paid in full" in {
+                    enable(AdjustPaymentsOnAccount)
+                    stubAuthorised(mtdUserRole)
+                    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYearPoa - 1, Some(testTaxYearPoa.toString)))
+                    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 1}-04-06", s"$testTaxYearPoa-04-05")(OK,
+                      testValidFinancialDetailsModelJson(2000, 0, (testTaxYearPoa - 1).toString, testDate.toString))
+                    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 2}-04-06", s"${testTaxYearPoa - 1}-04-05")(OK,
+                      testValidFinancialDetailsModelJson(2000, 0, (testTaxYearPoa - 1).toString, testDate.toString))
+
+                    val res = buildGETMTDClient(path, additionalCookies).futureValue
+
+                    res should have(
+                      httpStatus(OK),
+                      pageTitle(mtdUserRole, s"whatYouOwe.heading${if(mtdUserRole != MTDIndividual) "-agent" else ""}"),
+                      isElementVisibleById("adjust-poa-link")(expectedValue = true),
+                      isElementVisibleById("adjust-paid-poa-content")(expectedValue = true))
+                  }
+                }
+              }
+              "not show POA section" when {
+                "AdjustPaymentsOnAccount FS is enabled and a user" that {
+                  "does not have valid POAs" in {
+                    enable(AdjustPaymentsOnAccount)
+                    stubAuthorised(mtdUserRole)
+                    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYearPoa - 1, Some(testTaxYearPoa.toString)))
+                    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 1}-04-06", s"$testTaxYearPoa-04-05")(OK,
+                      testEmptyFinancialDetailsModelJson)
+                    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 2}-04-06", s"${testTaxYearPoa - 1}-04-05")(OK,
+                      testEmptyFinancialDetailsModelJson)
+
+                    val res = buildGETMTDClient(path, additionalCookies).futureValue
+
+                    res should have(
+                      httpStatus(OK),
+                      pageTitle(mtdUserRole, s"whatYouOwe.heading${if(mtdUserRole != MTDIndividual) "-agent" else ""}"),
+                      isElementVisibleById("adjust-poa-link")(expectedValue = false))
+                  }
+                }
+
+                "AdjustPaymentsOnAccount FS is disabled and a user" that {
+                  "has valid POAs" in {
+                    disable(AdjustPaymentsOnAccount)
+                    stubAuthorised(mtdUserRole)
+                    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYearPoa - 1, Some(testTaxYearPoa.toString)))
+                    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 1}-04-06", s"$testTaxYearPoa-04-05")(OK,
+                      testValidFinancialDetailsModelJson(2000, 2000, (testTaxYearPoa - 1).toString, testDate.toString))
+                    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 2}-04-06", s"${testTaxYearPoa - 1}-04-05")(OK,
+                      testValidFinancialDetailsModelJson(2000, 2000, (testTaxYearPoa - 1).toString, testDate.toString))
+
+                    val res = buildGETMTDClient(path, additionalCookies).futureValue
+
+                    res should have(
+                      httpStatus(OK),
+                      pageTitle(mtdUserRole, s"whatYouOwe.heading${if(mtdUserRole != MTDIndividual) "-agent" else ""}"),
+                      isElementVisibleById("adjust-poa-link")(expectedValue = false))
+                  }
+                }
+              }
+
+              "has a money in your account section" when {
+                "CreditsRefundsRepay FS is enabled and a user" that {
+                  "has available credits" in {
+                    enable(CreditsRefundsRepay)
+                    stubAuthorised(mtdUserRole)
+                    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+                    val mixedJson = Json.obj(
+                      "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00, "availableCredit" -> 300.00),
+                      "documentDetails" -> Json.arr(
+                        documentDetailJson(3400.00, 1000.00, testTaxYear, "ITSA- POA 1", transactionId = "transId1"),
+                        documentDetailJson(1000.00, 100.00, testTaxYear, "ITSA- POA 1", transactionId = "transId2"),
+                        documentDetailJson(1000.00, 0.00, testTaxYear, "ITSA - POA 2", transactionId = "transId3")
+                      ),
+                      "financialDetails" -> Json.arr(
+                        financialDetailJson(testTaxYear.toString, transactionId = "transId1"),
+                        financialDetailJson(testTaxYear.toString, "SA Payment on Account 1", "4920", testDate.plusDays(1).toString, "transId2"),
+                        financialDetailJson(testTaxYear.toString, "SA Payment on Account 2", "4930", testDate.minusDays(1).toString, "transId3")
+                      )
+                    )
+
+                    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
+                    IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                      "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
+
+                    val res = buildGETMTDClient(path, additionalCookies).futureValue
+                    res should have(
+                      httpStatus(OK),
+                      pageTitle(mtdUserRole, s"whatYouOwe.heading${if(mtdUserRole != MTDIndividual) "-agent" else ""}"),
+                      isElementVisibleById(s"money-in-your-account")(expectedValue = true),
+                      elementTextBySelector("#money-in-your-account")(
+                        messagesAPI(s"whatYouOwe.moneyOnAccount${if(mtdUserRole != MTDIndividual) "-agent" else ""}") + " " +
+                          messagesAPI("whatYouOwe.moneyOnAccount-1") + " £300.00" + " " +
+                          messagesAPI(s"whatYouOwe.moneyOnAccount${if(mtdUserRole != MTDIndividual) "-agent" else ""}-2") + " " +
+                          messagesAPI("whatYouOwe.moneyOnAccount-3") + "."
+                      )
+                    )
+                  }
+                }
+              }
+            }
+
+            "render the internal server error page" when {
+              "both connectors return internal server error" in {
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
+                  propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino,
+                  s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(INTERNAL_SERVER_ERROR, testFinancialDetailsErrorModelJson())
+                IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                  "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(INTERNAL_SERVER_ERROR, testOutstandingChargesErrorModelJson)
+
+                val res = buildGETMTDClient(path, additionalCookies).futureValue
+
+                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+
+                Then("the result should have a HTTP status of INTERNAL_SERVER_ERROR(500)")
+                res should have(
+                  httpStatus(INTERNAL_SERVER_ERROR)
+                )
+              }
+
+              "financial connector return internal server error" in {
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
+                  propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino,
+                  s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(INTERNAL_SERVER_ERROR, testFinancialDetailsErrorModelJson())
+                IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                  "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
+
+                val res = buildGETMTDClient(path, additionalCookies).futureValue
+
+                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+
+                Then("the result should have a HTTP status of INTERNAL_SERVER_ERROR(500)")
+                res should have(
+                  httpStatus(INTERNAL_SERVER_ERROR)
+                )
+              }
+
+              "Outstanding charges connector return internal server error" in {
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
+                  propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+
+                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
+                  testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, testDate.toString))
+                IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                  "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(INTERNAL_SERVER_ERROR, testOutstandingChargesErrorModelJson)
+
+                val res = buildGETMTDClient(path, additionalCookies).futureValue
+
+                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+
+                res should have(
+                  httpStatus(INTERNAL_SERVER_ERROR)
+                )
+              }
+            }
           }
         }
-        "not show" when {
-          "The user does not have valid POAs but the FS is Enabled" in {
-            enable(AdjustPaymentsOnAccount)
-
-            Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYearPoa - 1, Some(testTaxYearPoa.toString)))
-
-            And("I wiremock stub financial details for multiple years with NO POAs")
-            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 1}-04-06", s"$testTaxYearPoa-04-05")(OK,
-              testEmptyFinancialDetailsModelJson)
-            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 2}-04-06", s"${testTaxYearPoa - 1}-04-05")(OK,
-              testEmptyFinancialDetailsModelJson)
-
-            When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
-            val res = IncomeTaxViewChangeFrontend.getPaymentsDue
-
-            res should have(
-              httpStatus(OK),
-              pageTitleIndividual("whatYouOwe.heading"),
-              isElementVisibleById("adjust-poa-link")(expectedValue = false))
-          }
-          "The user has valid POAs but the FS is Disabled" in {
-            disable(AdjustPaymentsOnAccount)
-
-            Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYearPoa - 1, Some(testTaxYearPoa.toString)))
-
-            And("I wiremock stub financial details for multiple years with POAs")
-            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 1}-04-06", s"$testTaxYearPoa-04-05")(OK,
-              testValidFinancialDetailsModelJson(2000, 2000, (testTaxYearPoa - 1).toString, testDate.toString))
-            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 2}-04-06", s"${testTaxYearPoa - 1}-04-05")(OK,
-              testValidFinancialDetailsModelJson(2000, 2000, (testTaxYearPoa - 1).toString, testDate.toString))
-
-            When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
-            val res = IncomeTaxViewChangeFrontend.getPaymentsDue
-
-            res should have(
-              httpStatus(OK),
-              pageTitleIndividual("whatYouOwe.heading"),
-              isElementVisibleById("adjust-poa-link")(expectedValue = false))
-          }
-        }
+        testAuthFailures(path, mtdUserRole)
       }
     }
-
-    "render the money in your account section when balance details has available credits" in {
-      enable(CreditsRefundsRepay)
-      Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
-
-
-      And("I wiremock stub a single financial details response")
-      val mixedJson = Json.obj(
-        "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00, "availableCredit" -> 300.00),
-        "documentDetails" -> Json.arr(
-          documentDetailJson(3400.00, 1000.00, testTaxYear, "ITSA- POA 1", transactionId = "transId1"),
-          documentDetailJson(1000.00, 100.00, testTaxYear, "ITSA- POA 1", transactionId = "transId2"),
-          documentDetailJson(1000.00, 0.00, testTaxYear, "ITSA - POA 2", transactionId = "transId3")
-        ),
-        "financialDetails" -> Json.arr(
-          financialDetailJson(testTaxYear.toString, transactionId = "transId1"),
-          financialDetailJson(testTaxYear.toString, "SA Payment on Account 1", "4920", testDate.plusDays(1).toString, "transId2"),
-          financialDetailJson(testTaxYear.toString, "SA Payment on Account 2", "4930", testDate.minusDays(1).toString, "transId3")
-        )
-      )
-
-      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
-      IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-        "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
-
-
-      When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
-      val res = IncomeTaxViewChangeFrontend.getPaymentsDue
-
-      Then("the result should have a HTTP status of OK (200) and the payments due page")
-      res should have(
-        httpStatus(OK),
-        pageTitleIndividual("whatYouOwe.heading"),
-        isElementVisibleById(s"money-in-your-account")(expectedValue = true),
-        elementTextBySelector("#money-in-your-account")(
-          messagesAPI("whatYouOwe.moneyOnAccount") + " " +
-            messagesAPI("whatYouOwe.moneyOnAccount-1") + " £300.00" + " " +
-            messagesAPI("whatYouOwe.moneyOnAccount-2") + " " +
-            messagesAPI("whatYouOwe.moneyOnAccount-3") + "."
-        )
-      )
-    }
-
   }
 }
