@@ -20,7 +20,7 @@ import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import mocks.repositories.MockUIJourneySessionDataRepository
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.{reset, times, verify, when}
 import testUtils.TestSupport
 
 import java.time.LocalDate
@@ -48,7 +48,7 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
           when(mockFrontendAppConfig.encryptionIsEnabled).thenReturn(true)
           mockRepositoryGetSensitive(Some(sessionData))
           TestSessionService.getMongo(IncomeSourceJourneyType(Add, SelfEmployment))(headerCarrier, ec).futureValue shouldBe Right(Some(sessionData))
-          reset(mockFrontendAppConfig)
+//          verify(mockSensitiveUIJourneySessionDataRepository.get(), times(1))
         }
 
       }

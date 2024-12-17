@@ -40,7 +40,8 @@ trait MockUIJourneySessionDataRepository extends UnitSpec with BeforeAndAfterEac
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockUIJourneySessionDataRepository)
+    reset(mockUIJourneySessionDataRepository, mockSensitiveUIJourneySessionDataRepository)
+    reset(mockFrontendAppConfig)
   }
 
   def mockRepositoryGet(response: Option[UIJourneySessionData]): Unit = {
