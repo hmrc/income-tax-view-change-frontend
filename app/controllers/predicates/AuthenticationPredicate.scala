@@ -74,13 +74,13 @@ class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
         } else f(buildMtdUserOptionNino(enrolments, userName, credentials, affinityGroup))
     } recover {
       case _: InsufficientEnrolments =>
-        Logger("application").info("No HMRC-MTD-IT Enrolment and/or No NINO.")
+        Logger("application").error("No HMRC-MTD-IT Enrolment and/or No NINO.")
         Redirect(controllers.errors.routes.NotEnrolledController.show)
       case _: BearerTokenExpired =>
-        Logger("application").info("Bearer Token Timed Out.")
+        Logger("application").warn("Bearer Token Timed Out.")
         Redirect(controllers.timeout.routes.SessionTimeoutController.timeout)
       case _: AuthorisationException =>
-        Logger("application").info("Unauthorised request. Redirect to Sign In.")
+        Logger("application").error("Unauthorised request. Redirect to Sign In.")
         Redirect(controllers.routes.SignInController.signIn)
       case s =>
         Logger("application").error(s"Unexpected Error Caught. Show ISE.\n$s\n", s)
