@@ -60,7 +60,8 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
   }
 
   def getNextUpdates(backUrl: Call, isAgent: Boolean, errorHandler: ShowInternalServerError, origin: Option[String] = None)
-                    (implicit user: MtdItUser[_]): Future[Result] =
+                    (implicit user: MtdItUser[_]): Future[Result] = {
+
     hasAnyIncomeSource {
       for {
         nextUpdates <- nextUpdatesService.getOpenObligations().map {
@@ -77,21 +78,22 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
             val optOutSetup = {
               for {
                 (checks, optOutOneYearViewModel) <- optOutService.nextUpdatesPageOptOutViewModels()
-              } yield Ok(nextUpdatesOptOutView(viewModel, optOutOneYearViewModel, checks, backUrl.url, isAgent, origin))
+              } yield Ok(nextUpdatesOptOutView(viewModel, optOutOneYearViewModel, checks, backUrl.url, isAgent, user.isSupportingAgent, origin))
             }.recoverWith {
               case ex =>
                 Logger("application").error(s"Failed to retrieve quarterly reporting content checks: ${ex.getMessage}")
-                Future.successful(Ok(nextUpdatesView(viewModel, backUrl.url, isAgent, origin))) // Render view even on failure
+                Future.successful(Ok(nextUpdatesView(viewModel, backUrl.url, isAgent, user.isSupportingAgent, origin))) // Render view even on failure
             }
 
             optOutSetup
 
           case (_, false) =>
             auditNextUpdates(user, isAgent, origin)
-            Future.successful(Ok(nextUpdatesView(viewModel, backUrl.url, isAgent, origin)))
+            Future.successful(Ok(nextUpdatesView(viewModel, backUrl.url, isAgent, user.isSupportingAgent, origin)))
         }
       } yield result
     }(user, origin)
+  }
 
 
   def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async { implicit user =>

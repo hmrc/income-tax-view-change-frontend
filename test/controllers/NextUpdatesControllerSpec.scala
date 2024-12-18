@@ -333,7 +333,7 @@ class NextUpdatesControllerSpec extends MockAuthActions with MockIncomeSourceDet
           mockSingleBusinessIncomeSource()
           mockViewModel
           mockObligations
-          mockNextUpdates(nextUpdatesViewModel, controllers.routes.HomeController.showAgent.url, isAgent = true)(HtmlFormat.empty)
+          mockNextUpdates(nextUpdatesViewModel, controllers.routes.HomeController.showAgent.url, isAgent = true, isSupportingAgent)(HtmlFormat.empty)
 
           val result: Future[Result] = testNextUpdatesController.showAgent()(
             fakeRequestConfirmedClient(isSupportingAgent = isSupportingAgent)
