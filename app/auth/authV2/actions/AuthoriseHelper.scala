@@ -38,19 +38,19 @@ trait AuthoriseHelper extends AuthRedirects with FeatureSwitching {
 
   def logAndRedirect[A](requireAgent: Boolean): PartialFunction[Throwable, Future[Either[Result, MtdItUserOptionNino[A]]]] = {
     case _: BearerTokenExpired =>
-      logger.debug("Bearer Token Timed Out.")
+      logger.warn("Bearer Token Timed Out.")
       Future.successful(Left(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout)))
     case InsufficientEnrolments(msg) if msg.contains("HMRC-MTD-IT") && requireAgent =>
-      logger.debug(s"missing delegated enrolment. Redirect to agent error page.")
+      logger.error(s"missing delegated enrolment. Redirect to agent error page.")
       Future.successful(Left(Redirect(controllers.agent.routes.ClientRelationshipFailureController.show)))
     case _: InsufficientEnrolments if requireAgent =>
-      logger.debug(s"missing agent reference. Redirect to agent error page.")
+      logger.error(s"missing agent reference. Redirect to agent error page.")
       Future.successful(Left(Redirect(controllers.agent.errors.routes.AgentErrorController.show)))
     case insufficientEnrolments: InsufficientEnrolments =>
-      logger.debug(s"Insufficient enrolments: ${insufficientEnrolments.msg}")
+      logger.error(s"Insufficient enrolments: ${insufficientEnrolments.msg}")
       Future.successful(Left(Redirect(controllers.errors.routes.NotEnrolledController.show)))
     case authorisationException: AuthorisationException =>
-      logger.debug(s"Unauthorised request: ${authorisationException.reason}. Redirect to Sign In.")
+      logger.error(s"Unauthorised request: ${authorisationException.reason}. Redirect to Sign In.")
       Future.successful(Left(Redirect(controllers.routes.SignInController.signIn)))
     // No catch all block at end - bubble up to global error handler
     // See investigation: https://github.com/hmrc/income-tax-view-change-frontend/pull/2432
@@ -60,14 +60,14 @@ trait AuthoriseHelper extends AuthRedirects with FeatureSwitching {
   def redirectIfAgent[A]()(
     implicit request: Request[A]): PartialFunction[AuthRetrievals, Future[Either[Result, MtdItUserOptionNino[A]]]] = {
     case _ ~ _ ~ _ ~ Some(Agent) ~ _ =>
-      logger.debug(s"Agent on endpoint for individuals")
+      logger.error(s"Agent on endpoint for individuals")
       Future.successful(Left(Redirect(controllers.agent.routes.EnterClientsUTRController.show)))
   }
 
   def redirectIfNotAgent[A]()(
     implicit request: Request[A]): PartialFunction[AuthRetrievals, Future[Either[Result, MtdItUserOptionNino[A]]]] = {
     case _ ~ _ ~ _ ~ Some(ag@(Organisation | Individual)) ~ _ =>
-      logger.debug(s"$ag on endpoint for agents")
+      logger.error(s"$ag on endpoint for agents")
       Future.successful(Left(Redirect(controllers.routes.HomeController.show())))
   }
 }
