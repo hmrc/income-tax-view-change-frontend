@@ -18,6 +18,7 @@ package auth.authV2.actions
 
 import auth.FrontendAuthorisedFunctions
 import auth.authV2.AuthorisedUser
+import com.google.inject.Singleton
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import play.api.mvc.Results.Redirect
@@ -35,6 +36,7 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class AuthoriseAndRetrieveAgent @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
                                           val appConfig: FrontendAppConfig,
                                           override val config: Configuration,

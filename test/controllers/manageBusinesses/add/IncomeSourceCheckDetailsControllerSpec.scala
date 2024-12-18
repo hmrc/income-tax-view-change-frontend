@@ -44,13 +44,13 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
   import testConstants.IncomeSourceCheckDetailsConstants._
   lazy val mockBusinessDetailsService: CreateBusinessDetailsService = mock(classOf[CreateBusinessDetailsService])
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[CreateBusinessDetailsService].toInstance(mockBusinessDetailsService)
     ).build()
 
-  val testCheckDetailsController = fakeApplication().injector.instanceOf[IncomeSourceCheckDetailsController]
+  val testCheckDetailsController = app.injector.instanceOf[IncomeSourceCheckDetailsController]
 
   def getHeading(sourceType: IncomeSourceType): String = {
     sourceType match {

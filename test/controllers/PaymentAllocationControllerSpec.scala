@@ -37,12 +37,12 @@ import scala.concurrent.Future
 class PaymentAllocationControllerSpec extends MockAuthActions
   with ImplicitDateFormatter with MockPaymentAllocationsService {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[PaymentAllocationsService].toInstance(mockPaymentAllocationsService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[PaymentAllocationsController]
+  val testController = app.injector.instanceOf[PaymentAllocationsController]
 
   val singleTestPaymentAllocationCharge: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
     List(documentDetail),

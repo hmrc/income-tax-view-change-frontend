@@ -28,12 +28,12 @@ import services.SessionService
 
 class IncomeSourceCeasedBackErrorControllerSpec extends MockAuthActions with MockSessionService {
 
-  override def fakeApplication() = applicationBuilderWithAuthBindings()
+  override lazy val app = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[IncomeSourceCeasedBackErrorController]
+  val testController = app.injector.instanceOf[IncomeSourceCeasedBackErrorController]
 
   mtdAllRoles.foreach { mtdRole =>
     List(UkProperty, ForeignProperty).foreach { incomeSourceType =>

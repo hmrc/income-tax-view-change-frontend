@@ -36,12 +36,12 @@ import services.SessionService
 
 class AddPropertyControllerSpec extends MockAuthActions with MockSessionService {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[AddPropertyController]
+  val testController = app.injector.instanceOf[AddPropertyController]
 
 
   def getRequest(isAgent: Boolean): FakeRequest[AnyContentAsEmpty.type] = {

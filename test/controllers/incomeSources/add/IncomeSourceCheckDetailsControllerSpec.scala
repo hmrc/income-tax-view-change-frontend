@@ -46,13 +46,13 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
 
   val accruals: String = messages("incomeSources.add.accountingMethod.accruals")
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[CreateBusinessDetailsService].toInstance(mockBusinessDetailsService)
     ).build()
 
-  val testCheckDetailsController = fakeApplication().injector.instanceOf[IncomeSourceCheckDetailsController]
+  val testCheckDetailsController = app.injector.instanceOf[IncomeSourceCheckDetailsController]
 
   def getHeading(sourceType: IncomeSourceType): String = {
     sourceType match {

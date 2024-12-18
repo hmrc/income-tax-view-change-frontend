@@ -29,7 +29,7 @@ import scala.concurrent.Future
 
 trait MockITSAStatusUpdateConnector extends UnitSpec with BeforeAndAfterEach {
 
-  val mockOptOutConnector: ITSAStatusUpdateConnector = mock(classOf[ITSAStatusUpdateConnector])
+  lazy val mockOptOutConnector: ITSAStatusUpdateConnector = mock(classOf[ITSAStatusUpdateConnector])
 
   override def beforeEach(): Unit = {
     super.beforeEach()

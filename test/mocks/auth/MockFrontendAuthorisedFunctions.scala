@@ -32,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 trait MockFrontendAuthorisedFunctions extends BeforeAndAfterEach {
   self: Suite =>
 
-  val mockAuthService: FrontendAuthorisedFunctions = mock(classOf[FrontendAuthorisedFunctions])
+  lazy val mockAuthService: FrontendAuthorisedFunctions = mock(classOf[FrontendAuthorisedFunctions])
   lazy val isAgentEnrolment: Predicate = Enrolment("HMRC-AS-AGENT") and AffinityGroup.Agent
 
 

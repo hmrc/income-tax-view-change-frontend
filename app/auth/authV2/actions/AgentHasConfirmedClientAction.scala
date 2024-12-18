@@ -17,6 +17,7 @@
 package auth.authV2.actions
 
 import auth.MtdItUserOptionNino
+import com.google.inject.Singleton
 import controllers.agent.routes
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Result}
@@ -24,6 +25,7 @@ import play.api.mvc.{ActionRefiner, Result}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class AgentHasConfirmedClientAction @Inject()(implicit val executionContext: ExecutionContext)
   extends ActionRefiner[MtdItUserOptionNino, MtdItUserOptionNino] {
 

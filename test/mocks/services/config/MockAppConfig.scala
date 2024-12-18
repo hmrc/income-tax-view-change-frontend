@@ -23,7 +23,7 @@ import testUtils.UnitSpec
 
 trait MockAppConfig extends UnitSpec with BeforeAndAfterEach {
 
-  val mockAppConfig: FrontendAppConfig = mock(classOf[FrontendAppConfig])
+  lazy val mockAppConfig: FrontendAppConfig = mock(classOf[FrontendAppConfig])
 
   override def beforeEach(): Unit = {
     super.beforeEach()

@@ -42,12 +42,12 @@ class ViewAllCeasedBusinessesControllerSpec extends MockAuthActions
   with ImplicitDateFormatter
   with MockSessionService {
 
-  override def fakeApplication() = applicationBuilderWithAuthBindings()
+  override lazy val app = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[ViewAllCeasedBusinessesController]
+  val testController = app.injector.instanceOf[ViewAllCeasedBusinessesController]
 
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual

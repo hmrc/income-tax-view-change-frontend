@@ -41,13 +41,13 @@ class ChargeSummaryControllerTest extends MockAuthActions
   lazy val documentDetail: DocumentDetail = mock(classOf[DocumentDetail])
 
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[DocumentDetail].toInstance(documentDetail),
       api.inject.bind[DocumentDetailWithDueDate].toInstance(documentDetailWithDueDate)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[ChargeSummaryController]
+  val testController = app.injector.instanceOf[ChargeSummaryController]
 
   val interestEndDate: LocalDate = LocalDate.of(2024, 11, 5)
 

@@ -31,12 +31,12 @@ class TaxDueSummaryControllerSpec extends MockAuthActions with MockCalculationSe
 
   val testYear: Int = 2020
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[CalculationService].toInstance(mockCalculationService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[TaxDueSummaryController]
+  val testController = app.injector.instanceOf[TaxDueSummaryController]
 
   mtdAllRoles.foreach { case mtdUserRole =>
     val isAgent = mtdUserRole != MTDIndividual

@@ -35,12 +35,12 @@ import scala.concurrent.Future
 class ConfirmedOptOutControllerSpec extends MockAuthActions
   with MockOptOutService {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[OptOutService].toInstance(mockOptOutService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[ConfirmedOptOutController]
+  val testController = app.injector.instanceOf[ConfirmedOptOutController]
 
 
   val taxYear = TaxYear.forYearEnd(2024)

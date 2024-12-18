@@ -31,12 +31,12 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAn
 class ChooseYearControllerSpec extends MockAuthActions
   with MockOptInService {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[OptInService].toInstance(mockOptInService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[ChooseYearController]
+  val testController = app.injector.instanceOf[ChooseYearController]
 
   val endTaxYear = 2023
   val taxYear2023 = TaxYear.forYearEnd(endTaxYear)

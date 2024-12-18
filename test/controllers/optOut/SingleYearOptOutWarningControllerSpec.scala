@@ -37,12 +37,12 @@ import scala.concurrent.Future
 class
 SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOptOutService {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[OptOutService].toInstance(mockOptOutService)
     ).build()
 
-  val testSingleYearOptOutWarningController = fakeApplication().injector.instanceOf[SingleYearOptOutWarningController]
+  val testSingleYearOptOutWarningController = app.injector.instanceOf[SingleYearOptOutWarningController]
 
   mtdAllRoles.foreach{ case mtdUserRole =>
 

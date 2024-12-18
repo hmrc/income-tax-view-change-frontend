@@ -35,12 +35,12 @@ import java.time.LocalDate
 class RefundToTaxPayerControllerSpec extends MockAuthActions
   with MockRepaymentHistoryConnector {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[RepaymentHistoryConnector].toInstance(mockRepaymentHistoryConnector)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[RefundToTaxPayerController]
+  val testController = app.injector.instanceOf[RefundToTaxPayerController]
 
   val repaymentRequestNumber: String = "023942042349"
   val testNino: String = "AB123456C"

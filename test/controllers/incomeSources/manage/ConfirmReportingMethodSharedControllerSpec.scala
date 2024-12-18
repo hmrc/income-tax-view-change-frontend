@@ -44,14 +44,14 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
 
   lazy val mockUpdateIncomeSourceservice = mock(classOf[UpdateIncomeSourceService])
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[DateService].toInstance(dateService),
       api.inject.bind[UpdateIncomeSourceService].toInstance(mockUpdateIncomeSourceservice)
     ).build()
 
-  val testConfirmReportingMethodSharedController = fakeApplication().injector.instanceOf[ConfirmReportingMethodSharedController]
+  val testConfirmReportingMethodSharedController = app.injector.instanceOf[ConfirmReportingMethodSharedController]
 
   val individual: Boolean = true
   val agent: Boolean = false

@@ -48,14 +48,14 @@ class ManageObligationsControllerSpec extends MockAuthActions
 
   lazy val mockIncomeSourcesUtils: IncomeSourcesUtils = mock(classOf[IncomeSourcesUtils])
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[NextUpdatesService].toInstance(mockNextUpdatesService),
       api.inject.bind[IncomeSourcesUtils].toInstance(mockIncomeSourcesUtils)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[ManageObligationsController]
+  val testController = app.injector.instanceOf[ManageObligationsController]
 
 
   private def setMongoSessionData(incomeSourceId: String, reportingMethod: String, taxYear: String, incomeSourceType: IncomeSourceType): Unit = {

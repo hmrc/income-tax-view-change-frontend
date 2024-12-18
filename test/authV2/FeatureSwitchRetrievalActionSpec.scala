@@ -35,11 +35,11 @@ import scala.concurrent.Future
 class FeatureSwitchRetrievalActionSpec extends AuthActionsSpecHelper {
 
   override def afterEach(): Unit = {
-    Play.stop(fakeApplication())
+    Play.stop(app)
     super.afterEach()
   }
 
-  override def fakeApplication(): Application = {
+  override lazy val app: Application = {
     new GuiceApplicationBuilder()
       .overrides(
         api.inject.bind[FeatureSwitchService].toInstance(mockFeatureSwitchService)
@@ -56,7 +56,7 @@ class FeatureSwitchRetrievalActionSpec extends AuthActionsSpecHelper {
 
   def defaultAsync: MtdItUser[_] => Future[Result] = (_) => Future.successful(Results.Ok("Successful"))
 
-  lazy val action = fakeApplication().injector.instanceOf[FeatureSwitchRetrievalAction]
+  lazy val action = app.injector.instanceOf[FeatureSwitchRetrievalAction]
 
 
   "refine" when {

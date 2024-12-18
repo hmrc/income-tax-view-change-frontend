@@ -44,14 +44,14 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
   lazy val whatYouOweService: WhatYouOweService = mock(classOf[WhatYouOweService])
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[WhatYouOweService].toInstance(whatYouOweService),
       api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService),
       api.inject.bind[DateService].toInstance(dateService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[WhatYouOweController]
+  val testController = app.injector.instanceOf[WhatYouOweController]
 
   def testFinancialDetail(taxYear: Int): FinancialDetailsModel = financialDetailsModel(taxYear)
 

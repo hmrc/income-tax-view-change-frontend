@@ -21,7 +21,7 @@ import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import forms.incomeSources.add.IncomeSourceReportingMethodForm._
 import mocks.auth.MockAuthActions
-import mocks.services.MockSessionService
+import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockSessionService}
 import models.admin.IncomeSourcesFs
 import models.incomeSourceDetails.AddIncomeSourceData
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
@@ -41,14 +41,15 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUI
 
 import scala.concurrent.Future
 
-class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with MockSessionService {
+class IncomeSourceReportingMethodControllerSpec extends MockAuthActions
+  with MockSessionService
+  with MockCalculationListService
+  with MockITSAStatusService
+  with MockDateService {
 
-  lazy val mockITSAStatusService: ITSAStatusService = mock(classOf[ITSAStatusService])
   lazy val mockUpdateIncomeSourceService: UpdateIncomeSourceService = mock(classOf[UpdateIncomeSourceService])
-  lazy val mockCalculationListService: CalculationListService = mock(classOf[CalculationListService])
-  lazy val mockDateService: DateService = mock(classOf[DateService])
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[ITSAStatusService].toInstance(mockITSAStatusService),
@@ -57,7 +58,7 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with Moc
       api.inject.bind[DateService].toInstance(mockDateService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[IncomeSourceReportingMethodController]
+  val testController = app.injector.instanceOf[IncomeSourceReportingMethodController]
 
   val TAX_YEAR_2024 = 2024
   val TAX_YEAR_2023 = 2023

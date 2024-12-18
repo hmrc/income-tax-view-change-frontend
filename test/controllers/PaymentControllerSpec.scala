@@ -38,12 +38,12 @@ class PaymentControllerSpec extends MockAuthActions {
 
   lazy val mockPayApiConnector: PayApiConnector = mock(classOf[PayApiConnector])
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[PayApiConnector].toInstance(mockPayApiConnector)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[PaymentController]
+  val testController = app.injector.instanceOf[PaymentController]
 
   val paymentJourneyModel = PaymentJourneyModel("id", "redirect-url")
 

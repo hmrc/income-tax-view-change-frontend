@@ -22,10 +22,10 @@ import models.incomeSourceDetails.viewmodels.{CeasePropertyDetailsViewModel, Pro
 import models.incomeSourceDetails.{LatencyDetails, PropertyDetailsModel}
 import models.obligations.{SingleObligationModel, StatusFulfilled}
 import testConstants.BaseTestConstants.{testPropertyIncomeId, testPropertyIncomeId2, testSelfEmploymentId, testSelfEmploymentId2}
-import testConstants.BusinessDetailsTestConstants.{quarterTypeElectionCalendar, quarterTypeElectionStandard, testLatencyDetails4, testLatencyDetails5, testStartDate3}
+import testConstants.BusinessDetailsTestConstants.{quarterTypeElectionCalendar, quarterTypeElectionStandard, testLatencyDetails4, testLatencyDetails5}
 import testConstants.NextUpdatesTestConstants.fakeNextUpdatesModel
 
-import java.time.{LocalDate, Month}
+import java.time.LocalDate
 
 object PropertyDetailsTestConstants {
 
@@ -120,7 +120,7 @@ object PropertyDetailsTestConstants {
   val uKPropertyDetails2 = PropertyDetailsModel(
     incomeSourceId = testPropertyIncomeId2,
     accountingPeriod = Some(testPropertyAccountingPeriod),
-    firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
+    firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(ukIncomeType),
     tradingStartDate = Some(testStartDate),
     cessation = None,

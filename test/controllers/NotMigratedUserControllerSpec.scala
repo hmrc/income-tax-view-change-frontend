@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package controllers
 import enums.{MTDIndividual, MTDSupportingAgent}
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
-import org.mockito.ArgumentMatchers.isA
 import org.mockito.Mockito.mock
 import play.api
 import play.api.Application
@@ -32,12 +31,12 @@ class NotMigratedUserControllerSpec extends MockAuthActions
 
   lazy val mockPaymentHistoryService: PaymentHistoryService = mock(classOf[PaymentHistoryService])
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[PaymentHistoryService].toInstance(mockPaymentHistoryService),
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[NotMigratedUserController]
+  val testController = app.injector.instanceOf[NotMigratedUserController]
 
   mtdAllRoles.foreach{ case mtdUserRole =>
     val isAgent = mtdUserRole != MTDIndividual
@@ -61,7 +60,7 @@ class NotMigratedUserControllerSpec extends MockAuthActions
           "render the error page" when {
             "the user has already migrated to ETMP" in {
               setupMockSuccess(mtdUserRole)
-              mockSingleBusinessIncomeSource(userMigrated = true)
+              mockSingleBusinessIncomeSource()
 
               val result = action(fakeRequest)
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR

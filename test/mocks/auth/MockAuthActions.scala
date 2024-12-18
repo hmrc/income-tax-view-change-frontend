@@ -64,11 +64,6 @@ trait MockAuthActions extends
     reset(mockAuthService)
   }
 
-  override def afterAll(): Unit = {
-    super.afterAll()
-    Play.stop(fakeApplication())
-  }
-
   override def afterEach() = {
     super.afterEach()
   }
@@ -81,7 +76,7 @@ trait MockAuthActions extends
 
   lazy val mockAuthService: FrontendAuthorisedFunctions = mock(classOf[FrontendAuthorisedFunctions])
 
-  def applicationBuilderWithAuthBindings(): GuiceApplicationBuilder = {
+  lazy val applicationBuilderWithAuthBindings: GuiceApplicationBuilder = {
     new GuiceApplicationBuilder()
       .overrides(
         api.inject.bind[FrontendAuthorisedFunctions].toInstance(mockAuthService),

@@ -18,6 +18,7 @@ package auth.authV2.actions
 
 import auth.MtdItUserOptionNino
 import auth.authV2.AuthExceptions._
+import com.google.inject.Singleton
 import config.FrontendAppConfig
 import controllers.agent.routes
 import controllers.agent.sessionUtils.SessionKeys
@@ -32,6 +33,7 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class AgentHasClientDetails @Inject()(implicit val executionContext: ExecutionContext,
                                       sessionDataService: SessionDataService, appConfig: FrontendAppConfig)
   extends ActionRefiner[MtdItUserOptionNino, MtdItUserOptionNino] {

@@ -39,13 +39,13 @@ import scala.concurrent.Future
 
 class CreditAndRefundControllerSpec extends MockAuthActions with MockCreditService with MockRepaymentService {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[CreditService].toInstance(mockCreditService),
       api.inject.bind[RepaymentService].toInstance(mockRepaymentService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[CreditAndRefundController]
+  val testController = app.injector.instanceOf[CreditAndRefundController]
 
   def testFinancialDetail(taxYear: Int): FinancialDetailsModel = financialDetailsModel(taxYear)
 

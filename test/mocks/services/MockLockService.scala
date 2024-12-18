@@ -23,8 +23,8 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration.{Duration, FiniteDuration, MILLISECONDS}
 
 trait MockLockService extends LockService with TestSupport {
-  val mockMongoLockRepository: MongoLockRepository = app.injector.instanceOf[MongoLockRepository]
-  val lockRepository: MongoLockRepository = mockMongoLockRepository
+  lazy val mockMongoLockRepository: MongoLockRepository = app.injector.instanceOf[MongoLockRepository]
+  lazy val lockRepository: MongoLockRepository = mockMongoLockRepository
   val lockId: String = "calc-poller"
   val ttl: FiniteDuration = Duration.create(100, MILLISECONDS)
 }

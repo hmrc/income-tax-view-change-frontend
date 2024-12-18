@@ -38,11 +38,11 @@ import scala.concurrent.Future
 class AgentIsPrimaryActionSpec extends AuthActionsSpecHelper {
 
   override def afterEach(): Unit = {
-    Play.stop(fakeApplication())
+    Play.stop(app)
     super.afterEach()
   }
 
-  override def fakeApplication(): Application = {
+  override lazy val app: Application = {
     new GuiceApplicationBuilder()
       .overrides(api.inject.bind[AgentItvcErrorHandler].toInstance(mockAgentErrorHandler))
       .build()
@@ -57,7 +57,7 @@ class AgentIsPrimaryActionSpec extends AuthActionsSpecHelper {
 
   def defaultAsync: MtdItUserOptionNino[_] => Future[Result] = (_) => Future.successful(Results.Ok("Successful"))
 
-  lazy val action = fakeApplication().injector.instanceOf[AgentIsPrimaryAction]
+  lazy val action = app.injector.instanceOf[AgentIsPrimaryAction]
 
   "refine" when {
     "Checking if the Agent is primary" should {

@@ -26,10 +26,10 @@ import testConstants.BaseTestConstants.testNino
 
 class UpliftSuccessControllerSpec extends MockAuthActions {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .build()
 
-  val testController = fakeApplication().injector.instanceOf[UpliftSuccessController]
+  val testController = app.injector.instanceOf[UpliftSuccessController]
 
   val action = testController.success("PTA")
   val fakeRequest = fakeGetRequestBasedOnMTDUserType(MTDIndividual)

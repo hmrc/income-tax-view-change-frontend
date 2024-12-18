@@ -34,13 +34,13 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
   with MockFinancialDetailsService
   with MockCreditHistoryService {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[CalculationService].toInstance(mockCalculationService),
       api.inject.bind[CreditHistoryService].toInstance(mockCreditHistoryService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[CreditsSummaryController]
+  val testController = app.injector.instanceOf[CreditsSummaryController]
 
   val testCharges: List[DocumentDetail] = List(
     documentDetailModel(
@@ -56,7 +56,7 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
     disableAllSwitches()
   }
 
-  lazy val creditsSummaryView = fakeApplication().injector.instanceOf[CreditsSummary]
+  lazy val creditsSummaryView = app.injector.instanceOf[CreditsSummary]
   mtdAllRoles.foreach { mtdUserRole =>
     val isAgent = mtdUserRole != MTDIndividual
     s"show${if (isAgent) "AgentCreditsSummary"}" when {

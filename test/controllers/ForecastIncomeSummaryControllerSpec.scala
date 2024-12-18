@@ -32,19 +32,19 @@ import views.html.ForecastIncomeSummary
 
 class ForecastIncomeSummaryControllerSpec extends MockAuthActions with MockCalculationService {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[CalculationService].toInstance(mockCalculationService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[ForecastIncomeSummaryController]
+  val testController = app.injector.instanceOf[ForecastIncomeSummaryController]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     disable(NavBarFs)
   }
 
-  val view = fakeApplication().injector.instanceOf[ForecastIncomeSummary]
+  val view = app.injector.instanceOf[ForecastIncomeSummary]
 
   mtdAllRoles.foreach { mtdUserRole =>
     val isAgent = mtdUserRole != MTDIndividual

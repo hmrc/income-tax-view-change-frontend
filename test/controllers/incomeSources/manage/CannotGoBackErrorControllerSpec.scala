@@ -31,12 +31,12 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUI
 
 class CannotGoBackErrorControllerSpec extends MockAuthActions with MockSessionService {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[CannotGoBackErrorController]
+  val testController = app.injector.instanceOf[CannotGoBackErrorController]
 
   val annualReportingMethod = "annual"
   val quarterlyReportingMethod = "quarterly"

@@ -23,9 +23,9 @@ import testConstants.BaseTestConstants.agentAuthRetrievalSuccess
 
 class AgentErrorControllerSpec extends MockAuthActions {
 
-  override def fakeApplication() = applicationBuilderWithAuthBindings().build()
+  override lazy val app = applicationBuilderWithAuthBindings.build()
 
-  val testAgentErrorController = fakeApplication().injector.instanceOf[AgentErrorController]
+  val testAgentErrorController = app.injector.instanceOf[AgentErrorController]
 
   "Calling the show action of the AgentErrorController" should {
 

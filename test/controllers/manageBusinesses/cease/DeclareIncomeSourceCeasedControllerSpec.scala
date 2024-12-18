@@ -38,12 +38,12 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUI
 
 class DeclareIncomeSourceCeasedControllerSpec extends MockAuthActions with MockSessionService {
 
-  override def fakeApplication() = applicationBuilderWithAuthBindings()
+  override lazy val app = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService))
     .build()
 
-  val testController = fakeApplication().injector.instanceOf[DeclareIncomeSourceCeasedController]
+  val testController = app.injector.instanceOf[DeclareIncomeSourceCeasedController]
 
   def getHeader(incomeSourceType: IncomeSourceType): String = {
     incomeSourceType match {

@@ -49,7 +49,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
   with MockFinancialDetailsService with MockNextUpdatesService with MockIncomeTaxCalculationConnector
   with MockClaimToAdjustService with ChargeConstants {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[CalculationService].toInstance(mockCalculationService),
       api.inject.bind[FinancialDetailsService].toInstance(mockFinancialDetailsService),
@@ -57,9 +57,9 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
       api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService)
     ).build()
 
-  lazy val taxYearSummaryView: TaxYearSummary = fakeApplication().injector.instanceOf[TaxYearSummary]
+  lazy val taxYearSummaryView: TaxYearSummary = app.injector.instanceOf[TaxYearSummary]
 
-  val testController = fakeApplication().injector.instanceOf[TaxYearSummaryController]
+  val testController = app.injector.instanceOf[TaxYearSummaryController]
 
   val testCharge = chargeItemModel()
 

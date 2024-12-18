@@ -35,12 +35,12 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAn
 
 class IncomeSourceAddedBackErrorControllerSpec extends MockAuthActions with MockSessionService {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService))
     .build()
 
-  val testIncomeSourceAddedBackErrorController = fakeApplication().injector.instanceOf[IncomeSourceAddedBackErrorController]
+  val testIncomeSourceAddedBackErrorController = app.injector.instanceOf[IncomeSourceAddedBackErrorController]
 
 
   val title: String = messages("cannotGoBack.heading")

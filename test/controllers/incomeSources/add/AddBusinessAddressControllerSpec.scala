@@ -47,13 +47,13 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
   val redirectActionAgent: Call = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
   lazy val mockAddressLookupService: AddressLookupService = mock(classOf[AddressLookupService])
 
-  override def fakeApplication() = applicationBuilderWithAuthBindings()
+  override lazy val app = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[AddressLookupService].toInstance(mockAddressLookupService)
     ).build()
 
-  val testAddBusinessAddressController = fakeApplication().injector.instanceOf[AddBusinessAddressController]
+  val testAddBusinessAddressController = app.injector.instanceOf[AddBusinessAddressController]
 
   val testBusinessAddressModel: BusinessAddressModel = BusinessAddressModel("auditRef", Address(Seq("Line 1", "Line 2"), Some("AA1 1AA")))
   val testAddIncomeSourceSessionData: Option[AddIncomeSourceData] = Some(AddIncomeSourceData(address = Some(testBusinessAddressModel.address), countryCode = Some("GB")))

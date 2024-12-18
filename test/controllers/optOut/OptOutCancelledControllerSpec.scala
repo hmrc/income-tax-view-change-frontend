@@ -44,15 +44,15 @@ class OptOutCancelledControllerSpec extends MockAuthActions with MockOptOutServi
     "feature-switches.read-from-mongo" -> "false"
   )
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[OptOutService].toInstance(mockOptOutService)
     )
     .configure(config)
     .build()
 
-  val testController = fakeApplication().injector.instanceOf[OptOutCancelledController]
-  val optOutCancelledView = fakeApplication().injector.instanceOf[OptOutCancelledView]
+  val testController = app.injector.instanceOf[OptOutCancelledController]
+  val optOutCancelledView = app.injector.instanceOf[OptOutCancelledView]
 
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual

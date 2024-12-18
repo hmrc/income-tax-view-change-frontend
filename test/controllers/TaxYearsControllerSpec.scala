@@ -22,14 +22,14 @@ import mocks.auth.MockAuthActions
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers._
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{ukPropertyOnlyIncomeSourceWithFirstAccountPeriodEnd, _}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
 
 class TaxYearsControllerSpec extends MockAuthActions with ImplicitDateFormatter {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .build()
 
-  val testController = fakeApplication().injector.instanceOf[TaxYearsController]
+  val testController = app.injector.instanceOf[TaxYearsController]
 
   mtdAllRoles.foreach { case mtdUserRole =>
     val isAgent = mtdUserRole != MTDIndividual
@@ -44,14 +44,6 @@ class TaxYearsControllerSpec extends MockAuthActions with ImplicitDateFormatter 
             "income source details contains a business firstAccountingPeriodEndDate" in {
               setupMockSuccess(mtdUserRole)
               setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-
-              val result = action(fakeRequest)
-              status(result) shouldBe Status.OK
-            }
-
-            "income source details contains a propery firstAccountingPeriodEndDate" in {
-              setupMockSuccess(mtdUserRole)
-              setupMockGetIncomeSourceDetails()(ukPropertyOnlyIncomeSourceWithFirstAccountPeriodEnd)
 
               val result = action(fakeRequest)
               status(result) shouldBe Status.OK

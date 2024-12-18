@@ -36,12 +36,12 @@ import scala.concurrent.Future
 
 class IncomeSourceReportingMethodNotSavedControllerSpec extends MockAuthActions with MockSessionService {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[IncomeSourceReportingMethodNotSavedController]
+  val testController = app.injector.instanceOf[IncomeSourceReportingMethodNotSavedController]
 
   val incomeSourceTypes: Seq[IncomeSourceType with Serializable] = List(SelfEmployment, UkProperty, ForeignProperty)
 

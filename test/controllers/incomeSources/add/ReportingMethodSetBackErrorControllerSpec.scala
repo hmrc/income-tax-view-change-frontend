@@ -34,12 +34,12 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAn
 
 class ReportingMethodSetBackErrorControllerSpec extends MockAuthActions with MockSessionService {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[ReportingMethodSetBackErrorController]
+  val testController = app.injector.instanceOf[ReportingMethodSetBackErrorController]
 
   val title: String = messages("cannotGoBack.heading")
   val messageSE: String = messages("cannotGoBack.soleTraderAdded")
@@ -61,7 +61,7 @@ class ReportingMethodSetBackErrorControllerSpec extends MockAuthActions with Moc
     }
   }
 
-  val incomeSourceTypes: Seq[IncomeSourceType with Serializable] = List(SelfEmployment, UkProperty, ForeignProperty)
+  val incomeSourceTypes: List[IncomeSourceType] = List(SelfEmployment, UkProperty, ForeignProperty)
 
   def sessionData(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(incomeSourceId = Some("1234"))))
 

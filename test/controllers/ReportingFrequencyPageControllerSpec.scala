@@ -49,7 +49,7 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
 
   val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[OptOutService].toInstance(mockOptOutService),
       api.inject.bind[OptInService].toInstance(mockOptInService),
@@ -57,8 +57,8 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
     ).configure(Map("feature-switches.read-from-mongo" -> "false"))
     .build()
 
-  val testController = fakeApplication().injector.instanceOf[ReportingFrequencyPageController]
-  val reportingFrequencyView = fakeApplication().injector.instanceOf[ReportingFrequencyView]
+  val testController = app.injector.instanceOf[ReportingFrequencyPageController]
+  val reportingFrequencyView = app.injector.instanceOf[ReportingFrequencyView]
 
   mtdAllRoles.foreach { mtdRole =>
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)

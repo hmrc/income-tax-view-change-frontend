@@ -20,6 +20,7 @@ import audit.AuditingService
 import audit.models.IvUpliftRequiredAuditModel
 import auth._
 import auth.authV2.AuthExceptions.MissingMtdId
+import com.google.inject.Singleton
 import config.FrontendAppConfig
 import controllers.agent.AuthUtils.mtdEnrolmentName
 import controllers.predicates.agent.Constants
@@ -38,6 +39,7 @@ import java.net.URLEncoder
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
                                                val appConfig: FrontendAppConfig,
                                                override val config: Configuration,

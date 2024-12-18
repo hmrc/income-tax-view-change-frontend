@@ -37,11 +37,11 @@ import scala.concurrent.Future
 class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
 
   override def afterEach(): Unit = {
-    Play.stop(fakeApplication())
+    Play.stop(app)
     super.afterEach()
   }
 
-  override def fakeApplication(): Application = {
+  override lazy val app: Application = {
     val frontendAuthFunctions = new FrontendAuthorisedFunctions(mockAuthConnector)
 
     new GuiceApplicationBuilder()
@@ -61,7 +61,7 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
 
   def defaultAsync: AuthorisedUser[_] => Future[Result] = (_) => Future.successful(Results.Ok("Successful"))
 
-  lazy val authAction = fakeApplication().injector.instanceOf[AuthoriseAndRetrieveAgent]
+  lazy val authAction = app.injector.instanceOf[AuthoriseAndRetrieveAgent]
 
   "refine" when {
     "arn is required" should {

@@ -46,12 +46,12 @@ class FeedbackControllerSpec extends MockAuthActions
 
   lazy val mockFeedbackConnector: FeedbackConnector = mock(classOf[FeedbackConnector])
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[FeedbackConnector].toInstance(mockFeedbackConnector)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[FeedbackController]
+  val testController = app.injector.instanceOf[FeedbackController]
 
   val fields = Map(
     "feedback-name" -> "name",

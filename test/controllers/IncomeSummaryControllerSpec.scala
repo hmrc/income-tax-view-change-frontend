@@ -34,12 +34,12 @@ class IncomeSummaryControllerSpec extends MockAuthActions
 
   val testYear: Int = 2020
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[CalculationService].toInstance(mockCalculationService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[IncomeSummaryController]
+  val testController = app.injector.instanceOf[IncomeSummaryController]
 
   override def beforeEach(): Unit = {
     super.beforeEach()

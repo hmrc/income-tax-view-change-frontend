@@ -40,13 +40,13 @@ class PaymentHistoryControllerSpec extends MockAuthActions
   lazy val paymentHistoryService: PaymentHistoryService = mock(classOf[PaymentHistoryService])
   lazy val mockRepaymentService: RepaymentService = mock(classOf[RepaymentService])
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[PaymentHistoryService].toInstance(paymentHistoryService),
       api.inject.bind[RepaymentService].toInstance(mockRepaymentService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[PaymentHistoryController]
+  val testController = app.injector.instanceOf[PaymentHistoryController]
 
 
   val testPayments: List[Payment] = List(

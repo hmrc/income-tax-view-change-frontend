@@ -47,7 +47,7 @@ class IncomeSourceCeasedObligationsControllerSpec extends MockAuthActions
 
   lazy val mockIncomeSourcesUtils: IncomeSourcesUtils = mock(classOf[IncomeSourcesUtils])
 
-  override def fakeApplication() = applicationBuilderWithAuthBindings()
+  override lazy val app = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[NextUpdatesService].toInstance(mockNextUpdatesService),
@@ -55,7 +55,7 @@ class IncomeSourceCeasedObligationsControllerSpec extends MockAuthActions
       api.inject.bind[DateService].toInstance(dateService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[IncomeSourceCeasedObligationsController]
+  val testController = app.injector.instanceOf[IncomeSourceCeasedObligationsController]
 
   private def setMongoSessionData(incomeSourceType: IncomeSourceType, incomeSourceId: Option[String] = Some(testSelfEmploymentId),
                                   ceaseDate: Option[LocalDate] = Some(LocalDate.of(2022, 10, 10))): Unit = {

@@ -36,7 +36,7 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.Helpers._
 import play.api.test.{FakeRequest, Injecting}
-import play.api.{Configuration, Environment}
+import play.api.{Configuration, Environment, Play}
 import services.DateService
 import testConstants.BaseTestConstants._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
@@ -52,9 +52,13 @@ import scala.concurrent.{ExecutionContext, Future}
 import play.twirl.api.Html
 
 trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterAll with BeforeAndAfterEach with Injecting with FeatureSwitching {
-  this: Suite =>
 
   implicit val actorSystem: ActorSystem = app.actorSystem
+
+//  override def afterAll(): Unit = {
+//    super.afterAll()
+//    Play.stop(app)
+//  }
 
   implicit val htmlEq: Equality[Html] =
     new Equality[Html] {
@@ -73,9 +77,9 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
 
   implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
-  def messagesApi: MessagesApi = inject[MessagesApi]
+  lazy val messagesApi: MessagesApi = inject[MessagesApi]
 
-  implicit val mockItvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter = mock(classOf[ItvcHeaderCarrierForPartialsConverter])
+  implicit lazy val mockItvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter = mock(classOf[ItvcHeaderCarrierForPartialsConverter])
 
   implicit val headerCarrier: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId("session-123456")), deviceID = Some("some device Id")).withExtraHeaders(HeaderNames.REFERER -> testReferrerUrl)
   implicit val hcwc: HeaderCarrierForPartials = HeaderCarrierForPartials(headerCarrier)
@@ -100,13 +104,13 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
     override def getAccountingPeriodEndDate(startDate: LocalDate): LocalDate = LocalDate.of(2024, 4, 5)
   }
 
-  val tsTestUser: MtdItUser[AnyContentAsEmpty.type] =
+  lazy val tsTestUser: MtdItUser[AnyContentAsEmpty.type] =
     MtdItUser(
       mtditid = testMtditid, nino = testNino, userName = None, incomeSources = IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty), btaNavPartial = None,
       saUtr = Some("1234567890"), credId = Some("12345-credId"), userType = Some(Individual), arn = None
     )(FakeRequest())
 
-  val tsTestUserAgent: MtdItUser[_] = MtdItUser(
+  lazy val tsTestUserAgent: MtdItUser[_] = MtdItUser(
     testMtditid, testNino, None, IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty), None,
     Some("1234567890"), Some("12345-credId"), Some(Agent), None
   )(FakeRequest())

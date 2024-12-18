@@ -29,12 +29,12 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessInco
 
 class ForecastTaxCalcSummaryControllerSpec extends MockAuthActions with MockCalculationService {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[CalculationService].toInstance(mockCalculationService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[ForecastTaxCalcSummaryController]
+  val testController = app.injector.instanceOf[ForecastTaxCalcSummaryController]
 
   override def beforeEach(): Unit = {
     super.beforeEach()

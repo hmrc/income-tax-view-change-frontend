@@ -23,6 +23,7 @@ import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.admin.IncomeSourcesFs
 import play.api
+import play.api.Application
 import play.api.http.Status.OK
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import services.SessionService
@@ -30,12 +31,12 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.notCompleted
 
 class IncomeSourceCeasedBackErrorControllerSpec extends MockAuthActions with MockSessionService {
 
-  override def fakeApplication() = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[IncomeSourceCeasedBackErrorController]
+  val testController = app.injector.instanceOf[IncomeSourceCeasedBackErrorController]
 
   mtdAllRoles.foreach { mtdRole =>
     List(UkProperty, ForeignProperty).foreach { incomeSourceType =>

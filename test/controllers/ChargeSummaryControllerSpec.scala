@@ -33,13 +33,13 @@ import scala.concurrent.Future
 
 class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[ChargeHistoryService].toInstance(mockChargeHistoryService),
       api.inject.bind[FinancialDetailsService].toInstance(mockFinancialDetailsService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[ChargeSummaryController]
+  val testController = app.injector.instanceOf[ChargeSummaryController]
 
   val endYear: Int = 2018
   val startYear: Int = endYear - 1

@@ -29,12 +29,12 @@ import testConstants.BaseTestConstants.testTaxYear
 
 class CalculationPollingControllerSpec extends MockAuthActions with MockCalculationPollingService {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[CalculationPollingService].toInstance(mockCalculationPollingService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[CalculationPollingController]
+  val testController = app.injector.instanceOf[CalculationPollingController]
 
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual

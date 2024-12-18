@@ -39,12 +39,12 @@ import scala.concurrent.Future
 
 class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSessionService {
 
-  override def fakeApplication() = applicationBuilderWithAuthBindings()
+  override lazy val app = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[IncomeSourceEndDateController]
+  val testController = app.injector.instanceOf[IncomeSourceEndDateController]
 
   def heading(incomeSourceType: IncomeSourceType): String = {
     incomeSourceType match {

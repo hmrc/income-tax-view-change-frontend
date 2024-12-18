@@ -37,12 +37,12 @@ class FinalTaxCalculationControllerSpec extends MockAuthActions
   with MockCalculationService
   with ImplicitDateFormatter {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[CalculationService].toInstance(mockCalculationService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[FinalTaxCalculationController]
+  val testController = app.injector.instanceOf[FinalTaxCalculationController]
 
 
   val testCalcError: LiabilityCalculationError = LiabilityCalculationError(Status.OK, "Test message")

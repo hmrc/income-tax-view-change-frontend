@@ -32,12 +32,12 @@ class DeductionsSummaryControllerSpec extends MockAuthActions with MockCalculati
   val testYear: Int = 2020
   val title = messages("deduction_breakdown.heading")
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[CalculationService].toInstance(mockCalculationService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[DeductionsSummaryController]
+  val testController = app.injector.instanceOf[DeductionsSummaryController]
 
   mtdAllRoles.foreach { mtdUserRole =>
     val isAgent = mtdUserRole != MTDIndividual

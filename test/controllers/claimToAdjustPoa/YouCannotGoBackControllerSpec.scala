@@ -34,13 +34,13 @@ class YouCannotGoBackControllerSpec extends MockAuthActions
   with MockClaimToAdjustService
   with MockPaymentOnAccountSessionService {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService),
       api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[YouCannotGoBackController]
+  val testController = app.injector.instanceOf[YouCannotGoBackController]
 
   def setupTest(): Unit = {
     enable(AdjustPaymentsOnAccount)
