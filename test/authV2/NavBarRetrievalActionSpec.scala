@@ -41,11 +41,6 @@ import scala.concurrent.Future
 
 class NavBarRetrievalActionSpec extends AuthActionsSpecHelper {
 
-  override def afterEach(): Unit = {
-    Play.stop(app)
-    super.afterEach()
-  }
-
   def config: Map[String, Object] = Map(
     "feature-switches.read-from-mongo" -> "true"
   )

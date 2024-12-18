@@ -36,11 +36,6 @@ import scala.concurrent.Future
 
 class IncomeSourceRetrievalActionSpec extends AuthActionsSpecHelper {
 
-  override def afterEach(): Unit = {
-    Play.stop(app)
-    super.afterEach()
-  }
-
   override lazy val app: Application = {
     new GuiceApplicationBuilder()
       .overrides(

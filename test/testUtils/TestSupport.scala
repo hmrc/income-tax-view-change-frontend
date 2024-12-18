@@ -55,11 +55,6 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
 
   implicit val actorSystem: ActorSystem = app.actorSystem
 
-//  override def afterAll(): Unit = {
-//    super.afterAll()
-//    Play.stop(app)
-//  }
-
   implicit val htmlEq: Equality[Html] =
     new Equality[Html] {
       def areEqual(a: Html, b: Any): Boolean = {

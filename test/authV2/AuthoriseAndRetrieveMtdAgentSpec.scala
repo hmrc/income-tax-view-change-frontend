@@ -35,11 +35,6 @@ import scala.concurrent.Future
 
 class AuthoriseAndRetrieveMtdAgentSpec extends AuthActionsSpecHelper {
 
-  override def afterEach(): Unit = {
-    Play.stop(app)
-    super.afterEach()
-  }
-
   override lazy val app: Application = {
     val frontendAuthFunctions = new FrontendAuthorisedFunctions(mockAuthConnector)
 

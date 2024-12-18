@@ -36,12 +36,7 @@ import mocks.services.MockClientDetailsService
 import models.sessionData.SessionDataGetResponse.{SessionDataNotFound, SessionDataUnexpectedResponse}
 import services.agent.ClientDetailsService
 
-class RetrieveClientDataSpec extends AuthActionsSpecHelper with MockClientDetailsService{
-
-  override def afterEach(): Unit = {
-    Play.stop(app)
-    super.afterEach()
-  }
+class RetrieveClientDataSpec extends AuthActionsSpecHelper with MockClientDetailsService {
 
   override lazy val app: Application = {
     new GuiceApplicationBuilder()

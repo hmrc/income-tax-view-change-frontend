@@ -37,11 +37,6 @@ import scala.concurrent.Future
 
 class AgentIsPrimaryActionSpec extends AuthActionsSpecHelper {
 
-  override def afterEach(): Unit = {
-    Play.stop(app)
-    super.afterEach()
-  }
-
   override lazy val app: Application = {
     new GuiceApplicationBuilder()
       .overrides(api.inject.bind[AgentItvcErrorHandler].toInstance(mockAgentErrorHandler))

@@ -30,11 +30,6 @@ import scala.concurrent.Future
 
 class SessionTimeoutActionSpec extends AuthActionsSpecHelper {
 
-  override def afterEach(): Unit = {
-    Play.stop(app)
-    super.afterEach()
-  }
-
   override lazy val app: Application = {
     new GuiceApplicationBuilder()
       .build()
