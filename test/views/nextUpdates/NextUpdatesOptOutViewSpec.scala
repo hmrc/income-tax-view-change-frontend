@@ -36,7 +36,7 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val nextUpdatesView: NextUpdatesOptOut = app.injector.instanceOf[NextUpdatesOptOut]
 
-  class Setup(currentObligations: NextUpdatesViewModel, quarterlyUpdateContentShow: Boolean = true) {
+  class Setup(currentObligations: NextUpdatesViewModel, quarterlyUpdateContentShow: Boolean = true, isSupportingAgent: Boolean = false) {
 
     val checks: NextUpdatesQuarterlyReportingContentChecks = if (quarterlyUpdateContentShow) NextUpdatesQuarterlyReportingContentChecks(
       currentYearItsaStatus = true,
@@ -49,14 +49,19 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
         previousYearCrystallisedStatus = true)
 
     val optOutOneYearViewModel: OptOutOneYearViewModel = OptOutOneYearViewModel(TaxYear.forYearEnd(2024), Some(OneYearOptOutFollowedByAnnual))
-    val pageDocument: Document = Jsoup.parse(contentAsString(nextUpdatesView(currentObligations, Some(optOutOneYearViewModel), checks, "testBackURL")))
+    val pageDocument: Document = Jsoup.parse(contentAsString(
+      nextUpdatesView(currentObligations, Some(optOutOneYearViewModel), checks, "testBackURL", isSupportingAgent = isSupportingAgent)
+    ))
 
     val optOutMultiYearViewModel: OptOutMultiYearViewModel = OptOutMultiYearViewModel()
-    val pageDocumentMultiYearOptOut: Document = Jsoup.parse(contentAsString(nextUpdatesView(currentObligations,
-      Some(optOutMultiYearViewModel), checks, "testBackURL")))
+    val pageDocumentMultiYearOptOut: Document = Jsoup.parse(contentAsString(
+      nextUpdatesView(currentObligations, Some(optOutMultiYearViewModel), checks, "testBackURL", isSupportingAgent = isSupportingAgent)
+    ))
 
     val optOutOneYearViewModelWithMandated = optOutOneYearViewModel.copy(state = Some(OneYearOptOutFollowedByMandated))
-    val pageDocumentWithWarning: Document = Jsoup.parse(contentAsString(nextUpdatesView(currentObligations, Some(optOutOneYearViewModelWithMandated), checks, "testBackURL")))
+    val pageDocumentWithWarning: Document = Jsoup.parse(contentAsString(
+      nextUpdatesView(currentObligations, Some(optOutOneYearViewModelWithMandated), checks, "testBackURL", isSupportingAgent = isSupportingAgent)
+    ))
   }
 
   object obligationsMessages {
@@ -127,9 +132,17 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
       pageDocument.select("div .govuk-accordion").size() == 1
     }
 
-    s"have the information ${obligationsMessages.info}" in new Setup(obligationsModel) {
-      pageDocument.select("p:nth-child(6)").text shouldBe obligationsMessages.info
-      pageDocument.select("p:nth-child(6) a").attr("href") shouldBe controllers.routes.TaxYearsController.showTaxYears().url
+    s"have the information ${obligationsMessages.info}" when {
+      "a primary agent or individual" in new Setup(obligationsModel) {
+        pageDocument.select("p:nth-child(6)").text shouldBe obligationsMessages.info
+        pageDocument.select("p:nth-child(6) a").attr("href") shouldBe controllers.routes.TaxYearsController.showTaxYears().url
+      }
+    }
+
+    s"not have the information ${obligationsMessages.info}" when {
+      "a supporting agent" in new Setup(obligationsModel, isSupportingAgent = true) {
+        pageDocument.body.text() shouldNot include(obligationsMessages.info)
+      }
     }
 
     s"have the correct TradeName" in new Setup(obligationsModel) {
