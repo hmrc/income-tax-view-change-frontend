@@ -20,7 +20,7 @@ import models.admin.FeatureSwitch
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
-import repositories.admin.FeatureSwitchRepository
+import testOnly.repository.FeatureSwitchRepository
 import testUtils.UnitSpec
 
 import scala.concurrent.Future
