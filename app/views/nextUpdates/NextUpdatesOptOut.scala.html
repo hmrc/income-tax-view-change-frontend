@@ -41,6 +41,7 @@
   checks:NextUpdatesQuarterlyReportingContentChecks,
   backUrl: String,
   isAgent: Boolean = false,
+  isSupportingAgent: Boolean = false,
   origin: Option[String] = None)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @mainTemplate(
@@ -101,19 +102,18 @@
 
 	@nextUpdatesHelper(currentObligations)
 
-	@p(){
-		@messages("nextUpdates.previousYears.textOne")
-    @if(isAgent) {
-        @link(link = controllers.routes.TaxYearsController.showAgentTaxYears.url, messageKey = "nextUpdates.previousYears.link"
-)
-    }
-    @if(!isAgent) {
-        @link(link = controllers.routes.TaxYearsController.showTaxYears(origin).url, messageKey = "nextUpdates.previousYears.link"
-)
-     }
-		@messages("nextUpdates.previousYears.textTwo")
+	@if(!isSupportingAgent){
+		@p(){
+			@messages("nextUpdates.previousYears.textOne")
+			@if(isAgent) {
+				@link(link = controllers.routes.TaxYearsController.showAgentTaxYears.url, messageKey = "nextUpdates.previousYears.link")
+			}
+			@if(!isAgent) {
+				@link(link = controllers.routes.TaxYearsController.showTaxYears(origin).url, messageKey = "nextUpdates.previousYears.link")
+			}
+			@messages("nextUpdates.previousYears.textTwo")
+		}
 	}
-
 
 	@checks.showUseCompatibleSoftwareSection.map { _ =>
 	    @h3(msg = "nextUpdates.updates.software.heading", optId = Some("updates-software-heading"))
