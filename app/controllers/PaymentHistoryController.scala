@@ -28,6 +28,7 @@ import implicits.ImplicitDateFormatter
 import models.admin.{CreditsRefundsRepay, PaymentHistoryRefunds, ReviewAndReconcilePoa}
 import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
 import models.repaymentHistory.RepaymentHistoryUtils
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{DateServiceInterface, PaymentHistoryService, RepaymentService}
@@ -58,8 +59,7 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
 
   def handleRequest(backUrl: String,
                     origin: Option[String] = None,
-                    isAgent: Boolean,
-                    itvcErrorHandler: ShowInternalServerError)
+                    isAgent: Boolean)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] =
     for {
       payments                       <- paymentHistoryService.getPaymentHistory
@@ -67,7 +67,6 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
     } yield (payments, repayments) match {
 
       case (Right(payments), Right(repayments)) =>
-
         auditingService.extendedAudit(PaymentHistoryResponseAuditModel(
           mtdItUser = user,
           payments = payments
@@ -94,13 +93,12 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
         ))
           .addingToSession(gatewayPage -> PaymentHistoryPage.name)
 
-      case _ => itvcErrorHandler.showInternalServerError()
+      case _ => logAndHandleError("failed to get payments and/or repayments")
     }
 
   def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
       handleRequest(
-        itvcErrorHandler = itvcErrorHandler,
         isAgent = false,
         origin = origin,
         backUrl = controllers.routes.HomeController.show(origin).url
@@ -110,7 +108,6 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
   def showAgent(): Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
     implicit mtdItUser =>
       handleRequest(
-        itvcErrorHandler = itvcErrorHandlerAgent,
         isAgent = true,
         backUrl = controllers.routes.HomeController.showAgent.url
       )
@@ -121,10 +118,17 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
       if (isEnabled(PaymentHistoryRefunds)) {
         repaymentService.view(user.nino).map {
           case Right(nextUrl) => Redirect(nextUrl)
-          case Left(_) => itvcErrorHandler.showInternalServerError()
+          case Left(ex) => logAndHandleError(ex.getMessage)
         }
       } else {
         Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
       }
     }
+
+  def logAndHandleError(message: String)
+                       (implicit mtdItUser: MtdItUser[_]): Result = {
+    Logger("application").error(message)
+    val errorHandler = if(mtdItUser.isAgent()) itvcErrorHandlerAgent else itvcErrorHandler
+    errorHandler.showInternalServerError()
+  }
 }
