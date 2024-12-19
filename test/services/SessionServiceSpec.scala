@@ -16,7 +16,7 @@
 
 package services
 
-import enums.IncomeSourceJourney.SelfEmployment
+import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import mocks.repositories.MockUIJourneySessionDataRepository
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
@@ -36,6 +36,15 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
 
   "sessionService " when {
     "mongo" when {
+      "createSession method" should {
+        "successfully create a session, returning a Future Boolean" in {
+          mockRepositorySet(response = true)
+
+          val result = TestSessionService.createSession(IncomeSourceJourneyType(Add, SelfEmployment)).futureValue
+
+          result shouldBe true
+        }
+      }
       "getMongo method " should {
         "return the correct session value for given key" in {
           val sessionData = UIJourneySessionData("session-123456", "ADD-SE")
