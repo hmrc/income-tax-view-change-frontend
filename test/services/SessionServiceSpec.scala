@@ -136,10 +136,22 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
       }
 
       "setMongoKey method" should {
-        "return a future boolean value" in {
+        "return true when journey type is Add" in {
           mockRepositoryUpdateData()
           val result: Either[Throwable, Boolean] = TestSessionService.setMongoKey("key", "value",
             IncomeSourceJourneyType(Add, SelfEmployment))(headerCarrier, ec).futureValue
+          result shouldBe Right(true)
+        }
+        "return true when journey type is Manage" in {
+          mockRepositoryUpdateData()
+          val result: Either[Throwable, Boolean] = TestSessionService.setMongoKey("key", "value",
+            IncomeSourceJourneyType(Manage, SelfEmployment))(headerCarrier, ec).futureValue
+          result shouldBe Right(true)
+        }
+        "return true when journey type is Cease" in {
+          mockRepositoryUpdateData()
+          val result: Either[Throwable, Boolean] = TestSessionService.setMongoKey("key", "value",
+            IncomeSourceJourneyType(Cease, SelfEmployment))(headerCarrier, ec).futureValue
           result shouldBe Right(true)
         }
       }
