@@ -40,23 +40,33 @@ trait MockUIJourneySessionDataRepository extends UnitSpec with BeforeAndAfterEac
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockUIJourneySessionDataRepository)
+    reset(mockUIJourneySessionDataRepository, mockSensitiveUIJourneySessionDataRepository)
+    reset(mockFrontendAppConfig)
   }
 
-  def mockRepositoryGet(response: Option[UIJourneySessionData]): Unit = {
+  def mockRepositoryGet(response: Option[UIJourneySessionData], isSensitive: Boolean = false): Unit = {
+    if (isSensitive) {
+      when(mockSensitiveUIJourneySessionDataRepository.get(ArgumentMatchers.anyString(), ArgumentMatchers.any()))
+        .thenReturn(Future.successful(response))
+    }
+    else
     when(mockUIJourneySessionDataRepository.get(ArgumentMatchers.anyString(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
-
-  def mockRepositorySet(response: Boolean, withFailureResult: Boolean = false): Unit = {
-    when(mockUIJourneySessionDataRepository.set(ArgumentMatchers.any()))
-      .thenReturn({
-        if (withFailureResult){
+  def mockRepositorySet(response: Boolean, withFailureResult: Boolean = false, isSensitive: Boolean = false): Unit = {
+    val repository = if (isSensitive) {
+      mockSensitiveUIJourneySessionDataRepository.set _
+    } else {
+      mockUIJourneySessionDataRepository.set _
+    }
+    when(repository(ArgumentMatchers.any()))
+      .thenReturn(
+        if (withFailureResult) {
           Future.failed(new Exception("Error while set data"))
         } else {
           Future.successful(response)
         }
-      })
+      )
   }
 
   def mockRepositoryUpdateData(): Unit = {
@@ -94,12 +104,23 @@ trait MockUIJourneySessionDataRepository extends UnitSpec with BeforeAndAfterEac
       })
   }
 
-  def mockDeleteOne(): Unit = {
-    when(mockUIJourneySessionDataRepository.deleteOne(any[UIJourneySessionData]())).thenReturn(Future.successful(true))
+  def mockDeleteOne(isSensitive: Boolean = false): Unit = {
+    if (isSensitive) {
+      when(mockSensitiveUIJourneySessionDataRepository.deleteOne(any[UIJourneySessionData]())).thenReturn(Future.successful(true))
+    }
+    else {
+      when(mockUIJourneySessionDataRepository.deleteOne(any[UIJourneySessionData]())).thenReturn(Future.successful(true))
+    }
+
   }
 
-  def mockDeleteSession(): Unit = {
-    when(mockUIJourneySessionDataRepository.deleteJourneySession(anyString(), any[Operation]())).thenReturn(Future.successful(true))
+  def mockDeleteSession(isSensitive: Boolean = false): Unit = {
+    if (isSensitive) {
+      when(mockSensitiveUIJourneySessionDataRepository.deleteJourneySession(anyString(), any[Operation]())).thenReturn(Future.successful(true))
+    }
+    else {
+      when(mockUIJourneySessionDataRepository.deleteJourneySession(anyString(), any[Operation]())).thenReturn(Future.successful(true))
+    }
   }
 
   def mockClearSession(sessionId: String)(response: Future[Boolean]): Unit = {
