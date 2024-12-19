@@ -46,7 +46,7 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
       api.inject.bind[OptOutSessionDataRepository].toInstance(mockOptOutSessionDataRepository)
     ).build()
 
-  val testController = app.injector.instanceOf[OptOutChooseTaxYearController]
+  lazy val testController = app.injector.instanceOf[OptOutChooseTaxYearController]
 
 
   val optOutProposition: OptOutProposition = OptOutTestSupport.buildThreeYearOptOutProposition()

@@ -47,7 +47,7 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
       api.inject.bind[SessionService].toInstance(mockSessionService)
     ).build()
 
-  val testController = app.injector.instanceOf[AddIncomeSourceStartDateController]
+  lazy val testController = app.injector.instanceOf[AddIncomeSourceStartDateController]
 
   val dayField = "value.day"
   val monthField = "value.month"

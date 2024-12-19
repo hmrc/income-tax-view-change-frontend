@@ -42,7 +42,7 @@ SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOptOutSer
       api.inject.bind[OptOutService].toInstance(mockOptOutService)
     ).build()
 
-  val testSingleYearOptOutWarningController = app.injector.instanceOf[SingleYearOptOutWarningController]
+  lazy val testSingleYearOptOutWarningController = app.injector.instanceOf[SingleYearOptOutWarningController]
 
   mtdAllRoles.foreach{ case mtdUserRole =>
 

@@ -45,7 +45,7 @@ class CreditAndRefundControllerSpec extends MockAuthActions with MockCreditServi
       api.inject.bind[RepaymentService].toInstance(mockRepaymentService)
     ).build()
 
-  val testController = app.injector.instanceOf[CreditAndRefundController]
+  lazy val testController = app.injector.instanceOf[CreditAndRefundController]
 
   def testFinancialDetail(taxYear: Int): FinancialDetailsModel = financialDetailsModel(taxYear)
 

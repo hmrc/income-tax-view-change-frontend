@@ -25,7 +25,7 @@ class AgentNotFoundDocumentIDLookupControllerSpec extends MockAuthActions {
 
   override lazy val app = applicationBuilderWithAuthBindings.build()
 
-  val testAgentErrorController = app.injector.instanceOf[AgentNotFoundDocumentIDLookupController]
+  lazy val testAgentErrorController = app.injector.instanceOf[AgentNotFoundDocumentIDLookupController]
 
   "Calling the show action of the NotAnAgentController" should {
 

@@ -50,7 +50,7 @@ class ConfirmationForAdjustingPoaControllerSpec extends MockAuthActions
       api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService)
     ).build()
 
-  val testController = app.injector.instanceOf[ConfirmationForAdjustingPoaController]
+  lazy val testController = app.injector.instanceOf[ConfirmationForAdjustingPoaController]
 
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual

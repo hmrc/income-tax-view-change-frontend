@@ -55,7 +55,7 @@ class IncomeSourceCeasedObligationsControllerSpec extends MockAuthActions
       api.inject.bind[DateService].toInstance(dateService)
     ).build()
 
-  val testController = app.injector.instanceOf[IncomeSourceCeasedObligationsController]
+  lazy val testController = app.injector.instanceOf[IncomeSourceCeasedObligationsController]
 
   private def setMongoSessionData(incomeSourceType: IncomeSourceType, incomeSourceId: Option[String] = Some(testSelfEmploymentId),
                                   ceaseDate: Option[LocalDate] = Some(LocalDate.of(2022, 10, 10))): Unit = {

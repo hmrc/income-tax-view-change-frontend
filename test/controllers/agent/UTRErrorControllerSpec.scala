@@ -38,7 +38,7 @@ class UTRErrorControllerSpec extends MockAuthActions
       api.inject.bind[UTRError].toInstance(utrError),
     ).build()
 
-  val testUTRErrorController = app.injector.instanceOf[UTRErrorController]
+  lazy val testUTRErrorController = app.injector.instanceOf[UTRErrorController]
 
 
   "show" when {

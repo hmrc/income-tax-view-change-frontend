@@ -42,7 +42,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
       api.inject.bind[DateService].toInstance(dateService)
     ).build()
 
-  val testConfirmReportingMethodSharedController = app.injector.instanceOf[ConfirmReportingMethodSharedController]
+  lazy val testConfirmReportingMethodSharedController = app.injector.instanceOf[ConfirmReportingMethodSharedController]
 
   val individual: Boolean = true
   val agent: Boolean = false

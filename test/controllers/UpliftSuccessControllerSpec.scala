@@ -29,7 +29,7 @@ class UpliftSuccessControllerSpec extends MockAuthActions {
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .build()
 
-  val testController = app.injector.instanceOf[UpliftSuccessController]
+  lazy val testController = app.injector.instanceOf[UpliftSuccessController]
 
   val action = testController.success("PTA")
   val fakeRequest = fakeGetRequestBasedOnMTDUserType(MTDIndividual)

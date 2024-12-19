@@ -29,7 +29,7 @@ class TaxYearsControllerSpec extends MockAuthActions with ImplicitDateFormatter 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .build()
 
-  val testController = app.injector.instanceOf[TaxYearsController]
+  lazy val testController = app.injector.instanceOf[TaxYearsController]
 
   mtdAllRoles.foreach { case mtdUserRole =>
     val isAgent = mtdUserRole != MTDIndividual

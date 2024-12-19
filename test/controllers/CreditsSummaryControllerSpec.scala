@@ -40,7 +40,7 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
       api.inject.bind[CreditHistoryService].toInstance(mockCreditHistoryService)
     ).build()
 
-  val testController = app.injector.instanceOf[CreditsSummaryController]
+  lazy val testController = app.injector.instanceOf[CreditsSummaryController]
 
   val testCharges: List[DocumentDetail] = List(
     documentDetailModel(

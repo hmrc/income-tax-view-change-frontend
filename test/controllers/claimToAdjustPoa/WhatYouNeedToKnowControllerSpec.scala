@@ -40,7 +40,7 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthActions
       api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService)
     ).build()
 
-  val testController = app.injector.instanceOf[WhatYouNeedToKnowController]
+  lazy val testController = app.injector.instanceOf[WhatYouNeedToKnowController]
 
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual

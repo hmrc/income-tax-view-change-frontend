@@ -43,7 +43,7 @@ class AmendablePoaControllerSpec
       api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService)
     ).build()
 
-  val testController = app.injector.instanceOf[AmendablePoaController]
+  lazy val testController = app.injector.instanceOf[AmendablePoaController]
 
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual

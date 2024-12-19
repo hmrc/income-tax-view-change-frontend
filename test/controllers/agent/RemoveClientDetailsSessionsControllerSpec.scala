@@ -33,7 +33,7 @@ class RemoveClientDetailsSessionsControllerSpec extends MockAuthActions
       api.inject.bind[EnterClientsUTR].toInstance(enterClientsUTR)
     ).build()
 
-  val testRemoveClientDetailsSessionsController = app.injector.instanceOf[RemoveClientDetailsSessionsController]
+  lazy val testRemoveClientDetailsSessionsController = app.injector.instanceOf[RemoveClientDetailsSessionsController]
 
   Map("primary agent" -> false, "supporting agent" -> true).foreach { case (agentType, isSupportingAgent) =>
     val fakeRequest = fakeRequestConfirmedClient(isSupportingAgent = isSupportingAgent)

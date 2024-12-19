@@ -51,7 +51,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
       api.inject.bind[DateService].toInstance(dateService)
     ).build()
 
-  val testController = app.injector.instanceOf[WhatYouOweController]
+  lazy val testController = app.injector.instanceOf[WhatYouOweController]
 
   def testFinancialDetail(taxYear: Int): FinancialDetailsModel = financialDetailsModel(taxYear)
 

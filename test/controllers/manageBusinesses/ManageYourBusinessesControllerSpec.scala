@@ -42,7 +42,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
       api.inject.bind[SessionService].toInstance(mockSessionService)
     ).build()
 
-  val testManageYourBusinessesController = app.injector.instanceOf[ManageYourBusinessesController]
+  lazy val testManageYourBusinessesController = app.injector.instanceOf[ManageYourBusinessesController]
 
   "show()" when {
     "the user is authenticated" should {

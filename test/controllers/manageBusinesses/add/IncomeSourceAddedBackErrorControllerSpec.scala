@@ -40,8 +40,7 @@ class IncomeSourceAddedBackErrorControllerSpec extends MockAuthActions with Mock
       api.inject.bind[SessionService].toInstance(mockSessionService))
     .build()
 
-  val testIncomeSourceAddedBackErrorController = app.injector.instanceOf[IncomeSourceAddedBackErrorController]
-
+  lazy val testIncomeSourceAddedBackErrorController = app.injector.instanceOf[IncomeSourceAddedBackErrorController]
 
   val title: String = messages("cannotGoBack.heading")
   val warningMessage: String = s"! Warning ${messages("cannotGoBack.warningMessage")}"

@@ -53,7 +53,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
       api.inject.bind[UpdateIncomeSourceService].toInstance(mockUpdateIncomeSourceService)
     ).build()
 
-  val testCeaseCheckIncomeSourceDetailsController =
+  lazy val testCeaseCheckIncomeSourceDetailsController =
     app.injector.instanceOf[CeaseCheckIncomeSourceDetailsController]
 
   def heading(incomeSourceType: IncomeSourceType): String = {

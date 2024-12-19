@@ -30,7 +30,7 @@ class ApiFailureSubmittingPoaControllerSpec extends MockAuthActions {
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .build()
 
-  val testController = app.injector.instanceOf[ApiFailureSubmittingPoaController]
+  lazy val testController = app.injector.instanceOf[ApiFailureSubmittingPoaController]
 
   val firstParagraphView = "Your payments on account could not be updated."
 

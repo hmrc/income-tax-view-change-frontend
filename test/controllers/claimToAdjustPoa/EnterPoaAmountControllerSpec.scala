@@ -47,7 +47,7 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
       api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService)
     ).build()
 
-  val testController = app.injector.instanceOf[EnterPoaAmountController]
+  lazy val testController = app.injector.instanceOf[EnterPoaAmountController]
 
 
   val poaViewModelDecreaseJourney = PaymentOnAccountViewModel(

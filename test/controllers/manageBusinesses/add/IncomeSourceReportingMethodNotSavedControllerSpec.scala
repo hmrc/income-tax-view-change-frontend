@@ -41,7 +41,7 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends MockAuthActions 
       api.inject.bind[SessionService].toInstance(mockSessionService)
     ).build()
 
-  val testController = app.injector.instanceOf[IncomeSourceReportingMethodNotSavedController]
+  lazy val testController = app.injector.instanceOf[IncomeSourceReportingMethodNotSavedController]
 
   val incomeSourceTypes: Seq[IncomeSourceType with Serializable] = List(SelfEmployment, UkProperty, ForeignProperty)
 

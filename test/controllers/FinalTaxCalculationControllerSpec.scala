@@ -42,7 +42,7 @@ class FinalTaxCalculationControllerSpec extends MockAuthActions
       api.inject.bind[CalculationService].toInstance(mockCalculationService)
     ).build()
 
-  val testController = app.injector.instanceOf[FinalTaxCalculationController]
+  lazy val testController = app.injector.instanceOf[FinalTaxCalculationController]
 
 
   val testCalcError: LiabilityCalculationError = LiabilityCalculationError(Status.OK, "Test message")

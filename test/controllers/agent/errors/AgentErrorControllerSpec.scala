@@ -25,7 +25,7 @@ class AgentErrorControllerSpec extends MockAuthActions {
 
   override lazy val app = applicationBuilderWithAuthBindings.build()
 
-  val testAgentErrorController = app.injector.instanceOf[AgentErrorController]
+  lazy val testAgentErrorController = app.injector.instanceOf[AgentErrorController]
 
   "Calling the show action of the AgentErrorController" should {
 

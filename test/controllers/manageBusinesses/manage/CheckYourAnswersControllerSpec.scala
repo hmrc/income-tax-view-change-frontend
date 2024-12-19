@@ -51,7 +51,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
       api.inject.bind[UpdateIncomeSourceService].toInstance(mockUpdateIncomeSourceService)
     ).build()
 
-  val testController = app.injector.instanceOf[CheckYourAnswersController]
+  lazy val testController = app.injector.instanceOf[CheckYourAnswersController]
   val incomeSourceTypes = List(SelfEmployment, UkProperty, ForeignProperty)
 
   mtdAllRoles.foreach { mtdRole =>

@@ -34,7 +34,7 @@ class CalculationPollingControllerSpec extends MockAuthActions with MockCalculat
       api.inject.bind[CalculationPollingService].toInstance(mockCalculationPollingService)
     ).build()
 
-  val testController = app.injector.instanceOf[CalculationPollingController]
+  lazy val testController = app.injector.instanceOf[CalculationPollingController]
 
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual

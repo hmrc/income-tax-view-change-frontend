@@ -45,7 +45,7 @@ class ManageIncomeSourceControllerSpec extends MockAuthActions
       api.inject.bind[SessionService].toInstance(mockSessionService)
     ).build()
 
-  val testController = app.injector.instanceOf[ManageIncomeSourceController]
+  lazy val testController = app.injector.instanceOf[ManageIncomeSourceController]
 
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual

@@ -44,7 +44,7 @@ class SelectYourReasonControllerSpec extends MockAuthActions
       api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService)
     ).build()
 
-  val testController = app.injector.instanceOf[SelectYourReasonController]
+  lazy val testController = app.injector.instanceOf[SelectYourReasonController]
 
   val poa: Option[PaymentOnAccountViewModel] = Some(
     PaymentOnAccountViewModel(

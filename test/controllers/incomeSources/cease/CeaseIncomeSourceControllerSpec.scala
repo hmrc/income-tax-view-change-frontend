@@ -45,7 +45,7 @@ class CeaseIncomeSourceControllerSpec extends MockAuthActions
       api.inject.bind[SessionService].toInstance(mockSessionService)
     ).build()
 
-  val testCeaseIncomeSourceController = app.injector.instanceOf[CeaseIncomeSourceController]
+  lazy val testCeaseIncomeSourceController = app.injector.instanceOf[CeaseIncomeSourceController]
 
   mtdAllRoles.foreach { mtdRole =>
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)

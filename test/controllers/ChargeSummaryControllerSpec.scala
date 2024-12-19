@@ -39,7 +39,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
       api.inject.bind[FinancialDetailsService].toInstance(mockFinancialDetailsService)
     ).build()
 
-  val testController = app.injector.instanceOf[ChargeSummaryController]
+  lazy val testController = app.injector.instanceOf[ChargeSummaryController]
 
   val endYear: Int = 2018
   val startYear: Int = endYear - 1

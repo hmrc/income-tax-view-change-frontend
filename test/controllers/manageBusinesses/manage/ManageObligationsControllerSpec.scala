@@ -55,7 +55,7 @@ class ManageObligationsControllerSpec extends MockAuthActions
       api.inject.bind[IncomeSourcesUtils].toInstance(mockIncomeSourcesUtils)
     ).build()
 
-  val testController = app.injector.instanceOf[ManageObligationsController]
+  lazy val testController = app.injector.instanceOf[ManageObligationsController]
 
 
   private def setMongoSessionData(incomeSourceId: String, reportingMethod: String, taxYear: String, incomeSourceType: IncomeSourceType): Unit = {

@@ -47,7 +47,7 @@ class ViewAllCeasedBusinessesControllerSpec extends MockAuthActions
       api.inject.bind[SessionService].toInstance(mockSessionService)
     ).build()
 
-  val testController = app.injector.instanceOf[ViewAllCeasedBusinessesController]
+  lazy val testController = app.injector.instanceOf[ViewAllCeasedBusinessesController]
 
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual

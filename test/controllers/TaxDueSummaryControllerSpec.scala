@@ -36,7 +36,7 @@ class TaxDueSummaryControllerSpec extends MockAuthActions with MockCalculationSe
       api.inject.bind[CalculationService].toInstance(mockCalculationService)
     ).build()
 
-  val testController = app.injector.instanceOf[TaxDueSummaryController]
+  lazy val testController = app.injector.instanceOf[TaxDueSummaryController]
 
   mtdAllRoles.foreach { case mtdUserRole =>
     val isAgent = mtdUserRole != MTDIndividual

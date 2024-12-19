@@ -36,7 +36,7 @@ class NotMigratedUserControllerSpec extends MockAuthActions
       api.inject.bind[PaymentHistoryService].toInstance(mockPaymentHistoryService),
     ).build()
 
-  val testController = app.injector.instanceOf[NotMigratedUserController]
+  lazy val testController = app.injector.instanceOf[NotMigratedUserController]
 
   mtdAllRoles.foreach{ case mtdUserRole =>
     val isAgent = mtdUserRole != MTDIndividual

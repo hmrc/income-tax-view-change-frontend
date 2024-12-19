@@ -28,7 +28,7 @@ class OptInErrorControllerSpec extends MockAuthActions {
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .build()
 
-  val testController = app.injector.instanceOf[OptInErrorController]
+  lazy val testController = app.injector.instanceOf[OptInErrorController]
 
   mtdAllRoles.foreach { mtdRole =>
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)

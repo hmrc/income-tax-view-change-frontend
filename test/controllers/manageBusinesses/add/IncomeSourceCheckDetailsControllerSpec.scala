@@ -50,7 +50,7 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
       api.inject.bind[CreateBusinessDetailsService].toInstance(mockBusinessDetailsService)
     ).build()
 
-  val testCheckDetailsController = app.injector.instanceOf[IncomeSourceCheckDetailsController]
+  lazy val testCheckDetailsController = app.injector.instanceOf[IncomeSourceCheckDetailsController]
 
   def getHeading(sourceType: IncomeSourceType): String = {
     sourceType match {

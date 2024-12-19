@@ -57,8 +57,8 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
     ).configure(Map("feature-switches.read-from-mongo" -> "false"))
     .build()
 
-  val testController = app.injector.instanceOf[ReportingFrequencyPageController]
-  val reportingFrequencyView = app.injector.instanceOf[ReportingFrequencyView]
+  lazy val testController = app.injector.instanceOf[ReportingFrequencyPageController]
+  lazy val reportingFrequencyView = app.injector.instanceOf[ReportingFrequencyView]
 
   mtdAllRoles.foreach { mtdRole =>
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)

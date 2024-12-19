@@ -47,7 +47,7 @@ class ChargeSummaryControllerTest extends MockAuthActions
       api.inject.bind[DocumentDetailWithDueDate].toInstance(documentDetailWithDueDate)
     ).build()
 
-  val testController = app.injector.instanceOf[ChargeSummaryController]
+  lazy val testController = app.injector.instanceOf[ChargeSummaryController]
 
   val interestEndDate: LocalDate = LocalDate.of(2024, 11, 5)
 

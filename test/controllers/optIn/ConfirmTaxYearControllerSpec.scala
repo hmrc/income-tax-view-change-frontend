@@ -44,7 +44,7 @@ class ConfirmTaxYearControllerSpec extends MockAuthActions
       api.inject.bind[DateService].toInstance(mockDateService)
     ).build()
 
-  val testController = app.injector.instanceOf[ConfirmTaxYearController]
+  lazy val testController = app.injector.instanceOf[ConfirmTaxYearController]
 
   val endCurrentTaxYear = 2025
   val taxYear2024_25: TaxYear = TaxYear.forYearEnd(endCurrentTaxYear)

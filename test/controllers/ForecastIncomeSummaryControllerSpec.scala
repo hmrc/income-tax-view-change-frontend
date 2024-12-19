@@ -37,7 +37,7 @@ class ForecastIncomeSummaryControllerSpec extends MockAuthActions with MockCalcu
       api.inject.bind[CalculationService].toInstance(mockCalculationService)
     ).build()
 
-  val testController = app.injector.instanceOf[ForecastIncomeSummaryController]
+  lazy val testController = app.injector.instanceOf[ForecastIncomeSummaryController]
 
   override def beforeEach(): Unit = {
     super.beforeEach()

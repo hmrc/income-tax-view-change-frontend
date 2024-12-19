@@ -51,7 +51,7 @@ class FeedbackControllerSpec extends MockAuthActions
       api.inject.bind[FeedbackConnector].toInstance(mockFeedbackConnector)
     ).build()
 
-  val testController = app.injector.instanceOf[FeedbackController]
+  lazy val testController = app.injector.instanceOf[FeedbackController]
 
   val fields = Map(
     "feedback-name" -> "name",

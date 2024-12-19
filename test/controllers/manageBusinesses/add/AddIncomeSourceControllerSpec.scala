@@ -48,7 +48,7 @@ class AddIncomeSourceControllerSpec extends MockAuthActions
       api.inject.bind[SessionService].toInstance(mockSessionService)
     ).build()
 
-  val controller = app.injector.instanceOf[AddIncomeSourceController]
+  lazy val controller = app.injector.instanceOf[AddIncomeSourceController]
 
   mtdAllRoles.foreach { mtdRole =>
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)

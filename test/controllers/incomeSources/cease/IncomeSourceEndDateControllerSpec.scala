@@ -44,7 +44,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
       api.inject.bind[SessionService].toInstance(mockSessionService)
     ).build()
 
-  val testController = app.injector.instanceOf[IncomeSourceEndDateController]
+  lazy val testController = app.injector.instanceOf[IncomeSourceEndDateController]
 
 
   def heading(incomeSourceType: IncomeSourceType): String = {

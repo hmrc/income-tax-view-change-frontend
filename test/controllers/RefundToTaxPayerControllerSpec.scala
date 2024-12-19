@@ -40,7 +40,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthActions
       api.inject.bind[RepaymentHistoryConnector].toInstance(mockRepaymentHistoryConnector)
     ).build()
 
-  val testController = app.injector.instanceOf[RefundToTaxPayerController]
+  lazy val testController = app.injector.instanceOf[RefundToTaxPayerController]
 
   val repaymentRequestNumber: String = "023942042349"
   val testNino: String = "AB123456C"
@@ -53,7 +53,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthActions
     }
   }
 
-  val refundToTaxPayerView: RefundToTaxPayer = app.injector.instanceOf[RefundToTaxPayer]
+  lazy val refundToTaxPayerView: RefundToTaxPayer = app.injector.instanceOf[RefundToTaxPayer]
 
   val testRepaymentHistoryModel: RepaymentHistoryModel = RepaymentHistoryModel(
     List(RepaymentHistory(

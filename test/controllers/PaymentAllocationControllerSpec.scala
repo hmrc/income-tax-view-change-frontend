@@ -42,7 +42,7 @@ class PaymentAllocationControllerSpec extends MockAuthActions
       api.inject.bind[PaymentAllocationsService].toInstance(mockPaymentAllocationsService)
     ).build()
 
-  val testController = app.injector.instanceOf[PaymentAllocationsController]
+  lazy val testController = app.injector.instanceOf[PaymentAllocationsController]
 
   val singleTestPaymentAllocationCharge: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
     List(documentDetail),

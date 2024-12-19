@@ -51,8 +51,8 @@ class OptOutCancelledControllerSpec extends MockAuthActions with MockOptOutServi
     .configure(config)
     .build()
 
-  val testController = app.injector.instanceOf[OptOutCancelledController]
-  val optOutCancelledView = app.injector.instanceOf[OptOutCancelledView]
+  lazy val testController = app.injector.instanceOf[OptOutCancelledController]
+  lazy val optOutCancelledView = app.injector.instanceOf[OptOutCancelledView]
 
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual

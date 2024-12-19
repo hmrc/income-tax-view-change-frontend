@@ -57,7 +57,7 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with Moc
       api.inject.bind[DateService].toInstance(mockDateService)
     ).build()
 
-  val testController = app.injector.instanceOf[IncomeSourceReportingMethodController]
+  lazy val testController = app.injector.instanceOf[IncomeSourceReportingMethodController]
 
   val TAX_YEAR_2024 = 2024
   val TAX_YEAR_2023 = 2023

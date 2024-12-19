@@ -37,7 +37,7 @@ class OptInCompletedControllerSpec extends MockAuthActions
       api.inject.bind[OptInService].toInstance(mockOptInService)
     ).build()
 
-  val testController = app.injector.instanceOf[OptInCompletedController]
+  lazy val testController = app.injector.instanceOf[OptInCompletedController]
 
   val endTaxYear = 2023
   val taxYear2023 = TaxYear.forYearEnd(endTaxYear)

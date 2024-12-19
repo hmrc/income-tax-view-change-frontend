@@ -55,7 +55,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions
       api.inject.bind[ITSAStatusService].toInstance(mockITSAStatusService)
     ).build()
 
-  val testIncomeSourceAddedController = app.injector.instanceOf[IncomeSourceAddedController]
+  lazy val testIncomeSourceAddedController = app.injector.instanceOf[IncomeSourceAddedController]
 
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(
     GroupedObligationsModel(testSelfEmploymentId, List(SingleObligationModel(

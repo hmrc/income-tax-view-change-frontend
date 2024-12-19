@@ -47,7 +47,7 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
       api.inject.bind[SessionService].toInstance(mockSessionService)
     ).build()
 
-  val testAddBusinessTradeController = app.injector.instanceOf[AddBusinessTradeController]
+  lazy val testAddBusinessTradeController = app.injector.instanceOf[AddBusinessTradeController]
 
   def getAction(mtdRole: MTDUserRole, isChange: Boolean, isPost: Boolean = false) = mtdRole match {
     case MTDIndividual if isPost => testAddBusinessTradeController.submit(isChange)

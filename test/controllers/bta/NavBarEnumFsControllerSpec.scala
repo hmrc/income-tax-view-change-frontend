@@ -47,7 +47,7 @@ class NavBarEnumFsControllerSpec extends MockAuthenticationPredicate with MockIn
   val saUtr = "1234567800"
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  val testController = new BtaNavBarController(mockBtaNavBarPartialConnector, testView, mockMcc, mockNavBarService)
+  lazy val testController = new BtaNavBarController(mockBtaNavBarPartialConnector, testView, mockMcc, mockNavBarService)
 
   lazy val userWithNino: MtdItUserWithNino[Any] = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName),
     None, Some("testUtr"), Some("testCredId"), Some(Individual), None)

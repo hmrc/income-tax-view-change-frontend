@@ -43,7 +43,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
       api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService)
     ).build()
 
-  val testController = app.injector.instanceOf[CheckYourAnswersController]
+  lazy val testController = app.injector.instanceOf[CheckYourAnswersController]
 
   val poa: Option[PaymentOnAccountViewModel] = Some(
     PaymentOnAccountViewModel(

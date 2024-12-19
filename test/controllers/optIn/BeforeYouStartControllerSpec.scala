@@ -40,7 +40,7 @@ class BeforeYouStartControllerSpec extends MockAuthActions with MockOptInService
       api.inject.bind[OptInService].toInstance(mockOptInService)
     ).build()
 
-  val testController = app.injector.instanceOf[BeforeYouStartController]
+  lazy val testController = app.injector.instanceOf[BeforeYouStartController]
 
   val endTaxYear = 2025
   val taxYear2024: TaxYear = TaxYear.forYearEnd(endTaxYear - 1)

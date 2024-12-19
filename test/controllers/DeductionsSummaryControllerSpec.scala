@@ -37,7 +37,7 @@ class DeductionsSummaryControllerSpec extends MockAuthActions with MockCalculati
       api.inject.bind[CalculationService].toInstance(mockCalculationService)
     ).build()
 
-  val testController = app.injector.instanceOf[DeductionsSummaryController]
+  lazy val testController = app.injector.instanceOf[DeductionsSummaryController]
 
   mtdAllRoles.foreach { mtdUserRole =>
     val isAgent = mtdUserRole != MTDIndividual

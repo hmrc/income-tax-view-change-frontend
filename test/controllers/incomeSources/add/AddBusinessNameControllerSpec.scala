@@ -47,7 +47,7 @@ class AddBusinessNameControllerSpec extends MockAuthActions
       api.inject.bind[SessionService].toInstance(mockSessionService)
     ).build()
 
-  val testAddBusinessNameController = app.injector.instanceOf[AddBusinessNameController]
+  lazy val testAddBusinessNameController = app.injector.instanceOf[AddBusinessNameController]
 
   val validBusinessName: String = "Test Business Name"
   val journeyType: IncomeSourceJourneyType = IncomeSourceJourneyType(Add, SelfEmployment)

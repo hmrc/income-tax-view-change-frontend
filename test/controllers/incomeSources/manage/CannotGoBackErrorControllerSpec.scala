@@ -36,7 +36,7 @@ class CannotGoBackErrorControllerSpec extends MockAuthActions with MockSessionSe
       api.inject.bind[SessionService].toInstance(mockSessionService)
     ).build()
 
-  val testController = app.injector.instanceOf[CannotGoBackErrorController]
+  lazy val testController = app.injector.instanceOf[CannotGoBackErrorController]
 
   val annualReportingMethod = "annual"
   val quarterlyReportingMethod = "quarterly"

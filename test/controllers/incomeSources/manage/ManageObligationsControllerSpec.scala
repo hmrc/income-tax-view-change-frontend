@@ -55,7 +55,7 @@ class ManageObligationsControllerSpec extends MockAuthActions
       api.inject.bind[IncomeSourcesUtils].toInstance(mockIncomeSourcesUtils)
     ).build()
 
-  val testController = app.injector.instanceOf[ManageObligationsController]
+  lazy val testController = app.injector.instanceOf[ManageObligationsController]
 
   val testTaxYear = "2023-2024"
   val changeToA = "annual"

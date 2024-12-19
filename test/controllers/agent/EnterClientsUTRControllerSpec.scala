@@ -44,7 +44,7 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
       api.inject.bind[EnterClientsUTR].toInstance(enterClientsUTR)
     ).build()
 
-  val testEnterClientsUTRController = app.injector.instanceOf[EnterClientsUTRController]
+  lazy val testEnterClientsUTRController = app.injector.instanceOf[EnterClientsUTRController]
 
   "show" when {
     "the user is not authenticated" should {

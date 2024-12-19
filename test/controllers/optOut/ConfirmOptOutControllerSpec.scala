@@ -43,7 +43,7 @@ class ConfirmOptOutControllerSpec extends MockAuthActions
       api.inject.bind[SessionService].toInstance(mockSessionService)
     ).build()
 
-  val testController = app.injector.instanceOf[ConfirmOptOutController]
+  lazy val testController = app.injector.instanceOf[ConfirmOptOutController]
 
   val yearEnd = 2024
   val taxYear: TaxYear = TaxYear.forYearEnd(yearEnd)

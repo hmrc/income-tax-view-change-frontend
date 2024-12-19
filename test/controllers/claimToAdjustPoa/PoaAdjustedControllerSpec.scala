@@ -45,7 +45,7 @@ class PoaAdjustedControllerSpec extends MockAuthActions
       api.inject.bind[DateService].toInstance(mockDateService)
     ).build()
 
-  val testController = app.injector.instanceOf[PoaAdjustedController]
+  lazy val testController = app.injector.instanceOf[PoaAdjustedController]
 
   val startOfTaxYear: LocalDate = LocalDate.of(2023, 4, 7)
   val endOfTaxYear: LocalDate = LocalDate.of(2024, 4, 4)

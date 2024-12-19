@@ -59,7 +59,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
 
   lazy val taxYearSummaryView: TaxYearSummary = app.injector.instanceOf[TaxYearSummary]
 
-  val testController = app.injector.instanceOf[TaxYearSummaryController]
+  lazy val testController = app.injector.instanceOf[TaxYearSummaryController]
 
   val testCharge = chargeItemModel()
 

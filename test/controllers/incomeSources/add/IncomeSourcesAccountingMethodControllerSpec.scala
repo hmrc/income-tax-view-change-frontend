@@ -46,7 +46,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends MockAuthActions with M
       api.inject.bind[DateService].toInstance(dateService)
     ).build()
 
-  val testController = app.injector.instanceOf[IncomeSourcesAccountingMethodController]
+  lazy val testController = app.injector.instanceOf[IncomeSourcesAccountingMethodController]
 
   def businessResponseRoute(incomeSourceType: IncomeSourceType): String = {
     "incomeSources.add." + incomeSourceType.key + ".AccountingMethod"

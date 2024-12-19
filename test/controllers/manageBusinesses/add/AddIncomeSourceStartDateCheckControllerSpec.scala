@@ -52,7 +52,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
       api.inject.bind[DateService].toInstance(dateService)
     ).build()
 
-  val testAddIncomeSourceStartDateCheckController = app.injector.instanceOf[AddIncomeSourceStartDateCheckController]
+  lazy val testAddIncomeSourceStartDateCheckController = app.injector.instanceOf[AddIncomeSourceStartDateCheckController]
 
 
   val testStartDate: LocalDate = LocalDate.of(2022, 11, 11)

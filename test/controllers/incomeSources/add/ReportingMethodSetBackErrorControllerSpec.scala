@@ -39,7 +39,7 @@ class ReportingMethodSetBackErrorControllerSpec extends MockAuthActions with Moc
       api.inject.bind[SessionService].toInstance(mockSessionService)
     ).build()
 
-  val testController = app.injector.instanceOf[ReportingMethodSetBackErrorController]
+  lazy val testController = app.injector.instanceOf[ReportingMethodSetBackErrorController]
 
   val title: String = messages("cannotGoBack.heading")
   val messageSE: String = messages("cannotGoBack.soleTraderAdded")

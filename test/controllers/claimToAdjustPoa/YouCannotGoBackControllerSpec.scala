@@ -40,7 +40,7 @@ class YouCannotGoBackControllerSpec extends MockAuthActions
       api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService)
     ).build()
 
-  val testController = app.injector.instanceOf[YouCannotGoBackController]
+  lazy val testController = app.injector.instanceOf[YouCannotGoBackController]
 
   def setupTest(): Unit = {
     enable(AdjustPaymentsOnAccount)

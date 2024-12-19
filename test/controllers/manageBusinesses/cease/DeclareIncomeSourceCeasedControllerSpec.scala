@@ -43,7 +43,7 @@ class DeclareIncomeSourceCeasedControllerSpec extends MockAuthActions with MockS
       api.inject.bind[SessionService].toInstance(mockSessionService))
     .build()
 
-  val testController = app.injector.instanceOf[DeclareIncomeSourceCeasedController]
+  lazy val testController = app.injector.instanceOf[DeclareIncomeSourceCeasedController]
 
   def getHeader(incomeSourceType: IncomeSourceType): String = {
     incomeSourceType match {

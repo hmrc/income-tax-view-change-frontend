@@ -33,7 +33,7 @@ class IncomeSourceNotCeasedControllerSpec extends MockAuthActions {
   override lazy val app = applicationBuilderWithAuthBindings
     .build()
 
-  val testController = app.injector.instanceOf[IncomeSourceNotCeasedController]
+  lazy val testController = app.injector.instanceOf[IncomeSourceNotCeasedController]
 
   def getMessage(incomeSourceType: IncomeSourceType): String = incomeSourceType match {
     case SelfEmployment => messages("incomeSources.cease.error.SE.notCeased.text")

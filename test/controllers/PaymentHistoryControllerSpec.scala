@@ -46,7 +46,7 @@ class PaymentHistoryControllerSpec extends MockAuthActions
       api.inject.bind[RepaymentService].toInstance(mockRepaymentService)
     ).build()
 
-  val testController = app.injector.instanceOf[PaymentHistoryController]
+  lazy val testController = app.injector.instanceOf[PaymentHistoryController]
 
 
   val testPayments: List[Payment] = List(

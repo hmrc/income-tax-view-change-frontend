@@ -43,7 +43,7 @@ class ReportingMethodChangeErrorControllerSpec
       api.inject.bind[UpdateIncomeSourceService].toInstance(mockUpdateIncomeSourcesService)
     ).build()
 
-  val testController = app.injector.instanceOf[ReportingMethodChangeErrorController]
+  lazy val testController = app.injector.instanceOf[ReportingMethodChangeErrorController]
 
   val incomeSourceTypes = List(SelfEmployment, UkProperty, ForeignProperty)
 
