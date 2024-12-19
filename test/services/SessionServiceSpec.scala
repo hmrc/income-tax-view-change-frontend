@@ -17,7 +17,7 @@
 package services
 
 import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
-import enums.JourneyType.{Add, IncomeSourceJourneyType}
+import enums.JourneyType.{Add, Cease, IncomeSourceJourneyType, Manage}
 import mocks.repositories.MockUIJourneySessionDataRepository
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.mockito.Mockito.{reset, times, verify, when}
@@ -45,6 +45,7 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
           result shouldBe true
         }
       }
+
       "getMongo method " should {
         "return the correct session value for given key" in {
           val sessionData = UIJourneySessionData("session-123456", "ADD-SE")
@@ -112,6 +113,18 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
           updateMultipleData()
           val result: Either[Throwable, Boolean] = TestSessionService.setMultipleMongoData(Map("key" -> "value"),
             IncomeSourceJourneyType(Add, SelfEmployment))(headerCarrier, ec).futureValue
+          result shouldBe Right(true)
+        }
+        "return true when journey type is Manage" in {
+          updateMultipleData()
+          val result: Either[Throwable, Boolean] = TestSessionService.setMultipleMongoData(Map("key" -> "value"),
+            IncomeSourceJourneyType(Manage, SelfEmployment))(headerCarrier, ec).futureValue
+          result shouldBe Right(true)
+        }
+        "return true when journey type is Cease" in {
+          updateMultipleData()
+          val result: Either[Throwable, Boolean] = TestSessionService.setMultipleMongoData(Map("key" -> "value"),
+            IncomeSourceJourneyType(Cease, SelfEmployment))(headerCarrier, ec).futureValue
           result shouldBe Right(true)
         }
         "return a future error" in {
