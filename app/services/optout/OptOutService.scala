@@ -53,7 +53,10 @@ class OptOutService @Inject()(
 
     val currentYear = dateService.getCurrentTaxYear
 
-    val finalisedStatusFuture: Future[Boolean] = calculationListService.isTaxYearCrystallised(currentYear.previousYear)
+    val finalisedStatusFuture: Future[Boolean] =
+      calculationListService
+        .isTaxYearCrystallised(currentYear.previousYear)
+
     val statusMapFuture: Future[Map[TaxYear, ITSAStatus]] = getITSAStatusesFrom(currentYear.previousYear)
 
     for {
@@ -65,7 +68,8 @@ class OptOutService @Inject()(
         finalisedStatus,
         statusMap(currentYear.previousYear),
         statusMap(currentYear),
-        statusMap(currentYear.nextYear))
+        statusMap(currentYear.nextYear)
+      )
   }
 
   def recallOptOutProposition()(implicit hc: HeaderCarrier,
@@ -246,8 +250,8 @@ class OptOutService @Inject()(
       isMultiYearOptOut: Boolean = proposition.isMultiYearOptOut
     } yield {
       (isOneYearOptOut, isMultiYearOptOut) match {
-        case (true, false) => singleTaxYear
-        case _ => chosenTaxYear
+        case (false, true) => chosenTaxYear
+        case _ => singleTaxYear
       }
     }
   }
