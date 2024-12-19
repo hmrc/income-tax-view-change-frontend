@@ -30,9 +30,9 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class OptOutCancelledController @Inject()(val authActions: AuthActions,
-                                           optOutService: OptOutService,
-                                           view: OptOutCancelledView,
-                                           errorTemplate: ErrorTemplate
+                                          optOutService: OptOutService,
+                                          view: OptOutCancelledView,
+                                          errorTemplate: ErrorTemplate
                                          )(
                                            implicit val appConfig: FrontendAppConfig,
                                            mcc: MessagesControllerComponents,
@@ -43,26 +43,10 @@ class OptOutCancelledController @Inject()(val authActions: AuthActions,
 
   def show(): Action[AnyContent] =
     authActions.asMTDIndividual.async { implicit user =>
-      for {
-        proposition <- optOutService.fetchOptOutProposition()
-        availableOptOutYears = proposition.availableOptOutYears
-        isOneYearOptOut = proposition.isOneYearOptOut
-      } yield {
-        if (isOneYearOptOut) {
-          availableOptOutYears.headOption.map(_.taxYear) match {
-            case Some(taxYear) =>
-              Ok(view(false, taxYear.startYear.toString, taxYear.endYear.toString))
-            case _ =>
-              InternalServerError(
-                errorTemplate(
-                  pageTitle = "standardError.heading",
-                  heading = "standardError.heading",
-                  message = "standardError.message",
-                  isAgent = false
-                )
-              )
-          }
-        } else {
+      optOutService.getTaxYearForOptOutCancelled().map {
+        case Some(taxYear) =>
+          Ok(view(isAgent = false, taxYear.startYear.toString, taxYear.endYear.toString))
+        case None =>
           InternalServerError(
             errorTemplate(
               pageTitle = "standardError.heading",
@@ -71,41 +55,23 @@ class OptOutCancelledController @Inject()(val authActions: AuthActions,
               isAgent = false
             )
           )
-        }
       }
     }
 
   def showAgent(): Action[AnyContent] =
     authActions.asMTDAgentWithConfirmedClient.async { implicit user =>
-      for {
-        proposition <- optOutService.fetchOptOutProposition()
-        availableOptOutYears = proposition.availableOptOutYears
-        isOneYearOptOut = proposition.isOneYearOptOut
-      } yield {
-        if (isOneYearOptOut) {
-          availableOptOutYears.headOption.map(_.taxYear) match {
-            case Some(taxYear) =>
-              Ok(view(true, taxYear.startYear.toString, taxYear.endYear.toString))
-            case _ =>
-              InternalServerError(
-                errorTemplate(
-                  pageTitle = "standardError.heading",
-                  heading = "standardError.heading",
-                  message = "standardError.message",
-                  isAgent = true
-                )
-              )
-          }
-        } else {
+      optOutService.getTaxYearForOptOutCancelled().map {
+        case Some(taxYear) =>
+          Ok(view(isAgent = true, taxYear.startYear.toString, taxYear.endYear.toString))
+        case None =>
           InternalServerError(
             errorTemplate(
               pageTitle = "standardError.heading",
               heading = "standardError.heading",
               message = "standardError.message",
-              isAgent = true
+              isAgent = false
             )
           )
-        }
       }
     }
 }
