@@ -40,13 +40,13 @@ import scala.concurrent.Future
 
 class IncomeSourcesAccountingMethodControllerSpec extends MockAuthActions with MockSessionService {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[DateService].toInstance(dateService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[IncomeSourcesAccountingMethodController]
+  lazy val testController = app.injector.instanceOf[IncomeSourcesAccountingMethodController]
 
   def businessResponseRoute(incomeSourceType: IncomeSourceType): String = {
     "incomeSources.add." + incomeSourceType.key + ".AccountingMethod"

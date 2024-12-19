@@ -34,13 +34,13 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthActions
   with MockCalculationListService
   with MockPaymentOnAccountSessionService {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService),
       api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[WhatYouNeedToKnowController]
+  lazy val testController = app.injector.instanceOf[WhatYouNeedToKnowController]
 
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual

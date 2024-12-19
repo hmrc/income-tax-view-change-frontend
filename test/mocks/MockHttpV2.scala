@@ -29,8 +29,8 @@ import scala.concurrent.Future
 
 trait MockHttpV2 extends UnitSpec with BeforeAndAfterEach {
 
-  val mockHttpClientV2: HttpClientV2 = mock(classOf[HttpClientV2])
-  val mockRequestBuilder: RequestBuilder = mock(classOf[RequestBuilder])
+  lazy val mockHttpClientV2: HttpClientV2 = mock(classOf[HttpClientV2])
+  lazy val mockRequestBuilder: RequestBuilder = mock(classOf[RequestBuilder])
 
   override def beforeEach(): Unit = {
     super.beforeEach()

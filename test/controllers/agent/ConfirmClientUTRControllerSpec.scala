@@ -37,12 +37,12 @@ import views.html.agent.confirmClient
 class ConfirmClientUTRControllerSpec extends MockAuthActions
   with MockConfirmClient {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[confirmClient].toInstance(mockConfirmClient),
     ).build()
 
-  val testConfirmClientUTRController = fakeApplication().injector.instanceOf[ConfirmClientUTRController]
+  lazy val testConfirmClientUTRController = app.injector.instanceOf[ConfirmClientUTRController]
 
   Map("primary agent" -> false, "supporting agent" -> true).foreach { case (agentType, isSupportingAgent) =>
     val fakeRequest = fakeRequestUnconfirmedClient(isSupportingAgent = isSupportingAgent)

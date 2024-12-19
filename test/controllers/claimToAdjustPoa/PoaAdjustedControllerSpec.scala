@@ -38,14 +38,14 @@ class PoaAdjustedControllerSpec extends MockAuthActions
   with MockPaymentOnAccountSessionService
   with MockDateService {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService),
       api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService),
       api.inject.bind[DateService].toInstance(mockDateService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[PoaAdjustedController]
+  lazy val testController = app.injector.instanceOf[PoaAdjustedController]
 
   val startOfTaxYear: LocalDate = LocalDate.of(2023, 4, 7)
   val endOfTaxYear: LocalDate = LocalDate.of(2024, 4, 4)

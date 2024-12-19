@@ -48,7 +48,7 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with Moc
   lazy val mockCalculationListService: CalculationListService = mock(classOf[CalculationListService])
   lazy val mockDateService: DateService = mock(classOf[DateService])
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[ITSAStatusService].toInstance(mockITSAStatusService),
@@ -57,7 +57,7 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with Moc
       api.inject.bind[DateService].toInstance(mockDateService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[IncomeSourceReportingMethodController]
+  lazy val testController = app.injector.instanceOf[IncomeSourceReportingMethodController]
 
   val TAX_YEAR_2024 = 2024
   val TAX_YEAR_2023 = 2023

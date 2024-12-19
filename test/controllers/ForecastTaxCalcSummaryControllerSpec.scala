@@ -16,163 +16,82 @@
 
 package controllers
 
-import audit.mocks.MockAuditingService
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import mocks.auth.MockFrontendAuthorisedFunctions
-import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import enums.{MTDIndividual, MTDSupportingAgent}
+import mocks.auth.MockAuthActions
 import mocks.services.MockCalculationService
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
-import play.api.mvc.MessagesControllerComponents
+import play.api
+import play.api.Application
+import play.api.http.Status
 import play.api.test.Helpers.{charset, contentType, defaultAwaitTimeout, status}
-import services.IncomeSourceDetailsService
-import services.admin.FeatureSwitchService
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testMtditid, testMtditidAgent, testTaxYear}
-import testUtils.TestSupport
-import views.html.ForecastTaxCalcSummary
+import services.CalculationService
+import testConstants.BaseTestConstants.{testMtditid, testTaxYear}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 
-class ForecastTaxCalcSummaryControllerSpec extends TestSupport with MockCalculationService with MockFrontendAuthorisedFunctions
-  with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockAuditingService with FeatureSwitching {
+class ForecastTaxCalcSummaryControllerSpec extends MockAuthActions with MockCalculationService {
 
-  object TestForecastTaxCalcSummaryController extends ForecastTaxCalcSummaryController(
-    app.injector.instanceOf[ForecastTaxCalcSummary],
-    mockAuditingService,
-    mockCalculationService,
-    app.injector.instanceOf[ItvcErrorHandler],
-    app.injector.instanceOf[IncomeSourceDetailsService],
-    mockAuthService,
-    app.injector.instanceOf[FeatureSwitchService],
-    testAuthenticator
-  )(
-    ec,
-    languageUtils,
-    appConfig,
-    app.injector.instanceOf[MessagesControllerComponents],
-    app.injector.instanceOf[AgentItvcErrorHandler]
-  )
+  override lazy val app: Application = applicationBuilderWithAuthBindings
+    .overrides(
+      api.inject.bind[CalculationService].toInstance(mockCalculationService)
+    ).build()
+
+  lazy val testController = app.injector.instanceOf[ForecastTaxCalcSummaryController]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
   }
 
-  "individual user" when {
-    "show(taxYear)" when {
-      lazy val result = {
-        disableAllSwitches()
-        mockCalculationSuccessfulNew(testMtditid)
-        TestForecastTaxCalcSummaryController.show(testTaxYear)(fakeRequestWithActiveSession)
-      }
-      lazy val document = result.toHtmlDocument
+  mtdAllRoles.foreach { mtdUserRole =>
+    val isAgent = mtdUserRole != MTDIndividual
+    val action = if (isAgent) testController.showAgent(testTaxYear) else testController.show(testTaxYear)
+    val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
+    s"show${if (isAgent) "Agent"}" when {
+      s"the $mtdUserRole is authenticated" should {
+        if (mtdUserRole == MTDSupportingAgent) {
+          testSupportingAgentDeniedAccess(action)(fakeRequest)
+        } else {
+          "render the forecast tax calc summary page" in {
+            setupMockSuccess(mtdUserRole)
+            mockCalculationSuccessfulNew(testMtditid)
+            setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
 
-      "given a tax year which can be found in ETMP" should {
-        s"return status $OK" in {
-          status(result) shouldBe OK
-        }
+            val result = action(fakeRequest)
+            status(result) shouldBe Status.OK
+            contentType(result) shouldBe Some("text/html")
+            charset(result) shouldBe Some("utf-8")
+            lazy val document = result.toHtmlDocument
+            val title = messages("forecast_taxCalc.heading")
+            document.title() shouldBe messages({
+              if (isAgent) "htmlTitle.agent" else "htmlTitle"
+            }, title)
+          }
 
-        "return HTML" in {
-          contentType(result) shouldBe Some("text/html")
-          charset(result) shouldBe Some("utf-8")
-        }
+          "render the error page" when {
+            "given a tax year which can not be found in ETMP" in {
+              setupMockSuccess(mtdUserRole)
+              mockCalculationNotFoundNew(testMtditid)
+              setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            }
+            "there is a downstream error which return NOT_FOUND" in {
+              setupMockSuccess(mtdUserRole)
+              mockCalculationNotFoundNew(testMtditid)
+              setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            }
 
-        "render the forecast tax calc summary page" in {
-          document.title() shouldBe messages("htmlTitle", messages("forecast_taxCalc.heading"))
-        }
-      }
-
-      "given a tax year which can not be found in ETMP" should {
-        lazy val result = TestForecastTaxCalcSummaryController.show(testTaxYear)(fakeRequestWithActiveSession)
-
-        s"return status $INTERNAL_SERVER_ERROR" in {
-          disableAllSwitches()
-          mockCalculationNotFoundNew(testMtditid)
-          status(result) shouldBe INTERNAL_SERVER_ERROR
-        }
-
-      }
-      s"there is a downstream error which returns $NOT_FOUND" should {
-        lazy val result = TestForecastTaxCalcSummaryController.show(testTaxYear)(fakeRequestWithActiveSession)
-
-        s"return status $INTERNAL_SERVER_ERROR" in {
-          disableAllSwitches()
-          mockCalculationNotFoundNew(testMtditid)
-          status(result) shouldBe INTERNAL_SERVER_ERROR
-        }
-      }
-
-      s"there is a downstream error which returns $INTERNAL_SERVER_ERROR" should {
-        lazy val result = TestForecastTaxCalcSummaryController.show(testTaxYear)(fakeRequestWithActiveSession)
-
-        s"return status $INTERNAL_SERVER_ERROR" in {
-          disableAllSwitches()
-          mockCalculationErrorNew(testMtditid)
-          status(result) shouldBe INTERNAL_SERVER_ERROR
+            "there is a downstream error which return INTERNAL_SERVER_ERROR" in {
+              setupMockSuccess(mtdUserRole)
+              mockCalculationErrorNew(testMtditid)
+              setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            }
+          }
         }
       }
-    }
-  }
-
-  "agent user" when {
-
-    "show(taxYear) with forecast calculation fs enabled" when {
-
-      lazy val result = {
-        disableAllSwitches()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockCalculationSuccessfulNew(testMtditidAgent)
-        TestForecastTaxCalcSummaryController.showAgent(testTaxYear)(fakeRequestConfirmedClient("AB123456C"))
-      }
-      lazy val document = result.toHtmlDocument
-
-      "given a tax year which can be found in ETMP" should {
-        s"return $OK" in {
-          status(result) shouldBe OK
-        }
-
-        "return HTML" in {
-          contentType(result) shouldBe Some("text/html")
-          charset(result) shouldBe Some("utf-8")
-        }
-
-        "return the forecast tax calc summary page" in {
-          document.title() shouldBe messages("htmlTitle.agent", messages("forecast_taxCalc.heading"))
-        }
-      }
-
-      "given a tax year which can not be found in ETMP" should {
-
-        lazy val result = TestForecastTaxCalcSummaryController.showAgent(testTaxYear)(fakeRequestConfirmedClient("AB123456C"))
-
-        s"return status $INTERNAL_SERVER_ERROR" in {
-          disableAllSwitches()
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-          mockCalculationNotFoundNew(testMtditidAgent)
-          status(result) shouldBe INTERNAL_SERVER_ERROR
-        }
-      }
-
-      s"there is a downstream error which returns $NOT_FOUND" should {
-
-        lazy val result = TestForecastTaxCalcSummaryController.showAgent(testTaxYear)(fakeRequestConfirmedClient("AB123456C"))
-
-        s"return status $INTERNAL_SERVER_ERROR" in {
-          disableAllSwitches()
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-          mockCalculationNotFoundNew(testMtditidAgent)
-          status(result) shouldBe INTERNAL_SERVER_ERROR
-        }
-      }
-
-      s"there is a downstream error which returns $INTERNAL_SERVER_ERROR" should {
-
-        lazy val result = TestForecastTaxCalcSummaryController.showAgent(testTaxYear)(fakeRequestConfirmedClient("AB123456C"))
-
-        s"return status $INTERNAL_SERVER_ERROR" in {
-          disableAllSwitches()
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-          mockCalculationErrorNew(testMtditidAgent)
-          status(result) shouldBe INTERNAL_SERVER_ERROR
-        }
-      }
+      testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
     }
   }
 }

@@ -30,10 +30,10 @@ import scala.concurrent.Future
 
 class IncomeSourceNotCeasedControllerSpec extends MockAuthActions {
 
-  override def fakeApplication() = applicationBuilderWithAuthBindings()
+  override lazy val app = applicationBuilderWithAuthBindings
     .build()
 
-  val testController = fakeApplication().injector.instanceOf[IncomeSourceNotCeasedController]
+  lazy val testController = app.injector.instanceOf[IncomeSourceNotCeasedController]
 
   def getMessage(incomeSourceType: IncomeSourceType): String = incomeSourceType match {
     case SelfEmployment => messages("incomeSources.cease.error.SE.notCeased.text")

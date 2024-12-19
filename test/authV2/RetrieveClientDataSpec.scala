@@ -36,14 +36,9 @@ import mocks.services.MockClientDetailsService
 import models.sessionData.SessionDataGetResponse.{SessionDataNotFound, SessionDataUnexpectedResponse}
 import services.agent.ClientDetailsService
 
-class RetrieveClientDataSpec extends AuthActionsSpecHelper with MockClientDetailsService{
+class RetrieveClientDataSpec extends AuthActionsSpecHelper with MockClientDetailsService {
 
-  override def afterEach(): Unit = {
-    Play.stop(fakeApplication())
-    super.afterEach()
-  }
-
-  override def fakeApplication(): Application = {
+  override lazy val app: Application = {
     new GuiceApplicationBuilder()
       .overrides(
         api.inject.bind[SessionDataService].toInstance(mockSessionDataService),
@@ -62,7 +57,7 @@ class RetrieveClientDataSpec extends AuthActionsSpecHelper with MockClientDetail
 
   def defaultAsync: ClientDataRequest[_] => Future[Result] = (_) => Future.successful(Results.Ok("Successful"))
 
-  lazy val action = fakeApplication().injector.instanceOf[RetrieveClientData]
+  lazy val action = app.injector.instanceOf[RetrieveClientData]
 
   "refine" when {
     "the session data service returns client details" should {

@@ -32,8 +32,6 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
 
   val baseUrl: String = appConfig.addressLookupService
 
-  override def messagesApi: MessagesApi = inject[MessagesApi]
-
   val testBusinessAddressModel: BusinessAddressModel = BusinessAddressModel("auditRef", Address(Seq("Line 1", "Line 2"), Some("AA1 1AA")))
 
   object TestAddressLookupConnector extends AddressLookupConnector(appConfig, mockHttpClientV2, messagesApi)

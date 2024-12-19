@@ -47,14 +47,14 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions
 
   lazy val mockDateService: DateService = mock(classOf[DateService])
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[DateService].toInstance(mockDateService),
       api.inject.bind[NextUpdatesService].toInstance(mockNextUpdatesService)
     ).build()
 
-  val testIncomeSourceAddedController = fakeApplication().injector.instanceOf[IncomeSourceAddedController]
+  lazy val testIncomeSourceAddedController = app.injector.instanceOf[IncomeSourceAddedController]
 
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(
     GroupedObligationsModel(testSelfEmploymentId, List(SingleObligationModel(

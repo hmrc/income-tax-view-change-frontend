@@ -17,41 +17,36 @@
 package controllers
 
 import audit.models.IvOutcomeSuccessAuditModel
-import config.FrontendAppConfig
-import controllers.predicates.NinoPredicate
-import mocks.controllers.predicates.MockAuthenticationPredicate
+import enums.MTDIndividual
+import mocks.auth.MockAuthActions
+import play.api.Application
 import play.api.http.Status
-import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation}
 import testConstants.BaseTestConstants.testNino
-import testUtils.TestSupport
 
-import scala.concurrent.ExecutionContext
+class UpliftSuccessControllerSpec extends MockAuthActions {
 
-class UpliftSuccessControllerSpec extends TestSupport with MockAuthenticationPredicate {
+  override lazy val app: Application = applicationBuilderWithAuthBindings
+    .build()
 
-  object TestUpliftSuccessController extends UpliftSuccessController()(
-    app.injector.instanceOf[FrontendAppConfig],
-    app.injector.instanceOf[MessagesControllerComponents],
-    mockAuditingService,
-    app.injector.instanceOf[ExecutionContext],
-    MockAuthenticationPredicate,
-    app.injector.instanceOf[NinoPredicate]
-  )
+  lazy val testController = app.injector.instanceOf[UpliftSuccessController]
 
-  "the UpliftSuccessController.success action" should {
-
-    "audit IV-uplift-success-outcome when nino is defined" in {
-
-      lazy val result = TestUpliftSuccessController.success("PTA")(fakeRequestWithNino)
-
-      val expectedIvOutcomeSuccessAuditModel = IvOutcomeSuccessAuditModel(testNino)
-
-      whenReady(result) { response =>
-        verifyAudit(expectedIvOutcomeSuccessAuditModel)
-        response.header.status shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
+  val action = testController.success("PTA")
+  val fakeRequest = fakeGetRequestBasedOnMTDUserType(MTDIndividual)
+  s"success()" when {
+    s"the user is an authenticated individual" should {
+      "audit and redirect to the home controller" in {
+        setupMockSuccess(MTDIndividual)
+        mockSingleBusinessIncomeSource()
+        val result = action(fakeRequest)
+        val expectedIvOutcomeSuccessAuditModel = IvOutcomeSuccessAuditModel(testNino)
+        whenReady(result) { response =>
+          verifyAudit(expectedIvOutcomeSuccessAuditModel)
+          response.header.status shouldBe Status.SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
+        }
       }
     }
+    testMTDAuthFailuresForRole(action, MTDIndividual)(fakeRequest)
   }
 }

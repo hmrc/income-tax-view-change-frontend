@@ -64,11 +64,6 @@ trait MockAuthActions extends
     reset(mockAuthService)
   }
 
-  override def beforeAll(): Unit = {
-    super.beforeAll()
-    Play.stop(fakeApplication())
-  }
-
   override def afterEach() = {
     super.afterEach()
   }
@@ -81,7 +76,7 @@ trait MockAuthActions extends
 
   lazy val mockAuthService: FrontendAuthorisedFunctions = mock(classOf[FrontendAuthorisedFunctions])
 
-  def applicationBuilderWithAuthBindings(): GuiceApplicationBuilder = {
+  lazy val applicationBuilderWithAuthBindings: GuiceApplicationBuilder = {
     new GuiceApplicationBuilder()
       .overrides(
         api.inject.bind[FrontendAuthorisedFunctions].toInstance(mockAuthService),
@@ -92,8 +87,6 @@ trait MockAuthActions extends
       )
   }
 
-  val mockAuthActions: AuthActions = app.injector.instanceOf[AuthActions]
-
   def setupMockSuccess[X, Y](mtdUserRole: MTDUserRole): Unit = mtdUserRole match {
     case MTDIndividual => setupMockUserAuth
     case MTDPrimaryAgent => setupMockAgentWithClientAuth(false)
@@ -102,6 +95,12 @@ trait MockAuthActions extends
 
   def setupMockUserAuth[X, Y]: Unit = {
     val allEnrolments = getAllEnrolmentsIndividual(true, true)
+    val retrievalValue = allEnrolments ~ Some(userName) ~ Some(credentials) ~ Some(AffinityGroup.Individual) ~ acceptedConfidenceLevel
+    setupMockUserAuthSuccess(retrievalValue)
+  }
+
+  def setupMockUserAuthNoSAUtr[X, Y]: Unit = {
+    val allEnrolments = getAllEnrolmentsIndividual(true, false)
     val retrievalValue = allEnrolments ~ Some(userName) ~ Some(credentials) ~ Some(AffinityGroup.Individual) ~ acceptedConfidenceLevel
     setupMockUserAuthSuccess(retrievalValue)
   }

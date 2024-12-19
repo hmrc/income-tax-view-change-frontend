@@ -38,13 +38,13 @@ import scala.concurrent.Future
 class ConfirmTaxYearControllerSpec extends MockAuthActions
   with MockOptInService with MockDateService {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[OptInService].toInstance(mockOptInService),
       api.inject.bind[DateService].toInstance(mockDateService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[ConfirmTaxYearController]
+  lazy val testController = app.injector.instanceOf[ConfirmTaxYearController]
 
   val endCurrentTaxYear = 2025
   val taxYear2024_25: TaxYear = TaxYear.forYearEnd(endCurrentTaxYear)

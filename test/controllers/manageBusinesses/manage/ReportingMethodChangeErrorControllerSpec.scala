@@ -37,13 +37,13 @@ class ReportingMethodChangeErrorControllerSpec
 
   lazy val mockUpdateIncomeSourcesService = mock(classOf[UpdateIncomeSourceService])
 
-  override def fakeApplication() = applicationBuilderWithAuthBindings()
+  override lazy val app = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[UpdateIncomeSourceService].toInstance(mockUpdateIncomeSourcesService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[ReportingMethodChangeErrorController]
+  lazy val testController = app.injector.instanceOf[ReportingMethodChangeErrorController]
 
   val incomeSourceTypes = List(SelfEmployment, UkProperty, ForeignProperty)
 

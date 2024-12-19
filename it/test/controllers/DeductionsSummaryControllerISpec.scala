@@ -16,43 +16,51 @@
 
 package controllers
 
-import helpers.ComponentSpecBase
+import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks._
 import play.api.http.Status._
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
 
-class DeductionsSummaryControllerISpec extends ComponentSpecBase {
+class DeductionsSummaryControllerISpec extends ControllerISpecHelper {
 
-  "Calling the DeductionsSummaryController.showDeductionsSummary(taxYear)" when {
-    "isAuthorisedUser with an active enrolment, valid nino and tax year, valid CalcDisplayModel response" should {
-      "return the correct income summary page" in {
-        When("I wiremock stub a successful Deductions Source Details response with single Business and Property income")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+  def getPath(mtdRole: MTDUserRole): String = {
+    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    pathStart + s"/$testYear/allowances-and-deductions"
+  }
 
-        And("I stub a successful calculation response")
-        IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
-          status = OK,
-          body = liabilityCalculationModelSuccessful
-        )
+  mtdAllRoles.foreach { case mtdUserRole =>
+    val path = getPath(mtdUserRole)
+    val additionalCookies = getAdditionalCookies(mtdUserRole)
+    s"GET $path" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          if (mtdUserRole == MTDSupportingAgent) {
+            testSupportingAgentAccessDenied(path, additionalCookies)
+          } else {
+            "render the deduction summary page" in {
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+              IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
+                status = OK,
+                body = liabilityCalculationModelSuccessful
+              )
+              val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-        When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/income")
-        val res = IncomeTaxViewChangeFrontend.getDeductionsSummary(testYear)
+              verifyIncomeSourceDetailsCall(testMtditid)
+              IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
 
-        verifyIncomeSourceDetailsCall(testMtditid, 0)
-        IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
+              res should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, "deduction_breakdown.heading"),
+              )
 
-        Then("I see Allowances and deductions page")
-        res should have(
-          httpStatus(OK),
-          pageTitleIndividual("deduction_breakdown.heading"),
-        )
-
+            }
+          }
+        }
+        testAuthFailures(path, mtdUserRole)
       }
     }
-
-    unauthorisedTest("/" + testYear + "/allowances-and-deductions")
-
   }
 }

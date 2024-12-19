@@ -17,12 +17,14 @@
 package auth.authV2.actions
 
 import auth.MtdItUserOptionNino
+import com.google.inject.Singleton
 import config.AgentItvcErrorHandler
 import play.api.mvc.{ActionRefiner, Result}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class AgentIsPrimaryAction @Inject()(agentItvcErrorHandler: AgentItvcErrorHandler)(implicit val executionContext: ExecutionContext)
 extends ActionRefiner[MtdItUserOptionNino, MtdItUserOptionNino] {
 

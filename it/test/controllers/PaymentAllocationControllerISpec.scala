@@ -19,129 +19,108 @@ package controllers
 import audit.models.PaymentAllocationsResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
-import helpers.ComponentSpecBase
+import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.NavBarFs
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
-import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.http.Status.OK
 import play.api.libs.json.Json
-import play.api.libs.ws.WSResponse
-import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.PaymentAllocationIntegrationTestConstants._
-import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
-class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwitching {
-
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-  }
+class PaymentAllocationControllerISpec extends ControllerISpecHelper with FeatureSwitching {
 
   val singleTestPaymentAllocationCharge: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
     List(documentDetail),
     List(financialDetail)
   )
-
   val docNumber = "docNumber1"
 
-  val testUser: MtdItUser[_] = MtdItUser(
-    testMtditid, testNino, None, paymentHistoryBusinessAndPropertyResponse,
-    None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
-  )(FakeRequest())
+  val testUser: MTDUserRole => MtdItUser[_] = mtdUserRole =>
+    getTestUser(mtdUserRole, paymentHistoryBusinessAndPropertyResponse)
 
+  def getPath(mtdRole: MTDUserRole, documentNum: String = docNumber): String = {
+    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
+    pathStart + s"/payment-made-to-hmrc?documentNumber=$documentNum"
+  }
 
-  s"GET ${controllers.routes.PaymentAllocationsController.viewPaymentAllocation(docNumber).url}" should {
-    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" when {
-      "the user is not authenticated" in {
-        isAuthorisedUser(authorised = false)
-        stubUserDetails()
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
+  mtdAllRoles.foreach { case mtdUserRole =>
+    val path = getPath(mtdUserRole)
+    val additionalCookies = getAdditionalCookies(mtdUserRole)
+    s"GET $path" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          if (mtdUserRole == MTDSupportingAgent) {
+            testSupportingAgentAccessDenied(path, additionalCookies)
+          } else {
+            s"render the payment allocation page" which {
+              "is for non LPI" in {
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
 
-        IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, docNumber)(OK, validPaymentAllocationChargesJson)
+                IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, docNumber)(OK, validPaymentAllocationChargesJson)
+                IncomeTaxViewChangeStub.stubGetPaymentAllocationResponse(testNino, "paymentLot", "paymentLotItem")(OK, Json.toJson(testValidPaymentAllocationsModel))
 
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentAllocationCharges(docNumber)
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "paymentAllocation.heading"),
+                )
 
-        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn.url}")
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn.url)
-        )
-      }
-    }
+                verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser(mtdUserRole), paymentAllocationViewModel).detail)
+              }
+            }
 
-    s"return $OK with the payment allocation page for non LPI" when {
-      "the payment allocation feature switch is enabled" in {
-        disable(NavBarFs)
-        isAuthorisedUser(authorised = true)
-        stubUserDetails()
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
+            "shows payment allocation for HMRC adjustment" in {
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              val docNumber = "MA999991A202202"
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
+              IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, docNumber)(OK, validPaymentAllocationChargesHmrcAdjustmentJson)
+              IncomeTaxViewChangeStub.stubGetPaymentAllocationResponse(testNino, "MA999991A", "5")(OK, Json.toJson(testValidNoLpiPaymentAllocationHmrcAdjustment))
 
-        IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, docNumber)(OK, validPaymentAllocationChargesJson)
-        IncomeTaxViewChangeStub.stubGetPaymentAllocationResponse(testNino, "paymentLot", "paymentLotItem")(OK, Json.toJson(testValidPaymentAllocationsModel))
+              val result = buildGETMTDClient(getPath(mtdUserRole, docNumber), additionalCookies).futureValue
 
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentAllocationCharges(docNumber)
+              result should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, "paymentAllocation.heading"),
+                elementTextBySelector("tbody")("HMRC adjustment Tax year 2021 to 2022 Tax year 2021 to 2022 31 Jan 2021 £800.00"),
+              )
 
-        Then("The Payment allocation page is returned to the user")
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual("paymentAllocation.heading"),
-        )
+              verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser(mtdUserRole), paymentAllocationViewModelHmrcAdjustment).detail)
+            }
 
-        verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser, paymentAllocationViewModel).detail)
-      }
+            s"is for LPI" in {
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
 
-      "payment allocation for HMRC adjustment is shown" in {
-        disable(NavBarFs)
-        isAuthorisedUser(authorised = true)
-        stubUserDetails()
-        val docNumber = "MA999991A202202"
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
-        IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, docNumber)(OK, validPaymentAllocationChargesHmrcAdjustmentJson)
-        IncomeTaxViewChangeStub.stubGetPaymentAllocationResponse(testNino, "MA999991A", "5")(OK, Json.toJson(testValidNoLpiPaymentAllocationHmrcAdjustment))
+              IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(nino = testNino, from = s"${getCurrentTaxYearEnd.getYear - 1}-04-06",
+                to = s"${getCurrentTaxYearEnd.getYear}-04-05")(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
 
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentAllocationCharges(docNumber)
+              IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, docNumber)(OK, validPaymentAllocationChargesJson)
+              IncomeTaxViewChangeStub.stubGetPaymentAllocationResponse(testNino, "paymentLot", "paymentLotItem")(OK, Json.toJson(testValidLpiPaymentAllocationsModel))
+              IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, "1040000872")(OK, validPaymentAllocationChargesJson)
+              IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, "1040000873")(OK, validPaymentAllocationChargesJson)
 
-        Then("The Payment allocation page is returned to the user")
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual("paymentAllocation.heading"),
-          elementTextBySelector("tbody")("HMRC adjustment Tax year 2021 to 2022 Tax year 2021 to 2022 31 Jan 2021 £800.00"),
-        )
+              val result = buildGETMTDClient(path, additionalCookies).futureValue
 
-        verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser, paymentAllocationViewModelHmrcAdjustment).detail)
-      }
-    }
+              result should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, "paymentAllocation.heading"),
+                elementAttributeBySelector("#payment-allocation-0 a", "href")(
+                  "/report-quarterly/income-and-expenses/view" + {if(mtdUserRole != MTDIndividual) "/agents" else ""} +"/tax-years/9999/charge?id=PAYID01&isInterestCharge=true"),
+                elementTextBySelector("#payment-allocation-0 a")(s"${messagesAPI("paymentAllocation.paymentAllocations.balancingCharge.text")} ${messagesAPI("paymentAllocation.taxYear", "9998", "9999")}")
+              )
 
-    s"return $OK with the payment allocation page for LPI" when {
-      "the payment allocation feature switch is enabled" in {
-        disable(NavBarFs)
-        isAuthorisedUser(authorised = true)
-        stubUserDetails()
-
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
-
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(nino = testNino, from = s"${getCurrentTaxYearEnd.getYear - 1}-04-06",
-          to = s"${getCurrentTaxYearEnd.getYear}-04-05")(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
-
-        IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, docNumber)(OK, validPaymentAllocationChargesJson)
-        IncomeTaxViewChangeStub.stubGetPaymentAllocationResponse(testNino, "paymentLot", "paymentLotItem")(OK, Json.toJson(testValidLpiPaymentAllocationsModel))
-        IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, "1040000872")(OK, validPaymentAllocationChargesJson)
-        IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, "1040000873")(OK, validPaymentAllocationChargesJson)
-
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentAllocationCharges(docNumber)
-
-        Then("The Payment allocation page is returned to the user")
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual("paymentAllocation.heading"),
-          elementAttributeBySelector("#payment-allocation-0 a", "href")(
-            "/report-quarterly/income-and-expenses/view/tax-years/9999/charge?id=PAYID01&isInterestCharge=true"),
-          elementTextBySelector("#payment-allocation-0 a")(s"${messagesAPI("paymentAllocation.paymentAllocations.balancingCharge.text")} ${messagesAPI("paymentAllocation.taxYear", "9998", "9999")}")
-        )
-
-        verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser, lpiPaymentAllocationViewModel).detail)
+              verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser(mtdUserRole), lpiPaymentAllocationViewModel).detail)
+            }
+          }
+        }
+        testAuthFailures(path, mtdUserRole)
       }
     }
   }

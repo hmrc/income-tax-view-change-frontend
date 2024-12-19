@@ -36,12 +36,12 @@ class IncomeSourceNotAddedControllerSpec extends MockAuthActions {
 
   lazy val mockBusinessDetailsService: CreateBusinessDetailsService = mock(classOf[CreateBusinessDetailsService])
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[CreateBusinessDetailsService].toInstance(mockBusinessDetailsService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[IncomeSourceNotAddedController]
+  lazy val testController = app.injector.instanceOf[IncomeSourceNotAddedController]
 
   val title: String = messages("incomeSources.add.error.standardError")
   val titleAgent: String = s"${messages("htmlTitle.agent", messages("incomeSources.add.error.standardError"))}"

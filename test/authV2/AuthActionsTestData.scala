@@ -32,8 +32,8 @@ import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name}
 object AuthActionsTestData {
 
   val nino              = "AA111111A"
-  val saUtr             = "123456789"
-  val mtdId             = "abcde"
+  val saUtr             = "1234567890"
+  val mtdId             = "XAIT0000123456"
   val arn               = "1"
   val firstName = "Issac"
   val lastName = "Newton"
@@ -44,7 +44,7 @@ object AuthActionsTestData {
   val agentEnrolment            = Enrolment("HMRC-AS-AGENT", Seq(EnrolmentIdentifier("AgentReferenceNumber", "1")), "Activated", None)
   val ninoEnrolment             = Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", nino)), "Activated", None)
   val saEnrolment               = Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", saUtr)), "Activated", None)
-  val credentials               = Credentials("foo", "bar")
+  val credentials               = Credentials("testCredId", "bar")
   val defaultIncomeSourcesData  = IncomeSourceDetailsModel(nino, saUtr, Some("2012"), Nil, Nil)
   val invalidIncomeSourceData  = IncomeSourceDetailsError(500, "mongo error")
 

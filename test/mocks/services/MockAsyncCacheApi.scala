@@ -27,7 +27,7 @@ import scala.concurrent.Future
 
 trait MockAsyncCacheApi extends UnitSpec with BeforeAndAfterEach {
 
-  val mockAsyncCacheApi: AsyncCacheApi = mock(classOf[AsyncCacheApi])
+  lazy val mockAsyncCacheApi: AsyncCacheApi = mock(classOf[AsyncCacheApi])
 
   override def beforeEach(): Unit = {
     super.beforeEach()

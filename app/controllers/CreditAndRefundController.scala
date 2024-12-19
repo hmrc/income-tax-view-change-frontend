@@ -23,7 +23,6 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates._
 import models.admin.CreditsRefundsRepay
 import models.creditsandrefunds.{CreditAndRefundViewModel, CreditsModel}
 import play.api.i18n.{I18nSupport, Messages}
@@ -31,7 +30,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{CreditService, RepaymentService}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
 import utils.ErrorRecovery
 import views.html.CreditAndRefunds
@@ -45,17 +44,17 @@ class CreditAndRefundController @Inject()(val authActions: AuthActions,
                                           val view: CreditAndRefunds,
                                           val repaymentService: RepaymentService,
                                           val auditingService: AuditingService,
-                                          val controllerComponents: MessagesControllerComponents)
+                                          mcc: MessagesControllerComponents)
                                          (implicit val appConfig: FrontendAppConfig,
-                                          implicit val individualErrorHandler: ItvcErrorHandler,
-                                          implicit val agentErrorHandler: AgentItvcErrorHandler,
+                                          val individualErrorHandler: ItvcErrorHandler,
+                                          val agentErrorHandler: AgentItvcErrorHandler,
                                           val languageUtils: LanguageUtils,
                                           val ec: ExecutionContext,
                                           val customNotFoundErrorView: CustomNotFoundError)
-  extends FrontendBaseController with FeatureSwitching with I18nSupport with ErrorRecovery {
+  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with ErrorRecovery {
 
   def show(origin: Option[String] = None): Action[AnyContent] =
-    authActions.asIndividualOrAgent(isAgent = false) async {
+    authActions.asMTDIndividual.async {
       implicit user =>
         handleRequest(
           backUrl = controllers.routes.HomeController.show(origin).url,
@@ -77,7 +76,7 @@ class CreditAndRefundController @Inject()(val authActions: AuthActions,
   }
 
   def showAgent(): Action[AnyContent] = {
-    authActions.asIndividualOrAgent(isAgent = true) async {
+    authActions.asMTDPrimaryAgent async {
       implicit mtdItUser =>
         handleRequest(
           backUrl = controllers.routes.HomeController.showAgent.url,
@@ -87,18 +86,15 @@ class CreditAndRefundController @Inject()(val authActions: AuthActions,
   }
 
   def startRefund(): Action[AnyContent] =
-    authActions.asIndividualOrAgent(false) async {
+    authActions.asMTDIndividual async {
       implicit user =>
-        user.userType match {
-          case _ if !isEnabled(CreditsRefundsRepay) =>
-            Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
-          case Some(Agent) =>
-            Future.successful(agentErrorHandler.showInternalServerError())
-          case _ =>
-            handleRefundRequest(
-              backUrl = "", // TODO: do we need a backUrl
-              isAgent = false
-            ) recover logAndRedirect
+        if (isEnabled(CreditsRefundsRepay)) {
+          handleRefundRequest(
+            backUrl = "", // TODO: do we need a backUrl
+            isAgent = false
+          ) recover logAndRedirect
+        } else {
+          Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
         }
     }
 

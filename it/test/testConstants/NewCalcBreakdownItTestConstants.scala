@@ -17,6 +17,7 @@
 package testConstants
 
 import controllers.ForecastIncomeSummaryControllerTestConstants.taxableIncome
+import enums.{MTDIndividual, MTDUserRole}
 import models.liabilitycalculation.taxcalculation._
 import models.liabilitycalculation._
 
@@ -565,10 +566,11 @@ object NewCalcBreakdownItTestConstants {
     ))
   )))
 
-  val liabilityCalculationModelErrorMessagesFormatted = liabilityCalculationModelDeductionsMinimal.copy(messages = Some(Messages(
+  val liabilityCalculationModelErrorMessagesFormatted: MTDUserRole => LiabilityCalculationResponse = mtdUserRole =>
+    liabilityCalculationModelDeductionsMinimal.copy(messages = Some(Messages(
     errors = Some(List(
       Message("C55012", "the update must align to the accounting period end date of 5 January 2023."),
-      Message("C15507", "you’ve claimed £2000 in Property Income Allowance but this is more than turnover for your UK property."),
+      Message("C15507", s"${if(mtdUserRole == MTDIndividual) "you’ve" else "your client"} claimed £2000 in Property Income Allowance but this is more than turnover for ${if(mtdUserRole == MTDIndividual) "your" else "their"} UK property."),
       Message("C15510", "the Rent a Room relief claimed for a jointly let property cannot be more than 10% of the Rent a Room limit."),
       Message("C55010", "updates cannot include overlaps.")
     ))

@@ -16,12 +16,15 @@
 
 package controllers
 
-import helpers.ComponentSpecBase
+import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.core.PaymentJourneyModel
+import play.api.http.Status.OK
 import play.api.libs.json.{JsValue, Json}
+import testConstants.BaseIntegrationTestConstants.testMtditid
+import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndUkProperty
 
-class PaymentControllerISpec extends ComponentSpecBase {
+class PaymentControllerISpec extends ControllerISpecHelper {
 
   val url: String = "/pay-api/mtd-income-tax/sa/journey/start"
 
@@ -36,26 +39,62 @@ class PaymentControllerISpec extends ComponentSpecBase {
     """.stripMargin
   )
 
-  "Calling .paymentHandoff" should {
+  val agentSubmissionJson: JsValue = Json.parse(
+    s"""
+       |{
+       | "utr": "1234567890",
+       | "amountInPence": 10000,
+       | "returnUrl": "${appConfig.agentPaymentRedirectUrl}",
+       | "backUrl": "${appConfig.agentPaymentRedirectUrl}"
+       |}
+    """.stripMargin
+  )
 
-    "redirect the user correctly" when {
+  def getPath(mtdRole: MTDUserRole): String = {
+    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    pathStart + s"/payment?amountInPence=10000"
+  }
 
-      "the payments api responds with a 200 and valid json" in {
-        IncomeTaxViewChangeStub.stubPayApiResponse(url, 201, Json.toJson(PaymentJourneyModel("id", "redirect-url")))
-        val res = IncomeTaxViewChangeFrontend.getPay(10000)
-        IncomeTaxViewChangeStub.verifyStubPayApi(url, submissionJson)
-        res.status shouldBe 303
-        res.header("Location") shouldBe Some("redirect-url")
-      }
-    }
+  mtdAllRoles.foreach { case mtdUserRole =>
+    val path = getPath(mtdUserRole)
+    val additionalCookies = getAdditionalCookies(mtdUserRole)
+    s"GET $path" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          if (mtdUserRole == MTDSupportingAgent) {
+            testSupportingAgentAccessDenied(path, additionalCookies)
+          } else {
+            "redirect the user correctly" when {
+              "the payments api responds with a 200 and valid json" in {
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
+                IncomeTaxViewChangeStub.stubPayApiResponse(url, 201, Json.toJson(PaymentJourneyModel("id", "redirect-url")))
 
-    "return an internal server error" when {
+                val res = buildGETMTDClient(path, additionalCookies).futureValue
+                IncomeTaxViewChangeStub.verifyStubPayApi(url,
+                  if(mtdUserRole == MTDIndividual) submissionJson else agentSubmissionJson
+                )
+                res.status shouldBe 303
+                res.header("Location") shouldBe Some("redirect-url")
+              }
+            }
 
-      "the payments api responds with a 500" in {
-        IncomeTaxViewChangeStub.stubPayApiResponse(url, 500, Json.toJson(PaymentJourneyModel("id", "redirect-url")))
-        val res = IncomeTaxViewChangeFrontend.getPay(10000)
-        IncomeTaxViewChangeStub.verifyStubPayApi(url, submissionJson)
-        res.status shouldBe 500
+            "return an internal server error" when {
+              "the payments api responds with a 500" in {
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
+                IncomeTaxViewChangeStub.stubPayApiResponse(url, 500, Json.toJson(PaymentJourneyModel("id", "redirect-url")))
+
+                val res = buildGETMTDClient(path, additionalCookies).futureValue
+                IncomeTaxViewChangeStub.verifyStubPayApi(url,
+                  if(mtdUserRole == MTDIndividual) submissionJson else agentSubmissionJson
+                )
+                res.status shouldBe 500
+              }
+            }
+          }
+        }
+        testAuthFailures(path, mtdUserRole)
       }
     }
   }

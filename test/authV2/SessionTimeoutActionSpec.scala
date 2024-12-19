@@ -30,12 +30,7 @@ import scala.concurrent.Future
 
 class SessionTimeoutActionSpec extends AuthActionsSpecHelper {
 
-  override def afterEach(): Unit = {
-    Play.stop(fakeApplication())
-    super.afterEach()
-  }
-
-  override def fakeApplication(): Application = {
+  override lazy val app: Application = {
     new GuiceApplicationBuilder()
       .build()
   }
@@ -49,7 +44,7 @@ class SessionTimeoutActionSpec extends AuthActionsSpecHelper {
 
   def defaultAsync: Request[_] => Future[Result] = (_) => Future.successful(Results.Ok("Successful"))
 
-  lazy val action = fakeApplication().injector.instanceOf[SessionTimeoutAction]
+  lazy val action = app.injector.instanceOf[SessionTimeoutAction]
 
   val fakeRequest = FakeRequest()
     .withHeaders(
