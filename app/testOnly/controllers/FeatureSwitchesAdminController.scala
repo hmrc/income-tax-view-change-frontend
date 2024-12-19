@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.admin
+package testOnly.controllers
 
 import models.admin.{FeatureSwitch, FeatureSwitchName}
 import play.api.libs.json.{JsBoolean, Json}
