@@ -36,6 +36,8 @@ class ReportingFrequencyViewSpec extends TestSupport {
 
   def confirmOptOutUrl(isAgent: Boolean): String = controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url
 
+  val govGuidanceUrl = "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
+
   def bullet(i: Int): String = s"#main-content > div > div > div > ul > li:nth-child($i) > a"
 
   object Selectors {
@@ -47,6 +49,10 @@ class ReportingFrequencyViewSpec extends TestSupport {
     val mandatoryReportingInset = "mandatory-reporting-inset"
     val mandatoryReportingLink = "mandatory-reporting-link"
     val mandatoryReportingText = "mandatory-reporting-text"
+    val compatibleSoftwareH2 = "compatible-software-heading"
+    val compatibleSoftwareP1 = "compatible-software-text"
+    val compatibleSoftwareP2 = "compatible-software-text-2"
+    val govGuidance = "#compatible-software-link"
   }
 
   def testContentByIds(pageDocument: Document, additionalIdsAndContent: Seq[(String, String)] = Seq()): Unit = {
@@ -59,7 +65,10 @@ class ReportingFrequencyViewSpec extends TestSupport {
         Selectors.mandatoryReportingH2 -> mandatoryReportingHeading,
         Selectors.mandatoryReportingInset -> mandatoryReportingInset,
         Selectors.mandatoryReportingLink -> mandatoryReportingLink,
-        Selectors.mandatoryReportingText -> mandatoryReportingText
+        Selectors.mandatoryReportingText -> mandatoryReportingText,
+        Selectors.compatibleSoftwareH2 -> compatibleSoftwareH2,
+        Selectors.compatibleSoftwareP1 -> compatibleSoftwareP1,
+        Selectors.compatibleSoftwareP2 -> compatibleSoftwareP2
       ) ++ additionalIdsAndContent
 
     expectedContent.foreach {
@@ -97,6 +106,8 @@ class ReportingFrequencyViewSpec extends TestSupport {
 
         testContentByIds(pageDocument)
 
+        pageDocument.select(Selectors.govGuidance).attr("href") shouldBe govGuidanceUrl
+
         pageDocument.select(bullet(1)).text() shouldBe optOutGenericContent
 
         pageDocument.select(bullet(1)).attr("href") shouldBe optOutChooseTaxYearUrl(isAgentFlag)
@@ -105,6 +116,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
 
         pageDocument.select(bullet(2)).attr("href") shouldBe beforeYouStartUrl(isAgentFlag)
       }
+
       "return the correct content when opt in and opt out has single tax year and it is next tax year(2024)" in {
 
         val isAgentFlag = true
@@ -130,6 +142,8 @@ class ReportingFrequencyViewSpec extends TestSupport {
 
         testContentByIds(pageDocument)
 
+        pageDocument.select(Selectors.govGuidance).attr("href") shouldBe govGuidanceUrl
+
         pageDocument.select(bullet(1)).text() shouldBe optOutContentWithTaxYearOnwards
 
         pageDocument.select(bullet(1)).attr("href") shouldBe optOutChooseTaxYearUrl(isAgentFlag)
@@ -138,6 +152,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
 
         pageDocument.select(bullet(2)).attr("href") shouldBe beforeYouStartUrl(isAgentFlag)
       }
+
       "return the correct content when opt in and opt out has single tax year and it is not next tax year(2024)" in {
 
         val isAgentFlag = true
@@ -162,6 +177,8 @@ class ReportingFrequencyViewSpec extends TestSupport {
         pageDocument.title() shouldBe agentTitle
 
         testContentByIds(pageDocument)
+
+        pageDocument.select(Selectors.govGuidance).attr("href") shouldBe govGuidanceUrl
 
         pageDocument.select(bullet(1)).text() shouldBe optOutContentWithTaxYear
 
@@ -199,6 +216,8 @@ class ReportingFrequencyViewSpec extends TestSupport {
         pageDocument.title() shouldBe title
 
         testContentByIds(pageDocument)
+
+        pageDocument.select(Selectors.govGuidance).attr("href") shouldBe govGuidanceUrl
 
         pageDocument.select(bullet(1)).text() shouldBe optOutGenericContent
 
