@@ -209,8 +209,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     latencyDetails match {
       case Some(x) =>
         for {
-          isTY1Crystallised <- calculationListService.isTaxYearCrystallised(x.taxYear1.toInt)
-          isTY2Crystallised <- calculationListService.isTaxYearCrystallised(x.taxYear2.toInt)
+          isTY1Crystallised <- calculationListService.determineTaxYearCrystallised(x.taxYear1.toInt)
+          isTY2Crystallised <- calculationListService.determineTaxYearCrystallised(x.taxYear2.toInt)
         } yield {
           Some(List(isTY1Crystallised, isTY2Crystallised))
         }

@@ -42,11 +42,17 @@ class OptOutCancelledControllerISpec extends ControllerISpecHelper with FeatureS
   mtdAllRoles.foreach { case mtdUserRole =>
     val path = getPath(mtdUserRole)
     val additionalCookies = getAdditionalCookies(mtdUserRole)
+
     s"GET $path" when {
+
       s"a user is a $mtdUserRole" that {
+
         "is authenticated, with a valid enrolment" should {
+
           "render the choose tax year page" when {
+
             "only single tax year is voluntary, CY-1 = Mandated, CY = Voluntary, CY+1 = Mandated" in {
+
               val previousTaxYear = dateService.getCurrentTaxYearEnd - 1
               stubAuthorised(mtdUserRole)
 
@@ -68,11 +74,9 @@ class OptOutCancelledControllerISpec extends ControllerISpecHelper with FeatureS
                 pageTitle(mtdUserRole, "optout.cancelled.title")
               )
             }
-          }
-
-          "render the error page" when {
 
             "no tax year is voluntary, CY-1 = Mandated, CY = Mandated, CY+1 = Mandated" in {
+
               val previousTaxYear = dateService.getCurrentTaxYearEnd - 1
 
               stubAuthorised(mtdUserRole)
@@ -90,8 +94,8 @@ class OptOutCancelledControllerISpec extends ControllerISpecHelper with FeatureS
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
               result should have(
-                httpStatus(INTERNAL_SERVER_ERROR),
-                pageTitleCustom("Sorry, there is a problem with the service - GOV.UK")
+                httpStatus(OK),
+                pageTitle(mtdUserRole, "optout.cancelled.title")
               )
             }
 
@@ -114,10 +118,9 @@ class OptOutCancelledControllerISpec extends ControllerISpecHelper with FeatureS
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
               result should have(
-                httpStatus(INTERNAL_SERVER_ERROR),
-                pageTitleCustom("Sorry, there is a problem with the service - GOV.UK")
+                httpStatus(OK),
+                pageTitle(mtdUserRole, "optout.cancelled.title")
               )
-
             }
           }
         }
