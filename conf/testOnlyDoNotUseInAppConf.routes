@@ -77,11 +77,11 @@ GET         /report-quarterly/income-and-expenses/view/test-only/session-storage
 GET         /report-quarterly/income-and-expenses/view/agents/test-only/session-storage                               testOnly.controllers.SessionStorageServiceController.showAgent
 
 +nocsrf
-PUT        /report-quarterly/income-and-expenses/view/test-only/featureSwitches/:featureSwitchName                             controllers.admin.FeatureSwitchesAdminController.put(featureSwitchName: FeatureSwitchName)
-GET        /report-quarterly/income-and-expenses/view/test-only/featureSwitches                                                controllers.admin.FeatureSwitchesAdminController.get
+PUT        /report-quarterly/income-and-expenses/view/test-only/featureSwitches/:featureSwitchName                             testOnly.controllers.FeatureSwitchesAdminController.put(featureSwitchName: FeatureSwitchName)
+GET        /report-quarterly/income-and-expenses/view/test-only/featureSwitches                                                testOnly.controllers.FeatureSwitchesAdminController.get
 
 +nocsrf
-PUT        /report-quarterly/income-and-expenses/view/test-only/featureSwitches                                                controllers.admin.FeatureSwitchesAdminController.putAll
+PUT        /report-quarterly/income-and-expenses/view/test-only/featureSwitches                                                testOnly.controllers.FeatureSwitchesAdminController.putAll
 
 +nocsrf
 PUT        /report-quarterly/income-and-expenses/view/test-only/featureSwitch/:featureSwitchName/:isEnabled                    testOnly.controllers.FeatureSwitchController.setSwitch(featureSwitchName: FeatureSwitchName, isEnabled: Boolean)
