@@ -9,7 +9,7 @@ import uk.gov.hmrc.DefaultBuildSettings
 val appName = "income-tax-view-change-frontend"
 
 val bootstrapPlayVersion = "8.1.0"
-val playPartialsVersion = "10.0.0"
+val playPartialsVersion = "9.1.0"
 val playFrontendHMRCVersion = "11.7.0"
 val catsVersion = "2.8.0"
 
