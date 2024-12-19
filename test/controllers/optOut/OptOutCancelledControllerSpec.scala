@@ -16,14 +16,13 @@
 
 package controllers.optOut
 
-import config.FrontendAppConfig
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockOptOutService
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
 import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.{any, isA}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import play.api
@@ -56,49 +55,30 @@ class OptOutCancelledControllerSpec extends MockAuthActions with MockOptOutServi
 
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual
+
     s"show(isAgent = $isAgent)" when {
+
       val action = if (isAgent) testController.showAgent() else testController.show()
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
-      s"the user is authenticated as a $mtdRole" should {
-        s"render the opt out cancelled page" in {
-          val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2017"), List(business1), Nil)
-          setupMockSuccess(mtdRole)
-          when(
-            mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
-          ).thenReturn(Future(singleBusinessIncome))
 
-          when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(
-            Future(
-              OptOutProposition.createOptOutProposition(
-                currentYear = TaxYear(2024, 2025),
-                previousYearCrystallised = false,
-                previousYearItsaStatus = Mandated,
-                currentYearItsaStatus = Voluntary,
-                nextYearItsaStatus = Mandated
-              )
-            )
-          )
+      s"the user is authenticated as a $mtdRole" when {
 
-          val result = action(fakeRequest)
+        "a tax year is determined from a single year / multi year chosen intent tax year" should {
 
-          status(result) shouldBe OK
-          contentAsString(result) shouldBe
-            optOutCancelledView(
-              isAgent = isAgent,
-              currentTaxYearStart = "2024",
-              currentTaxYearEnd = "2025"
-            ).toString
-        }
+          s"render the opt out cancelled page" in {
 
-        "show the Error Template view" when {
-          "and return Internal Server Error - 500" in {
             val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2017"), List(business1), Nil)
-
             setupMockSuccess(mtdRole)
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
             ).thenReturn(Future(singleBusinessIncome))
+
+
+            when(mockOptOutService.getTaxYearForOptOutCancelled()(any(), any(), any()))
+              .thenReturn(
+                Future(Some(TaxYear(2024, 2025)))
+              )
 
             when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(
               Future(
@@ -107,14 +87,59 @@ class OptOutCancelledControllerSpec extends MockAuthActions with MockOptOutServi
                   previousYearCrystallised = false,
                   previousYearItsaStatus = Mandated,
                   currentYearItsaStatus = Voluntary,
-                  nextYearItsaStatus = Voluntary
+                  nextYearItsaStatus = Mandated
                 )
               )
             )
+
             val result = action(fakeRequest)
 
-            status(result) shouldBe INTERNAL_SERVER_ERROR
-            contentAsString(result).contains("Sorry, there is a problem with the service") shouldBe true
+            status(result) shouldBe OK
+            contentAsString(result) shouldBe
+              optOutCancelledView(
+                isAgent = isAgent,
+                currentTaxYearStart = "2024",
+                currentTaxYearEnd = "2025"
+              ).toString
+          }
+        }
+
+        "show the Error Template view" when {
+
+          "no tax year is returned" should {
+
+            "return Internal Server Error - 500" in {
+
+              val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2017"), List(business1), Nil)
+
+              setupMockSuccess(mtdRole)
+
+              when(
+                mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
+              ).thenReturn(Future(singleBusinessIncome))
+
+              when(mockOptOutService.getTaxYearForOptOutCancelled()(any(), any(), any()))
+                .thenReturn(
+                  Future(None)
+                )
+
+              when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(
+                Future(
+                  OptOutProposition.createOptOutProposition(
+                    currentYear = TaxYear(2024, 2025),
+                    previousYearCrystallised = false,
+                    previousYearItsaStatus = Mandated,
+                    currentYearItsaStatus = Voluntary,
+                    nextYearItsaStatus = Voluntary
+                  )
+                )
+              )
+
+              val result = action(fakeRequest)
+
+              status(result) shouldBe INTERNAL_SERVER_ERROR
+              contentAsString(result).contains("Sorry, there is a problem with the service") shouldBe true
+            }
           }
         }
       }

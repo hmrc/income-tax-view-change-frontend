@@ -43,35 +43,37 @@ class OptOutCancelledController @Inject()(val authActions: AuthActions,
 
   def show(): Action[AnyContent] =
     authActions.asMTDIndividual.async { implicit user =>
-      optOutService.getTaxYearForOptOutCancelled().map {
-        case Some(taxYear) =>
-          Ok(view(isAgent = false, taxYear.startYear.toString, taxYear.endYear.toString))
-        case None =>
-          InternalServerError(
-            errorTemplate(
-              pageTitle = "standardError.heading",
-              heading = "standardError.heading",
-              message = "standardError.message",
-              isAgent = false
+      optOutService.getTaxYearForOptOutCancelled()
+        .map {
+          case Some(taxYear) =>
+            Ok(view(isAgent = false, taxYear.startYear.toString, taxYear.endYear.toString))
+          case None =>
+            InternalServerError(
+              errorTemplate(
+                pageTitle = "standardError.heading",
+                heading = "standardError.heading",
+                message = "standardError.message",
+                isAgent = false
+              )
             )
-          )
-      }
+        }
     }
 
   def showAgent(): Action[AnyContent] =
     authActions.asMTDAgentWithConfirmedClient.async { implicit user =>
-      optOutService.getTaxYearForOptOutCancelled().map {
-        case Some(taxYear) =>
-          Ok(view(isAgent = true, taxYear.startYear.toString, taxYear.endYear.toString))
-        case None =>
-          InternalServerError(
-            errorTemplate(
-              pageTitle = "standardError.heading",
-              heading = "standardError.heading",
-              message = "standardError.message",
-              isAgent = false
+      optOutService.getTaxYearForOptOutCancelled()
+        .map {
+          case Some(taxYear) =>
+            Ok(view(isAgent = true, taxYear.startYear.toString, taxYear.endYear.toString))
+          case None =>
+            InternalServerError(
+              errorTemplate(
+                pageTitle = "standardError.heading",
+                heading = "standardError.heading",
+                message = "standardError.message",
+                isAgent = false
+              )
             )
-          )
-      }
+        }
     }
 }
