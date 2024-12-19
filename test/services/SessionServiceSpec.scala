@@ -88,13 +88,13 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
       }
 
       "setMongoData method" should {
-        "return a future boolean value" in {
+        "return true when data is set" in {
           mockRepositorySet(response = true)
           val result: Boolean = TestSessionService.setMongoData(UIJourneySessionData("session-1", "ADD-SE"))(headerCarrier, ec)
             .futureValue
           result shouldBe true
         }
-        "return a future boolean value if encryption is enabled" in {
+        "return true when data is set and encryption is enabled" in {
           mockRepositorySet(response = true, isSensitive = true)
           when(mockFrontendAppConfig.encryptionIsEnabled).thenReturn(true)
           val result: Boolean = TestSessionService.setMongoData(UIJourneySessionData("session-1", "ADD-SE"))(headerCarrier, ec)
