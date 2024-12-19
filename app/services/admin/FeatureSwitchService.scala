@@ -22,7 +22,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import models.admin.{FeatureSwitch, FeatureSwitchName}
 import play.api.Logger
 import play.api.mvc.MessagesControllerComponents
-import testOnly.repository.FeatureSwitchRepository
+import repositories.admin.FeatureSwitchRepository
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 
 import javax.inject.{Inject, Singleton}
