@@ -16,24 +16,20 @@
 
 package services.admin
 
-import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import mocks.MockItvcErrorHandler
-import mocks.auth.MockOldAuthActions
+import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.repositories.MockFeatureSwitchRepository
 import models.admin.{FeatureSwitch, FeatureSwitchName}
 import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.mvc.MessagesControllerComponents
 import testUtils.TestSupport
 
-import java.net.spi.InetAddressResolverProvider.Configuration
 import scala.concurrent.ExecutionContext
 
-class FeatureSwitchServiceSpec extends TestSupport with MockFeatureSwitchRepository with MockOldAuthActions with MockItvcErrorHandler {
+class FeatureSwitchServiceSpec extends TestSupport with MockFeatureSwitchRepository with MockFrontendAuthorisedFunctions with MockItvcErrorHandler {
 
   val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
