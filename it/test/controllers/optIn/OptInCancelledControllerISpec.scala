@@ -19,11 +19,17 @@ package controllers.optIn
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import controllers.ControllerISpecHelper
+import enums.JourneyType.{Opt, OptInJourney}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
+import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
+import models.itsaStatus.ITSAStatus.{Annual, Mandated}
+import models.optin.{OptInContextData, OptInSessionData}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
+import repositories.ITSAStatusRepositorySupport.statusToString
+import repositories.UIJourneySessionDataRepository
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSessionId}
 import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants.businessAndPropertyResponseWoMigration
 import uk.gov.hmrc.http.client.HttpClientV2
@@ -39,14 +45,30 @@ class OptInCancelledControllerISpec extends ControllerISpecHelper with FeatureSw
     pathStart + "/opt-in/cancelled"
   }
 
-  mtdAllRoles.foreach { case mtdUserRole =>
+  val forYearEnd = 2023
+  val currentTaxYear = TaxYear.forYearEnd(forYearEnd)
+  val nextTaxYear = currentTaxYear.nextYear
+
+  val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
+
+  private def setupOptInSessionData(currentTaxYear: TaxYear, currentYearStatus: ITSAStatus.Value, nextYearStatus: ITSAStatus.Value): Unit = {
+    repository.set(
+      UIJourneySessionData(testSessionId,
+        Opt(OptInJourney).toString,
+        optInSessionData =
+          Some(OptInSessionData(
+            Some(OptInContextData(
+              currentTaxYear.toString, statusToString(currentYearStatus), statusToString(nextYearStatus))), None))))
+  }
+
+  mtdAllRoles.foreach { mtdUserRole =>
     val path = getPath(mtdUserRole)
     val additionalCookies = getAdditionalCookies(mtdUserRole)
     s"GET $path" when {
       s"a user is a $mtdUserRole" that {
         "is authenticated, with a valid enrolment" should {
           "render the choose tax year page" when {
-            "only single tax year is voluntary, CY-1 = Mandated, CY = Voluntary, CY+1 = Mandated" in {
+            "only single tax year is Annual, CY-1 = Mandated, CY = Annual, CY+1 = Mandated" in {
               val previousTaxYear = dateService.getCurrentTaxYearEnd - 1
               stubAuthorised(mtdUserRole)
 
@@ -60,6 +82,8 @@ class OptInCancelledControllerISpec extends ControllerISpecHelper with FeatureSw
                 itsaStatusCY = ITSAStatus.Annual,
                 `itsaStatusCY+1` = ITSAStatus.Mandated
               )
+
+              setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Mandated)
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -80,6 +104,8 @@ class OptInCancelledControllerISpec extends ControllerISpecHelper with FeatureSw
 
               CalculationListStub.stubGetLegacyCalculationList(testNino, previousTaxYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
 
+              setupOptInSessionData(currentTaxYear, currentYearStatus = Mandated, nextYearStatus = Mandated)
+
               ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
                 taxYear = dateService.getCurrentTaxYear,
                 `itsaStatusCY-1` = ITSAStatus.Mandated,
@@ -95,7 +121,7 @@ class OptInCancelledControllerISpec extends ControllerISpecHelper with FeatureSw
               )
             }
 
-            "multiple tax years are voluntary, CY-1 = Mandated, CY = Voluntary, CY+1 = Voluntary" in {
+            "multiple tax years are Annual, CY-1 = Mandated, CY = Annual, CY+1 = Annual" in {
 
               val previousTaxYear = dateService.getCurrentTaxYearEnd - 1
 
@@ -110,6 +136,8 @@ class OptInCancelledControllerISpec extends ControllerISpecHelper with FeatureSw
                 itsaStatusCY = ITSAStatus.Annual,
                 `itsaStatusCY+1` = ITSAStatus.Annual
               )
+
+              setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual)
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
