@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package repositories.admin
+package testOnly.repository
 
 import models.admin.{FeatureSwitch, FeatureSwitchName}
 import org.mongodb.scala.model.Filters._
