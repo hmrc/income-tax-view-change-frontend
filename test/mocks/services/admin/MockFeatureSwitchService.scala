@@ -24,6 +24,6 @@ import testUtils.TestSupport
 trait MockFeatureSwitchService extends TestSupport with BeforeAndAfterEach {
   self: Suite =>
 
-  val featureSwitchService: FeatureSwitchService = app.injector.instanceOf[FeatureSwitchService]
+  lazy val featureSwitchService: FeatureSwitchService = app.injector.instanceOf[FeatureSwitchService]
 
  }

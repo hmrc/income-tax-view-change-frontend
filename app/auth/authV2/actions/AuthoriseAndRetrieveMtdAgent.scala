@@ -17,6 +17,7 @@
 package auth.authV2.actions
 
 import auth.{FrontendAuthorisedFunctions, MtdItUserOptionNino}
+import com.google.inject.Singleton
 import config.FrontendAppConfig
 import controllers.agent.AuthUtils._
 import play.api.mvc.Results.Redirect
@@ -32,8 +33,9 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-case class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: FrontendAuthorisedFunctions,
-                                                  appConfig: FrontendAppConfig,
+@Singleton
+class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: FrontendAuthorisedFunctions,
+                                             val appConfig: FrontendAppConfig,
                                                   override val config: Configuration,
                                                   override val env: Environment,
                                                   mcc: MessagesControllerComponents)

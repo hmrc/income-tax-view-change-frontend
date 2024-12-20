@@ -30,12 +30,7 @@ import scala.concurrent.Future
 
 class AgentHasConfirmedClientActionSpec extends AuthActionsSpecHelper {
 
-  override def afterEach(): Unit = {
-    Play.stop(fakeApplication())
-    super.afterEach()
-  }
-
-  override def fakeApplication(): Application = {
+  override lazy val app: Application = {
     new GuiceApplicationBuilder()
       .build()
   }
@@ -50,7 +45,7 @@ class AgentHasConfirmedClientActionSpec extends AuthActionsSpecHelper {
 
   def defaultAsync: MtdItUserOptionNino[_] => Future[Result] = (_) => Future.successful(Results.Ok("Successful"))
 
-  lazy val action = fakeApplication().injector.instanceOf[AgentHasConfirmedClientAction]
+  lazy val action = app.injector.instanceOf[AgentHasConfirmedClientAction]
 
   "refine" when {
     "Checking if the Agent has been confirmed" should {

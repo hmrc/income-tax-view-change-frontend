@@ -25,6 +25,7 @@ import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api
+import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.{SessionService, UpdateIncomeSourceService}
@@ -37,13 +38,13 @@ class ReportingMethodChangeErrorControllerSpec
 
   lazy val mockUpdateIncomeSourcesService = mock(classOf[UpdateIncomeSourceService])
 
-  override def fakeApplication() = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[UpdateIncomeSourceService].toInstance(mockUpdateIncomeSourcesService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[ReportingMethodChangeErrorController]
+  lazy val testController = app.injector.instanceOf[ReportingMethodChangeErrorController]
 
   val incomeSourceTypes = List(SelfEmployment, UkProperty, ForeignProperty)
 

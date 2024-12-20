@@ -42,12 +42,12 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
   val validBusinessName: String = "Test Business Name"
   val journeyType: JourneyType = IncomeSourceJourneyType(Add, SelfEmployment)
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService)
     ).build()
 
-  val testAddBusinessTradeController = fakeApplication().injector.instanceOf[AddBusinessTradeController]
+  lazy val testAddBusinessTradeController = app.injector.instanceOf[AddBusinessTradeController]
 
   def getAction(mtdRole: MTDUserRole, isChange: Boolean, isPost: Boolean = false) = mtdRole match {
     case MTDIndividual if isPost => testAddBusinessTradeController.submit(isChange)

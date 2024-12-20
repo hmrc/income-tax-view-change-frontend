@@ -40,12 +40,12 @@ class ManageIncomeSourceControllerSpec extends MockAuthActions
   with ImplicitDateFormatter
   with MockSessionService {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[ManageIncomeSourceController]
+  lazy val testController = app.injector.instanceOf[ManageIncomeSourceController]
 
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual

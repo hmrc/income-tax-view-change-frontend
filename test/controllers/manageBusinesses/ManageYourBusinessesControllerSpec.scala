@@ -37,12 +37,12 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
   with ImplicitDateFormatter
   with MockSessionService {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService)
     ).build()
 
-  val testManageYourBusinessesController = fakeApplication().injector.instanceOf[ManageYourBusinessesController]
+  lazy val testManageYourBusinessesController = app.injector.instanceOf[ManageYourBusinessesController]
 
   "show()" when {
     "the user is authenticated" should {

@@ -150,7 +150,7 @@ GET         /language/:lang                                               contro
 #Payment history
 GET         /payment-refund-history                                       controllers.PaymentHistoryController.show(origin: Option[String] ?= None)
 GET         /agents/payment-refund-history                                controllers.PaymentHistoryController.showAgent
-GET         /refund-status                                                controllers.PaymentHistoryController.refundStatus(isAgent: Boolean = false)
+GET         /refund-status                                                controllers.PaymentHistoryController.refundStatus
 
 
 #InYear Tax

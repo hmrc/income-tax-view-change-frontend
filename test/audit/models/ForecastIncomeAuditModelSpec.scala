@@ -16,7 +16,9 @@
 
 package audit.models
 
-import auth.MtdItUserWithNino
+import auth.{MtdItUser, MtdItUserWithNino}
+import models.admin.FeatureSwitch
+import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -174,36 +176,41 @@ class ForecastIncomeAuditModelSpec extends TestSupport {
     incomeTaxNicAndCgtAmount = Some(5000.99)
   )
 
-  val testUserIndividual = MtdItUserWithNino(
+  val testUserIndividual = MtdItUser(
     mtditid = testMtditid,
     nino = testNino,
     userName = None,
+    incomeSources = IncomeSourceDetailsModel(testNino ,testMtditid, None, Nil, Nil),
     btaNavPartial = None,
     saUtr = Some(testSaUtr),
     credId = Some("testCredId"),
     userType = Some(Individual),
     arn = None
-  )(FakeRequest())
+  )
+  (FakeRequest())
 
-  val testUserAgent = MtdItUserWithNino(
+  val testUserAgent = MtdItUser(
     mtditid = testMtditid,
     nino = testNino,
     userName = None,
+    incomeSources = IncomeSourceDetailsModel(testNino ,testMtditid, None, Nil, Nil),
     btaNavPartial = None,
     saUtr = Some(testSaUtr),
     credId = Some("testCredId"),
     userType = Some(Agent),
-    arn = None
+    arn = Some("1"),
+    isSupportingAgent = true,
+    featureSwitches = List.empty
   )(FakeRequest())
 
   def testForecastIncomeAuditModelIndividual( endOfYearEstimate: EndOfYearEstimate = endOfYearEstimate,
-                                  ): ForecastIncomeAuditModel = ForecastIncomeAuditModel(
+                                            ): ForecastIncomeAuditModel = ForecastIncomeAuditModel(
     user = testUserIndividual,
     endOfYearEstimate = endOfYearEstimate
   )
 
   def testForecastIncomeAuditModelAgent(endOfYearEstimate: EndOfYearEstimate = endOfYearEstimate,
-                                  ): ForecastIncomeAuditModel = ForecastIncomeAuditModel(
+                                       ): ForecastIncomeAuditModel = ForecastIncomeAuditModel(
     user = testUserAgent,
     endOfYearEstimate = endOfYearEstimate
   )

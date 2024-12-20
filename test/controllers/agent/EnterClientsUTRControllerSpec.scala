@@ -39,12 +39,12 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
   with MockEnterClientsUTR
   with MockClientDetailsService {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[EnterClientsUTR].toInstance(enterClientsUTR)
     ).build()
 
-  val testEnterClientsUTRController = fakeApplication().injector.instanceOf[EnterClientsUTRController]
+  lazy val testEnterClientsUTRController = app.injector.instanceOf[EnterClientsUTRController]
 
   "show" when {
     "the user is not authenticated" should {

@@ -16,34 +16,32 @@
 
 package controllers
 
-import auth.MtdItUserWithNino
+import auth.MtdItUser
+import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import controllers.agent.predicates.ClientConfirmedController
 import forms.utils.SessionKeys
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.CalculationPollingService
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
-import utils.AuthenticatorPredicate
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CalculationPollingController @Inject()(val authorisedFunctions: AuthorisedFunctions,
+class CalculationPollingController @Inject()(val authActions: AuthActions,
                                              pollCalculationService: CalculationPollingService,
                                              val itvcErrorHandler: ItvcErrorHandler,
-                                             implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                             val auth: AuthenticatorPredicate)
+                                             val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                             (implicit val appConfig: FrontendAppConfig,
-                                             implicit override val mcc: MessagesControllerComponents,
-                                             implicit val ec: ExecutionContext,
+                                             val mcc: MessagesControllerComponents,
+                                             val ec: ExecutionContext,
                                              val languageUtils: LanguageUtils)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching {
+  extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
   def handleRequest(origin: Option[String] = None,
                     itcvErrorHandler: ShowInternalServerError,
@@ -51,7 +49,7 @@ class CalculationPollingController @Inject()(val authorisedFunctions: Authorised
                     isAgent: Boolean,
                     successfulPollRedirect: Call,
                     calculationId: Option[String])
-                   (implicit user: MtdItUserWithNino[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
+                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
     (calculationId, user.nino, user.mtditid) match {
       case (Some(calculationId), nino, mtditid) =>
         Logger("application").info(s"Polling started for $calculationId")
@@ -75,9 +73,8 @@ class CalculationPollingController @Inject()(val authorisedFunctions: Authorised
   }
 
   def calculationPoller(taxYear: Int, isFinalCalc: Boolean, origin: Option[String] = None): Action[AnyContent] =
-    auth.authenticatedActionWithNino {
+    authActions.asMTDIndividual.async {
       implicit user =>
-
         lazy val successfulPollRedirect: Call = if (isFinalCalc) {
           controllers.routes.FinalTaxCalculationController.show(taxYear, origin)
         } else {
@@ -95,24 +92,23 @@ class CalculationPollingController @Inject()(val authorisedFunctions: Authorised
     }
 
   def calculationPollerAgent(taxYear: Int, isFinalCalc: Boolean, origin: Option[String] = None): Action[AnyContent] = {
-    auth.authenticatedActionWithNinoAgent { implicit response =>
+    authActions.asMTDPrimaryAgent.async { implicit user =>
 
-        lazy val successfulPollRedirect: Call = if (isFinalCalc) {
-          controllers.routes.FinalTaxCalculationController.showAgent(taxYear)
-        } else {
-          controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear)
-        }
+      lazy val successfulPollRedirect: Call = if (isFinalCalc) {
+        controllers.routes.FinalTaxCalculationController.showAgent(taxYear)
+      } else {
+        controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear)
+      }
 
-        handleRequest(
-          origin = origin,
-          itcvErrorHandler = itvcErrorHandlerAgent,
-          taxYear = taxYear,
-          isAgent = true,
-          successfulPollRedirect = successfulPollRedirect,
-          calculationId = response.request.session.get(SessionKeys.calculationId)
-        )(getMtdItUserWithNino()(response.agent, response.request), response.hc, implicitly)
+      handleRequest(
+        origin = origin,
+        itcvErrorHandler = itvcErrorHandlerAgent,
+        taxYear = taxYear,
+        isAgent = true,
+        successfulPollRedirect = successfulPollRedirect,
+        calculationId = user.session.get(SessionKeys.calculationId)
+      )
 
     }
   }
-
 }

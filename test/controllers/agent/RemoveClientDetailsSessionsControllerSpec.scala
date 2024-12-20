@@ -28,12 +28,12 @@ import views.html.agent.EnterClientsUTR
 class RemoveClientDetailsSessionsControllerSpec extends MockAuthActions
   with MockEnterClientsUTR {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[EnterClientsUTR].toInstance(enterClientsUTR)
     ).build()
 
-  val testRemoveClientDetailsSessionsController = fakeApplication().injector.instanceOf[RemoveClientDetailsSessionsController]
+  lazy val testRemoveClientDetailsSessionsController = app.injector.instanceOf[RemoveClientDetailsSessionsController]
 
   Map("primary agent" -> false, "supporting agent" -> true).foreach { case (agentType, isSupportingAgent) =>
     val fakeRequest = fakeRequestConfirmedClient(isSupportingAgent = isSupportingAgent)

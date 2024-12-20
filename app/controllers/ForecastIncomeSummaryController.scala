@@ -18,40 +18,34 @@ package controllers
 
 import audit.AuditingService
 import audit.models.ForecastIncomeAuditModel
-import auth.MtdItUserWithNino
-import config.featureswitch.FeatureSwitching
+import auth.MtdItUser
+import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
 import implicits.ImplicitDateFormatter
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.admin.FeatureSwitchService
-import services.{CalculationService, IncomeSourceDetailsService}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import services.CalculationService
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
-import utils.AuthenticatorPredicate
 import views.html.ForecastIncomeSummary
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ForecastIncomeSummaryController @Inject()(val forecastIncomeSummaryView: ForecastIncomeSummary,
+class ForecastIncomeSummaryController @Inject()(val authActions: AuthActions,
+                                                val forecastIncomeSummaryView: ForecastIncomeSummary,
                                                 val calculationService: CalculationService,
                                                 val auditingService: AuditingService,
                                                 val itvcErrorHandler: ItvcErrorHandler,
-                                                val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                                val authorisedFunctions: AuthorisedFunctions,
-                                                val featureSwitchService: FeatureSwitchService,
-                                                auth: AuthenticatorPredicate)
+                                                val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                                (implicit val ec: ExecutionContext,
                                                 val languageUtils: LanguageUtils,
                                                 val appConfig: FrontendAppConfig,
-                                                mcc: MessagesControllerComponents,
-                                                implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-  extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
+                                                mcc: MessagesControllerComponents)
+  extends FrontendController(mcc) with I18nSupport with ImplicitDateFormatter {
 
   def onError(message: String, isAgent: Boolean, taxYear: Int)(implicit request: Request[_]): Result = {
     val errorPrefix: String = s"[ForecastIncomeSummaryController]${if (isAgent) "[agent]" else ""}[showIncomeSummary[$taxYear]]"
@@ -60,7 +54,7 @@ class ForecastIncomeSummaryController @Inject()(val forecastIncomeSummaryView: F
   }
 
   def handleRequest(taxYear: Int, isAgent: Boolean, origin: Option[String] = None)
-                   (implicit user: MtdItUserWithNino[_]): Future[Result] = {
+                   (implicit user: MtdItUser[_]): Future[Result] = {
     calculationService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case liabilityCalc: LiabilityCalculationResponse =>
         val viewModel = liabilityCalc.calculation.flatMap(calc => calc.endOfYearEstimate)
@@ -80,14 +74,14 @@ class ForecastIncomeSummaryController @Inject()(val forecastIncomeSummaryView: F
   }
 
   def show(taxYear: Int, origin: Option[String] = None): Action[AnyContent] =
-    auth.authenticatedActionWithNino {
+    authActions.asMTDIndividual.async {
       implicit user =>
         handleRequest(taxYear, isAgent = false, origin)
     }
 
-  def showAgent(taxYear: Int): Action[AnyContent] = auth.authenticatedActionWithNinoAgent {
+  def showAgent(taxYear: Int): Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
     implicit response =>
-        handleRequest(taxYear, isAgent = true)(getMtdItUserWithNino()(response.agent, response.request))
+      handleRequest(taxYear, isAgent = true)
   }
 
   def backUrl(taxYear: Int, origin: Option[String], isAgent: Boolean): String =

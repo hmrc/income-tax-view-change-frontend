@@ -44,7 +44,7 @@ trait HomeControllerHelperSpec extends MockAuthActions
 
   val agentTitle = s"${messages("htmlTitle.agent", messages("home.agent.heading"))}"
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[NextUpdatesService].toInstance(mockNextUpdatesService),
       api.inject.bind[FinancialDetailsService].toInstance(mockFinancialDetailsService),

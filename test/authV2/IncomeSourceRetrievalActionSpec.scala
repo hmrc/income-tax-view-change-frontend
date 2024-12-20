@@ -36,12 +36,7 @@ import scala.concurrent.Future
 
 class IncomeSourceRetrievalActionSpec extends AuthActionsSpecHelper {
 
-  override def afterEach(): Unit = {
-    Play.stop(fakeApplication())
-    super.afterEach()
-  }
-
-  override def fakeApplication(): Application = {
+  override lazy val app: Application = {
     new GuiceApplicationBuilder()
       .overrides(
         api.inject.bind[IncomeSourceDetailsService].toInstance(mockIncomeSourceDetailsService),
@@ -60,7 +55,7 @@ class IncomeSourceRetrievalActionSpec extends AuthActionsSpecHelper {
 
   def defaultAsync: MtdItUser[_] => Future[Result] = (_) => Future.successful(Results.Ok("Successful"))
 
-  lazy val action = fakeApplication().injector.instanceOf[IncomeSourceRetrievalAction]
+  lazy val action = app.injector.instanceOf[IncomeSourceRetrievalAction]
 
   "refine" when {
     "Return the income source details" should {

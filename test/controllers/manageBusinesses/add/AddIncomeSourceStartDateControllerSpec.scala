@@ -42,12 +42,12 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
   with MockSessionService
   with ImplicitDateFormatter {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[AddIncomeSourceStartDateController]
+  lazy val testController = app.injector.instanceOf[AddIncomeSourceStartDateController]
 
   val dayField = "value.day"
   val monthField = "value.month"

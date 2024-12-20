@@ -17,19 +17,29 @@
 package controllers
 
 import audit.models.ForecastTaxCalculationAuditModel
-import auth.MtdItUserWithNino
-import helpers.ComponentSpecBase
-import helpers.servicemocks.{AuditStub, IncomeTaxCalculationStub}
+import auth.MtdItUser
+import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import helpers.servicemocks.{AuditStub, IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
 import models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
 import play.api.http.Status.OK
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testYear}
+import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, multipleBusinessesAndUkProperty}
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
-import uk.gov.hmrc.auth.core.AffinityGroup.Individual
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 object ForecastTaxSummaryControllerTestConstants {
-  val mtdItUser: MtdItUserWithNino[_] = MtdItUserWithNino(testMtditid, testNino, None, None, Some("1234567890"),
-    Some("12345-credId"), Some(Individual), None)(FakeRequest())
+  def testUser(mtdUserRole: MTDUserRole): MtdItUser[_] = {
+    val (affinityGroup, arn) = if(mtdUserRole == MTDIndividual) {
+      (Individual, None)
+    } else {
+      (Agent, Some("1"))
+    }
+    MtdItUser(
+      testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
+      None, Some("1234567890"), Some("12345-credId"), Some(affinityGroup), arn
+    )(FakeRequest())
+  }
 
   val taxableIncome = 12500
 
@@ -79,33 +89,45 @@ object ForecastTaxSummaryControllerTestConstants {
   )
 }
 
-class ForecastTaxCalcSummaryControllerISpec extends ComponentSpecBase {
+class ForecastTaxCalcSummaryControllerISpec extends ControllerISpecHelper {
 
-  "Calling the ForecastTaxCalcSummaryController.show(taxYear)" when {
-    "isAuthorisedUser with an active enrolment, valid nino and tax year, valid LiabilityCalculationModel response" should {
-      "return the forecast tax calc summary page and audit event when the forecast calculation fs is enabled" in {
-
-        And("I stub a successful calculation response")
-        IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
-          status = OK,
-          body = liabilityCalculationModelSuccessful
-        )
-
-        When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/tax-due/forecast")
-        val res = IncomeTaxViewChangeFrontend.getForecastTaxCalcSummary(testYear)
-
-        IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
-
-        AuditStub.verifyAuditEvent(ForecastTaxCalculationAuditModel(ForecastTaxSummaryControllerTestConstants.mtdItUser,
-          ForecastTaxSummaryControllerTestConstants.endOfYearEstimate))
-
-        res should have(
-          httpStatus(OK),
-          pageTitleIndividual("forecast_taxCalc.heading")
-        )
-      }
-    }
-    unauthorisedTest("/" + testYear + "/forecast-tax-calculation")
+  def getPath(mtdRole: MTDUserRole): String = {
+    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    pathStart + s"/$testYear/forecast-tax-calculation"
   }
 
+  mtdAllRoles.foreach { case mtdUserRole =>
+    val path = getPath(mtdUserRole)
+    val additionalCookies = getAdditionalCookies(mtdUserRole)
+    s"GET $path" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          if (mtdUserRole == MTDSupportingAgent) {
+            testSupportingAgentAccessDenied(path, additionalCookies)
+          } else {
+            "render the forecast income summary page" in {
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
+              IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
+                status = OK,
+                body = liabilityCalculationModelSuccessful
+              )
+
+              val res = buildGETMTDClient(path, additionalCookies).futureValue
+              IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
+
+              AuditStub.verifyAuditEvent(ForecastTaxCalculationAuditModel(ForecastTaxSummaryControllerTestConstants.testUser(mtdUserRole),
+                ForecastTaxSummaryControllerTestConstants.endOfYearEstimate))
+
+              res should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, "forecast_taxCalc.heading")
+              )
+            }
+          }
+        }
+        testAuthFailures(path, mtdUserRole)
+      }
+    }
+  }
 }

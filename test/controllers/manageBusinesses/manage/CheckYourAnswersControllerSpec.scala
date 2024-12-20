@@ -45,13 +45,13 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
 
   lazy val mockUpdateIncomeSourceService = mock(classOf[UpdateIncomeSourceService])
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[UpdateIncomeSourceService].toInstance(mockUpdateIncomeSourceService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[CheckYourAnswersController]
+  lazy val testController = app.injector.instanceOf[CheckYourAnswersController]
   val incomeSourceTypes = List(SelfEmployment, UkProperty, ForeignProperty)
 
   mtdAllRoles.foreach { mtdRole =>

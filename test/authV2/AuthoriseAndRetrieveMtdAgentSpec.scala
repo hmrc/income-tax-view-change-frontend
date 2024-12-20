@@ -35,12 +35,7 @@ import scala.concurrent.Future
 
 class AuthoriseAndRetrieveMtdAgentSpec extends AuthActionsSpecHelper {
 
-  override def afterEach(): Unit = {
-    Play.stop(fakeApplication())
-    super.afterEach()
-  }
-
-  override def fakeApplication(): Application = {
+  override lazy val app: Application = {
     val frontendAuthFunctions = new FrontendAuthorisedFunctions(mockAuthConnector)
 
     new GuiceApplicationBuilder()
@@ -62,7 +57,7 @@ class AuthoriseAndRetrieveMtdAgentSpec extends AuthActionsSpecHelper {
 
   def redirectAsync(location: String): MtdItUserOptionNino[_] => Future[Result] = (_) => Future.successful(Results.SeeOther(location))
 
-  lazy val authAction = fakeApplication().injector.instanceOf[AuthoriseAndRetrieveMtdAgent]
+  lazy val authAction = app.injector.instanceOf[AuthoriseAndRetrieveMtdAgent]
 
   //TODO move this to AuthActionsTestData
   lazy val fakeClientDetailsRequest = ClientDataRequest(

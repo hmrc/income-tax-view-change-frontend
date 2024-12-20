@@ -18,25 +18,18 @@ package controllers
 
 import audit.models.RefundToTaxPayerResponseAuditModel
 import auth.MtdItUser
-import helpers.ComponentSpecBase
+import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.admin.PaymentHistoryRefunds
 import models.core.Nino
 import models.repaymentHistory._
 import play.api.http.Status._
-import play.api.libs.ws.WSResponse
-import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.paymentHistoryBusinessAndPropertyResponse
-import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate
 
-class RefundToTaxPayerControllerISpec extends ComponentSpecBase {
-
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-  }
+class RefundToTaxPayerControllerISpec extends ControllerISpecHelper {
 
   val testRepaymentHistoryModel: RepaymentHistoryModel = RepaymentHistoryModel(
     List(RepaymentHistory(
@@ -73,68 +66,48 @@ class RefundToTaxPayerControllerISpec extends ComponentSpecBase {
       status = RepaymentHistoryStatus("A"))
     )
   )
-
   val repaymentRequestNumber: String = "023942042349"
   val testNino: String = "AA123456A"
 
-  val testUser: MtdItUser[_] = MtdItUser(
-    testMtditid, testNino, None, paymentHistoryBusinessAndPropertyResponse,
-    None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
-  )(FakeRequest())
+  lazy val testUser: MTDUserRole => MtdItUser[_] = mtdUserRole =>
+    getTestUser(mtdUserRole, paymentHistoryBusinessAndPropertyResponse)
 
-  s"GET ${controllers.routes.RefundToTaxPayerController.show(repaymentRequestNumber).url}" should {
-    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" when {
-      "the user is not authenticated" in {
-        isAuthorisedUser(authorised = false)
-        stubUserDetails()
-        enable(PaymentHistoryRefunds)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
-
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentHistory
-
-        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn.url}")
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn.url)
-        )
-      }
-    }
+  def getPath(mtdRole: MTDUserRole): String = {
+    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
+    pathStart + s"/refund-to-taxpayer/$repaymentRequestNumber"
   }
 
-  s"return $OK with the refund to tax payer page" when {
-    "the payment history refunds feature switch is enabled" in {
-      isAuthorisedUser(authorised = true)
-      stubUserDetails()
-      enable(PaymentHistoryRefunds)
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
-      IncomeTaxViewChangeStub.stubGetRepaymentHistoryByRepaymentId(Nino(testNino), repaymentRequestNumber)(OK, testRepaymentHistoryModel)
+  mtdAllRoles.foreach { case mtdUserRole =>
+    val path = getPath(mtdUserRole)
+    val additionalCookies = getAdditionalCookies(mtdUserRole)
+    s"GET $path" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          if (mtdUserRole == MTDSupportingAgent) {
+            testSupportingAgentAccessDenied(path, additionalCookies)
+          } else {
 
-      val result: WSResponse = IncomeTaxViewChangeFrontend.getRefundToTaxPayer(repaymentRequestNumber)
 
-      Then("The Refund to tax payer page is returned to the user")
-      result should have(
-        httpStatus(OK),
-        pageTitleIndividual("refund-to-taxpayer.heading")
-      )
-    }
+            s"audit and render the refund to tax payer page" when {
+              "the payment history refunds feature switch is enabled" in {
+                enable(PaymentHistoryRefunds)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
+                IncomeTaxViewChangeStub.stubGetRepaymentHistoryByRepaymentId(Nino(testNino), repaymentRequestNumber)(OK, testRepaymentHistoryModel)
 
-    "the audit event is running as expected" in {
-      isAuthorisedUser(authorised = true)
-      stubUserDetails()
-      enable(PaymentHistoryRefunds)
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
-      IncomeTaxViewChangeStub.stubGetRepaymentHistoryByRepaymentId(Nino(testNino), repaymentRequestNumber)(OK, testRepaymentHistoryModel)
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
 
-      val result: WSResponse = IncomeTaxViewChangeFrontend.getRefundToTaxPayer(repaymentRequestNumber)
-
-      Then("The Refund to tax payer page is returned to the user")
-      result should have(
-        httpStatus(OK),
-        pageTitleIndividual("refund-to-taxpayer.heading")
-      )
-
-      Then("Audit event is raised")
-      AuditStub.verifyAuditEvent(RefundToTaxPayerResponseAuditModel(testRepaymentHistoryModel)(testUser))
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "refund-to-taxpayer.heading")
+                )
+                AuditStub.verifyAuditEvent(RefundToTaxPayerResponseAuditModel(testRepaymentHistoryModel)(testUser(mtdUserRole)))
+              }
+            }
+          }
+        }
+        testAuthFailures(path, mtdUserRole)
+      }
     }
   }
 }

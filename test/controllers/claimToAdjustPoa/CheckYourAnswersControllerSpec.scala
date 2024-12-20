@@ -36,14 +36,14 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
   with MockPaymentOnAccountSessionService
   with MockClaimToAdjustPoaCalculationService {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService),
       api.inject.bind[ClaimToAdjustPoaCalculationService].toInstance(mockClaimToAdjustPoaCalculationService),
       api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[CheckYourAnswersController]
+  lazy val testController = app.injector.instanceOf[CheckYourAnswersController]
 
   val poa: Option[PaymentOnAccountViewModel] = Some(
     PaymentOnAccountViewModel(

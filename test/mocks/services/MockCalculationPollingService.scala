@@ -31,7 +31,7 @@ trait MockCalculationPollingService extends UnitSpec with BeforeAndAfterEach {
 
   val testCalcId: String = "1234567890"
 
-  val mockCalculationPollingService: CalculationPollingService = mock(classOf[CalculationPollingService])
+  lazy val mockCalculationPollingService: CalculationPollingService = mock(classOf[CalculationPollingService])
 
 
   override def beforeEach(): Unit = {

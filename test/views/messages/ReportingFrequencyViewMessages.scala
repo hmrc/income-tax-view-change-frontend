@@ -35,4 +35,11 @@ object ReportingFrequencyViewMessages {
   val mandatoryReportingInset = "Reporting quarterly is required if your income from self-employment or property, or both, exceeds the income threshold."
   val mandatoryReportingText = "You can check the threshold for when reporting quarterly is mandatory in the criteria for people who will need to sign up for Making Tax Digital for Income Tax (opens in new tab)"
   val mandatoryReportingLink = "criteria for people who will need to sign up for Making Tax Digital for Income Tax (opens in new tab)"
+
+  val compatibleSoftwareH2 = "When compatible software is required"
+  val compatibleSoftwareP1 = "If you are reporting quarterly, you will need to use software compatible with Making Tax Digital for Income Tax (opens in new tab) There are both paid and free options for you or your agent to choose from."
+  val compatibleSoftwareP2 = "For reporting annually, you can use either compatible software or your HMRC online account to submit your tax return."
+
+
+
 }

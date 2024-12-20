@@ -40,12 +40,12 @@ import scala.concurrent.Future
 class CeaseIncomeSourceControllerSpec extends MockAuthActions
   with MockSessionService {
 
-  override def fakeApplication() = applicationBuilderWithAuthBindings()
+  override lazy val app = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService)
     ).build()
 
-  val testCeaseIncomeSourceController = fakeApplication().injector.instanceOf[CeaseIncomeSourceController]
+  lazy val testCeaseIncomeSourceController = app.injector.instanceOf[CeaseIncomeSourceController]
 
   mtdAllRoles.foreach { mtdRole =>
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)

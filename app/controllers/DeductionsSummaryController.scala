@@ -18,10 +18,9 @@ package controllers
 
 import audit.AuditingService
 import audit.models._
-import auth.MtdItUserWithNino
+import auth.MtdItUser
+import auth.authV2.AuthActions
 import config._
-import config.featureswitch.FeatureSwitching
-import controllers.agent.predicates.ClientConfirmedController
 import forms.utils.SessionKeys.calcPagesBackPage
 import implicits.ImplicitDateFormatter
 import models.liabilitycalculation._
@@ -30,34 +29,33 @@ import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import services.CalculationService
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
-import utils.{AuthenticatorPredicate, TaxCalcFallBackBackLink}
+import utils.TaxCalcFallBackBackLink
 import views.html.DeductionBreakdown
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class DeductionsSummaryController @Inject()(val authorisedFunctions: AuthorisedFunctions,
+class DeductionsSummaryController @Inject()(val authActions: AuthActions,
                                             val calculationService: CalculationService,
                                             val auditingService: AuditingService,
                                             val deductionBreakdownView: DeductionBreakdown,
                                             val itvcErrorHandler: ItvcErrorHandler,
-                                            val auth: AuthenticatorPredicate,
-                                            implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                            val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                            (implicit val appConfig: FrontendAppConfig,
-                                            implicit override val mcc: MessagesControllerComponents,
+                                            val mcc: MessagesControllerComponents,
                                             val ec: ExecutionContext,
                                             val languageUtils: LanguageUtils)
-  extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport with TaxCalcFallBackBackLink {
+  extends FrontendController(mcc) with ImplicitDateFormatter with I18nSupport with TaxCalcFallBackBackLink {
 
   def handleRequest(origin: Option[String] = None,
                     itcvErrorHandler: ShowInternalServerError,
                     taxYear: Int,
                     isAgent: Boolean)
-                   (implicit user: MtdItUserWithNino[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
+                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     calculationService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case liabilityCalc: LiabilityCalculationResponse =>
         val viewModel = AllowancesAndDeductionsViewModel(liabilityCalc.calculation)
@@ -76,7 +74,7 @@ class DeductionsSummaryController @Inject()(val authorisedFunctions: AuthorisedF
   }
 
   def showDeductionsSummary(taxYear: Int, origin: Option[String] = None): Action[AnyContent] =
-    auth.authenticatedActionWithNino {
+    authActions.asMTDIndividual.async {
       implicit user =>
         handleRequest(
           origin = origin,
@@ -87,12 +85,12 @@ class DeductionsSummaryController @Inject()(val authorisedFunctions: AuthorisedF
     }
 
   def showDeductionsSummaryAgent(taxYear: Int): Action[AnyContent] = {
-    auth.authenticatedActionWithNinoAgent { implicit response =>
-        handleRequest(
-          itcvErrorHandler = itvcErrorHandlerAgent,
-          taxYear = taxYear,
-          isAgent = true
-        )(getMtdItUserWithNino()(response.agent, response.request), response.hc, implicitly, response.messages)
+    authActions.asMTDPrimaryAgent.async { implicit response =>
+      handleRequest(
+        itcvErrorHandler = itvcErrorHandlerAgent,
+        taxYear = taxYear,
+        isAgent = true
+      )
     }
   }
 

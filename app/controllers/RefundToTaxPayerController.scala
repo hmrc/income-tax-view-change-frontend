@@ -19,21 +19,18 @@ package controllers
 import audit.AuditingService
 import audit.models.RefundToTaxPayerResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching}
+import auth.authV2.AuthActions
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import connectors.RepaymentHistoryConnector
-import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates._
 import models.admin.PaymentHistoryRefunds
 import models.core.Nino
-import models.repaymentHistory.RepaymentHistoryModel
+import models.repaymentHistory.{RepaymentHistoryErrorModel, RepaymentHistoryModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.IncomeSourceDetailsService
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.AuthenticatorPredicate
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.RefundToTaxPayer
 
 import javax.inject.{Inject, Singleton}
@@ -42,69 +39,65 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTaxPayer,
                                            val repaymentHistoryConnector: RepaymentHistoryConnector,
-                                           val authorisedFunctions: AuthorisedFunctions,
+                                           val authActions: AuthActions,
                                            itvcErrorHandler: ItvcErrorHandler,
-                                           auditingService: AuditingService,
-                                           val auth: AuthenticatorPredicate)
+                                           itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                           auditingService: AuditingService)
                                           (implicit mcc: MessagesControllerComponents,
                                            val ec: ExecutionContext,
-                                           val appConfig: FrontendAppConfig,
-                                           val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
+                                           val appConfig: FrontendAppConfig) extends FrontendController(mcc)
+  with I18nSupport with FeatureSwitching {
 
   def handleRequest(backUrl: String,
                     origin: Option[String] = None,
-                    isAgent: Boolean,
                     itvcErrorHandler: ShowInternalServerError,
                     repaymentRequestNumber: String)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     if (isEnabled(PaymentHistoryRefunds)) {
-      (for {
-        repaymentHistoryModel <- repaymentHistoryConnector.getRepaymentHistoryByRepaymentId(Nino(user.nino), repaymentRequestNumber).collect {
-          case repaymentHistoryModel: RepaymentHistoryModel => repaymentHistoryModel
-        }
-      } yield {
-        auditingService.extendedAudit(RefundToTaxPayerResponseAuditModel(repaymentHistoryModel))
-        Ok(
-          refundToTaxPayerView(
-            repaymentHistoryModel,
-            paymentHistoryRefundsEnabled = isEnabled(PaymentHistoryRefunds),
-            backUrl, user.saUtr,
-            btaNavPartial = user.btaNavPartial,
-            isAgent = isAgent))
-      }).recover {
-        case ex if isAgent =>
+      repaymentHistoryConnector.getRepaymentHistoryByRepaymentId(Nino(user.nino), repaymentRequestNumber).map {
+        case repaymentHistoryModel: RepaymentHistoryModel =>
+          auditingService.extendedAudit(RefundToTaxPayerResponseAuditModel(repaymentHistoryModel))
+          Ok(
+            refundToTaxPayerView(
+              repaymentHistoryModel,
+              paymentHistoryRefundsEnabled = true,
+              backUrl, user.saUtr,
+              btaNavPartial = user.btaNavPartial,
+              isAgent = user.isAgent()))
+        case error: RepaymentHistoryErrorModel =>
           Logger("application")
-            .error(s"Could not retrieve repayment history for repaymentRequestNumber: $repaymentRequestNumber - ${ex.getMessage} - ${ex.getCause}")
-          itvcErrorHandlerAgent.showInternalServerError()
-        case ex =>
-          Logger("application")
-            .error(s"[Agent]Could not retrieve repayment history for repaymentRequestNumber: $repaymentRequestNumber - ${ex.getMessage} - ${ex.getCause}")
+            .error(s"${if (user.isAgent()) "[Agent] "}Could not retrieve repayment history" +
+              s" for repaymentRequestNumber: $repaymentRequestNumber - ${error.message} - ${error.code}")
           itvcErrorHandler.showInternalServerError()
       }
     } else {
-      Future.successful(Redirect(controllers.routes.HomeController.show().url))
+      Future.successful(Redirect(homeUrl(user.isAgent())))
     }
   }
 
-  def show(repaymentRequestNumber: String, origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(repaymentRequestNumber: String,
+           origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
       handleRequest(
         backUrl = controllers.routes.PaymentHistoryController.show(origin).url,
         origin = origin,
-        isAgent = false,
         itvcErrorHandler = itvcErrorHandler,
         repaymentRequestNumber = repaymentRequestNumber
       )
   }
 
-  def showAgent(repaymentRequestNumber: String): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent(repaymentRequestNumber: String): Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
     implicit mtdItUser =>
       handleRequest(
         backUrl = controllers.routes.PaymentHistoryController.showAgent.url,
-        isAgent = true,
         itvcErrorHandler = itvcErrorHandlerAgent,
         repaymentRequestNumber = repaymentRequestNumber
       )
   }
-}
 
+  lazy val homeUrl: Boolean => String = isAgent => if(isAgent) {
+    controllers.routes.HomeController.showAgent.url
+  } else {
+    controllers.routes.HomeController.show().url
+  }
+}

@@ -302,7 +302,7 @@ object IncomeSourceIntegrationTestConstants {
   ), "documentDetails" -> Json.arr(), "financialDetails" -> Json.arr())
 
   def propertyOnlyResponseWithMigrationData(year: Int,
-                                            yearOfMigration: Option[String]): IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
+                                            yearOfMigration: Option[String]): IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     testNino,
     testMtdItId,
     businesses = List(),

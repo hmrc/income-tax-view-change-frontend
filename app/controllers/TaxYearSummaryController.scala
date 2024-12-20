@@ -19,9 +19,9 @@ package controllers
 import audit.AuditingService
 import audit.models.TaxYearSummaryResponseAuditModel
 import auth.MtdItUser
+import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
 import enums.GatewayPage.TaxYearSummaryPage
 import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import implicits.ImplicitDateFormatter
@@ -36,10 +36,9 @@ import play.api.Logger
 import play.api.i18n.{I18nSupport, Lang, Messages, MessagesApi}
 import play.api.mvc._
 import services._
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
-import utils.AuthenticatorPredicate
 import views.html.TaxYearSummary
 
 import java.net.URI
@@ -48,23 +47,22 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
+class TaxYearSummaryController @Inject()(authActions: AuthActions,
+                                         taxYearSummaryView: TaxYearSummary,
                                          calculationService: CalculationService,
                                          financialDetailsService: FinancialDetailsService,
                                          itvcErrorHandler: ItvcErrorHandler,
+                                         agentItvcErrorHandler: AgentItvcErrorHandler,
                                          nextUpdatesService: NextUpdatesService,
-                                         auth: AuthenticatorPredicate,
                                          messagesApi: MessagesApi,
                                          val languageUtils: LanguageUtils,
-                                         val authorisedFunctions: AuthorisedFunctions,
                                          val auditingService: AuditingService,
                                          claimToAdjustService: ClaimToAdjustService)
                                         (implicit val appConfig: FrontendAppConfig,
                                          dateService: DateServiceInterface,
-                                         val agentItvcErrorHandler: AgentItvcErrorHandler,
                                          mcc: MessagesControllerComponents,
                                          val ec: ExecutionContext)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport with ImplicitDateFormatter with TransactionUtils {
+  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with ImplicitDateFormatter with TransactionUtils {
 
   private def showForecast(calculationSummary: Option[CalculationSummary])(implicit user: MtdItUser[_]): Boolean = {
     val isCrystallised = calculationSummary.flatMap(_.crystallised).contains(true)
@@ -99,9 +97,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
           showForecastData = showForecast(calculationSummary),
           ctaViewModel = claimToAdjustViewModel
         )
-
         lazy val ctaLink = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = isAgent).url
-
         auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(
           mtdItUser, messagesApi, taxYearSummaryViewModel, liabilityCalc.messages))
 
@@ -188,13 +184,13 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
         }
 
         val chargeItemsCodingOutPaye: List[TaxYearSummaryChargeItem] = {
-           chargeItemsCodingOut
+          chargeItemsCodingOut
             .filter(_.subTransactionType.contains(models.financialDetails.Accepted))
             .filterNot(_.originalAmount <= 0)
         }
 
         val chargeItemsCodingOutNotPaye: List[TaxYearSummaryChargeItem] = {
-           chargeItemsCodingOut
+          chargeItemsCodingOut
             .filterNot(_.subTransactionType.contains(models.financialDetails.Accepted))
             .filterNot(_.originalAmount <= 0)
         }
@@ -246,12 +242,12 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
 
   private def handleRequest(taxYear: Int, origin: Option[String], isAgent: Boolean)
                            (implicit user: MtdItUser[_], hc: HeaderCarrier,
-                            ec: ExecutionContext, messages: Messages): Future[Result] = {
+                            ec: ExecutionContext): Future[Result] = {
 
     withTaxYearFinancials(taxYear, isAgent) { charges =>
       withObligationsModel(taxYear, isAgent) { obligationsModel =>
-        val mtdItId: String = if (isAgent) getClientMtditid else user.mtditid
-        val nino: String = if (isAgent) getClientNino else user.nino
+        val mtdItId: String = user.mtditid
+        val nino: String = user.nino
         for {
           viewModel <- claimToAdjustViewModel(Nino(value = user.nino), taxYear)
           liabilityCalcResponse <- calculationService.getLiabilityCalculationDetail(mtdItId, nino, taxYear)
@@ -271,7 +267,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
       errorHandler.showInternalServerError()
   }
 
-  def renderTaxYearSummaryPage(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def renderTaxYearSummaryPage(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
       if (taxYear.toString.matches("[0-9]{4}")) {
         handleRequest(taxYear, origin, isAgent = false)
@@ -280,7 +276,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
       }
   }
 
-  def renderAgentTaxYearSummaryPage(taxYear: Int): Action[AnyContent] = auth.authenticatedAction(true) { implicit user =>
+  def renderAgentTaxYearSummaryPage(taxYear: Int): Action[AnyContent] = authActions.asMTDPrimaryAgent.async { implicit user =>
     // TODO: restore taxYear validation
     handleRequest(taxYear, None, isAgent = true)
   }

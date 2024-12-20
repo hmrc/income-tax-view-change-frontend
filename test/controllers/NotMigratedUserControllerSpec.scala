@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,81 +16,59 @@
 
 package controllers
 
-import config.{FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import enums.{MTDIndividual, MTDSupportingAgent}
 import implicits.ImplicitDateFormatter
-import mocks.MockItvcErrorHandler
-import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import mocks.auth.MockAuthActions
 import org.mockito.Mockito.mock
-import play.api.mvc.MessagesControllerComponents
-import services.PaymentHistoryService
-import views.html.notMigrated.NotMigratedUser
-import play.api.mvc.Result
-
-import scala.concurrent.Future
-import play.api.test.Helpers._
+import play.api
+import play.api.Application
 import play.api.http.Status
-import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
+import play.api.test.Helpers._
+import services.PaymentHistoryService
 
-class NotMigratedUserControllerSpec extends MockAuthenticationPredicate
-  with MockIncomeSourceDetailsPredicate with ImplicitDateFormatter with MockItvcErrorHandler {
+class NotMigratedUserControllerSpec extends MockAuthActions
+  with ImplicitDateFormatter {
 
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-  }
+  lazy val mockPaymentHistoryService: PaymentHistoryService = mock(classOf[PaymentHistoryService])
 
-  trait Setup {
-    val paymentHistoryService: PaymentHistoryService = mock(classOf[PaymentHistoryService])
+  override lazy val app: Application = applicationBuilderWithAuthBindings
+    .overrides(
+      api.inject.bind[PaymentHistoryService].toInstance(mockPaymentHistoryService),
+    ).build()
 
-    val controller = new NotMigratedUserController(
-      app.injector.instanceOf[NotMigratedUser],
-      mockAuthService,
-      app.injector.instanceOf[ItvcErrorHandler],
-      mockItvcErrorHandler,
-      testAuthenticator)(ec,
-      app.injector.instanceOf[MessagesControllerComponents],
-      app.injector.instanceOf[FrontendAppConfig])
+  lazy val testController = app.injector.instanceOf[NotMigratedUserController]
 
-  }
+  mtdAllRoles.foreach{ case mtdUserRole =>
+    val isAgent = mtdUserRole != MTDIndividual
+    val action = if (isAgent) testController.showAgent() else testController.show()
+    val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
+    s"show${if (isAgent) "Agent"}" when {
+      s"the $mtdUserRole is authenticated" should {
+        if (mtdUserRole == MTDSupportingAgent) {
+          testSupportingAgentDeniedAccess(action)(fakeRequest)
+        } else {
+          "render the not migrated page" when {
+            "the user has not migrated to ETMP" in {
+              setupMockSuccess(mtdUserRole)
+              mockSingleBusinessIncomeSource(userMigrated = false)
 
-  "User not migrated to ETMP" when {
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.OK
+              JsoupParse(result).toHtmlDocument.title() shouldBe s"How to claim a refund - Manage your ${if(isAgent) "client’s " else ""}Income Tax updates - GOV.UK"
+            }
+          }
+          "render the error page" when {
+            "the user has already migrated to ETMP" in {
+              setupMockSuccess(mtdUserRole)
+              mockSingleBusinessIncomeSource()
 
-    "hit how-to-claim-refund page" should {
-
-      "show user content" in new Setup {
-        mockSingleBusinessIncomeSource(userMigrated = false)
-        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
-        status(result) shouldBe Status.OK
-        contentType(result) shouldBe Some(HTML)
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            }
+          }
+        }
       }
-
-      "show agent content" in new Setup {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockSingleBusinessIncomeSource(userMigrated = false)
-        val result: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
-        status(result) shouldBe Status.OK
-        contentType(result) shouldBe Some(HTML)
-      }
+      testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
     }
   }
-
-  "User migrated to ETMP" when {
-
-    "hit how-to-claim-refund page" should {
-
-      "throw an error for user" in new Setup {
-        mockSingleBusinessIncomeSource(userMigrated = true)
-        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-
-      "throw an error for agent" in new Setup {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockSingleBusinessIncomeSource(userMigrated = true)
-        val result: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-    }
-  }
-
 }
