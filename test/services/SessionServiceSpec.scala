@@ -58,7 +58,6 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
           when(mockFrontendAppConfig.encryptionIsEnabled).thenReturn(true)
           mockRepositoryGet(Some(sessionData), isSensitive = true)
           TestSessionService.getMongo(IncomeSourceJourneyType(Add, SelfEmployment))(headerCarrier, ec).futureValue shouldBe Right(Some(sessionData))
-//          verify(mockSensitiveUIJourneySessionDataRepository.get(), times(1))
         }
 
       }
