@@ -41,13 +41,13 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
   with MockClaimToAdjustService
   with MockPaymentOnAccountSessionService {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService),
       api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[EnterPoaAmountController]
+  lazy val testController = app.injector.instanceOf[EnterPoaAmountController]
 
 
   val poaViewModelDecreaseJourney = PaymentOnAccountViewModel(

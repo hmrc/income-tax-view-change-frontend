@@ -43,14 +43,14 @@ class ConfirmationForAdjustingPoaControllerSpec extends MockAuthActions
   val validSession: PoaAmendmentData = PoaAmendmentData(Some(MainIncomeLower), Some(BigDecimal(1000.00)))
   val emptySession: PoaAmendmentData = PoaAmendmentData(None, None)
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService),
       api.inject.bind[ClaimToAdjustPoaCalculationService].toInstance(mockClaimToAdjustPoaCalculationService),
       api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[ConfirmationForAdjustingPoaController]
+  lazy val testController = app.injector.instanceOf[ConfirmationForAdjustingPoaController]
 
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual

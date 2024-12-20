@@ -28,7 +28,7 @@ import scala.concurrent.Future
 
 trait MockNinoLookupService extends UnitSpec with BeforeAndAfterEach {
 
-  val mockNinoLookupService: NinoLookupService = mock(classOf[NinoLookupService])
+  lazy val mockNinoLookupService: NinoLookupService = mock(classOf[NinoLookupService])
 
   override def beforeEach(): Unit = {
     super.beforeEach()

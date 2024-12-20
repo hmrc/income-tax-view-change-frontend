@@ -47,7 +47,7 @@ trait ManageIncomeSourceDetailsHelper extends MockAuthActions with MockBusinessD
   lazy val calendar: String = messages("incomeSources.manage.quarterly-period.calendar")
   lazy val reportingMethod: String = messages("incomeSources.manage.business-manage-details.reporting-method")
 
-  override def fakeApplication() = applicationBuilderWithAuthBindings()
+  override lazy val app = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
@@ -56,7 +56,7 @@ trait ManageIncomeSourceDetailsHelper extends MockAuthActions with MockBusinessD
       api.inject.bind[CalculationListService].toInstance(mockCalculationListService)
     ).build()
 
-  lazy val testController = fakeApplication().injector.instanceOf[ManageIncomeSourceDetailsController]
+  lazy val testController = app.injector.instanceOf[ManageIncomeSourceDetailsController]
 
   def getHeading(document: Document): String = document.select("h1:nth-child(1)").text
   def hasChangeFirstYearReportingMethodLink(document: Document): Boolean = Option(document.getElementById("change-link-1")).isDefined

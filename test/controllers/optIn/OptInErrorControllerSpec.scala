@@ -25,10 +25,10 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAn
 
 class OptInErrorControllerSpec extends MockAuthActions {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .build()
 
-  val testController = fakeApplication().injector.instanceOf[OptInErrorController]
+  lazy val testController = app.injector.instanceOf[OptInErrorController]
 
   mtdAllRoles.foreach { mtdRole =>
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)

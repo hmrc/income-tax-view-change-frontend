@@ -33,12 +33,12 @@ import views.html.agent.errorPages.UTRError
 class UTRErrorControllerSpec extends MockAuthActions
   with MockUTRError {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[UTRError].toInstance(utrError),
     ).build()
 
-  val testUTRErrorController = fakeApplication().injector.instanceOf[UTRErrorController]
+  lazy val testUTRErrorController = app.injector.instanceOf[UTRErrorController]
 
 
   "show" when {

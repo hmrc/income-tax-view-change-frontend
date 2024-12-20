@@ -42,12 +42,12 @@ import scala.concurrent.Future
 class AddBusinessNameControllerSpec extends MockAuthActions
   with MockSessionService {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService)
     ).build()
 
-  val testAddBusinessNameController = fakeApplication().injector.instanceOf[AddBusinessNameController]
+  lazy val testAddBusinessNameController = app.injector.instanceOf[AddBusinessNameController]
 
   val validBusinessName: String = "Test Business Name"
   val journeyType: IncomeSourceJourneyType = IncomeSourceJourneyType(Add, SelfEmployment)

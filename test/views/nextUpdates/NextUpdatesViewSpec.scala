@@ -35,8 +35,8 @@ class NextUpdatesViewSpec extends TestSupport {
   val claimToAdjustPoaMessage: String = messages("nextUpdates.claim-to-adjust.text")
   val claimToAdjustPoaLink: String = "/report-quarterly/income-and-expenses/view/adjust-poa/start"
 
-  class Setup(currentObligations: NextUpdatesViewModel) {
-    val pageDocument: Document = Jsoup.parse(contentAsString(nextUpdatesView(currentObligations, "testBackURL")))
+  class Setup(currentObligations: NextUpdatesViewModel, isSupportingAgent: Boolean = false) {
+    val pageDocument: Document = Jsoup.parse(contentAsString(nextUpdatesView(currentObligations, "testBackURL", isSupportingAgent = isSupportingAgent)))
   }
 
   object obligationsMessages {
@@ -96,9 +96,17 @@ class NextUpdatesViewSpec extends TestSupport {
       pageDocument.select("div .govuk-accordion").size() == 1
     }
 
-    s"have the information ${obligationsMessages.info}" in new Setup(obligationsModel) {
-      pageDocument.select("p:nth-child(6)").text shouldBe obligationsMessages.info
-      pageDocument.select("p:nth-child(6) a").attr("href") shouldBe controllers.routes.TaxYearsController.showTaxYears().url
+    s"have the information ${obligationsMessages.info}" when {
+      "a primary agent or individual" in new Setup(obligationsModel) {
+        pageDocument.select("p:nth-child(6)").text shouldBe obligationsMessages.info
+        pageDocument.select("p:nth-child(6) a").attr("href") shouldBe controllers.routes.TaxYearsController.showTaxYears().url
+      }
+    }
+
+    s"not have the information ${obligationsMessages.info}" when {
+      "a supporting agent" in new Setup(obligationsModel, true) {
+        pageDocument.body.text() shouldNot include(obligationsMessages.info)
+      }
     }
 
     s"have the correct TradeName" in new Setup(obligationsModel) {

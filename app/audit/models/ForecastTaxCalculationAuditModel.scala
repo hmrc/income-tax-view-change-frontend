@@ -17,14 +17,14 @@
 package audit.models
 
 import audit.Utilities.userAuditDetails
-import auth.MtdItUserWithNino
+import auth.MtdItUser
 import implicits.ImplicitDateParser
 import models.liabilitycalculation.EndOfYearEstimate
-import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.libs.json.{JsValue, Json}
 import utils.Utilities._
 
 
-case class ForecastTaxCalculationAuditModel(user: MtdItUserWithNino[_], endOfYearEstimate: EndOfYearEstimate)
+case class ForecastTaxCalculationAuditModel(user: MtdItUser[_], endOfYearEstimate: EndOfYearEstimate)
   extends ExtendedAuditModel with ImplicitDateParser {
 
   override val transactionName: String = enums.TransactionName.ForecastTaxCalculation

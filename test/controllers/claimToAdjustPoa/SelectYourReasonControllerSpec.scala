@@ -38,13 +38,13 @@ class SelectYourReasonControllerSpec extends MockAuthActions
   with MockPaymentOnAccountSessionService
   with MockCalculationListService {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService),
       api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[SelectYourReasonController]
+  lazy val testController = app.injector.instanceOf[SelectYourReasonController]
 
   val poa: Option[PaymentOnAccountViewModel] = Some(
     PaymentOnAccountViewModel(

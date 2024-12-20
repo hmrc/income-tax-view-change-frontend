@@ -20,10 +20,6 @@ import enums.{MTDIndividual, MTDSupportingAgent}
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import mocks.MockItvcErrorHandler
-import mocks.auth.MockFrontendAuthorisedFunctions
-import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
-import mocks.services.{MockIncomeSourceDetailsService, MockSessionService}
 import models.admin.IncomeSourcesFs
 import models.incomeSourceDetails.viewmodels.AddIncomeSourcesViewModel
 import org.jsoup.Jsoup
@@ -38,7 +34,6 @@ import play.api.test.Helpers._
 import services.SessionService
 import testConstants.BusinessDetailsTestConstants.{businessDetailsViewModel, businessDetailsViewModel2, ceasedBusinessDetailsViewModel}
 import testConstants.PropertyDetailsTestConstants.{foreignPropertyDetailsViewModel, ukPropertyDetailsViewModel}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
@@ -47,12 +42,12 @@ class AddIncomeSourceControllerSpec extends MockAuthActions
   with ImplicitDateFormatter
   with MockSessionService {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService)
     ).build()
 
-  val controller = fakeApplication().injector.instanceOf[AddIncomeSourceController]
+  lazy val controller = app.injector.instanceOf[AddIncomeSourceController]
 
   mtdAllRoles.foreach { mtdRole =>
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)

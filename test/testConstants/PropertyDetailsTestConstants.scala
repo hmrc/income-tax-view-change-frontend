@@ -22,7 +22,7 @@ import models.incomeSourceDetails.viewmodels.{CeasePropertyDetailsViewModel, Pro
 import models.incomeSourceDetails.{LatencyDetails, PropertyDetailsModel}
 import models.obligations.{SingleObligationModel, StatusFulfilled}
 import testConstants.BaseTestConstants.{testPropertyIncomeId, testPropertyIncomeId2, testSelfEmploymentId, testSelfEmploymentId2}
-import testConstants.BusinessDetailsTestConstants.{quarterTypeElectionCalendar, quarterTypeElectionStandard, testLatencyDetails4, testLatencyDetails5, testStartDate3}
+import testConstants.BusinessDetailsTestConstants.{quarterTypeElectionCalendar, quarterTypeElectionStandard, testLatencyDetails4, testLatencyDetails5}
 import testConstants.NextUpdatesTestConstants.fakeNextUpdatesModel
 
 import java.time.LocalDate

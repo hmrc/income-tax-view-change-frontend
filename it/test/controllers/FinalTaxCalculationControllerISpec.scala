@@ -16,29 +16,23 @@
 
 package controllers
 
-import helpers.ComponentSpecBase
-import helpers.servicemocks.{AuthStub, IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
+import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import helpers.servicemocks.{IncomeTaxCalculationStub, IncomeTaxViewChangeStub, MTDIndividualAuthStub}
 import models.liabilitycalculation.LiabilityCalculationError
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
-import play.api.http.HeaderNames
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
 import play.api.i18n.{Lang, Messages, MessagesApi}
-import play.api.libs.ws.WSResponse
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
-import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, multipleBusinessesAndPropertyResponseWoMigration}
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testYear}
+import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponseWoMigration
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
 
 import java.util.Locale
 
-class FinalTaxCalculationControllerISpec extends ComponentSpecBase {
+class FinalTaxCalculationControllerISpec extends ControllerISpecHelper {
 
   val (taxYear, month, dayOfMonth) = (2018, 5, 6)
   val (hour, minute) = (12, 0)
-  val url: String = s"http://localhost:$port" + controllers.routes.FinalTaxCalculationController.show(taxYear).url
-
   implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
   lazy val mcc: MessagesControllerComponents = app.injector.instanceOf[MessagesControllerComponents]
 
@@ -87,40 +81,59 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase {
   }
 
   object ExpectedValues {
-    val title = messages(s"htmlTitle", messages("final-tax-overview.individual.heading"))
     val caption = "6 April 2017 to 5 April 2018"
 
-    val insetTextFull = "If you think this information is incorrect, you can check your Income Tax Return."
-    val insetTextLink = "check your Income Tax Return."
+    val yourOrYourClients: Boolean => String = isAgent => if(isAgent) {
+      "your client’s"
+    } else "your"
+
+    val pathStart: Boolean => String = isAgent =>
+      "/report-quarterly/income-and-expenses/view" + {if(isAgent) "/agents" else ""}
+
+    val insetTextFull: Boolean => String = isAgent =>
+      s"If you think this information is incorrect, you can check ${yourOrYourClients(isAgent)} Income Tax Return."
+    val insetTextLink: Boolean => String = isAgent => s"check ${yourOrYourClients(isAgent)} Income Tax Return."
     val insetLinkHref = "http://localhost:9302/update-and-submit-income-tax-return/2018/view"
 
     val incomeText = "Income"
     val incomeAmount = "£12,500.00"
-    val incomeLink = "/report-quarterly/income-and-expenses/view/2018/income"
+    val incomeLink: Boolean => String = isAgent => pathStart(isAgent) + "/2018/income"
 
     val allowanceText = "Allowances and deductions"
     val allowanceAmount = "£12,500.00"
-    val allowanceLink = "/report-quarterly/income-and-expenses/view/2018/allowances-and-deductions"
+    val allowanceLink: Boolean => String = isAgent => pathStart(isAgent) + "/2018/allowances-and-deductions"
 
     val taxIsDueText = "Total taxable income"
     val taxIsDueAmount = "£12,500.00"
 
     val contributionText = "Income Tax and National Insurance contributions"
     val contributionAmount = "£90,500.99"
-    val contributionLink = "/report-quarterly/income-and-expenses/view/2018/tax-calculation"
+    val contributionLink: Boolean => String = isAgent => pathStart(isAgent) + "/2018/tax-calculation"
 
-    val chargeInformationParagraph: String = "The amount you need to pay might be different if there are other charges or payments on your account, for example, late payment interest."
-
+    val chargeInformationParagraph: Boolean => String = isAgent =>
+      if(isAgent) {
+        "The amount your client needs to pay might be different if there are other charges or payments on their account, for example, late payment interest."
+      } else {
+        "The amount you need to pay might be different if there are other charges or payments on your account, for example, late payment interest."
+      }
     val continueButtonText = "Continue"
   }
 
   object ExpectedValuesWelsh {
-    val heading = toMessages("CY")(s"final-tax-overview.individual.heading")
-    val title = toMessages("CY")(s"htmlTitle", heading)
     val caption = "6 Ebrill 2017 i 5 Ebrill 2018"
 
-    val insetTextFull = "Os ydych o’r farn bod yr wybodaeth hon yn anghywir gallwch wirio eich Ffurflen Dreth Incwm."
-    val insetTextLink = "wirio eich Ffurflen Dreth Incwm."
+    val insetTextFull: Boolean => String = isAgent =>
+      if(isAgent){
+        "Os ydych o’r farn bod yr wybodaeth hon yn anghywir gallwch wirio Ffurflen Dreth Incwm eich cleient."
+      } else {
+        "Os ydych o’r farn bod yr wybodaeth hon yn anghywir gallwch wirio eich Ffurflen Dreth Incwm."
+      }
+    val insetTextLink: Boolean => String = isAgent =>
+      if(isAgent){
+        "wirio Ffurflen Dreth Incwm eich cleient."
+      } else {
+        "wirio eich Ffurflen Dreth Incwm."
+      }
 
     val incomeText = "Incwm"
 
@@ -130,336 +143,154 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase {
 
     val contributionText = "Treth Incwm a chyfraniadau Yswiriant Gwladol"
 
-    val chargeInformationParagraph: String = "Gall y swm y mae angen i chi ei dalu fod yn wahanol os oes taliadau neu ffioedd eraill ar eich cyfrif, er enghraifft, llog taliad hwyr."
+    val chargeInformationParagraph: Boolean => String = isAgent =>
+      if(isAgent){
+        "Gall y swm y mae angen i’ch cleient ei dalu fod yn wahanol os oes taliadau neu ffioedd eraill ar ei gyfrif, er enghraifft, llog taliad hwyr."
+      } else {
+        "Gall y swm y mae angen i chi ei dalu fod yn wahanol os oes taliadau neu ffioedd eraill ar eich cyfrif, er enghraifft, llog taliad hwyr."
+      }
 
     val continueButtonText = "Yn eich blaen"
   }
 
-  s"calling GET ${controllers.routes.FinalTaxCalculationController.show(taxYear)}" should {
-    "display the new calc page in english" which {
-      lazy val result = {
-        isAuthorisedUser(authorised = true)
-        calculationStub()
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
-
-        ws.url(url)
-          .get()
-      }.futureValue
-
-      lazy val document: Document = Jsoup.parse(result.body)
-
-      "have a status of OK (200)" in {
-        result.status shouldBe OK
-      }
-
-      "have the correct title" in {
-        document.title() shouldBe ExpectedValues.title
-      }
-
-      "have the correct caption" in {
-        document.select(Selectors.caption).text() shouldBe ExpectedValues.caption
-      }
-
-      "the inset text" should {
-
-        "have the correct full text" in {
-          document.select(Selectors.insetText).text() shouldBe ExpectedValues.insetTextFull
-        }
-
-        "have the correct link text" which {
-          lazy val insetElement = document.select(Selectors.insetLinkText)
-
-          "has the correct text" in {
-            insetElement.text() shouldBe ExpectedValues.insetTextLink
-          }
-
-          "has the correct href" in {
-            insetElement.attr("href") shouldBe ExpectedValues.insetLinkHref
-          }
-
-        }
-
-      }
-
-      "have a table that" should {
-
-        "have the correct income row content" which {
-          lazy val key = document.select(Selectors.incomeRowText)
-
-          "has the correct key text" in {
-            key.text() shouldBe ExpectedValues.incomeText
-          }
-
-          "has the correct amount" in {
-            document.select(Selectors.incomeRowAmount).text() shouldBe ExpectedValues.incomeAmount
-          }
-
-          "has the correct URL" in {
-            key.attr("href") shouldBe ExpectedValues.incomeLink
-          }
-
-        }
-
-        "have the correct allowance row content" which {
-          lazy val key = document.select(Selectors.allowanceRowText)
-
-          "has the correct key text" in {
-            key.text() shouldBe ExpectedValues.allowanceText
-          }
-
-          "has the correct amount" in {
-            document.select(Selectors.allowanceRowAmount).text() shouldBe ExpectedValues.allowanceAmount
-          }
-
-          "has the correct URL" in {
-            key.attr("href") shouldBe ExpectedValues.allowanceLink
-          }
-
-        }
-
-        "have the correct income on which tax is due row content" which {
-
-          "has the correct key text" in {
-            document.select(Selectors.taxIsDueRowText).text() shouldBe ExpectedValues.taxIsDueText
-          }
-
-          "has the correct amount" in {
-            document.select(Selectors.taxIsDueRowAmount).text() shouldBe ExpectedValues.taxIsDueAmount
-          }
-        }
-
-        "have the correct total contributions row content" which {
-          lazy val key = document.select(Selectors.contributionDueRowText)
-
-          "has the correct key text" in {
-            key.text() shouldBe ExpectedValues.contributionText
-          }
-
-          "has the correct amount" in {
-            document.select(Selectors.contributionDueRowAmount).text() shouldBe ExpectedValues.contributionAmount
-          }
-
-          "has the correct URL" in {
-            key.attr("href") shouldBe ExpectedValues.contributionLink
-          }
-
-        }
-
-      }
-
-      "have a charge or payment information section" that {
-
-        "has the correct paragraph text" in {
-          document.select(Selectors.chargeInformationParagraph).text() shouldBe ExpectedValues.chargeInformationParagraph
-        }
-
-      }
-
-      "have a submit button" that {
-        lazy val submitButton = document.select(Selectors.continueButton)
-
-        "has the correct text" in {
-          submitButton.text() shouldBe ExpectedValues.continueButtonText
-        }
-      }
-    }
-
-    "display the page in welsh" which {
-      lazy val result: WSResponse = {
-        isAuthorisedUser(authorised = true)
-        calculationStub()
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
-        ws.url(url)
-          .withHttpHeaders(HeaderNames.ACCEPT_LANGUAGE -> "cy")
-          .get()
-      }.futureValue
-
-
-      lazy val document: Document = Jsoup.parse(result.body)
-
-      "have a status of OK (200)" in {
-        result.status shouldBe OK
-      }
-
-      "have the correct title" in {
-        document.title() shouldBe ExpectedValuesWelsh.title
-      }
-
-      "have the correct caption" in {
-        document.select(Selectors.caption).text() shouldBe ExpectedValuesWelsh.caption
-      }
-
-      "the inset text" should {
-
-        "have the correct full text" in {
-          document.select(Selectors.insetText).text() shouldBe ExpectedValuesWelsh.insetTextFull
-        }
-
-        "have the correct link text" which {
-          lazy val insetElement = document.select(Selectors.insetLinkText)
-
-          "has the correct text" in {
-            insetElement.text() shouldBe ExpectedValuesWelsh.insetTextLink
-          }
-
-          "has the correct href" in {
-            insetElement.attr("href") shouldBe ExpectedValues.insetLinkHref
-          }
-
-        }
-
-      }
-
-      "have a table that" should {
-
-        "have the correct income row content" which {
-          lazy val key = document.select(Selectors.incomeRowText)
-
-          "has the correct key text" in {
-            key.text() shouldBe ExpectedValuesWelsh.incomeText
-          }
-
-          "has the correct amount" in {
-            document.select(Selectors.incomeRowAmount).text() shouldBe ExpectedValues.incomeAmount
-          }
-
-          "has the correct URL" in {
-            key.attr("href") shouldBe ExpectedValues.incomeLink
-          }
-
-        }
-
-        "have the correct allowance row content" which {
-          lazy val key = document.select(Selectors.allowanceRowText)
-
-          "has the correct key text" in {
-            key.text() shouldBe ExpectedValuesWelsh.allowanceText
-          }
-
-          "has the correct amount" in {
-            document.select(Selectors.allowanceRowAmount).text() shouldBe ExpectedValues.allowanceAmount
-          }
-
-          "has the correct URL" in {
-            key.attr("href") shouldBe ExpectedValues.allowanceLink
-          }
-
-        }
-
-        "have the correct income on which tax is due row content" which {
-
-          "has the correct key text" in {
-            document.select(Selectors.taxIsDueRowText).text() shouldBe ExpectedValuesWelsh.taxIsDueText
-          }
-
-          "has the correct amount" in {
-            document.select(Selectors.taxIsDueRowAmount).text() shouldBe ExpectedValues.taxIsDueAmount
-          }
-        }
-
-        "have the correct total contributions row content" which {
-          lazy val key = document.select(Selectors.contributionDueRowText)
-
-          "has the correct key text" in {
-            key.text() shouldBe ExpectedValuesWelsh.contributionText
-          }
-
-          "has the correct amount" in {
-            document.select(Selectors.contributionDueRowAmount).text() shouldBe ExpectedValues.contributionAmount
-          }
-
-          "has the correct URL" in {
-            key.attr("href") shouldBe ExpectedValues.contributionLink
-          }
-
-        }
-
-      }
-
-      "have a charge or payment information section" that {
-
-        "has the correct paragraph text" in {
-          document.select(Selectors.chargeInformationParagraph).text() shouldBe ExpectedValuesWelsh.chargeInformationParagraph
-        }
-
-      }
-
-      "have a submit button" that {
-        lazy val submitButton = document.select(Selectors.continueButton)
-
-        "has the correct text" in {
-          submitButton.text() shouldBe ExpectedValuesWelsh.continueButtonText
-        }
-      }
-    }
-
-    "show an error page" when {
-      "there is no calc data model" which {
-        lazy val result = {
-          isAuthorisedUser(authorised = true)
-          calculationStubEmptyCalculations()
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-
-          ws.url(url)
-            .get()
-        }.futureValue
-
-        "has a status of INTERNAL_SERVER_ERROR (500)" in {
-          result.status shouldBe INTERNAL_SERVER_ERROR
-        }
-      }
-    }
+  def getPath(mtdRole: MTDUserRole): String = {
+    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    pathStart + s"/$testYear/final-tax-overview"
   }
 
-  s"calling POST ${controllers.routes.FinalTaxCalculationController.submit(taxYear)}" should {
-    "redirect to the confirmation page on income-tax-submission-frontend" which {
-      lazy val result = {
-        AuthStub.stubAuthorisedWithName()
-        calculationStub()
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+  mtdAllRoles.foreach { case mtdUserRole =>
+    val isAgent = mtdUserRole != MTDIndividual
+    val path = getPath(mtdUserRole)
+    val additionalCookies = getAdditionalCookies(mtdUserRole)
+    s"GET $path" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          if (mtdUserRole == MTDSupportingAgent) {
+            testSupportingAgentAccessDenied(path, additionalCookies)
+          } else {
+            "render the final tax calculation page" that {
+              "is in English" in {
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
+                calculationStub()
 
-        ws.url(url)
-          .withFollowRedirects(false)
-          .post("{}")
-      }.futureValue
+                val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-      "has a status of SEE_OTHER (303)" in {
-        result.status shouldBe SEE_OTHER
+                res should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, s"final-tax-overview${if(isAgent) ".agent" else ".individual"}.heading"),
+                  elementTextBySelector(Selectors.caption)(ExpectedValues.caption),
+                  elementTextBySelector(Selectors.insetText)(ExpectedValues.insetTextFull(isAgent)),
+                  elementTextBySelector(Selectors.insetLinkText)(ExpectedValues.insetTextLink(isAgent)),
+                  elementAttributeBySelector(Selectors.insetLinkText, "href")(ExpectedValues.insetLinkHref),
+                  elementTextBySelector(Selectors.incomeRowText)(ExpectedValues.incomeText),
+                  elementTextBySelector(Selectors.incomeRowAmount)(ExpectedValues.incomeAmount),
+                  elementAttributeBySelector(Selectors.incomeRowText, "href")(ExpectedValues.incomeLink(isAgent)),
+                  elementTextBySelector(Selectors.allowanceRowText)(ExpectedValues.allowanceText),
+                  elementTextBySelector(Selectors.allowanceRowAmount)(ExpectedValues.allowanceAmount),
+                  elementAttributeBySelector(Selectors.allowanceRowText, "href")(ExpectedValues.allowanceLink(isAgent)),
+                  elementTextBySelector(Selectors.taxIsDueRowText)(ExpectedValues.taxIsDueText),
+                  elementTextBySelector(Selectors.taxIsDueRowAmount)(ExpectedValues.taxIsDueAmount),
+                  elementTextBySelector(Selectors.contributionDueRowText)(ExpectedValues.contributionText),
+                  elementTextBySelector(Selectors.contributionDueRowAmount)(ExpectedValues.contributionAmount),
+                  elementAttributeBySelector(Selectors.contributionDueRowText, "href")(ExpectedValues.contributionLink(isAgent)),
+                  elementTextBySelector(Selectors.chargeInformationParagraph)(ExpectedValues.chargeInformationParagraph(isAgent)),
+                  elementTextBySelector(Selectors.continueButton)(ExpectedValues.continueButtonText)
+                )
+              }
+
+              "is in welsh" in {
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
+                calculationStub()
+
+                val res = buildGETMTDClient(path, additionalCookies, true).futureValue
+
+                res should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, s"final-tax-overview${if(isAgent) ".agent" else ".individual"}.heading")(Lang("cy")),
+                  elementTextBySelector(Selectors.caption)(ExpectedValuesWelsh.caption),
+                  elementTextBySelector(Selectors.insetText)(ExpectedValuesWelsh.insetTextFull(isAgent)),
+                  elementTextBySelector(Selectors.insetLinkText)(ExpectedValuesWelsh.insetTextLink(isAgent)),
+                  elementAttributeBySelector(Selectors.insetLinkText, "href")(ExpectedValues.insetLinkHref),
+                  elementTextBySelector(Selectors.incomeRowText)(ExpectedValuesWelsh.incomeText),
+                  elementTextBySelector(Selectors.incomeRowAmount)(ExpectedValues.incomeAmount),
+                  elementAttributeBySelector(Selectors.incomeRowText, "href")(ExpectedValues.incomeLink(isAgent)),
+                  elementTextBySelector(Selectors.allowanceRowText)(ExpectedValuesWelsh.allowanceText),
+                  elementTextBySelector(Selectors.allowanceRowAmount)(ExpectedValues.allowanceAmount),
+                  elementAttributeBySelector(Selectors.allowanceRowText, "href")(ExpectedValues.allowanceLink(isAgent)),
+                  elementTextBySelector(Selectors.taxIsDueRowText)(ExpectedValuesWelsh.taxIsDueText),
+                  elementTextBySelector(Selectors.taxIsDueRowAmount)(ExpectedValues.taxIsDueAmount),
+                  elementTextBySelector(Selectors.contributionDueRowText)(ExpectedValuesWelsh.contributionText),
+                  elementTextBySelector(Selectors.contributionDueRowAmount)(ExpectedValues.contributionAmount),
+                  elementAttributeBySelector(Selectors.contributionDueRowText, "href")(ExpectedValues.contributionLink(isAgent)),
+                  elementTextBySelector(Selectors.chargeInformationParagraph)(ExpectedValuesWelsh.chargeInformationParagraph(isAgent)),
+                  elementTextBySelector(Selectors.continueButton)(ExpectedValuesWelsh.continueButtonText)
+                )
+              }
+            }
+
+            "render the error page" when {
+              "there is no calc data model" in {
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
+                calculationStubEmptyCalculations()
+
+                val res = buildGETMTDClient(path, additionalCookies).futureValue
+                res should have(
+                  httpStatus(INTERNAL_SERVER_ERROR)
+                )
+              }
+            }
+          }
+        }
+        testAuthFailures(path, mtdUserRole)
       }
-
-      "has the correct redirect url" in {
-        result.headers("Location").head shouldBe "http://localhost:9302/update-and-submit-income-tax-return/2018/declaration"
-      }
-
     }
 
-    "show an error page" when {
-      "there is no name provided in the auth" in {
-        lazy val result = {
-          AuthStub.stubAuthorised()
-          calculationStub()
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+    s"POST $path" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          if (mtdUserRole == MTDSupportingAgent) {
+            testSupportingAgentAccessDenied(path, additionalCookies)
+          } else {
+            "redirect to the confirmation page" in {
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
+              calculationStub()
 
-          ws.url(url)
-            .withFollowRedirects(false)
-            .post("{}")
-        }.futureValue
+              val res = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
 
-        result.status shouldBe INTERNAL_SERVER_ERROR
-      }
+              res should have(
+                httpStatus(SEE_OTHER),
+                redirectURI("http://localhost:9302/update-and-submit-income-tax-return/2018/declaration")
+              )
+            }
 
-      "there is no calc information" in {
-        lazy val result = {
-          AuthStub.stubAuthorisedWithName()
-          calculationStubEmptyCalculations()
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+            "render the error page" when {
+              if (mtdUserRole == MTDIndividual) {
+                "there is no name provided in the auth" in {
+                  MTDIndividualAuthStub.stubAuthorisedWithNoName()
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
+                  calculationStub()
 
-          ws.url(url)
-            .withFollowRedirects(false)
-            .post("{}")
-        }.futureValue
+                  val res = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
+                  res.status shouldBe INTERNAL_SERVER_ERROR
+                }
+              }
 
-        result.status shouldBe INTERNAL_SERVER_ERROR
+              "there is no calc information" in {
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
+                calculationStubEmptyCalculations()
+
+                val res = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
+                res.status shouldBe INTERNAL_SERVER_ERROR
+              }
+            }
+          }
+        }
+        testAuthFailures(path, mtdUserRole, Some(Map.empty))
       }
     }
   }

@@ -18,11 +18,11 @@ package controllers
 
 import audit.AuditingService
 import audit.models.ChargeSummaryAudit
-import auth.{FrontendAuthorisedFunctions, MtdItUser}
+import auth.MtdItUser
+import auth.authV2.AuthActions
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.ChargeSummaryController.ErrorCode
-import controllers.agent.predicates.ClientConfirmedController
 import enums.GatewayPage.GatewayPage
 import forms.utils.SessionKeys.gatewayPage
 import models.admin._
@@ -33,12 +33,12 @@ import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.claimToAdjustPoa.ClaimToAdjustHelper.{isPoaOne, isPoaTwo}
-import services.{ChargeHistoryService, DateServiceInterface, FinancialDetailsService, IncomeSourceDetailsService}
+import services.{ChargeHistoryService, DateServiceInterface, FinancialDetailsService}
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
-import utils.{AuthenticatorPredicate, FallBackBackLinks}
+import utils.FallBackBackLinks
 import views.html.ChargeSummary
-import views.html.errorPages.CustomNotFoundError
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -47,22 +47,19 @@ object ChargeSummaryController {
   case class ErrorCode(message: String)
 }
 
-class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
+class ChargeSummaryController @Inject()(val authActions: AuthActions,
                                         val financialDetailsService: FinancialDetailsService,
                                         val auditingService: AuditingService,
                                         val itvcErrorHandler: ItvcErrorHandler,
+                                        val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                         val chargeSummaryView: ChargeSummary,
-                                        val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                        val chargeHistoryService: ChargeHistoryService,
-                                        val authorisedFunctions: FrontendAuthorisedFunctions,
-                                        val customNotFoundErrorView: CustomNotFoundError)
+                                        val chargeHistoryService: ChargeHistoryService)
                                        (implicit val appConfig: FrontendAppConfig,
                                         dateService: DateServiceInterface,
                                         val languageUtils: LanguageUtils,
                                         mcc: MessagesControllerComponents,
-                                        val ec: ExecutionContext,
-                                        val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport with FallBackBackLinks with TransactionUtils {
+                                        val ec: ExecutionContext)
+  extends FrontendController(mcc) with I18nSupport with FallBackBackLinks with TransactionUtils with FeatureSwitching {
 
   def onError(message: String, isAgent: Boolean, showInternalServerError: Boolean)(implicit request: Request[_]): Result = {
     val errorPrefix: String = s"[ChargeSummaryController]${if (isAgent) "[Agent]" else ""}[showChargeSummary]"
@@ -106,13 +103,13 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
   }
 
   def show(taxYear: Int, id: String, isInterestCharge: Boolean = false, origin: Option[String] = None): Action[AnyContent] =
-    auth.authenticatedAction(isAgent = false) {
+    authActions.asMTDIndividual.async {
       implicit user =>
         handleRequest(taxYear, id, isInterestCharge, isAgent = false, origin)
     }
 
   def showAgent(taxYear: Int, id: String, isInterestCharge: Boolean = false): Action[AnyContent] =
-    auth.authenticatedAction(isAgent = true) {
+    authActions.asMTDPrimaryAgent.async {
       implicit mtdItUser =>
         handleRequest(taxYear, id, isInterestCharge, isAgent = true)
     }
@@ -142,9 +139,9 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
       } else Nil
 
     val paymentAllocations: List[PaymentHistoryAllocations] =
-        financialDetailsForCharge
-            .filter(_.messageKeyByTypes.isDefined)
-          .flatMap(chargeFinancialDetail => paymentsForAllYears.getAllocationsToCharge(chargeFinancialDetail))
+      financialDetailsForCharge
+        .filter(_.messageKeyByTypes.isDefined)
+        .flatMap(chargeFinancialDetail => paymentsForAllYears.getAllocationsToCharge(chargeFinancialDetail))
 
 
     chargeHistoryService.chargeHistoryResponse(isInterestCharge, documentDetailWithDueDate.documentDetail.isPayeSelfAssessment,
@@ -206,7 +203,7 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
   private def checkForPoaExtraChargeLink(chargeDetailsForTaxYear: FinancialDetailsModel, documentDetailWithDueDate: DocumentDetailWithDueDate, isAgent: Boolean)(implicit user: MtdItUser[_]): Option[String] = {
     val chargeItem: Option[ChargeItem] = getChargeItemOpt(chargeDetailsForTaxYear.financialDetails)(documentDetailWithDueDate.documentDetail)
 
-   chargeItem match {
+    chargeItem match {
       case Some(value) =>
         val desiredMainTransaction = value.poaLinkForDrilldownPage
         val extraChargeId = chargeDetailsForTaxYear.financialDetails.find(x => x.taxYear == documentDetailWithDueDate.documentDetail.taxYear.toString

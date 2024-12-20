@@ -16,11 +16,10 @@
 
 package controllers
 
-import auth.{FrontendAuthorisedFunctions, MtdItUser}
+import auth.MtdItUser
+import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import controllers.agent.predicates.ClientConfirmedController
-import controllers.agent.sessionUtils.SessionKeys.{clientFirstName, clientLastName}
 import forms.utils.SessionKeys
 import forms.utils.SessionKeys.{calcPagesBackPage, summaryData}
 import models.finalTaxCalculation.TaxReturnRequestModel
@@ -31,23 +30,22 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{CalculationService, IncomeSourceDetailsService}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.AuthenticatorPredicate
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.FinalTaxCalculationView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControllerComponents,
-                                              val ec: ExecutionContext,
+class FinalTaxCalculationController @Inject()(authActions: AuthActions,
                                               view: FinalTaxCalculationView,
                                               calcService: CalculationService,
                                               itvcErrorHandler: ItvcErrorHandler,
-                                              val authorisedFunctions: FrontendAuthorisedFunctions,
-                                              implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                              val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                              implicit val appConfig: FrontendAppConfig,
-                                              val auth: AuthenticatorPredicate
-                                             ) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
+                                              val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                              val incomeSourceDetailsService: IncomeSourceDetailsService
+                                             )(implicit val appConfig: FrontendAppConfig,
+                                               val mcc: MessagesControllerComponents,
+                                               ec: ExecutionContext) extends FrontendController(mcc)
+  with I18nSupport with FeatureSwitching {
 
   def handleShowRequest(taxYear: Int,
                         itvcErrorHandler: ShowInternalServerError,
@@ -70,7 +68,7 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
   }
 
 
-  def show(taxYear: Int, origin: Option[String]): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(taxYear: Int, origin: Option[String]): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
       handleShowRequest(
         itvcErrorHandler = itvcErrorHandler,
@@ -80,7 +78,7 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
       )
   }
 
-  def showAgent(taxYear: Int): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent(taxYear: Int): Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
     implicit mtdItUser =>
       handleShowRequest(
         itvcErrorHandler = itvcErrorHandlerAgent,
@@ -89,21 +87,17 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
       )
   }
 
-  def submit(taxYear: Int, origin: Option[String]): Action[AnyContent] = auth.authenticatedAction(isAgent = false) { implicit user =>
+  def submit(taxYear: Int, origin: Option[String]): Action[AnyContent] = authActions.asMTDIndividual.async { implicit user =>
     val fullNameOptional = user.userName.map { nameModel =>
       (nameModel.name.getOrElse("") + " " + nameModel.lastName.getOrElse("")).trim
     }
     finalDeclarationSubmit(taxYear, fullNameOptional)
   }
 
-    def agentSubmit(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>
-      implicit agent =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { user =>
-          val fullName = user.session.get(clientFirstName).getOrElse("") + " " + user.session.get(clientLastName).getOrElse("")
-          agentFinalDeclarationSubmit(taxYear, fullName)(user, hc)
-        }
-    }
-
+  def agentSubmit(taxYear: Int): Action[AnyContent] = authActions.asMTDPrimaryAgent.async { implicit user =>
+    val fullName = user.optClientNameAsString.getOrElse("").trim
+    agentFinalDeclarationSubmit(taxYear, fullName)(user, hc)
+  }
 
   def agentFinalDeclarationSubmit(taxYear: Int, fullName: String)
                                  (implicit user: MtdItUser[AnyContent], hc: HeaderCarrier): Future[Result] = {
@@ -126,14 +120,14 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
             )
           case _ =>
             Logger("application").error("[Agent]UTR missing.")
-            itvcErrorHandler.showInternalServerError()
+            itvcErrorHandlerAgent.showInternalServerError()
         }
       case calcError: LiabilityCalculationError if calcError.status == NO_CONTENT =>
         Logger("application").info("[Agent]No calculation data returned from downstream.")
-        itvcErrorHandler.showInternalServerError()
+        itvcErrorHandlerAgent.showInternalServerError()
       case _ =>
         Logger("application").error("[Agent]Unexpected error has occurred while retrieving calculation data.")
-        itvcErrorHandler.showInternalServerError()
+        itvcErrorHandlerAgent.showInternalServerError()
     }
   }
 

@@ -31,13 +31,11 @@ import models.sessionData.SessionCookieData
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
-import services.SessionDataService
 import services.agent.ClientDetailsService
 import services.agent.ClientDetailsService.{BusinessDetailsNotFound, CitizenDetailsNotFound}
 import uk.gov.hmrc.auth.core.Enrolment
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve.~
-import utils.SessionCookieUtil
 import views.html.agent.EnterClientsUTR
 
 import javax.inject.{Inject, Singleton}
@@ -48,22 +46,21 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
                                           clientDetailsService: ClientDetailsService,
                                           val authorisedFunctions: FrontendAuthorisedFunctions,
                                           val authActions: AuthActions,
-                                          val auditingService: AuditingService,
-                                          val sessionDataService: SessionDataService)
+                                          val auditingService: AuditingService)
                                          (implicit mcc: MessagesControllerComponents,
                                           val appConfig: FrontendAppConfig,
                                           val itvcErrorHandler: AgentItvcErrorHandler,
                                           val ec: ExecutionContext)
-  extends BaseAgentController with I18nSupport with FeatureSwitching with SessionCookieUtil {
+  extends BaseAgentController with I18nSupport with FeatureSwitching {
 
-  def show: Action[AnyContent] = authActions.asAgent().async {implicit user =>
+  def show: Action[AnyContent] = authActions.asAgent().async { implicit user =>
     Future.successful(Ok(enterClientsUTR(
       clientUTRForm = ClientsUTRForm.form,
       postAction = routes.EnterClientsUTRController.submit
     )))
   }
 
-  def showWithUtr(utr: String): Action[AnyContent] = authActions.asAgent().async {implicit user =>
+  def showWithUtr(utr: String): Action[AnyContent] = authActions.asAgent().async { implicit user =>
     val utrSafe = utr.filter(_.isDigit).take(10)
     Future.successful(Ok(enterClientsUTR(
       clientUTRForm = ClientsUTRForm.form.fill(utrSafe),
@@ -83,13 +80,11 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
           utr = validUTR
         ) flatMap {
           case Right(clientDetails) =>
-            checkAgentAuthorisedAndGetRole(clientDetails.mtdItId).flatMap{ userRole =>
-              val sessionCookieData: SessionCookieData = SessionCookieData(clientDetails, validUTR, userRole == MTDSupportingAgent)
-              handleSessionCookies(sessionCookieData) { sessionCookies =>
-                sendAudit(true, user, sessionCookieData.utr, sessionCookieData.nino, sessionCookieData.mtditid)
-                Future.successful(Redirect(routes.ConfirmClientUTRController.show).addingToSession(sessionCookies: _*))
-              }
-            }.recover{
+            checkAgentAuthorisedAndGetRole(clientDetails.mtdItId).flatMap { userRole =>
+              val sessionCookies: Seq[(String, String)] = SessionCookieData(clientDetails, validUTR, userRole == MTDSupportingAgent).toSessionCookieSeq
+              sendAudit(true, user, validUTR, clientDetails.nino, clientDetails.mtdItId)
+              Future.successful(Redirect(routes.ConfirmClientUTRController.show).addingToSession(sessionCookies: _*))
+            }.recover {
               case ex =>
                 Logger("application")
                   .error(s"[EnterClientsUTRController] - ${ex.getMessage} - ${ex.getCause}")
@@ -119,8 +114,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
       }.recoverWith { case e =>
         authorisedFunctions
           .authorised(Enrolment(secondaryAgentEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
-            .withDelegatedAuthRule(secondaryAgentAuthRule)).retrieve(allEnrolments and name and credentials and affinityGroup and confidenceLevel)
-          { case _ ~ _ ~ _ ~ _ ~ _ => Future.successful(MTDSupportingAgent)
+            .withDelegatedAuthRule(secondaryAgentAuthRule)).retrieve(allEnrolments and name and credentials and affinityGroup and confidenceLevel) { case _ ~ _ ~ _ ~ _ ~ _ => Future.successful(MTDSupportingAgent)
           }
       }
   }

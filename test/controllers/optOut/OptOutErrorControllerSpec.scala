@@ -25,10 +25,10 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAn
 
 class OptOutErrorControllerSpec extends MockAuthActions {
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .build()
 
-  val testController = fakeApplication().injector.instanceOf[OptOutErrorController]
+  lazy val testController = app.injector.instanceOf[OptOutErrorController]
 
   mtdAllRoles.foreach { mtdRole =>
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)

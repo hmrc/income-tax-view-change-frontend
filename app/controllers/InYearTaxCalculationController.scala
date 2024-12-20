@@ -18,45 +18,44 @@ package controllers
 
 import audit.AuditingService
 import audit.models.{ViewInYearTaxEstimateAuditBody, ViewInYearTaxEstimateAuditModel}
-import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
+import auth.MtdItUser
+import auth.authV2.AuthActions
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import forms.utils.SessionKeys.calcPagesBackPage
 import implicits.ImplicitDateFormatter
 import models.liabilitycalculation.viewmodels.CalculationSummary
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import play.api.Logger
-import play.api.i18n.{I18nSupport, Messages}
+import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{CalculationService, DateServiceInterface}
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
-import utils.AuthenticatorPredicate
 import views.html.InYearTaxCalculationView
 
 import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class InYearTaxCalculationController @Inject()(val executionContext: ExecutionContext,
-                                                view: InYearTaxCalculationView,
-                                                calcService: CalculationService,
-                                                dateService: DateServiceInterface,
-                                                auditingService: AuditingService,
-                                                itvcErrorHandler: ItvcErrorHandler,
-                                                implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                                val authorisedFunctions: FrontendAuthorisedFunctions,
-                                                val languageUtils: LanguageUtils,
-                                                implicit val appConfig: FrontendAppConfig,
-                                                implicit override val mcc: MessagesControllerComponents,
-                                                implicit val ec: ExecutionContext,
-                                                val auth: AuthenticatorPredicate
-                                              ) extends ClientConfirmedController with FeatureSwitching with I18nSupport with ImplicitDateFormatter {
+class InYearTaxCalculationController @Inject()(authActions: AuthActions,
+                                               view: InYearTaxCalculationView,
+                                               calcService: CalculationService,
+                                               dateService: DateServiceInterface,
+                                               auditingService: AuditingService,
+                                               itvcErrorHandler: ItvcErrorHandler,
+                                               itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                              (implicit val mcc: MessagesControllerComponents,
+                                               val appConfig: FrontendAppConfig,
+                                               val languageUtils: LanguageUtils,
+                                               val ec: ExecutionContext) extends FrontendController(mcc)
+  with I18nSupport with ImplicitDateFormatter {
 
 
   def handleRequest(isAgent: Boolean, currentDate: LocalDate, timeStamp: String, origin: Option[String] = None)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
+                   (implicit user: MtdItUser[_],
+                    hc: HeaderCarrier,
+                    errorHandler: ShowInternalServerError): Future[Result] = {
 
     val taxYear = if (currentDate.isAfter(toTaxYearEndDate(currentDate.getYear))) {
       currentDate.getYear + 1
@@ -78,18 +77,18 @@ class InYearTaxCalculationController @Inject()(val executionContext: ExecutionCo
         auditingService.audit(auditModel)
 
         lazy val backUrl: String = appConfig.submissionFrontendTaxOverviewUrl(taxYear)
-        Ok(view(taxCalc, taxYear, isAgent, backUrl, timeStamp)(messages, user, appConfig))
+        Ok(view(taxCalc, taxYear, isAgent, backUrl, timeStamp))
           .addingToSession(calcPagesBackPage -> "submission")
       case calcErrorResponse: LiabilityCalculationError if calcErrorResponse.status == NO_CONTENT =>
         Logger("application").info("No calculation data returned from downstream.")
-        itvcErrorHandler.showInternalServerError()
+        errorHandler.showInternalServerError()
       case _ =>
         Logger("application").error("Unexpected error has occurred while retrieving calculation data.")
-        itvcErrorHandler.showInternalServerError()
+        errorHandler.showInternalServerError()
     }
   }
 
-  def show(origin: Option[String]): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(origin: Option[String]): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
       val currentDate = dateService.getCurrentDate
       handleRequest(
@@ -97,17 +96,17 @@ class InYearTaxCalculationController @Inject()(val executionContext: ExecutionCo
         currentDate,
         currentDate.toLongDate,
         origin = origin
-      )
+      )(implicitly, implicitly, itvcErrorHandler)
   }
 
-  def showAgent: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent: Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
     implicit mtdItUser =>
       val currentDate = dateService.getCurrentDate
       handleRequest(
         isAgent = true,
         currentDate,
         currentDate.toLongDate
-      )
+      )(implicitly, implicitly, itvcErrorHandlerAgent)
   }
 
 }

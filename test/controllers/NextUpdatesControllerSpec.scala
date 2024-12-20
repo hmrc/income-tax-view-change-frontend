@@ -43,12 +43,12 @@ class NextUpdatesControllerSpec extends MockAuthActions with MockIncomeSourceDet
 
   val nextTitle: String = messages("htmlTitle", messages("nextUpdates.heading"))
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[NextUpdatesService].toInstance(mockNextUpdatesService),
     ).build()
 
-  val testNextUpdatesController: NextUpdatesController = fakeApplication().injector.instanceOf[NextUpdatesController]
+  lazy val testNextUpdatesController: NextUpdatesController = app.injector.instanceOf[NextUpdatesController]
 
   val obligationsModel: ObligationsModel = ObligationsModel(Seq(
     GroupedObligationsModel(BaseTestConstants.testSelfEmploymentId, List(SingleObligationModel(fixedDate, fixedDate, fixedDate, "Quarterly", Some(fixedDate), "#001", StatusFulfilled))),
@@ -333,7 +333,7 @@ class NextUpdatesControllerSpec extends MockAuthActions with MockIncomeSourceDet
           mockSingleBusinessIncomeSource()
           mockViewModel
           mockObligations
-          mockNextUpdates(nextUpdatesViewModel, controllers.routes.HomeController.showAgent.url, isAgent = true)(HtmlFormat.empty)
+          mockNextUpdates(nextUpdatesViewModel, controllers.routes.HomeController.showAgent.url, isAgent = true, isSupportingAgent)(HtmlFormat.empty)
 
           val result: Future[Result] = testNextUpdatesController.showAgent()(
             fakeRequestConfirmedClient(isSupportingAgent = isSupportingAgent)

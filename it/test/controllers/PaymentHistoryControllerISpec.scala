@@ -18,25 +18,18 @@ package controllers
 
 import audit.models.PaymentHistoryResponseAuditModel
 import auth.MtdItUser
-import helpers.ComponentSpecBase
+import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.PaymentHistoryRefunds
 import models.financialDetails.Payment
 import play.api.http.Status._
-import play.api.libs.ws.WSResponse
-import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
-import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate
 
-class PaymentHistoryControllerISpec extends ComponentSpecBase {
-
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-  }
+class PaymentHistoryControllerISpec extends ControllerISpecHelper {
 
   val payments: List[Payment] = List(
     Payment(reference = Some("payment1"), amount = Some(100.00), outstandingAmount = None, method = Some("method"),
@@ -61,87 +54,69 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
   val previousTaxYearEnd: Int = currentTaxYearEnd - 1
   val twoPreviousTaxYearEnd: Int = currentTaxYearEnd - 2
 
-  val testUser: MtdItUser[_] = MtdItUser(
-    testMtditid, testNino, None, paymentHistoryBusinessAndPropertyResponse,
-    None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
-  )(FakeRequest())
+  val testUser: MTDUserRole => MtdItUser[_] = mtdUserRole => getTestUser(mtdUserRole, paymentHistoryBusinessAndPropertyResponse)
 
-  s"GET ${controllers.routes.PaymentHistoryController.show().url}" should {
-    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" when {
-      "the user is not authenticated" in {
-        isAuthorisedUser(authorised = false)
-        stubUserDetails()
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
-        IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$twoPreviousTaxYearEnd-04-06", s"$previousTaxYearEnd-04-05")(OK, payments)
-        IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK, payments)
-
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentHistory
-
-        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn.url}")
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn.url)
-        )
-      }
-    }
+  def getPath(mtdRole: MTDUserRole): String = {
+    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    pathStart + s"/payment-refund-history"
   }
+  mtdAllRoles.foreach { case mtdUserRole =>
+    val path = getPath(mtdUserRole)
+    val additionalCookies = getAdditionalCookies(mtdUserRole)
+    s"GET $path" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          if (mtdUserRole == MTDSupportingAgent) {
+            testSupportingAgentAccessDenied(path, additionalCookies)
+          } else {
 
+            s"render the payment history page" that {
+              "has payment history title" when {
+                "the PaymentHistoryRefunds FS is disabled" in {
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
+                  IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$twoPreviousTaxYearEnd-04-06", s"$previousTaxYearEnd-04-05")(OK, payments)
 
-  s"return $OK with the payment history page" when {
-    "the payment history feature switch is enabled" in {
-      isAuthorisedUser(authorised = true)
-      stubUserDetails()
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
-      IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$twoPreviousTaxYearEnd-04-06", s"$previousTaxYearEnd-04-05")(OK, payments)
+                  val result = buildGETMTDClient(path, additionalCookies).futureValue
+                  result should have(
+                    httpStatus(OK),
+                    pageTitle(mtdUserRole, "paymentHistory.heading"),
+                    elementTextBySelector("#refundstatus")(""),
+                  )
 
-      val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentHistory
+                  verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser(mtdUserRole), payments).detail)
+                }
+              }
 
-      Then("The Payment History page is returned to the user")
-      result should have(
-        httpStatus(OK),
-        pageTitleIndividual("paymentHistory.heading"),
-        elementTextBySelector("#refundstatus")(""),
-      )
+              "has payment and refund history title" when {
 
-      verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, payments).detail)
-    }
+                "the payment is from an earlier tax year description when CutOverCreditsEnabled and credit is defined" in {
+                  enable(PaymentHistoryRefunds)
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
+                  IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$twoPreviousTaxYearEnd-04-06", s"$previousTaxYearEnd-04-05")(OK, payments)
 
-    "return payment from earlier tax year description when CutOverCreditsEnabled and credit is defined" in {
-      enable(PaymentHistoryRefunds)
-      isAuthorisedUser(authorised = true)
-      stubUserDetails()
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
-      IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$twoPreviousTaxYearEnd-04-06", s"$previousTaxYearEnd-04-05")(OK, payments)
+                  val result = buildGETMTDClient(path, additionalCookies).futureValue
 
-      val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentHistory
+                  result should have(
+                    httpStatus(OK),
+                    pageTitle(mtdUserRole, "paymentHistory.paymentAndRefundHistory.heading"),
+                    elementTextBySelector("h1")(messagesAPI("paymentHistory.paymentAndRefundHistory.heading"))
+                  )
+                  if(mtdUserRole == MTDIndividual) {
+                    result should have(
+                      elementTextBySelector("#refundstatus")(messagesAPI("paymentHistory.check-refund-1") + " " +
+                        messagesAPI("paymentHistory.check-refund-2") + " " + messagesAPI("paymentHistory.check-refund-3"))
+                    )
+                  }
 
-      Then("The Payment History page is returned to the user")
-      result should have(
-        httpStatus(OK),
-        pageTitleIndividual("paymentHistory.paymentAndRefundHistory.heading"),
-        elementTextBySelector("h1")(messagesAPI("paymentHistory.paymentAndRefundHistory.heading")),
-        elementTextBySelector("#refundstatus")(messagesAPI("paymentHistory.check-refund-1") + " " +
-          messagesAPI("paymentHistory.check-refund-2") + " " + messagesAPI("paymentHistory.check-refund-3")),
-      )
-
-      verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, payments).detail)
-    }
-
-
-    "Show the user the payments history page" when {
-      "The feature switch is disabled" in {
-        disable(PaymentHistoryRefunds)
-        isAuthorisedUser(authorised = true)
-        stubUserDetails()
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
-        IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$twoPreviousTaxYearEnd-04-06", s"$previousTaxYearEnd-04-05")(OK, payments)
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentHistory
-        Then("The Payment History page is returned to the user")
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual("paymentHistory.heading"),
-          elementTextBySelector("h1")(messagesAPI("paymentHistory.heading"))
-        )
+                  verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser(mtdUserRole), payments).detail)
+                }
+              }
+            }
+          }
+        }
+        testAuthFailures(path, mtdUserRole)
       }
     }
   }

@@ -41,16 +41,11 @@ import scala.concurrent.Future
 
 class NavBarRetrievalActionSpec extends AuthActionsSpecHelper {
 
-  override def afterEach(): Unit = {
-    Play.stop(fakeApplication())
-    super.afterEach()
-  }
-
   def config: Map[String, Object] = Map(
     "feature-switches.read-from-mongo" -> "true"
   )
 
-  override def fakeApplication(): Application = {
+  override lazy val app: Application = {
     new GuiceApplicationBuilder()
       .overrides(
         api.inject.bind[BtaNavBarController].toInstance(mockBtaNavBarController),
@@ -71,7 +66,7 @@ class NavBarRetrievalActionSpec extends AuthActionsSpecHelper {
   def defaultAsync: MtdItUser[_] => Future[Result] = (_) => Future.successful(Results.Ok("Successful"))
 
   val featureSwitchesIncludingNavBarEnabled = List(FeatureSwitch(NavBarFs, true))
-  lazy val action = fakeApplication().injector.instanceOf[NavBarRetrievalAction]
+  lazy val action = app.injector.instanceOf[NavBarRetrievalAction]
 
   "refine" when {
     "the user is an Agent" should {

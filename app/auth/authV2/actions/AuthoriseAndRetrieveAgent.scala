@@ -18,6 +18,7 @@ package auth.authV2.actions
 
 import auth.FrontendAuthorisedFunctions
 import auth.authV2.AuthorisedUser
+import com.google.inject.Singleton
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import play.api.mvc.Results.Redirect
@@ -35,6 +36,7 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class AuthoriseAndRetrieveAgent @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
                                           val appConfig: FrontendAppConfig,
                                           override val config: Configuration,
@@ -71,13 +73,13 @@ class AuthoriseAndRetrieveAgent @Inject()(val authorisedFunctions: FrontendAutho
 
   def logAndRedirect[A]: PartialFunction[Throwable, Future[Either[Result, AuthorisedUser[A]]]] = {
     case _: BearerTokenExpired =>
-      logger.debug("Bearer Token Timed Out.")
+      logger.warn("Bearer Token Timed Out.")
       Future.successful(Left(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout)))
     case _: InsufficientEnrolments =>
-      logger.debug(s"missing agent reference. Redirect to agent error page.")
+      logger.error(s"missing agent reference. Redirect to agent error page.")
       Future.successful(Left(Redirect(controllers.agent.errors.routes.AgentErrorController.show)))
     case authorisationException: AuthorisationException =>
-      logger.debug(s"Unauthorised request: ${authorisationException.reason}. Redirect to Sign In.")
+      logger.error(s"Unauthorised request: ${authorisationException.reason}. Redirect to Sign In.")
       Future.successful(Left(Redirect(controllers.routes.SignInController.signIn)))
     // No catch all block at end - bubble up to global error handler
     // See investigation: https://github.com/hmrc/income-tax-view-change-frontend/pull/2432
@@ -103,7 +105,7 @@ class AuthoriseAndRetrieveAgent @Inject()(val authorisedFunctions: FrontendAutho
   private def redirectIfNotAgent[A]()(
     implicit request: Request[A]): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedUser[A]]]] = {
     case _ ~ _ ~ Some(ag@(Organisation | Individual)) ~ _ =>
-      logger.debug(s"$ag on endpoint for agents")
+      logger.error(s"$ag on endpoint for agents")
       Future.successful(Left(Redirect(controllers.routes.HomeController.show())))
   }
 }

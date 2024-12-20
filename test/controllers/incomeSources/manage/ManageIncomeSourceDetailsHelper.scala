@@ -46,7 +46,7 @@ trait ManageIncomeSourceDetailsHelper extends MockAuthActions with MockBusinessD
 
   lazy val taxYearEnd2023 = TaxYear(2022, 2023)
 
-  override def fakeApplication() = applicationBuilderWithAuthBindings()
+  override lazy val app = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
@@ -55,7 +55,7 @@ trait ManageIncomeSourceDetailsHelper extends MockAuthActions with MockBusinessD
       api.inject.bind[CalculationListService].toInstance(mockCalculationListService)
     ).build()
 
-  lazy val testController = fakeApplication().injector.instanceOf[ManageIncomeSourceDetailsController]
+  lazy val testController = app.injector.instanceOf[ManageIncomeSourceDetailsController]
 
   def getHeading(document: Document): String = document.select("h1:nth-child(1)").text
   def hasChangeFirstYearReportingMethodLink(document: Document): Boolean = Option(document.getElementById("change-link-1")).isDefined

@@ -37,13 +37,13 @@ class AmendablePoaControllerSpec
   val getMongoResponseJourneyIncomplete: Option[PoaAmendmentData] = Some(PoaAmendmentData())
   val getMongoResponseJourneyComplete: Option[PoaAmendmentData] = Some(PoaAmendmentData(None, None, journeyCompleted = true))
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService),
       api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService)
     ).build()
 
-  val testController = fakeApplication().injector.instanceOf[AmendablePoaController]
+  lazy val testController = app.injector.instanceOf[AmendablePoaController]
 
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual

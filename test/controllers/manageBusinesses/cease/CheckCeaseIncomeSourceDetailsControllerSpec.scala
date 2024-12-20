@@ -47,14 +47,14 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
 
   val checkDetailsHeading: String = messages("cease-check-answers.title")
 
-  override def fakeApplication() = applicationBuilderWithAuthBindings()
+  override lazy val app = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[UpdateIncomeSourceService].toInstance(mockUpdateIncomeSourceService)
     ).build()
 
-  val testCeaseCheckIncomeSourceDetailsController =
-    fakeApplication().injector.instanceOf[CeaseCheckIncomeSourceDetailsController]
+  lazy val testCeaseCheckIncomeSourceDetailsController =
+    app.injector.instanceOf[CeaseCheckIncomeSourceDetailsController]
 
   def heading(incomeSourceType: IncomeSourceType): String = {
     incomeSourceType match {

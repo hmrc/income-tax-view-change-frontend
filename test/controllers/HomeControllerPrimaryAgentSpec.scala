@@ -34,7 +34,7 @@ import scala.concurrent.Future
 
 class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injecting {
 
-  val testHomeController = fakeApplication().injector.instanceOf[HomeController]
+  lazy val testHomeController = app.injector.instanceOf[HomeController]
 
   trait Setup {
     val controller = testHomeController

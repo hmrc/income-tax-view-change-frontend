@@ -36,14 +36,9 @@ import mocks.services.MockClientDetailsService
 import models.sessionData.SessionDataGetResponse.{SessionDataNotFound, SessionDataUnexpectedResponse}
 import services.agent.ClientDetailsService
 
-class RetrieveClientDataSpec extends AuthActionsSpecHelper with MockClientDetailsService{
+class RetrieveClientDataSpec extends AuthActionsSpecHelper with MockClientDetailsService {
 
-  override def afterEach(): Unit = {
-    Play.stop(fakeApplication())
-    super.afterEach()
-  }
-
-  override def fakeApplication(): Application = {
+  override lazy val app: Application = {
     new GuiceApplicationBuilder()
       .overrides(
         api.inject.bind[SessionDataService].toInstance(mockSessionDataService),
@@ -62,7 +57,7 @@ class RetrieveClientDataSpec extends AuthActionsSpecHelper with MockClientDetail
 
   def defaultAsync: ClientDataRequest[_] => Future[Result] = (_) => Future.successful(Results.Ok("Successful"))
 
-  lazy val action = fakeApplication().injector.instanceOf[RetrieveClientData]
+  lazy val action = app.injector.instanceOf[RetrieveClientData]
 
   "refine" when {
     "the session data service returns client details" should {
@@ -73,7 +68,7 @@ class RetrieveClientDataSpec extends AuthActionsSpecHelper with MockClientDetail
               .thenReturn(Future.successful(Right(sessionGetSuccessResponse)))
             setupMockGetClientDetailsSuccess()
 
-            val result = action.invokeBlock(
+            val result = action.authorise().invokeBlock(
               fakeRequestWithSession,
               defaultAsyncBody { res =>
                 res.isSupportingAgent shouldBe true
@@ -90,11 +85,11 @@ class RetrieveClientDataSpec extends AuthActionsSpecHelper with MockClientDetail
             .thenReturn(Future.successful(Right(sessionGetSuccessResponse)))
           setupMockGetClientDetailsSuccess()
 
-          val result = action.invokeBlock(
+          val result = action.authorise().invokeBlock(
             fakeRequestWithSession,
             defaultAsyncBody { res =>
               res.isSupportingAgent shouldBe false
-              res.confirmed shouldBe false
+              res.confirmed shouldBe appConfig.isSessionDataStorageEnabled
             })
 
           status(result) shouldBe OK
@@ -109,7 +104,7 @@ class RetrieveClientDataSpec extends AuthActionsSpecHelper with MockClientDetail
         when(mockSessionDataService.getSessionData(any())(any(), any()))
           .thenReturn(Future.successful(Left(SessionDataNotFound("no data"))))
 
-        val result = action.invokeBlock(
+        val result = action.authorise().invokeBlock(
           fakeRequestWithActiveSession,
           defaultAsync)
 
@@ -127,7 +122,7 @@ class RetrieveClientDataSpec extends AuthActionsSpecHelper with MockClientDetail
         when(mockAgentErrorHandler.showInternalServerError()(any()))
           .thenReturn(InternalServerError("ERROR PAGE"))
 
-        val result = action.invokeBlock(
+        val result = action.authorise().invokeBlock(
           fakeRequestWithActiveSession,
           defaultAsync)
 

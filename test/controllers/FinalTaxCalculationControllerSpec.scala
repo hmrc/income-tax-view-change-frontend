@@ -16,139 +16,117 @@
 
 package controllers
 
-import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import config.featureswitch.FeatureSwitching
-import controllers.agent.sessionUtils
-import controllers.agent.sessionUtils.SessionKeys.clientNino
-import controllers.predicates.{FeatureSwitchPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import enums.{MTDIndividual, MTDSupportingAgent}
+import forms.utils.SessionKeys.calcPagesBackPage
 import implicits.ImplicitDateFormatter
-import mocks.MockItvcErrorHandler
-import mocks.auth.MockFrontendAuthorisedFunctions
-import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import mocks.services.MockIncomeSourceDetailsService
-import mocks.views.agent.MockTaxYears
-import models.liabilitycalculation.{Inputs, LiabilityCalculationError, LiabilityCalculationResponse, Metadata, PersonalInformation}
+import mocks.auth.MockAuthActions
+import mocks.services.MockCalculationService
+import models.liabilitycalculation._
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, when}
+import org.mockito.Mockito.when
+import play.api
+import play.api.Application
 import play.api.http.Status
-import play.api.mvc.Results.InternalServerError
-import play.api.mvc.{AnyContent, MessagesControllerComponents, Result}
-import play.api.test.FakeRequest
-import play.api.test.Helpers.{defaultAwaitTimeout, status}
-import play.twirl.api.HtmlFormat
-import services.{CalculationService, IncomeSourceDetailsService}
-import testConstants.BaseTestConstants.{testCredId, testMtditid, testNino, testRetrievedUserName, testUserTypeIndividual}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
-import testUtils.TestSupport
-import views.html.FinalTaxCalculationView
+import play.api.test.Helpers._
+import services.CalculationService
+import testConstants.BaseTestConstants.testTaxYear
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 
 import scala.concurrent.Future
-class FinalTaxCalculationControllerSpec extends MockAuthenticationPredicate
-  with MockIncomeSourceDetailsPredicate with MockIncomeSourceDetailsService
-  with MockFrontendAuthorisedFunctions with MockItvcErrorHandler with MockTaxYears with ImplicitDateFormatter with TestSupport with FeatureSwitching{
+class FinalTaxCalculationControllerSpec extends MockAuthActions
+  with MockCalculationService
+  with ImplicitDateFormatter {
 
-  val mockCalculationService: CalculationService = mock(classOf[CalculationService])
-  val mockErrorHandler: ItvcErrorHandler = mock(classOf[ItvcErrorHandler])
+  override lazy val app: Application = applicationBuilderWithAuthBindings
+    .overrides(
+      api.inject.bind[CalculationService].toInstance(mockCalculationService)
+    ).build()
 
-  val testFinalTaxCalculationController = new FinalTaxCalculationController()(
-    app.injector.instanceOf[MessagesControllerComponents],
-    ec,
-    app.injector.instanceOf[FinalTaxCalculationView],
-    mockCalculationService,
-    mockErrorHandler,
-    app.injector.instanceOf[FrontendAuthorisedFunctions],
-    app.injector.instanceOf[AgentItvcErrorHandler],
-    app.injector.instanceOf[IncomeSourceDetailsService],
-    app.injector.instanceOf[FrontendAppConfig],
-    testAuthenticator
-  )
+  lazy val testController = app.injector.instanceOf[FinalTaxCalculationController]
+
 
   val testCalcError: LiabilityCalculationError = LiabilityCalculationError(Status.OK, "Test message")
+  val testCalcNOCONTENT: LiabilityCalculationError = LiabilityCalculationError(Status.NO_CONTENT, "Test message")
+
   val testCalcResponse: LiabilityCalculationResponse = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(taxRegime = "UK", class2VoluntaryContributions = None)),
     messages = None,
     calculation = None,
     metadata = Metadata(None))
-  when(mockErrorHandler.showInternalServerError()(any()))
-    .thenReturn(InternalServerError(HtmlFormat.empty))
   val taxYear = 2018
-  val user: MtdItUser[AnyContent] = MtdItUser(
-    mtditid = testMtditid,
-    nino = testNino,
-    userName = Some(testRetrievedUserName),
-    incomeSources = businessAndPropertyAligned,
-    btaNavPartial = None,
-    saUtr = None,
-    credId = Some(testCredId),
-    userType = Some(testUserTypeIndividual),
-    arn = None
-  )(FakeRequest())
 
-  val noNameUser: MtdItUser[AnyContent] = MtdItUser(
-    mtditid = testMtditid,
-    nino = testNino,
-    userName = None,
-    incomeSources = businessAndPropertyAligned,
-    btaNavPartial = None,
-    saUtr = None,
-    credId = Some(testCredId),
-    userType = Some(testUserTypeIndividual),
-    arn = None
-  )(FakeRequest().withSession(sessionUtils.SessionKeys.clientUTR -> "1234567890",
-    sessionUtils.SessionKeys.clientMTDID -> testMtditid,
-    sessionUtils.SessionKeys.clientNino -> clientNino,
-    sessionUtils.SessionKeys.confirmedClient -> "true",
-    forms.utils.SessionKeys.calculationId -> "1234567890"))
+  mtdAllRoles.foreach { mtdUserRole =>
+    val isAgent = mtdUserRole != MTDIndividual
+    s"show${if (isAgent) "Agent"}" when {
+      val action = if (isAgent) testController.showAgent(testTaxYear) else testController.show(testTaxYear, None)
+      val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
+      s"the $mtdUserRole is authenticated" should {
+        if (mtdUserRole == MTDSupportingAgent) {
+          testSupportingAgentDeniedAccess(action)(fakeRequest)
+        } else {
+          "render the final tax calculation page" in {
+            setupMockSuccess(mtdUserRole)
+            setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+            when(mockCalculationService.getLiabilityCalculationDetail(any(), any(), any())(any()))
+              .thenReturn(Future.successful(testCalcResponse))
+            val result = action(fakeRequest)
+            status(result) shouldBe Status.OK
+            session(result).get(calcPagesBackPage) shouldBe Some("submission")
+          }
 
-  "handle show request" should(
-    "return unknown error" when (
-      "an unconventional error occurs" in {
-        when(mockCalculationService.getLiabilityCalculationDetail(any(), any(), any())(any()))
-          .thenReturn(Future.successful(testCalcError))
-        val result: Future[Result] = testFinalTaxCalculationController.handleShowRequest(taxYear, mockErrorHandler, isAgent = false)
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          "render the error page" when {
+            "calculation service fails" in {
+              setupMockSuccess(mtdUserRole)
+              setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+              when(mockCalculationService.getLiabilityCalculationDetail(any(), any(), any())(any()))
+                .thenReturn(Future.successful(testCalcError))
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            }
+          }
+        }
       }
-      )
-    )
-
-  "agent submit" should (
-    "use blank first name" when {
-      "client has no provided first name" in {
-        val result: Future[Result] = testFinalTaxCalculationController.agentSubmit(taxYear)(noNameUser)
-        status(result) shouldBe Status.SEE_OTHER
-      }
-    }
-    )
-
-  "agent final declaration submit" should{
-    "return unknown error" when {
-      "an unconventional error occurs" in {
-        when(mockCalculationService.getLiabilityCalculationDetail(any(), any(), any())(any()))
-          .thenReturn(Future.successful(testCalcError))
-        val result: Future[Result] = testFinalTaxCalculationController.agentFinalDeclarationSubmit(taxYear, "Test Name")(user, headerCarrier)
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
+      testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
     }
 
-    "return UTR missing error" when{
-      "supplied a user with no UTR" in {
-        when(mockCalculationService.getLiabilityCalculationDetail(any(), any(), any())(any()))
-          .thenReturn(Future.successful(testCalcResponse))
-        val result: Future[Result] = testFinalTaxCalculationController.agentFinalDeclarationSubmit(taxYear, "Test Name")(user, headerCarrier)
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+    s"submit${if (isAgent) "Agent"}" when {
+      val action = if (isAgent) testController.agentSubmit(testTaxYear) else testController.submit(testTaxYear, None)
+      val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdUserRole)
+      s"the $mtdUserRole is authenticated" should {
+        if (mtdUserRole == MTDSupportingAgent) {
+          testSupportingAgentDeniedAccess(action)(fakeRequest)
+        } else {
+          "redirect to submissionFrontendFinalDeclaration" in {
+            setupMockSuccess(mtdUserRole)
+            setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+            when(mockCalculationService.getLiabilityCalculationDetail(any(), any(), any())(any()))
+              .thenReturn(Future.successful(testCalcResponse))
+            val result = action(fakeRequest)
+            status(result) shouldBe Status.SEE_OTHER
+            redirectLocation(result).get should include(s"/update-and-submit-income-tax-return/$taxYear/declaration")
+          }
+
+          "render the error page" when {
+            "calculation service returns NO CONTENT" in {
+              setupMockSuccess(mtdUserRole)
+              setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+              when(mockCalculationService.getLiabilityCalculationDetail(any(), any(), any())(any()))
+                .thenReturn(Future.successful(testCalcNOCONTENT))
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            }
+            "calculation service fails" in {
+              setupMockSuccess(mtdUserRole)
+              setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+              when(mockCalculationService.getLiabilityCalculationDetail(any(), any(), any())(any()))
+                .thenReturn(Future.successful(testCalcError))
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            }
+          }
+        }
       }
+      testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
     }
   }
-
-  "final declaration submit" should (
-    "return unknown error" when (
-      "an unconventional error occurs" in {
-        when(mockCalculationService.getLiabilityCalculationDetail(any(), any(), any())(any()))
-          .thenReturn(Future.successful(testCalcError))
-        val result: Future[Result] = testFinalTaxCalculationController.finalDeclarationSubmit(taxYear, Some("Test Name"))(user, headerCarrier)
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-      )
-    )
 }

@@ -27,7 +27,7 @@ class InitiatePayNowAuditModelISpec extends TestSupport {
 
   "The InitiatePayNowAuditModel" should {
 
-    lazy val testInitiatePayNowAuditModel = InitiatePayNowAuditModel(testMtditid, Some(testNino),
+    lazy val testInitiatePayNowAuditModel = InitiatePayNowAuditModel(testMtditid, testNino,
       Some(testSaUtr), Some(testCredId), Some(testUserType))
 
     s"Have the correct transaction name of '$transactionName'" in {

@@ -16,157 +16,98 @@
 
 package controllers
 
-import audit.AuditingService
-import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testCredId, testMtditid, testMtditidAgent, testNino, testNinoAgent, testSaUtrId, testUserTypeAgent}
-import testConstants.PaymentDataTestConstants._
-import audit.mocks.MockAuditingService
 import audit.models.InitiatePayNowAuditModel
 import connectors.PayApiConnector
-import controllers.agent.sessionUtils
-import controllers.predicates.SessionTimeoutPredicate
-import mocks.MockItvcErrorHandler
-import mocks.auth.MockFrontendAuthorisedFunctions
-import mocks.controllers.predicates.MockAuthenticationPredicate
-import mocks.services.MockIncomeSourceDetailsService
-import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel, PaymentJourneyResponse}
+import enums.{MTDIndividual, MTDSupportingAgent}
+import mocks.auth.MockAuthActions
+import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
-import play.api.http.Status
-import play.api.mvc.{MessagesControllerComponents, Result}
+import play.api
+import play.api.Application
+import play.api.mvc.Result
 import play.api.test.Helpers._
-import testUtils.TestSupport
-import uk.gov.hmrc.auth.core.AffinityGroup.Individual
+import testConstants.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtrId}
+import testConstants.PaymentDataTestConstants._
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
-class PaymentControllerSpec extends TestSupport with MockAuthenticationPredicate with MockAuditingService
-  with MockFrontendAuthorisedFunctions with MockItvcErrorHandler with MockIncomeSourceDetailsService {
+class PaymentControllerSpec extends MockAuthActions {
+
+  lazy val mockPayApiConnector: PayApiConnector = mock(classOf[PayApiConnector])
+
+  override lazy val app: Application = applicationBuilderWithAuthBindings
+    .overrides(
+      api.inject.bind[PayApiConnector].toInstance(mockPayApiConnector)
+    ).build()
+
+  lazy val testController = app.injector.instanceOf[PaymentController]
+
+  val paymentJourneyModel = PaymentJourneyModel("id", "redirect-url")
 
 
-  class SetupTestPaymentController(isAgent: Boolean, response: Future[PaymentJourneyResponse]) {
+  mtdAllRoles.foreach { case mtdUserRole =>
+    val isAgent = mtdUserRole != MTDIndividual
+    val action = if (isAgent) testController.agentPaymentHandoff(testAmountInPence) else testController.paymentHandoff(testAmountInPence)
+    val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
+    s"${if (isAgent) "agentP" else "p"}aymentHandoff" when {
+      s"the $mtdUserRole is authenticated" should {
+        if (mtdUserRole == MTDSupportingAgent) {
+          testSupportingAgentDeniedAccess(action)(fakeRequest)
+        } else {
+          "redirect to the payment api provided by payAPI" when {
+            "a successful payments journey is started" in {
+              setupMockSuccess(mtdUserRole)
+              mockSingleBusinessIncomeSource()
+              when(mockPayApiConnector.startPaymentJourney(ArgumentMatchers.eq(testSaUtrId), ArgumentMatchers.eq(BigDecimal(10000)),
+                ArgumentMatchers.eq(isAgent))
+              (ArgumentMatchers.any[HeaderCarrier])).thenReturn(Future.successful(paymentJourneyModel))
+              val result = action(fakeRequest)
 
-    val mockPayApiConnector: PayApiConnector = mock(classOf[PayApiConnector])
+              status(result) shouldBe SEE_OTHER
+              redirectLocation(result) shouldBe Some("redirect-url")
+              verifyExtendedAudit(InitiatePayNowAuditModel(testMtditid, testNino,
+                Some(testSaUtrId), Some(testCredId),
+                Some {
+                  if (mtdUserRole == MTDIndividual) Individual else Agent
+                }))
+            }
+          }
 
-    when(mockPayApiConnector.startPaymentJourney(ArgumentMatchers.eq(testSaUtrId), ArgumentMatchers.eq(BigDecimal(10000)),
-      ArgumentMatchers.eq(isAgent))
-    (ArgumentMatchers.any[HeaderCarrier])).thenReturn(response)
+          "render the error page" when {
+            if(mtdUserRole == MTDIndividual) {
+              "an SA UTR is missing from the user" in {
+                setupMockUserAuthNoSAUtr
+                mockSingleBusinessIncomeSource()
+                val result = action(fakeRequest)
+                status(result) shouldBe INTERNAL_SERVER_ERROR
+              }
+            }
+            "an error response is returned by the connector" in {
+              setupMockSuccess(mtdUserRole)
+              mockSingleBusinessIncomeSource()
+              when(mockPayApiConnector.startPaymentJourney(ArgumentMatchers.eq(testSaUtrId), ArgumentMatchers.eq(BigDecimal(10000)),
+                ArgumentMatchers.eq(isAgent))
+              (ArgumentMatchers.any[HeaderCarrier])).thenReturn(Future.successful(PaymentJourneyErrorResponse(INTERNAL_SERVER_ERROR, "Error Message")))
+              val result = action(fakeRequest)
+              status(result) shouldBe INTERNAL_SERVER_ERROR
+            }
 
-    val testController = new PaymentController(
-      mockPayApiConnector,
-      mockAuditingService,
-      mockAuthService,
-      testAuthenticator
-    )(
-      appConfig,
-      app.injector.instanceOf[MessagesControllerComponents],
-      ec,
-      mockItvcErrorHandler
-    )
-  }
-
-  "The PaymentController.paymentHandoff action" should {
-
-    "redirect the user to the login page" when {
-
-      "called with an unauthenticated user" in new SetupTestPaymentController(isAgent = false, Future.successful(PaymentJourneyModel("id", "redirect-url"))) {
-        setupMockAuthorisationException()
-        val result: Future[Result] = testController.paymentHandoff(testAmountInPence)(fakeRequestWithActiveSession)
-        status(result) shouldBe Status.SEE_OTHER
+            "an exception is returned by the connector" in {
+              setupMockSuccess(mtdUserRole)
+              mockSingleBusinessIncomeSource()
+              when(mockPayApiConnector.startPaymentJourney(ArgumentMatchers.eq(testSaUtrId), ArgumentMatchers.eq(BigDecimal(10000)),
+                ArgumentMatchers.eq(isAgent))
+              (ArgumentMatchers.any[HeaderCarrier])).thenReturn(Future.failed(new Exception("Exception Message")))
+              val result = action(fakeRequest)
+              status(result) shouldBe INTERNAL_SERVER_ERROR
+            }
+          }
+        }
       }
-    }
-
-    "redirect the user to the payments page" when {
-
-      "a successful payments journey is started with audit events" in new SetupTestPaymentController(isAgent = false, Future.successful(
-        PaymentJourneyModel("id", "redirect-url"))) {
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        val result: Future[Result] = testController.paymentHandoff(testAmountInPence)(fakeRequestWithActiveSession)
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some("redirect-url")
-        verifyExtendedAudit(InitiatePayNowAuditModel(testMtditid, Some(testNino), Some(testSaUtrId), Some(testCredId), Some(Individual)))
-      }
-    }
-
-    "return an internal server error" when {
-
-
-      "an SA UTR is missing from the user" in new SetupTestPaymentController(isAgent = false, Future.successful(PaymentJourneyModel("id", "redirect-url"))) {
-        val result: Future[Result] = testController.paymentHandoff(testAmountInPence)(fakeRequestWithActiveSession)
-        status(result) shouldBe INTERNAL_SERVER_ERROR
-      }
-
-
-      "an error response is returned by the connector" in new SetupTestPaymentController(isAgent = false, Future.successful(
-        PaymentJourneyErrorResponse(INTERNAL_SERVER_ERROR, "Error Message"))) {
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        val result: Future[Result] = testController.paymentHandoff(testAmountInPence)(fakeRequestWithActiveSession)
-        status(result) shouldBe INTERNAL_SERVER_ERROR
-      }
-
-      "an exception is returned by the connector" in new SetupTestPaymentController(isAgent = false, Future.failed(new Exception("Exception Message"))) {
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        val result: Future[Result] = testController.paymentHandoff(testAmountInPence)(fakeRequestWithActiveSession)
-        status(result) shouldBe INTERNAL_SERVER_ERROR
-      }
-    }
-  }
-
-  "The PaymentController.agentPaymentHandoff action" should {
-
-    "redirect the user to the login page" when {
-
-      "called with an unauthenticated user" in new SetupTestPaymentController(isAgent = true, Future.successful(PaymentJourneyModel("id", "redirect-url"))) {
-        setupMockAgentAuthorisationException()
-        val result: Future[Result] = testController.agentPaymentHandoff(testAmountInPence)()(fakeRequestConfirmedClient())
-        status(result) shouldBe Status.SEE_OTHER
-      }
-    }
-
-    "redirect the user to the payments page" when {
-
-      "a successful payments journey is started with audit events" in new SetupTestPaymentController(isAgent = true, Future.successful(
-        PaymentJourneyModel("id", "redirect-url"))) {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        val result: Future[Result] = testController.agentPaymentHandoff(testAmountInPence)(fakeRequestConfirmedClient())
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some("redirect-url")
-        verifyExtendedAudit(InitiatePayNowAuditModel(testMtditidAgent, Some(testNinoAgent), Some(testSaUtrId),
-          Some(testCredId), Some(testUserTypeAgent)))
-      }
-    }
-
-    "an SA UTR is missing from the user" in new SetupTestPaymentController(isAgent = true, Future.successful(PaymentJourneyModel("id", "redirect-url"))) {
-      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-      val result: Future[Result] = testController.agentPaymentHandoff(testAmountInPence)(
-        fakeRequestWithActiveSession.withSession(sessionUtils.SessionKeys.clientMTDID -> "XAIT00000000015"))
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show.url)
-    }
-
-    "return an error" when {
-
-      "an error response is returned by the connector" in new SetupTestPaymentController(isAgent = true, Future.successful(PaymentJourneyErrorResponse(
-        INTERNAL_SERVER_ERROR, "Error Message"))) {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        val result: Future[Result] = testController.agentPaymentHandoff(testAmountInPence)(fakeRequestConfirmedClient())
-
-        result.failed.futureValue shouldBe an[Exception]
-      }
-
-      "an exception is returned by the connector" in new SetupTestPaymentController(isAgent = true, Future.failed(new Exception("Exception Message"))) {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        val result: Future[Result] = testController.agentPaymentHandoff(testAmountInPence)(fakeRequestConfirmedClient())
-
-        result.failed.futureValue shouldBe an[Exception]
-        result.failed.futureValue.getMessage shouldBe "Exception Message"
-
-      }
+      testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
     }
   }
 }
