@@ -50,6 +50,11 @@ GET         /agents/optout/cancelled                                      contro
 GET         /opt-in/start                                                 controllers.optIn.BeforeYouStartController.show(isAgent: Boolean = false)
 GET         /agents/opt-in/start                                          controllers.optIn.BeforeYouStartController.show(isAgent: Boolean = true)
 
+GET         /opt-in/single-taxyear-warning                                controllers.optIn.SingleTaxYearWarningController.show(isAgent: Boolean = false)
+GET         /agents/opt-in/single-taxyear-warning                         controllers.optIn.SingleTaxYearWarningController.show(isAgent: Boolean = true)
+POST        /opt-in/single-taxyear-warning                                controllers.optIn.SingleTaxYearWarningController.submit(isAgent: Boolean = false)
+POST        /agents/opt-in/single-taxyear-warning                         controllers.optIn.SingleTaxYearWarningController.submit(isAgent: Boolean = true)
+
 GET         /opt-in/choose-tax-year                                         controllers.optIn.ChooseYearController.show(isAgent: Boolean = false)
 GET         /agents/opt-in/choose-tax-year                                  controllers.optIn.ChooseYearController.show(isAgent: Boolean = true)
 POST        /opt-in/choose-tax-year                                         controllers.optIn.ChooseYearController.submit(isAgent: Boolean = false)

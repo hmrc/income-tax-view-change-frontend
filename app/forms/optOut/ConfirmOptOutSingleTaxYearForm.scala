@@ -30,9 +30,10 @@ object ConfirmOptOutSingleTaxYearForm {
 
 
   def apply(taxYear: TaxYear)(implicit messages: Messages): Form[ConfirmOptOutSingleTaxYearForm] = {
-    val noSelectionErrorMessage: String = messages(noResponseErrorMessageKey,
-      taxYear.startYear.toString,
-      taxYear.endYear.toString)
+    val noSelectionErrorMessage: String =
+      messages(noResponseErrorMessageKey,
+        taxYear.startYear.toString,
+        taxYear.endYear.toString)
 
     Form(
       mapping(
