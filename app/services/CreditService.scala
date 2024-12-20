@@ -43,20 +43,23 @@ class CreditService @Inject()(val financialDetailsConnector: FinancialDetailsCon
     Logger("application").debug(
       s"Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
 
-    Future.sequence(
-        user.incomeSources.orderedTaxYearsByYearOfMigration.map { taxYearInt =>
-          Logger("application").debug(s"Getting financial details for TaxYear: ${taxYearInt}")
-          for {
-            taxYear <- Future.fromTry(Try(TaxYear.forYearEnd(taxYearInt)))
-            response <- financialDetailsConnector.getCreditsAndRefund(taxYear, user.nino)
-          } yield response match {
-            case Right(financialDetails: CreditsModel) => Some(financialDetails)
-            case Left(error: ErrorModel) if error.code != NOT_FOUND =>
-              throw new Exception("Error response while getting Unpaid financial details")
-            case _ => None
-          }
-      })
-      .map(_.flatten)
-      .map(_.reduceOption(mergeCreditAndRefundModels).getOrElse(CreditsModel(0, 0, Nil)))
+    val (from, to) = (user.incomeSources.orderedTaxYearsByYearOfMigration.min, user.incomeSources.orderedTaxYearsByYearOfMigration.max)
+    Logger("application").debug(s"Getting financial details for TaxYear: ${from} - ${to}")
+    val res = {
+              for {
+                taxYearFrom <- Future.fromTry(Try(TaxYear.forYearEnd(from)))
+                taxYearTo <- Future.fromTry(Try(TaxYear.forYearEnd(to)))
+                response <- financialDetailsConnector.getCreditsAndRefundV2(taxYearFrom, taxYearTo, user.nino)
+              } yield response match {
+                case Right(financialDetails: CreditsModel) => Some(financialDetails)
+                case Left(error: ErrorModel) if error.code != NOT_FOUND =>
+                  throw new Exception("Error response while getting Unpaid financial details")
+                case _ => None
+              }
+    }
+    res.map(_.reduceOption(mergeCreditAndRefundModels).getOrElse(CreditsModel(0, 0, Nil)))
+//  .flatten
+//      .map(_.flatten)
+//      .map(_.reduceOption(mergeCreditAndRefundModels).getOrElse(CreditsModel(0, 0, Nil)))
   }
 }
