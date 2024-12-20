@@ -22,7 +22,7 @@ import controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.itsaStatus.ITSAStatus
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
+import play.api.http.Status.{OK}
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants.businessAndPropertyResponseWoMigration
