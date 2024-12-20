@@ -41,20 +41,6 @@ import testUtils.TestSupport
 
 import scala.concurrent.Future
 
-/*
-* Keys:
-*
-* U: Unknown
-* V: Voluntary
-* M: Mandated
-* A: Annual
-*
-* PY: Previous Year
-* CY: Current Year
-* NY: Next Year
-*
-* */
-
 case class TaxYearAndCountOfSubmissionsForIt(taxYear: TaxYear, submissions: Int)
 
 class OptOutServiceSpec
@@ -98,7 +84,56 @@ class OptOutServiceSpec
 
   val apiError: String = "some api error"
 
-  "OptOutService.getSubmissionCountForTaxYear" when {
+  private def stubOptOut(currentTaxYear: TaxYear,
+                         previousYearCrystallisedStatus: Boolean,
+                         previousYearStatus: Value,
+                         currentYearStatus: Value,
+                         nextYearStatus: Value): Unit = {
+
+    val (previousYear, currentYear, nextYear) = taxYears(currentTaxYear)
+
+    stubCurrentTaxYear(currentYear)
+
+    stubItsaStatuses(
+      previousYear, previousYearStatus,
+      currentYear, currentYearStatus,
+      nextYear, nextYearStatus)
+
+    stubCrystallisedStatus(previousYear, previousYearCrystallisedStatus)
+
+    allowWriteOfOptOutDataToMongoToSucceed()
+  }
+
+  private def taxYears(currentYear: TaxYear): (TaxYear, TaxYear, TaxYear) = {
+    val previousYear = currentYear.previousYear
+    val nextTaxYear = currentTaxYear.nextYear
+    (previousYear, currentYear, nextTaxYear)
+  }
+
+  private def stubCurrentTaxYear(currentYear: TaxYear): Unit = {
+    when(mockDateService.getCurrentTaxYear).thenReturn(currentYear)
+  }
+
+  private def stubItsaStatuses(previousYear: TaxYear, previousYearStatus: Value,
+                               currentYear: TaxYear, currentYearStatus: Value,
+                               nextYear: TaxYear, nextYearStatus: Value): Unit = {
+    val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
+      previousYear -> StatusDetail("", previousYearStatus, ""),
+      currentYear -> StatusDetail("", currentYearStatus, ""),
+      nextYear -> StatusDetail("", nextYearStatus, "")
+    )
+    when(mockITSAStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
+  }
+
+  private def stubCrystallisedStatus(taxYear: TaxYear, crystallisedStatus: Boolean): Unit = {
+    when(mockCalculationListService.isTaxYearCrystallised(taxYear)).thenReturn(Future.successful(crystallisedStatus))
+  }
+
+  private def allowWriteOfOptOutDataToMongoToSucceed(): Unit = {
+    when(mockRepository.initialiseOptOutJourney(any())(any())).thenReturn(Future.successful(true))
+  }
+
+  ".getSubmissionCountForTaxYear" when {
     "three years offered for opt-out; end-year 2023, 2024, 2025" when {
       "tax-payer made previous submissions for end-year 2023, 2024" should {
         "return count of submissions for each year" in {
@@ -158,7 +193,7 @@ class OptOutServiceSpec
     }
   }
 
-  "OptOutService.makeOptOutUpdateRequestForYear" when {
+  ".makeOptOutUpdateRequestForYear" when {
 
     "make opt-out update request for previous tax-year" should {
 
@@ -259,7 +294,7 @@ class OptOutServiceSpec
 
   }
 
-  "OptOutService.nextUpdatesPageOneYearOptOutViewModel" when {
+  ".nextUpdatesPageOneYearOptOutViewModel" when {
 
     "PY is Voluntary, CY is NoStatus, NY is NoStatus and PY is NOT finalised" should {
 
@@ -418,7 +453,7 @@ class OptOutServiceSpec
       }
     }
 
-    "OptOutService.nextUpdatesPageOptOutViewModels" when {
+    ".nextUpdatesPageOptOutViewModels" when {
       "ITSA Status from CY-1 till future years and Calculation State for CY-1 is available" should {
         "return NextUpdatesQuarterlyReportingContentCheck" in {
           // Because we're saving the status as well as building view models...
@@ -465,7 +500,7 @@ class OptOutServiceSpec
     }
   }
 
-  "OptOutService.optOutCheckPointPageViewModel for single year case" when {
+  ".optOutCheckPointPageViewModel for single year case" when {
     val CY = TaxYear.forYearEnd(2024)
     val PY = CY.previousYear
     val NY = CY.nextYear
@@ -518,7 +553,7 @@ class OptOutServiceSpec
 
   }
 
-  "OptOutService.optOutCheckPointPageViewModel for multi year case" when {
+  ".optOutCheckPointPageViewModel for multi year case" when {
     val CY = TaxYear.forYearEnd(2024)
     val PY = CY.previousYear
     val NY = CY.nextYear
@@ -561,7 +596,7 @@ class OptOutServiceSpec
 
   }
 
-  "OptOutService.optOutConfirmedPageViewModel" when {
+  ".optOutConfirmedPageViewModel" when {
     val CY = TaxYear.forYearEnd(2024)
     val PY = CY.previousYear
     val previousOptOutTaxYear = PreviousOptOutTaxYear(Voluntary, PY, crystallised = false)
@@ -598,53 +633,67 @@ class OptOutServiceSpec
     }
   }
 
-  private def stubOptOut(currentTaxYear: TaxYear,
-                         previousYearCrystallisedStatus: Boolean,
-                         previousYearStatus: Value,
-                         currentYearStatus: Value,
-                         nextYearStatus: Value): Unit = {
+  ".getTaxYearForOptOutCancelled" when {
 
-    val (previousYear, currentYear, nextYear) = taxYears(currentTaxYear)
+    "single year opt out scenario" when {
 
-    stubCurrentTaxYear(currentYear)
+      "scenario: CY-1 == Mandated, CY == Annual, CY+1 == Voluntary" should {
 
-    stubItsaStatuses(
-      previousYear, previousYearStatus,
-      currentYear, currentYearStatus,
-      nextYear, nextYearStatus)
+        "return the correct tax year" in {
 
-    stubCrystallisedStatus(previousYear, previousYearCrystallisedStatus)
+          val taxYear = TaxYear(2025, 2026)
 
-    allowWriteOfOptOutDataToMongoToSucceed()
+          when(mockDateService.getCurrentTaxYear).thenReturn(taxYear)
+
+          when(mockCalculationListService.isTaxYearCrystallised(any())(any(), any()))
+            .thenReturn(Future.successful(false))
+
+          stubOptOut(
+            currentTaxYear = taxYear,
+            previousYearCrystallisedStatus = false,
+            previousYearStatus = Mandated,
+            currentYearStatus = Annual,
+            nextYearStatus = Voluntary
+          )
+
+          when(mockRepository.fetchSavedIntent()).thenReturn(Future.successful(None))
+
+          val result: Future[Option[TaxYear]] = service.getTaxYearForOptOutCancelled()
+
+          val expected = Some(TaxYear(2024, 2025))
+
+          result.futureValue shouldBe expected
+        }
+      }
+    }
+
+    "multi year opt out scenario, and the user has chosen a tax year" should {
+
+      "return the correct tax year" in {
+
+        val taxYear = TaxYear(2025, 2026)
+
+        when(mockDateService.getCurrentTaxYear).thenReturn(taxYear)
+
+        when(mockCalculationListService.isTaxYearCrystallised(any())(any(), any()))
+          .thenReturn(Future.successful(false))
+
+        stubOptOut(
+          currentTaxYear = taxYear,
+          previousYearCrystallisedStatus = false,
+          previousYearStatus = NoStatus,
+          currentYearStatus = Voluntary,
+          nextYearStatus = Voluntary
+        )
+
+        when(mockRepository.fetchSavedIntent()).thenReturn(Future.successful(Some(taxYear)))
+
+        val result: Future[Option[TaxYear]] = service.getTaxYearForOptOutCancelled()
+
+        val expected = Some(taxYear)
+
+        result.futureValue shouldBe expected
+      }
+    }
   }
-
-  private def taxYears(currentYear: TaxYear): (TaxYear, TaxYear, TaxYear) = {
-    val previousYear = currentYear.previousYear
-    val nextTaxYear = currentTaxYear.nextYear
-    (previousYear, currentYear, nextTaxYear)
-  }
-
-  private def stubCurrentTaxYear(currentYear: TaxYear): Unit = {
-    when(mockDateService.getCurrentTaxYear).thenReturn(currentYear)
-  }
-
-  private def stubItsaStatuses(previousYear: TaxYear, previousYearStatus: Value,
-                               currentYear: TaxYear, currentYearStatus: Value,
-                               nextYear: TaxYear, nextYearStatus: Value): Unit = {
-    val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
-      previousYear -> StatusDetail("", previousYearStatus, ""),
-      currentYear -> StatusDetail("", currentYearStatus, ""),
-      nextYear -> StatusDetail("", nextYearStatus, "")
-    )
-    when(mockITSAStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
-  }
-
-  private def stubCrystallisedStatus(taxYear: TaxYear, crystallisedStatus: Boolean): Unit = {
-    when(mockCalculationListService.isTaxYearCrystallised(taxYear)).thenReturn(Future.successful(crystallisedStatus))
-  }
-
-  private def allowWriteOfOptOutDataToMongoToSucceed(): Unit = {
-    when(mockRepository.initialiseOptOutJourney(any())(any())).thenReturn(Future.successful(true))
-  }
-
 }
