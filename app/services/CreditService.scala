@@ -58,8 +58,5 @@ class CreditService @Inject()(val financialDetailsConnector: FinancialDetailsCon
               }
     }
     res.map(_.reduceOption(mergeCreditAndRefundModels).getOrElse(CreditsModel(0, 0, Nil)))
-//  .flatten
-//      .map(_.flatten)
-//      .map(_.reduceOption(mergeCreditAndRefundModels).getOrElse(CreditsModel(0, 0, Nil)))
   }
 }
