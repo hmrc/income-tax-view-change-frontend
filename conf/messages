@@ -2302,16 +2302,16 @@ reporting.frequency.title = Your reporting frequency
 reporting.frequency.h1    = Your reporting frequency
 reporting.frequency.h2    = Manage your reporting frequency for all your businesses
 
-reporting.frequency.manageReportingFrequency.p1 = If you are reporting annually or voluntarily reporting quarterly, you may be able to change your reporting frequency for specific tax years.
-reporting.frequency.manageReportingFrequency.p2 = This is what you can do for all your businesses:
-reporting.frequency.manageReportingFrequency.optIn.link.generic = Opt in to quarterly reporting
-reporting.frequency.manageReportingFrequency.optIn.link.taxyear = Opt in to quarterly reporting for the {0} to {1} tax year
-reporting.frequency.manageReportingFrequency.optIn.link.onwards = Opt in to quarterly reporting from the {0} to {1} tax year onwards
-reporting.frequency.manageReportingFrequency.optOut.link.generic = Opt out of quarterly reporting and report annually
-reporting.frequency.manageReportingFrequency.optOut.link.taxyear = Opt out of quarterly reporting and report annually for the {0} to {1} tax year
-reporting.frequency.manageReportingFrequency.optOut.link.onwards = Opt out of quarterly reporting and report annually from the {0} to {1} tax year onwards
-reporting.frequency.manageReportingFrequency.b1.link = Opt in to quarterly reporting for the {0} to {1} tax year
-reporting.frequency.manageReportingFrequency.b2.link = Opt out of quarterly reporting and report annually from the {0} to {1} tax year onwards
+reporting.frequency.manageReportingFrequency.p1                     = If you are reporting annually or voluntarily reporting quarterly, you may be able to change your reporting frequency for specific tax years.
+reporting.frequency.manageReportingFrequency.p2                     = This is what you can do for all your businesses:
+reporting.frequency.manageReportingFrequency.optIn.link.generic     = Opt in to quarterly reporting
+reporting.frequency.manageReportingFrequency.optIn.link.taxyear     = Opt in to quarterly reporting for the {0} to {1} tax year
+reporting.frequency.manageReportingFrequency.optIn.link.onwards     = Opt in to quarterly reporting from the {0} to {1} tax year onwards
+reporting.frequency.manageReportingFrequency.optOut.link.generic    = Opt out of quarterly reporting and report annually
+reporting.frequency.manageReportingFrequency.optOut.link.taxyear    = Opt out of quarterly reporting and report annually for the {0} to {1} tax year
+reporting.frequency.manageReportingFrequency.optOut.link.onwards    = Opt out of quarterly reporting and report annually from the {0} to {1} tax year onwards
+reporting.frequency.manageReportingFrequency.b1.link                = Opt in to quarterly reporting for the {0} to {1} tax year
+reporting.frequency.manageReportingFrequency.b2.link                = Opt out of quarterly reporting and report annually from the {0} to {1} tax year onwards
 
 reporting.frequency.mandatoryReporting.heading    = When reporting quarterly is mandatory
 reporting.frequency.mandatoryReporting.inset      = Reporting quarterly is required if your income from self-employment or property, or both, exceeds the income threshold.
@@ -2326,3 +2326,12 @@ reporting.frequency.compatibleSoftware.link      = https://www.gov.uk/guidance/f
 reporting.frequency.compatibleSoftware.link.text = software compatible with Making Tax Digital for Income Tax
 reporting.frequency.compatibleSoftware.p2        = There are both paid and free options for you or your agent to choose from.
 reporting.frequency.compatibleSoftware.p3        = For reporting annually, you can use either compatible software or your HMRC online account to submit your tax return.
+
+reporting.frequency.table.h2                                        = How often you need to report
+reporting.frequency.table.heading.taxyear                           = Tax year
+reporting.frequency.table.heading.status                            = Reporting frequency
+
+reporting.frequency.table.taxYear                                   = {0} to {1}
+reporting.frequency.table.mandated                                  = Quarterly (mandatory)
+reporting.frequency.table.voluntary                                 = Quarterly
+reporting.frequency.table.annual                                    = Annual

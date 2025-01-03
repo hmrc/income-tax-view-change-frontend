@@ -63,6 +63,7 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
   mtdAllRoles.foreach { mtdRole =>
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
     val isAgent = mtdRole != MTDIndividual
+
     s"show(isAgent = $isAgent)" when {
       val action = testController.show(isAgent)
       s"the user is authenticated as a $mtdRole" should {
@@ -96,9 +97,15 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
               reportingFrequencyView(
                 ReportingFrequencyViewModel(
                   isAgent = isAgent,
-                  Some(controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent).url),
+                  optOutJourneyUrl = Some(controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent).url),
                   optOutTaxYears = Seq(TaxYear(2024, 2025)),
-                  optInTaxYears = Seq(TaxYear(2024, 2025))
+                  optInTaxYears = Seq(TaxYear(2024, 2025)),
+                  itsaStatusTable =
+                    Seq(
+                      "2023 to 2024" -> Some("Quarterly (mandatory)"),
+                      "2024 to 2025" -> Some("Quarterly"),
+                      "2025 to 2026" -> Some("Quarterly (mandatory)"),
+                    )
                 )
               ).toString
           }

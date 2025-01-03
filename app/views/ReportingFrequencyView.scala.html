@@ -33,6 +33,31 @@
 
 @(viewModel: ReportingFrequencyViewModel)(implicit messages: Messages, user: auth.MtdItUser[_], dateService: DateServiceInterface)
 
+@itsaStatusTable = {
+    @h2(msg = "reporting.frequency.table.h2", optId = Some("manage-reporting-frequency-table-heading"))
+    @govukTable(Table(
+        head = Some(List(
+            HeadCell(
+                content = Text(messages("reporting.frequency.table.heading.taxyear")),
+                attributes = Map("id" -> "table-head-name-taxyear")),
+            HeadCell(
+                content = Text(messages("reporting.frequency.table.heading.status")),
+                attributes = Map("id" -> "table-head-name-status"))
+        )),
+        rows = viewModel.itsaStatusTable.zipWithIndex.map { case (itsaStatusTable, index) =>
+            Seq(
+                TableRow(
+                    content = Text(itsaStatusTable._1),
+                    attributes = Map("id" -> s"table-taxyear-$index")),
+                TableRow(
+                    content = Text(itsaStatusTable._2.get),
+                    attributes = Map("id" -> s"table-status-$index"))
+            )
+        },
+        attributes = Map("id" -> "itsa-status-table")
+    ))
+}
+
 @optInLink = {
     @if(viewModel.optInTaxYears.size > 1) {
         @linkComponent(controllers.optIn.routes.BeforeYouStartController.show(viewModel.isAgent).url, message = messages("reporting.frequency.manageReportingFrequency.optIn.link.generic"))
@@ -97,6 +122,7 @@
 ) {
 
     @h1(msg = "reporting.frequency.h1", id = Some("reporting-frequency-heading"))
+    @itsaStatusTable
     @manageReportingFrequency
 
     @h2(msg = "reporting.frequency.mandatoryReporting.heading", optId = Some("mandatory-reporting-heading"))
