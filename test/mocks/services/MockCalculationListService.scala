@@ -35,7 +35,7 @@ trait MockCalculationListService extends UnitSpec with BeforeAndAfterEach {
     reset(mockCalculationListService)
   }
   def setupMockTaxYearNotCrystallised(): Unit =
-    when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.anyInt())(any(), any()))
+    when(mockCalculationListService.determineTaxYearCrystallised(ArgumentMatchers.anyInt())(any(), any()))
       .thenReturn(Future.successful(false))
 
   def setupMockIsTaxYearCrystallisedCall(taxYear: TaxYear)(out: Future[Boolean]): Unit = {
@@ -44,14 +44,14 @@ trait MockCalculationListService extends UnitSpec with BeforeAndAfterEach {
       .thenReturn(out)
   }
   def setupMockTaxYearCrystallised(): Unit =
-    when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.anyInt())(any(), any()))
+    when(mockCalculationListService.determineTaxYearCrystallised(ArgumentMatchers.anyInt())(any(), any()))
       .thenReturn(Future.successful(true))
 
   def setupMockTaxYearCrystallised(year: Int): Unit =
-    when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(year))(any(), any()))
+    when(mockCalculationListService.determineTaxYearCrystallised(ArgumentMatchers.eq(year))(any(), any()))
       .thenReturn(Future.successful(true))
 
   def setupMockTaxYearNotCrystallised(year: Int): Unit =
-    when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(year))(any(), any()))
+    when(mockCalculationListService.determineTaxYearCrystallised(ArgumentMatchers.eq(year))(any(), any()))
       .thenReturn(Future.successful(false))
 }

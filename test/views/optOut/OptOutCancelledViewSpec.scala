@@ -73,8 +73,7 @@ class OptOutCancelledViewSpec extends TestSupport {
             contentAsString(
               view.apply(
                 isAgent = isAgentFlag,
-                currentTaxYearStart = dateService.getCurrentTaxYear.startYear.toString,
-                currentTaxYearEnd = dateService.getCurrentTaxYear.endYear.toString,
+                taxYearOpt = Some(dateService.getCurrentTaxYear)
               )
             )
           )
@@ -122,8 +121,7 @@ class OptOutCancelledViewSpec extends TestSupport {
             contentAsString(
               view.apply(
                 isAgent = isAgentFlag,
-                currentTaxYearStart = dateService.getCurrentTaxYear.startYear.toString,
-                currentTaxYearEnd = dateService.getCurrentTaxYear.endYear.toString,
+                taxYearOpt = Some(dateService.getCurrentTaxYear)
               )
             )
           )
