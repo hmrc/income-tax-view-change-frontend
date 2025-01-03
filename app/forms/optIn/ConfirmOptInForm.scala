@@ -20,20 +20,20 @@ import play.api.data.Form
 import play.api.data.Forms.{boolean, mapping, optional}
 import play.api.i18n.Messages
 
-case class StillOptInForm(choice: Option[Boolean])
+case class ConfirmOptInForm(choice: Option[Boolean])
 
-object StillOptInForm {
+object ConfirmOptInForm {
 
   val choiceField: String = "choice"
   val noResponseErrorMessageKey: String = "optIn.ConfirmOptInMultiTaxYearChoice.form.no-select.error"
 
-  def apply()(implicit messages: Messages): Form[StillOptInForm] = {
+  def apply()(implicit messages: Messages): Form[ConfirmOptInForm] = {
     val noSelectionErrorMessage: String = messages(noResponseErrorMessageKey)
 
     Form(
       mapping(
         choiceField -> optional(boolean).verifying(noSelectionErrorMessage, optionalChoice => optionalChoice.nonEmpty)
-      )(StillOptInForm.apply)(StillOptInForm.unapply)
+      )(ConfirmOptInForm.apply)(ConfirmOptInForm.unapply)
     )
 
   }

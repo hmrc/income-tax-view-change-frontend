@@ -20,10 +20,8 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import forms.optIn.StillOptInForm
-import forms.optOut.ConfirmOptOutSingleTaxYearForm
+import forms.optIn.ConfirmOptInForm
 import models.incomeSourceDetails.TaxYear
-import models.optout.OptOutOneYearViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -60,7 +58,7 @@ class SingleTaxYearWarningController @Inject()(val view: SingleTaxYearWarningVie
 
   private def handleSubmitRequest(isAgent: Boolean, taxYear: TaxYear)(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
 
-    StillOptInForm().bindFromRequest().fold(
+    ConfirmOptInForm().bindFromRequest().fold(
       formWithError => {
         Future.successful(BadRequest(view(
           form = formWithError,
@@ -70,12 +68,12 @@ class SingleTaxYearWarningController @Inject()(val view: SingleTaxYearWarningVie
         )))
       },
       {
-        case StillOptInForm(Some(true)) =>
+        case ConfirmOptInForm(Some(true)) =>
           optInService.saveIntent(TaxYear.makeTaxYearWithEndYear(taxYear.endYear))
           val nextPage = controllers.optIn.routes.ConfirmTaxYearController.show(isAgent)
           logger.info(s"redirecting to : $nextPage")
           Future.successful(Redirect(nextPage))
-        case StillOptInForm(Some(false)) =>
+        case ConfirmOptInForm(Some(false)) =>
           val optInCancelledUrl =
             if (isAgent) {
               controllers.routes.HomeController.showAgent.url
@@ -95,7 +93,7 @@ class SingleTaxYearWarningController @Inject()(val view: SingleTaxYearWarningVie
     implicit user =>
       withRecover(isAgent) {
         optInService.availableOptInTaxYear().flatMap {
-          case Seq(singleYear) => Future.successful(Ok(view(StillOptInForm(), submitAction(isAgent), isAgent, singleYear)))
+          case Seq(singleYear) => Future.successful(Ok(view(ConfirmOptInForm(), submitAction(isAgent), isAgent, singleYear)))
           case _ => Future.successful(Redirect(controllers.optIn.routes.ChooseYearController.show(isAgent)))
         }
       }
