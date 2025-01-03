@@ -65,7 +65,7 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
       auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList, dateService))
 
       val hasOverdueCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isOverdue()(dateService))
-      val hasAccruingInterestReviewAndReconcileCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isReviewAndReconcileAccruingInterestCharge()(dateService))
+      val hasAccruingInterestReviewAndReconcileCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isOverdueReviewAndReconcileAccruingInterestCharge()(dateService))
       Ok(whatYouOwe(
         currentDate = dateService.getCurrentDate,
         hasOverdueOrAccruingInterestCharges = hasOverdueCharges || hasAccruingInterestReviewAndReconcileCharges,
