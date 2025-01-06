@@ -1,0 +1,123 @@
+/*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package controllers.optIn
+
+import enums.MTDIndividual
+import mocks.auth.MockAuthActions
+import mocks.services.{MockOptInService, MockOptOutService}
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
+import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
+import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar
+import play.api
+import play.api.Application
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
+import play.api.test.Helpers.{contentAsString, status}
+import services.optIn.OptInService
+import services.optIn.core.OptInProposition
+import services.optout.{OptOutProposition, OptOutService}
+import testConstants.BaseTestConstants.testNino
+import testConstants.BusinessDetailsTestConstants.{business1, testMtdItId}
+import views.html.optIn.OptInCancelledView
+
+import scala.concurrent.Future
+
+
+class OptInCancelledControllerSpec extends MockAuthActions with MockOptInService with MockitoSugar {
+
+  def config: Map[String, Object] = Map(
+    "feature-switches.read-from-mongo" -> "false"
+  )
+
+  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+    .overrides(
+      api.inject.bind[OptInService].toInstance(mockOptInService)
+    )
+    .configure(config)
+    .build()
+
+  val testController = fakeApplication().injector.instanceOf[OptInCancelledController]
+  val optInCancelledView = fakeApplication().injector.instanceOf[OptInCancelledView]
+
+  mtdAllRoles.foreach { mtdRole =>
+    val isAgent = mtdRole != MTDIndividual
+    s"show(isAgent = $isAgent)" when {
+      val action = if (isAgent) testController.showAgent() else testController.show()
+      val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
+      s"the user is authenticated as a $mtdRole" should {
+        s"render the opt out cancelled page" in {
+          val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2017"), List(business1), Nil)
+          setupMockSuccess(mtdRole)
+          when(
+            mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
+          ).thenReturn(Future(singleBusinessIncome))
+
+          when(mockOptInService.fetchOptInProposition()(any(), any(), any())).thenReturn(
+            Future(
+              OptInProposition.createOptInProposition(
+                currentYear = TaxYear(2024, 2025),
+                currentYearItsaStatus = Voluntary,
+                nextYearItsaStatus = Mandated
+              )
+            )
+          )
+
+          val result = action(fakeRequest)
+
+          status(result) shouldBe OK
+          contentAsString(result) shouldBe
+            optInCancelledView(
+              isAgent = isAgent,
+              currentTaxYearStart = "2024",
+              currentTaxYearEnd = "2025"
+            ).toString
+        }
+
+        "show the Error Template view" when {
+          "and return Internal Server Error - 500" in {
+            val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2017"), List(business1), Nil)
+
+            setupMockSuccess(mtdRole)
+
+            when(
+              mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
+            ).thenReturn(Future(singleBusinessIncome))
+
+            when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(
+              Future(
+                OptOutProposition.createOptOutProposition(
+                  currentYear = TaxYear(2024, 2025),
+                  previousYearCrystallised = false,
+                  previousYearItsaStatus = Mandated,
+                  currentYearItsaStatus = Voluntary,
+                  nextYearItsaStatus = Voluntary
+                )
+              )
+            )
+            val result = action(fakeRequest)
+
+            status(result) shouldBe INTERNAL_SERVER_ERROR
+            contentAsString(result).contains("Sorry, there is a problem with the service") shouldBe true
+          }
+        }
+      }
+      testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
+    }
+  }
+}
