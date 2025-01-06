@@ -75,7 +75,7 @@ class CreditService @Inject()(val financialDetailsConnector: FinancialDetailsCon
       for {
         taxYearFrom <- Future.fromTry(Try(TaxYear.forYearEnd(from)))
         taxYearTo <- Future.fromTry(Try(TaxYear.forYearEnd(to)))
-        response <- financialDetailsConnector.getCreditsAndRefundV2(taxYearFrom, taxYearTo, user.nino)
+        response <- financialDetailsConnector.getCreditsAndRefund(taxYearFrom, taxYearTo, user.nino)
       } yield response match {
         case Right(financialDetails: CreditsModel) => Some(financialDetails)
         case Left(error: ErrorModel) if error.code != NOT_FOUND =>

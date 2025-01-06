@@ -125,7 +125,7 @@ class FinancialDetailsConnector @Inject()(
       }
   }
 
-  def getCreditsAndRefundV2(taxYearFrom: TaxYear, taxYearTo: TaxYear, nino: String)
+  def getCreditsAndRefund(taxYearFrom: TaxYear, taxYearTo: TaxYear, nino: String)
                            (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[ResponseModel[CreditsModel]] = {
 
     val dateFrom: String = taxYearFrom.toFinancialYearStart.format(DateTimeFormatter.ISO_DATE)
