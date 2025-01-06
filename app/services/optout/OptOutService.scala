@@ -37,13 +37,15 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnector,
-                              itsaStatusService: ITSAStatusService,
-                              calculationListService: CalculationListService,
-                              nextUpdatesService: NextUpdatesService,
-                              dateService: DateServiceInterface,
-                              repository: OptOutSessionDataRepository,
-                              auditingService: AuditingService) {
+class OptOutService @Inject()(
+                               itsaStatusUpdateConnector: ITSAStatusUpdateConnector,
+                               itsaStatusService: ITSAStatusService,
+                               calculationListService: CalculationListService,
+                               nextUpdatesService: NextUpdatesService,
+                               dateService: DateServiceInterface,
+                               repository: OptOutSessionDataRepository,
+                               auditingService: AuditingService
+                             ) {
 
   def fetchOptOutProposition()(implicit user: MtdItUser[_],
                                hc: HeaderCarrier,
@@ -51,7 +53,10 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
 
     val currentYear = dateService.getCurrentTaxYear
 
-    val finalisedStatusFuture: Future[Boolean] = calculationListService.isTaxYearCrystallised(currentYear.previousYear)
+    val finalisedStatusFuture: Future[Boolean] =
+      calculationListService
+        .isTaxYearCrystallised(currentYear.previousYear)
+
     val statusMapFuture: Future[Map[TaxYear, ITSAStatus]] = getITSAStatusesFrom(currentYear.previousYear)
 
     for {
@@ -63,7 +68,8 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
         finalisedStatus,
         statusMap(currentYear.previousYear),
         statusMap(currentYear),
-        statusMap(currentYear.nextYear))
+        statusMap(currentYear.nextYear)
+      )
   }
 
   def recallOptOutProposition()(implicit hc: HeaderCarrier,
@@ -135,7 +141,7 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     for {
       proposition <- fetchOptOutProposition()
       _ <- repository.initialiseOptOutJourney(proposition)
-    }yield (proposition, nextUpdatesOptOutViewModel(proposition))
+    } yield (proposition, nextUpdatesOptOutViewModel(proposition))
   }
 
   def nextUpdatesPageOptOutViewModels()(implicit user: MtdItUser[_],
@@ -146,7 +152,7 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
       _ <- repository.initialiseOptOutJourney(proposition)
     } yield (nextUpdatesQuarterlyReportingContentChecks(proposition), nextUpdatesOptOutViewModel(proposition))
   }
-  
+
   private def nextUpdatesQuarterlyReportingContentChecks(oop: OptOutProposition) = {
     val currentYearStatus = oop.currentTaxYear.status
     val previousYearStatus = oop.previousTaxYear.status
@@ -231,6 +237,23 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     annualQuarterlyUpdateCounts.
       map(cumulativeQuarterlyUpdateCounts).
       map(QuarterlyUpdatesCountForTaxYearModel)
+  }
+
+
+  def getTaxYearForOptOutCancelled()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[TaxYear]] = {
+    for {
+      proposition: OptOutProposition <- fetchOptOutProposition()
+      chosenTaxYear: Option[TaxYear] <- repository.fetchSavedIntent()
+      availableOptOutYears: Seq[OptOutTaxYear] = proposition.availableOptOutYears
+      singleTaxYear: Option[TaxYear] = availableOptOutYears.headOption.map(_.taxYear)
+      isOneYearOptOut: Boolean = proposition.isOneYearOptOut
+      isMultiYearOptOut: Boolean = proposition.isMultiYearOptOut
+    } yield {
+      (isOneYearOptOut, isMultiYearOptOut) match {
+        case (false, true) => chosenTaxYear
+        case _ => singleTaxYear
+      }
+    }
   }
 
 }

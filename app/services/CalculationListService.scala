@@ -63,10 +63,10 @@ class CalculationListService @Inject()(calculationListConnector: CalculationList
   }
 
   def isTaxYearCrystallised(taxYear: TaxYear)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Boolean] = {
-    isTaxYearCrystallised(taxYear.endYear)
+    determineTaxYearCrystallised(taxYear.endYear)
   }
 
-  def isTaxYearCrystallised(taxYear: Int)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Boolean] = {
+  def determineTaxYearCrystallised(taxYear: Int)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Boolean] = {
 
     val currentTaxYearEnd = dateService.getCurrentTaxYearEnd
     val futureTaxYear = taxYear >= currentTaxYearEnd
