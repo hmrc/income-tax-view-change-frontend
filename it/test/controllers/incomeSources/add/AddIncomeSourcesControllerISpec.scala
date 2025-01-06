@@ -53,7 +53,7 @@ class AddIncomeSourcesControllerISpec extends ControllerISpecHelper {
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
             val res = buildGETMTDClient(path, additionalCookies).futureValue
-            verifyIncomeSourceDetailsCall(testMtditid)
+            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
             res should have(
               httpStatus(OK),

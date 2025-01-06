@@ -16,9 +16,14 @@
 
 package helpers.servicemocks
 
+import play.api.libs.json.{JsString, JsValue, Json}
+import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
+
 trait MTDAuthStub {
 
-  def stubAuthorised(confidenceLevel: Option[Int] = None): Unit
+  lazy val postAuthoriseUrl = "/auth/authorise"
+
+  def stubAuthorisedAndMTDEnrolled(confidenceLevel: Option[Int] = None): Unit
 
   def stubUnauthorised(): Unit
 
@@ -26,4 +31,20 @@ trait MTDAuthStub {
 
   def stubAuthorisedWhenNoChecks(): Unit
 
+  lazy val emptyPredicateRequest: JsValue = {
+    val predicateJson = {
+      EmptyPredicate.toJson
+    }
+
+    Json.obj(
+      "authorise" -> predicateJson,
+      "retrieve" -> Json.arr(
+        JsString("allEnrolments"),
+        JsString("optionalName"),
+        JsString("optionalCredentials"),
+        JsString("affinityGroup"),
+        JsString("confidenceLevel")
+      )
+    )
+  }
 }

@@ -49,7 +49,7 @@ class IncomeSummaryControllerISpec extends ControllerISpecHelper {
 
               val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-              verifyIncomeSourceDetailsCall(testMtditid, 1)
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid, 1)
               IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, "2018")
 
               res should have(

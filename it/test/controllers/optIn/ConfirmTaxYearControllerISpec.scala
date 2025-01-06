@@ -95,7 +95,7 @@ class ConfirmTaxYearControllerISpec extends ControllerISpecHelper {
             setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual, intent).futureValue shouldBe true
 
             val result = buildGETMTDClient(path, additionalCookies).futureValue
-            verifyIncomeSourceDetailsCall(testMtditid)
+            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
             result should have(
               httpStatus(OK),
@@ -118,7 +118,7 @@ class ConfirmTaxYearControllerISpec extends ControllerISpecHelper {
             setupOptInSessionData(currentTaxYear, currentYearStatus = Mandated, nextYearStatus = Annual, intent).futureValue shouldBe true
 
             val result = buildGETMTDClient(path, additionalCookies).futureValue
-            verifyIncomeSourceDetailsCall(testMtditid)
+            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
             result should have(
               httpStatus(OK),
@@ -151,7 +151,7 @@ class ConfirmTaxYearControllerISpec extends ControllerISpecHelper {
               )
 
               val result = buildPOSTMTDPostClient(path, additionalCookies, body = Map.empty).futureValue
-              verifyIncomeSourceDetailsCall(testMtditid)
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(Status.SEE_OTHER),
@@ -171,7 +171,7 @@ class ConfirmTaxYearControllerISpec extends ControllerISpecHelper {
               )
 
               val result = buildPOSTMTDPostClient(path, additionalCookies, body = Map.empty).futureValue
-              verifyIncomeSourceDetailsCall(testMtditid)
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(Status.SEE_OTHER),
@@ -192,7 +192,7 @@ class ConfirmTaxYearControllerISpec extends ControllerISpecHelper {
                 BAD_REQUEST, Json.toJson(ITSAStatusUpdateResponseFailure.defaultFailure()).toString()
               )
               val result = buildPOSTMTDPostClient(path, additionalCookies, body = Map.empty).futureValue
-              verifyIncomeSourceDetailsCall(testMtditid)
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(Status.SEE_OTHER),

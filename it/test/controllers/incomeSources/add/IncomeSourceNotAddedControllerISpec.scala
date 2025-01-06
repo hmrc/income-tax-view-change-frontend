@@ -62,7 +62,7 @@ class IncomeSourceNotAddedControllerISpec  extends ControllerISpecHelper {
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
-                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
                 result should have(
                   httpStatus(OK),
@@ -78,7 +78,7 @@ class IncomeSourceNotAddedControllerISpec  extends ControllerISpecHelper {
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
-                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
                 result should have(
                   httpStatus(SEE_OTHER)

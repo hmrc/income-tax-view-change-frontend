@@ -17,7 +17,7 @@
 package connectors.agent
 
 import com.github.tomakehurst.wiremock.client.WireMock
-import _root_.helpers.agent.ComponentSpecBase
+import _root_.helpers.ComponentSpecBase
 import _root_.helpers.WiremockHelper
 import _root_.helpers.servicemocks.AuditStub
 import models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel}

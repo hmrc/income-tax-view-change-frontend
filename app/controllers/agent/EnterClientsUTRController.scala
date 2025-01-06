@@ -23,7 +23,6 @@ import auth.authV2.{AuthActions, AuthorisedUser}
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.AuthUtils._
-import controllers.agent.predicates.BaseAgentController
 import controllers.agent.sessionUtils.SessionKeys
 import enums.{MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import forms.agent.ClientsUTRForm
@@ -36,6 +35,7 @@ import services.agent.ClientDetailsService.{BusinessDetailsNotFound, CitizenDeta
 import uk.gov.hmrc.auth.core.Enrolment
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.agent.EnterClientsUTR
 
 import javax.inject.{Inject, Singleton}
@@ -51,7 +51,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
                                           val appConfig: FrontendAppConfig,
                                           val itvcErrorHandler: AgentItvcErrorHandler,
                                           val ec: ExecutionContext)
-  extends BaseAgentController with I18nSupport with FeatureSwitching {
+  extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
   def show: Action[AnyContent] = authActions.asAgent().async { implicit user =>
     Future.successful(Ok(enterClientsUTR(

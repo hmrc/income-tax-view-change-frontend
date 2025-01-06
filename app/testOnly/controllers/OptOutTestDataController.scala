@@ -17,6 +17,7 @@
 package testOnly.controllers
 
 import auth.MtdItUser
+import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import models.calculationList.CalculationListResponseModel
@@ -31,13 +32,11 @@ import services.{CalculationListService, DateServiceInterface}
 import testOnly.services.DynamicStubService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.AuthenticatorPredicate
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class OptOutTestDataController @Inject()(
-                                          val auth: AuthenticatorPredicate,
+class OptOutTestDataController @Inject()(val authActions: AuthActions,
                                           val appConfig: FrontendAppConfig,
                                           val calculationListService: CalculationListService,
                                           val dynamicStubService: DynamicStubService,
@@ -99,7 +98,7 @@ class OptOutTestDataController @Inject()(
     }
   }
 
-  val show: Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  val show: Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
       retrieveData(
         nino = user.nino,
@@ -107,7 +106,7 @@ class OptOutTestDataController @Inject()(
       )
   }
 
-  def showAgent: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent: Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit mtdItUser =>
       retrieveData(
         nino = mtdItUser.nino,

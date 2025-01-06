@@ -67,7 +67,7 @@ class OptInCompletedControllerISpec extends ControllerISpecHelper {
 
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
-              verifyIncomeSourceDetailsCall(testMtditid)
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(OK),
@@ -86,7 +86,7 @@ class OptInCompletedControllerISpec extends ControllerISpecHelper {
               setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual, intent).futureValue shouldBe true
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
-              verifyIncomeSourceDetailsCall(testMtditid)
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(OK),

@@ -80,7 +80,7 @@ class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSu
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-                verifyIncomeSourceDetailsCall(testMtditid, 1)
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid, 1)
                 IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
 
                 AuditStub.verifyAuditContainsDetail(
@@ -131,7 +131,7 @@ class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSu
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-                verifyIncomeSourceDetailsCall(testMtditid, 1)
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid, 1)
                 IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
 
                 AuditStub.verifyAuditContainsDetail(

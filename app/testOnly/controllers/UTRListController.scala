@@ -19,7 +19,6 @@ package testOnly.controllers
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import connectors.RawResponseReads
-import controllers.agent.predicates.ClientConfirmedController
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
@@ -30,23 +29,21 @@ import testOnly.views.html.ListUTRs
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.{affinityGroup, allEnrolments, groupIdentifier}
 import uk.gov.hmrc.auth.core.retrieve.~
-import utils.AuthenticatorPredicate
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class UTRListController @Inject()(
-                                   listUTRsView: ListUTRs,
+class UTRListController @Inject()(listUTRsView: ListUTRs,
                                    val authorisedFunctions: AuthorisedFunctions,
                                    enrolmentService: EnrolmentService,
-                                   userRepository: UserRepository,
-                                   val auth: AuthenticatorPredicate
+                                   userRepository: UserRepository
                                  )(implicit
                                    val appConfig: FrontendAppConfig,
                                    mcc: MessagesControllerComponents,
                                    implicit val ec: ExecutionContext,
                                    val itvcErrorHandler: AgentItvcErrorHandler
-                                 ) extends ClientConfirmedController with I18nSupport with FeatureSwitching with RawResponseReads {
+                                 ) extends FrontendController(mcc) with I18nSupport with FeatureSwitching with RawResponseReads {
 
   def listUTRs(): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     authorisedFunctions.authorised().retrieve(allEnrolments and affinityGroup and groupIdentifier) {

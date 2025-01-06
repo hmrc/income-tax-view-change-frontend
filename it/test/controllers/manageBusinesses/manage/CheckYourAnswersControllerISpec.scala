@@ -151,7 +151,7 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
 
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
-                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
                 result should have(
                   httpStatus(OK),
@@ -179,7 +179,7 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
                 IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
-                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                 result should have(
                   httpStatus(SEE_OTHER),
                   redirectURI(homeUrl(mtdUserRole))

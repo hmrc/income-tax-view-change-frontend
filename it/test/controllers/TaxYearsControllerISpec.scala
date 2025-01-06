@@ -44,7 +44,7 @@ class TaxYearsControllerISpec extends ControllerISpecHelper with FeatureSwitchin
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
-                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
                 Then("The view should have the correct headings and all tax years display")
                 res should have(
@@ -65,7 +65,7 @@ class TaxYearsControllerISpec extends ControllerISpecHelper with FeatureSwitchin
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
                 res should have(
                   httpStatus(INTERNAL_SERVER_ERROR)

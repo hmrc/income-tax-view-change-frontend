@@ -111,7 +111,7 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
 
                 val pathWithValidQueryParams = path + s"?changeTo=$annual&taxYear=$taxYear"
                 val result = buildGETMTDClient(pathWithValidQueryParams, additionalCookies).futureValue
-                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
 
 
@@ -134,7 +134,7 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
 
                 val pathWithValidQueryParams = path + s"?changeTo=$quarterly&taxYear=$taxYear"
                 val result = buildGETMTDClient(pathWithValidQueryParams, additionalCookies).futureValue
-                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
                 result should have(
                   httpStatus(OK),
@@ -171,7 +171,7 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
 
                 val pathWithValidQueryParams = path + s"?changeTo=$annual&taxYear=$taxYear"
                 val result = buildGETMTDClient(pathWithValidQueryParams, additionalCookies).futureValue
-                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
                 result should have(
                   httpStatus(INTERNAL_SERVER_ERROR)

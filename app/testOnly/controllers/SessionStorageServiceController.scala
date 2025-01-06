@@ -16,36 +16,33 @@
 
 package testOnly.controllers
 
-import auth.{FrontendAuthorisedFunctions, MtdItUser}
+import auth.FrontendAuthorisedFunctions
+import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import controllers.agent.predicates.ClientConfirmedController
-import models.sessionData.SessionDataModel
-import models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostSuccess}
 import models.sessionData.SessionDataGetResponse.SessionDataGetSuccess
 import play.api.Logger
 import play.api.mvc._
 import services.SessionDataService
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.AuthenticatorPredicate
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContext,
-                                                implicit override val mcc: MessagesControllerComponents,
+class SessionStorageServiceController @Inject()(val authActions: AuthActions,
                                                 val itvcErrorHandler: ItvcErrorHandler,
-                                                implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                                val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                 val authorisedFunctions: FrontendAuthorisedFunctions,
-                                                val auth: AuthenticatorPredicate,
                                                 val sessionDataService: SessionDataService
-                                               ) extends ClientConfirmedController {
+                                               )(implicit val ec: ExecutionContext,
+                                                 val mcc: MessagesControllerComponents) extends FrontendController(mcc) {
 
-  def show(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
       handleShow(isAgent = false)
   }
 
-  def showAgent: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent: Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit mtdItUser =>
       handleShow(isAgent = true)
   }

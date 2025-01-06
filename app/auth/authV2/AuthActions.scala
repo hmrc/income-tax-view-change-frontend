@@ -47,11 +47,6 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
 
   def asAgent(arnRequired: Boolean = true): ActionBuilder[AuthorisedUser, AnyContent] = checkSessionTimeout andThen authoriseAndRetrieveAgent.authorise(arnRequired)
 
-  def asIndividualOrAgent(isAgent: Boolean): ActionBuilder[MtdItUser, AnyContent] = {
-    if (isAgent) asMTDAgentWithConfirmedClient
-    else asMTDIndividual
-  }
-
   def asMTDAgentWithConfirmedClient: ActionBuilder[MtdItUser, AnyContent] = {
     checkSessionTimeout andThen
       retrieveClientData.authorise() andThen

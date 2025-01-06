@@ -82,7 +82,7 @@ class ChooseYearControllerISpec extends ControllerISpecHelper {
 
             setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual)
             val result = buildGETMTDClient(path, additionalCookies).futureValue
-            verifyIncomeSourceDetailsCall(testMtditid)
+            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
             result should have(
               httpStatus(OK),
@@ -122,7 +122,7 @@ class ChooseYearControllerISpec extends ControllerISpecHelper {
             setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual)
 
             val result = buildPOSTMTDPostClient(path, additionalCookies, body = formData).futureValue
-            verifyIncomeSourceDetailsCall(testMtditid)
+            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
             result should have(
               httpStatus(Status.SEE_OTHER),
@@ -140,7 +140,7 @@ class ChooseYearControllerISpec extends ControllerISpecHelper {
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
               setupOptInSessionData(currentTaxYear, currentYearStatus = Voluntary, nextYearStatus = Voluntary)
               val result = buildPOSTMTDPostClient(path, additionalCookies, body = invalidFormData).futureValue
-              verifyIncomeSourceDetailsCall(testMtditid)
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(Status.BAD_REQUEST),

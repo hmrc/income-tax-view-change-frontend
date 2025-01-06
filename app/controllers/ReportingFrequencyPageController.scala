@@ -52,7 +52,7 @@ class ReportingFrequencyPageController @Inject()(
   extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
 
   def show(isAgent: Boolean): Action[AnyContent] =
-    auth.asIndividualOrAgent(isAgent).async { implicit user =>
+    auth.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
 
       for {
         (optOutProposition, optOutJourneyType) <- optOutService.reportingFrequencyViewModels()

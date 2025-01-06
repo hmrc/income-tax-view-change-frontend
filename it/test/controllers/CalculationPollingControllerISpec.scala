@@ -27,8 +27,6 @@ import testConstants.NewCalcBreakdownItTestConstants._
 
 class CalculationPollingControllerISpec extends ControllerISpecHelper {
 
-  unauthorisedTest(s"/calculation/$testYear/submitted")
-
   def getPath(mtdRole: MTDUserRole, isFinalCalc: Boolean = false): String = {
     val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
     if(isFinalCalc) {

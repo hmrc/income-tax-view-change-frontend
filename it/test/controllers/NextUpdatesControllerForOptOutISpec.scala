@@ -54,7 +54,7 @@ class NextUpdatesControllerForOptOutISpec extends ComponentSpecBase {
 
       "show opt-out message if the user has Previous Year as Voluntary, Current Year as NoStatus, Next Year as NoStatus" in {
         enable(OptOutFs)
-        MTDIndividualAuthStub.stubAuthorised()
+        MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
         optOutSessionDataRepository.saveIntent(TaxYear.forYearEnd(2024)).futureValue
 
         val currentTaxYear = dateService.getCurrentTaxYearEnd
@@ -82,8 +82,8 @@ class NextUpdatesControllerForOptOutISpec extends ComponentSpecBase {
 
         AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
 
-        verifyIncomeSourceDetailsCall(testMtditid)
-        verifyNextUpdatesCall(testNino)
+        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+        IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
         IncomeTaxViewChangeStub.verifyGetObligations(testNino)
 
         Then("the quarterly updates info sections")
@@ -97,7 +97,7 @@ class NextUpdatesControllerForOptOutISpec extends ComponentSpecBase {
 
       "show multi year opt-out message if the user has Previous Year as Voluntary, Current Year as Voluntary, Next Year as Voluntary" in {
         enable(OptOutFs)
-        MTDIndividualAuthStub.stubAuthorised()
+        MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         val currentTaxYear = dateService.getCurrentTaxYearEnd
         val previousYear = currentTaxYear - 1
@@ -125,8 +125,8 @@ class NextUpdatesControllerForOptOutISpec extends ComponentSpecBase {
 
         AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
 
-        verifyIncomeSourceDetailsCall(testMtditid)
-        verifyNextUpdatesCall(testNino)
+        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+        IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
         IncomeTaxViewChangeStub.verifyGetObligations(testNino)
 
         Then("the quarterly updates info sections")

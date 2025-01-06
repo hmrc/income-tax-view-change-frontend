@@ -75,7 +75,7 @@ class OptOutChooseTaxYearControllerISpec extends ControllerISpecHelper {
             IncomeTaxViewChangeStub.stubGetAllObligations(testNino, currentTaxYear.toFinancialYearStart, currentTaxYear.toFinancialYearEnd, allObligations)
 
             val result = buildGETMTDClient(path, additionalCookies).futureValue
-            verifyIncomeSourceDetailsCall(testMtditid)
+            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
             result should have(
               httpStatus(OK),
@@ -111,7 +111,7 @@ class OptOutChooseTaxYearControllerISpec extends ControllerISpecHelper {
                 ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> Seq(""))
 
               val result = buildPOSTMTDPostClient(path, additionalCookies, body = formData).futureValue
-              verifyIncomeSourceDetailsCall(testMtditid)
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(Status.SEE_OTHER),
@@ -137,7 +137,7 @@ class OptOutChooseTaxYearControllerISpec extends ControllerISpecHelper {
                 ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> Seq(""))
 
               val result = buildPOSTMTDPostClient(path, additionalCookies, body = formData).futureValue
-              verifyIncomeSourceDetailsCall(testMtditid)
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(Status.SEE_OTHER),
@@ -163,7 +163,7 @@ class OptOutChooseTaxYearControllerISpec extends ControllerISpecHelper {
                   ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> Seq(""))
 
                 val result = buildPOSTMTDPostClient(path, additionalCookies, body = formData).futureValue
-                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
                 result should have(
                   httpStatus(Status.SEE_OTHER),
@@ -190,7 +190,7 @@ class OptOutChooseTaxYearControllerISpec extends ControllerISpecHelper {
                 ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> Seq(),
                 ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> Seq(""))
               val result = buildPOSTMTDPostClient(path, additionalCookies, body = formData).futureValue
-              verifyIncomeSourceDetailsCall(testMtditid)
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(Status.BAD_REQUEST),
