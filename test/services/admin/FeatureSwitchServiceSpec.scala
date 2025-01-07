@@ -16,20 +16,17 @@
 
 package services.admin
 
-import config.{FrontendAppConfig, ItvcErrorHandler}
-import mocks.MockItvcErrorHandler
-import mocks.auth.MockFrontendAuthorisedFunctions
+import config.FrontendAppConfig
 import mocks.repositories.MockFeatureSwitchRepository
 import models.admin.{FeatureSwitch, FeatureSwitchName}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar.mock
-import play.api.mvc.MessagesControllerComponents
 import testUtils.TestSupport
 
 import scala.concurrent.ExecutionContext
 
-class FeatureSwitchServiceSpec extends TestSupport with MockFeatureSwitchRepository with MockFrontendAuthorisedFunctions with MockItvcErrorHandler {
+class FeatureSwitchServiceSpec extends TestSupport with MockFeatureSwitchRepository {
 
   val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
@@ -38,13 +35,9 @@ class FeatureSwitchServiceSpec extends TestSupport with MockFeatureSwitchReposit
 
   object TestFSService extends FeatureSwitchService(
     mockFeatureSwitchRepository,
-    mockAuthService,
     mockFrontendAppConfig
   )(
-    app.injector.instanceOf[ExecutionContext],
-    app.injector.instanceOf[MessagesControllerComponents],
-    app.injector.instanceOf[ItvcErrorHandler],
-    mockItvcErrorHandler
+    app.injector.instanceOf[ExecutionContext]
   )
 
   override val appConfig: FrontendAppConfig = mockFrontendAppConfig
