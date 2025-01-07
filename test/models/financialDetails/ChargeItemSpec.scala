@@ -22,7 +22,7 @@ import models.financialDetails.ChargeItem.filterAllowedCharges
 import services.{DateService, DateServiceInterface}
 import testConstants.BaseTestConstants.app
 import testConstants.ChargeConstants
-import testConstants.FinancialDetailsTestConstants.{documentDetailModel, financialDetail}
+import testConstants.FinancialDetailsTestConstants.{documentDetailModel, financialDetail, financialDetailsWithReviewAndReconcileDebits}
 import testUtils.UnitSpec
 
 import java.time.LocalDate
@@ -44,9 +44,13 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
     latePaymentInterestAmount = latePaymentInterestAmount,
     lpiWithDunningLock = lpiWithDunningLock)
 
-  val poa1FinancialDetails = financialDetail()
+  val docDetailsNoOutstandingAmout = defaultDocDetails.copy(outstandingAmount = 0)
 
+  val poa1FinancialDetails = financialDetail()
   val poa2FinancialDetails = financialDetail(mainTransaction = "4930")
+
+  val PoaOneReconciliationDebitDetails = financialDetail(mainTransaction = "4911")
+  val PoaTwoReconciliationDebitDetails = financialDetail(mainTransaction = "4913")
 
   val balancingNics2DocumentDetails = defaultDocDetails.copy(documentText = Some(CODING_OUT_CLASS2_NICS.name))
   val balancingNics2FinancialDetails = financialDetail(mainTransaction = "4910")
@@ -63,6 +67,62 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
   implicit val dateService: DateServiceInterface = dateService(LocalDate.of(2000, 1, 1))
   def dateService(currentDate: LocalDate): DateService = new DateService()(app.injector.instanceOf[FrontendAppConfig]){
     override def getCurrentDate: LocalDate = currentDate
+  }
+
+  "ChargeItem" when {
+    "isOverdueReviewAndReconcileAccruingInterestCharge method" when {
+
+      "transaction type is PoaOneReconciliationDebit, is not overdue and is not paid returns true" in {
+        val dateServiceAfterDueDate = dateService(dueDate.minusDays(1))
+
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(PoaOneReconciliationDebitDetails))
+
+        chargeItem.isOverdueReviewAndReconcileAccruingInterestCharge()(dateServiceAfterDueDate) shouldBe true
+      }
+
+      "transaction type is PoaTwoReconciliationDebit, is not overdue and is not paid returns true" in {
+        val dateServiceAfterDueDate = dateService(dueDate.minusDays(1))
+
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(PoaTwoReconciliationDebitDetails))
+
+        chargeItem.isOverdueReviewAndReconcileAccruingInterestCharge()(dateServiceAfterDueDate) shouldBe true
+      }
+
+      "charge is overdue and is not paid returns false" in {
+        val dateServiceAfterDueDate = dateService(dueDate.plusDays(1))
+
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(PoaOneReconciliationDebitDetails))
+
+        chargeItem.isOverdueReviewAndReconcileAccruingInterestCharge()(dateServiceAfterDueDate) shouldBe false
+      }
+
+      "charge is not overdue and is paid returns false" in {
+        val dateServiceAfterDueDate = dateService(dueDate.plusDays(1))
+
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = docDetailsNoOutstandingAmout,
+          financialDetails = List(PoaOneReconciliationDebitDetails))
+
+        chargeItem.isOverdueReviewAndReconcileAccruingInterestCharge()(dateServiceAfterDueDate) shouldBe false
+      }
+
+      "returns false when charge item is not PoaOneReconciliationDebit or PoaTwoReconciliationDebit " in {
+        val dateServiceAfterDueDate = dateService(dueDate.minusDays(1))
+
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(balancingNics2FinancialDetails))
+
+        chargeItem.isOverdueReviewAndReconcileAccruingInterestCharge()(dateServiceAfterDueDate) shouldBe false
+      }
+
+    }
   }
 
   "fromDocumentPair" when {
