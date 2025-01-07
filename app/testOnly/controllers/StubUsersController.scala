@@ -21,21 +21,18 @@ import controllers.BaseController
 import play.api.i18n.I18nSupport
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import play.api.{Configuration, Environment, Logger}
+import play.api.Logger
 import testOnly.models.UserRecord
 import testOnly.utils.UserRepository
-import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class StubUsersController @Inject()(implicit val appConfig: FrontendAppConfig,
-                                    override val config: Configuration,
-                                    override val env: Environment,
                                     implicit val mcc: MessagesControllerComponents,
                                     implicit val executionContext: ExecutionContext,
                                     userRepository: UserRepository
-                                   ) extends BaseController with AuthRedirects with I18nSupport {
+                                   ) extends BaseController with I18nSupport {
 
   def stubUsers: Action[JsValue] = Action.async(parse.json) { implicit request =>
     withJsonBody[UserRecord](

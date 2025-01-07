@@ -20,7 +20,6 @@ import play.api.Logger
 import play.api.http.Status.{CREATED, TOO_MANY_REQUESTS}
 import play.api.libs.json._
 import uk.gov.hmrc.auth.core.PlayAuthConnector
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, TooManyRequestException}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.http.HttpReads.Implicits._
 
@@ -31,6 +30,8 @@ import testOnly.models.Nino
 import testOnly.utils.FileUtil._
 import testOnly.utils.LoginUtil._
 import testOnly.utils.UserRepository
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps, TooManyRequestException}
+import uk.gov.hmrc.http.client.HttpClientV2
 
 case class EnrolmentData(name: String, state: String, taxIdentifier: scala.Seq[TaxIdentifierData])
 
@@ -51,8 +52,8 @@ case class AuthExchange(bearerToken: String, sessionAuthorityUri: String)
 @Singleton
 class CustomAuthConnector @Inject()(servicesConfig: ServicesConfig,
                                     val userRepository: UserRepository,
-                                    val http: HttpClient,
-                                    implicit val ec: ExecutionContext) extends PlayAuthConnector {
+                                    http: HttpClientV2)
+                                    (implicit ec: ExecutionContext) extends PlayAuthConnector {
   override val serviceUrl: String = servicesConfig.baseUrl("auth-login")
 
   def login(nino: Nino, isAgent: Boolean, isSupporting: Boolean)(implicit hc: HeaderCarrier): Future[(AuthExchange, GovernmentGatewayToken)] = {
@@ -67,8 +68,13 @@ class CustomAuthConnector @Inject()(servicesConfig: ServicesConfig,
       val headerNames = List(headerName, headerName.take(1).toUpperCase() + headerName.drop(1))
       headerNames.flatMap(name => headers.get(name)).headOption.map(_.mkString)
     }
+    val sessionUrl=s"$serviceUrl/government-gateway/session/login"
 
-    http.POST[JsValue, HttpResponse](s"$serviceUrl/government-gateway/session/login", payload) flatMap {
+    http
+      .post(url"$sessionUrl")
+      .withBody(payload)
+      .execute[HttpResponse]
+      .map {
       case response@HttpResponse(CREATED, _, headers) =>
         (
           getHeader("authorization", headers),
