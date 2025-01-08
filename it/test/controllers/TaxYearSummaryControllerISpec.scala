@@ -78,7 +78,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                 IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)
                 IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino,
                   from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
@@ -126,7 +126,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                 IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)
                 IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino,
                   from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
@@ -184,7 +184,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                 IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)
                 IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino,
                   from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
@@ -253,7 +253,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                 IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)
                 IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino,
                   from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
@@ -294,7 +294,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
                 Then("I check all calls expected were made")
-                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                 IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)
                 IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino,
                   from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
@@ -335,7 +335,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
                   val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-                  verifyIncomeSourceDetailsCall(testMtditid)
+                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                   IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)
                   IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino,
                     from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
@@ -377,7 +377,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
                   val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-                  verifyIncomeSourceDetailsCall(testMtditid)
+                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                   IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)
                   IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(
                     nino = testNino,
@@ -430,7 +430,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
                   val res = buildGETMTDClient(getPath(mtdUserRole, "2018"), additionalCookies).futureValue
 
-                  verifyIncomeSourceDetailsCall(testMtditid)
+                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                   IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, "2018")
 
                   res should have(
@@ -465,7 +465,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
                   val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-                  verifyIncomeSourceDetailsCall(testMtditid)
+                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                   IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)
                   IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino,
                     from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
@@ -521,7 +521,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
                 val auditDD = financialDetailsMFADebits.getAllDocumentDetailsWithDueDates()
-                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                 IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)
                 IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino,
                   from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
@@ -648,7 +648,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
                 val res = buildGETMTDClient(getPath(mtdUserRole, testYear), additionalCookies).futureValue
 
-                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                 IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino)
 
                 res should have(
@@ -682,7 +682,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
                 val res = buildGETMTDClient(getPath(mtdUserRole, year = testYear), additionalCookies).futureValue
 
-                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                 IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, "2018")
 
                 res should have(
@@ -707,7 +707,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
                 val res = buildGETMTDClient(getPath(mtdUserRole, year = testYear), additionalCookies).futureValue
 
-                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                 IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, LocalDate.of(2017, 4, 6).toString,
                   LocalDate.of(2018, 4, 5).toString)
 
@@ -737,7 +737,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
                 val res = buildGETMTDClient(getPath(mtdUserRole, testYear), additionalCookies).futureValue
 
-                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                 IncomeTaxViewChangeStub.verifyGetAllObligations(testNino,
                   LocalDate.of(2017, 4, 6), LocalDate.of(2018, 4, 5))
                 IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino)
@@ -754,7 +754,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
                 val res = buildGETMTDClient(getPath(mtdUserRole, testYear), additionalCookies).futureValue
 
-                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                 IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino)
 
                 res should have(

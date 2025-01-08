@@ -17,7 +17,6 @@
 package controllers
 
 import mocks.auth.MockAuthActions
-import mocks.controllers.predicates.MockIncomeSourceDetailsPredicateNoCache
 import mocks.services.{MockNextUpdatesService, MockOptOutService}
 import mocks.views.agent.MockNextUpdates
 import models.admin.OptOutFs
@@ -38,7 +37,7 @@ import testConstants.BaseTestConstants
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class NextUpdatesControllerSpec extends MockAuthActions with MockIncomeSourceDetailsPredicateNoCache
+class NextUpdatesControllerSpec extends MockAuthActions
   with MockNextUpdatesService with MockNextUpdates with MockOptOutService {
 
   val nextTitle: String = messages("htmlTitle", messages("nextUpdates.heading"))
@@ -348,7 +347,6 @@ class NextUpdatesControllerSpec extends MockAuthActions with MockIncomeSourceDet
           mockSingleBusinessIncomeSource()
           mockNoObligations
           mockNoIncomeSourcesWithDeadlines()
-          mockShowInternalServerError()
 
           val result: Future[Result] = testNextUpdatesController.showAgent()(
             fakeRequestConfirmedClient(isSupportingAgent= isSupportingAgent)

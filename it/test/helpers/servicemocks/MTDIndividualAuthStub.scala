@@ -24,7 +24,6 @@ import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolment}
 
 object MTDIndividualAuthStub extends MTDAuthStub {
 
-  val postAuthoriseUrl = "/auth/authorise"
   val requiredConfidenceLevel = 250
 
   lazy val getAuthRequest: JsValue = {
@@ -50,7 +49,7 @@ object MTDIndividualAuthStub extends MTDAuthStub {
   }
 
 
-  override def stubAuthorised(confidenceLevel: Option[Int] = None): Unit = {
+  override def stubAuthorisedAndMTDEnrolled(confidenceLevel: Option[Int] = None): Unit = {
 
     stubPostWithRequest(
       url = postAuthoriseUrl,
@@ -130,8 +129,9 @@ object MTDIndividualAuthStub extends MTDAuthStub {
   }
 
   override def stubAuthorisedWhenNoChecks(): Unit = {
-    stubPost(
+    stubPostWithRequest(
       url = postAuthoriseUrl,
+      requestBody = emptyPredicateRequest,
       status = Status.OK,
       responseBody = mtdIndividualUserSuccessResponse(Some(requiredConfidenceLevel))
     )

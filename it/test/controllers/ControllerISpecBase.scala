@@ -18,8 +18,7 @@ package controllers
 
 import auth.HeaderExtractor
 import config.FrontendAppConfig
-import helpers.agent.SessionCookieBaker
-import helpers.{TestDateService, TestHeaderExtractor, WiremockHelper}
+import helpers.{SessionCookieBaker, TestDateService, TestHeaderExtractor, WiremockHelper}
 import implicits.ImplicitDateFormatterImpl
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}

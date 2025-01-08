@@ -101,7 +101,7 @@ class IncomeSourceEndDateControllerISpec extends ControllerISpecHelper {
                 setupTestMongoData(incomeSourceType)
 
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
-                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
                 result should have(
                   httpStatus(OK),
@@ -126,7 +126,7 @@ class IncomeSourceEndDateControllerISpec extends ControllerISpecHelper {
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
 
                   val result = buildGETMTDClient(path, additionalCookies).futureValue
-                  verifyIncomeSourceDetailsCall(testMtditid)
+                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
                   val expectedUrl = if (mtdUserRole == MTDIndividual) {
                     controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url

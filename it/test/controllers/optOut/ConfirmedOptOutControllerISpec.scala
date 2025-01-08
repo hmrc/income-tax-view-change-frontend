@@ -62,7 +62,7 @@ class ConfirmedOptOutControllerISpec extends ControllerISpecHelper {
               nextYearStatus = Mandated)
 
             val result = buildGETMTDClient(path, additionalCookies).futureValue
-            verifyIncomeSourceDetailsCall(testMtditid)
+            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
             result should have(
               httpStatus(OK),

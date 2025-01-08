@@ -26,7 +26,7 @@ import views.html.agent.errorPages.ClientRelationshipFailure
 trait MockClientRelationshipFailure extends BeforeAndAfterEach {
   self: Suite =>
 
-  val clientRelationshipFailure: ClientRelationshipFailure = mock(classOf[ClientRelationshipFailure])
+  lazy val clientRelationshipFailure: ClientRelationshipFailure = mock(classOf[ClientRelationshipFailure])
 
   override def beforeEach(): Unit = {
     super.beforeEach()

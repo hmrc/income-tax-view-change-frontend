@@ -63,7 +63,7 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
       "User is authorised" in {
         enable(IncomeSourcesFs)
         disable(NavBarFs)
-        MTDIndividualAuthStub.stubAuthorised()
+        MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -76,7 +76,7 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
         )
 
         val result = buildGETMTDClient(path).futureValue
-        verifyIncomeSourceDetailsCall(testMtditid)
+        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
         result should have(
           httpStatus(OK),
@@ -97,7 +97,7 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
       "user answers with invalid data" in {
         enable(IncomeSourcesFs)
         disable(NavBarFs)
-        MTDIndividualAuthStub.stubAuthorised()
+        MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -108,7 +108,7 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
           nextYearStatus = NoStatus)
 
         val result = buildPOSTMTDPostClient(path, body = inValidForm).futureValue
-        verifyIncomeSourceDetailsCall(testMtditid)
+        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
         result should have(
           httpStatus(BAD_REQUEST),
@@ -125,7 +125,7 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
       "user answers Yes" in {
         enable(IncomeSourcesFs)
         disable(NavBarFs)
-        MTDIndividualAuthStub.stubAuthorised()
+        MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -136,7 +136,7 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
           nextYearStatus = NoStatus)
 
         val result = buildPOSTMTDPostClient(path, body = validYesForm).futureValue
-        verifyIncomeSourceDetailsCall(testMtditid)
+        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -150,7 +150,7 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
       "user answers No" in {
         enable(IncomeSourcesFs)
         disable(NavBarFs)
-        MTDIndividualAuthStub.stubAuthorised()
+        MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -162,7 +162,7 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
 
         val result = buildPOSTMTDPostClient(path, body = validNoForm).futureValue
 
-        verifyIncomeSourceDetailsCall(testMtditid)
+        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
         result should have(
           httpStatus(SEE_OTHER),

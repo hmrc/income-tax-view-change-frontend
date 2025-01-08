@@ -16,7 +16,6 @@
 
 package auth.authV2
 
-import controllers.predicates.agent.Constants
 import play.api.mvc.{Request, WrappedRequest}
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name}
 import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, Enrolment, Enrolments}

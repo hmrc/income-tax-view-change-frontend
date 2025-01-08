@@ -16,8 +16,7 @@
 
 package controllers.agent
 
-import helpers.agent.ComponentSpecBase
-import play.api.libs.ws.WSResponse
+import helpers.ComponentSpecBase
 import play.api.http.Status.SEE_OTHER
 
 
@@ -25,9 +24,12 @@ class AgentLanguageControllerISpec extends ComponentSpecBase {
 
   val testRefererRoute: String = "/test/referer/route"
 
-  "GET /agents/language/cymraeg" should {
+  val pathCY = "/agents/language/cymraeg"
+  val pathEN = "/agents/language/english"
+
+  s"GET $pathCY" should {
     "update the PLAY_LANG cookie to cy and return the user where they were when a REFERER is in the headers" in {
-      lazy val resultCy: WSResponse = IncomeTaxViewChangeFrontend.getWithHeaders("/language/cymraeg", ("REFERER" -> testRefererRoute))
+      lazy val resultCy = buildGETMTDClient(pathCY, additionalHeaders = Map("REFERER" -> testRefererRoute)).futureValue
       resultCy.headers.isDefinedAt("Set-Cookie") shouldBe true
       resultCy.headers.toString.contains("PLAY_LANG=cy;") shouldBe true
       resultCy should have(
@@ -37,7 +39,7 @@ class AgentLanguageControllerISpec extends ComponentSpecBase {
     }
 
     "update the PLAY_LANG cookie to cy and return the user to the overview page when REFERER is not in the headers" in {
-      lazy val resultCy: WSResponse = IncomeTaxViewChangeFrontend.get("/language/cymraeg")
+      lazy val resultCy = buildGETMTDClient(pathCY).futureValue
       resultCy.headers.isDefinedAt("Set-Cookie") shouldBe true
       resultCy.headers.toString.contains("PLAY_LANG=cy;") shouldBe true
       resultCy should have(
@@ -47,9 +49,9 @@ class AgentLanguageControllerISpec extends ComponentSpecBase {
     }
   }
 
-  "GET /agents/language/english" should {
+  s"GET $pathEN" should {
     "update the PLAY_LANG cookie to en and return the user where they were when a REFERER is in the headers" in {
-      lazy val resultEn: WSResponse = IncomeTaxViewChangeFrontend.getWithHeaders("/language/english", ("REFERER" -> testRefererRoute))
+      lazy val resultEn = buildGETMTDClient(pathEN, additionalHeaders = Map("REFERER" -> testRefererRoute)).futureValue
       resultEn.headers.isDefinedAt("Set-Cookie") shouldBe true
       resultEn.headers.toString.contains("PLAY_LANG=en;") shouldBe true
       resultEn should have(
@@ -59,7 +61,7 @@ class AgentLanguageControllerISpec extends ComponentSpecBase {
     }
 
     "update the PLAY_LANG cookie to en and return the user to the overview page when REFERER is not in the headers" in {
-      lazy val resultEn: WSResponse = IncomeTaxViewChangeFrontend.get("/language/english")
+      lazy val resultEn = buildGETMTDClient(pathEN).futureValue
       resultEn.headers.isDefinedAt("Set-Cookie") shouldBe true
       resultEn.headers.toString.contains("PLAY_LANG=en;") shouldBe true
       resultEn should have(

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package controllers.predicates
+package authV2
 
 import auth.MtdItUser
+import auth.authV2.actions.SaveOriginAndRedirect
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import mocks.services.MockAsyncCacheApi
 import org.mockito.Mockito.mock
-import play.api.http.HeaderNames
 import play.api.http.Status.SEE_OTHER
 import play.api.i18n.MessagesApi
 import play.api.mvc.{AnyContentAsEmpty, Result}
@@ -32,7 +32,6 @@ import testConstants.BaseTestConstants.{testListLink, testMtditid, testNino, tes
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
-import uk.gov.hmrc.http.SessionKeys
 import views.html.navBar.BtaNavBar
 
 import scala.concurrent.Future

@@ -26,11 +26,10 @@ import models.sessionData.SessionCookieData
 import models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostSuccess}
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
+import play.api.mvc._
 import services.SessionDataService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.AuthenticatorPredicate
 import views.html.agent.confirmClient
 
 import javax.inject.{Inject, Singleton}
@@ -40,7 +39,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class ConfirmClientUTRController @Inject()(confirmClient: confirmClient,
                                            val authActions: AuthActions,
                                            val auditingService: AuditingService,
-                                           val auth: AuthenticatorPredicate,
                                            val sessionDataService: SessionDataService)
                                           (implicit mcc: MessagesControllerComponents,
                                            val appConfig: FrontendAppConfig,

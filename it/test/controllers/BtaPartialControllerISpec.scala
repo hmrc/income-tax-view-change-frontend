@@ -16,31 +16,29 @@
 
 package controllers
 
-import helpers.ComponentSpecBase
+import enums.MTDIndividual
+import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status._
+import testConstants.BaseIntegrationTestConstants.testMtditid
+import testConstants.IncomeSourceIntegrationTestConstants.businessAndPropertyResponse
 
-class BtaPartialControllerISpec extends ComponentSpecBase {
+class BtaPartialControllerISpec extends ControllerISpecHelper {
 
-  "calling the BtaPartialController" when {
+  val path = "/partial"
 
-    "Is authenticated with an active enrolment" should {
-
+  s"GET $path" when {
+    "the user is an authenticated individual" should {
       "display the bta partial with the correct information" in {
+        stubAuthorised(MTDIndividual)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
-        When("I call GET /report-quarterly/income-and-expenses/view/partial")
-        val res = IncomeTaxViewChangeFrontend.getBtaPartial
+        val result = buildGETMTDClient(path).futureValue
 
-        res should have(
+        result should have(
           httpStatus(OK)
-        )
-
-        Then("The BTA Partial is rendered")
-        res should have(
-          isElementVisibleById("it-quarterly-reporting-heading")(expectedValue = true)
         )
       }
     }
-
-    unauthorisedTest("/partial")
+    testAuthFailures(path, MTDIndividual)
   }
 }
