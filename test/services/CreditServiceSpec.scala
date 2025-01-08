@@ -53,7 +53,8 @@ class CreditServiceSpec extends TestSupport {
 
  class TestCreditService extends CreditService(mockFinancialDetailsConnector, dateService)
 
-  "CreditService.getCreditCharges method" should {
+  //Remove once deprecated method removed
+  "CreditService.getAllCredits method" should {
     "return a list of financial details credit charges" when {
 
       "a successful response is received in all tax year calls" in {
@@ -89,6 +90,42 @@ class CreditServiceSpec extends TestSupport {
           .thenReturn(Future.successful(Left(ErrorModel(500, "INTERNAL_SERVER ERROR"))))
 
         val result = new TestCreditService().getAllCredits(mtdItUser, headerCarrier).failed.futureValue
+
+        result shouldBe an[Exception]
+        result.getMessage shouldBe "Error response while getting Unpaid financial details"
+      }
+    }
+  }
+
+  "CreditService.getAllCreditsV2 method" should {
+    "return a list of financial details credit charges" when {
+
+      "a successful response is received in all tax year calls" in {
+
+        when(mockFinancialDetailsConnector.getCreditsAndRefund(ArgumentMatchers.eq(TaxYear.forYearEnd(2023)), ArgumentMatchers.eq(TaxYear.forYearEnd(2024)), any())(any(), any()))
+          .thenReturn(Future.successful(Right(
+            ANewCreditAndRefundModel()
+              .withFirstRefund(10)
+              .withSecondRefund(20)
+              .withBalancingChargeCredit(LocalDate.parse("2022-08-16"), 100.0)
+              .withBalancingChargeCredit(LocalDate.parse("2023-08-16"), 200.0)
+              .get())))
+
+        new TestCreditService().getAllCreditsV2(mtdItUser, headerCarrier).futureValue shouldBe ANewCreditAndRefundModel()
+          .withFirstRefund(10)
+          .withSecondRefund(20)
+          .withBalancingChargeCredit(LocalDate.parse("2022-08-16"), 100.0)
+          .withBalancingChargeCredit(LocalDate.parse("2023-08-16"), 200.0)
+          .get()
+      }
+    }
+
+    "handle an error" when {
+      "the financial service has returned an error in all tax year calls" in {
+        when(mockFinancialDetailsConnector.getCreditsAndRefund(any(), any(), any())(any(), any()))
+          .thenReturn(Future.successful(Left(ErrorModel(500, "INTERNAL_SERVER ERROR"))))
+
+        val result = new TestCreditService().getAllCreditsV2(mtdItUser, headerCarrier).failed.futureValue
 
         result shouldBe an[Exception]
         result.getMessage shouldBe "Error response while getting Unpaid financial details"
