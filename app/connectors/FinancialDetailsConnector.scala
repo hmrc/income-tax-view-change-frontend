@@ -125,6 +125,31 @@ class FinancialDetailsConnector @Inject()(
       }
   }
 
+  def getCreditsAndRefund(taxYearFrom: TaxYear, taxYearTo: TaxYear, nino: String)
+                           (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[ResponseModel[CreditsModel]] = {
+
+    val dateFrom: String = taxYearFrom.toFinancialYearStart.format(DateTimeFormatter.ISO_DATE)
+    val dateTo: String = taxYearTo.toFinancialYearEnd.format(DateTimeFormatter.ISO_DATE)
+
+    val url = getCreditAndRefundUrl(nino, dateFrom, dateTo)
+    Logger("application").debug(s"GET $url")
+
+    val hc = checkAndAddTestHeader(mtdItUser.path, headerCarrier, appConfig.poaAdjustmentOverrides(), "afterPoaAmountAdjusted")
+
+    val correlationId =
+      CorrelationId.fromHeaderCarrier(hc).getOrElse(CorrelationId())
+
+    httpV2
+      .get(url"$url")
+      .setHeader(correlationId.asHeader())
+      .execute[ResponseModel[CreditsModel]]
+      .recover {
+        case e =>
+          Logger("application").error(e.getMessage)
+          Left(UnexpectedError)
+      }
+  }
+
   // TODO: MFA Credits
   def getFinancialDetails(taxYear: Int, nino: String)
                          (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
