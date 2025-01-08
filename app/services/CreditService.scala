@@ -34,7 +34,7 @@ import scala.util.Try
 class CreditService @Inject()(val financialDetailsConnector: FinancialDetailsConnector,
                               implicit val dateService: DateServiceInterface)
                              (implicit ec: ExecutionContext, implicit val appConfig: FrontendAppConfig) {
-  @deprecated("Migrating as part of MISUV-8845")
+  @deprecated("Migrating as part of MISUV-8845", "1.1897.0")
   def getAllCredits(implicit user: MtdItUser[_],
                     hc: HeaderCarrier): Future[CreditsModel] = {
 
