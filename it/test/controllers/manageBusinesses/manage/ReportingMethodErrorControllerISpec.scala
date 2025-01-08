@@ -69,7 +69,7 @@ class ReportingMethodErrorControllerISpec extends ControllerISpecHelper {
                 await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
                   manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
-                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
                 result should have(
                   httpStatus(OK),
@@ -91,7 +91,7 @@ class ReportingMethodErrorControllerISpec extends ControllerISpecHelper {
                 }
 
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
-                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
                 result should have(
                   httpStatus(SEE_OTHER),
@@ -111,7 +111,7 @@ class ReportingMethodErrorControllerISpec extends ControllerISpecHelper {
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
                   val result = buildGETMTDClient(path, additionalCookies).futureValue
-                  verifyIncomeSourceDetailsCall(testMtditid)
+                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
                   result should have(
                     httpStatus(INTERNAL_SERVER_ERROR)
@@ -125,7 +125,7 @@ class ReportingMethodErrorControllerISpec extends ControllerISpecHelper {
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
                   val result = buildGETMTDClient(path, additionalCookies).futureValue
-                  verifyIncomeSourceDetailsCall(testMtditid)
+                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
                   result should have(
                     httpStatus(INTERNAL_SERVER_ERROR)

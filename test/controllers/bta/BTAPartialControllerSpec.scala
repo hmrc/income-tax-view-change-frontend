@@ -16,53 +16,34 @@
 
 package controllers.bta
 
-import controllers.predicates.SessionTimeoutPredicate
-import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import enums.MTDIndividual
+import mocks.auth.MockAuthActions
+import play.api.Application
 import play.api.http.Status
-import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
-import testUtils.TestSupport
-import views.html.navBar.BtaPartial
 
-class BTAPartialControllerSpec extends TestSupport with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {
+class BTAPartialControllerSpec extends MockAuthActions {
 
-  object TestBTAPartialController extends BTAPartialController(
-    app.injector.instanceOf[BtaPartial],
-    app.injector.instanceOf[SessionTimeoutPredicate],
-    MockAuthenticationPredicate
-  )(
-    ec,
-    app.injector.instanceOf[MessagesControllerComponents]
-  )
+  override lazy val app: Application = applicationBuilderWithAuthBindings.build()
+
+  lazy val testController = app.injector.instanceOf[BTAPartialController]
 
   "The BTAPartialController.setupPartial action" when {
+    val action = testController.setupPartial
+    "the user is authorised" should {
+      "render the BTA partial page" in {
+        setupMockSuccess(MTDIndividual)
+        mockBusinessIncomeSource()
 
-    "authorised with active session" should {
+        val result = action(fakeRequestWithActiveSession)
+        lazy val document = result.toHtmlDocument
 
-      lazy val result = TestBTAPartialController.setupPartial(fakeRequestWithActiveSession)
-      lazy val document = result.toHtmlDocument
-
-      "return Status OK (200)" in {
         status(result) shouldBe Status.OK
-      }
-
-      "return HTML" in {
         contentType(result) shouldBe Some("text/html")
         charset(result) shouldBe Some("utf-8")
-      }
-
-      "render the BTA partial" in {
         document.getElementById("it-quarterly-reporting-heading").text() shouldBe messages("bta_partial.heading")
       }
     }
-
-    "Called with an Unauthenticated User" should {
-
-      "return redirect SEE_OTHER (303)" in {
-        setupMockAuthorisationException()
-        val result = TestBTAPartialController.setupPartial(fakeRequestWithActiveSession)
-        status(result) shouldBe Status.SEE_OTHER
-      }
-    }
+    testMTDAuthFailuresForRole(action, MTDIndividual)(fakeRequestWithActiveSession)
   }
 }

@@ -17,24 +17,19 @@
 package controllers.agent
 
 import config.featureswitch.FeatureSwitching
-import helpers.agent.ComponentSpecBase
+import helpers.ComponentSpecBase
+import helpers.servicemocks.{AgentAuthStub, AuthStub}
 import play.api.http.Status._
-import play.api.libs.ws.WSResponse
 
 class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
+  val path = "/agents/cannot-view-client"
 
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-  }
-
-  s"GET ${controllers.agent.routes.UTRErrorController.show.url}" should {
+  s"GET $path" should {
     s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" when {
       "the user is not authenticated" in {
-        stubAuthorisedAgentUser(authorised = false)
+        AuthStub.stubUnauthorised()
+        val result = buildGETMTDClient(path).futureValue
 
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getUTRError()
-
-        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn.url}")
         result should have(
           httpStatus(SEE_OTHER),
           redirectURI(controllers.routes.SignInController.signIn.url)
@@ -44,9 +39,8 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
     s"return $SEE_OTHER with Agent error page" when {
       "the user is authenticated but doesn't have the agent enrolment" in {
-        stubAgentAuthorisedUser(authorised = true, hasAgentEnrolment = false)
-
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getUTRError()
+        AgentAuthStub.stubNoAgentEnrolment()
+        val result = buildGETMTDClient(path).futureValue
 
         Then(s"Agent error page is shown with status SEE_OTHER")
         result should have(
@@ -58,9 +52,9 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
     s"return $OK with the UTR Error page" when {
       "without checking whether the UTR is in session" in {
-        stubAuthorisedAgentUser(authorised = true)
+        AuthStub.stubAuthorisedAgent()
 
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getUTRError()
+        val result = buildGETMTDClient(path).futureValue
 
         Then("The UTR Error page is returned to the user")
         result should have(
@@ -71,14 +65,12 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
     }
   }
 
-  s"POST ${controllers.agent.routes.UTRErrorController.submit.url}" should {
+  s"POST $path" should {
     s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" when {
       "the user is not authenticated" in {
-        stubAuthorisedAgentUser(authorised = false)
+        AuthStub.stubUnauthorised()
+        val result = buildPOSTMTDPostClient(path, body = Map.empty).futureValue
 
-        val result: WSResponse = IncomeTaxViewChangeFrontend.postUTRError
-
-        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn.url}")
         result should have(
           httpStatus(SEE_OTHER),
           redirectURI(controllers.routes.SignInController.signIn.url)
@@ -88,11 +80,9 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
     s"return $SEE_OTHER to agent error page" when {
       "the user is authenticated but doesn't have the agent enrolment" in {
-        stubAgentAuthorisedUser(authorised = true, hasAgentEnrolment = false)
+        AgentAuthStub.stubNoAgentEnrolment()
+        val result = buildPOSTMTDPostClient(path, body = Map.empty).futureValue
 
-        val result: WSResponse = IncomeTaxViewChangeFrontend.postUTRError
-
-        Then("Agent error page is shown with status SEE_OTHER")
         result should have(
           httpStatus(SEE_OTHER),
           redirectURI(controllers.agent.errors.routes.AgentErrorController.show.url)

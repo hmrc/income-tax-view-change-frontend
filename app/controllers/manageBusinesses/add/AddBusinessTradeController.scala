@@ -20,7 +20,6 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import controllers.predicates._
 import enums.IncomeSourceJourney.{BeforeSubmissionPage, SelfEmployment}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import forms.manageBusinesses.add.BusinessTradeForm
@@ -39,7 +38,6 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class AddBusinessTradeController @Inject()(val authActions: AuthActions,
                                            val addBusinessTradeView: AddBusinessTrade,
-                                           val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                            val sessionService: SessionService)
                                           (implicit val appConfig: FrontendAppConfig,
                                            val itvcErrorHandler: ItvcErrorHandler,

@@ -21,7 +21,6 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import enums.{MTDIndividual, MTDUserRole}
-import helpers.agent.SessionCookieBaker
 import helpers.servicemocks.AuditStub
 import implicits.ImplicitDateFormatterImpl
 import models.admin.FeatureSwitchName
@@ -31,13 +30,10 @@ import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.cache.AsyncCacheApi
-import play.api.http.HeaderNames
-import play.api.http.Status.SEE_OTHER
 import play.api.i18n.{Lang, MessagesApi}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.crypto.DefaultCookieSigner
-import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import play.api.{Application, Environment, Mode}
 import repositories.{OptOutSessionDataRepository, UIJourneySessionDataRepository}
@@ -51,7 +47,7 @@ import uk.gov.hmrc.play.language.LanguageUtils
 import java.time.LocalDate
 import java.time.Month.APRIL
 import javax.inject.Singleton
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class TestHeaderExtractor extends HeaderExtractor {
@@ -97,8 +93,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   with GuiceOneServerPerSuite with ScalaFutures with IntegrationPatience with Matchers
   with WiremockHelper with BeforeAndAfterEach with BeforeAndAfterAll with Eventually
   with GenericStubMethods with FeatureSwitching with SessionCookieBaker {
-
-  val haveDefaultAuthMocks: Boolean = true
 
   val mockHost: String = WiremockHelper.wiremockHost
   val mockPort: String = WiremockHelper.wiremockPort.toString
@@ -187,9 +181,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "time-machine.add-days" -> "0"
   )
 
-  val userDetailsUrl = "/user-details/id/5397272a3d00003d002f3ca9"
   val btaPartialUrl = "/business-account/partial/service-info"
-  val testUserDetailsWiremockUrl: String = mockUrl + userDetailsUrl
 
   val getCurrentTaxYearEnd: LocalDate = {
     val currentDate: LocalDate = LocalDate.of(2023, 4, 4)
@@ -215,9 +207,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   override def beforeEach(): Unit = {
     super.beforeEach()
     WireMock.reset()
-    if (haveDefaultAuthMocks) {
-      isAuthorisedUser(true)
-    }
     AuditStub.stubAuditing()
     cache.removeAll()
     FeatureSwitchName.allFeatureSwitches foreach disable
@@ -227,99 +216,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     stopWiremock()
     super.afterAll()
     FeatureSwitchName.allFeatureSwitches foreach disable
-  }
-
-  def getWithClientDetailsInSession(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
-    buildClient(uri)
-      .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "Csrf-Token" -> "nocheck", "X-Session-ID" -> testSessionId)
-      .get().futureValue
-  }
-
-  def getWithCalcIdInSession(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
-    buildClient(uri)
-      .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "Csrf-Token" -> "nocheck")
-      .get().futureValue
-  }
-
-  def getWithCalcIdInSessionAndWithoutAwait(uri: String, additionalCookies: Map[String, String] = Map.empty): Future[WSResponse] = {
-    buildClient(uri)
-      .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "Csrf-Token" -> "nocheck")
-      .get()
-  }
-
-  object IncomeTaxViewChangeFrontend {
-
-    def getBtaPartial: WSResponse = get(s"/partial")
-
-    def get(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
-      When(s"I call GET /report-quarterly/income-and-expenses/view" + uri)
-      buildClient(uri)
-        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies), "X-Session-ID" -> testSessionId)
-        .get()
-        .futureValue
-    }
-
-    def getWithHeaders(uri: String, headers: (String, String)*): WSResponse = {
-      buildClient(uri)
-        .withHttpHeaders(headers: _*)
-        .get().futureValue
-    }
-
-    def post(uri: String, additionalCookies: Map[String, String] = Map.empty)(body: Map[String, Seq[String]]): WSResponse = {
-      When(s"I call POST /report-quarterly/income-and-expenses/view" + uri)
-      buildClient(uri)
-        .withFollowRedirects(false)
-        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies),
-          "Csrf-Token" -> "nocheck",
-          "X-Session-ID" -> testSessionId)
-        .post(body).futureValue
-    }
-  }
-
-
-  // TODO: Replace IncomeTaxViewChangeFrontend with this implementation
-  object IncomeTaxViewChangeFrontendManageBusinesses {
-    def get(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
-      When(s"I call GET /report-quarterly/income-and-expenses/view" + uri)
-      buildClient(uri)
-        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies), "X-Session-ID" -> testSessionId)
-        .get().futureValue
-    }
-
-    def getWithHeaders(uri: String, headers: (String, String)*): WSResponse = {
-      buildClient(uri)
-        .withHttpHeaders(headers: _*)
-        .get().futureValue
-    }
-
-    def post(uri: String, additionalCookies: Map[String, String] = Map.empty)(body: Map[String, Seq[String]]): WSResponse = {
-      When(s"I call POST /report-quarterly/income-and-expenses/view" + uri)
-      buildClient(uri)
-        .withFollowRedirects(false)
-        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies),
-          "Csrf-Token" -> "nocheck",
-          "X-Session-ID" -> testSessionId)
-        .post(body).futureValue
-    }
-  }
-
-  def unauthorisedTest(uri: String): Unit = {
-    "unauthorised" should {
-
-      "redirect to sign in" in {
-
-        isAuthorisedUser(false)
-
-        When(s"I call GET /report-quarterly/income-and-expenses/view$uri")
-        val res = IncomeTaxViewChangeFrontendManageBusinesses.get(uri)
-
-        Then("the http response for an unauthorised user is returned")
-        res should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn.url)
-        )
-      }
-    }
   }
 }
 

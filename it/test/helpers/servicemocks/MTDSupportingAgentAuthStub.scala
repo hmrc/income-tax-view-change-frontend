@@ -21,15 +21,13 @@ import helpers.WiremockHelper._
 import play.api.http.Status
 import play.api.libs.json.{JsString, JsValue, Json}
 import testConstants.BaseIntegrationTestConstants.testMtditid
-import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
 import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolment}
 
 object MTDSupportingAgentAuthStub extends MTDAgentAuthStub {
 
-  val postAuthoriseUrl = "/auth/authorise"
   val requiredConfidenceLevel = 250
 
-  override def stubAuthorised(confidenceLevel: Option[Int] = None): Unit = {
+  override def stubAuthorisedAndMTDEnrolled(confidenceLevel: Option[Int] = None): Unit = {
     val jsonRequest = getMTDAgentAuthRequest()
 
     stubPostWithRequest(
@@ -48,16 +46,6 @@ object MTDSupportingAgentAuthStub extends MTDAgentAuthStub {
       requestBody = jsonRequest,
       status = Status.OK,
       responseBody = mtdNotAgentSuccessResponse()
-    )
-  }
-
-  override def stubNoAgentEnrolmentRequiredSuccess(): Unit = {
-    val jsonRequest = emptyPredicateRequest
-    stubPostWithRequest(
-      url = postAuthoriseUrl,
-      requestBody = jsonRequest,
-      status = Status.OK,
-      responseBody = mtdAgentSuccessResponse()
     )
   }
 
@@ -111,24 +99,6 @@ object MTDSupportingAgentAuthStub extends MTDAgentAuthStub {
       responseHeaders = responseHeaders
     )
   }
-
-  lazy val emptyPredicateRequest: JsValue = {
-    val predicateJson = {
-      EmptyPredicate.toJson
-    }
-
-    Json.obj(
-      "authorise" -> predicateJson,
-      "retrieve" -> Json.arr(
-        JsString("allEnrolments"),
-        JsString("optionalName"),
-        JsString("optionalCredentials"),
-        JsString("affinityGroup"),
-        JsString("confidenceLevel")
-      )
-    )
-  }
-
 
   def getMTDAgentAuthRequest(): JsValue = {
     lazy val isAgentPredicate = Enrolment("HMRC-AS-AGENT") and AffinityGroup.Agent

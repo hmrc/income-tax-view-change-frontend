@@ -89,7 +89,7 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
             setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual, intent).futureValue shouldBe true
 
             val result = buildGETMTDClient(path, additionalCookies).futureValue
-            verifyIncomeSourceDetailsCall(testMtditid)
+            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
             result should have(
               httpStatus(OK),
@@ -113,7 +113,7 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
             setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual, intent).futureValue shouldBe true
 
             val result = buildGETMTDClient(path, additionalCookies).futureValue
-            verifyIncomeSourceDetailsCall(testMtditid)
+            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
             result should have(
               httpStatus(OK),
@@ -149,7 +149,7 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
             )
 
             val result = buildPOSTMTDPostClient(path, additionalCookies, body = Map.empty).futureValue
-            verifyIncomeSourceDetailsCall(testMtditid)
+            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
             verifyAudit()
 
             result should have(
@@ -171,7 +171,7 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
               )
 
               val result = buildPOSTMTDPostClient(path, additionalCookies, body = Map.empty).futureValue
-              verifyIncomeSourceDetailsCall(testMtditid)
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
               verifyAudit()
 
               result should have(

@@ -19,17 +19,13 @@ package mocks.auth
 import audit.AuditingService
 import audit.mocks.MockAuditingService
 import auth.FrontendAuthorisedFunctions
-import auth.authV2.AuthActions
 import authV2.AuthActionsTestData._
 import config.featureswitch.FeatureSwitching
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
-import mocks.MockItvcErrorHandler
 import mocks.services.{MockClientDetailsService, MockIncomeSourceDetailsService, MockSessionDataService}
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, reset, when}
+import org.mockito.Mockito.{mock, reset}
 import play.api
-import play.api.Play
 import play.api.http.Status
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{Action, AnyContent, AnyContentAsEmpty}
@@ -37,15 +33,9 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.agent.ClientDetailsService
 import services.{IncomeSourceDetailsService, SessionDataService}
-import testConstants.BaseTestConstants.{agentAuthRetrievalSuccess, testAuthSuccessResponse}
 import testUtils.TestSupport
-import uk.gov.hmrc.auth.core.AffinityGroup.Agent
-import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
-import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
-import uk.gov.hmrc.auth.core.{AffinityGroup, AuthorisationException, BearerTokenExpired, InsufficientEnrolments, InvalidBearerToken}
-import uk.gov.hmrc.http.HeaderCarrier
-
-import scala.concurrent.{ExecutionContext, Future}
+import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.retrieve.~
 
 trait MockAuthActions extends
   TestSupport with
@@ -53,7 +43,6 @@ trait MockAuthActions extends
   MockAgentAuthorisedFunctions with
   MockUserAuthorisedFunctions with
   MockAuditingService with
-  MockItvcErrorHandler with
   MockSessionDataService with
   MockClientDetailsService with
   FeatureSwitching {

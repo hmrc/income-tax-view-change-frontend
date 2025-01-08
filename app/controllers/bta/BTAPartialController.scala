@@ -16,24 +16,23 @@
 
 package controllers.bta
 
-import controllers.BaseController
-import controllers.predicates._
-import javax.inject.{Inject, Singleton}
+import auth.authV2.AuthActions
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.navBar.BtaPartial
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 
 @Singleton
 class BTAPartialController @Inject()(btaPartial: BtaPartial,
-                                     checkSessionTimeout: SessionTimeoutPredicate,
-                                     authenticate: AuthenticationPredicate)
+                                     authActions: AuthActions)
                                     (implicit val executionContext: ExecutionContext,
-                                     mcc: MessagesControllerComponents) extends BaseController with I18nSupport {
+                                     mcc: MessagesControllerComponents) extends FrontendController(mcc) with I18nSupport {
 
-  def setupPartial: Action[AnyContent] = (checkSessionTimeout andThen authenticate) {
+  def setupPartial: Action[AnyContent] = authActions.asMTDIndividual {
     implicit request => Ok(btaPartial())
   }
 

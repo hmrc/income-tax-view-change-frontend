@@ -69,7 +69,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
                 addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName))))))
 
               val res = buildGETMTDClient(path, additionalCookies).futureValue
-              verifyIncomeSourceDetailsCall(testMtditid)
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
               res should have(
                 httpStatus(OK),
@@ -116,7 +116,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
               await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
                 addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName))))))
               val res = buildGETMTDClient(changePath, additionalCookies).futureValue
-              verifyIncomeSourceDetailsCall(testMtditid)
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
               res should have(
                 httpStatus(OK),

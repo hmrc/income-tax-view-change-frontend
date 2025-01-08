@@ -16,30 +16,30 @@
 
 package controllers.agent
 
+import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
-import controllers.agent.predicates.BaseAgentController
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.agent.errorPages.ClientRelationshipFailure
+
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class ClientRelationshipFailureController @Inject()(clientRelationshipFailure: ClientRelationshipFailure,
-                                                    val authorisedFunctions: AuthorisedFunctions)
+                                                    val authActions: AuthActions)
                                                    (implicit mcc: MessagesControllerComponents,
                                                     val appConfig: FrontendAppConfig,
                                                     val itvcErrorHandler: AgentItvcErrorHandler,
                                                     val ec: ExecutionContext)
-  extends BaseAgentController with I18nSupport with FeatureSwitching {
+  extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
-  def show: Action[AnyContent] = Authenticated.asyncWithoutClientAuth() { implicit request =>
-    implicit user =>
-      Future.successful(Ok(clientRelationshipFailure(
+  def show: Action[AnyContent] = authActions.asAgent() { implicit user =>
+      Ok(clientRelationshipFailure(
         postAction = routes.EnterClientsUTRController.show
-      )))
+      ))
   }
 
 }

@@ -17,7 +17,7 @@
 package mocks.auth
 
 import auth.FrontendAuthorisedFunctions
-import controllers.predicates.agent.Constants.mtdEnrolmentName
+import auth.authV2.Constants.mtdEnrolmentName
 import org.mockito.Mockito._
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import uk.gov.hmrc.auth.core._

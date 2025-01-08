@@ -53,13 +53,13 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
     "renderViewNextUpdates" when {
       "the user has no obligations" in {
-        MTDIndividualAuthStub.stubAuthorised()
+        MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         val res = buildGETMTDClient(path).futureValue
 
-        verifyIncomeSourceDetailsCall(testMtditid)
+        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
         Then("the view displays the correct title, username and links")
         res should have(
@@ -74,7 +74,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
       }
 
       "the user has a quarterly property income obligation only" in {
-        MTDIndividualAuthStub.stubAuthorised()
+        MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -86,8 +86,8 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
         AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
 
-        verifyIncomeSourceDetailsCall(testMtditid)
-        verifyNextUpdatesCall(testNino)
+        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+        IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
         IncomeTaxViewChangeStub.verifyGetObligations(testNino)
 
         Then("the view displays the correct title, username and links")
@@ -105,7 +105,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
       }
 
       "the user has a quarterly business income obligation only" in {
-        MTDIndividualAuthStub.stubAuthorised()
+        MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
 
@@ -117,9 +117,9 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
         AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testBusinessOnlyUser))
 
-        verifyIncomeSourceDetailsCall(testMtditid)
+        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-        verifyNextUpdatesCall(testNino)
+        IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
 
         IncomeTaxViewChangeStub.verifyGetObligations(testNino)
 
@@ -138,7 +138,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
       }
 
       "the user has multiple quarterly business income obligations only" in {
-        MTDIndividualAuthStub.stubAuthorised()
+        MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
         IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testSelfEmploymentId),
@@ -148,8 +148,8 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
         AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testBusinessOnlyUser))
 
-        verifyIncomeSourceDetailsCall(testMtditid)
-        verifyNextUpdatesCall(testNino)
+        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+        IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
         IncomeTaxViewChangeStub.verifyGetObligations(testNino)
 
         Then("the view displays the correct title, username and links")
@@ -167,7 +167,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
       }
 
       "the user has a Crystallised obligation only" in {
-        MTDIndividualAuthStub.stubAuthorised()
+        MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
         IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(noObligationsModel(testSelfEmploymentId), crystallisedEOPSModel)))
@@ -177,8 +177,8 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
         AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testBusinessOnlyUser))
 
-        verifyIncomeSourceDetailsCall(testMtditid)
-        verifyNextUpdatesCall(testNino)
+        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+        IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
         IncomeTaxViewChangeStub.verifyGetObligations(testNino)
 
         Then("the view displays the correct title")
@@ -192,7 +192,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
       "the user has a Opt Out Feature Switch Enabled" in {
         
         enable(OptOutFs)
-        MTDIndividualAuthStub.stubAuthorised()
+        MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         val currentTaxYear = dateService.getCurrentTaxYearEnd
         val previousYear = currentTaxYear - 1
@@ -210,8 +210,8 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
         AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
 
-        verifyIncomeSourceDetailsCall(testMtditid)
-        verifyNextUpdatesCall(testNino)
+        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+        IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
         IncomeTaxViewChangeStub.verifyGetObligations(testNino)
 
         Then("the view displays the correct title, username and links")
@@ -241,7 +241,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
       "the user has a Opt Out Feature Switch Disabled" in {
         disable(OptOutFs)
-        MTDIndividualAuthStub.stubAuthorised()
+        MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -253,8 +253,8 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
         AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
 
-        verifyIncomeSourceDetailsCall(testMtditid)
-        verifyNextUpdatesCall(testNino)
+        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+        IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
         IncomeTaxViewChangeStub.verifyGetObligations(testNino)
 
         Then("the view displays the correct title, username and links")
@@ -277,7 +277,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
       "show opt-out message if the user has Previous Year as Voluntary, Current Year as NoStatus, Next Year as NoStatus" in {
         enable(OptOutFs)
-        MTDIndividualAuthStub.stubAuthorised()
+        MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         val currentTaxYear = dateService.getCurrentTaxYearEnd
         val previousYear = currentTaxYear - 1
@@ -295,8 +295,8 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
         AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
 
-        verifyIncomeSourceDetailsCall(testMtditid)
-        verifyNextUpdatesCall(testNino)
+        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+        IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
         IncomeTaxViewChangeStub.verifyGetObligations(testNino)
 
         Then("the quarterly updates info sections")
@@ -310,7 +310,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
       "show multi year opt-out message if the user has Previous Year as Voluntary, Current Year as Voluntary, Next Year as Voluntary" in {
         enable(OptOutFs)
-        MTDIndividualAuthStub.stubAuthorised()
+        MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         val currentTaxYear = dateService.getCurrentTaxYearEnd
         val previousYear = currentTaxYear - 1
@@ -329,8 +329,8 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
         AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
 
-        verifyIncomeSourceDetailsCall(testMtditid)
-        verifyNextUpdatesCall(testNino)
+        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+        IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
         IncomeTaxViewChangeStub.verifyGetObligations(testNino)
 
         Then("the quarterly updates info sections")
@@ -345,7 +345,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
       "Opt Out feature switch is enabled" when {
         "ITSA Status API Failure" in {
           enable(OptOutFs)
-          MTDIndividualAuthStub.stubAuthorised()
+          MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
           val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
           val previousYear = currentTaxYear.addYears(-1)
@@ -364,8 +364,8 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
           AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
 
-          verifyIncomeSourceDetailsCall(testMtditid)
-          verifyNextUpdatesCall(testNino)
+          IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+          IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
           IncomeTaxViewChangeStub.verifyGetObligations(testNino)
 
           Then("the view displays the correct title even if the OptOut fail")
@@ -377,7 +377,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
         "Calculation API Failure" in {
           enable(OptOutFs)
-          MTDIndividualAuthStub.stubAuthorised()
+          MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
           val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
           val previousYear = currentTaxYear.addYears(-1)
@@ -396,8 +396,8 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
           AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
 
-          verifyIncomeSourceDetailsCall(testMtditid)
-          verifyNextUpdatesCall(testNino)
+          IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+          IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
           IncomeTaxViewChangeStub.verifyGetObligations(testNino)
 
           Then("the view displays the correct title even if the OptOut fail")
@@ -409,7 +409,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
         "ITSA Status API Failure and Calculation API Failure" in {
           enable(OptOutFs)
-          MTDIndividualAuthStub.stubAuthorised()
+          MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
           val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
           val previousYear = currentTaxYear.addYears(-1)
@@ -428,8 +428,8 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
           AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
 
-          verifyIncomeSourceDetailsCall(testMtditid)
-          verifyNextUpdatesCall(testNino)
+          IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+          IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
           IncomeTaxViewChangeStub.verifyGetObligations(testNino)
 
           Then("the view displays the correct title even if the OptOut fail")

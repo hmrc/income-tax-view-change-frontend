@@ -57,7 +57,7 @@ class ManageYourBusinessesControllerISpec extends ControllerISpecHelper {
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
-              verifyIncomeSourceDetailsCall(testMtditid)
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(OK),
@@ -81,7 +81,7 @@ class ManageYourBusinessesControllerISpec extends ControllerISpecHelper {
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
-              verifyIncomeSourceDetailsCall(testMtditid)
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(OK),

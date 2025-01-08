@@ -14,17 +14,21 @@
  * limitations under the License.
  */
 
-package mocks.controllers.predicates
+package auth.authV2
 
-import config.ItvcErrorHandler
-import controllers.predicates.IncomeSourceDetailsPredicateNoCache
-import mocks.services._
-import play.api.mvc.MessagesControllerComponents
-import testUtils.TestSupport
+object Constants {
 
-trait MockIncomeSourceDetailsPredicateNoCache extends TestSupport with MockIncomeSourceDetailsService {
+  val agentServiceEnrolmentName = "HMRC-AS-AGENT"
+  val agentServiceIdentifierKey = "AgentReferenceNumber"
 
-  object MockIncomeSourceDetailsPredicateNoCache extends IncomeSourceDetailsPredicateNoCache(
-    mockIncomeSourceDetailsService, app.injector.instanceOf[ItvcErrorHandler])(
-    ec, app.injector.instanceOf[MessagesControllerComponents])
+  val ninoEnrolmentName = "HMRC-NI"
+  val ninoEnrolmentIdentifierKey = "NINO"
+
+  val saEnrolmentName = "IR-SA"
+  val saEnrolmentIdentifierKey = "UTR"
+
+  val mtdEnrolmentName = "HMRC-MTD-IT"
+  val mtdEnrolmentIdentifierKey = "MTDITID"
+
+
 }

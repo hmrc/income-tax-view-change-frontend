@@ -19,7 +19,6 @@ package controllers.feedback
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.FeedbackConnector
-import controllers.predicates.agent.AgentAuthenticationPredicate.defaultAgentPredicates
 import forms.FeedbackForm
 import play.api.Logger
 import play.api.i18n.I18nSupport

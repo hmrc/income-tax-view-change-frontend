@@ -26,8 +26,6 @@ import testConstants.BaseIntegrationTestConstants.getAgentClientDetailsForCookie
 
 trait ControllerISpecHelper extends ComponentSpecBase {
 
-  override val haveDefaultAuthMocks: Boolean = false
-
   val mtdAllRoles = List(MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent)
 
   def homeUrl(mtdUserRole: MTDUserRole): String = mtdUserRole match {
@@ -41,7 +39,7 @@ trait ControllerISpecHelper extends ComponentSpecBase {
       stubGetCitizenDetails()
       stubGetBusinessDetails()()
     }
-    getMTDAuthStub(mtdRole).stubAuthorised()
+    getMTDAuthStub(mtdRole).stubAuthorisedAndMTDEnrolled()
   }
 
   def getMTDAuthStub(mtdUserRole: MTDUserRole): MTDAuthStub = mtdUserRole match {
@@ -148,7 +146,7 @@ trait ControllerISpecHelper extends ComponentSpecBase {
 
     "does not have the required confidence level" should {
       s"redirect ($SEE_OTHER) to IV uplift" in {
-        MTDIndividualAuthStub.stubAuthorised(Some(50))
+        MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled(Some(50))
         val result = buildMTDClient(requestPath, optBody = optBody).futureValue
 
         result.status shouldBe SEE_OTHER

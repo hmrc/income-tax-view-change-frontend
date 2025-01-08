@@ -46,7 +46,6 @@ object AuthStub extends ComponentSpecBase {
            | "identifiers": [{"key":"$testSaUtrEnrolmentIdentifier", "value":"$testSaUtr"}]
            | }
            | ],
-           | "userDetailsUri":"$testUserDetailsWiremockUrl",
            | "affinityGroup" : "Individual",
            | "optionalCredentials": {
            |  "providerId": "12345-credId",
@@ -58,78 +57,8 @@ object AuthStub extends ComponentSpecBase {
     )
   }
 
-  def stubAuthorisedWithName(): Unit = {
-    WiremockHelper.stubPost(postAuthoriseUrl, Status.OK,
-      Json.parse(
-        s"""{
-           | "allEnrolments": [{
-           | "key":"$testMtditidEnrolmentKey",
-           | "identifiers": [{"key":"$testMtditidEnrolmentIdentifier", "value":"$testMtditid"}]
-           | },
-           | {
-           | "key":"$testNinoEnrolmentKey",
-           | "identifiers": [{"key":"$testNinoEnrolmentIdentifier", "value":"$testNino"}]
-           | },
-           | {
-           | "key":"$testSaUtrEnrolmentKey",
-           | "identifiers": [{"key":"$testSaUtrEnrolmentIdentifier", "value":"$testSaUtr"}]
-           | }
-           | ],
-           | "userDetailsUri":"$testUserDetailsWiremockUrl",
-           | "affinityGroup" : "Individual",
-           | "optionalCredentials": {
-           |  "providerId": "12345-credId",
-           |  "providerType": "GovernmentGateway"
-           | },
-           | "optionalName": {
-           |  "name": "John",
-           |  "lastName": "Doe"
-           | },
-           | "confidenceLevel": $requiredConfidenceLevel
-           |}""".stripMargin).toString())
-  }
-
-  def stubAuthorisedNoNino(): Unit = {
-    WiremockHelper.stubPost(postAuthoriseUrl, Status.OK,
-      Json.parse(
-        s"""
-           |{
-           |"allEnrolments": [{
-           |  "key":"$testMtditidEnrolmentKey",
-           |  "identifiers": [{"key":"$testMtditidEnrolmentIdentifier", "value":"$testMtditid"}]
-           |}],
-           | "userDetailsUri":"$testUserDetailsWiremockUrl",
-           | "affinityGroup" : "Individual"
-           |}
-       """.stripMargin).toString
-    )
-  }
-
   def stubUnauthorised(): Unit = {
     WiremockHelper.stubPost(postAuthoriseUrl, Status.UNAUTHORIZED, "{}")
-  }
-
-  def stubInsufficientEnrolments(): Unit = {
-    WiremockHelper.stubPost(postAuthoriseUrl, Status.INTERNAL_SERVER_ERROR,
-      Json.parse(
-        s"""{
-           |"allEnrolments":[{}],
-           |"userDetailsUri":"$testUserDetailsWiremockUrl"
-           |}
-         """.stripMargin).toString()
-    )
-  }
-
-  def stubWrongEnrolment(): Unit = {
-    WiremockHelper.stubPost(postAuthoriseUrl, Status.UNAUTHORIZED,
-      Json.parse(
-        s"""{
-           | "allEnrolments": [{
-           | "key":"ANOTHER-KEY",
-           | "identifiers": [{"key":"ANOTHER-ID", "value":"XA123456789"}]
-           | }],
-           | "userDetailsUri":"$testUserDetailsWiremockUrl"
-           |}""".stripMargin).toString())
   }
 
   def stubAuthorisedAgent(mtdId: String = "mtdbsaId"): Unit = {

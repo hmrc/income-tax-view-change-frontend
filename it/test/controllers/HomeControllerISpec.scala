@@ -78,7 +78,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
         "displays the next upcoming payment and charge" when {
           "there are payments upcoming and nothing is overdue" in {
             disable(NavBarFs)
-            MTDIndividualAuthStub.stubAuthorised()
+            MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
               status = OK,
               response = incomeSourceDetailsModel
@@ -148,7 +148,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
         "displays no upcoming payment" when {
           "there are no upcoming payments" in {
             disable(NavBarFs)
-            MTDIndividualAuthStub.stubAuthorised()
+            MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
               status = OK,
               response = incomeSourceDetailsModel
@@ -217,7 +217,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
         "displays an overdue payment and an overdue obligation" when {
           "there is a single payment overdue and a single obligation overdue" in {
             disable(NavBarFs)
-            MTDIndividualAuthStub.stubAuthorised()
+            MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
               status = OK,
               response = incomeSourceDetailsModel
@@ -286,7 +286,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
 
           "there is a single payment overdue and a single obligation overdue and one overdue CESA " in {
             disable(NavBarFs)
-            MTDIndividualAuthStub.stubAuthorised()
+            MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
               status = OK,
               response = incomeSourceDetailsModel
@@ -356,7 +356,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
         "display a count of the overdue payments a count of overdue obligations" when {
           "there is more than one payment overdue and more than one obligation overdue" in {
             disable(NavBarFs)
-            MTDIndividualAuthStub.stubAuthorised()
+            MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
               status = OK,
@@ -447,7 +447,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
         "display Income Sources tile" when {
           "IncomeSources feature switch is enabled" in {
             disable(NavBarFs)
-            MTDIndividualAuthStub.stubAuthorised()
+            MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
             enable(IncomeSourcesFs)
 
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -517,7 +517,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
         "display Your Businesses tile" when {
           "IncomeSources and IncomeSourcesNewJourney feature switches are enabled" in {
             disable(NavBarFs)
-            MTDIndividualAuthStub.stubAuthorised()
+            MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
             enable(IncomeSourcesFs)
             enable(IncomeSourcesNewJourney)
 
@@ -591,7 +591,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
 
         "retrieving the charges was unsuccessful" in {
           disable(NavBarFs)
-          MTDIndividualAuthStub.stubAuthorised()
+          MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
             status = OK,
@@ -632,7 +632,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
       }
       "retrieving the obligations was unsuccessful" in {
         disable(NavBarFs)
-        MTDIndividualAuthStub.stubAuthorised()
+        MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
           status = OK,
@@ -651,7 +651,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
       "retrieving the income sources was unsuccessful" in {
         disable(NavBarFs)
         enable(IncomeSourcesFs)
-        MTDIndividualAuthStub.stubAuthorised()
+        MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsErrorResponse(testMtditid)(
           status = INTERNAL_SERVER_ERROR)
