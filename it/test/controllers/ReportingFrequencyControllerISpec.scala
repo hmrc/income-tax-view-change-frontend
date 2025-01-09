@@ -26,7 +26,7 @@ import org.jsoup.Jsoup
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
-import testConstants.IncomeSourceIntegrationTestConstants.businessAndPropertyResponseWoMigration
+import testConstants.IncomeSourceIntegrationTestConstants.{businessAndPropertyResponseWoMigration, foreignPropertyAndCeasedBusiness}
 
 class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
 
@@ -42,7 +42,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
 
 
 
-  def bullet(i: Int): String = s"#main-content > div > div > div > ul > li:nth-child($i) > a"
+  def optInOptOutLinks(i: Int): String = s"#main-content > div > div > div > ul > li:nth-child($i) > a"
 
   def getPath(mtdRole: MTDUserRole): String = {
     val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
@@ -86,7 +86,8 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "reporting.frequency.title"),
-                  elementTextBySelector(bullet(1))("Opt out of quarterly reporting and report annually")
+                  elementTextByID("manage-reporting-frequency-heading")("Manage your reporting frequency for all your businesses"),
+                  elementTextBySelector(optInOptOutLinks(1))("Opt out of quarterly reporting and report annually")
                 )
               }
             }
@@ -109,7 +110,8 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "reporting.frequency.title"),
-                  elementTextBySelector(bullet(1))("Opt in to quarterly reporting")
+                  elementTextByID("manage-reporting-frequency-heading")("Manage your reporting frequency for all your businesses"),
+                  elementTextBySelector(optInOptOutLinks(1))("Opt in to quarterly reporting")
                 )
               }
             }
@@ -132,8 +134,9 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "reporting.frequency.title"),
-                  elementTextBySelector(bullet(1))(s"Opt out of quarterly reporting and report annually for the $currentStartYear to $currentEndYear tax year"),
-                  elementTextBySelector(bullet(2))(s"Opt in to quarterly reporting from the $nextStartYear to $nextEndYear tax year onwards")
+                  elementTextByID("manage-reporting-frequency-heading")("Manage your reporting frequency for all your businesses"),
+                  elementTextBySelector(optInOptOutLinks(1))(s"Opt out of quarterly reporting and report annually for the $currentStartYear to $currentEndYear tax year"),
+                  elementTextBySelector(optInOptOutLinks(2))(s"Opt in to quarterly reporting from the $nextStartYear to $nextEndYear tax year onwards")
                 )
               }
             }
@@ -157,8 +160,9 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "reporting.frequency.title"),
-                  elementTextBySelector(bullet(1))(s"Opt in to quarterly reporting for the $currentStartYear to $currentEndYear tax year"),
-                  elementTextBySelector(bullet(2))(s"Opt out of quarterly reporting and report annually from the $nextStartYear to $nextEndYear tax year onwards")
+                  elementTextByID("manage-reporting-frequency-heading")("Manage your reporting frequency for all your businesses"),
+                  elementTextBySelector(optInOptOutLinks(1))(s"Opt in to quarterly reporting for the $currentStartYear to $currentEndYear tax year"),
+                  elementTextBySelector(optInOptOutLinks(2))(s"Opt out of quarterly reporting and report annually from the $nextStartYear to $nextEndYear tax year onwards")
                 )
               }
             }
@@ -182,7 +186,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "reporting.frequency.title"),
-                  elementTextBySelector(bullet(1))(s"Opt in to quarterly reporting for the $currentStartYear to $currentEndYear tax year")
+                  elementTextBySelector(optInOptOutLinks(1))(s"Opt in to quarterly reporting for the $currentStartYear to $currentEndYear tax year")
                 )
               }
 
@@ -203,7 +207,8 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "reporting.frequency.title"),
-                  elementTextBySelector(bullet(1))(s"Opt in to quarterly reporting from the $nextStartYear to $nextEndYear tax year onwards")
+                  elementTextByID("manage-reporting-frequency-heading")("Manage your reporting frequency for all your businesses"),
+                  elementTextBySelector(optInOptOutLinks(1))(s"Opt in to quarterly reporting from the $nextStartYear to $nextEndYear tax year onwards")
                 )
               }
             }
@@ -227,7 +232,8 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "reporting.frequency.title"),
-                  elementTextBySelector(bullet(1))(s"Opt out of quarterly reporting and report annually from the $nextStartYear to $nextEndYear tax year onwards")
+                  elementTextByID("manage-reporting-frequency-heading")("Manage your reporting frequency for all your businesses"),
+                  elementTextBySelector(optInOptOutLinks(1))(s"Opt out of quarterly reporting and report annually from the $nextStartYear to $nextEndYear tax year onwards")
                 )
               }
             }
@@ -251,8 +257,9 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "reporting.frequency.title"),
-                  elementTextBySelector(bullet(1))("Opt out of quarterly reporting and report annually"),
-                  elementTextBySelector(bullet(2))(s"Opt in to quarterly reporting from the $nextStartYear to $nextEndYear tax year onwards")
+                  elementTextByID("manage-reporting-frequency-heading")("Manage your reporting frequency for all your businesses"),
+                  elementTextBySelector(optInOptOutLinks(1))("Opt out of quarterly reporting and report annually"),
+                  elementTextBySelector(optInOptOutLinks(2))(s"Opt in to quarterly reporting from the $nextStartYear to $nextEndYear tax year onwards")
                 )
               }
             }
@@ -276,8 +283,61 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "reporting.frequency.title"),
-                  elementTextBySelector(bullet(1))(s"Opt out of quarterly reporting and report annually for the $previousStartYear to $previousEndYear tax year"),
-                  elementTextBySelector(bullet(2))(s"Opt in to quarterly reporting")
+                  elementTextByID("manage-reporting-frequency-heading")("Manage your reporting frequency for all your businesses"),
+                  elementTextBySelector(optInOptOutLinks(1))(s"Opt out of quarterly reporting and report annually for the $previousStartYear to $previousEndYear tax year"),
+                  elementTextBySelector(optInOptOutLinks(2))(s"Opt in to quarterly reporting")
+                )
+              }
+            }
+
+            "does not have Manage your reporting frequency section" when {
+              "all business are ceased" in {
+                enable(ReportingFrequencyPage)
+                enable(OptOutFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)
+                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
+                  dateService.getCurrentTaxYear,
+                  Voluntary,
+                  Annual,
+                  Annual
+                )
+
+                stubCalculationListResponseBody("2022")
+
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "reporting.frequency.title")
+                )
+                result shouldNot have(
+                  elementTextByID("manage-reporting-frequency-heading")("Manage your reporting frequency for all your businesses"),
+                  elementTextBySelector(optInOptOutLinks(1))(s"Opt out of quarterly reporting and report annually for the $previousStartYear to $previousEndYear tax year"),
+                  elementTextBySelector(optInOptOutLinks(2))(s"Opt in to quarterly reporting")
+                )
+              }
+              "CY, CY-1 and CY+1 are mandated" in {
+                enable(ReportingFrequencyPage)
+                enable(OptOutFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
+                  dateService.getCurrentTaxYear,
+                  Mandated,
+                  Mandated,
+                  Mandated
+                )
+                stubCalculationListResponseBody("2022")
+
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "reporting.frequency.title")
+                )
+                result shouldNot have(
+                  elementTextByID("manage-reporting-frequency-heading")("Manage your reporting frequency for all your businesses"),
+                  elementTextBySelector(optInOptOutLinks(1))(s"Opt out of quarterly reporting and report annually for the $previousStartYear to $previousEndYear tax year"),
+                  elementTextBySelector(optInOptOutLinks(2))(s"Opt in to quarterly reporting")
                 )
               }
             }

@@ -17,6 +17,7 @@
 package services.optout
 
 import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
 
 case class OptOutProposition(previousTaxYear: PreviousOptOutTaxYear,
@@ -54,6 +55,9 @@ case class OptOutProposition(previousTaxYear: PreviousOptOutTaxYear,
       currentTaxYear.expectedItsaStatusAfter(customerIntent),
       nextTaxYear.expectedItsaStatusAfter(customerIntent))
   }
+
+  def areAllTaxYearsMandated: Boolean =
+    previousTaxYear.status == ITSAStatus.Mandated && currentTaxYear.status == ITSAStatus.Mandated && nextTaxYear.status == ITSAStatus.Mandated
 }
 
 object OptOutProposition {

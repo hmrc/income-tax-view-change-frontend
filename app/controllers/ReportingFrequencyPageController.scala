@@ -53,7 +53,6 @@ class ReportingFrequencyPageController @Inject()(
 
   def show(isAgent: Boolean): Action[AnyContent] =
     auth.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
-
       for {
         (optOutProposition, optOutJourneyType) <- optOutService.reportingFrequencyViewModels()
         optInTaxYears <- optInService.availableOptInTaxYear()
@@ -76,7 +75,8 @@ class ReportingFrequencyPageController @Inject()(
               optOutJourneyUrl = optOutUrl,
               optOutTaxYears = optOutProposition.availableTaxYearsForOptOut,
               optInTaxYears = optInTaxYears,
-              itsaStatusTable = reportingFrequencyViewUtils.itsaStatusTable(optOutProposition)
+              itsaStatusTable = reportingFrequencyViewUtils.itsaStatusTable(optOutProposition),
+              displayManageYourRfSection = !(optOutProposition.areAllTaxYearsMandated || user.incomeSources.areAllBusinessesCeased)
             )
           ))
         } else {
