@@ -57,6 +57,7 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
     }
   }
 
+  @deprecated("Use getAllFinancialDetailsV2 instead", "MISUV-8845")
   def getAllFinancialDetails(implicit user: MtdItUser[_],
                              hc: HeaderCarrier, ec: ExecutionContext): Future[List[(Int, FinancialDetailsResponseModel)]] = {
     Logger("application").debug(
@@ -95,6 +96,7 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
     }
   }
 
+  @deprecated("Use getUnpaidFinancialDetailsV2 instead", "MISUV-8845")
   def getAllUnpaidFinancialDetails()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[List[FinancialDetailsResponseModel]] = {
     getAllFinancialDetails.map { chargesWithYears =>
       chargesWithYears.flatMap {

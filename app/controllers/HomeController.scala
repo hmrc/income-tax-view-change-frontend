@@ -39,7 +39,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success, Try}
 
 @Singleton
 class HomeController @Inject()(val homeView: views.html.Home,
