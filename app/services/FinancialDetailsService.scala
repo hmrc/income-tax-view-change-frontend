@@ -20,13 +20,16 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.FinancialDetailsConnector
 import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
+import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.impl.Promise
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 @Singleton
 class FinancialDetailsService @Inject()(val financialDetailsConnector: FinancialDetailsConnector,
@@ -70,6 +73,28 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
     }).map(_.flatten)
   }
 
+  def getAllFinancialDetailsV2(implicit user: MtdItUser[_],
+                               hc: HeaderCarrier, ec: ExecutionContext): Future[Option[FinancialDetailsResponseModel]] = {
+    Logger("application").debug(
+      s"Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
+
+    val yearsOfMigration = user.incomeSources.orderedTaxYearsByYearOfMigration
+    if (yearsOfMigration.isEmpty)
+      Future.successful(None)
+    else {
+      val (from, to) = (yearsOfMigration.min, yearsOfMigration.max)
+      Logger("application").debug(s"Getting financial details for TaxYears: ${from} - ${to}")
+
+      for {
+        response <- financialDetailsConnector.getFinancialDetails(TaxYear.forYearEnd(from).startYear, TaxYear.forYearEnd(to).startYear, user.nino)
+      } yield response match {
+        case financialDetails: FinancialDetailsModel => Some(financialDetails)
+        case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Some(error)
+        case _ => None
+      }
+    }
+  }
+
   def getAllUnpaidFinancialDetails()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[List[FinancialDetailsResponseModel]] = {
     getAllFinancialDetails.map { chargesWithYears =>
       chargesWithYears.flatMap {
@@ -78,6 +103,16 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
           val unpaidDocDetails: List[DocumentDetail] = financialDetails.unpaidDocumentDetails()
           if (unpaidDocDetails.nonEmpty) Some(financialDetails.copy(documentDetails = unpaidDocDetails)) else None
       }
+    }
+  }
+
+  def getAllUnpaidFinancialDetailsV2()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[FinancialDetailsResponseModel]] = {
+    getAllFinancialDetailsV2.map {
+      case Some(errorModel: FinancialDetailsErrorModel) => Some(errorModel)
+      case Some(financialDetails: FinancialDetailsModel) =>
+        val unpaidDocDetails: List[DocumentDetail] = financialDetails.unpaidDocumentDetails()
+        if (unpaidDocDetails.nonEmpty) Some(financialDetails.copy(documentDetails = unpaidDocDetails)) else None
+      case _ => None
     }
   }
 }

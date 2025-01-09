@@ -126,7 +126,7 @@ class FinancialDetailsConnector @Inject()(
   }
 
   def getCreditsAndRefund(taxYearFrom: TaxYear, taxYearTo: TaxYear, nino: String)
-                           (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[ResponseModel[CreditsModel]] = {
+                         (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[ResponseModel[CreditsModel]] = {
 
     val dateFrom: String = taxYearFrom.toFinancialYearStart.format(DateTimeFormatter.ISO_DATE)
     val dateTo: String = taxYearTo.toFinancialYearEnd.format(DateTimeFormatter.ISO_DATE)
@@ -156,6 +156,45 @@ class FinancialDetailsConnector @Inject()(
 
     val dateFrom: String = (taxYear - 1).toString + "-04-06"
     val dateTo: String = taxYear.toString + "-04-05"
+
+    val url = getChargesUrl(nino, dateFrom, dateTo)
+    Logger("application").debug(s"GET $url")
+
+    val hc: HeaderCarrier = checkAndAddTestHeader(mtdItUser.path, headerCarrier, appConfig.poaAdjustmentOverrides(), "afterPoaAmountAdjusted")
+
+    httpV2
+      .get(url"$url")
+      .setHeader(hc.extraHeaders: _*)
+      .execute[HttpResponse]
+      .map { response =>
+        response.status match {
+          case OK =>
+            Logger("application").debug(s"Status: ${response.status}, json: ${response.json}")
+            response.json.validate[FinancialDetailsModel].fold(
+              invalid => {
+                Logger("application").error(s"Json Validation Error: $invalid")
+                FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing FinancialDetails Data Response")
+              },
+              valid => valid
+            )
+          case status if status >= 500 =>
+            Logger("application").error(s"Status: ${response.status}, body: ${response.body}")
+            FinancialDetailsErrorModel(response.status, response.body)
+          case _ =>
+            Logger("application").warn(s"Status: ${response.status}, body: ${response.body}")
+            FinancialDetailsErrorModel(response.status, response.body)
+        }
+      }.recover {
+        case ex =>
+          Logger("application").error(s"Unexpected failure, ${ex.getMessage}", ex)
+          FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
+      }
+  }
+
+  def getFinancialDetails(taxYearFrom: Int, taxYearTo: Int, nino: String)
+                         (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
+    val dateFrom: String = (taxYearFrom - 1).toString + "-04-06"
+    val dateTo: String = taxYearTo.toString + "-04-05"
 
     val url = getChargesUrl(nino, dateFrom, dateTo)
     Logger("application").debug(s"GET $url")
