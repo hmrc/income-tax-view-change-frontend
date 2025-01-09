@@ -72,8 +72,6 @@ class ReportingFrequencyPageController @Inject()(
 
           val isCeased = user.incomeSources.businesses.forall(_.isCeased)
 
-          user.incomeSources.businesses.foreach(a => println(Console.YELLOW + a.isCeased + Console.RESET))
-
           Ok(view(
             ReportingFrequencyViewModel(
               isAgent = user.isAgent(),
