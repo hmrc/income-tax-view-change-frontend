@@ -35,6 +35,7 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAn
 import scala.concurrent.Future
 
 class OptInCompletedControllerISpec extends ControllerISpecHelper {
+
   val forYearEnd = 2023
   val currentTaxYear: TaxYear = TaxYear.forYearEnd(forYearEnd)
 

@@ -16,7 +16,7 @@
 
 package controllers
 
-import controllers.optIn.SingleTaxYearWarningController
+import controllers.optIn.SingleTaxYearOptInWarningController
 import enums.{MTDIndividual, MTDUserRole}
 import forms.optIn.SingleTaxYearOptInWarningForm
 import mocks.auth.MockAuthActions
@@ -55,7 +55,7 @@ class SingleTaxYearWarningControllerSpec extends MockAuthActions with MockOptInS
       .configure(config)
       .build()
 
-  lazy val testController: SingleTaxYearWarningController = app.injector.instanceOf[SingleTaxYearWarningController]
+  lazy val testController: SingleTaxYearOptInWarningController = app.injector.instanceOf[SingleTaxYearOptInWarningController]
   lazy val singleTaxYearWarningView: SingleTaxYearWarningView = app.injector.instanceOf[SingleTaxYearWarningView]
 
   val taxYear = TaxYear(2024, 2025)

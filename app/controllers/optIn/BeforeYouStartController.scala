@@ -54,8 +54,8 @@ class BeforeYouStartController @Inject()(authActions: AuthActions,
 
   private def startButtonUrl(isAgent: Boolean, availableYears: Seq[TaxYear])(implicit user: MtdItUser[_]) = {
     availableYears match {
-      case Seq(singleYear) =>
-        controllers.optIn.routes.SingleTaxYearWarningController.show(isAgent)
+      case Seq(_) =>
+        controllers.optIn.routes.SingleTaxYearOptInWarningController.show(isAgent)
       case _ => controllers.optIn.routes.ChooseYearController.show(isAgent)
     }
   }

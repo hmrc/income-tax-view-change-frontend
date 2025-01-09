@@ -136,7 +136,7 @@ object WiremockHelper extends Eventually with IntegrationPatience {
       )
     )
 
-  def stubPostWithRequest(url: String, requestBody:JsValue, status: Integer, responseBody: String): StubMapping =
+  def stubPostWithRequest(url: String, requestBody: JsValue, status: Integer, responseBody: String): StubMapping =
     stubFor(post(urlEqualTo(url))
       .withRequestBody(equalToJson(requestBody.toString()))
       .willReturn(
@@ -146,7 +146,7 @@ object WiremockHelper extends Eventually with IntegrationPatience {
       )
     )
 
-  def stubPostWithRequestAndResponseHeaders(url: String, requestBody:JsValue, status: Integer, responseHeaders: Map[String, String] = Map()): StubMapping =
+  def stubPostWithRequestAndResponseHeaders(url: String, requestBody: JsValue, status: Integer, responseHeaders: Map[String, String] = Map()): StubMapping =
     stubFor(post(urlEqualTo(url))
       .withRequestBody(equalToJson(requestBody.toString()))
       .willReturn(
@@ -255,15 +255,18 @@ trait WiremockHelper {
     }
   }
 
-  def buildGETMTDClient(path: String,
-                        additionalCookies: Map[String, String] = Map.empty, isCY: Boolean = false,
-                        additionalHeaders: Map[String, String]= Map.empty): Future[WSResponse] = {
+  def buildGETMTDClient(
+                         path: String,
+                         additionalCookies: Map[String, String] = Map.empty,
+                         isCY: Boolean = false,
+                         additionalHeaders: Map[String, String] = Map.empty
+                       ): Future[WSResponse] = {
     val defaultHeader = Map(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies),
-    "X-Session-ID" -> testSessionId)
+      "X-Session-ID" -> testSessionId)
     val defaultAndAdditionalHeaders = defaultHeader ++ additionalHeaders
-    val headers = if(isCY) defaultAndAdditionalHeaders ++ Map(HeaderNames.ACCEPT_LANGUAGE -> "cy") else defaultAndAdditionalHeaders
+    val headers = if (isCY) defaultAndAdditionalHeaders ++ Map(HeaderNames.ACCEPT_LANGUAGE -> "cy") else defaultAndAdditionalHeaders
     buildClient(path)
-      .withHttpHeaders(headers.toSeq :_*)
+      .withHttpHeaders(headers.toSeq: _*)
       .get()
   }
 

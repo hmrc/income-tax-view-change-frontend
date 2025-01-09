@@ -70,12 +70,9 @@
     }
 }
 
-@formConfirmationAction = @{
-    controllers.optIn.routes.SingleTaxYearWarningController.submit(isAgent)
-}
 
 @confirmOptInForCurrentYearForm = {
-    @formWithCSRF(action = formConfirmationAction, Symbol("id") -> "still-opt-in-form"){
+    @formWithCSRF(action = submitAction, Symbol("id") -> "still-opt-in-form"){
         @govukRadios(Radios(
             fieldset = Some(Fieldset(
                 legend = Some(Legend(

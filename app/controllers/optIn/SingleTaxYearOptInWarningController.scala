@@ -32,17 +32,17 @@ import views.html.optIn.SingleTaxYearWarningView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SingleTaxYearWarningController @Inject()(
-                                                val view: SingleTaxYearWarningView,
-                                                val optInService: OptInService,
-                                                val authActions: AuthActions,
-                                                val itvcErrorHandler: ItvcErrorHandler,
-                                                val itvcErrorHandlerAgent: AgentItvcErrorHandler
-                                              )(
-                                                implicit val appConfig: FrontendAppConfig,
-                                                mcc: MessagesControllerComponents,
-                                                val ec: ExecutionContext
-                                              ) extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
+class SingleTaxYearOptInWarningController @Inject()(
+                                                     val view: SingleTaxYearWarningView,
+                                                     val optInService: OptInService,
+                                                     val authActions: AuthActions,
+                                                     val itvcErrorHandler: ItvcErrorHandler,
+                                                     val itvcErrorHandlerAgent: AgentItvcErrorHandler
+                                                   )(
+                                                     implicit val appConfig: FrontendAppConfig,
+                                                     mcc: MessagesControllerComponents,
+                                                     val ec: ExecutionContext
+                                                   ) extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
 
   val logger = Logger(getClass)
 
@@ -56,7 +56,7 @@ class SingleTaxYearWarningController @Inject()(
     }
   }
 
-  private val submitAction = (isAgent: Boolean) => controllers.optIn.routes.SingleTaxYearWarningController.submit(isAgent)
+  private val submitAction = (isAgent: Boolean) => controllers.optIn.routes.SingleTaxYearOptInWarningController.submit(isAgent)
 
   private[controllers] def handleSubmitRequest(isAgent: Boolean, taxYear: TaxYear)(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
 
@@ -89,15 +89,19 @@ class SingleTaxYearWarningController @Inject()(
       )
   }
 
-  def show(isAgent: Boolean = false): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-    implicit user =>
-      withRecover(isAgent) {
-        optInService.availableOptInTaxYear().map {
-          case Seq(singleYear) => Ok(view(SingleTaxYearOptInWarningForm(singleYear), submitAction(isAgent), isAgent, singleYear))
-          case _ => Redirect(controllers.optIn.routes.ChooseYearController.show(isAgent))
+  def show(isAgent: Boolean = false): Action[AnyContent] =
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
+      implicit user =>
+        withRecover(isAgent) {
+          optInService.availableOptInTaxYear().map {
+            case Seq(singleYear) =>
+              Ok(view(SingleTaxYearOptInWarningForm(singleYear), submitAction(isAgent), isAgent, singleYear))
+            case tax =>
+              println(tax)
+              Redirect(controllers.optIn.routes.ChooseYearController.show(isAgent))
+          }
         }
-      }
-  }
+    }
 
   def submit(isAgent: Boolean): Action[AnyContent] =
     authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
@@ -106,7 +110,8 @@ class SingleTaxYearWarningController @Inject()(
           optInService.availableOptInTaxYear().flatMap {
             case Seq(singleYear) =>
               handleSubmitRequest(isAgent, singleYear)
-            case _ =>
+            case tax =>
+              println(tax)
               Future.successful(Redirect(controllers.optIn.routes.ChooseYearController.show(isAgent)))
           }
         }
