@@ -2334,3 +2334,7 @@ reporting.frequency.table.taxYear                                   = {0} i {1}
 reporting.frequency.table.mandated                                  = Yn chwarterol (gorfodol)
 reporting.frequency.table.voluntary                                 = Yn chwarterol
 reporting.frequency.table.annual                                    = Yn flynyddol
+
+reporting.frequency.ceasedBusiness.warning.text.1                   = Nid oes unrhyw fusnesau ar y cyfrif hwn ar hyn o bryd. Gallwch ychwanegu unig fasnachwr neu fusnes eiddo ar y dudalen
+reporting.frequency.ceasedBusiness.warning.link                     = bob busnes.
+reporting.frequency.ceasedBusiness.warning.text.2                   =

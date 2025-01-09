@@ -115,6 +115,20 @@
     </ul>
 }
 
+@ceasedBusinessWarning = {
+    @if(viewModel.displayCeasedBusinessWarning) {
+        <div class="govuk-warning-text">
+            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+            <strong id="ceased-business-warning" class="govuk-warning-text__text">
+                <span class="govuk-visually-hidden">Warning</span>
+                @messages("reporting.frequency.ceasedBusiness.warning.text.1")
+                <a id="ceased-business-link" class="govuk-link" href="@controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url">@messages("reporting.frequency.ceasedBusiness.warning.link")</a>
+                @messages("reporting.frequency.ceasedBusiness.warning.text.2")
+            </strong>
+        </div>
+    }
+}
+
 @mainTemplate(
     pageTitle = messages("reporting.frequency.title"),
     isAgent = viewModel.isAgent,
@@ -122,6 +136,7 @@
 ) {
 
     @h1(msg = "reporting.frequency.h1", id = Some("reporting-frequency-heading"))
+    @ceasedBusinessWarning
     @itsaStatusTable
     @manageReportingFrequency
 
