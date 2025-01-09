@@ -18,8 +18,9 @@
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
 @import models.incomeSourceDetails.TaxYear
+@import views.html.helpers.injected.ErrorSummary
 @import play.api.data.Form
-@import forms.optIn.ConfirmOptInForm
+@import forms.optIn.SingleTaxYearOptInWarningForm
 
 
 
@@ -33,6 +34,7 @@
         govukTable: GovukTable,
         govukInsetText : GovukInsetText,
         detailsDropdown : detailsDropdown,
+        errorSummary: ErrorSummary,
         formWithCSRF: FormWithCSRF,
         govukRadios: GovukRadios,
         govukButton: GovukButton
@@ -106,7 +108,7 @@
                     ))
                 )
             )
-        ).withFormField(form(ConfirmOptInForm.choiceField)))
+        ).withFormField(form(SingleTaxYearOptInWarningForm.choiceField)))
 
         @govukButton(Button(
             content = Text(messages("optIn.singleTaxYearWarning.continue")),
@@ -120,6 +122,7 @@
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial,
 ) {
+    @errorSummary(form = form)
     @headingSection
     @volReportingAndQuarterlyUpdatesSection
     @detailsDropdown(messages("optIn.singleTaxYearWarning.dropDown.heading"), howToSubmitOverdueDropDown)
