@@ -18,6 +18,7 @@ package models.financialDetails
 
 import config.FrontendAppConfig
 import enums.CodingOutType.{CODING_OUT_ACCEPTED, CODING_OUT_CANCELLED, CODING_OUT_CLASS2_NICS}
+import exceptions.MissingFieldException
 import models.financialDetails.ChargeItem.filterAllowedCharges
 import services.{DateService, DateServiceInterface}
 import testConstants.BaseTestConstants.app
@@ -80,6 +81,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
           documentDetail = defaultDocDetails,
           financialDetails = List(PoaOneReconciliationDebitDetails))
 
+
         chargeItem.isOverdueReviewAndReconcileAccruingInterestCharge()(dateServiceBeforeDueDate) shouldBe true
       }
 
@@ -138,15 +140,19 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
       }
 
-//      "throws MissingFieldException when due date is not found" in {
-//
-//        val chargeItem = ChargeItem.fromDocumentPair(
-//          documentDetail = defaultDocDetails,
-//          financialDetails = List(PoaOneReconciliationDebitDetails))
-//
-//        chargeItem.getDueDate shouldBe LocalDate.of(2024, 1, 1)
-//
-//      }
+      "throws MissingFieldException when due date is not found" in {
+
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(PoaOneReconciliationDebitDetails)).copy(dueDate = None)
+
+        val exception = intercept[MissingFieldException] {
+          chargeItem.getDueDate
+        }
+        exception shouldBe MissingFieldException("documentDueDate")
+
+
+      }
 
     }
 
