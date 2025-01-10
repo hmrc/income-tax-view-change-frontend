@@ -22,6 +22,8 @@ import config.featureswitch._
 import exceptions.MissingFieldException
 import models.homePage._
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
+import models.itsaStatus.ITSAStatus
+import models.itsaStatus.ITSAStatus.ITSAStatus
 import models.obligations.NextUpdatesTileViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -106,7 +108,9 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
                   incomeSourcesEnabled: Boolean = false,
                   incomeSourcesNewJourneyEnabled: Boolean = false,
                   creditAndRefundEnabled: Boolean = false,
-                  user: MtdItUser[_] = testMtdItUserNotMigrated
+                  user: MtdItUser[_] = testMtdItUserNotMigrated,
+                  reportingFrequencyEnabled: Boolean = false,
+                  currentITSAStatus: ITSAStatus = ITSAStatus.Voluntary
                  ) {
 
     val agentHome: PrimaryAgentHome = app.injector.instanceOf[PrimaryAgentHome]
@@ -119,6 +123,8 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
 
     val yourBusinessesTileViewModel = YourBusinessesTileViewModel(displayCeaseAnIncome, incomeSourcesEnabled, incomeSourcesNewJourneyEnabled)
 
+    val accountSettingsTileViewModel = AccountSettingsTileViewModel(TaxYear(currentTaxYear - 1, currentTaxYear), reportingFrequencyEnabled, currentITSAStatus)
+
     val homePageViewModel = HomePageViewModel(
       utr = utr,
       nextUpdatesTileViewModel = nextUpdatesTileViewModel,
@@ -126,6 +132,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
       nextPaymentsTileViewModel = nextPaymentsTileViewModel,
       paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel,
       yourBusinessesTileViewModel = yourBusinessesTileViewModel,
+      accountSettingsTileViewModel = accountSettingsTileViewModel,
       dunningLockExists = dunningLockExists
     )
     val view: HtmlFormat.Appendable = agentHome(
@@ -333,6 +340,35 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
 
         s"has the available credit " in new TestSetup(creditAndRefundEnabled = true) {
           getElementById("available-credit").map(_.text) shouldBe Some("£100.00 is in your account")
+        }
+      }
+
+
+      "have an Account Settings tile" when {
+        "the reporting frequency page FS is enabled" which {
+          "has a heading" in new TestSetup(user = testMtdItUserMigrated, reportingFrequencyEnabled = true) {
+            getElementById("account-settings-tile").map(_.select("h2").first().text()) shouldBe Some("Your account settings")
+          }
+          "has text for reporting quarterly(voluntary)" in new TestSetup(user = testMtdItUserMigrated, reportingFrequencyEnabled = true, currentITSAStatus = ITSAStatus.Voluntary) {
+            getElementById("current-itsa-status") shouldBe Some(s"Reporting quarterly for $currentTaxYear to ${currentTaxYear + 1} tax year")
+          }
+          "has text for reporting quarterly(mandated)" in new TestSetup(user = testMtdItUserMigrated, reportingFrequencyEnabled = true, currentITSAStatus = ITSAStatus.Mandated) {
+            getElementById("current-itsa-status") shouldBe Some(s"Reporting quarterly for $currentTaxYear to ${currentTaxYear + 1} tax year")
+          }
+          "has text for reporting annually" in new TestSetup(user = testMtdItUserMigrated, reportingFrequencyEnabled = true, currentITSAStatus = ITSAStatus.Annual) {
+            getElementById("current-itsa-status") shouldBe Some(s"Reporting annually for $currentTaxYear to ${currentTaxYear + 1} tax year")
+          }
+
+          "has a link to the reporting frequency page" in new TestSetup(user = testMtdItUserMigrated, reportingFrequencyEnabled = true) {
+            getElementById("reporting-frequency-link") shouldBe Some("Manage your reporting frequency")
+            getElementById("reporting-frequency-link").map(_.attr("href")) shouldBe Some(controllers.routes.ReportingFrequencyPageController.show(false).url)
+          }
+        }
+
+        "the reporting frequency page FS is disabled" which {
+          "does not have the Account Settings tile" in new TestSetup(user = testMtdItUserMigrated, reportingFrequencyEnabled = false) {
+            getElementById("account-settings-tile") shouldBe None
+          }
         }
       }
 

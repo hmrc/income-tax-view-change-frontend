@@ -22,6 +22,8 @@ import config.featureswitch.FeatureSwitching
 import models.admin.PaymentHistoryRefunds
 import models.homePage._
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
+import models.itsaStatus.ITSAStatus
+import models.itsaStatus.ITSAStatus.ITSAStatus
 import models.obligations.NextUpdatesTileViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -114,7 +116,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
   class Setup(paymentDueDate: LocalDate = nextPaymentDueDate, overDuePaymentsCount: Int = 0, paymentsAccruingInterestCount: Int = 0, reviewAndReconcileEnabled: Boolean = false,
               nextUpdatesTileViewModel: NextUpdatesTileViewModel = viewModelFuture, utr: Option[String] = Some("1234567890"), paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
               user: MtdItUser[_] = testMtdItUser(), dunningLockExists: Boolean = false, creditAndRefundEnabled: Boolean = false, displayCeaseAnIncome: Boolean = false,
-              incomeSourcesEnabled: Boolean = false, incomeSourcesNewJourneyEnabled: Boolean = false) {
+              incomeSourcesEnabled: Boolean = false, incomeSourcesNewJourneyEnabled: Boolean = false, reportingFrequencyEnabled: Boolean = false, currentITSAStatus: ITSAStatus = ITSAStatus.Voluntary) {
 
     val returnsTileViewModel = ReturnsTileViewModel(currentTaxYear = TaxYear(currentTaxYear - 1, currentTaxYear), iTSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled)
 
@@ -124,6 +126,8 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
     val yourBusinessesTileViewModel = YourBusinessesTileViewModel(displayCeaseAnIncome, incomeSourcesEnabled, incomeSourcesNewJourneyEnabled)
 
+    val accountSettingsTileViewModel = AccountSettingsTileViewModel(TaxYear(currentTaxYear - 1, currentTaxYear), reportingFrequencyEnabled, currentITSAStatus)
+
     val homePageViewModel = HomePageViewModel(
       utr = utr,
       nextUpdatesTileViewModel = nextUpdatesTileViewModel,
@@ -131,6 +135,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       nextPaymentsTileViewModel = nextPaymentsTileViewModel,
       paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel,
       yourBusinessesTileViewModel = yourBusinessesTileViewModel,
+      accountSettingsTileViewModel = accountSettingsTileViewModel,
       dunningLockExists = dunningLockExists
     )
 
@@ -372,6 +377,34 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
         "has a link to AddIncomeSourceController.show()" in new Setup(user = testMtdItUserMigrated(), incomeSourcesEnabled = true, incomeSourcesNewJourneyEnabled = true) {
           getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").text()) shouldBe Some(messages("home.incomeSources.newJourney.view"))
           getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").attr("href")) shouldBe Some(controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
+        }
+      }
+    }
+
+    "have an Account Settings tile" when {
+      "the reporting frequency page FS is enabled" which {
+        "has a heading" in new Setup(user = testMtdItUserMigrated(), reportingFrequencyEnabled = true) {
+          getElementById("account-settings-tile").map(_.select("h2").first().text()) shouldBe Some("Your account settings")
+        }
+        "has text for reporting quarterly(voluntary)" in new Setup(user = testMtdItUserMigrated(), reportingFrequencyEnabled = true, currentITSAStatus = ITSAStatus.Voluntary) {
+          getElementById("current-itsa-status") shouldBe Some(s"Reporting quarterly for $currentTaxYear to ${currentTaxYear + 1} tax year")
+        }
+        "has text for reporting quarterly(mandated)" in new Setup(user = testMtdItUserMigrated(), reportingFrequencyEnabled = true, currentITSAStatus = ITSAStatus.Mandated) {
+          getElementById("current-itsa-status") shouldBe Some(s"Reporting quarterly for $currentTaxYear to ${currentTaxYear + 1} tax year")
+        }
+        "has text for reporting annually" in new Setup(user = testMtdItUserMigrated(), reportingFrequencyEnabled = true, currentITSAStatus = ITSAStatus.Annual) {
+          getElementById("current-itsa-status") shouldBe Some(s"Reporting annually for $currentTaxYear to ${currentTaxYear + 1} tax year")
+        }
+
+        "has a link to the reporting frequency page" in new Setup(user = testMtdItUserMigrated(), reportingFrequencyEnabled = true) {
+          getElementById("reporting-frequency-link") shouldBe Some("Manage your reporting frequency")
+          getElementById("reporting-frequency-link").map(_.attr("href")) shouldBe Some(controllers.routes.ReportingFrequencyPageController.show(false).url)
+        }
+      }
+
+      "the reporting frequency page FS is disabled" which {
+        "does not have the Account Settings tile" in new Setup(user = testMtdItUserMigrated(), reportingFrequencyEnabled = false) {
+          getElementById("account-settings-tile") shouldBe None
         }
       }
     }
