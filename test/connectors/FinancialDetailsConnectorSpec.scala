@@ -198,7 +198,7 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
       }
     }
 
-    ".getFinancialDetails()" should {
+    ".getFinancialDetails() for a single tax year" should {
 
       val successResponse = HttpResponse(status = Status.OK, json = testValidFinancialDetailsModelJsonReads, headers = Map.empty)
       val successResponseBadJson = HttpResponse(status = Status.OK, json = testInvalidFinancialDetailsJson, headers = Map.empty)
@@ -269,6 +269,82 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
           .thenReturn(Future.failed(new Exception("unknown error")))
 
         val result: Future[FinancialDetailsResponseModel] = connector.getFinancialDetails(testYear2017, testNino)
+        result.futureValue shouldBe FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, unknown error")
+      }
+
+    }
+
+    ".getFinancialDetails() for a range of tax years" should {
+
+      val successResponse = HttpResponse(status = Status.OK, json = testValidFinancialDetailsModelJsonReads, headers = Map.empty)
+      val successResponseBadJson = HttpResponse(status = Status.OK, json = testInvalidFinancialDetailsJson, headers = Map.empty)
+      val badResponse = HttpResponse(status = Status.BAD_REQUEST, body = "Error Message")
+
+      "return a FinancialDetails model when successful JSON is received" in new Setup {
+
+        when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
+
+        when(mockRequestBuilder.withBody(any())(any(), any(), any()))
+          .thenReturn(mockRequestBuilder)
+
+        when(mockRequestBuilder.setHeader(any()))
+          .thenReturn(mockRequestBuilder)
+
+        when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
+          .thenReturn(Future(successResponse))
+
+        val result: Future[FinancialDetailsResponseModel] = connector.getFinancialDetails(testYear2017, testYearPlusOne, testNino)
+        result.futureValue shouldBe testValidFinancialDetailsModel
+      }
+
+      "return FinancialDetails model in case of bad/malformed JSON response" in new Setup {
+
+        when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
+
+        when(mockRequestBuilder.withBody(any())(any(), any(), any()))
+          .thenReturn(mockRequestBuilder)
+
+        when(mockRequestBuilder.setHeader(any()))
+          .thenReturn(mockRequestBuilder)
+
+        when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
+          .thenReturn(Future(successResponseBadJson))
+
+        val result: Future[FinancialDetailsResponseModel] = connector.getFinancialDetails(testYear2017, testYearPlusOne, testNino)
+        result.futureValue shouldBe testFinancialDetailsErrorModelParsing
+      }
+
+      "return FinancialDetailsErrorResponse model in case of failure" in new Setup {
+
+        when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
+
+        when(mockRequestBuilder.withBody(any())(any(), any(), any()))
+          .thenReturn(mockRequestBuilder)
+
+        when(mockRequestBuilder.setHeader(any()))
+          .thenReturn(mockRequestBuilder)
+
+        when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
+          .thenReturn(Future(badResponse))
+
+        val result: Future[FinancialDetailsResponseModel] = connector.getFinancialDetails(testYear2017, testYearPlusOne, testNino)
+        result.futureValue shouldBe FinancialDetailsErrorModel(Status.BAD_REQUEST, "Error Message")
+      }
+
+      "return FinancialDetailsErrorModel model in case of future failed scenario" in new Setup {
+
+        when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
+
+        when(mockRequestBuilder.withBody(any())(any(), any(), any()))
+          .thenReturn(mockRequestBuilder)
+
+        when(mockRequestBuilder.setHeader(any()))
+          .thenReturn(mockRequestBuilder)
+
+        when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
+          .thenReturn(Future.failed(new Exception("unknown error")))
+
+        val result: Future[FinancialDetailsResponseModel] = connector.getFinancialDetails(testYear2017, testYearPlusOne, testNino)
         result.futureValue shouldBe FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, unknown error")
       }
 
