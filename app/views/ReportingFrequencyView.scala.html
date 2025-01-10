@@ -135,8 +135,10 @@
 
 @mainTemplate(
     pageTitle = messages("reporting.frequency.title"),
+    backUrl = Some("#"),
     isAgent = viewModel.isAgent,
-    btaNavPartial = user.btaNavPartial
+    btaNavPartial = user.btaNavPartial,
+    useFallbackBackLink = true
 ) {
 
     @h1(msg = "reporting.frequency.h1", id = Some("reporting-frequency-heading"))
