@@ -18,9 +18,8 @@ package controllers.optIn
 
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
-import mocks.services.{MockOptInService, MockOptOutService}
+import mocks.services.MockOptInService
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
-import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Annual, Mandated, Voluntary}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
@@ -30,11 +29,9 @@ import play.api
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.mvc.{Action, AnyContent}
-import play.api.test.Helpers.{contentAsString, status}
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
 import services.optIn.OptInService
 import services.optIn.core.OptInProposition
-import services.optout.{OptOutProposition, OptOutService}
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
 import testConstants.BaseTestConstants.testNino
 import testConstants.BusinessDetailsTestConstants.{business1, testMtdItId}
 import views.html.optIn.OptInCancelledView
