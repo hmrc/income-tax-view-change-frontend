@@ -2319,7 +2319,6 @@ reporting.frequency.mandatoryReporting.text       = You can check the threshold 
 reporting.frequency.mandatoryReporting.link.text  = criteria for people who will need to sign up for Making Tax Digital for Income Tax
 reporting.frequency.mandatoryReporting.link       = https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up
 
-
 reporting.frequency.compatibleSoftware.heading   = When compatible software is required
 reporting.frequency.compatibleSoftware.p1        = If you are reporting quarterly, you will need to use
 reporting.frequency.compatibleSoftware.link      = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax
@@ -2335,3 +2334,7 @@ reporting.frequency.table.taxYear                                   = {0} to {1}
 reporting.frequency.table.mandated                                  = Quarterly (mandatory)
 reporting.frequency.table.voluntary                                 = Quarterly
 reporting.frequency.table.annual                                    = Annual
+
+reporting.frequency.ceasedBusiness.warning.text.1                   = There are currently no businesses on this account. You can add a sole trader or property business on the
+reporting.frequency.ceasedBusiness.warning.link                     = all businesses
+reporting.frequency.ceasedBusiness.warning.text.2                   = page.

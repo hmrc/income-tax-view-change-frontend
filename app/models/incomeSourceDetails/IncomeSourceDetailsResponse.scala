@@ -111,6 +111,8 @@ case class IncomeSourceDetailsModel(nino: String,
       .filterNot(_.isCeased)
       .map(_.cashOrAccruals)
   }
+
+  def areAllBusinessesCeased: Boolean = businesses.forall(_.isCeased)
 }
 
 case class IncomeSourceDetailsError(status: Int, reason: String) extends IncomeSourceDetailsResponse {
