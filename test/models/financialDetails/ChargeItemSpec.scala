@@ -22,7 +22,7 @@ import models.financialDetails.ChargeItem.filterAllowedCharges
 import services.{DateService, DateServiceInterface}
 import testConstants.BaseTestConstants.app
 import testConstants.ChargeConstants
-import testConstants.FinancialDetailsTestConstants.{documentDetailModel, financialDetail, financialDetailsWithReviewAndReconcileDebits}
+import testConstants.FinancialDetailsTestConstants.{documentDetailModel, financialDetail}
 import testUtils.UnitSpec
 
 import java.time.LocalDate
@@ -70,26 +70,37 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
   }
 
   "ChargeItem" when {
+
     "isOverdueReviewAndReconcileAccruingInterestCharge method" when {
 
       "transaction type is PoaOneReconciliationDebit, is not overdue and is not paid returns true" in {
-        val dateServiceAfterDueDate = dateService(dueDate.minusDays(1))
+        val dateServiceBeforeDueDate = dateService(dueDate.minusDays(1))
 
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
           financialDetails = List(PoaOneReconciliationDebitDetails))
 
-        chargeItem.isOverdueReviewAndReconcileAccruingInterestCharge()(dateServiceAfterDueDate) shouldBe true
+        chargeItem.isOverdueReviewAndReconcileAccruingInterestCharge()(dateServiceBeforeDueDate) shouldBe true
       }
 
       "transaction type is PoaTwoReconciliationDebit, is not overdue and is not paid returns true" in {
-        val dateServiceAfterDueDate = dateService(dueDate.minusDays(1))
+        val dateServiceBeforeDueDate = dateService(dueDate.minusDays(1))
 
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
           financialDetails = List(PoaTwoReconciliationDebitDetails))
 
-        chargeItem.isOverdueReviewAndReconcileAccruingInterestCharge()(dateServiceAfterDueDate) shouldBe true
+        chargeItem.isOverdueReviewAndReconcileAccruingInterestCharge()(dateServiceBeforeDueDate) shouldBe true
+      }
+
+      "returns false when charge item is not PoaOneReconciliationDebit or PoaTwoReconciliationDebit " in {
+        val dateServiceAfterDueDate = dateService(dueDate.minusDays(1))
+
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(balancingNics2FinancialDetails))
+
+        chargeItem.isOverdueReviewAndReconcileAccruingInterestCharge()(dateServiceAfterDueDate) shouldBe false
       }
 
       "charge is overdue and is not paid returns false" in {
@@ -103,26 +114,44 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
       }
 
       "charge is not overdue and is paid returns false" in {
-        val dateServiceAfterDueDate = dateService(dueDate.plusDays(1))
+        val dateServiceBeforeDueDate = dateService(dueDate.minusDays(1))
 
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = docDetailsNoOutstandingAmout,
           financialDetails = List(PoaOneReconciliationDebitDetails))
 
-        chargeItem.isOverdueReviewAndReconcileAccruingInterestCharge()(dateServiceAfterDueDate) shouldBe false
+        chargeItem.isOverdueReviewAndReconcileAccruingInterestCharge()(dateServiceBeforeDueDate) shouldBe false
       }
 
-      "returns false when charge item is not PoaOneReconciliationDebit or PoaTwoReconciliationDebit " in {
-        val dateServiceAfterDueDate = dateService(dueDate.minusDays(1))
+
+    }
+
+    "getDueDate method" when {
+
+      "successfully gets due date" in {
 
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
-          financialDetails = List(balancingNics2FinancialDetails))
+          financialDetails = List(PoaOneReconciliationDebitDetails))
 
-        chargeItem.isOverdueReviewAndReconcileAccruingInterestCharge()(dateServiceAfterDueDate) shouldBe false
+        chargeItem.getDueDate shouldBe LocalDate.of(2024, 1, 1)
+
       }
 
+//      "throws MissingFieldException when due date is not found" in {
+//
+//        val chargeItem = ChargeItem.fromDocumentPair(
+//          documentDetail = defaultDocDetails,
+//          financialDetails = List(PoaOneReconciliationDebitDetails))
+//
+//        chargeItem.getDueDate shouldBe LocalDate.of(2024, 1, 1)
+//
+//      }
+
     }
+
+
+
   }
 
   "fromDocumentPair" when {
