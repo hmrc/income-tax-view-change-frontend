@@ -24,7 +24,8 @@ case class ReportingFrequencyViewModel(
                                         optOutJourneyUrl: Option[String],
                                         optOutTaxYears: Seq[TaxYear],
                                         optInTaxYears: Seq[TaxYear],
-                                        itsaStatusTable: Seq[(String, Option[String])]
+                                        itsaStatusTable: Seq[(String, Option[String])],
+                                        displayCeasedBusinessWarning: Boolean
                                       )(implicit dateService: DateServiceInterface) {
 
   val isOptInLinkOnward: Boolean =

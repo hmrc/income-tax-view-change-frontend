@@ -91,7 +91,8 @@ class ReportingFrequencyViewSpec extends TestSupport {
             Some(optOutChooseTaxYearUrl(isAgentFlag)),
             Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
             Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
-            Seq("2024 to 2025" -> Some("Quarterly"))
+            Seq("2024 to 2025" -> Some("Quarterly")),
+            displayCeasedBusinessWarning = false
           )
 
         val pageDocument: Document =
@@ -128,7 +129,8 @@ class ReportingFrequencyViewSpec extends TestSupport {
             Some(optOutChooseTaxYearUrl(isAgentFlag)),
             Seq(TaxYear(2024, 2025)),
             Seq(TaxYear(2024, 2025)),
-            Seq("2024 to 2025" -> Some("Quarterly"))
+            Seq("2024 to 2025" -> Some("Quarterly")),
+            displayCeasedBusinessWarning = false
           )
 
         val pageDocument: Document =
@@ -169,7 +171,8 @@ class ReportingFrequencyViewSpec extends TestSupport {
               "2023 to 2024" -> Some("Quarterly (mandatory)"),
               "2024 to 2025" -> Some("Quarterly"),
               "2025 to 2026" -> Some("Annual"),
-            )
+            ),
+            displayCeasedBusinessWarning = false
           )
 
         val pageDocument: Document =
@@ -239,7 +242,8 @@ class ReportingFrequencyViewSpec extends TestSupport {
             Some(confirmOptOutUrl(isAgentFlag)),
             Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
             Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
-            Seq("2024 to 2025" -> Some("Quarterly"))
+            Seq("2024 to 2025" -> Some("Quarterly")),
+            displayCeasedBusinessWarning = false
           )
 
         val pageDocument: Document =
@@ -264,6 +268,37 @@ class ReportingFrequencyViewSpec extends TestSupport {
         pageDocument.select(bullet(2)).text() shouldBe optInGenericContent
 
         pageDocument.select(bullet(2)).attr("href") shouldBe beforeYouStartUrl(isAgentFlag)
+      }
+
+      "return the correct content when the user has a ceased business" in {
+        val isAgentFlag = false
+
+        val reportingFrequencyViewModel: ReportingFrequencyViewModel =
+          ReportingFrequencyViewModel(
+            isAgent = isAgentFlag,
+            Some(optOutChooseTaxYearUrl(isAgentFlag)),
+            Seq(TaxYear(2024, 2025)),
+            Seq(TaxYear(2024, 2025)),
+            Seq("2024 to 2025" -> Some("Quarterly")),
+            displayCeasedBusinessWarning = true
+          )
+
+        val pageDocument: Document =
+          Jsoup.parse(
+            contentAsString(
+              view.apply(
+                viewModel = reportingFrequencyViewModel
+              )
+            )
+          )
+
+        pageDocument.title() shouldBe title
+
+        testContentByIds(pageDocument)
+
+        pageDocument.getElementById("ceased-business-warning").text() shouldBe "Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page."
+
+        pageDocument.getElementById("ceased-business-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/manage-your-businesses"
       }
     }
   }
