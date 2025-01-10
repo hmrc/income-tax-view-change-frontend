@@ -618,32 +618,6 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
 
         result.futureValue shouldBe None
       }
-      //I think this test only exists for multiple requests, i.e. we make multiple requests and only some fail
-      //Now that we just make one request, I think this test isn't needed
-//      "errored financial transactions exist" in {
-//
-//        val financialDetailError = FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "internal server error")
-//        val expectedResult: List[FinancialDetailsResponseModel] = List(
-//          getFinancialDetailSuccess(documentDetails = List(
-//            fullDocumentDetailModel.copy(outstandingAmount = 100.00)
-//          ), financialDetails = List(
-//            fullFinancialDetailModel
-//          )),
-//          financialDetailError
-//        )
-//
-//        setupMockGetFinancialDetails(getTaxEndYear(fixedDate.minusYears(2)), getTaxEndYear(fixedDate), testNino)(getFinancialDetailSuccess(documentDetails = List(
-//          fullDocumentDetailModel.copy(outstandingAmount = 100.00),
-//          fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(0.00), interestOutstandingAmount = Some(0.00))
-//        ), financialDetails = List(
-//          fullFinancialDetailModel
-//        )))
-//        setupMockGetFinancialDetails(getTaxEndYear(fixedDate), testNino)(financialDetailError)
-//
-//        val result = TestFinancialDetailsService.getAllUnpaidFinancialDetailsV2()(mtdUser(2), headerCarrier, ec)
-//
-//        result.futureValue shouldBe expectedResult
-//      }
     }
     "return unpaid transactions and coding out document details" when {
       "coding out is enabled and coding out data exists" in {
