@@ -70,8 +70,6 @@ class ReportingFrequencyPageController @Inject()(
             }
           }
 
-          val isCeased = user.incomeSources.businesses.forall(_.isCeased)
-
           Ok(view(
             ReportingFrequencyViewModel(
               isAgent = user.isAgent(),
@@ -79,7 +77,7 @@ class ReportingFrequencyPageController @Inject()(
               optOutTaxYears = optOutProposition.availableTaxYearsForOptOut,
               optInTaxYears = optInTaxYears,
               itsaStatusTable = reportingFrequencyViewUtils.itsaStatusTable(optOutProposition),
-              displayCeasedBusinessWarning = isCeased
+              displayCeasedBusinessWarning = user.incomeSources.areAllBusinessesCeased
             )
           ))
         } else {
