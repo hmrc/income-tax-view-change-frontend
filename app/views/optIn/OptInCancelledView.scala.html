@@ -52,33 +52,22 @@
 
 
 @mainTemplate(
-    pageTitle = messages("optout.cancelled.title"),
+    pageTitle = messages("optin.cancelled.title"),
     backUrl = Some("#"),
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial,
     useFallbackBackLink = true
 ) {
 
-    @h1(id = Some("opt-out-cancelled"), msg = messages("optout.cancelled.h1"), classes = "govuk-heading-l")
+    @h1(id = Some("opt-in-cancelled"), msg = messages("optin.cancelled.h1"), classes = "govuk-heading-l")
 
     @p(id=Some("continue-to-report-quarterly")) {
-        @messages("optout.cancelled.p1", currentTaxYearStart, currentTaxYearEnd)
+        @messages("optin.cancelled.p1", currentTaxYearStart, currentTaxYearEnd)
     }
 
     <ul class="govuk-list govuk-list--bullet">
-        <li>@linkComponent(url = nextUpdatesUrl, message = messages("optout.cancelled.bullet1.link"))</li>
-        <li>@linkComponent(url = homePageUrl, message =  messages("optout.cancelled.bullet2.link"))</li>
+        <li>@linkComponent(url = nextUpdatesUrl, message = messages("optin.cancelled.bullet1.link"))</li>
+        <li>@linkComponent(url = homePageUrl, message =  messages("optin.cancelled.bullet2.link"))</li>
     </ul>
-
-    @h2(msg = "optout.cancelled.h2", optId = Some("reporting-annually"))
-
-    @p(id=Some("can-choose-to-report-annually")) {
-        @messages("optout.cancelled.p2")
-    }
-
-    @p(id=Some("change-how-often")) {
-        @linkComponent(id = Some("manage-your-businesses"),url = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url, message = messages("optout.cancelled.p3.link"))
-        @messages("optout.cancelled.p3")
-    }
 
 }

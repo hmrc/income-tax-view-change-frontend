@@ -20,7 +20,8 @@ import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.{MockOptInService, MockOptOutService}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
-import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
+import models.itsaStatus.ITSAStatus
+import models.itsaStatus.ITSAStatus.{Annual, Mandated, Voluntary}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -28,10 +29,12 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
+import play.api.mvc.{Action, AnyContent}
 import play.api.test.Helpers.{contentAsString, status}
 import services.optIn.OptInService
 import services.optIn.core.OptInProposition
 import services.optout.{OptOutProposition, OptOutService}
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
 import testConstants.BaseTestConstants.testNino
 import testConstants.BusinessDetailsTestConstants.{business1, testMtdItId}
 import views.html.optIn.OptInCancelledView
@@ -58,10 +61,10 @@ class OptInCancelledControllerSpec extends MockAuthActions with MockOptInService
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual
     s"show(isAgent = $isAgent)" when {
-      val action = if (isAgent) testController.showAgent() else testController.show()
+      def action: Action[AnyContent] = if (isAgent) testController.showAgent() else testController.show()
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
       s"the user is authenticated as a $mtdRole" should {
-        s"render the opt out cancelled page" in {
+        s"render the opt in cancelled page" in {
           val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2017"), List(business1), Nil)
           setupMockSuccess(mtdRole)
           when(
@@ -72,7 +75,7 @@ class OptInCancelledControllerSpec extends MockAuthActions with MockOptInService
             Future(
               OptInProposition.createOptInProposition(
                 currentYear = TaxYear(2024, 2025),
-                currentYearItsaStatus = Voluntary,
+                currentYearItsaStatus = Annual,
                 nextYearItsaStatus = Mandated
               )
             )
@@ -99,12 +102,10 @@ class OptInCancelledControllerSpec extends MockAuthActions with MockOptInService
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
             ).thenReturn(Future(singleBusinessIncome))
 
-            when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(
+            when(mockOptInService.fetchOptInProposition()(any(), any(), any())).thenReturn(
               Future(
-                OptOutProposition.createOptOutProposition(
+                OptInProposition.createOptInProposition(
                   currentYear = TaxYear(2024, 2025),
-                  previousYearCrystallised = false,
-                  previousYearItsaStatus = Mandated,
                   currentYearItsaStatus = Voluntary,
                   nextYearItsaStatus = Voluntary
                 )

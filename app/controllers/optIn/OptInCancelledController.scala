@@ -76,10 +76,11 @@ class OptInCancelledController @Inject()(val authActions: AuthActions,
     }
   }
 
-  def show(): Action[AnyContent] =
+  def show(): Action[AnyContent] = {
     authActions.asMTDIndividual.async { implicit user =>
       pageRender()
     }
+  }
 
   def showAgent(): Action[AnyContent] =
     authActions.asMTDAgentWithConfirmedClient.async { implicit user =>
