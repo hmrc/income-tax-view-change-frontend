@@ -19,46 +19,59 @@ package testOnly.connectors
 import connectors.RawResponseReads
 import play.api.Logger
 import play.api.http.Status.OK
+import play.api.libs.json.Json
 import testOnly.TestOnlyAppConfig
 import testOnly.models.{DataModel, Nino, SchemaModel}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
-                                     val http: HttpClient
+                                     val http: HttpClientV2
                                     )(implicit ec: ExecutionContext) extends RawResponseReads {
 
   def addSchema(schemaModel: SchemaModel)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
     lazy val url = s"${appConfig.dynamicStubUrl}/setup/schema"
-    http.POST[SchemaModel, HttpResponse](url, schemaModel)
+    http.post(url"$url")
+        .withBody(Json.toJson[SchemaModel](schemaModel))
+        .execute[HttpResponse]
   }
 
   def addData(dataModel: DataModel)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
     lazy val url = s"${appConfig.dynamicStubUrl}/setup/data"
-    http.POST[DataModel, HttpResponse](url, dataModel)
+    http.post(url"$url")
+        .withBody(Json.toJson[DataModel](dataModel))
+        .execute[HttpResponse]
   }
 
   def deleteAllData()(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
     lazy val url = s"${appConfig.dynamicStubUrl}/setup/all-data"
-    http.DELETE[HttpResponse](url)
+    http.delete(url"$url")
+        .execute[HttpResponse]
+
   }
 
   def deleteAllSchemas()(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
     lazy val url = s"${appConfig.dynamicStubUrl}/setup/all-schemas"
-    http.DELETE[HttpResponse](url)
+    http.delete(url"$url")
+        .execute[HttpResponse]
   }
 
   def showLogin(resourceUrl: String)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
     lazy val url = s"${appConfig.dynamicStubUrl}/$resourceUrl"
-    http.GET[HttpResponse](url)
+    http.get(url"$url")
+        .execute[HttpResponse]
   }
 
   def postLogin(resourceUrl: String, nino: String, isAgent: String)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
     lazy val url = s"${appConfig.dynamicStubUrl}/$resourceUrl"
-    http.POSTForm(url, Map("nino" -> Seq(nino), "isAgent" -> Seq(isAgent)))
+    lazy val data = Map("nino" -> Seq(nino), "isAgent" -> Seq(isAgent))
+    http.post(url"$url")
+        .withBody(data)
+        .execute[HttpResponse]
   }
 
   def getOverwriteItsaStatusUrl(nino: String, taxYearRange: String, itsaStatus: String): String = {
@@ -69,11 +82,10 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
   def overwriteItsaStatus(nino: Nino, taxYearRange: String, itsaStatus: String)
                          (implicit headerCarrier: HeaderCarrier): Future[Unit] = {
 
-    http.GET[HttpResponse](getOverwriteItsaStatusUrl(nino.value, taxYearRange, itsaStatus))(
-      httpReads,
-      headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.2.0+json"),
-      ec
-    ) map { response =>
+    val url = getOverwriteItsaStatusUrl(nino.value, taxYearRange, itsaStatus)
+    http.get(url"$url")
+        .setHeader("Accept" -> "application/vnd.hmrc.2.0+json")
+        .execute[HttpResponse] map { response =>
       response.status match {
         case OK =>
           (): Unit
@@ -91,11 +103,10 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
   def overwriteCalculationList(nino: Nino, taxYearRange: String, crystallisationStatus: String)
                               (implicit headerCarrier: HeaderCarrier): Future[Unit] = {
 
-    http.GET[HttpResponse](getOverwriteCalculationListUrl(nino.value, taxYearRange, crystallisationStatus))(
-      httpReads,
-      headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.2.0+json"),
-      ec
-    ) map { response =>
+    val url=getOverwriteCalculationListUrl(nino.value, taxYearRange, crystallisationStatus)
+    http.get(url"$url")
+        .setHeader("Accept" -> "application/vnd.hmrc.2.0+json")
+        .execute[HttpResponse] map { response =>
       response.status match {
         case OK =>
           (): Unit

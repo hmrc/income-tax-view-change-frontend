@@ -20,15 +20,15 @@ import connectors.RawResponseReads
 import play.api.libs.json.{JsValue, Json}
 import testOnly.TestOnlyAppConfig
 import testOnly.models.StubClientDetailsModel
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
+import uk.gov.hmrc.http.client.HttpClientV2
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class MatchingStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
-                                      val http: HttpClient
+                                      val http: HttpClientV2
                                      )(implicit ec: ExecutionContext) extends RawResponseReads {
 
   def stubClient(clientDetails: StubClientDetailsModel)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
@@ -57,7 +57,9 @@ class MatchingStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
       "resultCode" -> clientDetails.status,
       "timeToLive" -> 43200000
     )
-    http.POST[JsValue, HttpResponse](url, json)
+    http.post(url"$url")
+      .withBody(json)
+      .execute[HttpResponse]
   }
 
 }
