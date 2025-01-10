@@ -386,9 +386,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         val expectedResult: Option[FinancialDetailsResponseModel] = Some(financialDetailsError)
 
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate.minusYears(1)), getTaxEndYear(fixedDate), testNino)(financialDetailsError)
-        setupMockGetFinancialDetails(getTaxEndYear(fixedDate), testNino)(financialDetailsError)
 
-        val result = TestFinancialDetailsService.getAllFinancialDetails(mtdUser(2), headerCarrier, ec)
+        val result = TestFinancialDetailsService.getAllFinancialDetailsV2(mtdUser(1), headerCarrier, ec)
 
         result.futureValue shouldBe expectedResult
       }
