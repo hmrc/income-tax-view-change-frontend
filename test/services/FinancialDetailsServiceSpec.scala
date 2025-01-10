@@ -49,10 +49,16 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
     else date.getYear + 1
   }
 
-  private def getFinancialDetailSuccess(taxYear: Int,
-                                        documentDetails: List[DocumentDetail] = List(fullDocumentDetailModel),
-                                        financialDetails: List[FinancialDetail] = List(fullFinancialDetailModel)): FinancialDetailsModel = {
-    FinancialDetailsModel(balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None), documentDetails = documentDetails, financialDetails = financialDetails)
+  private def getFinancialDetailSuccess(documentDetails: List[DocumentDetail] = List(fullDocumentDetailModel),
+                                        financialDetails: List[FinancialDetail] = List(fullFinancialDetailModel)) = {
+    FinancialDetailsModel(balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+      documentDetails = documentDetails, financialDetails = financialDetails)
+  }
+
+  private def getMultiYearFinancialDetailSuccess(documentDetails: List[DocumentDetail] = List(fullDocumentDetailModel, fullDocumentDetailModel),
+                                                  financialDetails: List[FinancialDetail] = List(fullFinancialDetailModel, fullFinancialDetailModel)) = {
+    FinancialDetailsModel(balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+      documentDetails = documentDetails, financialDetails = financialDetails)
   }
 
   private def mtdUser(numYears: Int): MtdItUser[_] = MtdItUser(
@@ -247,7 +253,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
   "getAllFinancialDetails" when {
     "return a set of successful financial details" when {
       "a successful response is returned for a single year" in {
-        val financialDetail = getFinancialDetailSuccess(getTaxEndYear(fixedDate))
+        val financialDetail = getFinancialDetailSuccess()
         val expectedResult: List[(Int, FinancialDetailsResponseModel)] = List(
           (getTaxEndYear(fixedDate), financialDetail)
         )
@@ -258,8 +264,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
       }
 
       "successful responses are returned for multiple years" in {
-        val financialDetailLastYear = getFinancialDetailSuccess(fixedDate.getYear)
-        val financialDetail = getFinancialDetailSuccess(fixedDate.getYear + 1)
+        val financialDetailLastYear = getFinancialDetailSuccess()
+        val financialDetail = getFinancialDetailSuccess()
         val expectedResult: List[(Int, FinancialDetailsResponseModel)] = List(
           (fixedDate.getYear, financialDetailLastYear),
           (fixedDate.getYear + 1, financialDetail)
@@ -273,7 +279,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         result.futureValue shouldBe expectedResult
       }
       "a successful response and a not found response are returned" in {
-        val financialDetailLastYear = getFinancialDetailSuccess(getTaxEndYear(fixedDate.minusYears(1)))
+        val financialDetailLastYear = getFinancialDetailSuccess()
         val financialDetailNotFound = FinancialDetailsErrorModel(Status.NOT_FOUND, "not found")
         val expectedResult: List[(Int, FinancialDetailsResponseModel)] = List(
           (getTaxEndYear(fixedDate.minusYears(1)), financialDetailLastYear)
@@ -326,7 +332,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
       }
       "an error response is returned along with a successful response" in {
         val financialDetailsErrorLastYear = FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "internal server error")
-        val financialDetails = getFinancialDetailSuccess(getTaxEndYear(fixedDate))
+        val financialDetails = getFinancialDetailSuccess()
         val expectedResult: List[(Int, FinancialDetailsResponseModel)] = List(
           (getTaxEndYear(fixedDate.minusYears(1)), financialDetailsErrorLastYear),
           (getTaxEndYear(fixedDate), financialDetails)
@@ -342,32 +348,70 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
     }
   }
 
+  "getAllFinancialDetailsV2" when {
+    "return a set of successful financial details" when {
+      "a successful response is returned for a single year" in {
+        val financialDetail = getFinancialDetailSuccess()
+        val expectedResult: Option[FinancialDetailsResponseModel] = Some(financialDetail)
+
+        setupMockGetFinancialDetails(fixedTaxYear, fixedTaxYear, testNino)(financialDetail)
+        val result = TestFinancialDetailsService.getAllFinancialDetailsV2(mtdUser(1), headerCarrier, ec)
+        result.futureValue shouldBe expectedResult
+      }
+
+      "successful response is returned for multiple years" in {
+        val financialDetail = getMultiYearFinancialDetailSuccess()
+        val expectedResult: Option[FinancialDetailsResponseModel] = Some(financialDetail)
+
+        setupMockGetFinancialDetails(fixedTaxYear.previousYear, fixedTaxYear.nextYear,testNino)(financialDetail)
+
+        val result = TestFinancialDetailsService.getAllFinancialDetailsV2(mtdUser(2), headerCarrier, ec)
+
+        result.futureValue shouldBe expectedResult
+      }
+      "not found response is returned" in {
+        val financialDetailNotFound = FinancialDetailsErrorModel(Status.NOT_FOUND, "not found")
+        val expectedResult: Option[FinancialDetailsResponseModel] = None
+
+        setupMockGetFinancialDetails(fixedTaxYear, fixedTaxYear, testNino)(financialDetailNotFound)
+
+        val result = TestFinancialDetailsService.getAllFinancialDetailsV2(mtdUser(1), headerCarrier, ec)
+
+        result.futureValue shouldBe expectedResult
+      }
+    }
+    "return a set of error transactions" when {
+      "an error response is returned" in {
+        val financialDetailsError = FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "internal service error")
+        val expectedResult: Option[FinancialDetailsResponseModel] = Some(financialDetailsError)
+
+        setupMockGetFinancialDetails(fixedTaxYear, fixedTaxYear, testNino)(financialDetailsError)
+
+        val result = TestFinancialDetailsService.getAllFinancialDetailsV2(mtdUser(1), headerCarrier, ec)
+
+        result.futureValue shouldBe expectedResult
+      }
+    }
+  }
+
   "getAllUnpaidFinancialDetails" when {
     "return financial transactions with only the unpaid transactions" when {
       "only unpaid transactions exist" in {
 
-        val financialDetailLastYear = getFinancialDetailSuccess(
-          taxYear = getTaxEndYear(fixedDate.minusYears(1)),
-          documentDetails = List(
-            fullDocumentDetailModel.copy(outstandingAmount = 100.00, interestOutstandingAmount = Some(0)),
-            fullDocumentDetailModel.copy(outstandingAmount = 200.00, interestOutstandingAmount = Some(0))
-          ),
-          financialDetails = List(
-            fullFinancialDetailModel,
-            fullFinancialDetailModel,
-          )
-        )
-        val financialDetail = getFinancialDetailSuccess(
-          taxYear = getTaxEndYear(fixedDate),
-          documentDetails = List(
-            fullDocumentDetailModel.copy(outstandingAmount = 300.00),
-            fullDocumentDetailModel.copy(outstandingAmount = 400.00)
-          ),
-          financialDetails = List(
-            fullFinancialDetailModel,
-            fullFinancialDetailModel
-          )
-        )
+        val financialDetailLastYear = getFinancialDetailSuccess(documentDetails = List(
+          fullDocumentDetailModel.copy(outstandingAmount = 100.00, interestOutstandingAmount = Some(0)),
+          fullDocumentDetailModel.copy(outstandingAmount = 200.00, interestOutstandingAmount = Some(0))
+        ), financialDetails = List(
+          fullFinancialDetailModel,
+          fullFinancialDetailModel,
+        ))
+        val financialDetail = getFinancialDetailSuccess(documentDetails = List(
+          fullDocumentDetailModel.copy(outstandingAmount = 300.00),
+          fullDocumentDetailModel.copy(outstandingAmount = 400.00)
+        ), financialDetails = List(
+          fullFinancialDetailModel,
+          fullFinancialDetailModel
+        ))
         val expectedResult: List[FinancialDetailsResponseModel] = List(
           financialDetailLastYear,
           financialDetail
@@ -383,52 +427,36 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
       "a mix of unpaid, paid and non charge transactions exist" in {
 
         val expectedResult: List[FinancialDetailsResponseModel] = List(
-          getFinancialDetailSuccess(
-            taxYear = getTaxEndYear(fixedDate.minusYears(1)),
-            documentDetails = List(
-              fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(50.0)),
-              fullDocumentDetailModel.copy(outstandingAmount = 100.00, originalAmount = 100.00),
-              fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(0.00), interestOutstandingAmount = Some(100.00))
-            ),
-            financialDetails = List(
-              fullFinancialDetailModel
-            )
-          ),
-          getFinancialDetailSuccess(
-            taxYear = getTaxEndYear(fixedDate),
-            documentDetails = List(
-              fullDocumentDetailModel.copy(outstandingAmount = 300.00, originalAmount = 300.00),
-              fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(25.0))
-            ),
-            financialDetails = List(
-              fullFinancialDetailModel
-            )
-          )
-        )
-
-        setupMockGetFinancialDetails(getTaxEndYear(fixedDate.minusYears(1)), testNino)(getFinancialDetailSuccess(
-          taxYear = getTaxEndYear(fixedDate.minusYears(1)),
-          documentDetails = List(
+          getFinancialDetailSuccess(documentDetails = List(
             fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(50.0)),
             fullDocumentDetailModel.copy(outstandingAmount = 100.00, originalAmount = 100.00),
-            fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(0.00), interestOutstandingAmount = Some(100.00)),
-            fullDocumentDetailModel.copy(outstandingAmount = 0, originalAmount = -200.00, latePaymentInterestAmount = None, interestOutstandingAmount = None)
-          ),
-          financialDetails = List(
+            fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(0.00), interestOutstandingAmount = Some(100.00))
+          ), financialDetails = List(
             fullFinancialDetailModel
-          )
-        ))
-        setupMockGetFinancialDetails(getTaxEndYear(fixedDate), testNino)(getFinancialDetailSuccess(
-          taxYear = getTaxEndYear(fixedDate),
-          documentDetails = List(
+          )),
+          getFinancialDetailSuccess(documentDetails = List(
             fullDocumentDetailModel.copy(outstandingAmount = 300.00, originalAmount = 300.00),
-            fullDocumentDetailModel.copy(outstandingAmount = 0.00, originalAmount = -400.00, latePaymentInterestAmount = None, interestOutstandingAmount = None),
             fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(25.0))
-          ),
-          financialDetails = List(
+          ), financialDetails = List(
             fullFinancialDetailModel
-          )
-        ))
+          ))
+        )
+
+        setupMockGetFinancialDetails(getTaxEndYear(fixedDate.minusYears(1)), testNino)(getFinancialDetailSuccess(documentDetails = List(
+          fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(50.0)),
+          fullDocumentDetailModel.copy(outstandingAmount = 100.00, originalAmount = 100.00),
+          fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(0.00), interestOutstandingAmount = Some(100.00)),
+          fullDocumentDetailModel.copy(outstandingAmount = 0, originalAmount = -200.00, latePaymentInterestAmount = None, interestOutstandingAmount = None)
+        ), financialDetails = List(
+          fullFinancialDetailModel
+        )))
+        setupMockGetFinancialDetails(getTaxEndYear(fixedDate), testNino)(getFinancialDetailSuccess(documentDetails = List(
+          fullDocumentDetailModel.copy(outstandingAmount = 300.00, originalAmount = 300.00),
+          fullDocumentDetailModel.copy(outstandingAmount = 0.00, originalAmount = -400.00, latePaymentInterestAmount = None, interestOutstandingAmount = None),
+          fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(25.0))
+        ), financialDetails = List(
+          fullFinancialDetailModel
+        )))
 
         val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails()(mtdUser(2), headerCarrier, ec)
 
@@ -436,28 +464,20 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
       }
       "no unpaid transactions exist" in {
 
-        setupMockGetFinancialDetails(getTaxEndYear(fixedDate.minusYears(1)), testNino)(getFinancialDetailSuccess(
-          taxYear = getTaxEndYear(fixedDate.minusYears(1)),
-          documentDetails = List(
-            fullDocumentDetailModel.copy(outstandingAmount = 0, latePaymentInterestAmount = None, interestOutstandingAmount = None),
-            fullDocumentDetailModel.copy(outstandingAmount = 0, latePaymentInterestAmount = None, interestOutstandingAmount = None)
-          ),
-          financialDetails = List(
-            fullFinancialDetailModel,
-            fullFinancialDetailModel
-          )
-        ))
-        setupMockGetFinancialDetails(getTaxEndYear(fixedDate), testNino)(getFinancialDetailSuccess(
-          taxYear = getTaxEndYear(fixedDate),
-          documentDetails = List(
-            fullDocumentDetailModel.copy(outstandingAmount = 0, latePaymentInterestAmount = None, interestOutstandingAmount = None),
-            fullDocumentDetailModel.copy(outstandingAmount = 0, latePaymentInterestAmount = None, interestOutstandingAmount = None)
-          ),
-          financialDetails = List(
-            fullFinancialDetailModel,
-            fullFinancialDetailModel
-          )
-        ))
+        setupMockGetFinancialDetails(getTaxEndYear(fixedDate.minusYears(1)), testNino)(getFinancialDetailSuccess(documentDetails = List(
+          fullDocumentDetailModel.copy(outstandingAmount = 0, latePaymentInterestAmount = None, interestOutstandingAmount = None),
+          fullDocumentDetailModel.copy(outstandingAmount = 0, latePaymentInterestAmount = None, interestOutstandingAmount = None)
+        ), financialDetails = List(
+          fullFinancialDetailModel,
+          fullFinancialDetailModel
+        )))
+        setupMockGetFinancialDetails(getTaxEndYear(fixedDate), testNino)(getFinancialDetailSuccess(documentDetails = List(
+          fullDocumentDetailModel.copy(outstandingAmount = 0, latePaymentInterestAmount = None, interestOutstandingAmount = None),
+          fullDocumentDetailModel.copy(outstandingAmount = 0, latePaymentInterestAmount = None, interestOutstandingAmount = None)
+        ), financialDetails = List(
+          fullFinancialDetailModel,
+          fullFinancialDetailModel
+        )))
 
         val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails()(mtdUser(2), headerCarrier, ec)
 
@@ -467,28 +487,20 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
 
         val financialDetailError = FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "internal server error")
         val expectedResult: List[FinancialDetailsResponseModel] = List(
-          getFinancialDetailSuccess(
-            taxYear = getTaxEndYear(fixedDate.minusYears(1)),
-            documentDetails = List(
-              fullDocumentDetailModel.copy(outstandingAmount = 100.00)
-            ),
-            financialDetails = List(
-              fullFinancialDetailModel
-            )
-          ),
+          getFinancialDetailSuccess(documentDetails = List(
+            fullDocumentDetailModel.copy(outstandingAmount = 100.00)
+          ), financialDetails = List(
+            fullFinancialDetailModel
+          )),
           financialDetailError
         )
 
-        setupMockGetFinancialDetails(getTaxEndYear(fixedDate.minusYears(1)), testNino)(getFinancialDetailSuccess(
-          taxYear = getTaxEndYear(fixedDate.minusYears(1)),
-          documentDetails = List(
-            fullDocumentDetailModel.copy(outstandingAmount = 100.00),
-            fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(0.00), interestOutstandingAmount = Some(0.00))
-          ),
-          financialDetails = List(
-            fullFinancialDetailModel
-          )
-        ))
+        setupMockGetFinancialDetails(getTaxEndYear(fixedDate.minusYears(1)), testNino)(getFinancialDetailSuccess(documentDetails = List(
+          fullDocumentDetailModel.copy(outstandingAmount = 100.00),
+          fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(0.00), interestOutstandingAmount = Some(0.00))
+        ), financialDetails = List(
+          fullFinancialDetailModel
+        )))
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate), testNino)(financialDetailError)
 
         val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails()(mtdUser(2), headerCarrier, ec)
@@ -498,32 +510,24 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
     }
     "return unpaid transactions and coding out document details" when {
       "coding out is enabled and coding out data exists" in {
-        val financialDetailCodingOut = getFinancialDetailSuccess(
-          taxYear = getTaxEndYear(fixedDate.minusYears(1)),
-          documentDetails = List(
-            documentDetailModel(transactionId = "transid1", outstandingAmount = 200.00).copy(
-              interestOutstandingAmount = Some(0), documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_CLASS2_NICS)),
-            documentDetailModel(taxYear = 2021, transactionId = "transid2", outstandingAmount = 0).copy(
-              interestOutstandingAmount = Some(0), documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_ACCEPTED)),
-            documentDetailModel(transactionId = "transid3", outstandingAmount = 0).copy(
-              interestOutstandingAmount = Some(0), documentDescription = Some("TRM Amend Charge"), documentText = Some(CODING_OUT_CANCELLED)),
-          ),
-          financialDetails = List(
-            fullFinancialDetailModel,
-            fullFinancialDetailModel,
-          )
-        )
-        val financialDetail = getFinancialDetailSuccess(
-          taxYear = getTaxEndYear(fixedDate),
-          documentDetails = List(
-            fullDocumentDetailModel.copy(outstandingAmount = 300.00),
-            fullDocumentDetailModel.copy(outstandingAmount = 400.00)
-          ),
-          financialDetails = List(
-            fullFinancialDetailModel,
-            fullFinancialDetailModel
-          )
-        )
+        val financialDetailCodingOut = getFinancialDetailSuccess(documentDetails = List(
+          documentDetailModel(transactionId = "transid1", outstandingAmount = 200.00).copy(
+            interestOutstandingAmount = Some(0), documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_CLASS2_NICS)),
+          documentDetailModel(taxYear = 2021, transactionId = "transid2", outstandingAmount = 0).copy(
+            interestOutstandingAmount = Some(0), documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_ACCEPTED)),
+          documentDetailModel(transactionId = "transid3", outstandingAmount = 0).copy(
+            interestOutstandingAmount = Some(0), documentDescription = Some("TRM Amend Charge"), documentText = Some(CODING_OUT_CANCELLED)),
+        ), financialDetails = List(
+          fullFinancialDetailModel,
+          fullFinancialDetailModel,
+        ))
+        val financialDetail = getFinancialDetailSuccess(documentDetails = List(
+          fullDocumentDetailModel.copy(outstandingAmount = 300.00),
+          fullDocumentDetailModel.copy(outstandingAmount = 400.00)
+        ), financialDetails = List(
+          fullFinancialDetailModel,
+          fullFinancialDetailModel
+        ))
 
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate.minusYears(1)), testNino)(financialDetailCodingOut)
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate), testNino)(financialDetail)
@@ -533,6 +537,111 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         result.futureValue shouldBe List(
           financialDetailCodingOut,
           financialDetail
+        )
+      }
+    }
+  }
+
+  "getAllUnpaidFinancialDetailsV2" when {
+    "return financial transactions with only the unpaid transactions" when {
+      "only unpaid transactions exist" in {
+
+        val financialDetail = getFinancialDetailSuccess(documentDetails = List(
+          fullDocumentDetailModel.copy(outstandingAmount = 100.00, interestOutstandingAmount = Some(0)),
+          fullDocumentDetailModel.copy(outstandingAmount = 200.00, interestOutstandingAmount = Some(0)),
+          fullDocumentDetailModel.copy(outstandingAmount = 300.00),
+          fullDocumentDetailModel.copy(outstandingAmount = 400.00)
+        ), financialDetails = List(
+          fullFinancialDetailModel,
+          fullFinancialDetailModel,
+          fullFinancialDetailModel,
+          fullFinancialDetailModel
+        ))
+
+        val expectedResult: Option[FinancialDetailsResponseModel] = Some(
+          financialDetail
+        )
+
+        setupMockGetFinancialDetails(fixedTaxYear, fixedTaxYear, testNino)(financialDetail)
+        val result = TestFinancialDetailsService.getAllUnpaidFinancialDetailsV2()(mtdUser(1), headerCarrier, ec)
+
+        result.futureValue shouldBe expectedResult
+      }
+      "a mix of unpaid, paid and non charge transactions exist" in {
+
+        val expectedResult: Option[FinancialDetailsResponseModel] = Some(
+          getFinancialDetailSuccess(documentDetails = List(
+            fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(50.0)),
+            fullDocumentDetailModel.copy(outstandingAmount = 100.00, originalAmount = 100.00),
+            fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(0.00), interestOutstandingAmount = Some(100.00)),
+            fullDocumentDetailModel.copy(outstandingAmount = 300.00, originalAmount = 300.00),
+            fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(25.0))
+          ), financialDetails = List(
+            fullFinancialDetailModel,
+            fullFinancialDetailModel
+          ))
+        )
+
+        setupMockGetFinancialDetails(fixedTaxYear.previousYear, fixedTaxYear, testNino)(getFinancialDetailSuccess(documentDetails = List(
+          fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(50.0)),
+          fullDocumentDetailModel.copy(outstandingAmount = 100.00, originalAmount = 100.00),
+          fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(0.00), interestOutstandingAmount = Some(100.00)),
+          fullDocumentDetailModel.copy(outstandingAmount = 0, originalAmount = -200.00, latePaymentInterestAmount = None, interestOutstandingAmount = None),
+          fullDocumentDetailModel.copy(outstandingAmount = 300.00, originalAmount = 300.00),
+          fullDocumentDetailModel.copy(outstandingAmount = 0.00, originalAmount = -400.00, latePaymentInterestAmount = None, interestOutstandingAmount = None),
+          fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(25.0))
+        ), financialDetails = List(
+          fullFinancialDetailModel,
+          fullFinancialDetailModel
+        )))
+
+        val result = TestFinancialDetailsService.getAllUnpaidFinancialDetailsV2()(mtdUser(2), headerCarrier, ec)
+
+        result.futureValue shouldBe expectedResult
+      }
+      "no unpaid transactions exist" in {
+
+        setupMockGetFinancialDetails(fixedTaxYear.previousYear, fixedTaxYear, testNino)(getFinancialDetailSuccess(documentDetails = List(
+          fullDocumentDetailModel.copy(outstandingAmount = 0, latePaymentInterestAmount = None, interestOutstandingAmount = None),
+          fullDocumentDetailModel.copy(outstandingAmount = 0, latePaymentInterestAmount = None, interestOutstandingAmount = None),
+          fullDocumentDetailModel.copy(outstandingAmount = 0, latePaymentInterestAmount = None, interestOutstandingAmount = None),
+          fullDocumentDetailModel.copy(outstandingAmount = 0, latePaymentInterestAmount = None, interestOutstandingAmount = None)
+        ), financialDetails = List(
+          fullFinancialDetailModel,
+          fullFinancialDetailModel,
+          fullFinancialDetailModel,
+          fullFinancialDetailModel
+        )))
+
+        val result = TestFinancialDetailsService.getAllUnpaidFinancialDetailsV2()(mtdUser(2), headerCarrier, ec)
+
+        result.futureValue shouldBe None
+      }
+    }
+    "return unpaid transactions and coding out document details" when {
+      "coding out is enabled and coding out data exists" in {
+        val financialDetailCodingOut = getFinancialDetailSuccess(documentDetails = List(
+          documentDetailModel(transactionId = "transid1", outstandingAmount = 200.00).copy(
+            interestOutstandingAmount = Some(0), documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_CLASS2_NICS)),
+          documentDetailModel(taxYear = 2021, transactionId = "transid2", outstandingAmount = 0).copy(
+            interestOutstandingAmount = Some(0), documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_ACCEPTED)),
+          documentDetailModel(transactionId = "transid3", outstandingAmount = 0).copy(
+            interestOutstandingAmount = Some(0), documentDescription = Some("TRM Amend Charge"), documentText = Some(CODING_OUT_CANCELLED)),
+          fullDocumentDetailModel.copy(outstandingAmount = 300.00),
+          fullDocumentDetailModel.copy(outstandingAmount = 400.00)
+        ), financialDetails = List(
+          fullFinancialDetailModel,
+          fullFinancialDetailModel,
+          fullFinancialDetailModel,
+          fullFinancialDetailModel
+        ))
+
+        setupMockGetFinancialDetails(fixedTaxYear.previousYear, fixedTaxYear, testNino)(financialDetailCodingOut)
+
+        val result = TestFinancialDetailsService.getAllUnpaidFinancialDetailsV2()(mtdUser(2), headerCarrier, ec)
+
+        result.futureValue shouldBe Some(
+          financialDetailCodingOut
         )
       }
     }
