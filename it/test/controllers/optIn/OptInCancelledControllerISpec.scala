@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.optOut
+package controllers.optIn
 
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
@@ -28,7 +28,7 @@ import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants.businessAndPropertyResponseWoMigration
 import uk.gov.hmrc.http.client.HttpClientV2
 
-class OptOutCancelledControllerISpec extends ControllerISpecHelper with FeatureSwitching {
+class OptInCancelledControllerISpec extends ControllerISpecHelper with FeatureSwitching {
 
   override val appConfig: FrontendAppConfig = testAppConfig
 
@@ -36,7 +36,7 @@ class OptOutCancelledControllerISpec extends ControllerISpecHelper with FeatureS
 
   def getPath(mtdRole: MTDUserRole): String = {
     val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
-    pathStart + "/optout/cancelled"
+    pathStart + "/opt-in/cancelled"
   }
 
   mtdAllRoles.foreach { case mtdUserRole =>
@@ -57,7 +57,7 @@ class OptOutCancelledControllerISpec extends ControllerISpecHelper with FeatureS
               ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
                 taxYear = dateService.getCurrentTaxYear,
                 `itsaStatusCY-1` = ITSAStatus.Mandated,
-                itsaStatusCY = ITSAStatus.Voluntary,
+                itsaStatusCY = ITSAStatus.Annual,
                 `itsaStatusCY+1` = ITSAStatus.Mandated
               )
 
@@ -65,7 +65,7 @@ class OptOutCancelledControllerISpec extends ControllerISpecHelper with FeatureS
 
               result should have(
                 httpStatus(OK),
-                pageTitle(mtdUserRole, "optout.cancelled.title")
+                pageTitle(mtdUserRole, "optin.cancelled.title")
               )
             }
           }
@@ -107,8 +107,8 @@ class OptOutCancelledControllerISpec extends ControllerISpecHelper with FeatureS
               ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
                 taxYear = dateService.getCurrentTaxYear,
                 `itsaStatusCY-1` = ITSAStatus.Mandated,
-                itsaStatusCY = ITSAStatus.Voluntary,
-                `itsaStatusCY+1` = ITSAStatus.Voluntary
+                itsaStatusCY = ITSAStatus.Annual,
+                `itsaStatusCY+1` = ITSAStatus.Annual
               )
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
