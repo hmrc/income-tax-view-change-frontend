@@ -45,7 +45,7 @@ class OptInCancelledControllerSpec extends MockAuthActions with MockOptInService
     "feature-switches.read-from-mongo" -> "false"
   )
 
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings()
+  override def fakeApplication(): Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[OptInService].toInstance(mockOptInService)
     )
