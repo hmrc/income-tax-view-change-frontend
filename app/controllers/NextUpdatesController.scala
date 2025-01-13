@@ -22,7 +22,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import models.admin.OptOutFs
+import models.admin.{OptOutFs, ReportingFrequencyPage}
 import models.obligations._
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -59,7 +59,7 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
     }
   }
 
-  def getNextUpdates(backUrl: Call, isAgent: Boolean, errorHandler: ShowInternalServerError, origin: Option[String] = None)
+  def getNextUpdates(backUrl: Call, isAgent: Boolean, errorHandler: ShowInternalServerError, origin: Option[String] = None, showReportingFrequencyContent: Boolean = false)
                     (implicit user: MtdItUser[_]): Future[Result] = {
 
     hasAnyIncomeSource {
@@ -78,7 +78,7 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
             val optOutSetup = {
               for {
                 (checks, optOutOneYearViewModel) <- optOutService.nextUpdatesPageOptOutViewModels()
-              } yield Ok(nextUpdatesOptOutView(viewModel, optOutOneYearViewModel, checks, backUrl.url, isAgent, user.isSupportingAgent, origin))
+              } yield Ok(nextUpdatesOptOutView(viewModel, optOutOneYearViewModel, checks, backUrl.url, isAgent, user.isSupportingAgent, origin, showReportingFrequencyContent))
             }.recoverWith {
               case ex =>
                 Logger("application").error(s"Failed to retrieve quarterly reporting content checks: ${ex.getMessage}")
@@ -97,20 +97,26 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
 
 
   def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async { implicit user =>
+    val shouldShowReportingContent: Boolean = isEnabled(ReportingFrequencyPage)
       getNextUpdates(
         controllers.routes.HomeController.show(origin),
         isAgent = false,
         itvcErrorHandler,
-        origin)
+        origin,
+        shouldShowReportingContent
+      )
   }
 
   def showAgent: Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit mtdItUser =>
+      val shouldShowReportingContent: Boolean = isEnabled(ReportingFrequencyPage)
       getNextUpdates(
         controllers.routes.HomeController.showAgent,
         isAgent = true,
         agentItvcErrorHandler,
-        None)
+        None,
+        shouldShowReportingContent
+      )
   }
 
   private def auditNextUpdates[A](user: MtdItUser[A], isAgent: Boolean, origin: Option[String])(implicit hc: HeaderCarrier, request: Request[_]): Unit =

@@ -769,11 +769,16 @@ nextUpdates.propertyIncome            							   = Property income
 nextUpdates.propertyIncome.UK                                      = UK property
 nextUpdates.propertyIncome.Foreign                                 = Foreign property
 nextUpdates.business            							       = Business income
+
 nextUpdates.optOutOneYear-1                                        = You are currently reporting quarterly on a voluntary basis for the {0} to {1} tax year. You can choose to
 nextUpdates.optOutOneYear-2                                        = opt out of quarterly updates and report annually instead.
+nextUpdates.withReportingFrequencyContent.optOutOneYear-1          = Depending on your circumstances, you may be able to
+nextUpdates.withReportingFrequencyContent.optOutOneYear-2          = view and change your reporting frequency.
 
 nextUpdates.optOutMultiYear-1                                      = You are currently reporting quarterly on a voluntary basis. You can choose to
 nextUpdates.optOutMultiYear-2                                      = opt out of quarterly updates and report annually instead.
+nextUpdates.withReportingFrequencyContent.optOutMultiYear-1        = Depending on your circumstances, you may be able to
+nextUpdates.withReportingFrequencyContent.optOutMultiYear-2        = view and change your reporting frequency.
 
 sections.open.all												   = Show all sections
 sections.close.all												   = Hide all sections

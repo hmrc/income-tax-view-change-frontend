@@ -301,9 +301,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
         Then("the quarterly updates info sections")
         res should have(
-          elementTextBySelector("#one-year-opt-out-message")(expectedValue = "You are currently reporting quarterly on a " +
-            "voluntary basis for the 2021 to 2022 tax year. You can choose to opt out of quarterly updates and " +
-            "report annually instead.")
+          elementTextBySelector("#one-year-opt-out-message")(expectedValue = "Depending on your circumstances, you may be able to view and change your reporting frequency.")
         )
 
       }
@@ -335,8 +333,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
         Then("the quarterly updates info sections")
         res should have(
-          elementTextBySelector("#multi-year-opt-out-message")(expectedValue = "You are currently reporting quarterly on a " +
-            "voluntary basis. You can choose to opt out of quarterly updates and report annually instead.")
+          elementTextBySelector("#multi-year-opt-out-message")(expectedValue = "Depending on your circumstances, you may be able to view and change your reporting frequency.")
         )
       }
     }
