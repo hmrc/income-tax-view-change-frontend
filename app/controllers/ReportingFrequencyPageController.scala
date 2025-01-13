@@ -77,7 +77,8 @@ class ReportingFrequencyPageController @Inject()(
               optOutTaxYears = optOutProposition.availableTaxYearsForOptOut,
               optInTaxYears = optInTaxYears,
               itsaStatusTable = reportingFrequencyViewUtils.itsaStatusTable(optOutProposition),
-              displayCeasedBusinessWarning = user.incomeSources.areAllBusinessesCeased
+              displayCeasedBusinessWarning = user.incomeSources.areAllBusinessesCeased,
+              displayManageYourRfSection = !(optOutProposition.areAllTaxYearsMandated || user.incomeSources.areAllBusinessesCeased)
             )
           ))
         } else {
