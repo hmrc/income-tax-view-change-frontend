@@ -2244,6 +2244,14 @@ optin.optInError.nextUpdates-bullet-2              = a rhoi cynnig arall arni
 optin.optInError.home-bullet-1                     = mynd yn ôl i’r
 optin.optInError.home-bullet-2                     = hafan
 
+# Opt in cancelled page
+
+optin.cancelled.title                              = Y dewis i optio i mewn wedi’i ganslo
+optin.cancelled.h1                                 = Y dewis i optio i mewn wedi’i ganslo
+optin.cancelled.p1                                 = Byddwch yn parhau i gyflwyno adroddiadau’n flynyddol ar gyfer blwyddyn dreth {0} i {1}.
+optin.cancelled.bullet1.link                       = Bwrw golwg dros eich diweddariadau sydd ar y gweill
+optin.cancelled.bullet2.link                       = Ewch i’r hafan
+
 # opt-in completed
 optin.completedOptIn.heading                                = Optio i mewn wedi’i gwblhau
 optin.completedOptIn.overdueUpdates.inset                   = Mae gennych ddiweddariadau hwyr ar gyfer blwyddyn dreth {0} i {1}. Mae’n rhaid i chi gyflwyno’r diweddariadau hyn, ynghyd â’r holl incwm a threuliau sydd eu hangen, gan ddefnyddio’ch meddalwedd sy’n cydweddu.
