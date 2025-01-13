@@ -164,10 +164,18 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
         chargeItem.interestIsPaid shouldBe true
       }
+
+      "interest outstanding amount is not 0 returns false" in {
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(PoaOneReconciliationDebitDetails))
+
+        chargeItem.interestIsPaid shouldBe false
+      }
     }
 
 
-    // TEST interestIsPaid, getInterestPaidStatus, getChargePaidStatus
+    // TEST getInterestPaidStatus, getChargePaidStatus
   }
 
   "fromDocumentPair" when {
