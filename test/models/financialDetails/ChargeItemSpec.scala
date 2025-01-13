@@ -125,7 +125,6 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
         chargeItem.isOverdueReviewAndReconcileAccruingInterestCharge()(dateServiceBeforeDueDate) shouldBe false
       }
 
-
     }
 
     "getDueDate method" when {
@@ -156,8 +155,19 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
     }
 
+    "interestIsPaid method" when {
+
+      "interest outstanding amount is 0 returns true" in {
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(PoaOneReconciliationDebitDetails)).copy(interestOutstandingAmount = Some(BigDecimal(0)))
+
+        chargeItem.interestIsPaid shouldBe true
+      }
+    }
 
 
+    // TEST interestIsPaid, getInterestPaidStatus, getChargePaidStatus
   }
 
   "fromDocumentPair" when {
