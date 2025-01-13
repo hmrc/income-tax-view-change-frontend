@@ -123,7 +123,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
 
     val yourBusinessesTileViewModel = YourBusinessesTileViewModel(displayCeaseAnIncome, incomeSourcesEnabled, incomeSourcesNewJourneyEnabled)
 
-    val accountSettingsTileViewModel = AccountSettingsTileViewModel(TaxYear(currentTaxYear - 1, currentTaxYear), reportingFrequencyEnabled, currentITSAStatus)
+    val accountSettingsTileViewModel = AccountSettingsTileViewModel(TaxYear(currentTaxYear, currentTaxYear + 1), reportingFrequencyEnabled, currentITSAStatus)
 
     val homePageViewModel = HomePageViewModel(
       utr = utr,
@@ -350,18 +350,18 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
             getElementById("account-settings-tile").map(_.select("h2").first().text()) shouldBe Some("Your account settings")
           }
           "has text for reporting quarterly(voluntary)" in new TestSetup(user = testMtdItUserMigrated, reportingFrequencyEnabled = true, currentITSAStatus = ITSAStatus.Voluntary) {
-            getElementById("current-itsa-status") shouldBe Some(s"Reporting quarterly for $currentTaxYear to ${currentTaxYear + 1} tax year")
+            getElementById("current-itsa-status").map(_.text()) shouldBe Some(s"Reporting quarterly for $currentTaxYear to ${currentTaxYear + 1} tax year")
           }
           "has text for reporting quarterly(mandated)" in new TestSetup(user = testMtdItUserMigrated, reportingFrequencyEnabled = true, currentITSAStatus = ITSAStatus.Mandated) {
-            getElementById("current-itsa-status") shouldBe Some(s"Reporting quarterly for $currentTaxYear to ${currentTaxYear + 1} tax year")
+            getElementById("current-itsa-status").map(_.text()) shouldBe Some(s"Reporting quarterly for $currentTaxYear to ${currentTaxYear + 1} tax year")
           }
           "has text for reporting annually" in new TestSetup(user = testMtdItUserMigrated, reportingFrequencyEnabled = true, currentITSAStatus = ITSAStatus.Annual) {
-            getElementById("current-itsa-status") shouldBe Some(s"Reporting annually for $currentTaxYear to ${currentTaxYear + 1} tax year")
+            getElementById("current-itsa-status").map(_.text()) shouldBe Some(s"Reporting annually for $currentTaxYear to ${currentTaxYear + 1} tax year")
           }
 
           "has a link to the reporting frequency page" in new TestSetup(user = testMtdItUserMigrated, reportingFrequencyEnabled = true) {
-            getElementById("reporting-frequency-link") shouldBe Some("Manage your reporting frequency")
-            getElementById("reporting-frequency-link").map(_.attr("href")) shouldBe Some(controllers.routes.ReportingFrequencyPageController.show(false).url)
+            getElementById("reporting-frequency-link").map(_.text()) shouldBe Some("Manage your reporting frequency")
+            getElementById("reporting-frequency-link").map(_.attr("href")) shouldBe Some(controllers.routes.ReportingFrequencyPageController.show(true).url)
           }
         }
 
