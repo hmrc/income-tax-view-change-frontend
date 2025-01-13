@@ -23,7 +23,7 @@ import models.financialDetails.ChargeItem.filterAllowedCharges
 import services.{DateService, DateServiceInterface}
 import testConstants.BaseTestConstants.app
 import testConstants.ChargeConstants
-import testConstants.FinancialDetailsTestConstants.{documentDetailModel, financialDetail}
+import testConstants.FinancialDetailsTestConstants.{documentDetailModel, financialDetail, financialDetails}
 import testUtils.UnitSpec
 
 import java.time.LocalDate
@@ -174,6 +174,32 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
       }
     }
 
+    "getInterestPaidStatus method" when {
+
+      " interest is 0, return paid" in {
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(PoaOneReconciliationDebitDetails)).copy(interestOutstandingAmount = Some(BigDecimal(0)))
+
+        chargeItem.getInterestPaidStatus shouldBe "paid"
+      }
+
+      "interest is part paid, return part-paid" in {
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(PoaOneReconciliationDebitDetails))
+
+        chargeItem.getInterestPaidStatus shouldBe "part-paid"
+      }
+
+      "interest is not paid, return unpaid" in {
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(PoaOneReconciliationDebitDetails)).copy(interestOutstandingAmount = Some(BigDecimal(30)))
+
+        chargeItem.getInterestPaidStatus shouldBe "unpaid"
+      }
+    }
 
     // TEST getInterestPaidStatus, getChargePaidStatus
   }
