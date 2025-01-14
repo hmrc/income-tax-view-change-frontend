@@ -23,7 +23,7 @@ import models.financialDetails.ChargeItem.filterAllowedCharges
 import services.{DateService, DateServiceInterface}
 import testConstants.BaseTestConstants.app
 import testConstants.ChargeConstants
-import testConstants.FinancialDetailsTestConstants.{documentDetailModel, financialDetail, financialDetails}
+import testConstants.FinancialDetailsTestConstants.{documentDetailModel, financialDetail}
 import testUtils.UnitSpec
 
 import java.time.LocalDate
