@@ -201,7 +201,32 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
       }
     }
 
-    // TEST getInterestPaidStatus, getChargePaidStatus
+    "getChargePaidStatus method" when {
+
+      "outstanding amount is 0, return paid" in {
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(PoaOneReconciliationDebitDetails)).copy(outstandingAmount = BigDecimal(0))
+
+        chargeItem.getChargePaidStatus shouldBe "paid"
+      }
+
+      "interest is part paid, return part-paid" in {
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(PoaOneReconciliationDebitDetails))
+
+        chargeItem.getChargePaidStatus shouldBe "part-paid"
+      }
+
+      "interest not paid, return unpaid" in {
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(PoaOneReconciliationDebitDetails)).copy(outstandingAmount = BigDecimal(100))
+
+        chargeItem.getChargePaidStatus shouldBe "unpaid"
+      }
+    }
   }
 
   "fromDocumentPair" when {
