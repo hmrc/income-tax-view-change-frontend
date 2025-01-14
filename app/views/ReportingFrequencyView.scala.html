@@ -122,7 +122,11 @@
             <strong id="ceased-business-warning" class="govuk-warning-text__text">
                 <span class="govuk-visually-hidden">Warning</span>
                 @messages("reporting.frequency.ceasedBusiness.warning.text.1")
-                <a id="ceased-business-link" class="govuk-link" href="@controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url">@messages("reporting.frequency.ceasedBusiness.warning.link")</a>
+                @if(viewModel.isAgent) {
+                    <a id="ceased-business-link" class="govuk-link" href="@controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url">@messages("reporting.frequency.ceasedBusiness.warning.link")</a>
+                } else {
+                    <a id="ceased-business-link" class="govuk-link" href="@controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url">@messages("reporting.frequency.ceasedBusiness.warning.link")</a>
+                }
                 @messages("reporting.frequency.ceasedBusiness.warning.text.2")
             </strong>
         </div>
