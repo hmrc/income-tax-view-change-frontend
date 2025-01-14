@@ -18,7 +18,6 @@ package auth.authV2.actions
 
 import auth.MtdItUser
 import config.FrontendAppConfig
-import controllers.predicates.SaveOriginAndRedirect
 import play.api.i18n.MessagesApi
 import play.api.mvc._
 import services.admin.FeatureSwitchService
@@ -30,7 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class FeatureSwitchRetrievalAction @Inject()(val featureSwitchService: FeatureSwitchService)
                                             (implicit val appConfig: FrontendAppConfig,
                                        val executionContext: ExecutionContext,
-                                       val messagesApi: MessagesApi) extends ActionRefiner[MtdItUser, MtdItUser] with SaveOriginAndRedirect {
+                                       val messagesApi: MessagesApi) extends ActionRefiner[MtdItUser, MtdItUser] {
 
   override def refine[A](request: MtdItUser[A]): Future[Either[Result, MtdItUser[A]]] = {
     featureSwitchService.getAll.map(fs => {

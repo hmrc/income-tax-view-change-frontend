@@ -16,21 +16,19 @@
 
 package controllers.agent
 
+import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.sessionUtils.SessionKeys
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import utils.AuthenticatorPredicate
-import auth.authV2.AuthActions
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
-class RemoveClientDetailsSessionsController @Inject()(val auth: AuthenticatorPredicate,
-                                                      val authActions: AuthActions)
+class RemoveClientDetailsSessionsController @Inject()(val authActions: AuthActions)
                                                      (implicit mcc: MessagesControllerComponents,
                                                       val appConfig: FrontendAppConfig,
                                                       val itvcErrorHandler: AgentItvcErrorHandler,

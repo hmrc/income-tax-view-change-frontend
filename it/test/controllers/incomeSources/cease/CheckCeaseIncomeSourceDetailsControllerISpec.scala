@@ -124,7 +124,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
 
               When(s"I call GET ${selfEmploymentPath}")
               val result = buildGETMTDClient(selfEmploymentPath, additionalCookies).futureValue
-              verifyIncomeSourceDetailsCall(testMtditid)
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(OK),
@@ -151,7 +151,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
 
               When(s"I call GET ${selfEmploymentPath}")
               val result = buildGETMTDClient(selfEmploymentPath, additionalCookies).futureValue
-              verifyIncomeSourceDetailsCall(testMtditid)
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(OK),
@@ -184,7 +184,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
 
               When(s"I call GET ${selfEmploymentPath}")
               val result = buildGETMTDClient(selfEmploymentPath, additionalCookies).futureValue
-              verifyIncomeSourceDetailsCall(testMtditid)
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(SEE_OTHER),
@@ -213,7 +213,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
 
               When(s"I call GET ${ukPropertyPath}")
               val result = buildGETMTDClient(ukPropertyPath, additionalCookies).futureValue
-              verifyIncomeSourceDetailsCall(testMtditid)
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(OK),
@@ -238,7 +238,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
 
               When(s"I call GET $ukPropertyPath")
               val result = buildGETMTDClient(ukPropertyPath, additionalCookies).futureValue
-              verifyIncomeSourceDetailsCall(testMtditid)
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(SEE_OTHER),
@@ -266,7 +266,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
 
               When(s"I call GET ${foreignPropertyPath}")
               val result = buildGETMTDClient(foreignPropertyPath, additionalCookies).futureValue
-              verifyIncomeSourceDetailsCall(testMtditid)
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(OK),
@@ -290,7 +290,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
 
               When(s"I call GET $foreignPropertyPath")
               val result = buildGETMTDClient(foreignPropertyPath, additionalCookies).futureValue
-              verifyIncomeSourceDetailsCall(testMtditid)
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(SEE_OTHER),

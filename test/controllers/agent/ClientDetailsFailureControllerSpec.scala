@@ -16,78 +16,65 @@
 
 package controllers.agent
 
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
-import config.featureswitch.FeatureSwitching
-import mocks.MockItvcErrorHandler
-import mocks.auth.MockFrontendAuthorisedFunctions
+import mocks.auth.MockAuthActions
 import mocks.views.agent.MockClientRelationshipFailure
-import play.api.http.Status
-import play.api.mvc.MessagesControllerComponents
+import play.api
+import play.api.Application
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import testUtils.TestSupport
-import uk.gov.hmrc.auth.core.BearerTokenExpired
+import testConstants.BaseTestConstants.agentAuthRetrievalSuccess
+import uk.gov.hmrc.auth.core.InsufficientEnrolments
+import views.html.agent.errorPages.ClientRelationshipFailure
 
-class ClientDetailsFailureControllerSpec extends TestSupport
+class ClientDetailsFailureControllerSpec extends MockAuthActions
   with MockClientRelationshipFailure
-  with MockFrontendAuthorisedFunctions
-  with FeatureSwitching
-  with MockItvcErrorHandler {
+   {
 
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-  }
+  override lazy val app: Application = applicationBuilderWithAuthBindings
+    .overrides(
+      api.inject.bind[ClientRelationshipFailure].toInstance(clientRelationshipFailure)
+    )
+     .build()
 
-  object TestClientRelationshipFailureController extends ClientRelationshipFailureController(
-    clientRelationshipFailure,
-    mockAuthService
-  )(
-    app.injector.instanceOf[MessagesControllerComponents],
-    appConfig,
-    mockItvcErrorHandler,
-    ec
-  )
+  lazy val testController = app.injector.instanceOf[ClientRelationshipFailureController]
 
   "show" when {
+    val action = testController.show
     "the user is not authenticated" should {
-      "redirect the user to authenticate" in {
-        setupMockAgentAuthorisationException(withClientPredicate = false)
+      "redirect them to sign in" in {
+        setupMockAgentAuthException()
 
-        val result = TestClientRelationshipFailureController.show()(fakeRequestWithActiveSession)
+        val result = action(fakeRequestWithActiveSession)
 
-        status(result) shouldBe Status.SEE_OTHER
+        status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
       }
     }
-
     "the user has timed out" should {
       "redirect to the session timeout page" in {
-        setupMockAgentAuthorisationException(exception = BearerTokenExpired(), withClientPredicate = false)
-
-        val result = TestClientRelationshipFailureController.show()(fakeRequestWithTimeoutSession)
+        val result = action(fakeRequestWithTimeoutSession)
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
       }
     }
-
     "the user does not have an agent reference number" should {
-      "return Ok with technical difficulties" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccessNoEnrolment, withClientPredicate = false)
-        mockShowOkTechnicalDifficulties()
+      "redirect them to the error page" in {
+        setupMockAgentAuthException(InsufficientEnrolments())
 
-        val result = TestClientRelationshipFailureController.show()(fakeRequestWithActiveSession)
+        val result = action(fakeRequestWithActiveSession)
 
-        status(result) shouldBe OK
-        contentType(result) shouldBe Some(HTML)
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentErrorController.show.url)
       }
     }
 
     "return OK and display the client relationship failure page" in {
-      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+      setupMockAgentAuthSuccess(agentAuthRetrievalSuccess)
+      mockBusinessIncomeSource()
       mockClientRelationshipFailure(HtmlFormat.empty)
 
-      val result = TestClientRelationshipFailureController.show()(fakeRequestWithClientDetails)
+      val result = action(fakeRequestWithClientDetails)
 
       status(result) shouldBe OK
       contentType(result) shouldBe Some(HTML)

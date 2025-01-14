@@ -101,7 +101,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ControllerISpecHelper
               setupTestMongoData(incomeSourceType)
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
-              verifyIncomeSourceDetailsCall(testMtditid)
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(OK),

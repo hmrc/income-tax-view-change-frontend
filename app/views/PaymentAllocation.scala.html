@@ -16,7 +16,6 @@
 
 @import implicits.ImplicitCurrencyFormatter._
 @import implicits.ImplicitDateFormatterImpl
-@import exceptions.MissingFieldException
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
 @import views.html.partials.paymentAllocations._
@@ -45,8 +44,12 @@
 @import implicitDateFormatter._
 
 @pageTitle = @{
-    messages(if (paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined))
-        "paymentAllocation.earlyTaxYear.heading" else "paymentAllocation.heading")
+    messages(
+        if(paymentAllocations.hasDocumentDetailWithCredit)
+            "paymentAllocation.earlyTaxYear.heading"
+        else
+            "paymentAllocation.heading"
+    )
 }
 
 @mainTemplate(
@@ -58,13 +61,13 @@
     gatewayPage = gatewayPage
 ) {
 
-    @if(paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
+    @if(paymentAllocations.hasDocumentDetailWithCredit) {
         @h1(msg = "paymentAllocation.earlyTaxYear.heading", id = Some("page-heading"))
     } else {
         @h1(msg = "paymentAllocation.heading", id = Some("page-heading"))
     }
 
-    @if(saUtr.isDefined && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
+    @if(saUtr.isDefined && paymentAllocations.hasDocumentDetailWithCredit) {
         @p(id=Some("sa-note-migrated")){
             @messages("paymentAllocation.sa.info")
             @link(link = appConfig.saViewLandPService(saUtr.get), messageKey = "taxYears.oldSa.content.link",
@@ -77,11 +80,11 @@
     <dl class="govuk-summary-list" id="payment-allocation-charge-table">
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">@messages("paymentAllocation.date")</dt>
-            <dd class="govuk-summary-list__value">@{paymentAllocations.paymentAllocationChargeModel.documentDetails.head.effectiveDateOfPayment.getOrElse(throw MissingFieldException("Effective Date Of Payment")).toLongDate}</dd>
+            <dd class="govuk-summary-list__value">@{paymentAllocations.getEffectiveDateOfPayment.toLongDate}</dd>
         </div>
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">@messages("paymentAllocation.amount")</dt>
-            <dd class="govuk-summary-list__value">@{paymentAllocations.paymentAllocationChargeModel.filteredDocumentDetails.head.originalAmount.abs.toCurrencyString}</dd>
+            <dd class="govuk-summary-list__value">@{paymentAllocations.getOriginalAmount}</dd>
         </div>
     </dl>
 

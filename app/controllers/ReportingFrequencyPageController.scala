@@ -24,10 +24,11 @@ import models.admin.ReportingFrequencyPage
 import models.optout.{OptOutMultiYearViewModel, OptOutOneYearViewModel}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.DateServiceInterface
 import services.optIn.OptInService
 import services.optout.OptOutService
+import services.DateServiceInterface
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import viewUtils.ReportingFrequencyViewUtils
 import views.html.ReportingFrequencyView
 import views.html.errorPages.templates.ErrorTemplate
 
@@ -39,6 +40,7 @@ class ReportingFrequencyPageController @Inject()(
                                                   optInService: OptInService,
                                                   val auth: AuthActions,
                                                   errorTemplate: ErrorTemplate,
+                                                  reportingFrequencyViewUtils: ReportingFrequencyViewUtils,
                                                   view: ReportingFrequencyView
                                                 )(
                                                   implicit val appConfig: FrontendAppConfig,
@@ -50,14 +52,14 @@ class ReportingFrequencyPageController @Inject()(
   extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
 
   def show(isAgent: Boolean): Action[AnyContent] =
-    auth.asIndividualOrAgent(isAgent).async { implicit user =>
+    auth.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
 
       for {
         (optOutProposition, optOutJourneyType) <- optOutService.reportingFrequencyViewModels()
         optInTaxYears <- optInService.availableOptInTaxYear()
 
       } yield {
-        if (isEnabled(ReportingFrequencyPage)) {
+        if (isEnabled(ReportingFrequencyPage) && reportingFrequencyViewUtils.itsaStatusTable(optOutProposition).nonEmpty) {
 
           val optOutUrl: Option[String] = {
             optOutJourneyType.map {
@@ -73,7 +75,10 @@ class ReportingFrequencyPageController @Inject()(
               isAgent = user.isAgent(),
               optOutJourneyUrl = optOutUrl,
               optOutTaxYears = optOutProposition.availableTaxYearsForOptOut,
-              optInTaxYears = optInTaxYears
+              optInTaxYears = optInTaxYears,
+              itsaStatusTable = reportingFrequencyViewUtils.itsaStatusTable(optOutProposition),
+              displayCeasedBusinessWarning = user.incomeSources.areAllBusinessesCeased,
+              displayManageYourRfSection = !(optOutProposition.areAllTaxYearsMandated || user.incomeSources.areAllBusinessesCeased)
             )
           ))
         } else {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package mocks.controllers.predicates
+package views.messages
 
-import controllers.predicates.FeatureSwitchPredicate
-import mocks.services._
-import mocks.services.admin.MockFeatureSwitchService
-import testUtils.TestSupport
+object OptInCancelledViewMessages {
 
-trait MockFeatureSwitchPredicate extends TestSupport with MockFeatureSwitchService with MockAsyncCacheApi {
-
-  object FeatureSwitchPredicate extends FeatureSwitchPredicate(featureSwitchService)(appConfig, ec, messagesApi)
+  val titleIndividualContent = "Opt in cancelled - Manage your Income Tax updates - GOV.UK"
+  val titleAgentContent = "Opt in cancelled - Manage your client’s Income Tax updates - GOV.UK"
+  
+  val h1Content = "Opt in cancelled"
+  val p1Content = "You will continue to report annually for the 2023 to 2024 tax year."
+  val bullet1LinkContent = "View your upcoming updates"
+  val bullet2LinkContent = "Go to home page"
 
 }

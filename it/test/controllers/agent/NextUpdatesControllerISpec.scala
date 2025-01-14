@@ -103,9 +103,9 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
             val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-            verifyIncomeSourceDetailsCall(testMtditid)
+            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-            verifyNextUpdatesCall(testNino)
+            IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
 
             Then("the next update view displays the correct title")
             res should have(
@@ -130,7 +130,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
             val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-            verifyIncomeSourceDetailsCall(testMtditid)
+            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
             IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
 
@@ -170,9 +170,9 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
             val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-            verifyIncomeSourceDetailsCall(testMtditid)
+            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-            verifyNextUpdatesCall(testNino)
+            IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
 
             Then("the next update view displays the correct title")
             res should have(
@@ -212,9 +212,9 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
             val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-            verifyIncomeSourceDetailsCall(testMtditid)
+            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-            verifyNextUpdatesCall(testNino)
+            IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
 
             Then("the next update view displays the correct title")
             res should have(
@@ -258,9 +258,9 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-                verifyNextUpdatesCall(testNino)
+                IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
 
                 Then("the next update view displays the correct title even if the OptOut fail")
                 res should have(
@@ -297,9 +297,9 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-                verifyNextUpdatesCall(testNino)
+                IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
 
                 Then("the next update view displays the correct title even if the OptOut fail")
                 res should have(
@@ -336,9 +336,9 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-                verifyNextUpdatesCall(testNino)
+                IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
 
                 Then("the next update view displays the correct title even if the OptOut fail")
                 res should have(

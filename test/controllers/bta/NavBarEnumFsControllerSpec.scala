@@ -19,35 +19,37 @@ package controllers.bta
 
 import auth.{MtdItUser, MtdItUserWithNino}
 import connectors.BtaNavBarPartialConnector
-import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import models.btaNavBar._
-import org.mockito.ArgumentMatchers.{any, contains}
-import org.mockito.Mockito.when
-import org.scalatest.concurrent.ScalaFutures
-import org.mockito.Mockito.mock
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{mock, when}
+import play.api
+import play.api.Application
 import play.api.i18n.{Lang, Messages}
-import play.api.mvc.MessagesControllerComponents
+import play.api.inject.guice.GuiceApplicationBuilder
 import services.BtaNavBarService
 import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncome
-import testUtils.{TestSupport, UnitSpec}
+import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
-import uk.gov.hmrc.http.HeaderCarrier
 import views.html.navBar.BtaNavBar
 
 import scala.concurrent.Future
 
-class NavBarEnumFsControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
-  with UnitSpec with TestSupport with ScalaFutures {
+class NavBarEnumFsControllerSpec extends TestSupport {
 
-  val mockNavBarService: BtaNavBarService = mock(classOf[BtaNavBarService])
-  val mockBtaNavBarPartialConnector: BtaNavBarPartialConnector = mock(classOf[BtaNavBarPartialConnector])
-  val testView: BtaNavBar = app.injector.instanceOf[BtaNavBar]
-  val mockMcc: MessagesControllerComponents = app.injector.instanceOf[MessagesControllerComponents]
+  lazy val mockNavBarService: BtaNavBarService = mock(classOf[BtaNavBarService])
+  lazy val mockBtaNavBarPartialConnector: BtaNavBarPartialConnector = mock(classOf[BtaNavBarPartialConnector])
+
+  override lazy val app: Application = new GuiceApplicationBuilder()
+    .overrides(
+      api.inject.bind[BtaNavBarService].toInstance(mockNavBarService),
+      api.inject.bind[BtaNavBarPartialConnector].toInstance(mockBtaNavBarPartialConnector)
+    ).build()
+
+  lazy val testController = app.injector.instanceOf[BtaNavBarController]
+
+  lazy val testView: BtaNavBar = app.injector.instanceOf[BtaNavBar]
   val saUtr = "1234567800"
-  implicit val hc: HeaderCarrier = HeaderCarrier()
-
-  lazy val testController = new BtaNavBarController(mockBtaNavBarPartialConnector, testView, mockMcc, mockNavBarService)
 
   lazy val userWithNino: MtdItUserWithNino[Any] = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName),
     None, Some("testUtr"), Some("testCredId"), Some(Individual), None)

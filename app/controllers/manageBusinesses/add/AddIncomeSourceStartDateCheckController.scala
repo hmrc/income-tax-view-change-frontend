@@ -19,7 +19,6 @@ package controllers.manageBusinesses.add
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import controllers.predicates._
 import enums.IncomeSourceJourney.{BeforeSubmissionPage, IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import forms.incomeSources.add.{AddIncomeSourceStartDateCheckForm => form}
@@ -40,7 +39,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AddIncomeSourceStartDateCheckController @Inject()(val authActions: AuthActions,
-                                                        val checkSessionTimeout: SessionTimeoutPredicate,
                                                         val addIncomeSourceStartDateCheckView: AddIncomeSourceStartDateCheck,
                                                         val languageUtils: LanguageUtils,
                                                         val sessionService: SessionService,

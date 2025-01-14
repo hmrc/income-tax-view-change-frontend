@@ -256,10 +256,12 @@ trait WiremockHelper {
   }
 
   def buildGETMTDClient(path: String,
-                        additionalCookies: Map[String, String] = Map.empty, isCY: Boolean = false): Future[WSResponse] = {
+                        additionalCookies: Map[String, String] = Map.empty, isCY: Boolean = false,
+                        additionalHeaders: Map[String, String]= Map.empty): Future[WSResponse] = {
     val defaultHeader = Map(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies),
     "X-Session-ID" -> testSessionId)
-    val headers = if(isCY) defaultHeader ++ Map(HeaderNames.ACCEPT_LANGUAGE -> "cy") else defaultHeader
+    val defaultAndAdditionalHeaders = defaultHeader ++ additionalHeaders
+    val headers = if(isCY) defaultAndAdditionalHeaders ++ Map(HeaderNames.ACCEPT_LANGUAGE -> "cy") else defaultAndAdditionalHeaders
     buildClient(path)
       .withHttpHeaders(headers.toSeq :_*)
       .get()

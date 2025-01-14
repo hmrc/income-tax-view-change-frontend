@@ -2244,6 +2244,14 @@ optin.optInError.nextUpdates-bullet-2              = a rhoi cynnig arall arni
 optin.optInError.home-bullet-1                     = mynd yn ôl i’r
 optin.optInError.home-bullet-2                     = hafan
 
+# Opt in cancelled page
+
+optin.cancelled.title                              = Y dewis i optio i mewn wedi’i ganslo
+optin.cancelled.h1                                 = Y dewis i optio i mewn wedi’i ganslo
+optin.cancelled.p1                                 = Byddwch yn parhau i gyflwyno adroddiadau’n flynyddol ar gyfer blwyddyn dreth {0} i {1}.
+optin.cancelled.bullet1.link                       = Bwrw golwg dros eich diweddariadau sydd ar y gweill
+optin.cancelled.bullet2.link                       = Ewch i’r hafan
+
 # opt-in completed
 optin.completedOptIn.heading                                = Optio i mewn wedi’i gwblhau
 optin.completedOptIn.overdueUpdates.inset                   = Mae gennych ddiweddariadau hwyr ar gyfer blwyddyn dreth {0} i {1}. Mae’n rhaid i chi gyflwyno’r diweddariadau hyn, ynghyd â’r holl incwm a threuliau sydd eu hangen, gan ddefnyddio’ch meddalwedd sy’n cydweddu.
@@ -2325,3 +2333,16 @@ reporting.frequency.compatibleSoftware.link      = https://www.gov.uk/guidance/f
 reporting.frequency.compatibleSoftware.link.text = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
 reporting.frequency.compatibleSoftware.p2        =
 reporting.frequency.compatibleSoftware.p3        = Gallwch chi, neu’ch asiant, ddewis o blith amrywiaeth o becynnau meddalwedd, gan gynnwys rhai sy’n rhad ac am ddim a rhai y mae angen talu amdanynt.
+
+reporting.frequency.table.h2                                        = Pa mor aml y mae angen i chi gyflwyno adroddiadau
+reporting.frequency.table.heading.taxyear                           = Blwyddyn Dreth
+reporting.frequency.table.heading.status                            = Amlder cyflwyno adroddiadau
+
+reporting.frequency.table.taxYear                                   = {0} i {1}
+reporting.frequency.table.mandated                                  = Yn chwarterol (gorfodol)
+reporting.frequency.table.voluntary                                 = Yn chwarterol
+reporting.frequency.table.annual                                    = Yn flynyddol
+
+reporting.frequency.ceasedBusiness.warning.text.1                   = Nid oes unrhyw fusnesau ar y cyfrif hwn ar hyn o bryd. Gallwch ychwanegu unig fasnachwr neu fusnes eiddo ar y dudalen
+reporting.frequency.ceasedBusiness.warning.link                     = bob busnes.
+reporting.frequency.ceasedBusiness.warning.text.2                   =

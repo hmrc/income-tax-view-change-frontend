@@ -169,7 +169,7 @@ class IncomeSourceReportingMethodController @Inject()(val authActions: AuthActio
       case Some(LatencyDetails(_, _, _, taxYear2, _)) if taxYear2.toInt < currentTaxYear =>
         Future.successful(None)
       case Some(LatencyDetails(_, taxYear1, taxYear1LatencyIndicator, taxYear2, taxYear2LatencyIndicator)) =>
-        calculationListService.isTaxYearCrystallised(taxYear1.toInt).flatMap {
+        calculationListService.determineTaxYearCrystallised(taxYear1.toInt).flatMap {
           case true =>
             Future.successful {
               Some(IncomeSourceReportingMethodViewModel(latencyYear1 = None, latencyYear2 = Some(LatencyYear(taxYear2, taxYear2LatencyIndicator))))

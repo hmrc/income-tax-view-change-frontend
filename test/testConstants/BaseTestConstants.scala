@@ -20,7 +20,7 @@ import auth.{MtdItUser, MtdItUserOptionNino}
 import config.FrontendAppConfig
 import models.btaNavBar.ListLinks
 import models.core.Nino
-import models.incomeSourceDetails.IncomeSourceDetailsModel
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
 import play.api.test.FakeRequest
@@ -101,6 +101,7 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
   val testTaxCalculationId = "CALCID"
   val testTimeStampString = "2017-07-06T12:34:56.789Z"
   val testYear2017 = 2017
+  val testTaxYear2017: TaxYear = TaxYear(2017, 2018)
   val testMigrationYear2019 = "2019"
   val testFrom = "2016-04-06"
   val testTo = "2017-04-05"

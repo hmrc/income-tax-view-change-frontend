@@ -128,7 +128,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
                   await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
 
                   val result = buildGETMTDClient(path, additionalCookies).futureValue
-                  verifyIncomeSourceDetailsCall(testMtditid)
+                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
                   result should have(
                     httpStatus(OK),

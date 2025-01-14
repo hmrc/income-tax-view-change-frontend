@@ -25,9 +25,12 @@ class ItvcLanguageControllerISpec extends ComponentSpecBase {
   val testRefererRoute: String = "/test/referer/route"
   val testRefererRouteWithFragment: String = "/test/referer/route#fragment"
 
-  "GET /language/cymraeg" should {
+  val pathCY = "/switch-to-welsh"
+  val pathEN = "/switch-to-english"
+
+  s"GET $pathCY" should {
     "update the PLAY_LANG cookie to cy and return the user where they were when a REFERER is in the headers" in {
-      lazy val resultCy: WSResponse = IncomeTaxViewChangeFrontend.getWithHeaders("/switch-to-welsh", "REFERER" -> testRefererRoute)
+      lazy val resultCy = buildGETMTDClient(pathCY, additionalHeaders = Map("REFERER" -> testRefererRoute)).futureValue
       resultCy.headers.isDefinedAt("Set-Cookie") shouldBe true
       resultCy.headers.toString.contains("PLAY_LANG=cy;") shouldBe true
       resultCy should have(
@@ -36,18 +39,9 @@ class ItvcLanguageControllerISpec extends ComponentSpecBase {
       )
     }
 
-    "update the PLAY_LANG cookie to en and return the user where they were when a REFERER is in the headers" in {
-      lazy val resultCy: WSResponse = IncomeTaxViewChangeFrontend.getWithHeaders("/switch-to-english", ("REFERER" -> testRefererRoute))
-      resultCy.headers.isDefinedAt("Set-Cookie") shouldBe true
-      resultCy.headers.toString.contains("PLAY_LANG=en;") shouldBe true
-      resultCy should have(
-        httpStatus(SEE_OTHER),
-        redirectURI(testRefererRoute)
-      )
-    }
-
     "preserve the fragment in the redirect url" in {
-      lazy val resultCy: WSResponse = IncomeTaxViewChangeFrontend.getWithHeaders("/switch-to-welsh?fragment=fragment", ("REFERER" -> testRefererRoute))
+      lazy val resultCy = buildGETMTDClient(pathCY + "?fragment=fragment", additionalHeaders = Map("REFERER" -> testRefererRoute)).futureValue
+
       resultCy.headers.isDefinedAt("Set-Cookie") shouldBe true
       resultCy.headers.toString.contains("PLAY_LANG=cy;") shouldBe true
       resultCy should have(
@@ -57,7 +51,7 @@ class ItvcLanguageControllerISpec extends ComponentSpecBase {
     }
 
     "update the PLAY_LANG cookie to cy and return the user to the overview page when REFERER is not in the headers" in {
-      lazy val resultCy: WSResponse = IncomeTaxViewChangeFrontend.get("/switch-to-welsh")
+      lazy val resultCy = buildGETMTDClient(pathCY).futureValue
       resultCy.headers.isDefinedAt("Set-Cookie") shouldBe true
       resultCy.headers.toString.contains("PLAY_LANG=cy;") shouldBe true
       resultCy should have(
@@ -67,9 +61,9 @@ class ItvcLanguageControllerISpec extends ComponentSpecBase {
     }
   }
 
-  "GET /language/english" should {
+  s"GET $pathEN" should {
     "update the PLAY_LANG cookie to en and return the user where they were when a REFERER is in the headers" in {
-      lazy val resultEn: WSResponse = IncomeTaxViewChangeFrontend.getWithHeaders("/language/english", ("REFERER" -> testRefererRoute))
+      lazy val resultEn: WSResponse = buildGETMTDClient(pathEN, additionalHeaders = Map("REFERER" -> testRefererRoute)).futureValue
       resultEn.headers.isDefinedAt("Set-Cookie") shouldBe true
       resultEn.headers.toString.contains("PLAY_LANG=en;") shouldBe true
       resultEn should have(
@@ -79,7 +73,7 @@ class ItvcLanguageControllerISpec extends ComponentSpecBase {
     }
 
     "update the PLAY_LANG cookie to en and return the user to the overview page when REFERER is not in the headers" in {
-      lazy val resultEn: WSResponse = IncomeTaxViewChangeFrontend.get("/language/english")
+      lazy val resultEn: WSResponse = buildGETMTDClient(pathEN).futureValue
       resultEn.headers.isDefinedAt("Set-Cookie") shouldBe true
       resultEn.headers.toString.contains("PLAY_LANG=en;") shouldBe true
       resultEn should have(
@@ -87,7 +81,6 @@ class ItvcLanguageControllerISpec extends ComponentSpecBase {
         redirectURI(controllers.routes.HomeController.show().url)
       )
     }
-
 
   }
 }

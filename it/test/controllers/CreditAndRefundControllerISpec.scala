@@ -76,7 +76,7 @@ class CreditAndRefundControllerISpec extends ControllerISpecHelper {
                   mtdUserRole) {
 
                   val res = buildGETMTDClient(path, additionalCookies).futureValue
-                  verifyIncomeSourceDetailsCall(testMtditid)
+                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                   IncomeTaxViewChangeStub.verifyGetFinancialDetailsCreditsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")
                   AuditStub.verifyAuditEvent(ClaimARefundAuditModel(creditsModel = validResponseModel)(mtdUser))
 

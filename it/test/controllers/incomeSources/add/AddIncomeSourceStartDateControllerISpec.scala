@@ -121,7 +121,7 @@ class AddIncomeSourceStartDateControllerISpec extends ControllerISpecHelper {
                   await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
 
                   val result = buildGETMTDClient(path, additionalCookies).futureValue
-                  verifyIncomeSourceDetailsCall(testMtditid)
+                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
                   val expectedHintText: String =  messagesAPI(s"${getPrefix(incomeSourceType)}.hint") + " " +
                     messagesAPI("dateForm.hint")

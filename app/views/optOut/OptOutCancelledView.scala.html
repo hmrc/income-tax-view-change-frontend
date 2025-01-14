@@ -32,7 +32,7 @@
 )
 
 
-@(isAgent:Boolean, currentTaxYearStart: String, currentTaxYearEnd: String)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(isAgent:Boolean, taxYearOpt: Option[TaxYear])(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @nextUpdatesUrl = @{
     if(isAgent) {
@@ -61,8 +61,10 @@
 
     @h1(id = Some("opt-out-cancelled"), msg = messages("optout.cancelled.h1"), classes = "govuk-heading-l")
 
-    @p(id=Some("continue-to-report-quarterly")) {
-        @messages("optout.cancelled.p1", currentTaxYearStart, currentTaxYearEnd)
+    @taxYearOpt.map { taxYear =>
+        @p(id=Some("continue-to-report-quarterly")) {
+            @messages("optout.cancelled.p1", taxYear.startYear.toString, taxYear.endYear.toString)
+        }
     }
 
     <ul class="govuk-list govuk-list--bullet">

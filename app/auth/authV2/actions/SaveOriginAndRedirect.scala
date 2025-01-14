@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.predicates
+package auth.authV2.actions
 
 import auth.MtdItUserBase
 import config.featureswitch.FeatureSwitching

@@ -104,7 +104,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
               IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
               val result = buildGETMTDClient(pathSE, additionalCookies).futureValue
-              verifyIncomeSourceDetailsCall(testMtditid)
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(OK),
@@ -128,7 +128,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
               IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
               val result = buildGETMTDClient(pathSE, additionalCookies).futureValue
-              verifyIncomeSourceDetailsCall(testMtditid)
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
               result should have(
                 httpStatus(SEE_OTHER),
                 redirectURI(homeUrl(mtdUserRole))
@@ -158,7 +158,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
               await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
 
               val result = buildGETMTDClient(pathUK, additionalCookies).futureValue
-              verifyIncomeSourceDetailsCall(testMtditid)
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(OK),
@@ -181,7 +181,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
               await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
 
               val result = buildGETMTDClient(pathUK, additionalCookies).futureValue
-              verifyIncomeSourceDetailsCall(testMtditid)
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
               result should have(
                 httpStatus(SEE_OTHER),
                 redirectURI(homeUrl(mtdUserRole))
@@ -211,7 +211,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
               await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
 
               val result = buildGETMTDClient(pathFP, additionalCookies).futureValue
-              verifyIncomeSourceDetailsCall(testMtditid)
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(OK),
@@ -234,7 +234,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
               await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
 
               val result = buildGETMTDClient(pathFP, additionalCookies).futureValue
-              verifyIncomeSourceDetailsCall(testMtditid)
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
               result should have(
                 httpStatus(SEE_OTHER),
                 redirectURI(homeUrl(mtdUserRole))

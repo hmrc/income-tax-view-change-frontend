@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package helpers.agent
+package helpers
 
 import play.api.libs.crypto.DefaultCookieSigner
 import uk.gov.hmrc.crypto.{PlainText, SymmetricCryptoFactory}

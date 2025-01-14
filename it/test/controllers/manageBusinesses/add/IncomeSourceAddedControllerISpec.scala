@@ -114,7 +114,7 @@ class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
                   IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
 
                   val result = buildGETMTDClient(path, additionalCookies).futureValue
-                  verifyIncomeSourceDetailsCall(testMtditid)
+                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
                   val expectedText: String = getExpectedPageTitle(incomeSourceType)
 

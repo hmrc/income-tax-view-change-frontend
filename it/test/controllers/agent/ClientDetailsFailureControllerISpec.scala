@@ -17,44 +17,45 @@
 package controllers.agent
 
 import config.featureswitch.FeatureSwitching
-import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.AuthStub.titleInternalServer
+import helpers.ComponentSpecBase
+import helpers.servicemocks.{AgentAuthStub, AuthStub}
 import play.api.http.Status._
 import play.api.libs.ws.WSResponse
 
 class ClientDetailsFailureControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
+  val path = "/agents/not-authorised-to-view-client"
+
   s"GET ${controllers.agent.routes.ClientRelationshipFailureController.show.url}" should {
     s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" when {
       "the user is not authenticated" in {
-        stubAuthorisedAgentUser(authorised = false)
+        AuthStub.stubUnauthorised()
 
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getClientRelationshipFailure
+        val result: WSResponse = buildGETMTDClient(path, Map.empty).futureValue
 
-        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn.url}")
         result should have(
           httpStatus(SEE_OTHER),
           redirectURI(controllers.routes.SignInController.signIn.url)
         )
       }
     }
-    s"return $OK with technical difficulties" when {
+    s"redirect to agent error page" when {
       "the user is authenticated but doesn't have the agent enrolment" in {
-        stubAuthorisedAgentUser(authorised = true, hasAgentEnrolment = false)
+        AgentAuthStub.stubNoAgentEnrolment()
 
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getClientRelationshipFailure
+        val result: WSResponse = buildGETMTDClient(path, Map.empty).futureValue
 
         Then(s"Technical difficulties are shown with status OK")
         result should have(
-          httpStatus(OK),
-          pageTitleAgent(titleInternalServer, isErrorPage = true)
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.agent.errors.routes.AgentErrorController.show.url)
         )
       }
     }
     s"return $OK with the enter client utr page" in {
-      stubAuthorisedAgentUser(authorised = true)
+      AuthStub.stubAuthorisedAgent()
 
-      val result: WSResponse = IncomeTaxViewChangeFrontend.getClientRelationshipFailure
+      val result: WSResponse = buildGETMTDClient(path, Map.empty).futureValue
 
       Then("The client relationship failure page is returned to the user")
       result should have(

@@ -20,10 +20,10 @@ import audit.AuditingService
 import audit.models.IvUpliftRequiredAuditModel
 import auth._
 import auth.authV2.AuthExceptions.MissingMtdId
+import authV2.Constants
 import com.google.inject.Singleton
 import config.FrontendAppConfig
 import controllers.agent.AuthUtils.mtdEnrolmentName
-import controllers.predicates.agent.Constants
 import models.OriginEnum
 import play.api.mvc.Results.Redirect
 import play.api.mvc._

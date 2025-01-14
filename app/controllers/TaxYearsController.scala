@@ -21,6 +21,7 @@ import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.FeatureSwitching
 import models.admin.ITSASubmissionIntegration
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.DateServiceInterface
@@ -59,7 +60,9 @@ class TaxYearsController @Inject()(taxYearsView: TaxYears,
         origin = origin)
     } match {
       case Success(taxView) => Future.successful(Ok(taxView))
-      case Failure(_) =>
+      case Failure(ex) =>
+        Logger("application").error(
+          s"failed to render view file for taxYears due to ${ex.getMessage}")
         val errorHandler = if(isAgent) agentItvcErrorHandler else itvcErrorHandler
         Future.successful(errorHandler.showInternalServerError())
     }

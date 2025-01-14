@@ -2244,6 +2244,14 @@ optin.optInError.nextUpdates-bullet-2              = and try again
 optin.optInError.home-bullet-1                     = go back to the
 optin.optInError.home-bullet-2                     = homepage
 
+# Opt in cancelled page
+
+optin.cancelled.title                              = Opt in cancelled
+optin.cancelled.h1                                 = Opt in cancelled
+optin.cancelled.p1                                 = You will continue to report annually for the {0} to {1} tax year.
+optin.cancelled.bullet1.link                       = View your upcoming updates
+optin.cancelled.bullet2.link                       = Go to home page
+
 # opt-in completed
 optin.completedOptIn.heading                                    = Opt in completed
 optin.completedOptIn.overdueUpdates.inset                       = You may have overdue updates for the {0} to {1} tax year. You must submit these updates with all required income and expenses through your compatible software.
@@ -2302,16 +2310,16 @@ reporting.frequency.title = Your reporting frequency
 reporting.frequency.h1    = Your reporting frequency
 reporting.frequency.h2    = Manage your reporting frequency for all your businesses
 
-reporting.frequency.manageReportingFrequency.p1 = If you are reporting annually or voluntarily reporting quarterly, you may be able to change your reporting frequency for specific tax years.
-reporting.frequency.manageReportingFrequency.p2 = This is what you can do for all your businesses:
-reporting.frequency.manageReportingFrequency.optIn.link.generic = Opt in to quarterly reporting
-reporting.frequency.manageReportingFrequency.optIn.link.taxyear = Opt in to quarterly reporting for the {0} to {1} tax year
-reporting.frequency.manageReportingFrequency.optIn.link.onwards = Opt in to quarterly reporting from the {0} to {1} tax year onwards
-reporting.frequency.manageReportingFrequency.optOut.link.generic = Opt out of quarterly reporting and report annually
-reporting.frequency.manageReportingFrequency.optOut.link.taxyear = Opt out of quarterly reporting and report annually for the {0} to {1} tax year
-reporting.frequency.manageReportingFrequency.optOut.link.onwards = Opt out of quarterly reporting and report annually from the {0} to {1} tax year onwards
-reporting.frequency.manageReportingFrequency.b1.link = Opt in to quarterly reporting for the {0} to {1} tax year
-reporting.frequency.manageReportingFrequency.b2.link = Opt out of quarterly reporting and report annually from the {0} to {1} tax year onwards
+reporting.frequency.manageReportingFrequency.p1                     = If you are reporting annually or voluntarily reporting quarterly, you may be able to change your reporting frequency for specific tax years.
+reporting.frequency.manageReportingFrequency.p2                     = This is what you can do for all your businesses:
+reporting.frequency.manageReportingFrequency.optIn.link.generic     = Opt in to quarterly reporting
+reporting.frequency.manageReportingFrequency.optIn.link.taxyear     = Opt in to quarterly reporting for the {0} to {1} tax year
+reporting.frequency.manageReportingFrequency.optIn.link.onwards     = Opt in to quarterly reporting from the {0} to {1} tax year onwards
+reporting.frequency.manageReportingFrequency.optOut.link.generic    = Opt out of quarterly reporting and report annually
+reporting.frequency.manageReportingFrequency.optOut.link.taxyear    = Opt out of quarterly reporting and report annually for the {0} to {1} tax year
+reporting.frequency.manageReportingFrequency.optOut.link.onwards    = Opt out of quarterly reporting and report annually from the {0} to {1} tax year onwards
+reporting.frequency.manageReportingFrequency.b1.link                = Opt in to quarterly reporting for the {0} to {1} tax year
+reporting.frequency.manageReportingFrequency.b2.link                = Opt out of quarterly reporting and report annually from the {0} to {1} tax year onwards
 
 reporting.frequency.mandatoryReporting.heading    = When reporting quarterly is mandatory
 reporting.frequency.mandatoryReporting.inset      = Reporting quarterly is required if your income from self-employment or property, or both, exceeds the income threshold.
@@ -2319,10 +2327,22 @@ reporting.frequency.mandatoryReporting.text       = You can check the threshold 
 reporting.frequency.mandatoryReporting.link.text  = criteria for people who will need to sign up for Making Tax Digital for Income Tax
 reporting.frequency.mandatoryReporting.link       = https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up
 
-
 reporting.frequency.compatibleSoftware.heading   = When compatible software is required
 reporting.frequency.compatibleSoftware.p1        = If you are reporting quarterly, you will need to use
 reporting.frequency.compatibleSoftware.link      = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax
 reporting.frequency.compatibleSoftware.link.text = software compatible with Making Tax Digital for Income Tax
 reporting.frequency.compatibleSoftware.p2        = There are both paid and free options for you or your agent to choose from.
 reporting.frequency.compatibleSoftware.p3        = For reporting annually, you can use either compatible software or your HMRC online account to submit your tax return.
+
+reporting.frequency.table.h2                                        = How often you need to report
+reporting.frequency.table.heading.taxyear                           = Tax year
+reporting.frequency.table.heading.status                            = Reporting frequency
+
+reporting.frequency.table.taxYear                                   = {0} to {1}
+reporting.frequency.table.mandated                                  = Quarterly (mandatory)
+reporting.frequency.table.voluntary                                 = Quarterly
+reporting.frequency.table.annual                                    = Annual
+
+reporting.frequency.ceasedBusiness.warning.text.1                   = There are currently no businesses on this account. You can add a sole trader or property business on the
+reporting.frequency.ceasedBusiness.warning.link                     = all businesses
+reporting.frequency.ceasedBusiness.warning.text.2                   = page.

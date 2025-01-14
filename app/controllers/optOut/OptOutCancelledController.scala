@@ -19,6 +19,7 @@ package controllers.optOut
 import auth.authV2.AuthActions
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
+import models.incomeSourceDetails.TaxYear
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.optout.OptOutService
@@ -30,9 +31,9 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class OptOutCancelledController @Inject()(val authActions: AuthActions,
-                                           optOutService: OptOutService,
-                                           view: OptOutCancelledView,
-                                           errorTemplate: ErrorTemplate
+                                          optOutService: OptOutService,
+                                          view: OptOutCancelledView,
+                                          errorTemplate: ErrorTemplate
                                          )(
                                            implicit val appConfig: FrontendAppConfig,
                                            mcc: MessagesControllerComponents,
@@ -43,69 +44,43 @@ class OptOutCancelledController @Inject()(val authActions: AuthActions,
 
   def show(): Action[AnyContent] =
     authActions.asMTDIndividual.async { implicit user =>
-      for {
-        proposition <- optOutService.fetchOptOutProposition()
-        availableOptOutYears = proposition.availableOptOutYears
-        isOneYearOptOut = proposition.isOneYearOptOut
-      } yield {
-        if (isOneYearOptOut) {
-          availableOptOutYears.headOption.map(_.taxYear) match {
-            case Some(taxYear) =>
-              Ok(view(false, taxYear.startYear.toString, taxYear.endYear.toString))
-            case _ =>
-              InternalServerError(
-                errorTemplate(
-                  pageTitle = "standardError.heading",
-                  heading = "standardError.heading",
-                  message = "standardError.message",
-                  isAgent = false
-                )
+      optOutService.getTaxYearForOptOutCancelled()
+        .map { taxYear: Option[TaxYear] =>
+          Ok(view(
+            isAgent = false,
+            taxYear
+          ))
+        }.recover {
+          case _ =>
+            InternalServerError(
+              errorTemplate(
+                pageTitle = "standardError.heading",
+                heading = "standardError.heading",
+                message = "standardError.message",
+                isAgent = false
               )
-          }
-        } else {
-          InternalServerError(
-            errorTemplate(
-              pageTitle = "standardError.heading",
-              heading = "standardError.heading",
-              message = "standardError.message",
-              isAgent = false
             )
-          )
         }
-      }
     }
 
   def showAgent(): Action[AnyContent] =
     authActions.asMTDAgentWithConfirmedClient.async { implicit user =>
-      for {
-        proposition <- optOutService.fetchOptOutProposition()
-        availableOptOutYears = proposition.availableOptOutYears
-        isOneYearOptOut = proposition.isOneYearOptOut
-      } yield {
-        if (isOneYearOptOut) {
-          availableOptOutYears.headOption.map(_.taxYear) match {
-            case Some(taxYear) =>
-              Ok(view(true, taxYear.startYear.toString, taxYear.endYear.toString))
-            case _ =>
-              InternalServerError(
-                errorTemplate(
-                  pageTitle = "standardError.heading",
-                  heading = "standardError.heading",
-                  message = "standardError.message",
-                  isAgent = true
-                )
+      optOutService.getTaxYearForOptOutCancelled()
+        .map { taxYear: Option[TaxYear] =>
+          Ok(view(
+            isAgent = true,
+            taxYear
+          ))
+        }.recover {
+          case _ =>
+            InternalServerError(
+              errorTemplate(
+                pageTitle = "standardError.heading",
+                heading = "standardError.heading",
+                message = "standardError.message",
+                isAgent = true
               )
-          }
-        } else {
-          InternalServerError(
-            errorTemplate(
-              pageTitle = "standardError.heading",
-              heading = "standardError.heading",
-              message = "standardError.message",
-              isAgent = true
             )
-          )
         }
-      }
     }
 }

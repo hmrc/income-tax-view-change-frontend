@@ -76,7 +76,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
 
                   val result = buildGETMTDClient(path +"?id=1040000124", additionalCookies).futureValue
 
-                  verifyIncomeSourceDetailsCall(testMtditid)
+                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                   result should have(
                     httpStatus(OK)
                   )
@@ -104,7 +104,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
 
                   val res = buildGETMTDClient(path +"?id=1040000123", additionalCookies).futureValue
 
-                  verifyIncomeSourceDetailsCall(testMtditid)
+                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
                   AuditStub.verifyAuditEvent(ChargeSummaryAudit(
                     testUser(mtdUserRole),
@@ -136,7 +136,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
 
                   val res = buildGETMTDClient(path +"?id=1040000123", additionalCookies).futureValue
 
-                  verifyIncomeSourceDetailsCall(testMtditid)
+                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
                   val x = chargeItemWithInterestAndOverdue(BalancingCharge, None, Some(dateService.getCurrentDate.plusDays(20)))
 
@@ -169,7 +169,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
 
                   val res = buildGETMTDClient(path +"?id=1040000123&isInterestCharge=true", additionalCookies).futureValue
 
-                  verifyIncomeSourceDetailsCall(testMtditid)
+                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                   AuditStub.verifyAuditEvent(
                     ChargeSummaryAudit(
                       testUser(mtdUserRole),
@@ -197,7 +197,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
 
                   val res = buildGETMTDClient(path +"?id=1040000123&isInterestCharge=true", additionalCookies).futureValue
 
-                  verifyIncomeSourceDetailsCall(testMtditid)
+                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                   res should have(
                     httpStatus(OK),
                     pageTitle(mtdUserRole, "chargeSummary.lpi.balancingCharge.text"),
@@ -236,7 +236,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
 
                   val res = buildGETMTDClient(path +"?id=1040001234&isInterestCharge=true", additionalCookies).futureValue
 
-                  verifyIncomeSourceDetailsCall(testMtditid)
+                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
                   Then("the result should have a HTTP status of OK (200) and load the correct page")
                   res should have(
@@ -273,7 +273,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
 
                   val res = buildGETMTDClient(path +"?id=CODINGOUT01", additionalCookies).futureValue
 
-                  verifyIncomeSourceDetailsCall(testMtditid)
+                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                   res should have(
                     httpStatus(OK),
                     pageTitle(mtdUserRole, "tax-year-summary.payments.codingOut.text"),
@@ -296,7 +296,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
 
                   val res = buildGETMTDClient(path +"?id=1040000123", additionalCookies).futureValue
 
-                  verifyIncomeSourceDetailsCall(testMtditid)
+                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
                   Then("the result should have a HTTP status of OK (200) and load the correct page")
                   res should have(
@@ -358,7 +358,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
 
                 val res = buildGETMTDClient(path +"?id=1040000123", additionalCookies).futureValue
 
-                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                 val summaryListText = "Due date OVERDUE 30 March 2018 Amount £1,200.00 Still to pay £1,200.00"
                 val hmrcCreated = messagesAPI("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
                 val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,200.00"
@@ -394,7 +394,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
 
                 val res = buildGETMTDClient(path +"?id=1", additionalCookies).futureValue
 
-                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
                 val summaryListText = "Due date 30 March 2018 Amount £1,200.00 Still to pay £0.00"
                 val hmrcCreated = messagesAPI("chargeSummary.chargeHistory.created.hmrcAdjustment.text")

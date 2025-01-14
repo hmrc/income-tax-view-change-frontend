@@ -61,7 +61,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper with FeatureSwi
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                 IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
 
                 verifyAuditEvent(TaxDueResponseAuditModel(testUser(mtdUserRole), TaxDueSummaryViewModel(liabilityCalculationModelSuccessful), testYearInt))
@@ -85,7 +85,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper with FeatureSwi
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                 IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
 
                 res should have(
@@ -106,7 +106,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper with FeatureSwi
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                 IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
 
                 res should have(
@@ -126,7 +126,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper with FeatureSwi
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                 IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
 
                 res should have(
@@ -146,7 +146,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper with FeatureSwi
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-                verifyIncomeSourceDetailsCall(testMtditid)
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                 IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
 
                 res should have(
@@ -170,7 +170,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper with FeatureSwi
 
                   val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-                  verifyIncomeSourceDetailsCall(testMtditid)
+                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                   IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
 
                   res should have(
@@ -192,7 +192,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper with FeatureSwi
 
                   val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-                  verifyIncomeSourceDetailsCall(testMtditid)
+                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                   IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
 
                   res should have(

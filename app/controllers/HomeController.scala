@@ -35,7 +35,6 @@ import play.api.mvc._
 import services._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.AuthenticatorPredicate
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
@@ -51,8 +50,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
                                val financialDetailsService: FinancialDetailsService,
                                val dateService: DateServiceInterface,
                                val whatYouOweService: WhatYouOweService,
-                               auditingService: AuditingService,
-                               auth: AuthenticatorPredicate)
+                               auditingService: AuditingService)
                               (implicit val ec: ExecutionContext,
                                implicit val itvcErrorHandler: ItvcErrorHandler,
                                implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
@@ -102,7 +100,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
   private def buildHomePage(nextUpdatesDueDates: Seq[LocalDate], origin: Option[String])
                            (implicit user: MtdItUser[_]): Future[Result] =
     for {
-      unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails()
+      unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails
       paymentsDue = getDueDates(unpaidCharges)
       dunningLockExists = hasDunningLock(unpaidCharges)
       outstandingChargesModel <- getOutstandingChargesModel(unpaidCharges)
