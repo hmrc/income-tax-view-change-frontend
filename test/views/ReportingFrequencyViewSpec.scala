@@ -323,7 +323,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
             )
           )
 
-        pageDocument.title() shouldBe title
+        pageDocument.title() shouldBe agentTitle
 
         testContentByIds(pageDocument)
 
