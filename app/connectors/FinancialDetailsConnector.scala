@@ -23,7 +23,6 @@ import models.core.{CorrelationId, Nino}
 import models.creditsandrefunds.CreditsModel
 import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
-import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel, OutstandingChargesResponseModel}
 import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel, FinancialDetailsWithDocumentDetailsResponse}
 import models.paymentAllocations.{PaymentAllocations, PaymentAllocationsError, PaymentAllocationsResponse}
 import play.api.Logger
@@ -50,9 +49,6 @@ class FinancialDetailsConnector @Inject()(
 
   private[connectors] def getCreditAndRefundUrl(nino: String, from: String, to: String): String =
     baseUrl + s"/$nino/financial-details/credits/from/$from/to/$to"
-
-  private[connectors] def getOutstandingChargesUrl(idType: String, idNumber: String, taxYear: String): String =
-    baseUrl + s"/out-standing-charges/$idType/$idNumber/$taxYear"
 
   private[connectors] def getPaymentsUrl(nino: String, from: String, to: String): String =
     baseUrl + s"/$nino/financial-details/payments/from/$from/to/$to"
@@ -227,41 +223,6 @@ class FinancialDetailsConnector @Inject()(
         case ex =>
           Logger("application").error(s"Unexpected failure, ${ex.getMessage}", ex)
           FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
-      }
-  }
-
-  def getOutstandingCharges(idType: String, idNumber: String, taxYear: String)
-                           (implicit headerCarrier: HeaderCarrier): Future[OutstandingChargesResponseModel] = {
-
-
-    val url = getOutstandingChargesUrl(idType, idNumber, s"$taxYear-04-05")
-    Logger("application").debug(s"GET $url")
-
-    httpV2
-      .get(url"$url")
-      .execute[HttpResponse]
-      .map { response =>
-        response.status match {
-          case OK =>
-            Logger("application").debug(s"Status: ${response.status}, json: ${response.json}")
-            response.json.validate[OutstandingChargesModel].fold(
-              invalid => {
-                Logger("application").error(s"Json Validation Error: $invalid")
-                OutstandingChargesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing OutstandingCharges Data Response")
-              },
-              valid => valid
-            )
-          case status if status >= 500 =>
-            Logger("application").error(s"Status: ${response.status}, body: ${response.body}")
-            OutstandingChargesErrorModel(response.status, response.body)
-          case _ =>
-            Logger("application").warn(s"Status: ${response.status}, body: ${response.body}")
-            OutstandingChargesErrorModel(response.status, response.body)
-        }
-      }.recover {
-        case ex =>
-          Logger("application").error(s"Unexpected failure, ${ex.getMessage}", ex)
-          OutstandingChargesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
       }
   }
 

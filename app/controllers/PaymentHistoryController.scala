@@ -62,7 +62,7 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
                     isAgent: Boolean)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] =
     for {
-      payments                       <- paymentHistoryService.getPaymentHistoryV2
+      payments                       <- paymentHistoryService.getPaymentHistory
       repayments                     <- paymentHistoryService.getRepaymentHistory(isEnabled(PaymentHistoryRefunds))
     } yield (payments, repayments) match {
 
@@ -74,7 +74,7 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
 
         val paymentHistoryEntries = RepaymentHistoryUtils.getGroupedPaymentHistoryData(
           isAgent = isAgent,
-          payments = payments.toList,
+          payments = payments,
           repayments = repayments,
           languageUtils = languageUtils,
           reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa)
