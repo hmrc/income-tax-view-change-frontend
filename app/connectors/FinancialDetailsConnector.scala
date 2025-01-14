@@ -298,6 +298,38 @@ class FinancialDetailsConnector @Inject()(
       }
   }
 
+  def getPayments(taxYearFrom: TaxYear, taxYearTo: TaxYear)
+                 (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[PaymentsResponse] = {
+    val dateFrom: String = taxYearFrom.toFinancialYearStart.format(DateTimeFormatter.ISO_DATE)
+    val dateTo: String = taxYearTo.toFinancialYearEnd.format(DateTimeFormatter.ISO_DATE)
+
+    val url: String = getPaymentsUrl(mtdUser.nino, dateFrom, dateTo)
+    Logger("application").debug(s"GET $url")
+
+    httpV2
+      .get(url"$url")
+      .execute[HttpResponse]
+      .map { response =>
+        response.status match {
+          case OK =>
+            Logger("application").info(s"Status: ${response.status}, json: ${response.json}")
+            response.json.validate[Seq[Payment]].fold(
+              invalid => {
+                Logger("application").error(s"Json validation error: $invalid")
+                PaymentsError(response.status, "Json validation error")
+              },
+              valid => Payments(valid)
+            )
+          case status if status >= 500 =>
+            Logger("application").error(s"Status: ${response.status}, body: ${response.body}")
+            PaymentsError(status, response.body)
+          case status =>
+            Logger("application").warn(s"Status ${response.status}, body: ${response.body}")
+            PaymentsError(status, response.body)
+        }
+      }
+  }
+
   def getFinancialDetailsByDocumentId(
                                        nino: Nino,
                                        documentNumber: String
