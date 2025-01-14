@@ -300,6 +300,37 @@ class ReportingFrequencyViewSpec extends TestSupport {
 
         pageDocument.getElementById("ceased-business-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/manage-your-businesses"
       }
+
+      "return the correct content when the user has a ceased business and is an agent" in {
+        val isAgentFlag = true
+
+        val reportingFrequencyViewModel: ReportingFrequencyViewModel =
+          ReportingFrequencyViewModel(
+            isAgent = isAgentFlag,
+            Some(optOutChooseTaxYearUrl(isAgentFlag)),
+            Seq(TaxYear(2024, 2025)),
+            Seq(TaxYear(2024, 2025)),
+            Seq("2024 to 2025" -> Some("Quarterly")),
+            displayCeasedBusinessWarning = true
+          )
+
+        val pageDocument: Document =
+          Jsoup.parse(
+            contentAsString(
+              view.apply(
+                viewModel = reportingFrequencyViewModel
+              )
+            )
+          )
+
+        pageDocument.title() shouldBe title
+
+        testContentByIds(pageDocument)
+
+        pageDocument.getElementById("ceased-business-warning").text() shouldBe "Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page."
+
+        pageDocument.getElementById("ceased-business-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/manage-your-businesses"
+      }
     }
   }
 }
