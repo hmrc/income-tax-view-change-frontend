@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE.p.link.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -43,7 +43,7 @@ class NextUpdatesViewUtils @Inject()(
             Html(messages("nextUpdates.optOutOneYear.reportingFrequency.p.message", m.startYear, m.endYear)),
             link(
               link = reportingFrequencyLink,
-              messageKey = "nextUpdates.optOutOneYear.p.link"
+              messageKey = "nextUpdates.optOutOneYear.reportingFrequency.p.link"
             )
           )
         )
@@ -53,7 +53,7 @@ class NextUpdatesViewUtils @Inject()(
             Html(messages("nextUpdates.optOutMultiYear.reportingFrequency.p.message")),
             link(
               link = reportingFrequencyLink,
-              messageKey = "nextUpdates.optOutMultiYear.p.link"
+              messageKey = "nextUpdates.optOutMultiYear.reportingFrequency.p.link"
             )
           )
         )
