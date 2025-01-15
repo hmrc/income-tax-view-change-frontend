@@ -769,11 +769,16 @@ nextUpdates.propertyIncome            							= Incwm o eiddo
 nextUpdates.propertyIncome.UK                                   = Eiddo yn y DU
 nextUpdates.propertyIncome.Foreign                              = Eiddo tramor
 nextUpdates.business            							    = Incwm busnes
+
 nextUpdates.optOutOneYear-1                                     = Ar hyn o bryd, rydych yn adrodd bob chwarter ar sail wirfoddol ar gyfer blwyddyn dreth {0} i {1}. Gallwch ddewis
 nextUpdates.optOutOneYear-2                                     = optio allan o ddiweddariadau bob chwarter ac adrodd yn flynyddol yn lle hynny.
+nextUpdates.withReportingFrequencyContent.optOutOneYear-1       = Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
+nextUpdates.withReportingFrequencyContent.optOutOneYear-2       = bwrw golwg dros a newid amlder eich adroddiadau.
 
 nextUpdates.optOutMultiYear-1                                   = Ar hyn o bryd rhydych yn cyflwyno adroddiadau’n chwarterol ar sail wirfoddol. Cadarnhewch eich bod am
 nextUpdates.optOutMultiYear-2                                   = optio allan o ddiweddariadau chwarterol ac am gyflwyno’n flynyddol yn lle hynny.
+nextUpdates.withReportingFrequencyContent.optOutMultiYear-1     = Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
+nextUpdates.withReportingFrequencyContent.optOutMultiYear-2     = bwrw golwg dros a newid amlder eich adroddiadau.
 
 sections.open.all												= Dangos pob adran
 sections.close.all												= Cuddio pob adran

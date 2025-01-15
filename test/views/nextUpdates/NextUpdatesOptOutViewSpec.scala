@@ -17,6 +17,7 @@
 package views.nextUpdates
 
 import config.FrontendAppConfig
+import models.admin.ReportingFrequencyPage
 import models.incomeSourceDetails.TaxYear
 import models.obligations._
 import models.optout.{NextUpdatesQuarterlyReportingContentChecks, OptOutMultiYearViewModel, OptOutOneYearViewModel}
@@ -52,15 +53,24 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
     val pageDocument: Document = Jsoup.parse(contentAsString(
       nextUpdatesView(currentObligations, Some(optOutOneYearViewModel), checks, "testBackURL", isSupportingAgent = isSupportingAgent)
     ))
+    val pageDocumentWithReportingContent: Document = Jsoup.parse(contentAsString(
+      nextUpdatesView(currentObligations, Some(optOutOneYearViewModel), checks, "testBackURL", isSupportingAgent = isSupportingAgent, showReportingContent = true)
+    ))
 
     val optOutMultiYearViewModel: OptOutMultiYearViewModel = OptOutMultiYearViewModel()
     val pageDocumentMultiYearOptOut: Document = Jsoup.parse(contentAsString(
       nextUpdatesView(currentObligations, Some(optOutMultiYearViewModel), checks, "testBackURL", isSupportingAgent = isSupportingAgent)
     ))
+    val pageDocumentMultiYearOptOutWithReportingContent: Document = Jsoup.parse(contentAsString(
+      nextUpdatesView(currentObligations, Some(optOutMultiYearViewModel), checks, "testBackURL", isSupportingAgent = isSupportingAgent, showReportingContent = true)
+    ))
 
     val optOutOneYearViewModelWithMandated = optOutOneYearViewModel.copy(state = Some(OneYearOptOutFollowedByMandated))
     val pageDocumentWithWarning: Document = Jsoup.parse(contentAsString(
       nextUpdatesView(currentObligations, Some(optOutOneYearViewModelWithMandated), checks, "testBackURL", isSupportingAgent = isSupportingAgent)
+    ))
+    val pageDocumentWithWarningWithReportingContent: Document = Jsoup.parse(contentAsString(
+      nextUpdatesView(currentObligations, Some(optOutOneYearViewModelWithMandated), checks, "testBackURL", isSupportingAgent = isSupportingAgent, showReportingContent = true)
     ))
   }
 
@@ -83,6 +93,7 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
   val confirmOptOutLink = "/report-quarterly/income-and-expenses/view/optout/review-confirm-taxyear"
   val singleYearOptOutWarningLink = "/report-quarterly/income-and-expenses/view/optout/single-taxyear-warning"
   val multiYearOptOutLink = "/report-quarterly/income-and-expenses/view/optout/choose-taxyear"
+  val reportingFrequencyLink = "/report-quarterly/income-and-expenses/view/reporting-frequency"
 
   lazy val obligationsModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(GroupedObligationsModel(
     business1.incomeSourceId,
@@ -171,9 +182,15 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
     "have the confirm opt out link" in new Setup(obligationsModel) {
       pageDocument.getElementById("confirm-opt-out-link").attr("href") shouldBe confirmOptOutLink
     }
+    "have the confirm opt out link (with reporting content)" in new Setup(obligationsModel) {
+      pageDocumentWithWarningWithReportingContent.getElementById("reporting-frequency-link").attr("href") shouldBe reportingFrequencyLink
+    }
 
     "have the single year opt out warning link" in new Setup(obligationsModel) {
       pageDocumentWithWarning.getElementById("single-year-opt-out-warning-link").attr("href") shouldBe singleYearOptOutWarningLink
+    }
+    "have the single year opt out warning link (with reporting content)" in new Setup(obligationsModel) {
+      pageDocumentWithWarningWithReportingContent.getElementById("reporting-frequency-link").attr("href") shouldBe reportingFrequencyLink
     }
 
     "have the multi year opt out message" in new Setup(obligationsModel) {
@@ -182,6 +199,9 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
 
     "have the multi year opt out message link" in new Setup(obligationsModel) {
       pageDocumentMultiYearOptOut.getElementById("opt-out-link").attr("href") shouldBe multiYearOptOutLink
+    }
+    "have the multi year opt out message link (with reporting content)" in new Setup(obligationsModel) {
+      pageDocumentMultiYearOptOutWithReportingContent.getElementById("reporting-frequency-link").attr("href") shouldBe reportingFrequencyLink
     }
   }
 }
