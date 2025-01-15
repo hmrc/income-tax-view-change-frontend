@@ -110,10 +110,10 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
     LocalDate.of(2018, 2, 1), LocalDate.of(2018, 3, 1)), currentDate, false)
   private val viewModelNoUpdates: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(), currentDate, false)
   private val viewModelOptOut: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, true)
-  val todayDateMinusOneDay: LocalDate = LocalDate.now().minusDays(1)
-  val todayDatePlusOneDay: LocalDate = LocalDate.now().plusDays(1)
-  val todayDatePlusOneDayLongFormat: String = LocalDate.now().plusDays(1).format(DateTimeFormatter.ofPattern("dd MMMM YYYY"))
-  val todayDateMinusOneDayLongFormat: String = s"OVERDUE ${LocalDate.now().minusDays(1).format(DateTimeFormatter.ofPattern("dd MMMM YYYY"))}"
+  val paymentTileOverdueDate: LocalDate = LocalDate.of(2020, 4, 6)
+  val paymentTileFutureDate: LocalDate = LocalDate.of(2100, 4, 6)
+  val paymentTileFutureDateLongFormat: String = paymentTileFutureDate.format(DateTimeFormatter.ofPattern("d MMMM YYYY"))
+  val paymentTileOverdueDateLongFormat: String = s"OVERDUE ${paymentTileOverdueDate.format(DateTimeFormatter.ofPattern("d MMMM YYYY"))}"
 
 
   class Setup(paymentDueDate: LocalDate = nextPaymentDueDate, overDuePaymentsCount: Int = 0, paymentsAccruingInterestCount: Int = 0, reviewAndReconcileEnabled: Boolean = false,
@@ -268,12 +268,12 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
         getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some("OVERDUE " + paymentDateLongDate)
       }
 
-      "display only the date when there are payments due but none being overdue" in new Setup(paymentDueDate = todayDatePlusOneDay, overDuePaymentsCount = 0) {
-        document.select("#payments-tile > div > p.govuk-body").text() shouldBe todayDatePlusOneDayLongFormat
+      "display only the date when there are payments due but none being overdue" in new Setup(paymentDueDate = paymentTileFutureDate, overDuePaymentsCount = 0) {
+        document.select("#payments-tile > div > p.govuk-body").text() shouldBe paymentTileFutureDateLongFormat
       }
 
-      "display the date and an overdue tag when there is one payment that is overdue" in new Setup(paymentDueDate = todayDateMinusOneDay, overDuePaymentsCount = 1) {
-        document.select("#payments-tile > div > p.govuk-body").text() shouldBe todayDateMinusOneDayLongFormat
+      "display the date and an overdue tag when there is one payment that is overdue" in new Setup(paymentDueDate = paymentTileOverdueDate, overDuePaymentsCount = 1) {
+        document.select("#payments-tile > div > p.govuk-body").text() shouldBe paymentTileOverdueDateLongFormat
       }
 
       "display daily interest tag when there are payments accruing interest" in new Setup(paymentsAccruingInterestCount = 2, reviewAndReconcileEnabled = true) {
