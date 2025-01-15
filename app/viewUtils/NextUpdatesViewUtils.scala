@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE.p.link.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -40,50 +40,50 @@ class NextUpdatesViewUtils @Inject()(
       case m: OptOutOneYearViewModel if isEnabled(ReportingFrequencyPage) =>
         HtmlFormat.fill(
           Seq(
-            Html(messages("nextUpdates.withReportingFrequencyContent.optOutOneYear-1", m.startYear, m.endYear)),
+            Html(messages("nextUpdates.optOutOneYear.reportingFrequency.p.message", m.startYear, m.endYear)),
             link(
               link = reportingFrequencyLink,
-              messageKey = "nextUpdates.optOutOneYear-2"
+              messageKey = "nextUpdates.optOutOneYear.p.link"
             )
           )
         )
       case _: OptOutMultiYearViewModel if isEnabled(ReportingFrequencyPage) =>
         HtmlFormat.fill(
           Seq(
-            Html(messages("nextUpdates.withReportingFrequencyContent.optOutMultiYear-1")),
+            Html(messages("nextUpdates.optOutMultiYear.reportingFrequency.p.message")),
             link(
               link = reportingFrequencyLink,
-              messageKey = "nextUpdates.optOutMultiYear-2"
+              messageKey = "nextUpdates.optOutMultiYear.p.link"
             )
           )
         )
       case m: OptOutOneYearViewModel if m.showWarning =>
         HtmlFormat.fill(
           Seq(
-            Html(messages("nextUpdates.optOutOneYear-1", m.startYear, m.endYear)),
+            Html(messages("nextUpdates.optOutOneYear.p.message", m.startYear, m.endYear)),
             link(
               link = controllers.optOut.routes.SingleYearOptOutWarningController.show(isAgent).url,
-              messageKey = "nextUpdates.optOutOneYear-2"
+              messageKey = "nextUpdates.optOutOneYear.p.link"
             )
           )
         )
       case m: OptOutOneYearViewModel =>
         HtmlFormat.fill(
           Seq(
-            Html(messages("nextUpdates.optOutOneYear-1", m.startYear, m.endYear)),
+            Html(messages("nextUpdates.optOutOneYear.p.message", m.startYear, m.endYear)),
             link(
               link = controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url,
-              messageKey = "nextUpdates.optOutOneYear-2"
+              messageKey = "nextUpdates.optOutOneYear.p.link"
             )
           )
         )
       case _: OptOutMultiYearViewModel =>
         HtmlFormat.fill(
           Seq(
-            Html(messages("nextUpdates.optOutMultiYear-1")),
+            Html(messages("nextUpdates.optOutMultiYear.p.message")),
             link(
               link = controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent).url,
-              messageKey = "nextUpdates.optOutMultiYear-2"
+              messageKey = "nextUpdates.optOutMultiYear.p.link"
             )
           )
         )
