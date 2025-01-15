@@ -22,7 +22,6 @@
 @import models.optout.OptOutViewModel
 @import models.optout.OptOutOneYearViewModel
 @import models.optout.OptOutMultiYearViewModel
-@import viewUtils.EntryPointLink
 
 
 
@@ -45,7 +44,7 @@
 	isAgent: Boolean = false,
 	isSupportingAgent: Boolean = false,
 	origin: Option[String] = None,
-	entryPointLink: Option[EntryPointLink]
+	whatTheUserCanDo: Option[Html]
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @mainTemplate(
@@ -63,13 +62,8 @@
 	    @detailsDropdown("nextUpdates.dropdown.info", detailsContent)
 	}
 
-	@p(id = Some("entry-point-link")) {
-        @{
-            entryPointLink.map { link =>
-                    link.message
-                    link.linkComponent
-            }
-        }
+	@whatTheUserCanDo.map { content =>
+		@p(id = Some("what-the-user-can-do")) { @content }
 	}
 
 	<h2 class="govuk-heading-m">@messages("nextUpdates.sub-heading")</h2>

@@ -22,7 +22,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import models.admin.{OptOutFs, ReportingFrequencyPage}
+import models.admin.OptOutFs
 import models.obligations._
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -38,19 +38,23 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
-                                      nextUpdatesView: NextUpdates,
-                                      nextUpdatesOptOutView: NextUpdatesOptOut,
-                                      auditingService: AuditingService,
-                                      nextUpdatesService: NextUpdatesService,
-                                      itvcErrorHandler: ItvcErrorHandler,
-                                      optOutService: OptOutService,
-                                      nextUpdatesViewUtils: NextUpdatesViewUtils,
-                                      val appConfig: FrontendAppConfig,
-                                      val authActions: AuthActions)
-                                     (implicit mcc: MessagesControllerComponents,
-                                      val agentItvcErrorHandler: AgentItvcErrorHandler,
-                                      val ec: ExecutionContext)
+class NextUpdatesController @Inject()(
+                                       noNextUpdatesView: NoNextUpdates,
+                                       nextUpdatesView: NextUpdates,
+                                       nextUpdatesOptOutView: NextUpdatesOptOut,
+                                       auditingService: AuditingService,
+                                       nextUpdatesService: NextUpdatesService,
+                                       itvcErrorHandler: ItvcErrorHandler,
+                                       optOutService: OptOutService,
+                                       nextUpdatesViewUtils: NextUpdatesViewUtils,
+                                       val appConfig: FrontendAppConfig,
+                                       val authActions: AuthActions
+                                     )
+                                     (
+                                       implicit mcc: MessagesControllerComponents,
+                                       val agentItvcErrorHandler: AgentItvcErrorHandler,
+                                       val ec: ExecutionContext
+                                     )
   extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
 
   private def hasAnyIncomeSource(action: => Future[Result])(implicit user: MtdItUser[_], origin: Option[String]): Future[Result] = {
@@ -58,7 +62,7 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
     if (user.incomeSources.hasBusinessIncome || user.incomeSources.hasPropertyIncome) {
       action
     } else {
-      Future.successful(Ok(NoNextUpdatesView(backUrl = controllers.routes.HomeController.show(origin).url)))
+      Future.successful(Ok(noNextUpdatesView(backUrl = controllers.routes.HomeController.show(origin).url)))
     }
   }
 
@@ -90,7 +94,7 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
                   isAgent = isAgent,
                   isSupportingAgent = user.isSupportingAgent,
                   origin = origin,
-                  nextUpdatesViewUtils.entryPointLink(optOutOneYearViewModel, isAgent)
+                  nextUpdatesViewUtils.whatTheUserCanDo(optOutOneYearViewModel, isAgent)
                 )
               )
             }.recoverWith {
