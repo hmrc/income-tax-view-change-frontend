@@ -22,6 +22,7 @@
 @import models.optout.OptOutViewModel
 @import models.optout.OptOutOneYearViewModel
 @import models.optout.OptOutMultiYearViewModel
+@import viewUtils.EntryPointLink
 
 
 
@@ -44,7 +45,8 @@
 	isAgent: Boolean = false,
 	isSupportingAgent: Boolean = false,
 	origin: Option[String] = None,
-	showReportingContent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
+	entryPointLink: Option[EntryPointLink]
+)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @mainTemplate(
 	pageTitle = messages("nextUpdates.heading"),
@@ -61,71 +63,14 @@
 	    @detailsDropdown("nextUpdates.dropdown.info", detailsContent)
 	}
 
-	@p() {
-
-		@{
-			if(showReportingContent){
-				optOutViewModel.map {
-
-					case m:OptOutOneYearViewModel =>
-						Html(
-							s"""
-							<span id="one-year-opt-out-message">
-								${messages("nextUpdates.withReportingFrequencyContent.optOutOneYear-1", m.startYear, m.endYear)}
-								${link(id = Some("reporting-frequency-link"), link = controllers.routes.ReportingFrequencyPageController.show(isAgent).url, messageKey = "nextUpdates.optOutOneYear-2")}
-							</span>
-						"""
-						)
-
-					case m:OptOutMultiYearViewModel =>
-						Html(
-							s"""
-						<span id="multi-year-opt-out-message">
-      						${messages("nextUpdates.withReportingFrequencyContent.optOutMultiYear-1")}
-       						${link(id = Some("reporting-frequency-link"), link = controllers.routes.ReportingFrequencyPageController.show(isAgent).url, messageKey = "nextUpdates.optOutMultiYear-2")}
-						</span>
-						"""
-						)
-				}
-			}else{
-				optOutViewModel.map {
-
-					case m:OptOutOneYearViewModel =>
-						if (m.showWarning) {
-							Html(
-								s"""
-							<span id="one-year-opt-out-message">
-								${messages("nextUpdates.optOutOneYear-1", m.startYear, m.endYear)}
-								${link(id = Some("single-year-opt-out-warning-link"), link = controllers.optOut.routes.SingleYearOptOutWarningController.show(isAgent).url, messageKey = "nextUpdates.optOutOneYear-2")}
-							</span>
-							"""
-							)
-						} else {
-							Html(
-								s"""
-							<span id="one-year-opt-out-message">
-								${messages("nextUpdates.optOutOneYear-1", m.startYear, m.endYear)}
-								${link(id = Some("confirm-opt-out-link"), link = controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url, messageKey = "nextUpdates.optOutOneYear-2")}
-							</span>
-						"""
-							)
-						}
-
-					case m:OptOutMultiYearViewModel =>
-						Html(
-							s"""
-						<span id="multi-year-opt-out-message">
-      						${messages("nextUpdates.optOutMultiYear-1")}
-       						${link(id = Some("opt-out-link"), link = controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent).url, messageKey = "nextUpdates.optOutMultiYear-2")}
-						</span>
-						"""
-						)
-				}
-			}
-
-		}
+	@p(id = Some("entry-point-link")) {
+        @{
+            entryPointLink.map { link =>
+                    link.message
+                    link.linkComponent
+            }
+        }
 	}
-
 
 	<h2 class="govuk-heading-m">@messages("nextUpdates.sub-heading")</h2>
 

@@ -17,6 +17,8 @@
 package services
 
 import auth.MtdItUser
+import config.FrontendAppConfig
+import config.featureswitch.FeatureSwitching
 import connectors._
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels._
@@ -31,12 +33,17 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 object NextUpdatesService {
+
   case class QuarterlyUpdatesCountForTaxYear(taxYear: TaxYear, count: Int)
+
   private val noQuarterlyUpdates = 0
 }
 
 @Singleton
-class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnector)(implicit ec: ExecutionContext, val dateService: DateServiceInterface) {
+class NextUpdatesService @Inject()(
+                                    val obligationsConnector: ObligationsConnector,
+                                    val appConfig: FrontendAppConfig
+                                  )(implicit ec: ExecutionContext, val dateService: DateServiceInterface) extends FeatureSwitching {
 
   def getDueDates()(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[Either[Exception, Seq[LocalDate]]] = {
     getOpenObligations().map {
@@ -69,8 +76,7 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
   }
 
 
-
-  def getNextUpdatesViewModel(obligationsModel: ObligationsModel)(implicit user: MtdItUser[_]): NextUpdatesViewModel = NextUpdatesViewModel{
+  def getNextUpdatesViewModel(obligationsModel: ObligationsModel)(implicit user: MtdItUser[_]): NextUpdatesViewModel = NextUpdatesViewModel {
     obligationsModel.obligationsByDate.map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
       if (obligations.headOption.map(_.obligation.obligationType).contains("Quarterly")) {
         val obligationsByType = obligationsModel.groupByQuarterPeriod(obligations)
@@ -144,3 +150,5 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
     processingRes
   }
 }
+
+

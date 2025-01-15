@@ -31,6 +31,7 @@ import services.NextUpdatesService
 import services.optout.OptOutService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import viewUtils.NextUpdatesViewUtils
 import views.html.nextUpdates.{NextUpdates, NextUpdatesOptOut, NoNextUpdates}
 
 import javax.inject.{Inject, Singleton}
@@ -44,6 +45,7 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
                                       nextUpdatesService: NextUpdatesService,
                                       itvcErrorHandler: ItvcErrorHandler,
                                       optOutService: OptOutService,
+                                      nextUpdatesViewUtils: NextUpdatesViewUtils,
                                       val appConfig: FrontendAppConfig,
                                       val authActions: AuthActions)
                                      (implicit mcc: MessagesControllerComponents,
@@ -52,6 +54,7 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
   extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
 
   private def hasAnyIncomeSource(action: => Future[Result])(implicit user: MtdItUser[_], origin: Option[String]): Future[Result] = {
+
     if (user.incomeSources.hasBusinessIncome || user.incomeSources.hasPropertyIncome) {
       action
     } else {
@@ -59,7 +62,7 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
     }
   }
 
-  def getNextUpdates(backUrl: Call, isAgent: Boolean, errorHandler: ShowInternalServerError, origin: Option[String] = None, showReportingFrequencyContent: Boolean = false)
+  def getNextUpdates(backUrl: Call, isAgent: Boolean, errorHandler: ShowInternalServerError, origin: Option[String] = None)
                     (implicit user: MtdItUser[_]): Future[Result] = {
 
     hasAnyIncomeSource {
@@ -78,7 +81,18 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
             val optOutSetup = {
               for {
                 (checks, optOutOneYearViewModel) <- optOutService.nextUpdatesPageOptOutViewModels()
-              } yield Ok(nextUpdatesOptOutView(viewModel, optOutOneYearViewModel, checks, backUrl.url, isAgent, user.isSupportingAgent, origin, showReportingFrequencyContent))
+              } yield Ok(
+                nextUpdatesOptOutView(
+                  currentObligations = viewModel,
+                  optOutViewModel = optOutOneYearViewModel,
+                  checks = checks,
+                  backUrl = backUrl.url,
+                  isAgent = isAgent,
+                  isSupportingAgent = user.isSupportingAgent,
+                  origin = origin,
+                  nextUpdatesViewUtils.entryPointLink(optOutOneYearViewModel, isAgent)
+                )
+              )
             }.recoverWith {
               case ex =>
                 Logger("application").error(s"Failed to retrieve quarterly reporting content checks: ${ex.getMessage}")
@@ -97,25 +111,21 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
 
 
   def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async { implicit user =>
-    val shouldShowReportingContent: Boolean = isEnabled(ReportingFrequencyPage)
-      getNextUpdates(
-        controllers.routes.HomeController.show(origin),
-        isAgent = false,
-        itvcErrorHandler,
-        origin,
-        shouldShowReportingContent
-      )
+    getNextUpdates(
+      backUrl = controllers.routes.HomeController.show(origin),
+      isAgent = false,
+      errorHandler = itvcErrorHandler,
+      origin = origin
+    )
   }
 
   def showAgent: Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit mtdItUser =>
-      val shouldShowReportingContent: Boolean = isEnabled(ReportingFrequencyPage)
       getNextUpdates(
-        controllers.routes.HomeController.showAgent,
+        backUrl = controllers.routes.HomeController.showAgent,
         isAgent = true,
-        agentItvcErrorHandler,
-        None,
-        shouldShowReportingContent
+        errorHandler = agentItvcErrorHandler,
+        origin = None
       )
   }
 
