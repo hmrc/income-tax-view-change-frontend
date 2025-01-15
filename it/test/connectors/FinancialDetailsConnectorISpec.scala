@@ -254,7 +254,7 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
       }
     }
 
-    ".getPaymentsUrl()" when {
+    ".getPayments() for a single tax year" when {
 
       "OK" should {
 
@@ -321,6 +321,81 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
             WiremockHelper.stubGet(url, INTERNAL_SERVER_ERROR, response)
 
             val result = connector.getPayments(2024).futureValue
+
+            result shouldBe PaymentsError(INTERNAL_SERVER_ERROR, response)
+            WiremockHelper.verifyGet(uri = url)
+          }
+        }
+      }
+    }
+
+    ".getPayments() for a range of tax years" when {
+
+      "OK" should {
+
+        "return a successful Payments" in {
+
+          val testUserNino = "AA123456A"
+          val url = s"/income-tax-view-change/$testUserNino/financial-details/payments/from/2023-04-06/to/2025-04-05"
+
+          val paymentFull: List[Payment] =
+            List(
+              Payment(
+                reference = Some("reference"),
+                amount = Some(100.00),
+                outstandingAmount = Some(1.00),
+                method = Some("method"),
+                documentDescription = None,
+                lot = Some("lot"),
+                lotItem = Some("lotItem"),
+                dueDate = Some(LocalDate.of(2024, 1, 1)),
+                documentDate = LocalDate.of(2024, 1, 1), Some("DOCID01")
+              )
+            )
+
+          val response: List[Payment] = paymentFull
+
+          WiremockHelper.stubGet(url, OK, Json.toJson(response).toString())
+
+          val result = connector.getPayments(TaxYear(2023, 2024), TaxYear(2024, 2025)).futureValue
+
+          result shouldBe Payments(response)
+          WiremockHelper.verifyGet(uri = url)
+        }
+
+        "request returns json validation errors" should {
+
+          "return a PaymentsError" in {
+
+            val testUserNino = "AA123456A"
+            val url = s"/income-tax-view-change/$testUserNino/financial-details/payments/from/2023-04-06/to/2025-04-05"
+
+            val response = """{"bad_key":"bad_value"}"""
+
+            WiremockHelper.stubGet(url, OK, response)
+
+            val result = connector.getPayments(TaxYear(2023, 2024), TaxYear(2024, 2025)).futureValue
+
+            result shouldBe PaymentsError(OK, "Json validation error")
+            WiremockHelper.verifyGet(uri = url)
+          }
+        }
+      }
+
+      "INTERNAL_SERVER_ERROR" when {
+
+        "request returns an error json response" should {
+
+          "return a OutstandingChargesErrorModel with response body message" in {
+
+            val testUserNino = "AA123456A"
+            val url = s"/income-tax-view-change/$testUserNino/financial-details/payments/from/2023-04-06/to/2025-04-05"
+
+            val response = """{"fake_error_key: "fake_error_value"}"""
+
+            WiremockHelper.stubGet(url, INTERNAL_SERVER_ERROR, response)
+
+            val result = connector.getPayments(TaxYear(2023, 2024), TaxYear(2024, 2025)).futureValue
 
             result shouldBe PaymentsError(INTERNAL_SERVER_ERROR, response)
             WiremockHelper.verifyGet(uri = url)

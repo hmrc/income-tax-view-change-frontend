@@ -21,6 +21,7 @@ import config.featureswitch.FeatureSwitching
 import connectors.RepaymentHistoryConnector
 import mocks.connectors.MockFinancialDetailsConnector
 import models.financialDetails.{Payment, Payments, PaymentsError}
+import models.incomeSourceDetails.TaxYear
 import org.mockito.Mockito.mock
 import play.api.http.Status.{NOT_FOUND, UNPROCESSABLE_ENTITY}
 import play.api.test.FakeRequest
@@ -98,6 +99,32 @@ class PaymentHistoryServiceSpec extends TestSupport with MockFinancialDetailsCon
       }
     }
 
+  }
+
+  "getPaymentHistoryV2" when {
+    "An error is returned from the connector" should {
+      "return a payment history error" in {
+        setupGetPayments(TaxYear.forYearEnd(getCurrentTaxEndYear - 1),
+          TaxYear.forYearEnd(getCurrentTaxEndYear))(PaymentsError(500, "ERROR"))
+        TestPaymentHistoryService.getPaymentHistoryV2.futureValue shouldBe Left(PaymentHistoryError)
+
+      }
+
+      "return a payment history error for status 422" in {
+        setupGetPayments(TaxYear.forYearEnd(getCurrentTaxEndYear - 1),
+          TaxYear.forYearEnd(getCurrentTaxEndYear))(PaymentsError(UNPROCESSABLE_ENTITY, "ERROR"))
+        TestPaymentHistoryService.getPaymentHistoryV2.futureValue shouldBe Left(PaymentHistoryError)
+
+      }
+    }
+
+    "a successful Payment History response is returned from the connector" should {
+      "return a list of payments" in {
+        setupGetPayments(TaxYear.forYearEnd(getCurrentTaxEndYear - 1),
+          TaxYear.forYearEnd(getCurrentTaxEndYear))(Payments(paymentFull))
+        TestPaymentHistoryService.getPaymentHistoryV2.futureValue shouldBe Right(paymentFull)
+      }
+    }
   }
 
 }
