@@ -72,7 +72,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
   "ChargeItem" when {
 
-    "isOverdueReviewAndReconcileAccruingInterestCharge method" when {
+    "isOverdueReviewAndReconcileAccruingInterestCharge" when {
 
       "transaction type is PoaOneReconciliationDebit, is not overdue and is not paid returns true" in {
         val dateServiceBeforeDueDate = dateService(dueDate.minusDays(1))
@@ -127,7 +127,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
     }
 
-    "getDueDate method" when {
+    "getDueDate" when {
 
       "successfully gets due date" in {
 
@@ -155,7 +155,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
     }
 
-    "interestIsPaid method" when {
+    "interestIsPaid" when {
 
       "interest outstanding amount is 0 returns true" in {
         val chargeItem = ChargeItem.fromDocumentPair(
@@ -174,7 +174,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
       }
     }
 
-    "getInterestPaidStatus method" when {
+    "getInterestPaidStatus" when {
 
       "interest is 0, return paid" in {
         val chargeItem = ChargeItem.fromDocumentPair(
@@ -201,7 +201,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
       }
     }
 
-    "getChargePaidStatus method" when {
+    "getChargePaidStatus" when {
 
       "outstanding amount is 0, return paid" in {
         val chargeItem = ChargeItem.fromDocumentPair(
