@@ -160,7 +160,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
       }
 
       s"have the title ${messages("htmlTitle.agent", messages("home.agent.heading"))}" in new TestSetup() {
-        document.title() shouldBe messages("htmlTitle.agent", messages("home.agent.heading"))
+        document.title() shouldBe "Your client’s Income Tax - Manage your client’s Income Tax updates - GOV.UK"
       }
 
       s"have the page caption You are signed in as a main agent" in new TestSetup {
@@ -168,11 +168,11 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
       }
 
       s"have the page heading ${messages("home.agent.headingWithClientName", testClientNameString)}" in new TestSetup {
-        document.select("h1").text() shouldBe messages("home.agent.headingWithClientName", testClientNameString)
+        document.select("h1").text() shouldBe "Jon Jones’s Income Tax"
       }
 
       s"have the page heading ${messages("home.agent.heading")}" in new TestSetup(user = testMtdItUserMigrated) {
-        document.select("h1").text() shouldBe messages("home.agent.heading")
+        document.select("h1").text() shouldBe "Your client’s Income Tax"
       }
 
       s"have the hint with the clients utr '$testSaUtr' " in new TestSetup {
@@ -181,7 +181,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
 
       "have an next payment due tile" which {
         "has a heading" in new TestSetup {
-          getElementById("payments-tile").map(_.select("h2").text) shouldBe Some(messages("home.payments.heading"))
+          getElementById("payments-tile").map(_.select("h2").text) shouldBe Some("Next charges due")
         }
         "has content of the next payment due" which {
           "is overdue" in new TestSetup(nextPaymentDueDate = Some(nextPaymentDue), overDuePaymentsCount = 1) {
@@ -207,7 +207,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
         "has a link to check what your client owes" in new TestSetup {
           val link: Option[Elements] = getElementById("payments-tile").map(_.select("a"))
           link.map(_.attr("href")) shouldBe Some(controllers.routes.WhatYouOweController.showAgent.url)
-          link.map(_.text) shouldBe Some(messages("home.agent.payments.view"))
+          link.map(_.text) shouldBe Some("Check what your client owes")
         }
       }
 
@@ -233,7 +233,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
 
       "have an next updates due tile" which {
         "has a heading" in new TestSetup {
-          getElementById("updates-tile").map(_.select("h2").text) shouldBe Some(messages("home.updates.heading"))
+          getElementById("updates-tile").map(_.select("h2").text) shouldBe Some("Next updates due")
         }
         "has content of the next update due" which {
           "is overdue" in new TestSetup(nextUpdatesTileViewModel = viewModelOneOverdue) {
@@ -249,24 +249,24 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
         "has a link to view updates" in new TestSetup {
           val link: Option[Elements] = getElementById("updates-tile").map(_.select("a"))
           link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/next-updates")
-          link.map(_.text) shouldBe Some(messages("home.updates.view"))
+          link.map(_.text) shouldBe Some("View update deadlines")
         }
         "is empty except for the title" when {
           "user has no open obligations" in new TestSetup(nextUpdatesTileViewModel = viewModelNoUpdates) {
-            getElementById("updates-tile").map(_.text()) shouldBe Some(messages("home.updates.heading"))
+            getElementById("updates-tile").map(_.text()) shouldBe Some("Next updates due")
           }
         }
         "has a link to view and manage updates - Opt Out" in new TestSetup(nextUpdatesTileViewModel = viewModelOptOut) {
           val link: Option[Elements] = getElementById("updates-tile").map(_.select("a"))
           link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/next-updates")
-          link.map(_.text) shouldBe Some(messages("home.updates.view.opt-out"))
+          link.map(_.text) shouldBe Some("View deadlines and manage how you report")
         }
       }
 
       "have a language selection switch" which {
         "displays the current language" in new TestSetup {
           val langSwitch: Option[Element] = getElementById("lang-switch-en")
-          langSwitch.map(_.select("li:nth-child(1)").text) shouldBe Some(messages("language-switcher.english"))
+          langSwitch.map(_.select("li:nth-child(1)").text) shouldBe Some("English")
         }
 
         "changes with JS ENABLED" in new TestSetup {
@@ -278,64 +278,64 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
         "changes with JS DISABLED" in new TestSetup {
           val langSwitchNoScript: Option[Element] = getElementById("lang-switch-en-no-js")
           langSwitchNoScript.map(_.select("a").attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/switch-to-welsh")
-          langSwitchNoScript.map(_.select("a span:nth-child(2)").text) shouldBe Some(messages("language-switcher.welsh"))
+          langSwitchNoScript.map(_.select("a span:nth-child(2)").text) shouldBe Some("Cymraeg")
         }
       }
 
       "have a returns tile" which {
         "has a heading" in new TestSetup {
-          getElementById("returns-tile").map(_.select("h2").text) shouldBe Some(messages("home.tax-years.heading"))
+          getElementById("returns-tile").map(_.select("h2").text) shouldBe Some("Returns")
         }
         "has a link to the view payments page" in new TestSetup {
           val link: Option[Element] = getElementById("returns-tile").map(_.select("a").first)
           link.map(_.attr("href")) shouldBe Some(controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(currentTaxYear).url)
-          link.map(_.text) shouldBe Some(s"${messages("home.agent.returns.viewLink", s"${currentTaxYear - 1}", s"$currentTaxYear")}")
+          link.map(_.text) shouldBe Some(s"View your client’s current ${currentTaxYear - 1} to $currentTaxYear return")
         }
         "has a link to the update and submit page" in new TestSetup {
           val link: Option[Element] = getElementById("returns-tile").map(_.select("a").get(1))
           link.map(_.attr("href")) shouldBe Some(appConfig.submissionFrontendTaxYearsPage(currentTaxYear))
-          link.map(_.text) shouldBe Some(s"${messages("home.agent.your-returns.updatesLink", s"${currentTaxYear - 1}", s"$currentTaxYear")}")
+          link.map(_.text) shouldBe Some(s"Update and submit your client’s ${currentTaxYear - 1} to $currentTaxYear return")
         }
         "dont have a link to the update and submit page when ITSASubmissionIntegrationEnabled is disabled" in new TestSetup(ITSASubmissionIntegrationEnabled = false) {
           val link: Option[Element] = getElementById("returns-tile").map(_.select("a").get(1))
           link.map(_.attr("href")) should not be Some(appConfig.submissionFrontendTaxYearsPage(currentTaxYear))
-          link.map(_.text) should not be Some(s"${messages("home.your-returns.updatesLink", s"${currentTaxYear - 1}", s"$currentTaxYear")}")
+          link.map(_.text) should not be Some(s"Update and submit your ${currentTaxYear - 1} to ${currentTaxYear} return")
         }
         "has a link to the tax years page" in new TestSetup {
           val link: Option[Element] = getElementById("returns-tile").map(_.select("a").last)
           link.map(_.attr("href")) shouldBe Some(controllers.routes.TaxYearsController.showAgentTaxYears.url)
-          link.map(_.text) shouldBe Some(messages("home.tax-years.view"))
+          link.map(_.text) shouldBe Some("View all tax years")
         }
       }
 
       "have a payment history tile" which {
         "has payment and refund history heading when payment history feature switch is enabled" in new TestSetup() {
-          getElementById("payment-history-tile").map(_.select("h2").text) shouldBe Some(messages("home.paymentHistoryRefund.heading"))
+          getElementById("payment-history-tile").map(_.select("h2").text) shouldBe Some("Payment history and refunds")
         }
 
         "has payment history heading when payment history feature switch is disabled" in new TestSetup(paymentHistoryEnabled = false) {
-          getElementById("payment-history-tile").map(_.select("h2").text) shouldBe Some(messages("home.paymentHistory.heading"))
+          getElementById("payment-history-tile").map(_.select("h2").text) shouldBe Some("Payment history")
         }
 
         "has payment and refund history link when CreditsRefundsRepay OFF / PaymentHistoryRefunds ON" in new TestSetup(creditAndRefundEnabled = false, paymentHistoryEnabled = true) {
           val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
           link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.showAgent.url)
-          link.map(_.text) shouldBe Some(messages("home.paymentHistoryRefund.view"))
+          link.map(_.text) shouldBe Some("Payment and refund history")
         }
         "has payment and credit history link when CreditsRefundsRepay ON / PaymentHistoryRefunds OFF" in new TestSetup(creditAndRefundEnabled = true, paymentHistoryEnabled = false) {
           val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
           link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.showAgent.url)
-          link.map(_.text) shouldBe Some(messages("home.paymentCreditHistory.view"))
+          link.map(_.text) shouldBe Some("Payment and credit history")
         }
         "has payment, credit and refund history link when CreditsRefundsRepay ON / PaymentHistoryRefunds ON" in new TestSetup(creditAndRefundEnabled = true, paymentHistoryEnabled = true) {
           val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
           link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.showAgent.url)
-          link.map(_.text) shouldBe Some(messages("home.paymentCreditRefundHistory.view"))
+          link.map(_.text) shouldBe Some("Payment, credit and refund history")
         }
         "has payment history link when CreditsRefundsRepay OFF / PaymentHistoryRefunds OFF" in new TestSetup(paymentHistoryEnabled = false, creditAndRefundEnabled = false) {
           val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
           link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.showAgent.url)
-          link.map(_.text) shouldBe Some(messages("home.paymentHistory.view"))
+          link.map(_.text) shouldBe Some("Payment history")
         }
 
         s"has the available credit " in new TestSetup(creditAndRefundEnabled = true) {
@@ -376,7 +376,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
 
         val link: Option[Elements] = getElementById("changeClientLink").map(_.select("a"))
         link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/remove-client-sessions")
-        link.map(_.text) shouldBe Some(messages("home.agent.changeClientLink"))
+        link.map(_.text) shouldBe Some("Change client")
       }
     }
 
@@ -412,24 +412,24 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
       }
       "have an Income Sources tile" which {
         "has a heading" in new TestSetup(user = testMtdItUserMigrated, incomeSourcesEnabled = true) {
-          getElementById("income-sources-tile").map(_.select("h2").first().text()) shouldBe Some(messages("home.incomeSources.heading"))
+          getElementById("income-sources-tile").map(_.select("h2").first().text()) shouldBe Some("Income Sources")
         }
         "has a link to AddIncomeSourceController.showAgent()" in new TestSetup(user = testMtdItUserMigrated, incomeSourcesEnabled = true) {
-          getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").text()) shouldBe Some(messages("home.incomeSources.addIncomeSource.view"))
+          getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").text()) shouldBe Some("Add a new sole trader or property income source")
           getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").attr("href")) shouldBe Some(controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url)
         }
         "has a link to ManageIncomeSourceController.showAgent()" in new TestSetup(user = testMtdItUserMigrated, incomeSourcesEnabled = true) {
-          getElementById("income-sources-tile").map(_.select("div > p:nth-child(3) > a").text()) shouldBe Some(messages("home.incomeSources.manageIncomeSource.view"))
+          getElementById("income-sources-tile").map(_.select("div > p:nth-child(3) > a").text()) shouldBe Some("View and manage income sources")
           getElementById("income-sources-tile").map(_.select("div > p:nth-child(3) > a").attr("href")) shouldBe Some(controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url)
         }
       }
       "have a Your Businesses tile" when {
         "the new income sources journey FS is enabled" which {
           "has a heading" in new TestSetup(user = testMtdItUserMigrated, incomeSourcesEnabled = true, incomeSourcesNewJourneyEnabled = true) {
-            getElementById("income-sources-tile").map(_.select("h2").first().text()) shouldBe Some(messages("home.incomeSources.newJourneyHeading"))
+            getElementById("income-sources-tile").map(_.select("h2").first().text()) shouldBe Some("Your businesses")
           }
           "has a link to AddIncomeSourceController.show()" in new TestSetup(user = testMtdItUserMigrated, incomeSourcesEnabled = true, incomeSourcesNewJourneyEnabled = true) {
-            getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").text()) shouldBe Some(messages("home.incomeSources.newJourney.view"))
+            getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").text()) shouldBe Some("Add, manage or cease a business or income source")
             getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").attr("href")) shouldBe Some(controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url)
           }
         }

@@ -94,16 +94,14 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
     None
   )(FakeRequest())
 
-  def viewUpdateAndSubmitLinkWithDateRange(taxYear: Int): String = s"${messages("home.your-returns.updatesLink", taxYear - 1, taxYear)}"
-
   val updateDate: LocalDate = LocalDate.of(2100, 1, 1)
   val updateDateLongDate = "1 January 2100"
-  val multipleOverdueUpdates = ""
+  val multipleOverdueUpdates = "3 OVERDUE UPDATES"
   val nextPaymentDueDate: LocalDate = LocalDate.of(2019, 1, 31)
   val paymentDateLongDate = "31 January 2019"
   val multipleOverdueCharges = "3 OVERDUE CHARGES"
-  val overdueMessage = s"! Warning "
-  val overdueMessageForDunningLocks = ""
+  val overdueMessage = "! Warning You have overdue charges. You may be charged interest on these until they are paid in full."
+  val overdueMessageForDunningLocks = "! Warning You have overdue payments and one or more of your tax decisions are being reviewed. You may be charged interest on these until they are paid in full."
   val currentDate = dateService.getCurrentDate
   private val viewModelFuture: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, false)
   private val viewModelOneOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1)), currentDate, false)
@@ -169,7 +167,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
     }
 
     s"have the page heading '${messages("home.heading")}'" in new Setup {
-      getTextOfElementById("income-tax-heading") shouldBe "Income Tax"
+      getTextOfElementById("income-tax-heading") shouldBe Some("Income Tax")
     }
 
     "have the right keep-alive url in hmrc timeout dialog" in new Setup {
@@ -183,7 +181,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
     }
 
     "have the users UTR" in new Setup {
-      getTextOfElementById("utr-reference-heading") shouldBe ""
+      getTextOfElementById("utr-reference-heading") shouldBe Some("Unique Taxpayer Reference (UTR): testUtr")
     }
 
     "not have the users UTR when it is absent in user profile" in new Setup(user = testMtdItUser(saUtr = None)) {
@@ -193,7 +191,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
     "have a language selection switch" which {
       "displays the current language" in new Setup {
         val langSwitch: Option[Element] = getElementById("lang-switch-en")
-        langSwitch.map(_.select("li:nth-child(1)").text) shouldBe ""
+        langSwitch.map(_.select("li:nth-child(1)").text) shouldBe  Some("English")
       }
 
       "changes with JS ENABLED" in new Setup {
@@ -205,13 +203,13 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       "changes with JS DISABLED" in new Setup {
         val langSwitchNoScript: Option[Element] = getElementById("lang-switch-en-no-js")
         langSwitchNoScript.map(_.select("a").attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/switch-to-welsh")
-        langSwitchNoScript.map(_.select("a span:nth-child(2)").text) shouldBe ""
+        langSwitchNoScript.map(_.select("a span:nth-child(2)").text) shouldBe Some("Cymraeg")
       }
     }
 
     "have an updates tile" which {
       "has a heading" in new Setup {
-        getElementById("updates-tile").map(_.select("h2").text) shouldBe ""
+        getElementById("updates-tile").map(_.select("h2").text) shouldBe Some("Next updates due")
       }
       "has the date of the next update due" in new Setup {
         getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(updateDateLongDate)
@@ -224,24 +222,24 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       }
       "has a link to view updates" in new Setup {
         val link: Option[Elements] = getElementById("updates-tile").map(_.select("a"))
-        link.map(_.attr("href")) shouldBe Some(controllers.routes.NextUpdatesController.show().url)
-        link.map(_.text) shouldBe ""
+        link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/next-updates")
+        link.map(_.text) shouldBe Some("View update deadlines")
       }
       "is empty except for the title" when {
         "user has no open obligations" in new Setup(nextUpdatesTileViewModel = viewModelNoUpdates) {
-          getElementById("updates-tile").map(_.text()) shouldBe ""
+          getElementById("updates-tile").map(_.text()) shouldBe  Some("Next updates due")
         }
       }
       "has a link to view and manage updates - Opt Out" in new Setup(nextUpdatesTileViewModel = viewModelOptOut) {
         val link: Option[Elements] = getElementById("updates-tile").map(_.select("a"))
-        link.map(_.attr("href")) shouldBe Some(controllers.routes.NextUpdatesController.show().url)
-        link.map(_.text) shouldBe ""
+        link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/next-updates")
+        link.map(_.text) shouldBe Some("View deadlines and manage how you report")
       }
     }
 
     "have a payments due tile" which {
       "has a heading" in new Setup {
-        getElementById("payments-tile").map(_.select("h2").text) shouldBe ""
+        getElementById("payments-tile").map(_.select("h2").text) shouldBe Some("Next charges due")
       }
       "has the date of the next update due" in new Setup {
         getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(paymentDateLongDate)
@@ -277,7 +275,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       }
       "has a link to view payments" in new Setup {
         val link: Option[Elements] = getElementById("payments-tile").map(_.select("a"))
-        link.map(_.attr("href")) shouldBe Some(controllers.routes.WhatYouOweController.show().url)
+        link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/what-you-owe")
         link.map(_.text) shouldBe Some("Check what you owe")
       }
     }
@@ -288,7 +286,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       }
       "has a link to the view payments page" in new Setup {
         val link: Option[Element] = getElementById("returns-tile").map(_.select("a").first)
-        link.map(_.attr("href")) shouldBe Some(controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(currentTaxYear).url)
+        link.map(_.attr("href")) shouldBe Some(s"/report-quarterly/income-and-expenses/view/tax-year-summary/$currentTaxYear")
         link.map(_.text) shouldBe Some(s"View your current ${currentTaxYear - 1} to $currentTaxYear return")
       }
       "has a link to the update and submit page" in new Setup {
@@ -299,12 +297,12 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       "dont have a link to the update and submit page when ITSASubmissionIntegrationEnabled is disabled" in new Setup(ITSASubmissionIntegrationEnabled = false) {
         val link: Option[Element] = getElementById("returns-tile").map(_.select("a").get(1))
         link.map(_.attr("href")) should not be Some(appConfig.submissionFrontendTaxYearsPage(currentTaxYear))
-        link.map(_.text) should not be Some("View all tax years")
+        link.map(_.text) should not be Some(s"Update and submit your ${currentTaxYear - 1} to $currentTaxYear return")
       }
       "has a link to the tax years page" in new Setup {
         val link: Option[Element] = getElementById("returns-tile").map(_.select("a").last)
-        link.map(_.attr("href")) shouldBe Some(controllers.routes.TaxYearsController.showTaxYears().url)
-        link.map(_.text) shouldBe ""
+        link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/tax-years")
+        link.map(_.text) shouldBe Some("View all tax years")
       }
     }
 
@@ -320,22 +318,22 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       "has a link to the payment and refund history page" which {
         "has payment and refund history link when CreditsRefundsRepay OFF / PaymentHistoryRefunds ON" in new Setup(creditAndRefundEnabled = false, paymentHistoryEnabled = true) {
           val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
-          link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.show().url)
+          link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/payment-refund-history")
           link.map(_.text) shouldBe Some("Payment and refund history")
         }
         "has payment and credit history link when CreditsRefundsRepay ON / PaymentHistoryRefunds OFF" in new Setup(creditAndRefundEnabled = true, paymentHistoryEnabled = false) {
           val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
-          link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.show().url)
+          link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/payment-refund-history")
           link.map(_.text) shouldBe Some("Payment and credit history")
         }
         "has payment, credit and refund history link when CreditsRefundsRepay ON / PaymentHistoryRefunds ON" in new Setup(creditAndRefundEnabled = true, paymentHistoryEnabled = true) {
           val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
-          link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.show().url)
+          link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/payment-refund-history")
           link.map(_.text) shouldBe Some("Payment, credit and refund history")
         }
         "has payment history link when CreditsRefundsRepay OFF / PaymentHistoryRefunds OFF" in new Setup(creditAndRefundEnabled = false, paymentHistoryEnabled = false) {
           val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
-          link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.show().url)
+          link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/payment-refund-history")
           link.map(_.text) shouldBe Some("Payment history")
         }
         s"has the available credit " in new Setup(creditAndRefundEnabled = true) {
@@ -345,7 +343,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       "has an link to the 'How to claim a refund' for not migrated user" in new Setup(user = testMtdItUserNotMigrated()) {
         val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
         // next line would change as part of MISUV-3710 implementation
-        link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.show().url)
+        link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/payment-refund-history")
         link.map(_.text) shouldBe Some("Payment and refund history")
       }
 
@@ -357,11 +355,11 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       }
       "has a link to AddIncomeSourceController.show()" in new Setup(user = testMtdItUserMigrated(), incomeSourcesEnabled = true) {
         getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").text()) shouldBe Some("Add a new sole trader or property income source")
-        getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").attr("href")) shouldBe Some(controllers.incomeSources.add.routes.AddIncomeSourceController.show().url)
+        getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/income-sources/add/new-income-sources")
       }
       "has a link to ManageIncomeSourceController.show()" in new Setup(user = testMtdItUserMigrated(), incomeSourcesEnabled = true) {
         getElementById("income-sources-tile").map(_.select("div > p:nth-child(3) > a").text()) shouldBe Some("View and manage income sources")
-        getElementById("income-sources-tile").map(_.select("div > p:nth-child(3) > a").attr("href")) shouldBe Some(controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false).url)
+        getElementById("income-sources-tile").map(_.select("div > p:nth-child(3) > a").attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/income-sources/manage/view-and-manage-income-sources")
       }
     }
     "not have an Income Sources tile" when {
@@ -376,7 +374,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
         }
         "has a link to AddIncomeSourceController.show()" in new Setup(user = testMtdItUserMigrated(), incomeSourcesEnabled = true, incomeSourcesNewJourneyEnabled = true) {
           getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").text()) shouldBe Some("Add, manage or cease a business or income source")
-          getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").attr("href")) shouldBe Some(controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
+          getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/manage-your-businesses")
         }
       }
     }
@@ -398,7 +396,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
         "has a link to the reporting frequency page" in new Setup(user = testMtdItUserMigrated(), reportingFrequencyEnabled = true) {
           getElementById("reporting-frequency-link").map(_.text()) shouldBe Some("Manage your reporting frequency")
-          getElementById("reporting-frequency-link").map(_.attr("href")) shouldBe Some(controllers.routes.ReportingFrequencyPageController.show(false).url)
+          getElementById("reporting-frequency-link").map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/reporting-frequency")
         }
       }
 
@@ -412,7 +410,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
     "show the 'Claim refund' link for migrated user" when {
       "the claim a refund feature switch is on" in new Setup(user = testMtdItUserMigrated(), creditAndRefundEnabled = true) {
         val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").last())
-        link.map(_.attr("href")) shouldBe Some(controllers.routes.CreditAndRefundController.show().url)
+        link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/claim-refund")
         link.map(_.text) shouldBe Some("Claim a refund")
       }
     }
@@ -420,7 +418,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
     "show the 'How to claim a refund' link for not migrated user" when {
       "the claim a refund feature switch is on" in new Setup(user = testMtdItUserNotMigrated(), creditAndRefundEnabled = true) {
         val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").last())
-        link.map(_.attr("href")) shouldBe Some(controllers.routes.NotMigratedUserController.show().url)
+        link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/how-to-claim-refund")
         link.map(_.text) shouldBe Some("How to claim a refund")
       }
     }
