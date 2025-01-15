@@ -72,7 +72,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
   "ChargeItem" when {
 
-    "isOverdueReviewAndReconcileAccruingInterestCharge" when {
+    "isNotPaidAndNotOverduePoaReconciliationDebit" when {
 
       "transaction type is PoaOneReconciliationDebit, is not overdue and is not paid returns true" in {
         val dateServiceBeforeDueDate = dateService(dueDate.minusDays(1))
@@ -82,7 +82,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
           financialDetails = List(poaOneReconciliationDebitDetails))
 
 
-        chargeItem.isOverdueReviewAndReconcileAccruingInterestCharge()(dateServiceBeforeDueDate) shouldBe true
+        chargeItem.isNotPaidAndNotOverduePoaReconciliationDebit()(dateServiceBeforeDueDate) shouldBe true
       }
 
       "transaction type is PoaTwoReconciliationDebit, is not overdue and is not paid returns true" in {
@@ -92,7 +92,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
           documentDetail = defaultDocDetails,
           financialDetails = List(PoaTwoReconciliationDebitDetails))
 
-        chargeItem.isOverdueReviewAndReconcileAccruingInterestCharge()(dateServiceBeforeDueDate) shouldBe true
+        chargeItem.isNotPaidAndNotOverduePoaReconciliationDebit()(dateServiceBeforeDueDate) shouldBe true
       }
 
       "returns false when charge item is not PoaOneReconciliationDebit or PoaTwoReconciliationDebit " in {
@@ -102,7 +102,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
           documentDetail = defaultDocDetails,
           financialDetails = List(balancingNics2FinancialDetails))
 
-        chargeItem.isOverdueReviewAndReconcileAccruingInterestCharge()(dateServiceAfterDueDate) shouldBe false
+        chargeItem.isNotPaidAndNotOverduePoaReconciliationDebit()(dateServiceAfterDueDate) shouldBe false
       }
 
       "charge is overdue and is not paid returns false" in {
@@ -112,7 +112,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
           documentDetail = defaultDocDetails,
           financialDetails = List(poaOneReconciliationDebitDetails))
 
-        chargeItem.isOverdueReviewAndReconcileAccruingInterestCharge()(dateServiceAfterDueDate) shouldBe false
+        chargeItem.isNotPaidAndNotOverduePoaReconciliationDebit()(dateServiceAfterDueDate) shouldBe false
       }
 
       "charge is not overdue and is paid returns false" in {
@@ -122,7 +122,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
           documentDetail = docDetailsNoOutstandingAmout,
           financialDetails = List(poaOneReconciliationDebitDetails))
 
-        chargeItem.isOverdueReviewAndReconcileAccruingInterestCharge()(dateServiceBeforeDueDate) shouldBe false
+        chargeItem.isNotPaidAndNotOverduePoaReconciliationDebit()(dateServiceBeforeDueDate) shouldBe false
       }
 
     }

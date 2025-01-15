@@ -55,7 +55,7 @@ case class ChargeItem (
   def hasAccruingInterest: Boolean =
     interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0 && !isPaid
 
-  def isOverdueReviewAndReconcileAccruingInterestCharge()(implicit dateService: DateServiceInterface): Boolean = {
+  def isNotPaidAndNotOverduePoaReconciliationDebit()(implicit dateService: DateServiceInterface): Boolean = {
     Seq(PoaOneReconciliationDebit, PoaTwoReconciliationDebit).contains(transactionType) && !isPaid && !isOverdue()
   }
 
