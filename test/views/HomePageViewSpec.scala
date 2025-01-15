@@ -36,6 +36,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import views.html.Home
 
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import scala.util.Random
 
 
@@ -109,6 +110,10 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
     LocalDate.of(2018, 2, 1), LocalDate.of(2018, 3, 1)), currentDate, false)
   private val viewModelNoUpdates: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(), currentDate, false)
   private val viewModelOptOut: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, true)
+  val todayDateMinusOneDay: LocalDate = LocalDate.now().minusDays(1)
+  val todayDatePlusOneDay: LocalDate = LocalDate.now().plusDays(1)
+  val todayDatePlusOneDayLongFormat: String = LocalDate.now().plusDays(1).format(DateTimeFormatter.ofPattern("dd MMMM YYYY"))
+  val todayDateMinusOneDayLongFormat: String = s"OVERDUE ${LocalDate.now().minusDays(1).format(DateTimeFormatter.ofPattern("dd MMMM YYYY"))}"
 
 
   class Setup(paymentDueDate: LocalDate = nextPaymentDueDate, overDuePaymentsCount: Int = 0, paymentsAccruingInterestCount: Int = 0, reviewAndReconcileEnabled: Boolean = false,
@@ -261,6 +266,14 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
       "display an overdue tag when a single update is overdue" in new Setup(overDuePaymentsCount = 1) {
         getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some("OVERDUE " + paymentDateLongDate)
+      }
+
+      "display only the date when there are payments due but none being overdue" in new Setup(paymentDueDate = todayDatePlusOneDay, overDuePaymentsCount = 0) {
+        document.select("#payments-tile > div > p.govuk-body").text() shouldBe todayDatePlusOneDayLongFormat
+      }
+
+      "display the date and an overdue tag when there is one payment that is overdue" in new Setup(paymentDueDate = todayDateMinusOneDay, overDuePaymentsCount = 1) {
+        document.select("#payments-tile > div > p.govuk-body").text() shouldBe todayDateMinusOneDayLongFormat
       }
 
       "display daily interest tag when there are payments accruing interest" in new Setup(paymentsAccruingInterestCount = 2, reviewAndReconcileEnabled = true) {
