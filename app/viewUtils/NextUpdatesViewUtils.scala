@@ -40,10 +40,11 @@ class NextUpdatesViewUtils @Inject()(
       case m: OptOutOneYearViewModel if isEnabled(ReportingFrequencyPage) =>
         HtmlFormat.fill(
           Seq(
-            Html(messages("nextUpdates.optOutOneYear.reportingFrequency.p.message", m.startYear, m.endYear)),
+            Html(messages("nextUpdates.optOutOneYear.reportingFrequency.p.message")),
             link(
               link = reportingFrequencyLink,
-              messageKey = "nextUpdates.optOutOneYear.reportingFrequency.p.link"
+              messageKey = "nextUpdates.optOutOneYear.reportingFrequency.p.link",
+              id = Some("reporting-frequency-link")
             )
           )
         )
@@ -53,7 +54,8 @@ class NextUpdatesViewUtils @Inject()(
             Html(messages("nextUpdates.optOutMultiYear.reportingFrequency.p.message")),
             link(
               link = reportingFrequencyLink,
-              messageKey = "nextUpdates.optOutMultiYear.reportingFrequency.p.link"
+              messageKey = "nextUpdates.optOutMultiYear.reportingFrequency.p.link",
+              id = Some("reporting-frequency-link")
             )
           )
         )
@@ -63,7 +65,8 @@ class NextUpdatesViewUtils @Inject()(
             Html(messages("nextUpdates.optOutOneYear.p.message", m.startYear, m.endYear)),
             link(
               link = controllers.optOut.routes.SingleYearOptOutWarningController.show(isAgent).url,
-              messageKey = "nextUpdates.optOutOneYear.p.link"
+              messageKey = "nextUpdates.optOutOneYear.p.link",
+              id = Some("single-year-opt-out-warning-link")
             )
           )
         )
@@ -73,7 +76,8 @@ class NextUpdatesViewUtils @Inject()(
             Html(messages("nextUpdates.optOutOneYear.p.message", m.startYear, m.endYear)),
             link(
               link = controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url,
-              messageKey = "nextUpdates.optOutOneYear.p.link"
+              messageKey = "nextUpdates.optOutOneYear.p.link",
+              id = Some("confirm-opt-out-link")
             )
           )
         )
@@ -83,7 +87,8 @@ class NextUpdatesViewUtils @Inject()(
             Html(messages("nextUpdates.optOutMultiYear.p.message")),
             link(
               link = controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent).url,
-              messageKey = "nextUpdates.optOutMultiYear.p.link"
+              messageKey = "nextUpdates.optOutMultiYear.p.link",
+              id = Some("opt-out-link")
             )
           )
         )

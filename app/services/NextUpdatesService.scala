@@ -17,8 +17,6 @@
 package services
 
 import auth.MtdItUser
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
 import connectors._
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels._
@@ -42,8 +40,7 @@ object NextUpdatesService {
 @Singleton
 class NextUpdatesService @Inject()(
                                     val obligationsConnector: ObligationsConnector,
-                                    val appConfig: FrontendAppConfig
-                                  )(implicit ec: ExecutionContext, val dateService: DateServiceInterface) extends FeatureSwitching {
+                                  )(implicit ec: ExecutionContext, val dateService: DateServiceInterface) {
 
   def getDueDates()(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[Either[Exception, Seq[LocalDate]]] = {
     getOpenObligations().map {
