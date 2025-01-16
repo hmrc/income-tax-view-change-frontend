@@ -106,7 +106,7 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
                       "2024 to 2025" -> Some("Quarterly"),
                       "2025 to 2026" -> Some("Quarterly (mandatory)"),
                     ),
-                  isAnyOfBusinessLatent = false,
+                  isAnyOfBusinessLatent = true,
                   displayCeasedBusinessWarning = false
                 )
               ).toString

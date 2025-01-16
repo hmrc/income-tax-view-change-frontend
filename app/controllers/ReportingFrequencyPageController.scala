@@ -77,7 +77,7 @@ class ReportingFrequencyPageController @Inject()(
               optInTaxYears = optInTaxYears,
               itsaStatusTable = reportingFrequencyViewUtils.itsaStatusTable(optOutProposition),
               displayCeasedBusinessWarning = user.incomeSources.areAllBusinessesCeased,
-              isAnyOfBusinessLatent = user.incomeSources.isAnyOfBusinessesLatent,
+              isAnyOfBusinessLatent = user.incomeSources.isAnyOfActiveBusinessesLatent,
               displayManageYourRfSection = !(optOutProposition.areAllTaxYearsMandated || user.incomeSources.areAllBusinessesCeased)
             )
           ))
