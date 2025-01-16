@@ -18,6 +18,7 @@ package models.financialDetails
 
 import config.FrontendAppConfig
 import enums.CodingOutType.{CODING_OUT_ACCEPTED, CODING_OUT_CANCELLED, CODING_OUT_CLASS2_NICS}
+import exceptions.MissingFieldException
 import models.financialDetails.ChargeItem.filterAllowedCharges
 import services.{DateService, DateServiceInterface}
 import testConstants.BaseTestConstants.app
@@ -44,9 +45,13 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
     latePaymentInterestAmount = latePaymentInterestAmount,
     lpiWithDunningLock = lpiWithDunningLock)
 
-  val poa1FinancialDetails = financialDetail()
+  val docDetailsNoOutstandingAmout = defaultDocDetails.copy(outstandingAmount = 0)
 
+  val poa1FinancialDetails = financialDetail()
   val poa2FinancialDetails = financialDetail(mainTransaction = "4930")
+
+  val poaOneReconciliationDebitDetails = financialDetail(mainTransaction = "4911")
+  val PoaTwoReconciliationDebitDetails = financialDetail(mainTransaction = "4913")
 
   val balancingNics2DocumentDetails = defaultDocDetails.copy(documentText = Some(CODING_OUT_CLASS2_NICS.name))
   val balancingNics2FinancialDetails = financialDetail(mainTransaction = "4910")
@@ -63,6 +68,165 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
   implicit val dateService: DateServiceInterface = dateService(LocalDate.of(2000, 1, 1))
   def dateService(currentDate: LocalDate): DateService = new DateService()(app.injector.instanceOf[FrontendAppConfig]){
     override def getCurrentDate: LocalDate = currentDate
+  }
+
+  "ChargeItem" when {
+
+    "isNotPaidAndNotOverduePoaReconciliationDebit" when {
+
+      "transaction type is PoaOneReconciliationDebit, is not overdue and is not paid returns true" in {
+        val dateServiceBeforeDueDate = dateService(dueDate.minusDays(1))
+
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(poaOneReconciliationDebitDetails))
+
+
+        chargeItem.isNotPaidAndNotOverduePoaReconciliationDebit()(dateServiceBeforeDueDate) shouldBe true
+      }
+
+      "transaction type is PoaTwoReconciliationDebit, is not overdue and is not paid returns true" in {
+        val dateServiceBeforeDueDate = dateService(dueDate.minusDays(1))
+
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(PoaTwoReconciliationDebitDetails))
+
+        chargeItem.isNotPaidAndNotOverduePoaReconciliationDebit()(dateServiceBeforeDueDate) shouldBe true
+      }
+
+      "returns false when charge item is not PoaOneReconciliationDebit or PoaTwoReconciliationDebit " in {
+        val dateServiceAfterDueDate = dateService(dueDate.minusDays(1))
+
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(balancingNics2FinancialDetails))
+
+        chargeItem.isNotPaidAndNotOverduePoaReconciliationDebit()(dateServiceAfterDueDate) shouldBe false
+      }
+
+      "charge is overdue and is not paid returns false" in {
+        val dateServiceAfterDueDate = dateService(dueDate.plusDays(1))
+
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(poaOneReconciliationDebitDetails))
+
+        chargeItem.isNotPaidAndNotOverduePoaReconciliationDebit()(dateServiceAfterDueDate) shouldBe false
+      }
+
+      "charge is not overdue and is paid returns false" in {
+        val dateServiceBeforeDueDate = dateService(dueDate.minusDays(1))
+
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = docDetailsNoOutstandingAmout,
+          financialDetails = List(poaOneReconciliationDebitDetails))
+
+        chargeItem.isNotPaidAndNotOverduePoaReconciliationDebit()(dateServiceBeforeDueDate) shouldBe false
+      }
+
+    }
+
+    "getDueDate" when {
+
+      "successfully gets due date" in {
+
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(poaOneReconciliationDebitDetails))
+
+        chargeItem.getDueDate shouldBe LocalDate.of(2024, 1, 1)
+
+      }
+
+      "throws MissingFieldException when due date is not found" in {
+
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(poaOneReconciliationDebitDetails)).copy(dueDate = None)
+
+        val exception = intercept[MissingFieldException] {
+          chargeItem.getDueDate
+        }
+        exception shouldBe MissingFieldException("documentDueDate")
+
+
+      }
+
+    }
+
+    "interestIsPaid" when {
+
+      "interest outstanding amount is 0 returns true" in {
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(poaOneReconciliationDebitDetails)).copy(interestOutstandingAmount = Some(BigDecimal(0)))
+
+        chargeItem.interestIsPaid shouldBe true
+      }
+
+      "interest outstanding amount is not 0 returns false" in {
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(poaOneReconciliationDebitDetails))
+
+        chargeItem.interestIsPaid shouldBe false
+      }
+    }
+
+    "getInterestPaidStatus" when {
+
+      "interest is 0, return paid" in {
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(poaOneReconciliationDebitDetails)).copy(interestOutstandingAmount = Some(BigDecimal(0)))
+
+        chargeItem.getInterestPaidStatus shouldBe "paid"
+      }
+
+      "interest is part paid, return part-paid" in {
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(poaOneReconciliationDebitDetails))
+
+        chargeItem.getInterestPaidStatus shouldBe "part-paid"
+      }
+
+      "interest is not paid, return unpaid" in {
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(poaOneReconciliationDebitDetails)).copy(interestOutstandingAmount = Some(BigDecimal(30)))
+
+        chargeItem.getInterestPaidStatus shouldBe "unpaid"
+      }
+    }
+
+    "getChargePaidStatus" when {
+
+      "outstanding amount is 0, return paid" in {
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(poaOneReconciliationDebitDetails)).copy(outstandingAmount = BigDecimal(0))
+
+        chargeItem.getChargePaidStatus shouldBe "paid"
+      }
+
+      "interest is part paid, return part-paid" in {
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(poaOneReconciliationDebitDetails))
+
+        chargeItem.getChargePaidStatus shouldBe "part-paid"
+      }
+
+      "interest not paid, return unpaid" in {
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(poaOneReconciliationDebitDetails)).copy(outstandingAmount = BigDecimal(100))
+
+        chargeItem.getChargePaidStatus shouldBe "unpaid"
+      }
+    }
   }
 
   "fromDocumentPair" when {
