@@ -76,42 +76,43 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
 
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual
-  s"show(isAgent = $isAgent)" when {
-    val action = testController.show(isAgent)
-    val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
-    s"the user is authenticated as a $mtdRole" should {
-      s"render the choose tax year page" that {
-        "has intent not pre-selected" in {
-          setupMockSuccess(mtdRole)
-          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-          mockFetchIntent(Future.successful(None))
-          mockGetSubmissionCountForTaxYear(counts)
-          mockRecallOptOutProposition(Future.successful(optOutProposition))
 
-          val result = action(fakeRequest)
+    s"show(isAgent = $isAgent)" when {
+      val action = testController.show(isAgent)
+      val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
+      s"the user is authenticated as a $mtdRole" should {
+        s"render the choose tax year page" that {
+          "has intent not pre-selected" in {
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            mockFetchIntent(Future.successful(None))
+            mockGetSubmissionCountForTaxYear(counts)
+            mockRecallOptOutProposition(Future.successful(optOutProposition))
 
-          status(result) shouldBe Status.OK
-          Jsoup.parse(contentAsString(result)).select("#choice-year-1[checked]").toArray should have length 0
+            val result = action(fakeRequest)
 
-        }
+            status(result) shouldBe Status.OK
+            Jsoup.parse(contentAsString(result)).select("#choice-year-1[checked]").toArray should have length 0
 
-        "has intent pre-selected" in {
-          setupMockSuccess(mtdRole)
-          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-          mockFetchIntent(Future.successful(Some(optOutTaxYear.taxYear)))
-          mockGetSubmissionCountForTaxYear(counts)
-          mockRecallOptOutProposition(Future.successful(optOutProposition))
+          }
 
-          val result = action(fakeRequest)
+          "has intent pre-selected" in {
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            mockFetchIntent(Future.successful(Some(optOutTaxYear.taxYear)))
+            mockGetSubmissionCountForTaxYear(counts)
+            mockRecallOptOutProposition(Future.successful(optOutProposition))
 
-          Jsoup.parse(contentAsString(result)).select("#choice-year-1[checked]").toArray should have length 1
-          status(result) shouldBe Status.OK
+            val result = action(fakeRequest)
+
+            Jsoup.parse(contentAsString(result)).select("#choice-year-1[checked]").toArray should have length 1
+            status(result) shouldBe Status.OK
+          }
         }
       }
-    }
-    testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
+      testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
 
-  }
+    }
 
     s"submit(isAgent = $isAgent)" when {
       val action = testController.submit(isAgent)
@@ -119,6 +120,7 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
       s"the user is authenticated as a $mtdRole" should {
         "redirect to review and confirm page" when {
           "current tax is chosen" in {
+
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
@@ -126,8 +128,10 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
             mockSaveIntent(currentTaxYear, Future.successful(true))
             mockRecallOptOutProposition(Future.successful(optOutProposition))
 
-            val formData = Map(ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> currentTaxYear.toString,
-              ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> "")
+            val formData = Map(
+              ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> currentTaxYear.toString,
+              ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> ""
+            )
 
             val result = action(fakeRequest.withFormUrlEncodedBody(
               formData.toSeq: _*

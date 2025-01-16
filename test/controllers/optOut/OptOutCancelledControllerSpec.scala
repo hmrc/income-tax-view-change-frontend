@@ -65,7 +65,7 @@ class OptOutCancelledControllerSpec extends MockAuthActions with MockOptOutServi
 
         "a tax year is determined from a single year / multi year chosen intent tax year" should {
 
-          s"render the opt out cancelled page" in {
+          "render the opt out cancelled page" in {
 
             val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2017"), List(business1), Nil)
             setupMockSuccess(mtdRole)
@@ -102,6 +102,8 @@ class OptOutCancelledControllerSpec extends MockAuthActions with MockOptOutServi
               ).toString
           }
         }
+
+
 
         "user hits the cancel page before a tax year is selected for a multi year scenario and no tax year is returned" should {
 

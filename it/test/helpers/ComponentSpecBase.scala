@@ -122,13 +122,14 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val titleNotFound = "Page not found - 404"
   val titleProbWithService = "Sorry, there is a problem with the service"
   val titleThereIsAProblem = "There’s a problem"
-  implicit val csbTestUser: MtdItUser[_] = MtdItUser(
-    testMtditid, testNino, None, IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty), None,
-    Some("1234567890"), Some("12345-credId"), Some(Individual), None
-  )(FakeRequest())
+  implicit val csbTestUser: MtdItUser[_] =
+    MtdItUser(
+      testMtditid, testNino, None, IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty), None,
+      Some("1234567890"), Some("12345-credId"), Some(Individual), None
+    )(FakeRequest())
 
   def getTestUser(mtdUserRole: MTDUserRole, incomeSources: IncomeSourceDetailsModel): MtdItUser[_] = {
-    val (affinityGroup, arn) = if(mtdUserRole == MTDIndividual) {
+    val (affinityGroup, arn) = if (mtdUserRole == MTDIndividual) {
       (Individual, None)
     } else {
       (Agent, Some("1"))
