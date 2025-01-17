@@ -21,7 +21,6 @@ import play.api.http.Status.{CREATED, TOO_MANY_REQUESTS}
 import play.api.libs.json._
 import uk.gov.hmrc.auth.core.PlayAuthConnector
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import javax.inject.{Inject, Singleton}
 import scala.collection.Seq
@@ -52,9 +51,10 @@ case class AuthExchange(bearerToken: String, sessionAuthorityUri: String)
 @Singleton
 class CustomAuthConnector @Inject()(servicesConfig: ServicesConfig,
                                     val userRepository: UserRepository,
-                                    http: HttpClientV2)
+                                    val http: HttpClientV2)
                                     (implicit ec: ExecutionContext) extends PlayAuthConnector {
   override val serviceUrl: String = servicesConfig.baseUrl("auth-login")
+  override def httpClientV2: HttpClientV2 = http
 
   def login(nino: Nino, isAgent: Boolean, isSupporting: Boolean)(implicit hc: HeaderCarrier): Future[(AuthExchange, GovernmentGatewayToken)] = {
     createPayload(nino, isAgent, isSupporting) flatMap {
@@ -73,8 +73,7 @@ class CustomAuthConnector @Inject()(servicesConfig: ServicesConfig,
     http
       .post(url"$sessionUrl")
       .withBody(payload)
-      .execute[HttpResponse]
-      .map {
+      .execute[HttpResponse] flatMap {
       case response@HttpResponse(CREATED, _, headers) =>
         (
           getHeader("authorization", headers),

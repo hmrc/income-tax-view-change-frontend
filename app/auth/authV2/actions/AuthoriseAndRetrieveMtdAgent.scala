@@ -36,9 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: FrontendAuthorisedFunctions,
                                              val appConfig: FrontendAppConfig,
-                                                  override val config: Configuration,
-                                                  override val env: Environment,
-                                                  mcc: MessagesControllerComponents)
+                                             mcc: MessagesControllerComponents)
   extends AuthoriseHelper with ActionRefiner[ClientDataRequest, MtdItUserOptionNino] {
 
   lazy val logger: Logger = Logger(getClass)
