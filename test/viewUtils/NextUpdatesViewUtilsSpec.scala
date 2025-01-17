@@ -22,13 +22,13 @@ import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatter
 import models.admin.ReportingFrequencyPage
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
-import models.optout.OptOutOneYearViewModel
+import models.optout.{OptOutMultiYearViewModel, OptOutOneYearViewModel}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.twirl.api.{Html, HtmlFormat}
-import services.optout.OneYearOptOutFollowedByAnnual
+import services.optout.{OneYearOptOutFollowedByAnnual, OneYearOptOutFollowedByMandated}
 import testConstants.BaseTestConstants.{testMtditid, testNino}
 import testUtils.UnitSpec
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
@@ -54,11 +54,11 @@ class NextUpdatesViewUtilsSpec extends UnitSpec with FeatureSwitching with Impli
 
   "NextUpdatesViewUtils" when {
 
-    ".whatTheUserCanDo() - " when {
+    "Method whatTheUserCanDo() - " when {
 
       "Reporting Frequency feature switch is ON" when {
 
-        "is optOut single year" should {
+        "Single year optout model is used" should {
 
           "return the correct content" in {
 
@@ -76,6 +76,7 @@ class NextUpdatesViewUtilsSpec extends UnitSpec with FeatureSwitching with Impli
                 Seq(
                   Html(messages("Depending on your circumstances, you may be able to")),
                   linkComponent(
+                    id = Some("reporting-frequency-link"),
                     link = reportingFrequencyLink,
                     messageKey = "view and change your reporting frequency."
                   )
@@ -85,7 +86,128 @@ class NextUpdatesViewUtilsSpec extends UnitSpec with FeatureSwitching with Impli
             actual shouldBe Some(expected)
           }
         }
+
+        "multi-year optout model is used" should {
+
+          "return the correct content" in {
+
+            enable(ReportingFrequencyPage)
+
+            val isAgent = false
+
+            val optOutMultiYear = OptOutMultiYearViewModel()
+
+            val reportingFrequencyLink = controllers.routes.ReportingFrequencyPageController.show(isAgent).url
+
+            val actual = nextUpdatesViewUtils.whatTheUserCanDo(Some(optOutMultiYear), isAgent)
+            val expected =
+              HtmlFormat.fill(
+                Seq(
+                  Html(messages("nextUpdates.optOutMultiYear.reportingFrequency.p.message")),
+                  linkComponent(
+                    id = Some("reporting-frequency-link"),
+                    link = reportingFrequencyLink,
+                    messageKey = "nextUpdates.optOutMultiYear.reportingFrequency.p.link"
+                  )
+                )
+              )
+
+            actual shouldBe Some(expected)
+          }
+        }
+
       }
+
+      "Reporting Frequency feature switch is OFF" when {
+
+        "Single year optout model is used and warning shown" should {
+
+          "return the correct content" in {
+
+            disable(ReportingFrequencyPage)
+
+            val isAgent = false
+
+            val taxYear = TaxYear(2025, 2026)
+
+            val optOutSingleYear = OptOutOneYearViewModel(oneYearOptOutTaxYear = taxYear, state = Some(OneYearOptOutFollowedByMandated))
+
+            val actual = nextUpdatesViewUtils.whatTheUserCanDo(Some(optOutSingleYear), isAgent)
+            val expected =
+              HtmlFormat.fill(
+                Seq(
+                  Html(messages("nextUpdates.optOutOneYear.p.message", taxYear.startYear.toString, taxYear.endYear.toString)),
+                  linkComponent(
+                    id = Some("single-year-opt-out-warning-link"),
+                    link = controllers.optOut.routes.SingleYearOptOutWarningController.show(isAgent).url,
+                    messageKey = "nextUpdates.optOutOneYear.p.link"
+                  )
+                )
+              )
+
+            actual shouldBe Some(expected)
+          }
+        }
+
+        "Single year optout model is used and warning NOT shown" should {
+
+          "return the correct content" in {
+
+            disable(ReportingFrequencyPage)
+
+            val isAgent = false
+
+            val taxYear = TaxYear(2025, 2026)
+
+            val optOutSingleYear = OptOutOneYearViewModel(oneYearOptOutTaxYear = taxYear, state = Some(OneYearOptOutFollowedByAnnual))
+
+            val actual = nextUpdatesViewUtils.whatTheUserCanDo(Some(optOutSingleYear), isAgent)
+            val expected =
+              HtmlFormat.fill(
+                Seq(
+                  Html(messages("nextUpdates.optOutOneYear.p.message", taxYear.startYear.toString, taxYear.endYear.toString)),
+                  linkComponent(
+                    id = Some("confirm-opt-out-link"),
+                    link = controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url,
+                    messageKey = "nextUpdates.optOutOneYear.p.link"
+                  )
+                )
+              )
+
+            actual shouldBe Some(expected)
+          }
+        }
+
+        "multi-year optout model is used" should {
+
+          "return the correct content" in {
+
+            disable(ReportingFrequencyPage)
+
+            val isAgent = false
+
+            val optOutMultiYear = OptOutMultiYearViewModel()
+
+            val actual = nextUpdatesViewUtils.whatTheUserCanDo(Some(optOutMultiYear), isAgent)
+            val expected =
+              HtmlFormat.fill(
+                Seq(
+                  Html(messages("nextUpdates.optOutMultiYear.p.message")),
+                  linkComponent(
+                    id = Some("opt-out-link"),
+                    link = controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent).url,
+                    messageKey = "nextUpdates.optOutMultiYear.p.link"
+                  )
+                )
+              )
+
+            actual shouldBe Some(expected)
+          }
+        }
+
+
+      }
+
     }
   }
 }
