@@ -59,7 +59,7 @@ class OutstandingChargesConnector @Inject()(
               },
               valid => valid
             )
-          case status if status >= 500 =>
+          case status if status >= Status.INTERNAL_SERVER_ERROR =>
             Logger("application").error(s"Status: ${response.status}, body: ${response.body}")
             OutstandingChargesErrorModel(response.status, response.body)
           case _ =>
