@@ -92,6 +92,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
             Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
             Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
             Seq("2024 to 2025" -> Some("Quarterly")),
+            isAnyOfBusinessLatent = false,
             displayCeasedBusinessWarning = false
           )
 
@@ -130,6 +131,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
             Seq(TaxYear(2024, 2025)),
             Seq(TaxYear(2024, 2025)),
             Seq("2024 to 2025" -> Some("Quarterly")),
+            isAnyOfBusinessLatent = false,
             displayCeasedBusinessWarning = false
           )
 
@@ -172,6 +174,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
               "2024 to 2025" -> Some("Quarterly"),
               "2025 to 2026" -> Some("Annual"),
             ),
+            isAnyOfBusinessLatent = false,
             displayCeasedBusinessWarning = false
           )
 
@@ -243,6 +246,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
             Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
             Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
             Seq("2024 to 2025" -> Some("Quarterly")),
+            isAnyOfBusinessLatent = false,
             displayCeasedBusinessWarning = false
           )
 
@@ -280,6 +284,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
             Seq(TaxYear(2024, 2025)),
             Seq(TaxYear(2024, 2025)),
             Seq("2024 to 2025" -> Some("Quarterly")),
+            isAnyOfBusinessLatent = false,
             displayCeasedBusinessWarning = true
           )
 
@@ -311,6 +316,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
             Seq(TaxYear(2024, 2025)),
             Seq(TaxYear(2024, 2025)),
             Seq("2024 to 2025" -> Some("Quarterly")),
+            isAnyOfBusinessLatent = false,
             displayCeasedBusinessWarning = true
           )
 

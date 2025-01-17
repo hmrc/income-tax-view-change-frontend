@@ -69,7 +69,6 @@ class ReportingFrequencyPageController @Inject()(
                 controllers.optOut.routes.OptOutChooseTaxYearController.show(user.isAgent()).url
             }
           }
-
           Ok(view(
             ReportingFrequencyViewModel(
               isAgent = user.isAgent(),
@@ -78,6 +77,7 @@ class ReportingFrequencyPageController @Inject()(
               optInTaxYears = optInTaxYears,
               itsaStatusTable = reportingFrequencyViewUtils.itsaStatusTable(optOutProposition),
               displayCeasedBusinessWarning = user.incomeSources.areAllBusinessesCeased,
+              isAnyOfBusinessLatent = user.incomeSources.isAnyOfActiveBusinessesLatent,
               displayManageYourRfSection = !(optOutProposition.areAllTaxYearsMandated || user.incomeSources.areAllBusinessesCeased)
             )
           ))

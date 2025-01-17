@@ -2365,3 +2365,16 @@ reporting.frequency.table.annual                                    = Yn flynydd
 reporting.frequency.ceasedBusiness.warning.text.1                   = Nid oes unrhyw fusnesau ar y cyfrif hwn ar hyn o bryd. Gallwch ychwanegu unig fasnachwr neu fusnes eiddo ar y dudalen
 reporting.frequency.ceasedBusiness.warning.link                     = bob busnes.
 reporting.frequency.ceasedBusiness.warning.text.2                   =
+
+reporting.frequency.latency.details.section.header                  = Gall amlder eich adroddiadau ar gyfer eich busnes newydd fod ar sail amlder gwahanol
+reporting.frequency.latency.details.section.text.para1              = Ar gyfer blynyddoedd treth lle yr ydych yn adrodd yn chwarterol, gallwch ddewis i adrodd yn flynyddol ar gyfer unrhyw ffynhonnell incwm o eiddo neu fasnachwr newydd:
+reporting.frequency.latency.details.section.text.para1.bullet1      = a ddechreuodd llai na 2 flynedd yn ôl
+reporting.frequency.latency.details.section.text.para1.bullet2      = a fydd yn dechrau yn y dyfodol
+reporting.frequency.latency.details.section.text.para2              = Mae’r opsiwn hwn ar gael i fusnesau newydd:
+reporting.frequency.latency.details.section.text.para2.bullet1      = am hyd ar 2 flwyddyn dreth
+reporting.frequency.latency.details.section.text.para2.bullet2      = ar yr amod eich bod yn adrodd yn chwarterol ar gyfer eich busnesau eraill
+reporting.frequency.latency.details.section.text.para2.bullet3      = hyd yn oed os yw’ch incwm o hunangyflogaeth neu’ch incwm o eiddo, neu’r ddau, y tu hwn i’r trothwy incwm
+reporting.frequency.latency.details.section.text.para3.heading      = Sut i newid amlder eich adroddiadau ar gyfer ffynhonnell incwm newydd
+reporting.frequency.latency.details.section.text.para3.text.1       = Neges testun. Gallwch wneud hyn ar unrhyw adeg o’r adran
+reporting.frequency.latency.details.section.text.para3.link.text    = pob busnes
+reporting.frequency.latency.details.section.text.para3.text.2       =

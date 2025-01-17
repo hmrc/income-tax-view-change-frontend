@@ -51,7 +51,7 @@ object IncomeSourceIntegrationTestConstants {
   val singleBusinessResponseManageYourDetailsAudit: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     testNino,
     testMtdItId,
-    businesses = List(businessForManageYourDetailsAudit),
+    businesses = List(businessWithLatencyForManageYourDetailsAudit),
     properties = Nil,
     yearOfMigration = Some("2018")
   )
@@ -238,6 +238,16 @@ object IncomeSourceIntegrationTestConstants {
     testMtdItId,
     businesses = List(
       ceasedBusiness1
+    ),
+    properties = List(foreignProperty),
+    yearOfMigration = Some("2018")
+  )
+
+  val businessWithLatency: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testNino,
+    testMtdItId,
+    businesses = List(
+      businessWithLatencyForManageYourDetailsAudit
     ),
     properties = List(foreignProperty),
     yearOfMigration = Some("2018")

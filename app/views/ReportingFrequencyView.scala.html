@@ -26,6 +26,7 @@
     h2: h2,
     p: p,
     linkComponent: linkComponent,
+    detailsDropdown: detailsDropdown,
     bulletList: bulletPointList,
     govukTable: GovukTable,
     govukInsetText : GovukInsetText
@@ -133,6 +134,37 @@
     }
 }
 
+@latentBusinessText = {
+    @p(id = Some("rf-latency-para1")) {
+        @messages("reporting.frequency.latency.details.section.text.para1")
+    }
+    <ul class="govuk-list govuk-list--bullet">
+        <li id="rf-latency-para1-bullet1">@messages("reporting.frequency.latency.details.section.text.para1.bullet1")</li>
+        <li id="rf-latency-para1-bullet2">@messages("reporting.frequency.latency.details.section.text.para1.bullet2")</li>
+    </ul>
+    @p(id = Some("rf-latency-para2")) {
+        @messages("reporting.frequency.latency.details.section.text.para2")
+    }
+    <ul class="govuk-list govuk-list--bullet">
+        <li id="rf-latency-para2-bullet1">@messages("reporting.frequency.latency.details.section.text.para2.bullet1")</li>
+        <li id="rf-latency-para2-bullet2">@messages("reporting.frequency.latency.details.section.text.para2.bullet2")</li>
+        <li id="rf-latency-para2-bullet3">@messages("reporting.frequency.latency.details.section.text.para2.bullet3")</li>
+    </ul>
+
+    <h3 class="govuk-heading-s" id="rf-latency-small-heading">
+        @messages("reporting.frequency.latency.details.section.text.para3.heading")
+    </h3>
+    @p(id = Some("rf-latency-para3-text")) {
+        @messages("reporting.frequency.latency.details.section.text.para3.text.1")
+        @linkComponent(
+            id = Some("rf-latency-para3-link"),
+            url = if(viewModel.isAgent) controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url else controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url,
+            message = messages("reporting.frequency.latency.details.section.text.para3.link.text")
+        )
+        @messages("reporting.frequency.latency.details.section.text.para3.text.2")
+    }
+}
+
 @mainTemplate(
     pageTitle = messages("reporting.frequency.title"),
     isAgent = viewModel.isAgent,
@@ -142,6 +174,9 @@
     @h1(msg = "reporting.frequency.h1", id = Some("reporting-frequency-heading"))
     @ceasedBusinessWarning
     @itsaStatusTable
+    @if(viewModel.isAnyOfBusinessLatent) {
+        @detailsDropdown("reporting.frequency.latency.details.section.header", latentBusinessText)
+    }
     @if(viewModel.displayManageYourRfSection) {
         @manageReportingFrequency
     }

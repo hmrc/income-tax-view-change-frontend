@@ -184,7 +184,7 @@ object BusinessDetailsIntegrationTestConstants {
     cashOrAccruals = false
   )
 
-  val businessForManageYourDetailsAudit = BusinessDetailsModel(
+  val businessWithLatencyForManageYourDetailsAudit = BusinessDetailsModel(
     incomeSourceId = testSelfEmploymentId,
     incomeSource = Some(testIncomeSource),
     accountingPeriod = Some(AccountingPeriodModel(

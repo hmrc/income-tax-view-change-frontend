@@ -26,6 +26,7 @@ case class ReportingFrequencyViewModel(
                                         optInTaxYears: Seq[TaxYear],
                                         itsaStatusTable: Seq[(String, Option[String])],
                                         displayCeasedBusinessWarning: Boolean,
+                                        isAnyOfBusinessLatent: Boolean,
                                         displayManageYourRfSection: Boolean = true
                                       )(implicit dateService: DateServiceInterface) {
 
