@@ -31,14 +31,14 @@ object ChooseTaxYearForm {
     val noSelectionErrorMessage: String = messages(noResponseErrorMessageKey)
 
     form(noSelectionErrorMessage, optionValue)
-
   }
 
-  def form(msg: String, optOutYears: Seq[String]): Form[ChooseTaxYearForm] = Form[ChooseTaxYearForm](
-    mapping(
-      choiceField -> optional(text).verifying(msg, optionalChoice => optionalChoice.nonEmpty && optOutYears.contains(optionalChoice.get))
-    )(ChooseTaxYearForm.apply)(ChooseTaxYearForm.unapply)
-  )
+  def form(msg: String, optOutYears: Seq[String]): Form[ChooseTaxYearForm] =
+    Form[ChooseTaxYearForm](
+      mapping(
+        choiceField -> optional(text).verifying(msg, optionalChoice => optionalChoice.nonEmpty && optOutYears.contains(optionalChoice.get))
+      )(ChooseTaxYearForm.apply)(ChooseTaxYearForm.unapply)
+    )
 
 
 }

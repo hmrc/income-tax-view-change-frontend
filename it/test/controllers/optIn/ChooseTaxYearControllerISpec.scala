@@ -35,6 +35,7 @@ import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
 object ChooseYearControllerISpec {
+
   val headingText = "Voluntarily opting in to reporting quarterly"
   val descriptionText = "Opting in to the current tax year may result in you having overdue quarterly updates."
   val description2TextHeading = "Voluntarily reporting quarterly and overdue updates"

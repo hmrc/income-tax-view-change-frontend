@@ -71,7 +71,7 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
     }
 
   def pageTitle(mtdUserRole: MTDUserRole, messageKey: String, isInvalidInput: Boolean = false, isErrorPage: Boolean = false)(implicit lang: Lang): HavePropertyMatcher[WSResponse, String] = {
-    if(mtdUserRole == MTDIndividual) {
+    if (mtdUserRole == MTDIndividual) {
       pageTitleIndividual(messageKey, isInvalidInput, isErrorPage)(lang)
     } else {
       pageTitleAgent(messageKey, isInvalidInput, isErrorPage)(lang)
@@ -99,8 +99,7 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
       }
     }
 
-  def pageTitleCustom(title: String,
-                      isErrorPage: Boolean = false): HavePropertyMatcher[WSResponse, String] =
+  def pageTitleCustom(title: String): HavePropertyMatcher[WSResponse, String] =
     new HavePropertyMatcher[WSResponse, String] {
       def apply(response: WSResponse) = {
         val body = Jsoup.parse(response.body)
@@ -113,6 +112,8 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
         )
       }
     }
+
+
   def pageTitleAgent(messageKey: String,
                      isInvalidInput: Boolean = false,
                      isErrorPage: Boolean = false,
@@ -140,9 +141,9 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
     }
 
   def pageTitleInd(messageKey: String,
-                     isInvalidInput: Boolean = false,
-                     isErrorPage: Boolean = false,
-                     showServiceName: Boolean = true): HavePropertyMatcher[WSResponse, String] =
+                   isInvalidInput: Boolean = false,
+                   isErrorPage: Boolean = false,
+                   showServiceName: Boolean = true): HavePropertyMatcher[WSResponse, String] =
     new HavePropertyMatcher[WSResponse, String] {
 
       def apply(response: WSResponse): HavePropertyMatchResult[String] = {
@@ -165,8 +166,8 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
     }
 
   def pageTitleAgentLogin(messageKey: String,
-                     isInvalidInput: Boolean = false,
-                     isErrorPage: Boolean = false): HavePropertyMatcher[WSResponse, String] =
+                          isInvalidInput: Boolean = false,
+                          isErrorPage: Boolean = false): HavePropertyMatcher[WSResponse, String] =
     new HavePropertyMatcher[WSResponse, String] {
 
       def apply(response: WSResponse): HavePropertyMatchResult[String] = {

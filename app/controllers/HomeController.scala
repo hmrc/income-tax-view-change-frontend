@@ -171,7 +171,7 @@ private def getOutstandingChargesModel(unpaidCharges: List[FinancialDetailsRespo
 
 private def calculateOverduePaymentsCount(paymentsDue: List[LocalDate], outstandingChargesModel: List[OutstandingChargeModel]): Int = {
   val overduePaymentsCountFromDate = paymentsDue.count(_.isBefore(dateService.getCurrentDate))
-  val overdueChargesCount = outstandingChargesModel.length
+  val overdueChargesCount = outstandingChargesModel.flatMap(_.relevantDueDate).count(_.isBefore(dateService.getCurrentDate))
   overduePaymentsCountFromDate + overdueChargesCount
 }
 

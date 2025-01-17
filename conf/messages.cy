@@ -2205,6 +2205,25 @@ optIn.beforeYouStart.voluntaryStatus           = Eich statws gwirfoddol
 optIn.beforeYouStart.voluntaryStatus.text      = Gan y byddech yn optio i mewn yn wirfoddol i adrodd yn chwarterol, byddech yn gallu optio allan ar unrhyw adeg ac felly dychwelyd i adroddiadau blynyddol.
 optIn.beforeYouStart.button.start              = Dechrau
 
+# opt-in single taxyear warning
+optIn.singleTaxYearWarning.heading                                      = Optio i mewn yn wirfoddol i adrodd yn chwarterol am flwyddyn dreth unigol
+optIn.singleTaxYearWarning.desc1                                        = Gall optio i mewn ar gyfer y flwyddyn dreth bresennol golygu y bydd gennych ddiweddariadau chwarterol hwyr.
+optIn.singleTaxYearWarning.inset.subHeading                             = Adrodd yn chwarterol yn wirfoddol a diweddariadau sy’n hwyr
+optIn.singleTaxYearWarning.inset.text                                   = Gan eich bod wedi optio i mewn yn wirfoddol, ni chodir unrhyw gosbau am gyflwyno diweddariadau chwarterol yn hwyr.
+optIn.singleTaxYearWarning.desc2                                        = Os, yn y dyfodol, nad ydych bellach yn wirfoddol ac y mae’n orfodol i adrodd yn chwarterol, codir cosbau am gyflwyno diweddariadau yn hwyr. Os bydd hi’n dod yn orfodol i chi adrodd yn chwarterol, byddwn yn anfon llythyr atoch.
+optIn.singleTaxYearWarning.dropDown.heading                             = Sut i gyflwyno diweddariadau sy’n hwyr
+optIn.singleTaxYearWarning.dropDown.insetText.p1                        = Mae diweddariad chwarterol unigol yn cwmpasu cyfnod o 3 mis ar gyfer un o’ch ffynonellau incwm. Er enghraifft, os oes gennych 2 ffynhonnell incwm, a’ch bod wedi methu 2 chwarter, byddai gennych 4 diweddariad hwyr.
+optIn.singleTaxYearWarning.dropDown.insetText.p2                        = Yn dibynnu ar y feddalwedd sy’n cydweddu yr ydych yn ei defnyddio, efallai y bydd angen i chi wneud y canlynol:
+optIn.singleTaxYearWarning.dropDown.insetText.p2.list1                  = cyflwyno pob diweddariad chwarter ar wahân, yn nhrefn gronolegol
+optIn.singleTaxYearWarning.dropDown.insetText.p2.list2                  = cyflwyno pob un o’ch diweddariadau sy’n hwyr fel un swmp
+optIn.singleTaxYearWarning.stillOptInCurrentYear.heading                = A ydych am optio i mewn ar gyfer blwyddyn dreth 2024 i 2025 o hyd?
+optIn.singleTaxYearWarning.form.error                                   = Select yes to opt in for the {0} to {1} tax year
+optIn.singleTaxYearWarning.stillOptInCurrentYear.radiobutton.yes        = Iawn
+optIn.singleTaxYearWarning.stillOptInCurrentYear.radiobutton.hint1      = Rwyf am optio i mewn i adrodd yn chwarterol, ac rwy’n deall y gall hyn olygu bod fy niweddariadau chwarterol yn hwyr yn barod.
+optIn.singleTaxYearWarning.stillOptInCurrentYear.radiobutton.no         = Na
+optIn.singleTaxYearWarning.stillOptInCurrentYear.radiobutton.hint2      = Rwyf am barhau i gyflwyno adroddiadau’n flynyddol.
+optIn.singleTaxYearWarning.continue                                     = Yn eich blaen
+
 # opt in choose tax year
 optin.chooseOptInTaxYear.heading                          = Optio i mewn yn wirfoddol i adrodd yn chwarterol
 optin.chooseOptInTaxYear.desc1                            = Gallai optio i mewn ar gyfer y flwyddyn dreth bresennol golygu y bydd gennych ddiweddariadau chwarterol hwyr.

@@ -99,7 +99,7 @@ class BeforeYouStartControllerISpec extends ControllerISpecHelper {
                 elementTextByID("reportQuarterly")(reportQuarterlyText),
                 elementTextByID("voluntaryStatus")(voluntaryStatus),
                 elementTextByID("voluntaryStatus-text")(voluntaryStatusText),
-                elementAttributeBySelector("#start-button", "href")(routes.ConfirmTaxYearController.show(isAgent).url)
+                elementAttributeBySelector("#start-button", "href")(routes.SingleTaxYearOptInWarningController.show(isAgent).url)
               )
             }
           }

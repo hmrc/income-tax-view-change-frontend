@@ -78,7 +78,7 @@ class BeforeYouStartControllerSpec extends MockAuthActions with MockOptInService
               when(mockOptInService.availableOptInTaxYear()(any(), any(), any()))
                 .thenReturn(Future.successful(Seq(taxYear2024)))
 
-              val buttonUrl = controllers.optIn.routes.ConfirmTaxYearController.show(isAgent).url
+              val buttonUrl = controllers.optIn.routes.SingleTaxYearOptInWarningController.show(isAgent).url
 
               val result = action(fakeRequest)
               val doc: Document = Jsoup.parse(contentAsString(result))
