@@ -39,7 +39,7 @@ object NextUpdatesService {
 
 @Singleton
 class NextUpdatesService @Inject()(
-                                    val obligationsConnector: ObligationsConnector,
+                                    val obligationsConnector: ObligationsConnector
                                   )(implicit ec: ExecutionContext, val dateService: DateServiceInterface) {
 
   def getDueDates()(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[Either[Exception, Seq[LocalDate]]] = {
