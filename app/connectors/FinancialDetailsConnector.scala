@@ -226,11 +226,11 @@ class FinancialDetailsConnector @Inject()(
       }
   }
 
-  def getPayments(taxYear: Int)
+  def getPayments(taxYear: TaxYear)
                  (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[PaymentsResponse] = {
 
-    val dateFrom: String = s"${taxYear - 1}-04-06"
-    val dateTo: String = s"$taxYear-04-05"
+    val dateFrom: String = taxYear.toFinancialYearStart.toString
+    val dateTo: String = taxYear.toFinancialYearEnd.toString
 
     val url: String = getPaymentsUrl(mtdUser.nino, dateFrom, dateTo)
     Logger("application").debug(s"GET $url")

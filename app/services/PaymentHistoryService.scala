@@ -43,7 +43,7 @@ class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistor
 
     val orderedTaxYears: List[Int] = user.incomeSources.orderedTaxYearsByYearOfMigration.reverse.take(appConfig.paymentHistoryLimit)
 
-    Future.sequence(orderedTaxYears.map(financialDetailsConnector.getPayments)) map { paymentResponses =>
+    Future.sequence(orderedTaxYears.map(year => financialDetailsConnector.getPayments(TaxYear(year-1, year)))) map { paymentResponses =>
       val paymentsContainsFailure: Boolean = paymentResponses.exists {
         case Payments(_) => false
         case PaymentsError(status, _) if status == NOT_FOUND => false

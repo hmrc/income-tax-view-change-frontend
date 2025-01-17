@@ -372,7 +372,7 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
           when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
             .thenReturn(Future(successResponse))
 
-          val result: Future[PaymentsResponse] = connector.getPayments(testYear2017)
+          val result: Future[PaymentsResponse] = connector.getPayments(testTaxYear2016)
 
           result.futureValue shouldBe Payments(payments)
         }
@@ -389,7 +389,7 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
           when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
             .thenReturn(Future(successResponseInvalidJson))
 
-          val result: Future[PaymentsResponse] = connector.getPayments(testYear2017)
+          val result: Future[PaymentsResponse] = connector.getPayments(testTaxYear2016)
 
           result.futureValue shouldBe PaymentsError(OK, "Json validation error")
         }
@@ -404,7 +404,7 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
           when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
             .thenReturn(Future(notFoundResponse))
 
-          val result: Future[PaymentsResponse] = connector.getPayments(testYear2017)
+          val result: Future[PaymentsResponse] = connector.getPayments(testTaxYear2016)
 
           result.futureValue shouldBe PaymentsError(NOT_FOUND, "Not Found")
         }
@@ -419,7 +419,7 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
           when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
             .thenReturn(Future(internalServerErrorResponse))
 
-          val result: Future[PaymentsResponse] = connector.getPayments(testYear2017)
+          val result: Future[PaymentsResponse] = connector.getPayments(testTaxYear2016)
 
           result.futureValue shouldBe PaymentsError(INTERNAL_SERVER_ERROR, "Internal Server Error")
         }

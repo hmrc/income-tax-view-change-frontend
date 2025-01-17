@@ -54,7 +54,7 @@ trait MockFinancialDetailsConnector extends UnitSpec with BeforeAndAfterEach {
       .thenReturn(Future.successful(response))
   }
 
-  def setupGetPayments(taxYear: Int)(response: PaymentsResponse): Unit = {
+  def setupGetPayments(taxYear: TaxYear)(response: PaymentsResponse): Unit = {
     when(mockFinancialDetailsConnector.getPayments(ArgumentMatchers.eq(taxYear))(any(), any()))
       .thenReturn(Future.successful(response))
   }

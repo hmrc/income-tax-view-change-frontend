@@ -282,7 +282,7 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
 
           WiremockHelper.stubGet(url, OK, Json.toJson(response).toString())
 
-          val result = connector.getPayments(2024).futureValue
+          val result = connector.getPayments(TaxYear(2023,2024)).futureValue
 
           result shouldBe Payments(response)
           WiremockHelper.verifyGet(uri = url)
@@ -299,7 +299,7 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
 
             WiremockHelper.stubGet(url, OK, response)
 
-            val result = connector.getPayments(2024).futureValue
+            val result = connector.getPayments(TaxYear(2023,2024)).futureValue
 
             result shouldBe PaymentsError(OK, "Json validation error")
             WiremockHelper.verifyGet(uri = url)
@@ -320,7 +320,7 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
 
             WiremockHelper.stubGet(url, INTERNAL_SERVER_ERROR, response)
 
-            val result = connector.getPayments(2024).futureValue
+            val result = connector.getPayments(TaxYear(2023,2024)).futureValue
 
             result shouldBe PaymentsError(INTERNAL_SERVER_ERROR, response)
             WiremockHelper.verifyGet(uri = url)
