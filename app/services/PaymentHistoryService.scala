@@ -21,7 +21,9 @@ import config.FrontendAppConfig
 import connectors.{FinancialDetailsConnector, RepaymentHistoryConnector}
 import models.core.Nino
 import models.financialDetails.{Payment, Payments, PaymentsError}
+import models.incomeSourceDetails.TaxYear
 import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryErrorModel, RepaymentHistoryModel}
+import play.api.Logger
 import play.api.http.Status.NOT_FOUND
 import services.PaymentHistoryService.PaymentHistoryError
 import uk.gov.hmrc.http.HeaderCarrier
@@ -36,11 +38,12 @@ class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistor
                                       val appConfig: FrontendAppConfig)
                                      (implicit ec: ExecutionContext) {
 
+  @deprecated("Use getPaymentHistoryV2 instead", "MISUV-8845")
   def getPaymentHistory(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[PaymentHistoryError.type, List[Payment]]] = {
 
     val orderedTaxYears: List[Int] = user.incomeSources.orderedTaxYearsByYearOfMigration.reverse.take(appConfig.paymentHistoryLimit)
 
-    Future.sequence(orderedTaxYears.map(financialDetailsConnector.getPayments)) map { paymentResponses =>
+    Future.sequence(orderedTaxYears.map(year => financialDetailsConnector.getPayments(TaxYear(year-1, year)))) map { paymentResponses =>
       val paymentsContainsFailure: Boolean = paymentResponses.exists {
         case Payments(_) => false
         case PaymentsError(status, _) if status == NOT_FOUND => false
@@ -53,6 +56,21 @@ class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistor
           case Payments(payments) => payments
         }.flatten.distinct)
       }
+    }
+  }
+
+  def getPaymentHistoryV2(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[PaymentHistoryError.type, Seq[Payment]]] = {
+
+    val orderedTaxYears: List[Int] = user.incomeSources.orderedTaxYearsByYearOfMigration.reverse.take(appConfig.paymentHistoryLimit)
+
+    val (from, to) = (orderedTaxYears.min, orderedTaxYears.max)
+    Logger("application").debug(s"Getting payment history for TaxYears: ${from} - ${to}")
+
+    for {
+      response <- financialDetailsConnector.getPayments(TaxYear.forYearEnd(from), TaxYear.forYearEnd(to))
+    } yield response match {
+      case Payments(payments) => Right(payments.distinct)
+      case PaymentsError(_, _) => Left(PaymentHistoryError)
     }
   }
 

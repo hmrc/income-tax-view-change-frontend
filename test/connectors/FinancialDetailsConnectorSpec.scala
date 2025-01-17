@@ -14,22 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * Copyright 2023 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package connectors
 
 import audit.AuditingService
@@ -110,14 +94,6 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
     )
 
   "FinancialDetailsConnector" when {
-
-    ".getOutstandingChargesUrl()" should {
-
-      "return the correct url" in new Setup {
-        connector.getOutstandingChargesUrl(testSaUtr, testSaUtrId, testTo) shouldBe
-          s"$baseUrl/income-tax-view-change/out-standing-charges/$testSaUtr/$testSaUtrId/$testTo"
-      }
-    }
 
     ".getPaymentAllocations()" should {
 
@@ -350,73 +326,7 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
 
     }
 
-    ".getOutstandingCharges()" should {
-
-      val successResponse = HttpResponse(status = Status.OK, json = testValidOutStandingChargeModelJson, headers = Map.empty)
-      val successResponseBadJson = HttpResponse(status = Status.OK, json = testInvalidOutstandingChargesJson, headers = Map.empty)
-      val badResponse = HttpResponse(status = Status.BAD_REQUEST, body = "Error Message")
-
-      "return a OutstandingCharges model when successful JSON is received" in new Setup {
-
-        when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
-
-        when(mockRequestBuilder.withBody(any())(any(), any(), any()))
-          .thenReturn(mockRequestBuilder)
-
-        when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
-          .thenReturn(Future(successResponse))
-
-        val result: Future[OutstandingChargesResponseModel] = connector.getOutstandingCharges(idType, idNumber, taxYear2020)
-        result.futureValue shouldBe testValidOutstandingChargesModel
-
-      }
-
-      "return a OutstandingCharges model in case of future failed scenario" in new Setup {
-
-        when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
-
-        when(mockRequestBuilder.withBody(any())(any(), any(), any()))
-          .thenReturn(mockRequestBuilder)
-
-        when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
-          .thenReturn(Future.failed(new Exception("unknown error")))
-
-        val result: Future[OutstandingChargesResponseModel] = connector.getOutstandingCharges(idType, idNumber, taxYear2020)
-        result.futureValue shouldBe OutstandingChargesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, unknown error")
-      }
-
-
-      "return OutstandingChargesErrorResponse model in case of failure" in new Setup {
-
-        when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
-
-        when(mockRequestBuilder.withBody(any())(any(), any(), any()))
-          .thenReturn(mockRequestBuilder)
-
-        when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
-          .thenReturn(Future(badResponse))
-
-        val result: Future[OutstandingChargesResponseModel] = connector.getOutstandingCharges(idType, idNumber, taxYear2020)
-        result.futureValue shouldBe OutstandingChargesErrorModel(Status.BAD_REQUEST, "Error Message")
-      }
-
-      "return OutstandingChargesErrorResponse model in case of bad/malformed JSON response" in new Setup {
-
-        when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
-
-        when(mockRequestBuilder.withBody(any())(any(), any(), any()))
-          .thenReturn(mockRequestBuilder)
-
-        when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
-          .thenReturn(Future(successResponseBadJson))
-
-        val result: Future[OutstandingChargesResponseModel] = connector.getOutstandingCharges(idType, idNumber, taxYear2020)
-        result.futureValue shouldBe testOutstandingChargesErrorModelParsing
-      }
-
-    }
-
-    ".getPayments()" should {
+    ".getPayments() for a single tax year" should {
 
       val payments: Seq[Payment] =
         Seq(
@@ -462,7 +372,7 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
           when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
             .thenReturn(Future(successResponse))
 
-          val result: Future[PaymentsResponse] = connector.getPayments(testYear2017)
+          val result: Future[PaymentsResponse] = connector.getPayments(testTaxYear2016)
 
           result.futureValue shouldBe Payments(payments)
         }
@@ -479,7 +389,7 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
           when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
             .thenReturn(Future(successResponseInvalidJson))
 
-          val result: Future[PaymentsResponse] = connector.getPayments(testYear2017)
+          val result: Future[PaymentsResponse] = connector.getPayments(testTaxYear2016)
 
           result.futureValue shouldBe PaymentsError(OK, "Json validation error")
         }
@@ -494,7 +404,7 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
           when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
             .thenReturn(Future(notFoundResponse))
 
-          val result: Future[PaymentsResponse] = connector.getPayments(testYear2017)
+          val result: Future[PaymentsResponse] = connector.getPayments(testTaxYear2016)
 
           result.futureValue shouldBe PaymentsError(NOT_FOUND, "Not Found")
         }
@@ -509,7 +419,107 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
           when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
             .thenReturn(Future(internalServerErrorResponse))
 
-          val result: Future[PaymentsResponse] = connector.getPayments(testYear2017)
+          val result: Future[PaymentsResponse] = connector.getPayments(testTaxYear2016)
+
+          result.futureValue shouldBe PaymentsError(INTERNAL_SERVER_ERROR, "Internal Server Error")
+        }
+      }
+    }
+
+    ".getPayments() for a range of tax years" should {
+
+      val payments: Seq[Payment] =
+        Seq(
+          Payment(reference = Some("reference"), amount = Some(100.00), outstandingAmount = None,
+            method = Some("method"), documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"),
+            dueDate = Some(fixedDate), documentDate = fixedDate, Some("DOCID01"))
+        )
+
+      val successResponse: HttpResponse =
+        HttpResponse(
+          status = OK,
+          json = Json.toJson(payments),
+          headers = Map.empty
+        )
+
+      val successResponseInvalidJson: HttpResponse =
+        HttpResponse(
+          status = OK,
+          json = Json.toJson("test"),
+          headers = Map.empty
+        )
+
+      val notFoundResponse: HttpResponse =
+        HttpResponse(
+          status = NOT_FOUND,
+          body = "Not Found"
+        )
+
+      val internalServerErrorResponse: HttpResponse =
+        HttpResponse(
+          status = INTERNAL_SERVER_ERROR,
+          body = "Internal Server Error"
+        )
+
+      "return Payments" when {
+        "a successful response is received with valid json" in new Setup {
+
+          when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
+
+          when(mockRequestBuilder.withBody(any())(any(), any(), any()))
+            .thenReturn(mockRequestBuilder)
+
+          when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
+            .thenReturn(Future(successResponse))
+
+          val result: Future[PaymentsResponse] = connector.getPayments(testTaxYear2017, testTaxYear2017.nextYear)
+
+          result.futureValue shouldBe Payments(payments)
+        }
+      }
+
+      "return a PaymentsError" when {
+        "a successful response is received with invalid json" in new Setup {
+
+          when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
+
+          when(mockRequestBuilder.withBody(any())(any(), any(), any()))
+            .thenReturn(mockRequestBuilder)
+
+          when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
+            .thenReturn(Future(successResponseInvalidJson))
+
+          val result: Future[PaymentsResponse] = connector.getPayments(testTaxYear2017, testTaxYear2017.nextYear)
+
+          result.futureValue shouldBe PaymentsError(OK, "Json validation error")
+        }
+
+        "a 4xx response is returned" in new Setup {
+
+          when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
+
+          when(mockRequestBuilder.withBody(any())(any(), any(), any()))
+            .thenReturn(mockRequestBuilder)
+
+          when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
+            .thenReturn(Future(notFoundResponse))
+
+          val result: Future[PaymentsResponse] = connector.getPayments(testTaxYear2017, testTaxYear2017.nextYear)
+
+          result.futureValue shouldBe PaymentsError(NOT_FOUND, "Not Found")
+        }
+
+        "a 5xx response is returned" in new Setup {
+
+          when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
+
+          when(mockRequestBuilder.withBody(any())(any(), any(), any()))
+            .thenReturn(mockRequestBuilder)
+
+          when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
+            .thenReturn(Future(internalServerErrorResponse))
+
+          val result: Future[PaymentsResponse] = connector.getPayments(testTaxYear2017, testTaxYear2017.nextYear)
 
           result.futureValue shouldBe PaymentsError(INTERNAL_SERVER_ERROR, "Internal Server Error")
         }

@@ -34,8 +34,13 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
                                         implicit val dateService: DateServiceInterface)
                                        (implicit val appConfig: FrontendAppConfig, ec: ExecutionContext) {
 
+  @deprecated("Use getFinancialDetailsV2 instead", "MISUV-8845")
   def getFinancialDetails(taxYear: Int, nino: String)(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
     financialDetailsConnector.getFinancialDetails(taxYear, nino)
+  }
+
+  def getFinancialDetailsV2(taxYearFrom: TaxYear, taxYearTo: TaxYear, nino: String)(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
+    financialDetailsConnector.getFinancialDetails(taxYearFrom, taxYearTo, nino)
   }
 
   def getChargeDueDates(financialDetails: List[FinancialDetailsResponseModel]): Option[Either[(LocalDate, Boolean), Int]] = {

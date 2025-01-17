@@ -21,6 +21,7 @@ import config.featureswitch.FeatureSwitching
 import connectors.RepaymentHistoryConnector
 import mocks.connectors.MockFinancialDetailsConnector
 import models.financialDetails.{Payment, Payments, PaymentsError}
+import models.incomeSourceDetails.TaxYear
 import org.mockito.Mockito.mock
 import play.api.http.Status.{NOT_FOUND, UNPROCESSABLE_ENTITY}
 import play.api.test.FakeRequest
@@ -68,15 +69,15 @@ class PaymentHistoryServiceSpec extends TestSupport with MockFinancialDetailsCon
   "getPaymentHistory" when {
     "An error is returned from the connector" should {
       "return a payment history error" in {
-        setupGetPayments(getCurrentTaxEndYear)(PaymentsError(500, "ERROR"))
-        setupGetPayments(getCurrentTaxEndYear - 1)(Payments(List.empty))
+        setupGetPayments(TaxYear(getCurrentTaxEndYear-1, getCurrentTaxEndYear))(PaymentsError(500, "ERROR"))
+        setupGetPayments(TaxYear(getCurrentTaxEndYear-2, getCurrentTaxEndYear-1))(Payments(List.empty))
         TestPaymentHistoryService.getPaymentHistory.futureValue shouldBe Left(PaymentHistoryError)
 
       }
 
       "return a payment history error for status 422" in {
-        setupGetPayments(getCurrentTaxEndYear)(PaymentsError(UNPROCESSABLE_ENTITY, "ERROR"))
-        setupGetPayments(getCurrentTaxEndYear - 1)(Payments(List.empty))
+        setupGetPayments(TaxYear(getCurrentTaxEndYear-1, getCurrentTaxEndYear))(PaymentsError(UNPROCESSABLE_ENTITY, "ERROR"))
+        setupGetPayments(TaxYear(getCurrentTaxEndYear-2, getCurrentTaxEndYear-1))(Payments(List.empty))
         TestPaymentHistoryService.getPaymentHistory.futureValue shouldBe Left(PaymentHistoryError)
 
       }
@@ -84,20 +85,46 @@ class PaymentHistoryServiceSpec extends TestSupport with MockFinancialDetailsCon
 
     "a successful Payment History response is returned from the connector" should {
       "return a list of payments and ignore any payment data not found (404s)" in {
-        setupGetPayments(getCurrentTaxEndYear)(PaymentsError(NOT_FOUND, "NOT FOUND"))
-        setupGetPayments(getCurrentTaxEndYear - 1)(Payments(paymentFull))
+        setupGetPayments(TaxYear(getCurrentTaxEndYear-1, getCurrentTaxEndYear))(PaymentsError(NOT_FOUND, "NOT FOUND"))
+        setupGetPayments(TaxYear(getCurrentTaxEndYear-2, getCurrentTaxEndYear-1))(Payments(paymentFull))
         TestPaymentHistoryService.getPaymentHistory.futureValue shouldBe Right(paymentFull)
       }
     }
 
     "duplicate payments are returned in the response from the connector" should {
       "return a list of payments with no duplicates" in {
-        setupGetPayments(getCurrentTaxEndYear)(Payments(paymentFull))
-        setupGetPayments(getCurrentTaxEndYear - 1)(Payments(paymentFull))
+        setupGetPayments(TaxYear(getCurrentTaxEndYear-1, getCurrentTaxEndYear))(Payments(paymentFull))
+        setupGetPayments(TaxYear(getCurrentTaxEndYear-2, getCurrentTaxEndYear-1))(Payments(paymentFull))
         TestPaymentHistoryService.getPaymentHistory.futureValue shouldBe Right(paymentFull)
       }
     }
 
+  }
+
+  "getPaymentHistoryV2" when {
+    "An error is returned from the connector" should {
+      "return a payment history error" in {
+        setupGetPayments(TaxYear.forYearEnd(getCurrentTaxEndYear - 1),
+          TaxYear.forYearEnd(getCurrentTaxEndYear))(PaymentsError(500, "ERROR"))
+        TestPaymentHistoryService.getPaymentHistoryV2.futureValue shouldBe Left(PaymentHistoryError)
+
+      }
+
+      "return a payment history error for status 422" in {
+        setupGetPayments(TaxYear.forYearEnd(getCurrentTaxEndYear - 1),
+          TaxYear.forYearEnd(getCurrentTaxEndYear))(PaymentsError(UNPROCESSABLE_ENTITY, "ERROR"))
+        TestPaymentHistoryService.getPaymentHistoryV2.futureValue shouldBe Left(PaymentHistoryError)
+
+      }
+    }
+
+    "a successful Payment History response is returned from the connector" should {
+      "return a list of payments" in {
+        setupGetPayments(TaxYear.forYearEnd(getCurrentTaxEndYear - 1),
+          TaxYear.forYearEnd(getCurrentTaxEndYear))(Payments(paymentFull))
+        TestPaymentHistoryService.getPaymentHistoryV2.futureValue shouldBe Right(paymentFull)
+      }
+    }
   }
 
 }

@@ -22,11 +22,9 @@ import models.core.{ErrorModel, Nino}
 import models.creditsandrefunds.CreditsModel
 import models.financialDetails.{Payment, Payments, PaymentsError}
 import models.incomeSourceDetails.TaxYear
-import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesErrorModel, OutstandingChargesModel, OutstandingChargesResponseModel}
-import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsModel, FinancialDetailsWithDocumentDetailsErrorModel}
+import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel}
 import models.paymentAllocations.{PaymentAllocationsError, PaymentAllocationsResponse}
 import org.scalatest.wordspec.AnyWordSpec
-import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.libs.json.Json
 import testConstants.BaseTestConstants.{testPaymentLot, testPaymentLotItem}
@@ -256,78 +254,7 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
       }
     }
 
-    ".getOutstandingCharges()" when {
-
-      "OK" should {
-
-        "return a successful OutstandingChargesModel" in {
-
-          val idType = "fakeId"
-          val idNumber = "1337"
-          val taxYear: String = "2023"
-          val url = s"/income-tax-view-change/out-standing-charges/$idType/$idNumber/$taxYear-04-05"
-
-          val response: OutstandingChargesModel =
-            OutstandingChargesModel(List(
-              OutstandingChargeModel("BCD", Some(LocalDate.of(2025, 1, 1)), 123456789012345.67, 1234),
-              OutstandingChargeModel("ACI", None, 12.67, 1234)
-            ))
-
-          WiremockHelper.stubGet(url, OK, Json.toJson(response).toString())
-
-          val result: OutstandingChargesResponseModel =
-            connector.getOutstandingCharges(idType, idNumber, taxYear).futureValue
-
-          result shouldBe response
-          WiremockHelper.verifyGet(uri = url)
-        }
-
-        "request returns json validation errors" should {
-
-          "return a OutstandingChargesErrorModel" in {
-
-            val idType = "fakeId"
-            val idNumber = "1337"
-            val taxYear: String = "2023"
-            val url = s"/income-tax-view-change/out-standing-charges/$idType/$idNumber/$taxYear-04-05"
-
-            WiremockHelper.stubGet(url, OK, """{"bad_key":"bad_value"}""")
-
-            val result: OutstandingChargesResponseModel =
-              connector.getOutstandingCharges(idType, idNumber, taxYear).futureValue
-
-            result shouldBe OutstandingChargesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing OutstandingCharges Data Response")
-            WiremockHelper.verifyGet(uri = url)
-          }
-        }
-      }
-
-      "INTERNAL_SERVER_ERROR" when {
-
-        "request returns an error json response" should {
-
-          "return a OutstandingChargesErrorModel with response body message" in {
-
-            val idType = "fakeId"
-            val idNumber = "1337"
-            val taxYear: String = "2023"
-            val url = s"/income-tax-view-change/out-standing-charges/$idType/$idNumber/$taxYear-04-05"
-
-            val response = """{"fake_error_key: "fake_error_value"}"""
-
-            WiremockHelper.stubGet(url, INTERNAL_SERVER_ERROR, response)
-
-            val result: OutstandingChargesResponseModel =
-              connector.getOutstandingCharges(idType, idNumber, taxYear).futureValue
-
-            result shouldBe OutstandingChargesErrorModel(Status.INTERNAL_SERVER_ERROR, response)
-            WiremockHelper.verifyGet(uri = url)
-          }
-        }
-      }
-    }
-
-    ".getPaymentsUrl()" when {
+    ".getPayments() for a single tax year" when {
 
       "OK" should {
 
@@ -355,7 +282,7 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
 
           WiremockHelper.stubGet(url, OK, Json.toJson(response).toString())
 
-          val result = connector.getPayments(2024).futureValue
+          val result = connector.getPayments(TaxYear(2023,2024)).futureValue
 
           result shouldBe Payments(response)
           WiremockHelper.verifyGet(uri = url)
@@ -372,7 +299,7 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
 
             WiremockHelper.stubGet(url, OK, response)
 
-            val result = connector.getPayments(2024).futureValue
+            val result = connector.getPayments(TaxYear(2023,2024)).futureValue
 
             result shouldBe PaymentsError(OK, "Json validation error")
             WiremockHelper.verifyGet(uri = url)
@@ -393,7 +320,82 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
 
             WiremockHelper.stubGet(url, INTERNAL_SERVER_ERROR, response)
 
-            val result = connector.getPayments(2024).futureValue
+            val result = connector.getPayments(TaxYear(2023,2024)).futureValue
+
+            result shouldBe PaymentsError(INTERNAL_SERVER_ERROR, response)
+            WiremockHelper.verifyGet(uri = url)
+          }
+        }
+      }
+    }
+
+    ".getPayments() for a range of tax years" when {
+
+      "OK" should {
+
+        "return a successful Payments" in {
+
+          val testUserNino = "AA123456A"
+          val url = s"/income-tax-view-change/$testUserNino/financial-details/payments/from/2023-04-06/to/2025-04-05"
+
+          val paymentFull: List[Payment] =
+            List(
+              Payment(
+                reference = Some("reference"),
+                amount = Some(100.00),
+                outstandingAmount = Some(1.00),
+                method = Some("method"),
+                documentDescription = None,
+                lot = Some("lot"),
+                lotItem = Some("lotItem"),
+                dueDate = Some(LocalDate.of(2024, 1, 1)),
+                documentDate = LocalDate.of(2024, 1, 1), Some("DOCID01")
+              )
+            )
+
+          val response: List[Payment] = paymentFull
+
+          WiremockHelper.stubGet(url, OK, Json.toJson(response).toString())
+
+          val result = connector.getPayments(TaxYear(2023, 2024), TaxYear(2024, 2025)).futureValue
+
+          result shouldBe Payments(response)
+          WiremockHelper.verifyGet(uri = url)
+        }
+
+        "request returns json validation errors" should {
+
+          "return a PaymentsError" in {
+
+            val testUserNino = "AA123456A"
+            val url = s"/income-tax-view-change/$testUserNino/financial-details/payments/from/2023-04-06/to/2025-04-05"
+
+            val response = """{"bad_key":"bad_value"}"""
+
+            WiremockHelper.stubGet(url, OK, response)
+
+            val result = connector.getPayments(TaxYear(2023, 2024), TaxYear(2024, 2025)).futureValue
+
+            result shouldBe PaymentsError(OK, "Json validation error")
+            WiremockHelper.verifyGet(uri = url)
+          }
+        }
+      }
+
+      "INTERNAL_SERVER_ERROR" when {
+
+        "request returns an error json response" should {
+
+          "return a OutstandingChargesErrorModel with response body message" in {
+
+            val testUserNino = "AA123456A"
+            val url = s"/income-tax-view-change/$testUserNino/financial-details/payments/from/2023-04-06/to/2025-04-05"
+
+            val response = """{"fake_error_key: "fake_error_value"}"""
+
+            WiremockHelper.stubGet(url, INTERNAL_SERVER_ERROR, response)
+
+            val result = connector.getPayments(TaxYear(2023, 2024), TaxYear(2024, 2025)).futureValue
 
             result shouldBe PaymentsError(INTERNAL_SERVER_ERROR, response)
             WiremockHelper.verifyGet(uri = url)

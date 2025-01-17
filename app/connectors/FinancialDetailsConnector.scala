@@ -23,7 +23,6 @@ import models.core.{CorrelationId, Nino}
 import models.creditsandrefunds.CreditsModel
 import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
-import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel, OutstandingChargesResponseModel}
 import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel, FinancialDetailsWithDocumentDetailsResponse}
 import models.paymentAllocations.{PaymentAllocations, PaymentAllocationsError, PaymentAllocationsResponse}
 import play.api.Logger
@@ -50,9 +49,6 @@ class FinancialDetailsConnector @Inject()(
 
   private[connectors] def getCreditAndRefundUrl(nino: String, from: String, to: String): String =
     baseUrl + s"/$nino/financial-details/credits/from/$from/to/$to"
-
-  private[connectors] def getOutstandingChargesUrl(idType: String, idNumber: String, taxYear: String): String =
-    baseUrl + s"/out-standing-charges/$idType/$idNumber/$taxYear"
 
   private[connectors] def getPaymentsUrl(nino: String, from: String, to: String): String =
     baseUrl + s"/$nino/financial-details/payments/from/$from/to/$to"
@@ -103,10 +99,7 @@ class FinancialDetailsConnector @Inject()(
   def getCreditsAndRefund(taxYear: TaxYear, nino: String)
                          (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[ResponseModel[CreditsModel]] = {
 
-    val dateFrom: String = taxYear.toFinancialYearStart.format(DateTimeFormatter.ISO_DATE)
-    val dateTo: String = taxYear.toFinancialYearEnd.format(DateTimeFormatter.ISO_DATE)
-
-    val url = getCreditAndRefundUrl(nino, dateFrom, dateTo)
+    val url = getCreditAndRefundUrl(nino, taxYear.financialYearStartString, taxYear.financialYearEndString)
     Logger("application").debug(s"GET $url")
 
     val hc = checkAndAddTestHeader(mtdItUser.path, headerCarrier, appConfig.poaAdjustmentOverrides(), "afterPoaAmountAdjusted")
@@ -128,10 +121,7 @@ class FinancialDetailsConnector @Inject()(
   def getCreditsAndRefund(taxYearFrom: TaxYear, taxYearTo: TaxYear, nino: String)
                          (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[ResponseModel[CreditsModel]] = {
 
-    val dateFrom: String = taxYearFrom.toFinancialYearStart.format(DateTimeFormatter.ISO_DATE)
-    val dateTo: String = taxYearTo.toFinancialYearEnd.format(DateTimeFormatter.ISO_DATE)
-
-    val url = getCreditAndRefundUrl(nino, dateFrom, dateTo)
+    val url = getCreditAndRefundUrl(nino, taxYearFrom.financialYearStartString, taxYearTo.financialYearEndString)
     Logger("application").debug(s"GET $url")
 
     val hc = checkAndAddTestHeader(mtdItUser.path, headerCarrier, appConfig.poaAdjustmentOverrides(), "afterPoaAmountAdjusted")
@@ -193,10 +183,8 @@ class FinancialDetailsConnector @Inject()(
 
   def getFinancialDetails(taxYearFrom: TaxYear, taxYearTo: TaxYear, nino: String)
                          (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
-    val dateFrom: String = taxYearFrom.toFinancialYearStart.format(DateTimeFormatter.ISO_DATE)
-    val dateTo: String = taxYearTo.toFinancialYearEnd.format(DateTimeFormatter.ISO_DATE)
 
-    val url = getChargesUrl(nino, dateFrom, dateTo)
+    val url = getChargesUrl(nino, taxYearFrom.financialYearStartString, taxYearTo.financialYearEndString)
     Logger("application").debug(s"GET $url")
 
     val hc: HeaderCarrier = checkAndAddTestHeader(mtdItUser.path, headerCarrier, appConfig.poaAdjustmentOverrides(), "afterPoaAmountAdjusted")
@@ -230,11 +218,10 @@ class FinancialDetailsConnector @Inject()(
       }
   }
 
-  def getOutstandingCharges(idType: String, idNumber: String, taxYear: String)
-                           (implicit headerCarrier: HeaderCarrier): Future[OutstandingChargesResponseModel] = {
+  def getPayments(taxYear: TaxYear)
+                 (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[PaymentsResponse] = {
 
-
-    val url = getOutstandingChargesUrl(idType, idNumber, s"$taxYear-04-05")
+    val url: String = getPaymentsUrl(mtdUser.nino, taxYear.toFinancialYearStart.toString, taxYear.toFinancialYearEnd.toString)
     Logger("application").debug(s"GET $url")
 
     httpV2
@@ -244,34 +231,27 @@ class FinancialDetailsConnector @Inject()(
         response.status match {
           case OK =>
             Logger("application").debug(s"Status: ${response.status}, json: ${response.json}")
-            response.json.validate[OutstandingChargesModel].fold(
+            response.json.validate[Seq[Payment]].fold(
               invalid => {
-                Logger("application").error(s"Json Validation Error: $invalid")
-                OutstandingChargesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing OutstandingCharges Data Response")
+                Logger("application").error(s"Json validation error: $invalid")
+                PaymentsError(response.status, "Json validation error")
               },
-              valid => valid
+              valid => Payments(valid)
             )
           case status if status >= 500 =>
             Logger("application").error(s"Status: ${response.status}, body: ${response.body}")
-            OutstandingChargesErrorModel(response.status, response.body)
-          case _ =>
-            Logger("application").warn(s"Status: ${response.status}, body: ${response.body}")
-            OutstandingChargesErrorModel(response.status, response.body)
+            PaymentsError(status, response.body)
+          case status =>
+            Logger("application").warn(s"Status ${response.status}, body: ${response.body}")
+            PaymentsError(status, response.body)
         }
-      }.recover {
-        case ex =>
-          Logger("application").error(s"Unexpected failure, ${ex.getMessage}", ex)
-          OutstandingChargesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
       }
   }
 
-  def getPayments(taxYear: Int)
+  def getPayments(taxYearFrom: TaxYear, taxYearTo: TaxYear)
                  (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[PaymentsResponse] = {
 
-    val dateFrom: String = s"${taxYear - 1}-04-06"
-    val dateTo: String = s"$taxYear-04-05"
-
-    val url: String = getPaymentsUrl(mtdUser.nino, dateFrom, dateTo)
+    val url: String = getPaymentsUrl(mtdUser.nino, taxYearFrom.financialYearStartString, taxYearTo.financialYearEndString)
     Logger("application").debug(s"GET $url")
 
     httpV2

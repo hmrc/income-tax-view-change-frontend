@@ -18,7 +18,7 @@ package services
 
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
-import connectors.FinancialDetailsConnector
+import connectors.{FinancialDetailsConnector, OutstandingChargesConnector}
 import enums.ChargeType.NIC4_WALES
 import enums.CodingOutType._
 import models.admin.{FilterCodedOutPoas, ReviewAndReconcilePoa}
@@ -59,6 +59,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
 
   val mockFinancialDetailsService: FinancialDetailsService = mock(classOf[FinancialDetailsService])
   val mockFinancialDetailsConnector: FinancialDetailsConnector = mock(classOf[FinancialDetailsConnector])
+  val mockOutstandingChargesConnector: OutstandingChargesConnector = mock(classOf[OutstandingChargesConnector])
   val currentYearAsInt: Int = 2022
   implicit val headCarrier: HeaderCarrier = headerCarrier
 
@@ -68,12 +69,12 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
     override def getCurrentTaxYearEnd: Int = currentYearAsInt
   }
 
-  object TestWhatYouOweService extends WhatYouOweService(mockFinancialDetailsService, mockFinancialDetailsConnector, mockDateService)
+  object TestWhatYouOweService extends WhatYouOweService(mockFinancialDetailsService, mockFinancialDetailsConnector, mockOutstandingChargesConnector, mockDateService)
 
   "The WhatYouOweService.getWhatYouOweChargesList method" when {
     "when both financial details and outstanding charges return success response and valid data of due more than 30 days" should {
       "return a success response back" in {
-        when(mockFinancialDetailsConnector.getOutstandingCharges(any(), any(), any())(any()))
+        when(mockOutstandingChargesConnector.getOutstandingCharges(any(), any(), any())(any()))
           .thenReturn(Future.successful(outstandingChargesDueInMoreThan30Days))
         when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
           .thenReturn(Future.successful(List(financialDetailsDueInMoreThan30Days())))
@@ -85,7 +86,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
     }
     "when both financial details and outstanding charges return success response and valid data of due in 30 days" should {
       "return a success response back" in {
-        when(mockFinancialDetailsConnector.getOutstandingCharges(any(), any(), any())(any()))
+        when(mockOutstandingChargesConnector.getOutstandingCharges(any(), any(), any())(any()))
           .thenReturn(Future.successful(outstandingChargesDueIn30Days))
         when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
           .thenReturn(Future.successful(List(financialDetailsDueIn30Days())))
@@ -94,7 +95,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
       }
       "when both financial details and outstanding charges return success response and valid data of overdue" should {
         "return a success response back" in {
-          when(mockFinancialDetailsConnector.getOutstandingCharges(any(), any(), any())(any()))
+          when(mockOutstandingChargesConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(outstandingChargesOverdueDataIt))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsOverdueData())))
@@ -104,7 +105,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
       }
       "when both financial details and outstanding charges return success response and valid data of mixed due dates of overdue and in future payments" should {
         "return a success response back" in {
-          when(mockFinancialDetailsConnector.getOutstandingCharges(any(), any(), any())(any()))
+          when(mockOutstandingChargesConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesModel(List())))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsWithMixedData1)))
@@ -114,7 +115,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
       }
       "when both financial details and outstanding charges return success response and valid data of mixed due dates of overdue and dueInThirtyDays" should {
         "return a success response back" in {
-          when(mockFinancialDetailsConnector.getOutstandingCharges(any(), any(), any())(any()))
+          when(mockOutstandingChargesConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesModel(List())))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsWithMixedData2)))
@@ -124,7 +125,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
       }
       "when both financial details return success and outstanding charges return 500" should {
         "return a success response back" in {
-          when(mockFinancialDetailsConnector.getOutstandingCharges(any(), any(), any())(any()))
+          when(mockOutstandingChargesConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesErrorModel(500, "test message")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsDueInMoreThan30Days())))
@@ -138,7 +139,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
       }
       "when both financial details return error and outstanding charges return success" should {
         "return a success response back" in {
-          when(mockFinancialDetailsConnector.getOutstandingCharges(any(), any(), any())(any()))
+          when(mockOutstandingChargesConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(outstandingChargesOverdueDataIt))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsDueInMoreThan30Days(), FinancialDetailsErrorModel(500, "test message"))))
@@ -152,7 +153,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
       }
       "when both financial details return success and outstanding charges return 404" should {
         "return a success response back" in {
-          when(mockFinancialDetailsConnector.getOutstandingCharges(any(), any(), any())(any()))
+          when(mockOutstandingChargesConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsDueInMoreThan30Days())))
@@ -166,7 +167,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
 
       "when both financial details return success and with balancing charges returned" should {
         "return a success response back" in {
-          when(mockFinancialDetailsConnector.getOutstandingCharges(any(), any(), any())(any()))
+          when(mockOutstandingChargesConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsBalancingCharges)))
@@ -180,7 +181,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
 
       "when both financial details return success and with balancing charges returned with mixed outstanding charges" should {
         "return a success empty response back with both outstanding amount zero and no late payment interest" in {
-          when(mockFinancialDetailsConnector.getOutstandingCharges(any(), any(), any())(any()))
+          when(mockOutstandingChargesConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsWithOutstandingChargesAndLpi(outstandingAmount = List(0, 0)))))
@@ -190,7 +191,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
           )
         }
         "return a success empty response with outstanding amount zero and late payment interest amount zero" in {
-          when(mockFinancialDetailsConnector.getOutstandingCharges(any(), any(), any())(any()))
+          when(mockOutstandingChargesConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsWithOutstandingChargesAndLpi(outstandingAmount = List(0, 0),
@@ -201,7 +202,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
           )
         }
         "return a success POA2 only response with outstanding amount zero and late payment interest amount non-zero" in {
-          when(mockFinancialDetailsConnector.getOutstandingCharges(any(), any(), any())(any()))
+          when(mockOutstandingChargesConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsWithOutstandingChargesAndLpi(outstandingAmount = List(0, 0),
@@ -232,7 +233,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
             effectiveDateOfPayment = Some(LocalDate.parse("2021-08-25")),
             documentDueDate = Some(LocalDate.parse("2021-08-25")))
           val dd3 = dd1.copy(transactionId = id1040000126, documentText = Some(CODING_OUT_ACCEPTED), amountCodedOut = Some(2500.00))
-          when(mockFinancialDetailsConnector.getOutstandingCharges(any(), any(), any())(any()))
+          when(mockOutstandingChargesConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(
@@ -257,7 +258,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
           )
         }
         "not return PoA charges if they have an amount coded out and filtering FS enabled" in {
-          when(mockFinancialDetailsConnector.getOutstandingCharges(any(), any(), any())(any()))
+          when(mockOutstandingChargesConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsWithOutstandingChargesAndLpi(outstandingAmount = List(1000, 400),
@@ -268,7 +269,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
             chargesList = List())
         }
         "return PoA charges if they have an amount coded out and filtering FS disabled" in {
-          when(mockFinancialDetailsConnector.getOutstandingCharges(any(), any(), any())(any()))
+          when(mockOutstandingChargesConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsWithOutstandingChargesAndLpi(outstandingAmount = List(1000, 400),
@@ -283,7 +284,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
 
     "with MFA Debits and non-MFA Debits charges" should {
       def testGetWhatYouOweChargesList(financialDetails: FinancialDetailsModel, expectedResult: WhatYouOweChargesList): Unit = {
-        when(mockFinancialDetailsConnector.getOutstandingCharges(any(), any(), any())(any()))
+        when(mockOutstandingChargesConnector.getOutstandingCharges(any(), any(), any())(any()))
           .thenReturn(Future.successful(OutstandingChargesModel(List())))
         when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
           .thenReturn(Future.successful(List(financialDetails)))
@@ -299,7 +300,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
     "with ReviewAndReconcilePoa" should {
       def testGetWhatYouOweChargesList(ReviewReconcileEnabled: Boolean, financialDetails: FinancialDetailsModel, expectedResult: WhatYouOweChargesList): Unit = {
         if (ReviewReconcileEnabled) enable(ReviewAndReconcilePoa) else disable(ReviewAndReconcilePoa)
-        when(mockFinancialDetailsConnector.getOutstandingCharges(any(), any(), any())(any()))
+        when(mockOutstandingChargesConnector.getOutstandingCharges(any(), any(), any())(any()))
           .thenReturn(Future.successful(OutstandingChargesModel(List())))
         when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
           .thenReturn(Future.successful(List(financialDetails)))
