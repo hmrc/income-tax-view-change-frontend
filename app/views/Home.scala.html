@@ -37,7 +37,8 @@
     updatesTile: UpdatesTile,
     paymentHistoryTile: PaymentHistoryTile,
     returnsTile: ReturnsTile,
-    incomeSourcesTile: IncomeSourcesTile
+    incomeSourcesTile: IncomeSourcesTile,
+    accountSettingsTile: AccountSettingsTile
 )
 
 @(
@@ -66,6 +67,7 @@ viewModel: HomePageViewModel
     <div class="grid-row">
         <div class="flex-container govuk-!-padding-0">
             @incomeSourcesTile(viewModel.yourBusinessesTileViewModel, false)
+            @accountSettingsTile(viewModel.accountSettingsTileViewModel, false)
         </div>
     </div>
 }

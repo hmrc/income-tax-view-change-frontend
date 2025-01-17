@@ -21,12 +21,12 @@ import auth.MtdItUser
 import controllers.ControllerISpecHelper
 import enums.MTDPrimaryAgent
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import models.admin.{IncomeSourcesFs, IncomeSourcesNewJourney, NavBarFs}
+import models.admin.{IncomeSourcesFs, IncomeSourcesNewJourney, NavBarFs, ReportingFrequencyPage}
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.financialDetails._
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
 import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.i18n.{Messages, MessagesApi}
@@ -87,6 +87,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                   status = OK,
                   response = incomeSourceDetailsModel
                 )
+                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
                 val currentObligations: ObligationsModel = ObligationsModel(Seq(
                   GroupedObligationsModel(
                     identification = "testId",
@@ -157,6 +158,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                   status = OK,
                   response = incomeSourceDetailsModel
                 )
+                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
 
                 val currentObligations: ObligationsModel = ObligationsModel(Seq(
                   GroupedObligationsModel(
@@ -226,6 +228,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                   status = OK,
                   response = incomeSourceDetailsModel
                 )
+                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
 
                 val currentObligations: ObligationsModel = ObligationsModel(Seq(
                   GroupedObligationsModel(
@@ -295,6 +298,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                   status = OK,
                   response = incomeSourceDetailsModel
                 )
+                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
 
                 val currentObligations: ObligationsModel = ObligationsModel(Seq(
                   GroupedObligationsModel(
@@ -361,7 +365,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
               "there is more than one payment overdue and more than one obligation overdue" in {
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
-
+                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   status = OK,
                   response = incomeSourceDetailsModel
@@ -453,7 +457,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 enable(IncomeSourcesFs)
-
+                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   status = OK,
                   response = incomeSourceDetailsModel
@@ -525,6 +529,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                 enable(IncomeSourcesFs)
                 enable(IncomeSourcesNewJourney)
 
+                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   status = OK,
                   response = incomeSourceDetailsModel
@@ -588,6 +593,77 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                   elementTextBySelector("#income-sources-tile h2:nth-child(1)")("Your businesses")
                 )
               }
+            }
+          }
+
+          "display the account settings tile" when {
+            "Reporting Frequency feature switches are enabled" in {
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
+              enable(ReportingFrequencyPage)
+
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                status = OK,
+                response = incomeSourceDetailsModel
+              )
+
+              val currentObligations: ObligationsModel = ObligationsModel(Seq(
+                GroupedObligationsModel(
+                  identification = "testId",
+                  obligations = List(
+                    SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", StatusFulfilled)
+                  ))
+              ))
+
+              IncomeTaxViewChangeStub.stubGetNextUpdates(
+                nino = testNino,
+                deadlines = currentObligations
+              )
+
+              IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                nino = testNino,
+                from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+                to = getCurrentTaxYearEnd.toString
+              )(
+                status = OK,
+                response = Json.toJson(FinancialDetailsModel(
+                  balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+                  documentDetails = List(
+                    DocumentDetail(
+                      taxYear = getCurrentTaxYearEnd.getYear,
+                      transactionId = "testTransactionId",
+                      documentDescription = Some("ITSA- POA 1"),
+                      documentText = Some("documentText"),
+                      outstandingAmount = 500.00,
+                      originalAmount = 1000.00,
+                      documentDate = LocalDate.of(2018, 3, 29),
+                      effectiveDateOfPayment = Some(currentDate),
+                      documentDueDate = Some(currentDate)
+                    )
+                  ),
+                  financialDetails = List(
+                    FinancialDetail(
+                      taxYear = getCurrentTaxYearEnd.getYear.toString,
+                      mainType = Some("SA Payment on Account 1"),
+                      transactionId = Some("testTransactionId"),
+                      items = Some(Seq(SubItem(Some(currentDate))))
+                    )
+                  )
+                ))
+              )
+
+              IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+              val result = buildGETMTDClient(path, additionalCookies).futureValue
+
+              result should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, "home.agent.heading"),
+                elementTextBySelector("#account-settings-tile p:nth-child(2)")("Reporting quarterly for 2022 to 2023 tax year"),
+                elementTextBySelector("#account-settings-tile h2:nth-child(1)")("Your account settings")
+              )
             }
           }
 
