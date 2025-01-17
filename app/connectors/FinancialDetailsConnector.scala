@@ -99,10 +99,7 @@ class FinancialDetailsConnector @Inject()(
   def getCreditsAndRefund(taxYear: TaxYear, nino: String)
                          (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[ResponseModel[CreditsModel]] = {
 
-    val dateFrom: String = taxYear.financialYearStartString
-    val dateTo: String = taxYear.financialYearEndString
-
-    val url = getCreditAndRefundUrl(nino, dateFrom, dateTo)
+    val url = getCreditAndRefundUrl(nino, taxYear.financialYearStartString, taxYear.financialYearEndString)
     Logger("application").debug(s"GET $url")
 
     val hc = checkAndAddTestHeader(mtdItUser.path, headerCarrier, appConfig.poaAdjustmentOverrides(), "afterPoaAmountAdjusted")
@@ -124,10 +121,7 @@ class FinancialDetailsConnector @Inject()(
   def getCreditsAndRefund(taxYearFrom: TaxYear, taxYearTo: TaxYear, nino: String)
                          (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[ResponseModel[CreditsModel]] = {
 
-    val dateFrom: String = taxYearFrom.financialYearStartString
-    val dateTo: String = taxYearTo.financialYearEndString
-
-    val url = getCreditAndRefundUrl(nino, dateFrom, dateTo)
+    val url = getCreditAndRefundUrl(nino, taxYearFrom.financialYearStartString, taxYearTo.financialYearEndString)
     Logger("application").debug(s"GET $url")
 
     val hc = checkAndAddTestHeader(mtdItUser.path, headerCarrier, appConfig.poaAdjustmentOverrides(), "afterPoaAmountAdjusted")
@@ -189,10 +183,8 @@ class FinancialDetailsConnector @Inject()(
 
   def getFinancialDetails(taxYearFrom: TaxYear, taxYearTo: TaxYear, nino: String)
                          (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
-    val dateFrom: String = taxYearFrom.financialYearStartString
-    val dateTo: String = taxYearTo.financialYearEndString
 
-    val url = getChargesUrl(nino, dateFrom, dateTo)
+    val url = getChargesUrl(nino, taxYearFrom.financialYearStartString, taxYearTo.financialYearEndString)
     Logger("application").debug(s"GET $url")
 
     val hc: HeaderCarrier = checkAndAddTestHeader(mtdItUser.path, headerCarrier, appConfig.poaAdjustmentOverrides(), "afterPoaAmountAdjusted")
@@ -229,10 +221,7 @@ class FinancialDetailsConnector @Inject()(
   def getPayments(taxYear: TaxYear)
                  (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[PaymentsResponse] = {
 
-    val dateFrom: String = taxYear.toFinancialYearStart.toString
-    val dateTo: String = taxYear.toFinancialYearEnd.toString
-
-    val url: String = getPaymentsUrl(mtdUser.nino, dateFrom, dateTo)
+    val url: String = getPaymentsUrl(mtdUser.nino, taxYear.toFinancialYearStart.toString, taxYear.toFinancialYearEnd.toString)
     Logger("application").debug(s"GET $url")
 
     httpV2
@@ -241,7 +230,7 @@ class FinancialDetailsConnector @Inject()(
       .map { response =>
         response.status match {
           case OK =>
-            Logger("application").info(s"Status: ${response.status}, json: ${response.json}")
+            Logger("application").debug(s"Status: ${response.status}, json: ${response.json}")
             response.json.validate[Seq[Payment]].fold(
               invalid => {
                 Logger("application").error(s"Json validation error: $invalid")
@@ -261,10 +250,8 @@ class FinancialDetailsConnector @Inject()(
 
   def getPayments(taxYearFrom: TaxYear, taxYearTo: TaxYear)
                  (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[PaymentsResponse] = {
-    val dateFrom: String = taxYearFrom.financialYearStartString
-    val dateTo: String = taxYearTo.financialYearEndString
 
-    val url: String = getPaymentsUrl(mtdUser.nino, dateFrom, dateTo)
+    val url: String = getPaymentsUrl(mtdUser.nino, taxYearFrom.financialYearStartString, taxYearTo.financialYearEndString)
     Logger("application").debug(s"GET $url")
 
     httpV2
