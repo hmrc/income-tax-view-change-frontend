@@ -28,6 +28,7 @@ import implicits.ImplicitDateFormatter
 import models.admin._
 import models.core.Nino
 import models.financialDetails._
+import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
 import models.obligations.ObligationsModel
@@ -152,7 +153,8 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
   private def withTaxYearFinancials(taxYear: Int, isAgent: Boolean)(f: List[TaxYearSummaryChargeItem] => Future[Result])
                                    (implicit user: MtdItUser[_]): Future[Result] = {
 
-    financialDetailsService.getFinancialDetails(taxYear, user.nino) flatMap {
+    val taxYearTyped = TaxYear(taxYear - 1, taxYear)
+    financialDetailsService.getFinancialDetailsV2(taxYearTyped, taxYearTyped, user.nino) flatMap {
       case financialDetails@FinancialDetailsModel(_, documentDetails, _) =>
 
         val getChargeItem: DocumentDetail => Option[ChargeItem] = getChargeItemOpt(financialDetails = financialDetails.financialDetails)
@@ -160,7 +162,7 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
         val chargeItemsNoPayments = documentDetails
           .filter(_.paymentLot.isEmpty)
 
-        val  chargeItemsCodingOut = chargeItemsNoPayments
+        val chargeItemsCodingOut = chargeItemsNoPayments
           .filterNot(_.isNotCodingOutDocumentDetail)
           .flatMap(dd => getChargeItem(dd)
             .map(ci => TaxYearSummaryChargeItem.fromChargeItem(ci, dd.getDueDate())))

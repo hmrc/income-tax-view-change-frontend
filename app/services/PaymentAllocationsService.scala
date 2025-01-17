@@ -84,16 +84,16 @@ class PaymentAllocationsService @Inject()(financialDetailsConnector: FinancialDe
   private def createPaymentAllocationForLpi(paymentCharge: PaymentAllocations,
                                             documentDetailsWithFinancialDetails: FinancialDetailsWithDocumentDetailsModel)
                                            (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Option[LatePaymentInterestPaymentAllocationDetails]] = {
-    financialDetailsService.getAllFinancialDetails.map { financialDetailsWithTaxYear =>
+    financialDetailsService.getAllFinancialDetailsV2.map { financialDetailsWithTaxYear =>
       financialDetailsWithTaxYear.flatMap {
-        case (_, financialDetails: FinancialDetailsModel) =>
+        case financialDetails: FinancialDetailsModel =>
           financialDetails.documentDetailsWithLpiId(paymentCharge.allocations.head.chargeReference).map {
             documentDetailsWithLpiId =>
               LatePaymentInterestPaymentAllocationDetails(documentDetailsWithLpiId,
                 documentDetailsWithFinancialDetails.documentDetails.head.originalAmount)
           }
         case _ => None
-      }.headOption
+      }
     }
   }
 }

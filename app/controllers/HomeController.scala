@@ -100,7 +100,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
   private def buildHomePage(nextUpdatesDueDates: Seq[LocalDate], origin: Option[String])
                            (implicit user: MtdItUser[_]): Future[Result] =
     for {
-      unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails
+      unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetailsV2()
       paymentsDue = getDueDates(unpaidCharges)
       dunningLockExists = hasDunningLock(unpaidCharges)
       outstandingChargesModel <- getOutstandingChargesModel(unpaidCharges)
@@ -148,15 +148,12 @@ class HomeController @Inject()(val homeView: views.html.Home,
     }
 }
 
-private def getDueDates(unpaidCharges: List[FinancialDetailsResponseModel]): List[LocalDate] =
+private def getDueDates(unpaidCharges: Option[FinancialDetailsResponseModel]): List[LocalDate] =
   (unpaidCharges collect {
     case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay.getAllDueDates
-  })
-    .flatten
-    .sortWith(_ isBefore _)
-    .sortBy(_.toEpochDay())
+  }).getOrElse(List.empty)
 
-private def getOutstandingChargesModel(unpaidCharges: List[FinancialDetailsResponseModel])
+private def getOutstandingChargesModel(unpaidCharges: Option[FinancialDetailsResponseModel])
                                       (implicit user: MtdItUser[_]): Future[List[OutstandingChargeModel]] =
   whatYouOweService.getWhatYouOweChargesList(
     unpaidCharges,
@@ -180,7 +177,7 @@ private def mergePaymentsDue(paymentsDue: List[LocalDate], outstandingChargesDue
     .sortWith(_ isBefore _)
     .headOption
 
-private def hasDunningLock(financialDetails: List[FinancialDetailsResponseModel]): Boolean =
+private def hasDunningLock(financialDetails: Option[FinancialDetailsResponseModel]): Boolean =
   financialDetails
     .collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }
     .getOrElse(false)

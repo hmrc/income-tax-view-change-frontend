@@ -51,18 +51,18 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
                               (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
     {
       for {
-        unpaidChanges <- financialDetailsService.getAllUnpaidFinancialDetails()
+        unpaidChanges <- financialDetailsService.getAllUnpaidFinancialDetailsV2()
       } yield getWhatYouOweChargesList(unpaidChanges, isReviewAndReconcile, isFilterCodedOutPoasEnabled)
     }.flatten
   }
 
-  def getWhatYouOweChargesList(unpaidCharges: List[FinancialDetailsResponseModel],
+  def getWhatYouOweChargesList(unpaidCharges: Option[FinancialDetailsResponseModel],
                                isReviewAndReconciledEnabled: Boolean,
                                isFilterCodedOutPoasEnabled: Boolean)
                               (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
 
     unpaidCharges match {
-      case financialDetails: List[FinancialDetailsResponseModel] if financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel]) =>
+      case financialDetails: Option[FinancialDetailsResponseModel] if financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel]) =>
         throw new Exception("Error response while getting Unpaid financial details")
       case financialDetails =>
         val financialDetailsModelList = financialDetails.asInstanceOf[List[FinancialDetailsModel]]
