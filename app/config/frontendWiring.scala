@@ -23,6 +23,7 @@ import uk.gov.hmrc.crypto.PlainText
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCrypto
 import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.play.partials.{FormPartialRetriever, HeaderCarrierForPartialsConverter}
 
 import javax.inject.{Inject, Singleton}
@@ -32,9 +33,9 @@ import scala.concurrent.{Await, ExecutionContext}
 
 @Singleton
 class FrontendAuthConnector @Inject()(config: ServicesConfig,
-                                      val WSHttp: HttpClient) extends PlayAuthConnector {
+                                      val WSHttp: HttpClientV2) extends PlayAuthConnector {
   lazy val serviceUrl: String = config.baseUrl("auth")
-  lazy val http = WSHttp
+  lazy val httpClientV2 = WSHttp
 }
 
 @Singleton

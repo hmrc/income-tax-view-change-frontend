@@ -23,13 +23,12 @@ import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Request, Result}
-import play.api.{Configuration, Environment, Logger}
+import play.api.Logger
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.Inject
@@ -38,10 +37,8 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class AuthoriseAndRetrieve @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
                                      val appConfig: FrontendAppConfig,
-                                     override val config: Configuration,
-                                     override val env: Environment,
                                      mcc: MessagesControllerComponents)
-  extends AuthRedirects with FeatureSwitching with ActionRefiner[Request, AuthorisedUser] {
+  extends FeatureSwitching with ActionRefiner[Request, AuthorisedUser] {
 
   lazy val logger: Logger = Logger(getClass)
   implicit val executionContext: ExecutionContext = mcc.executionContext

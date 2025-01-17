@@ -19,17 +19,13 @@ package controllers
 import config.FrontendAppConfig
 import javax.inject.{Inject, Singleton}
 import play.api.mvc._
-import play.api.{Configuration, Environment}
-import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.Future
 
 @Singleton
-class SignInController @Inject()(val appConfig: FrontendAppConfig,
-                                 override val config: Configuration,
-                                 override val env: Environment)
-                                (implicit mcc: MessagesControllerComponents) extends FrontendController(mcc) with AuthRedirects {
+class SignInController @Inject()(val appConfig: FrontendAppConfig)
+                                (implicit mcc: MessagesControllerComponents) extends FrontendController(mcc) {
 
   val signIn: Action[AnyContent] = Action.async { implicit request =>
     Future.successful(Redirect(appConfig.ggSignInUrl, Map("continue_url" -> Seq(appConfig.homePageUrl), "origin" -> Seq(appConfig.appName))))

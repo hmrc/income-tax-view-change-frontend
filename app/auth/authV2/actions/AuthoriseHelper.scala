@@ -24,12 +24,9 @@ import play.api.mvc.{Request, Result}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
-
 import scala.concurrent.Future
 
-trait AuthoriseHelper extends AuthRedirects with FeatureSwitching {
+trait AuthoriseHelper extends FeatureSwitching {
 
   type AuthRetrievals =
     Enrolments ~ Option[Name] ~ Option[Credentials] ~ Option[AffinityGroup] ~ ConfidenceLevel
