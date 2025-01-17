@@ -18,6 +18,7 @@ package repositories
 
 import auth.MtdItUser
 import connectors.itsastatus.ITSAStatusUpdateConnector
+import enums.JourneyType.OptOutJourney
 import mocks.services._
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus._
@@ -31,7 +32,6 @@ import services.optout.OptOutProposition.createOptOutProposition
 import services.optout.OptOutTestSupport._
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
-import utils.OptOutJourney
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -101,7 +101,7 @@ class OptOutSessionDataRepositorySpec extends UnitSpec
 
       val data = UIJourneySessionData(
         sessionId = hc.sessionId.get.value,
-        journeyType = OptOutJourney.Name,
+        journeyType = OptOutJourney.toString,
         optOutSessionData = Some(OptOutSessionData(None, selectedOptOutYear = None))
       )
       when(repository.get(any(), any())).thenReturn(Future.successful(Some(data)))
@@ -124,7 +124,7 @@ class OptOutSessionDataRepositorySpec extends UnitSpec
 
       val data = UIJourneySessionData(
         sessionId = hc.sessionId.get.value,
-        journeyType = OptOutJourney.Name,
+        journeyType = OptOutJourney.toString,
         optOutSessionData = Some(OptOutSessionData(Some(
           OptOutContextData(
             currentYear = "2023-2024",
@@ -153,7 +153,7 @@ class OptOutSessionDataRepositorySpec extends UnitSpec
 
       val data = UIJourneySessionData(
         sessionId = hc.sessionId.get.value,
-        journeyType = OptOutJourney.Name,
+        journeyType = OptOutJourney.toString,
         optOutSessionData = Some(OptOutSessionData(None, selectedOptOutYear = Some(customerIntent.toString)))
       )
       when(repository.get(any(), any())).thenReturn(Future.successful(Some(data)))

@@ -16,13 +16,13 @@
 
 package helpers
 
+import enums.JourneyType.OptOutJourney
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
 import models.optout.OptOutSessionData
 import repositories.ITSAStatusRepositorySupport.statusToString
 import repositories.{OptOutContextData, UIJourneySessionDataRepository}
 import testConstants.BaseIntegrationTestConstants.testSessionId
-import utils.OptOutJourney
 
 class OptOutSessionRepositoryHelper(repository: UIJourneySessionDataRepository) extends CustomMatchers {
 
@@ -34,7 +34,7 @@ class OptOutSessionRepositoryHelper(repository: UIJourneySessionDataRepository) 
     repository.set(
         UIJourneySessionData(
           sessionId = testSessionId,
-          journeyType = OptOutJourney.Name,
+          journeyType = OptOutJourney.toString,
           optOutSessionData =
             Some(OptOutSessionData(
               Some(OptOutContextData(
