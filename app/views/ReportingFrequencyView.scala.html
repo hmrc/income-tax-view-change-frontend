@@ -60,21 +60,21 @@
 
 @optInLink = {
     @if(viewModel.optInTaxYears.size > 1) {
-        @linkComponent(controllers.optIn.routes.BeforeYouStartController.show(viewModel.isAgent).url, message = messages("reporting.frequency.manageReportingFrequency.optIn.link.generic"))
+        @linkComponent(id = Some("opt-in-link"), url = controllers.optIn.routes.BeforeYouStartController.show(viewModel.isAgent).url, message = messages("reporting.frequency.manageReportingFrequency.optIn.link.generic"))
     } else if (viewModel.isOptInLinkOnward) {
-        @linkComponent(controllers.optIn.routes.BeforeYouStartController.show(viewModel.isAgent).url, message = messages("reporting.frequency.manageReportingFrequency.optIn.link.onwards", viewModel.optInTaxYears.head.startYear.toString, viewModel.optInTaxYears.head.endYear.toString))
+        @linkComponent(id = Some("opt-in-link"), url = controllers.optIn.routes.BeforeYouStartController.show(viewModel.isAgent).url, message = messages("reporting.frequency.manageReportingFrequency.optIn.link.onwards", viewModel.optInTaxYears.head.startYear.toString, viewModel.optInTaxYears.head.endYear.toString))
     } else if (viewModel.optInTaxYears.size == 1) {
-        @linkComponent(controllers.optIn.routes.BeforeYouStartController.show(viewModel.isAgent).url, message = messages("reporting.frequency.manageReportingFrequency.optIn.link.taxyear", viewModel.optInTaxYears.head.startYear.toString, viewModel.optInTaxYears.head.endYear.toString))
+        @linkComponent(id = Some("opt-in-link"), url = controllers.optIn.routes.BeforeYouStartController.show(viewModel.isAgent).url, message = messages("reporting.frequency.manageReportingFrequency.optIn.link.taxyear", viewModel.optInTaxYears.head.startYear.toString, viewModel.optInTaxYears.head.endYear.toString))
     }
 }
 
-@optOutLink(url: String) = {
+@optOutLink(linkUrl: String) = {
     @if(viewModel.optOutTaxYears.size > 1) {
-        @linkComponent(url, message = messages("reporting.frequency.manageReportingFrequency.optOut.link.generic"))
+        @linkComponent(id = Some("opt-out-link"), url = linkUrl, message = messages("reporting.frequency.manageReportingFrequency.optOut.link.generic"))
     } else if (viewModel.isOptOutLinkOnward) {
-        @linkComponent(url, message = messages("reporting.frequency.manageReportingFrequency.optOut.link.onwards", viewModel.optOutTaxYears.head.startYear.toString, viewModel.optOutTaxYears.head.endYear.toString))
+        @linkComponent(id = Some("opt-out-link"), url = linkUrl, message = messages("reporting.frequency.manageReportingFrequency.optOut.link.onwards", viewModel.optOutTaxYears.head.startYear.toString, viewModel.optOutTaxYears.head.endYear.toString))
     } else if (viewModel.optOutTaxYears.size == 1) {
-        @linkComponent(url, message = messages("reporting.frequency.manageReportingFrequency.optOut.link.taxyear", viewModel.optOutTaxYears.head.startYear.toString, viewModel.optOutTaxYears.head.endYear.toString))
+        @linkComponent(id = Some("opt-out-link"), url = linkUrl, message = messages("reporting.frequency.manageReportingFrequency.optOut.link.taxyear", viewModel.optOutTaxYears.head.startYear.toString, viewModel.optOutTaxYears.head.endYear.toString))
     }
 }
 

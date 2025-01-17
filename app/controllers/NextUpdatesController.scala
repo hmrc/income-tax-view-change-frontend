@@ -31,31 +31,38 @@ import services.NextUpdatesService
 import services.optout.OptOutService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import viewUtils.NextUpdatesViewUtils
 import views.html.nextUpdates.{NextUpdates, NextUpdatesOptOut, NoNextUpdates}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
-                                      nextUpdatesView: NextUpdates,
-                                      nextUpdatesOptOutView: NextUpdatesOptOut,
-                                      auditingService: AuditingService,
-                                      nextUpdatesService: NextUpdatesService,
-                                      itvcErrorHandler: ItvcErrorHandler,
-                                      optOutService: OptOutService,
-                                      val appConfig: FrontendAppConfig,
-                                      val authActions: AuthActions)
-                                     (implicit mcc: MessagesControllerComponents,
-                                      val agentItvcErrorHandler: AgentItvcErrorHandler,
-                                      val ec: ExecutionContext)
+class NextUpdatesController @Inject()(
+                                       noNextUpdatesView: NoNextUpdates,
+                                       nextUpdatesView: NextUpdates,
+                                       nextUpdatesOptOutView: NextUpdatesOptOut,
+                                       auditingService: AuditingService,
+                                       nextUpdatesService: NextUpdatesService,
+                                       itvcErrorHandler: ItvcErrorHandler,
+                                       optOutService: OptOutService,
+                                       nextUpdatesViewUtils: NextUpdatesViewUtils,
+                                       val appConfig: FrontendAppConfig,
+                                       val authActions: AuthActions
+                                     )
+                                     (
+                                       implicit mcc: MessagesControllerComponents,
+                                       val agentItvcErrorHandler: AgentItvcErrorHandler,
+                                       val ec: ExecutionContext
+                                     )
   extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
 
   private def hasAnyIncomeSource(action: => Future[Result])(implicit user: MtdItUser[_], origin: Option[String]): Future[Result] = {
+
     if (user.incomeSources.hasBusinessIncome || user.incomeSources.hasPropertyIncome) {
       action
     } else {
-      Future.successful(Ok(NoNextUpdatesView(backUrl = controllers.routes.HomeController.show(origin).url)))
+      Future.successful(Ok(noNextUpdatesView(backUrl = controllers.routes.HomeController.show(origin).url)))
     }
   }
 
@@ -78,7 +85,18 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
             val optOutSetup = {
               for {
                 (checks, optOutOneYearViewModel) <- optOutService.nextUpdatesPageOptOutViewModels()
-              } yield Ok(nextUpdatesOptOutView(viewModel, optOutOneYearViewModel, checks, backUrl.url, isAgent, user.isSupportingAgent, origin))
+              } yield Ok(
+                nextUpdatesOptOutView(
+                  currentObligations = viewModel,
+                  optOutViewModel = optOutOneYearViewModel,
+                  checks = checks,
+                  backUrl = backUrl.url,
+                  isAgent = isAgent,
+                  isSupportingAgent = user.isSupportingAgent,
+                  origin = origin,
+                  nextUpdatesViewUtils.whatTheUserCanDo(optOutOneYearViewModel, isAgent)
+                )
+              )
             }.recoverWith {
               case ex =>
                 Logger("application").error(s"Failed to retrieve quarterly reporting content checks: ${ex.getMessage}")
@@ -97,20 +115,22 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
 
 
   def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async { implicit user =>
-      getNextUpdates(
-        controllers.routes.HomeController.show(origin),
-        isAgent = false,
-        itvcErrorHandler,
-        origin)
+    getNextUpdates(
+      backUrl = controllers.routes.HomeController.show(origin),
+      isAgent = false,
+      errorHandler = itvcErrorHandler,
+      origin = origin
+    )
   }
 
   def showAgent: Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit mtdItUser =>
       getNextUpdates(
-        controllers.routes.HomeController.showAgent,
+        backUrl = controllers.routes.HomeController.showAgent,
         isAgent = true,
-        agentItvcErrorHandler,
-        None)
+        errorHandler = agentItvcErrorHandler,
+        origin = None
+      )
   }
 
   private def auditNextUpdates[A](user: MtdItUser[A], isAgent: Boolean, origin: Option[String])(implicit hc: HeaderCarrier, request: Request[_]): Unit =
