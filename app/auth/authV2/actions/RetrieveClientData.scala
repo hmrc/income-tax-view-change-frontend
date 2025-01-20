@@ -59,7 +59,8 @@ class RetrieveClientData @Inject()(sessionDataService: SessionDataService,
 
       val useSessionDataService = appConfig.isSessionDataStorageEnabled
 
-      sessionDataService.getSessionData(useCookie = useCookies || !useSessionDataService).flatMap {
+      val useCookies: Boolean = useCookies || !useSessionDataService
+      sessionDataService.getSessionData(useCookie = useCookies ).flatMap {
         case Right(sessionData) =>
           clientDetailsService.checkClientDetails(sessionData.utr).map {
             case Right(name) => Right(ClientDataRequest(
@@ -75,7 +76,7 @@ class RetrieveClientData @Inject()(sessionDataService: SessionDataService,
               }
             ))
             case Left(error) =>
-              Logger("error").error(s"unable to find client with UTR: ${sessionData.utr} " + error)
+              Logger("error").error(s"unable to find client with UTR: ${sessionData.utr} - ${useCookies}" + error)
               Left(Redirect(routes.EnterClientsUTRController.show))
           }
         case Left(_: SessionDataNotFound) => Future.successful(Left(Redirect(routes.EnterClientsUTRController.show)))

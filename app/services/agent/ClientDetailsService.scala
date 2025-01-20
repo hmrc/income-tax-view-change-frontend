@@ -44,8 +44,10 @@ class ClientDetailsService @Inject()(citizenDetailsConnector: CitizenDetailsConn
             Logger("application").error(s"error response from Income Source Details")
             Future.successful(Left(APIError))
         }
-      case CitizenDetailsModel(_, _, None) => Future.successful(Left(CitizenDetailsNotFound))
-      case CitizenDetailsErrorModel(NOT_FOUND, _) => Future.successful(Left(CitizenDetailsNotFound))
+      case CitizenDetailsModel(_, _, None) =>
+        Future.successful(Left(CitizenDetailsNotFound))
+      case CitizenDetailsErrorModel(NOT_FOUND, _) =>
+        Future.successful(Left(CitizenDetailsNotFound))
       case _=>
         Logger("application").error("error response from Citizen Details")
         Future.successful(Left(APIError))
