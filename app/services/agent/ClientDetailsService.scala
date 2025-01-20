@@ -45,8 +45,10 @@ class ClientDetailsService @Inject()(citizenDetailsConnector: CitizenDetailsConn
             Future.successful(Left(APIError))
         }
       case CitizenDetailsModel(_, _, None) =>
+        Logger("application").error("A:: NotFound")
         Future.successful(Left(CitizenDetailsNotFound))
       case CitizenDetailsErrorModel(NOT_FOUND, _) =>
+        Logger("application").error("B:: NotFound")
         Future.successful(Left(CitizenDetailsNotFound))
       case _=>
         Logger("application").error("error response from Citizen Details")
