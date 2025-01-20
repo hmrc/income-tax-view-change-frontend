@@ -33,7 +33,7 @@ class ClientDetailsService @Inject()(citizenDetailsConnector: CitizenDetailsConn
                                      businessDetailsConnector: BusinessDetailsConnector)
                                     (implicit ec: ExecutionContext) {
 
-  def checkClientDetails(utr: String)(implicit hc: HeaderCarrier): Future[Either[ClientDetailsFailure, ClientDetails]] =
+  def checkClientDetails(utr: String)(implicit hc: HeaderCarrier): Future[Either[ClientDetailsFailure, ClientDetails]] = {
     citizenDetailsConnector.getCitizenDetailsBySaUtr(utr) flatMap {
       case CitizenDetailsModel(optionalFirstName, optionalLastName, Some(nino)) =>
         businessDetailsConnector.getBusinessDetails(nino) flatMap {
@@ -48,12 +48,13 @@ class ClientDetailsService @Inject()(citizenDetailsConnector: CitizenDetailsConn
         Logger("application").error("A:: NotFound")
         Future.successful(Left(CitizenDetailsNotFound))
       case CitizenDetailsErrorModel(NOT_FOUND, _) =>
-        Logger("application").error("B:: NotFound")
+        Logger("application").error(s"B:: NotFound: -${utr}-")
         Future.successful(Left(CitizenDetailsNotFound))
       case _=>
         Logger("application").error("error response from Citizen Details")
         Future.successful(Left(APIError))
     }
+  }
 }
 
 object ClientDetailsService {
