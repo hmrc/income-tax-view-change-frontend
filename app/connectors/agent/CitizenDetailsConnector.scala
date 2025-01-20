@@ -51,7 +51,7 @@ class CitizenDetailsConnector @Inject()(val http: HttpClientV2,
 
     updateHeaderCarrier(
       http.get(url"$url")
-    ).transform(_.withRequestTimeout(Duration(3, SECONDS))).execute[HttpResponse] map { response =>
+    ).transform(_.withRequestTimeout(Duration(10, SECONDS))).execute[HttpResponse] map { response =>
       response.status match {
         case OK =>
           Logger("application").debug(s"RESPONSE status: ${response.status}, json: ${response.json}")
