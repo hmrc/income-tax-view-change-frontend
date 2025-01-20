@@ -63,7 +63,7 @@ class CitizenDetailsConnector @Inject()(val http: HttpClientV2,
           if (status >= 500) {
             Logger("application").error(s"RESPONSE status: ${response.status}, body: ${response.body}")
           } else {
-            Logger("application").error(s"RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger("application").error(s"RESPONSE status: ${response.status}, URL: ${url} body: ${response.body}")
           }
           CitizenDetailsErrorModel(response.status, response.body)
       }
