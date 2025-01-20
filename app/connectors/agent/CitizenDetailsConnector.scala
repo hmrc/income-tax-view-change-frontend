@@ -26,6 +26,7 @@ import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames, HttpResponse, StringContextOps}
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.duration.{Duration, SECONDS}
 import scala.concurrent.{ExecutionContext, Future}
 
 
@@ -48,7 +49,9 @@ class CitizenDetailsConnector @Inject()(val http: HttpClientV2,
 
     Logger("application").debug(s"GET $url")
 
-    updateHeaderCarrier(http.get(url"$url")).execute[HttpResponse] map { response =>
+    updateHeaderCarrier(
+      http.get(url"$url")
+    ).transform(_.withRequestTimeout(Duration(3, SECONDS))).execute[HttpResponse] map { response =>
       response.status match {
         case OK =>
           Logger("application").debug(s"RESPONSE status: ${response.status}, json: ${response.json}")
