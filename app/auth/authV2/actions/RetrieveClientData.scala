@@ -59,8 +59,8 @@ class RetrieveClientData @Inject()(sessionDataService: SessionDataService,
 
       val useSessionDataService = appConfig.isSessionDataStorageEnabled
 
-      val useCookies: Boolean = useCookies || !useSessionDataService
-      sessionDataService.getSessionData(useCookie = useCookies ).flatMap {
+      val useCookiesFlg: Boolean = useCookies || !useSessionDataService
+      sessionDataService.getSessionData(useCookie = useCookiesFlg ).flatMap {
         case Right(sessionData) =>
           clientDetailsService.checkClientDetails(sessionData.utr).map {
             case Right(name) => Right(ClientDataRequest(
