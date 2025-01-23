@@ -10,7 +10,7 @@ val appName = "income-tax-view-change-frontend"
 
 val bootstrapPlayVersion = "9.6.0"
 val playPartialsVersion = "9.1.0"
-val playFrontendHMRCVersion = "8.5.0"
+val playFrontendHMRCVersion = "9.0.0"
 val catsVersion = "2.12.0"
 
 val scalaTestPlusVersion = "7.0.1"

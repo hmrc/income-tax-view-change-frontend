@@ -18,34 +18,35 @@
 
 @()(implicit messages: Messages)
 
-<script src='@controllers.routes.Assets.versioned("lib/govuk-frontend/govuk/all.js")'></script>
+<script src='@controllers.routes.Assets.versioned("lib/govuk-frontend/dist/govuk/all.js")'></script>
 <script src='@controllers.routes.Assets.versioned("lib/hmrc-frontend/hmrc/all.js")'></script>
 
-<script>
-window.GOVUKFrontend.initAll();
-window.HMRCFrontend.initAll();
+<script type="module">
+ import { initAll } from '@routes.Assets.versioned("lib/govuk-frontend/dist/govuk/govuk-frontend.min.js")'
+   initAll()
+ window.HMRCFrontend.initAll();
 
-// ensure space bar triggers a click on pay now button link
-const handleKeyDown = function (event) {
-  const KEY_SPACE = 32
-  if (event.target.getAttribute('role') === 'button' && event.keyCode === KEY_SPACE) {
-    event.preventDefault()
-    event.target.click()
-  }
-}
-const payButton = document.querySelector("#payment-button-link")
-if(payButton) {
-    payButton.addEventListener('keydown', handleKeyDown)
-}
+ // ensure space bar triggers a click on pay now button link
+ const handleKeyDown = function (event) {
+   const KEY_SPACE = 32
+   if (event.target.getAttribute('role') === 'button' && event.keyCode === KEY_SPACE) {
+     event.preventDefault()
+     event.target.click()
+   }
+ }
+ const payButton = document.querySelector("#payment-button-link")
+ if(payButton) {
+     payButton.addEventListener('keydown', handleKeyDown)
+ }
 
-// ensure POSTed pages are replaced with GET to avoid form resubmission errors
-if (window.history && window.history.replaceState && typeof window.history.replaceState === 'function') {
-    window.history.replaceState(null, null, window.location.href);
-}
+ // ensure POSTed pages are replaced with GET to avoid form resubmission errors
+ if (window.history && window.history.replaceState && typeof window.history.replaceState === 'function') {
+     window.history.replaceState(null, null, window.location.href);
+ }
 
 </script>
 <link rel="stylesheet" type="text/css" href='@routes.Assets.versioned("stylesheets/itvc_custom.css")'>
-<script>
+<script type="module">
     const showAllSpan = document.getElementsByClassName('govuk-accordion__show-all-text')[0]
     const showAllButton = document.querySelector('.govuk-accordion__controls button')
     const accordionSections = document.getElementsByClassName('govuk-accordion__section')
