@@ -2137,12 +2137,18 @@ optout.confirmedOptOut.taxYear                                   = You are repor
 optout.confirmedOptOut.one-year                                  = You are reporting annually for the {0} to {1} tax year
 optout.confirmedOptOut.yourRevisedDeadlines.h2                   = Your revised deadlines
 optout.confirmedOptOut.yourRevisedDeadlines.desc1                = Your tax return for the {0} to {1} tax year is due by <b>31 January {2}</b>.
-optout.confirmedOptOut.viewUpcomingUpdates.text                  = View your upcoming updates
+optout.confirmedOptOut.viewUpcomingDeadlines.text                = View your upcoming deadlines
 optout.confirmedOptOut.yourRevisedDeadlines.desc2                = You can decide at any time to opt back in to reporting quarterly for all of your businesses on {0} page.
 optout.confirmedOptOut.yourReportingFrequency.text               = your reporting frequency
+
 optout.confirmedOptOut.submitTax                                 = Submit your tax return
-optout.confirmedOptOut.submitTax.desc1                           = When reporting annually, you can submit your tax return directly through your HMRC online account or software compatible.
-optout.confirmedOptOut.submitTax.desc2                           = However, compatible software is required for any tax years for which you are reporting quarterly.
+
+optout.confirmedOptOut.submitTax.confirmed.p1                    = Now you have opted out, you will need to go back to the way you have previously
+optout.confirmedOptOut.submitTax.confirmed.p1.link               = filed your Self Assessment tax return
+
+optout.confirmedOptOut.submitTax.confirmed.p2                    = For any tax year you are reporting quarterly, you will need
+optout.confirmedOptOut.submitTax.confirmed.p2.link               = software compatible with Making Tax Digital for Income Tax
+
 optout.confirmedOptOut.updatesDue                                = Your next updates due
 optout.confirmedOptOut.updatesDue.desc                           = Check the {0} page for the current tax year’s deadlines. Deadlines for future years will not be visible until they become the current year.
 optout.confirmedOptOut.next-updates                              = next updates
