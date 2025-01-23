@@ -16,8 +16,10 @@
 
 package controllers
 
-import models.admin.{CreditsRefundsRepay, IncomeSourcesFs, IncomeSourcesNewJourney, ReviewAndReconcilePoa}
+import models.admin.{CreditsRefundsRepay, IncomeSourcesFs, IncomeSourcesNewJourney, ReportingFrequencyPage, ReviewAndReconcilePoa}
 import models.financialDetails._
+import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.{ITSAStatus, StatusDetail}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
@@ -38,6 +40,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
   trait Setup {
     val controller = testHomeController
     when(mockDateService.getCurrentDate) thenReturn fixedDate
+    when(mockDateService.getCurrentTaxYearEnd) thenReturn fixedDate.getYear + 1
 
     lazy val homePageTitle = s"${messages("htmlTitle", messages("home.heading"))}"
 
@@ -71,6 +74,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
                   transactionId = Some("testId"),
                   items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))))))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
             status(result) shouldBe Status.OK
@@ -87,6 +91,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
               .thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
             when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
               .thenReturn(Future.successful(oneOverdueBCDPaymentInWhatYouOweChargesList))
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
@@ -125,6 +130,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
                     items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString)))))))
               )))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
@@ -168,6 +174,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
                     items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString)))))))
               )))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
@@ -203,6 +210,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
                     items = Some(Seq(SubItem(dueDate = Some(futureDueDates.head)))))))
               )))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
@@ -240,6 +248,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
                     items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString)))))))
               )))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
@@ -262,6 +271,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             .thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
           when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
+          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
@@ -280,6 +290,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             .thenReturn(Future.successful(List(FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None), List(), List()))))
           when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
+          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
@@ -303,6 +314,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             ))))
           when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
+          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
@@ -317,6 +329,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
       "render the home page controller with the next updates tile" when {
         "there is a future update date to display" in new Setup {
           setupNextUpdatesTests(futureDueDates)
+          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
@@ -328,6 +341,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
         "there is an overdue update date to display" in new Setup {
           setupNextUpdatesTests(overdueDueDates)
+          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
@@ -339,6 +353,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
         "there are no updates to display" in new Setup {
           setupNextUpdatesTests(Seq())
+          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
@@ -356,6 +371,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
           mockGetDueDates(Right(Seq()))
           mockGetAllUnpaidFinancialDetails()
           setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
           status(result) shouldBe Status.OK
@@ -381,6 +397,8 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
                   items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
               ))))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList)
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
             status(result) shouldBe Status.OK
             val document: Document = Jsoup.parse(contentAsString(result))
@@ -409,6 +427,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
                   items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
               ))))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList)
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
             status(result) shouldBe Status.OK
             val document: Document = Jsoup.parse(contentAsString(result))
@@ -439,6 +458,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
                 items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
             ))))
           setupMockGetWhatYouOweChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList)
+          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
           status(result) shouldBe Status.OK
           val document: Document = Jsoup.parse(contentAsString(result))
@@ -466,6 +486,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
                   items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
               ))))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
@@ -489,6 +510,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
                   items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
               ))))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
@@ -514,12 +536,72 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
                   items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
               ))))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
             status(result) shouldBe Status.OK
             val document: Document = Jsoup.parse(contentAsString(result))
             Option(document.getElementById("available-credit")).isDefined shouldBe false
+          }
+        }
+      }
+
+      "render the home page with an Account Settings tile" that {
+        "states that the user is reporting annually" when {
+          "Reporting Frequency FS is enabled and the current ITSA status is annually" in new Setup {
+            enable(ReportingFrequencyPage)
+            setupMockUserAuth
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+            setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+            mockGetDueDates(Right(Seq.empty))
+            mockSingleBusinessIncomeSource()
+            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
+              .thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
+
+            val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+
+            status(result) shouldBe Status.OK
+            val document: Document = Jsoup.parse(contentAsString(result))
+            document.title shouldBe homePageTitle
+            document.select("#account-settings-tile p:nth-child(2)").text() shouldBe ""
+          }
+        }
+        "states that the user is reporting quarterly" when {
+          "Reporting Frequency FS is enabled and the current ITSA status is voluntary" in new Setup {
+            enable(ReportingFrequencyPage)
+            setupMockUserAuth
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Voluntary))))
+            setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+            mockGetDueDates(Right(Seq.empty))
+            mockSingleBusinessIncomeSource()
+            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
+              .thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
+
+            val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+
+            status(result) shouldBe Status.OK
+            val document: Document = Jsoup.parse(contentAsString(result))
+            document.title shouldBe homePageTitle
+            document.select("#account-settings-tile p:nth-child(2)").text() shouldBe ""
+          }
+
+          "Reporting Frequency FS is enabled and the current ITSA status is mandated" in new Setup {
+            enable(ReportingFrequencyPage)
+            setupMockUserAuth
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Mandated))))
+            setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+            mockGetDueDates(Right(Seq.empty))
+            mockSingleBusinessIncomeSource()
+            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
+              .thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
+
+            val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+
+            status(result) shouldBe Status.OK
+            val document: Document = Jsoup.parse(contentAsString(result))
+            document.title shouldBe homePageTitle
+            document.select("#account-settings-tile p:nth-child(2)").text() shouldBe ""
           }
         }
       }

@@ -39,6 +39,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
   trait Setup {
     val controller = testHomeController
     when(mockDateService.getCurrentDate) thenReturn fixedDate
+    when(mockDateService.getCurrentTaxYearEnd) thenReturn fixedDate.getYear + 1
 
     lazy val homePageTitle = s"${messages("htmlTitle.agent", messages("home.agent.heading"))}"
     lazy val homePageCaption = "You are signed in as a main agent"
@@ -78,6 +79,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
                   transactionId = Some("testId"),
                   items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))))))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
             status(result) shouldBe Status.OK
@@ -97,6 +99,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
               .thenReturn(Future.successful(oneOverdueBCDPaymentInWhatYouOweChargesList))
 
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
             status(result) shouldBe Status.OK
@@ -134,6 +137,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
                     items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString)))))))
               )))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
@@ -177,6 +181,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
                     items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString)))))))
               )))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
@@ -212,6 +217,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
                     items = Some(Seq(SubItem(dueDate = Some(futureDueDates.head)))))))
               )))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
@@ -248,6 +254,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
                     items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString)))))))
               )))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
@@ -265,6 +272,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           setupMockAgentWithClientAuth(isSupportingAgent)
           mockSingleBusinessIncomeSource()
           mockGetDueDates(Right(futureDueDates))
+          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
@@ -288,6 +296,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             .thenReturn(Future.successful(List(FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None), List(), List()))))
           when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
+          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
           val result: Future[Result] = controller.showAgent()(fakeRequest)
 
@@ -311,6 +320,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             ))))
           when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
+          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
           val result: Future[Result] = controller.showAgent()(fakeRequest)
 
@@ -325,6 +335,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
       "render the home page controller with the next updates tile" when {
         "there is a future update date to display" in new Setup {
           setupNextUpdatesTests(futureDueDates, agentType)
+          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
           val result: Future[Result] = controller.showAgent()(fakeRequest)
 
@@ -336,6 +347,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
 
         "there is an overdue update date to display" in new Setup {
           setupNextUpdatesTests(overdueDueDates, agentType)
+          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
           val result: Future[Result] = controller.showAgent()(fakeRequest)
 
@@ -347,6 +359,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
 
         "there are no updates to display" in new Setup {
           setupNextUpdatesTests(Seq(), agentType)
+          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
           val result: Future[Result] = controller.showAgent()(fakeRequest)
 
@@ -364,6 +377,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           mockGetDueDates(Right(Seq()))
           mockGetAllUnpaidFinancialDetails()
           setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
           val result: Future[Result] = controller.showAgent()(fakeRequest)
           status(result) shouldBe Status.OK
@@ -389,6 +403,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
                   items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
               ))))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList)
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             val result: Future[Result] = controller.showAgent()(fakeRequest)
             status(result) shouldBe Status.OK
             val document: Document = Jsoup.parse(contentAsString(result))
@@ -417,6 +432,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
                   items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
               ))))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList)
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             val result: Future[Result] = controller.showAgent()(fakeRequest)
             status(result) shouldBe Status.OK
             val document: Document = Jsoup.parse(contentAsString(result))
@@ -447,6 +463,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
                 items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
             ))))
           setupMockGetWhatYouOweChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList)
+          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
           val result: Future[Result] = controller.showAgent()(fakeRequest)
           status(result) shouldBe Status.OK
           val document: Document = Jsoup.parse(contentAsString(result))
@@ -474,6 +491,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
                   items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
               ))))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
@@ -497,6 +515,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
                   items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
               ))))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
@@ -522,6 +541,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
                   items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
               ))))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 

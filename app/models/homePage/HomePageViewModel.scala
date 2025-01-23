@@ -18,18 +18,20 @@ package models.homePage
 
 import models.financialDetails.{DocumentDetail, FinancialDetailsModel, FinancialDetailsResponseModel}
 import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus.ITSAStatus
 import models.obligations.NextUpdatesTileViewModel
 
 import java.time.LocalDate
 
 case class HomePageViewModel(utr: Option[String],
-                            nextPaymentsTileViewModel: NextPaymentsTileViewModel,
-                            returnsTileViewModel: ReturnsTileViewModel,
-                            nextUpdatesTileViewModel: NextUpdatesTileViewModel,
-                            paymentCreditAndRefundHistoryTileViewModel: PaymentCreditAndRefundHistoryTileViewModel,
-                            yourBusinessesTileViewModel: YourBusinessesTileViewModel,
-                            dunningLockExists: Boolean = false,
-                            origin: Option[String] = None)
+                             nextPaymentsTileViewModel: NextPaymentsTileViewModel,
+                             returnsTileViewModel: ReturnsTileViewModel,
+                             nextUpdatesTileViewModel: NextUpdatesTileViewModel,
+                             paymentCreditAndRefundHistoryTileViewModel: PaymentCreditAndRefundHistoryTileViewModel,
+                             yourBusinessesTileViewModel: YourBusinessesTileViewModel,
+                             accountSettingsTileViewModel: AccountSettingsTileViewModel,
+                             dunningLockExists: Boolean = false,
+                             origin: Option[String] = None)
 
 case class NextPaymentsTileViewModel(nextPaymentDueDate: Option[LocalDate], overDuePaymentsCount: Int,
                                      paymentsAccruingInterestCount: Int, reviewAndReconcileEnabled: Boolean) {
@@ -60,3 +62,5 @@ case class ReturnsTileViewModel(currentTaxYear: TaxYear, iTSASubmissionIntegrati
 
 case class YourBusinessesTileViewModel(displayCeaseAnIncome: Boolean, incomeSourcesEnabled: Boolean,
                                        incomeSourcesNewJourneyEnabled: Boolean)
+
+case class AccountSettingsTileViewModel(currentTaxYear: TaxYear, reportingFrequencyEnabled: Boolean, currentYearITSAStatus: ITSAStatus)
