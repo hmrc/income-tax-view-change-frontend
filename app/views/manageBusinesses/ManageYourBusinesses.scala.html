@@ -147,14 +147,16 @@
                     </div>
                     <div class="govuk-summary-card__content">
                         <dl class="govuk-summary-list">
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">
-                                    @getMessage("datestarted")
-                                </dt>
-                                <dd class="govuk-summary-list__value" id="@{s"business-date-$index"}">
-                                    @business.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))
-                                </dd>
-                            </div>
+                            @if(sources.displayStartDate) {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        @getMessage("datestarted")
+                                    </dt>
+                                    <dd class="govuk-summary-list__value" id="@{s"business-date-$index"}">
+                                        @business.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))
+                                    </dd>
+                                </div>
+                            }
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key no-border">
                                     @getMessage("name")
@@ -197,19 +199,21 @@
                         </li>
                     </ul>
                 </div>
-                <div class="govuk-summary-card__content">
-                    <dl class="govuk-summary-list">
+                @if(sources.displayStartDate) {
+                    <div class="govuk-summary-card__content">
+                        <dl class="govuk-summary-list">
 
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key no-border">
-                                @getMessage("startdate")
-                            </dt>
-                            <dd class="govuk-summary-list__value no-border" id="uk-date">
-                                @ukProperty.map(_.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))).get
-                            </dd>
-                        </div>
-                    </dl>
-                </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key no-border">
+                                    @getMessage("startdate")
+                                </dt>
+                                <dd class="govuk-summary-list__value no-border" id="uk-date">
+                                    @ukProperty.map(_.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))).get
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
+                }
             </div>
 
         }
@@ -230,19 +234,21 @@
                         </li>
                     </ul>
                 </div>
-                <div class="govuk-summary-card__content">
-                    <dl class="govuk-summary-list">
+                @if(sources.displayStartDate) {
+                    <div class="govuk-summary-card__content">
+                        <dl class="govuk-summary-list">
 
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key no-border">
-                                @getMessage("startdate")
-                            </dt>
-                            <dd class="govuk-summary-list__value no-border" id="foreign-date">
-                                @foreignProperty.map(_.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))).get
-                            </dd>
-                        </div>
-                    </dl>
-                </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key no-border">
+                                    @getMessage("startdate")
+                                </dt>
+                                <dd class="govuk-summary-list__value no-border" id="foreign-date">
+                                    @foreignProperty.map(_.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))).get
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
+                }
             </div>
         }
 
