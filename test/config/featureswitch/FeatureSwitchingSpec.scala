@@ -51,7 +51,8 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
     FilterCodedOutPoas,
     ReviewAndReconcilePoa,
     ReportingFrequencyPage,
-    DisplayBusinessStartDate
+    DisplayBusinessStartDate,
+    PenaltiesAndAppeals
   )
 
   val mtdItUser: MtdItUser[_] =

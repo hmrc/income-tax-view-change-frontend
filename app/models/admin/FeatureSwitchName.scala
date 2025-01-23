@@ -107,8 +107,7 @@ object FeatureSwitchName {
       ReviewAndReconcilePoa,
       FilterCodedOutPoas,
       ReportingFrequencyPage,
-      DisplayBusinessStartDate
-      ReportingFrequencyPage,
+      DisplayBusinessStartDate,
       PenaltiesAndAppeals
     )
 
