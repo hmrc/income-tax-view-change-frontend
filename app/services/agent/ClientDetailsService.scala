@@ -33,6 +33,10 @@ class ClientDetailsService @Inject()(citizenDetailsConnector: CitizenDetailsConn
                                      businessDetailsConnector: BusinessDetailsConnector)
                                     (implicit ec: ExecutionContext) {
 
+  def checkClientDetailsV2(utr: String)(implicit hc: HeaderCarrier): Future[Either[ClientDetailsFailure, ClientDetails]] = {
+    Future.successful(Right(ClientDetailsService.ClientDetails(Some("optionalFirstName"), Some("optionalLastName"), "nino", "mtdbsa")))
+  }
+
   def checkClientDetails(utr: String)(implicit hc: HeaderCarrier): Future[Either[ClientDetailsFailure, ClientDetails]] = {
     citizenDetailsConnector.getCitizenDetailsBySaUtr(utr) flatMap {
       case CitizenDetailsModel(optionalFirstName, optionalLastName, Some(nino)) =>
