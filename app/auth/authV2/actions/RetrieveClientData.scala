@@ -23,11 +23,10 @@ import controllers.agent.sessionUtils.SessionKeys
 import models.sessionData.SessionDataGetResponse.SessionDataNotFound
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Request, Result}
-import play.api.{Configuration, Environment, Logger}
+import play.api.Logger
 import services.SessionDataService
 import services.agent.ClientDetailsService
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.Inject
@@ -37,11 +36,9 @@ import scala.concurrent.{ExecutionContext, Future}
 class RetrieveClientData @Inject()(sessionDataService: SessionDataService,
                                    clientDetailsService: ClientDetailsService,
                                    errorHandler: AgentItvcErrorHandler,
-                                   override val env: Environment,
-                                   override val config: Configuration,
                                    mcc: MessagesControllerComponents,
                                    appConfig: FrontendAppConfig)
-                                  (implicit val executionContext: ExecutionContext) extends AuthRedirects {
+                                  (implicit val executionContext: ExecutionContext) {
 
   lazy val logger: Logger = Logger(getClass)
 
