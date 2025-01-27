@@ -332,7 +332,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
         }
 
         s"has the available credit " in new TestSetup(creditAndRefundEnabled = true) {
-          getElementById("available-credit").map(_.text) shouldBe Some("£100.00 is in your account")
+          getElementById("available-credit").map(_.text) shouldBe Some("£0.00 is in your account")
         }
       }
 

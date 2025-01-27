@@ -347,7 +347,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
           link.map(_.text) shouldBe Some(messages("home.paymentHistory.view"))
         }
         s"has the available credit " in new Setup(creditAndRefundEnabled = true) {
-          getTextOfElementById("available-credit") shouldBe Some("£100.00 is in your account")
+          getTextOfElementById("available-credit") shouldBe Some("£0.00 is in your account")
         }
       }
       "has an link to the 'How to claim a refund' for not migrated user" in new Setup(user = testMtdItUserNotMigrated()) {

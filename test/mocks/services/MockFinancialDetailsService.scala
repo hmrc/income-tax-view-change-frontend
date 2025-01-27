@@ -16,7 +16,6 @@
 
 package mocks.services
 
-import models.chargeHistory.ChargeHistoryModel
 import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
