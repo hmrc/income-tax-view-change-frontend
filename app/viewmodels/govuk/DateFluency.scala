@@ -90,24 +90,8 @@ trait DateFluency {
 
   implicit class FluentDate(date: DateInput) {
 
-    def withNamePrefix(prefix: String): DateInput =
-      date.copy(namePrefix = Some(prefix))
-
     def withHint(hint: Hint): DateInput =
       date.copy(hint = Some(hint))
 
-    def withCssClass(newClass: String): DateInput =
-      date.copy(classes = s"${date.classes} $newClass")
-
-    def withAttribute(attribute: (String, String)): DateInput =
-      date.copy(attributes = date.attributes + attribute)
-
-    def asDateOfBirth(): DateInput =
-      date.copy(
-        items = date.items map {
-          item =>
-            val name = item.id.split('.').last
-            item.copy(autocomplete = Some(s"bday-$name"))
-        })
   }
 }
