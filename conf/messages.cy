@@ -156,6 +156,11 @@ home.incomeSources.manageIncomeSource.view                      = Bwrw golwg dro
 home.incomeSources.ceaseIncomeSource.view                       = Dod â ffynhonnell incwm i ben
 home.incomeSources.newJourney.view                              = Ychwanegu, rheoli neu ddod â busnes neu ffynhonnell incwm i ben
 
+home.accountSettings.heading                                    = Gosodiadau eich cyfrif
+home.accountSettings.reportingFrequency.quarterly.text          = Adrodd yn chwarterol ar gyfer blwyddyn dreth {0} i {1}
+home.accountSettings.reportingFrequency.annually.text           = Adrodd yn flynyddol ar gyfer blwyddyn dreth {0} i {1}
+home.accountSettings.reportingFrequency.link                    = Rheoli amlder eich adroddiadau
+
 home.agent.overdue.message.dunningLock.true                     = Mae gan eich cleient daliadau sy’n hwyr ac mae un neu fwy o’i benderfyniadau treth yn cael eu hadolygu. Mae’n bosibl y codir llog arno ar y rhain hyd nes eu bod wedi’u talu’n llawn.
 home.agent.overdue.message.dunningLock.false                    = Mae arnoch daliadau am fod yn hwyr. Mae’n bosibl y codir llog arnoch ar y rhain hyd nes eu bod wedi’u talu’n llawn.
 home.overdue.message.dunningLock.true                           = Mae gennych daliadau sy’n hwyr ac mae un neu fwy o’ch penderfyniadau treth yn cael eu hadolygu. Mae’n bosibl y codir llog arnoch ar y rhain hyd nes eu bod wedi’u talu’n llawn.

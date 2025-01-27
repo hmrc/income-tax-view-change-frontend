@@ -19,7 +19,9 @@ package services
 import audit.mocks.MockAuditingService
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import mocks.connectors.MockBusinessDetailsConnector
+import mocks.services.config.MockAppConfig
 import mocks.services.{MockAsyncCacheApi, MockNextUpdatesService}
+import models.admin.DisplayBusinessStartDate
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels._
 import play.api.cache.AsyncCacheApi
@@ -33,12 +35,12 @@ import scala.util.Success
 
 //scalastyle:off
 class IncomeSourceDetailsServiceSpec extends TestSupport with MockBusinessDetailsConnector with MockNextUpdatesService
-  with MockAuditingService with MockAsyncCacheApi {
+  with MockAuditingService with MockAsyncCacheApi with MockAppConfig {
   val cache = app.injector.instanceOf[AsyncCacheApi]
   val expectedAddressString1: Option[String] = Some("Line 1<br>Line 2<br>Line 3<br>Line 4<br>LN1 1NL<br>NI")
   val expectedAddressString2: Option[String] = Some("A Line 1<br>A Line 3<br>LN2 2NL<br>GB")
 
-  object TestIncomeSourceDetailsService extends IncomeSourceDetailsService(mockBusinessDetailsConnector, ec)
+  object TestIncomeSourceDetailsService extends IncomeSourceDetailsService(mockBusinessDetailsConnector, ec, mockAppConfig)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -156,6 +158,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockBusinessDetail
   "The IncomeSourceDetailsService.getViewIncomeSourceViewModel method" when {
     "a user has a uk property and a sole trader business" should {
       "return a ViewIncomeSourcesViewModel with a sole trader business and uk property" in {
+        enable(DisplayBusinessStartDate)
 
         val result = TestIncomeSourceDetailsService.getViewIncomeSourceViewModel(ukPropertyAndSoleTraderBusinessIncome)
 
@@ -163,7 +166,8 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockBusinessDetail
           viewSoleTraderBusinesses = List(viewBusinessDetailsViewModel2),
           viewUkProperty = Some(viewUkPropertyDetailsViewModel),
           viewForeignProperty = None,
-          viewCeasedBusinesses = Nil))
+          viewCeasedBusinesses = Nil,
+          displayStartDate = true))
       }
     }
     "a user has a foreign property and a ceased businesses" should {
@@ -179,7 +183,8 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockBusinessDetail
             CeasedBusinessDetailsViewModel(testTradeNameOption2, SelfEmployment, testStartDateOption3, testCessation2.date.get),
             CeasedBusinessDetailsViewModel(None, UkProperty, testPropertyStartDateOption, testPropertyCessation3.date.get),
             CeasedBusinessDetailsViewModel(None, ForeignProperty, testPropertyStartDateOption2, testPropertyCessation2.date.get),
-          )
+          ),
+          displayStartDate = true
         ))
       }
     }
@@ -198,7 +203,8 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockBusinessDetail
             CeasedBusinessDetailsViewModel(testTradeNameOption2, SelfEmployment, testStartDateOption3, testCessation2.date.get),
             CeasedBusinessDetailsViewModel(None, UkProperty, testPropertyStartDateOption, testPropertyCessation3.date.get),
             CeasedBusinessDetailsViewModel(None, ForeignProperty, testPropertyStartDateOption2, testPropertyCessation2.date.get),
-          )
+          ),
+          displayStartDate = true
         ))
       }
     }
@@ -213,7 +219,8 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockBusinessDetail
           viewCeasedBusinesses = List(
             //            CeasedBusinessDetailsViewModel(testTradeNameOption2, SelfEmployment, testStartDateOption3, testCessation2.date.get),
             CeasedBusinessDetailsViewModel(None, UkProperty, testPropertyStartDateOption, testPropertyCessation3.date.get)
-          )
+          ),
+          displayStartDate = true
         ))
       }
     }
