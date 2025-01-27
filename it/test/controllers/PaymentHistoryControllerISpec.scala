@@ -75,7 +75,7 @@ class PaymentHistoryControllerISpec extends ControllerISpecHelper {
                 "the PaymentHistoryRefunds FS is disabled" in {
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
-                  IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$twoPreviousTaxYearEnd-04-06", s"$previousTaxYearEnd-04-05")(OK, payments)
+                  IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$twoPreviousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK, payments)
 
                   val result = buildGETMTDClient(path, additionalCookies).futureValue
                   result should have(
@@ -94,7 +94,7 @@ class PaymentHistoryControllerISpec extends ControllerISpecHelper {
                   enable(PaymentHistoryRefunds)
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
-                  IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$twoPreviousTaxYearEnd-04-06", s"$previousTaxYearEnd-04-05")(OK, payments)
+                  IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$twoPreviousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK, payments)
 
                   val result = buildGETMTDClient(path, additionalCookies).futureValue
 

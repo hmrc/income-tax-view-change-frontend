@@ -179,7 +179,7 @@ private def mergePaymentsDue(paymentsDue: List[LocalDate], outstandingChargesDue
 
 private def hasDunningLock(financialDetails: Option[FinancialDetailsResponseModel]): Boolean =
   financialDetails
-    .collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }
+    .collect { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }
     .getOrElse(false)
 
 private def getRelevantDates(outstandingCharges: List[OutstandingChargeModel]): List[LocalDate] =
