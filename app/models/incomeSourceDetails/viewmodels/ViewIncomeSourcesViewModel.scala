@@ -23,7 +23,8 @@ import java.time.LocalDate
 case class ViewIncomeSourcesViewModel(viewSoleTraderBusinesses: List[ViewBusinessDetailsViewModel],
                                       viewUkProperty: Option[ViewPropertyDetailsViewModel],
                                       viewForeignProperty: Option[ViewPropertyDetailsViewModel],
-                                      viewCeasedBusinesses: List[CeasedBusinessDetailsViewModel])
+                                      viewCeasedBusinesses: List[CeasedBusinessDetailsViewModel],
+                                      displayStartDate: Boolean)
 
 case class ViewBusinessDetailsViewModel(incomeSourceId: IncomeSourceId,
                                         incomeSource: Option[String],

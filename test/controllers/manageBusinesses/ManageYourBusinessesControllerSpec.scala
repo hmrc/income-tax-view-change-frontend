@@ -21,7 +21,7 @@ import exceptions.MissingFieldException
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSourcesFs
+import models.admin.{DisplayBusinessStartDate, IncomeSourcesFs}
 import models.incomeSourceDetails.viewmodels.ViewIncomeSourcesViewModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -48,20 +48,48 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
     "the user is authenticated" should {
 
       "render the manage businesses page" when {
-        "the IncomeSources FS in enabled" in {
+        "the IncomeSources FS in enabled and the DisplayBusinessStartDate FS is enabled" in {
           setupMockUserAuth
           enable(IncomeSourcesFs)
+          enable(DisplayBusinessStartDate)
           mockBothIncomeSources()
           setupMockCreateSession(true)
           setupMockClearSession(true)
-          when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any()))
+          when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any())(any()))
             .thenReturn(
               Right(
                 ViewIncomeSourcesViewModel(
                   viewSoleTraderBusinesses = List(viewBusinessDetailsViewModel),
                   viewUkProperty = Some(viewUkPropertyDetailsViewModel),
                   viewForeignProperty = None,
-                  viewCeasedBusinesses = Nil
+                  viewCeasedBusinesses = Nil,
+                  displayStartDate = true
+                )
+              )
+            )
+
+          val result = testManageYourBusinessesController.show()(fakeRequestWithActiveSession)
+          status(result) shouldBe Status.OK
+        }
+      }
+
+      "render the manage businesses page with no business start date" when {
+        "the IncomeSources FS in enabled and the DisplayBusinessStartDate FS is disabled" in {
+          setupMockUserAuth
+          enable(IncomeSourcesFs)
+          disable(DisplayBusinessStartDate)
+          mockBothIncomeSources()
+          setupMockCreateSession(true)
+          setupMockClearSession(true)
+          when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any())(any()))
+            .thenReturn(
+              Right(
+                ViewIncomeSourcesViewModel(
+                  viewSoleTraderBusinesses = List(viewBusinessDetailsViewModel),
+                  viewUkProperty = Some(viewUkPropertyDetailsViewModel),
+                  viewForeignProperty = None,
+                  viewCeasedBusinesses = Nil,
+                  displayStartDate = false
                 )
               )
             )
@@ -87,8 +115,9 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
         "the call to get income source view model fails" in {
           setupMockUserAuth
           enable(IncomeSourcesFs)
+          enable(DisplayBusinessStartDate)
           mockBothIncomeSources()
-          when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any()))
+          when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any())(any()))
             .thenReturn(
               Left(MissingFieldException("Trading Name"))
             )
@@ -100,17 +129,19 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
         "the header carrier is missing the X-sessionId" in {
           setupMockUserAuth
           enable(IncomeSourcesFs)
+          enable(DisplayBusinessStartDate)
           mockBothIncomeSources()
           setupMockCreateSession(true)
           setupMockClearSession(true)
-          when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any()))
+          when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any())(any()))
             .thenReturn(
               Right(
                 ViewIncomeSourcesViewModel(
                   viewSoleTraderBusinesses = List(viewBusinessDetailsViewModel),
                   viewUkProperty = Some(viewUkPropertyDetailsViewModel),
                   viewForeignProperty = None,
-                  viewCeasedBusinesses = Nil
+                  viewCeasedBusinesses = Nil,
+                  displayStartDate = true
                 )
               )
             )
@@ -134,17 +165,19 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
           "the IncomeSources FS in enabled" in {
             setupMockAgentWithClientAuth(isSupportingAgent)
             enable(IncomeSourcesFs)
+            enable(DisplayBusinessStartDate)
             mockBothIncomeSources()
             setupMockCreateSession(true)
             setupMockClearSession(true)
-            when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any()))
+            when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any())(any()))
               .thenReturn(
                 Right(
                   ViewIncomeSourcesViewModel(
                     viewSoleTraderBusinesses = List(viewBusinessDetailsViewModel),
                     viewUkProperty = Some(viewUkPropertyDetailsViewModel),
                     viewForeignProperty = None,
-                    viewCeasedBusinesses = Nil
+                    viewCeasedBusinesses = Nil,
+                    displayStartDate = true
                   )
                 )
               )
@@ -170,8 +203,9 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
           "the call to get income source view model fails" in {
             setupMockAgentWithClientAuth(isSupportingAgent)
             enable(IncomeSourcesFs)
+            enable(DisplayBusinessStartDate)
             mockBothIncomeSources()
-            when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any()))
+            when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any())(any()))
               .thenReturn(
                 Left(MissingFieldException("Trading Name"))
               )
@@ -183,17 +217,19 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
           "the header carrier is missing the X-sessionId" in {
             setupMockAgentWithClientAuth(isSupportingAgent)
             enable(IncomeSourcesFs)
+            enable(DisplayBusinessStartDate)
             mockBothIncomeSources()
             setupMockCreateSession(true)
             setupMockClearSession(true)
-            when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any()))
+            when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any())(any()))
               .thenReturn(
                 Right(
                   ViewIncomeSourcesViewModel(
                     viewSoleTraderBusinesses = List(viewBusinessDetailsViewModel),
                     viewUkProperty = Some(viewUkPropertyDetailsViewModel),
                     viewForeignProperty = None,
-                    viewCeasedBusinesses = Nil
+                    viewCeasedBusinesses = Nil,
+                    displayStartDate = true
                   )
                 )
               )
