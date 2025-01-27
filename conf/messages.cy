@@ -177,6 +177,9 @@ home.agent.supporting.cannotAccess.returns                      = Ffurflenni Tre
 home.agent.supporting.cannotAccess.nextChargesDue               = y ffioedd sy’n ddyledus nesaf
 home.agent.supporting.readMore                                  = Darllenwch ragor am y gwahaniaeth rhwng prif asiantau ac asiantau ategol ar GOV.UK (yn agor tab newydd).
 
+home.penaltiesAndAppeals.heading                                = Cosbau ac apeliadau
+home.penaltiesAndAppeals.view                                   = Gwirio cosbau ac apeliadau Hunanasesiad
+
 ## Custom Error Page ##
 error.custom.heading                                           = Mae problem wedi codi
 error.custom.message                                           = Mae’r dudalen rydych yn ceisio’i gweld wedi newid

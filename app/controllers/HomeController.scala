@@ -128,6 +128,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
       val accountSettingsTileViewModel = AccountSettingsTileViewModel(currentTaxYear, isEnabled(ReportingFrequencyPage), currentITSAStatus)
 
+      val penaltiesAndAppealsTileViewModel = PenaltiesAndAppealsTileViewModel(isEnabled(PenaltiesAndAppeals))
+
       NextPaymentsTileViewModel(paymentsDueMerged, overDuePaymentsCount, accruingInterestPaymentsCount, isEnabled(ReviewAndReconcilePoa)).verify match {
 
         case Right(viewModel: NextPaymentsTileViewModel) => val homeViewModel = HomePageViewModel(
@@ -138,6 +140,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
           paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel,
           yourBusinessesTileViewModel = yourBusinessesTileViewModel,
           accountSettingsTileViewModel = accountSettingsTileViewModel,
+          penaltiesAndAppealsTileViewModel = penaltiesAndAppealsTileViewModel,
           dunningLockExists = dunningLockExists,
           origin = origin
         )
