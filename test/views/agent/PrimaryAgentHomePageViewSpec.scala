@@ -111,7 +111,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
 
     val agentHome: PrimaryAgentHome = app.injector.instanceOf[PrimaryAgentHome]
 
-    val paymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(None, creditAndRefundEnabled, paymentHistoryEnabled, isUserMigrated = user.incomeSources.yearOfMigration.isDefined)
+    val paymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(Some(financialDetailsModel()), creditAndRefundEnabled, paymentHistoryEnabled, isUserMigrated = user.incomeSources.yearOfMigration.isDefined)
 
     val returnsTileViewModel = ReturnsTileViewModel(currentTaxYear = TaxYear(currentTaxYear - 1, currentTaxYear), iTSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled)
 
@@ -332,7 +332,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
         }
 
         s"has the available credit " in new TestSetup(creditAndRefundEnabled = true) {
-          getElementById("available-credit").map(_.text) shouldBe Some("£0.00 is in your account")
+          getElementById("available-credit").map(_.text) shouldBe Some("£100.00 is in your account")
         }
       }
 
