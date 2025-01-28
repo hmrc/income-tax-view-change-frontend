@@ -21,6 +21,8 @@ import config.FrontendAppConfig
 import config.featureswitch._
 import models.homePage._
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
+import models.itsaStatus.ITSAStatus
+import models.itsaStatus.ITSAStatus.ITSAStatus
 import models.obligations.NextUpdatesTileViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -95,6 +97,8 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
                   displayCeaseAnIncome: Boolean = false,
                   incomeSourcesEnabled: Boolean = false,
                   incomeSourcesNewJourneyEnabled: Boolean = false,
+                  reportingFrequencyEnabled: Boolean = false,
+                  currentITSAStatus: ITSAStatus = ITSAStatus.Voluntary,
                   user: MtdItUser[_] = testMtdItUserNotMigrated
                  ) {
 
@@ -102,9 +106,12 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
 
     val yourBusinessesTileViewModel = YourBusinessesTileViewModel(displayCeaseAnIncome, incomeSourcesEnabled, incomeSourcesNewJourneyEnabled)
 
+    val accountSettingsTileViewModel = AccountSettingsTileViewModel(TaxYear(currentTaxYear, currentTaxYear + 1), reportingFrequencyEnabled, currentITSAStatus)
+
     val view: HtmlFormat.Appendable = agentHome(
       yourBusinessesTileViewModel,
-      nextUpdatesTileViewModel
+      nextUpdatesTileViewModel,
+      accountSettingsTileViewModel
     )(FakeRequest(), implicitly, user, mockAppConfig)
 
     lazy val document: Document = Jsoup.parse(contentAsString(view))
@@ -250,6 +257,35 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
           }
         }
       }
+
+      "have an Account Settings tile" when {
+        "the reporting frequency page FS is enabled" which {
+          "has a heading" in new TestSetup(user = testMtdItUserMigrated, reportingFrequencyEnabled = true) {
+            getElementById("account-settings-tile").map(_.select("h2").first().text()) shouldBe Some("Your account settings")
+          }
+          "has text for reporting quarterly(voluntary)" in new TestSetup(user = testMtdItUserMigrated, reportingFrequencyEnabled = true, currentITSAStatus = ITSAStatus.Voluntary) {
+            getElementById("current-itsa-status").map(_.text()) shouldBe Some(s"Reporting quarterly for $currentTaxYear to ${currentTaxYear + 1} tax year")
+          }
+          "has text for reporting quarterly(mandated)" in new TestSetup(user = testMtdItUserMigrated, reportingFrequencyEnabled = true, currentITSAStatus = ITSAStatus.Mandated) {
+            getElementById("current-itsa-status").map(_.text()) shouldBe Some(s"Reporting quarterly for $currentTaxYear to ${currentTaxYear + 1} tax year")
+          }
+          "has text for reporting annually" in new TestSetup(user = testMtdItUserMigrated, reportingFrequencyEnabled = true, currentITSAStatus = ITSAStatus.Annual) {
+            getElementById("current-itsa-status").map(_.text()) shouldBe Some(s"Reporting annually for $currentTaxYear to ${currentTaxYear + 1} tax year")
+          }
+
+          "has a link to the reporting frequency page" in new TestSetup(user = testMtdItUserMigrated, reportingFrequencyEnabled = true) {
+            getElementById("reporting-frequency-link").map(_.text()) shouldBe Some("Manage your reporting frequency")
+            getElementById("reporting-frequency-link").map(_.attr("href")) shouldBe Some(controllers.routes.ReportingFrequencyPageController.show(true).url)
+          }
+        }
+
+        "the reporting frequency page FS is disabled" which {
+          "does not have the Account Settings tile" in new TestSetup(user = testMtdItUserMigrated, reportingFrequencyEnabled = false) {
+            getElementById("account-settings-tile") shouldBe None
+          }
+        }
+      }
+
     }
   }
 

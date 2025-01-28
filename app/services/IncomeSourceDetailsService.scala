@@ -17,8 +17,11 @@
 package services
 
 import auth.{MtdItUser, MtdItUserOptionNino}
+import config.FrontendAppConfig
+import config.featureswitch.FeatureSwitching
 import connectors.BusinessDetailsConnector
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import models.admin.DisplayBusinessStartDate
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.{AddressModel, IncomeSourceId}
 import models.incomeSourceDetails.viewmodels._
@@ -33,7 +36,8 @@ import scala.util.Try
 
 @Singleton
 class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: BusinessDetailsConnector,
-                                           implicit val ec: ExecutionContext) {
+                                           implicit val ec: ExecutionContext,
+                                           implicit val appConfig: FrontendAppConfig) extends FeatureSwitching {
   val cacheExpiry: Duration = Duration(1, "day")
   val emptyAddress = AddressModel(
     addressLine1 = "",
@@ -70,7 +74,7 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
     )
   }
 
-  def getViewIncomeSourceViewModel(sources: IncomeSourceDetailsModel): Either[Throwable, ViewIncomeSourcesViewModel] = {
+  def getViewIncomeSourceViewModel(sources: IncomeSourceDetailsModel)(implicit user: MtdItUser[_]): Either[Throwable, ViewIncomeSourcesViewModel] = {
 
     val maybeSoleTraderBusinesses = sources.businesses.filterNot(_.isCeased)
     val soleTraderBusinessesExists = maybeSoleTraderBusinesses.nonEmpty
@@ -103,7 +107,8 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
             maybeForeignProperty.flatMap(_.tradingStartDate)
           ))
         } else None,
-        getCeasedBusinesses(sources = sources)
+        getCeasedBusinesses(sources = sources),
+        isEnabled(DisplayBusinessStartDate)
       )
     }.toEither
   }

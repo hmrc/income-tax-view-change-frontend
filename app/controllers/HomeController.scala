@@ -86,17 +86,26 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
   private def buildHomePageForSupportingAgent(nextUpdatesDueDates: Seq[LocalDate])
                                              (implicit user: MtdItUser[_]): Future[Result] = {
-    val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, dateService.getCurrentDate, isEnabled(OptOutFs))
-    val yourBusinessesTileViewModel = YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome, isEnabled(IncomeSourcesFs),
-      isEnabled(IncomeSourcesNewJourney))
-    Future.successful(
+
+    val currentTaxYear = TaxYear(dateService.getCurrentTaxYearEnd - 1, dateService.getCurrentTaxYearEnd)
+
+    for {
+      currentITSAStatus <- getCurrentITSAStatus(currentTaxYear)
+    } yield {
+
+      val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, dateService.getCurrentDate, isEnabled(OptOutFs))
+      val yourBusinessesTileViewModel = YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome, isEnabled(IncomeSourcesFs),
+        isEnabled(IncomeSourcesNewJourney))
+      val accountSettingsTileViewModel = AccountSettingsTileViewModel(currentTaxYear, isEnabled(ReportingFrequencyPage), currentITSAStatus)
+
       Ok(
         supportingAgentHomeView(
           yourBusinessesTileViewModel,
-          nextUpdatesTileViewModel
+          nextUpdatesTileViewModel,
+          accountSettingsTileViewModel
         )
       )
-    )
+    }
   }
 
   private def buildHomePage(nextUpdatesDueDates: Seq[LocalDate], origin: Option[String])

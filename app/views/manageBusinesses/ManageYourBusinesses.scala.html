@@ -147,16 +147,18 @@
                     </div>
                     <div class="govuk-summary-card__content">
                         <dl class="govuk-summary-list">
+                            @if(sources.displayStartDate) {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key" id="@{s"business-date-started-text-$index"}">
+                                        @getMessage("datestarted")
+                                    </dt>
+                                    <dd class="govuk-summary-list__value" id="@{s"business-date-$index"}">
+                                        @business.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))
+                                    </dd>
+                                </div>
+                            }
                             <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">
-                                    @getMessage("datestarted")
-                                </dt>
-                                <dd class="govuk-summary-list__value" id="@{s"business-date-$index"}">
-                                    @business.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))
-                                </dd>
-                            </div>
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key no-border">
+                                <dt class="govuk-summary-list__key no-border" id="@{s"business-trade-name-text-$index"}">
                                     @getMessage("name")
                                 </dt>
                                 <dd class="govuk-summary-list__value no-border" id="@{s"business-trade-name-$index"}">
@@ -185,7 +187,7 @@
 
             <div class="govuk-summary-card">
                 <div class="govuk-summary-card__title-wrapper">
-                    <h2 class="govuk-summary-card__title">@getMessage("UK")</h2>
+                    <h2 class="govuk-summary-card__title" id="uk-property-title">@getMessage("UK")</h2>
                     <ul class="govuk-summary-card__actions">
                         <li class="govuk-summary-card__action" id="uk-view-manage-link"> <a class="govuk-link" href=@incomeSourceDetailsURL(UkProperty, None)>
                             @getMessage("view.manage")
@@ -197,19 +199,21 @@
                         </li>
                     </ul>
                 </div>
-                <div class="govuk-summary-card__content">
-                    <dl class="govuk-summary-list">
+                @if(sources.displayStartDate) {
+                    <div class="govuk-summary-card__content">
+                        <dl class="govuk-summary-list">
 
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key no-border">
-                                @getMessage("startdate")
-                            </dt>
-                            <dd class="govuk-summary-list__value no-border" id="uk-date">
-                                @ukProperty.map(_.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))).get
-                            </dd>
-                        </div>
-                    </dl>
-                </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key no-border" id="uk-date-text">
+                                    @getMessage("startdate")
+                                </dt>
+                                <dd class="govuk-summary-list__value no-border" id="uk-date">
+                                    @ukProperty.map(_.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))).get
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
+                }
             </div>
 
         }
@@ -218,7 +222,7 @@
 
             <div class="govuk-summary-card">
                 <div class="govuk-summary-card__title-wrapper">
-                    <h2 class="govuk-summary-card__title">@getMessage("Foreign")</h2>
+                    <h2 class="govuk-summary-card__title" id="foreign-property-title">@getMessage("Foreign")</h2>
                     <ul class="govuk-summary-card__actions">
                         <li class="govuk-summary-card__action" id="foreign-view-manage-link"> <a class="govuk-link" href=@incomeSourceDetailsURL(ForeignProperty, None)>
                             @getMessage("view.manage")
@@ -230,19 +234,21 @@
                         </li>
                     </ul>
                 </div>
-                <div class="govuk-summary-card__content">
-                    <dl class="govuk-summary-list">
+                @if(sources.displayStartDate) {
+                    <div class="govuk-summary-card__content">
+                        <dl class="govuk-summary-list">
 
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key no-border">
-                                @getMessage("startdate")
-                            </dt>
-                            <dd class="govuk-summary-list__value no-border" id="foreign-date">
-                                @foreignProperty.map(_.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))).get
-                            </dd>
-                        </div>
-                    </dl>
-                </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key no-border" id="foreign-date-text">
+                                    @getMessage("startdate")
+                                </dt>
+                                <dd class="govuk-summary-list__value no-border" id="foreign-date">
+                                    @foreignProperty.map(_.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))).get
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
+                }
             </div>
         }
 
@@ -258,9 +264,9 @@
             @h2(msg = getMessage("ceasedBusinesses.heading"), optId = Some("ceasedBusinesses-heading"))
 
             @if(sources.viewCeasedBusinesses.length == 1) {
-                <p class="govuk-body">@getMessage("ceasedBusinesses.single")</p>
+                <p class="govuk-body" id="single-ceased-business">@getMessage("ceasedBusinesses.single")</p>
             } else {
-                <p class="govuk-body">@getMessage("ceasedBusinesses.multiple", sources.viewCeasedBusinesses.length.toString)</p>
+                <p class="govuk-body" id="multiple-ceased-business">@getMessage("ceasedBusinesses.multiple", sources.viewCeasedBusinesses.length.toString)</p>
             }
             @link(link = viewAllCeasedBusinessesControllerURL, messageKey = getMessage("ceasedBusinesses.viewall"), id = Some("ceasedBusinesses-viewall"))
         }
