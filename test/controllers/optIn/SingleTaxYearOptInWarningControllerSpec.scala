@@ -33,8 +33,8 @@ import play.api.mvc.AnyContentAsFormUrlEncoded
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.optIn.OptInService
-import testConstants.BaseTestConstants.testNino
-import testConstants.BusinessDetailsTestConstants.{business1, testMtdItId}
+import testConstants.BaseTestConstants._
+import testConstants.BusinessDetailsTestConstants.business1
 import views.html.optIn.SingleTaxYearWarningView
 
 import scala.concurrent.Future
@@ -72,7 +72,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
 
           "render the SingleTaxYearWarningView" in {
 
-            val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2017"), List(business1), Nil)
+            val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
             setupMockSuccess(mtdRole)
 
             when(
@@ -106,7 +106,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
 
           "redirect to ChooseYear page - SEE_OTHER" in {
 
-            val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2017"), List(business1), Nil)
+            val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
             setupMockSuccess(mtdRole)
 
             when(
@@ -136,7 +136,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
 
             "recover and return error template Internal Server Error - 500" in {
 
-              val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2017"), List(business1), Nil)
+              val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
               setupMockSuccess(mtdRole)
 
               when(
@@ -177,7 +177,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
 
             "handle the submit request and redirect to the ConfirmTaxYear page" in {
 
-              val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2017"), List(business1), Nil)
+              val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
 
               setupMockSuccess(mtdRole)
 
@@ -212,7 +212,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
 
             "handle the submit request and redirect to the Opt In Cancelled page"  in {
 
-              val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2017"), List(business1), Nil)
+              val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
 
               setupMockSuccess(mtdRole)
 
@@ -251,7 +251,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
 
             "handle the submit request and return the page with an error summary" in {
 
-              val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2017"), List(business1), Nil)
+              val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
 
               setupMockSuccess(mtdRole)
 
@@ -285,7 +285,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
 
           "redirect to ChooseYear page - OK SEE_OTHER" in {
 
-            val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2017"), List(business1), Nil)
+            val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
             setupMockSuccess(mtdRole)
 
             when(
@@ -316,7 +316,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
 
             "recover and return error template Internal Server Error - 500" in {
 
-              val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2017"), List(business1), Nil)
+              val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
               setupMockSuccess(mtdRole)
 
               when(
