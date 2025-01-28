@@ -22,7 +22,7 @@ import controllers.BaseController
 import models.incomeSourceDetails.TaxYear
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import play.api.{Configuration, Environment, Logger}
+import play.api.Logger
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService}
 import testOnly.TestOnlyAppConfig
 import testOnly.connectors.{CustomAuthConnector, DynamicStubConnector}
@@ -31,7 +31,6 @@ import testOnly.services.{DynamicStubService, OptOutCustomDataService}
 import testOnly.utils.UserRepository
 import testOnly.views.html.LoginPage
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 import utils.{AuthExchange, SessionBuilder}
 
 import javax.inject.{Inject, Singleton}
@@ -40,8 +39,6 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                                       val testOnlyAppConfig: TestOnlyAppConfig,
-                                      override val config: Configuration,
-                                      override val env: Environment,
                                       implicit val mcc: MessagesControllerComponents,
                                       implicit val executionContext: ExecutionContext,
                                       userRepository: UserRepository,
@@ -55,7 +52,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                                       val itvcErrorHandler: ItvcErrorHandler,
                                       implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                       dateService: DateServiceInterface
-                                     ) extends BaseController with AuthRedirects with I18nSupport with FeatureSwitching {
+                                     ) extends BaseController with I18nSupport with FeatureSwitching {
 
   // Logging page functionality
   val showLogin: Action[AnyContent] = Action.async { implicit request =>

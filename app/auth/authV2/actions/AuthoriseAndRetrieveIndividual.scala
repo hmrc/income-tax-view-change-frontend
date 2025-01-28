@@ -42,8 +42,6 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
                                                val appConfig: FrontendAppConfig,
-                                               override val config: Configuration,
-                                               override val env: Environment,
                                                mcc: MessagesControllerComponents,
                                                val auditingService: AuditingService)
   extends AuthoriseHelper with ActionRefiner[Request, MtdItUserOptionNino]{
