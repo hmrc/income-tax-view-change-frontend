@@ -425,10 +425,10 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
     "have a Penalties and Appeals tile" when {
       "Penalties and Appeals FS is enabled" which {
-        "has a heading" in new Setup() {
+        "has a heading" in new Setup(penaltyPoints = Some(2)) {
           getElementById("penalties-and-appeals-tile").map(_.select("h2").first().text()) shouldBe Some("Penalties and appeals")
         }
-        "has a link to Self Assessment Penalties and Appeals page" in new Setup() {
+        "has a link to Self Assessment Penalties and Appeals page" in new Setup(penaltyPoints = Some(2)) {
           getElementById("sa-penalties-and-appeals-link").map(_.text()) shouldBe Some("Check Self Assessment penalties and appeals")
           getElementById("sa-penalties-and-appeals-link").map(_.attr("href")) shouldBe Some("")
         }
