@@ -125,6 +125,8 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
 
     val accountSettingsTileViewModel = AccountSettingsTileViewModel(TaxYear(currentTaxYear, currentTaxYear + 1), reportingFrequencyEnabled, currentITSAStatus)
 
+    val penaltiesAndAppealsTileViewModel = PenaltiesAndAppealsTileViewModel(penaltiesAndAppealsEnabled = true)
+
     val homePageViewModel = HomePageViewModel(
       utr = utr,
       nextUpdatesTileViewModel = nextUpdatesTileViewModel,
@@ -133,6 +135,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
       paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel,
       yourBusinessesTileViewModel = yourBusinessesTileViewModel,
       accountSettingsTileViewModel = accountSettingsTileViewModel,
+      penaltiesAndAppealsTileViewModel = penaltiesAndAppealsTileViewModel,
       dunningLockExists = dunningLockExists
     )
     val view: HtmlFormat.Appendable = agentHome(

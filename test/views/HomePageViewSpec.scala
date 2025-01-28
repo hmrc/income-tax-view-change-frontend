@@ -119,7 +119,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
   class Setup(paymentDueDate: LocalDate = nextPaymentDueDate, overDuePaymentsCount: Int = 0, paymentsAccruingInterestCount: Int = 0, reviewAndReconcileEnabled: Boolean = false,
               nextUpdatesTileViewModel: NextUpdatesTileViewModel = viewModelFuture, utr: Option[String] = Some("1234567890"), paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
               user: MtdItUser[_] = testMtdItUser(), dunningLockExists: Boolean = false, creditAndRefundEnabled: Boolean = false, displayCeaseAnIncome: Boolean = false,
-              incomeSourcesEnabled: Boolean = false, incomeSourcesNewJourneyEnabled: Boolean = false, reportingFrequencyEnabled: Boolean = false, currentITSAStatus: ITSAStatus = ITSAStatus.Voluntary) {
+              incomeSourcesEnabled: Boolean = false, incomeSourcesNewJourneyEnabled: Boolean = false, reportingFrequencyEnabled: Boolean = false, penaltiesAndAppealsEnabled: Boolean = true, currentITSAStatus: ITSAStatus = ITSAStatus.Voluntary) {
 
     val returnsTileViewModel = ReturnsTileViewModel(currentTaxYear = TaxYear(currentTaxYear - 1, currentTaxYear), iTSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled)
 
@@ -131,6 +131,8 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
     val accountSettingsTileViewModel = AccountSettingsTileViewModel(TaxYear(currentTaxYear, currentTaxYear + 1), reportingFrequencyEnabled, currentITSAStatus)
 
+    val penaltiesAndAppealsTileViewModel = PenaltiesAndAppealsTileViewModel(penaltiesAndAppealsEnabled = true)
+
     val homePageViewModel = HomePageViewModel(
       utr = utr,
       nextUpdatesTileViewModel = nextUpdatesTileViewModel,
@@ -139,6 +141,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel,
       yourBusinessesTileViewModel = yourBusinessesTileViewModel,
       accountSettingsTileViewModel = accountSettingsTileViewModel,
+      penaltiesAndAppealsTileViewModel = penaltiesAndAppealsTileViewModel,
       dunningLockExists = dunningLockExists
     )
 
@@ -416,6 +419,18 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       "the reporting frequency page FS is disabled" which {
         "does not have the Account Settings tile" in new Setup(user = testMtdItUserMigrated(), reportingFrequencyEnabled = false) {
           getElementById("account-settings-tile") shouldBe None
+        }
+      }
+    }
+
+    "have a Penalties and Appeals tile" when {
+      "Penalties and Appeals FS is enabled" which {
+        "has a heading" in new Setup(penaltiesAndAppealsEnabled = true) {
+          getElementById("penalties-and-appeals-tile").map(_.select("h2").first().text()) shouldBe Some("Penalties and appeals")
+        }
+        "has a link to Self Assessment Penalties and Appeals page" in new Setup(penaltiesAndAppealsEnabled = true) {
+          getElementById("sa-penalties-and-appeals-link").map(_.text()) shouldBe Some("Check Self Assessment penalties and appeals")
+          getElementById("sa-penalties-and-appeals-link").map(_.attr("href")) shouldBe Some("")
         }
       }
     }
