@@ -35,6 +35,17 @@
 
 @if(penaltiesAndAppealsTileViewModel.penaltiesAndAppealsEnabled) {
     @home_tile("penalties-and-appeals-tile", messages("home.penaltiesAndAppeals.heading")) {
+        @(penaltiesAndAppealsTileViewModel.penaltyPoints match {
+            case Some(2) =>
+                <span class="govuk-tag govuk-tag--red" id="two-penalty-points-tag">
+                    { messages("home.penaltiesAndAppeals.twoPenaltiesTag") }
+                </span>
+            case Some(4) =>
+                <span class="govuk-tag govuk-tag--red" id="four-penalty-points-tag">
+                    { messages("home.penaltiesAndAppeals.fourPenaltiesTag") }
+                </span>
+            case _ =>
+        })
         @p(classes = "govuk-!-margin-bottom-4") {
             @penaltiesAndAppealsLink
         }

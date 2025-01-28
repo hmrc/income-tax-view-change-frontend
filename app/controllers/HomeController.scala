@@ -52,6 +52,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
                                val dateService: DateServiceInterface,
                                val whatYouOweService: WhatYouOweService,
                                val ITSAStatusService: ITSAStatusService,
+                               val penaltyDetailsService: PenaltyDetailsService,
                                auditingService: AuditingService)
                               (implicit val ec: ExecutionContext,
                                implicit val itvcErrorHandler: ItvcErrorHandler,
@@ -113,6 +114,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
       overDuePaymentsCount = calculateOverduePaymentsCount(paymentsDue, outstandingChargesModel)
       accruingInterestPaymentsCount = NextPaymentsTileViewModel.paymentsAccruingInterestCount(unpaidCharges, dateService.getCurrentDate)
       currentITSAStatus <- getCurrentITSAStatus(currentTaxYear)
+      maybePenaltyPoints = penaltyDetailsService.getPenaltyPoints
       paymentsDueMerged = mergePaymentsDue(paymentsDue, outstandingChargeDueDates)
     } yield {
 
@@ -128,7 +130,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
       val accountSettingsTileViewModel = AccountSettingsTileViewModel(currentTaxYear, isEnabled(ReportingFrequencyPage), currentITSAStatus)
 
-      val penaltiesAndAppealsTileViewModel = PenaltiesAndAppealsTileViewModel(isEnabled(PenaltiesAndAppeals))
+      val penaltiesAndAppealsTileViewModel = PenaltiesAndAppealsTileViewModel(isEnabled(PenaltiesAndAppeals), maybePenaltyPoints)
 
       NextPaymentsTileViewModel(paymentsDueMerged, overDuePaymentsCount, accruingInterestPaymentsCount, isEnabled(ReviewAndReconcilePoa)).verify match {
 

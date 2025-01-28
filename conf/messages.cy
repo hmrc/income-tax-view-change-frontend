@@ -179,6 +179,8 @@ home.agent.supporting.readMore                                  = Darllenwch rag
 
 home.penaltiesAndAppeals.heading                                = Cosbau ac apeliadau
 home.penaltiesAndAppeals.view                                   = Gwirio cosbau ac apeliadau Hunanasesiad
+home.penaltiesAndAppeals.twoPenaltiesTag                        = 2 BWYNT COSB
+home.penaltiesAndAppeals.fourPenaltiesTag                       = 4 PWYNT COSB
 
 ## Custom Error Page ##
 error.custom.heading                                           = Mae problem wedi codi
