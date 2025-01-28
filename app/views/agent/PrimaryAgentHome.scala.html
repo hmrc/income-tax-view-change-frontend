@@ -35,6 +35,7 @@
     paymentHistoryTile: PaymentHistoryTile,
     returnsTile: ReturnsTile,
     incomeSourcesTile: IncomeSourcesTile,
+    penaltiesAndAppealsTile: PenaltiesAndAppealsTile,
     accountSettingsTile: AccountSettingsTile
 )
 
@@ -71,6 +72,12 @@ viewModel: HomePageViewModel
         <div class="flex-container govuk-!-padding-0">
             @incomeSourcesTile(viewModel.yourBusinessesTileViewModel, true)
             @accountSettingsTile(viewModel.accountSettingsTileViewModel, true)
+        </div>
+    </div>
+
+    <div class="grid-row">
+        <div class="flex-container govuk-!-padding-0">
+            @penaltiesAndAppealsTile(viewModel.penaltiesAndAppealsTileViewModel)
         </div>
     </div>
 }

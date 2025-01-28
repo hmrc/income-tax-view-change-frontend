@@ -110,6 +110,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
                   creditAndRefundEnabled: Boolean = false,
                   user: MtdItUser[_] = testMtdItUserNotMigrated,
                   reportingFrequencyEnabled: Boolean = false,
+                  penaltiesAndAppealsEnabled: Boolean = true,
                   currentITSAStatus: ITSAStatus = ITSAStatus.Voluntary
                  ) {
 
@@ -437,6 +438,19 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
           }
         }
       }
+
+      "have a Penalties and Appeals tile" when {
+        "Penalties and Appeals FS is enabled" which {
+          "has a heading" in new TestSetup(penaltiesAndAppealsEnabled = true) {
+            getElementById("penalties-and-appeals-tile").map(_.select("h2").first().text()) shouldBe Some("Penalties and appeals")
+          }
+          "has a link to Self Assessment Penalties and Appeals page" in new TestSetup(penaltiesAndAppealsEnabled = true) {
+            getElementById("sa-penalties-and-appeals-link").map(_.text()) shouldBe Some("Check Self Assessment penalties and appeals")
+            getElementById("sa-penalties-and-appeals-link").map(_.attr("href")) shouldBe Some("")
+          }
+        }
+      }
+
     }
   }
 
