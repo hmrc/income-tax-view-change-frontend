@@ -16,7 +16,6 @@
 
 package controllers.incomeSources.manage
 
-import auth.MtdItUser
 import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
@@ -28,13 +27,11 @@ import models.incomeSourceDetails.{LatencyDetails, ManageIncomeSourceData, UIJou
 import models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.Json
-import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import play.mvc.Http.Status
 import services.SessionService
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
-import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate
 import java.time.Month.APRIL
@@ -91,11 +88,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
   val pageTitle = messagesAPI(s"$prefix.heading.annual")
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
-
-  val testUser: MtdItUser[_] = MtdItUser(
-    testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
-    None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
-  )(FakeRequest())
 
   def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,

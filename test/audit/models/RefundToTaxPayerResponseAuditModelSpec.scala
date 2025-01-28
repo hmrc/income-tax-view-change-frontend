@@ -18,8 +18,10 @@ package audit.models
 
 
 import models.repaymentHistory._
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import testUtils.TestSupport
+import uk.gov.hmrc.auth.core.AffinityGroup
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 import java.time.LocalDate
 
@@ -62,12 +64,8 @@ class RefundToTaxPayerResponseAuditModelSpec extends TestSupport {
     )
   )
 
-  val refundToTaxPayerAuditModelIndividualJsonFull = Json.obj(
-    "nino" -> "AB123456C",
-    "mtditid" -> "XAIT0000123456",
-    "saUtr" -> "testSaUtr",
-    "credId" -> "testCredId",
-    "userType" -> "Individual",
+  val auditDetails: AffinityGroup => JsValue = af =>
+    commonAuditDetails(af) ++ Json.obj(
     "estimatedDate" -> "2021-07-23",
     "method" -> "BACS",
     "totalRefund" -> "12345",
@@ -76,23 +74,12 @@ class RefundToTaxPayerResponseAuditModelSpec extends TestSupport {
     "requestedAmount" -> "705.2",
     "refundAmount" -> "705.2",
     "interestAmount" -> 9.67,
-    "interestDescription" -> "31 July 2021 to 30 November 2021 at 1.76%")
+    "interestDescription" -> "31 July 2021 to 30 November 2021 at 1.76%"
+    )
 
-  val refundToTaxPayerAuditModelAgentJsonFull = Json.obj("nino" -> "AA111111A",
-    "mtditid" -> "XAIT00000000015",
-    "agentReferenceNumber" -> "XAIT0000123456",
-    "saUtr" -> "1234567890",
-    "credId" -> "testCredId",
-    "userType" -> "Agent",
-    "estimatedDate" -> "2021-07-23",
-    "method" -> "BACS",
-    "totalRefund" -> "12345",
-    "requestedOn" -> "2021-07-21",
-    "refundReference" -> "000000003135",
-    "requestedAmount" -> "705.2",
-    "refundAmount" -> "705.2",
-    "interestAmount" -> 9.67,
-    "interestDescription" -> "31 July 2021 to 30 November 2021 at 1.76%")
+
+  val refundToTaxPayerAuditModelIndividualJsonFull = auditDetails(Individual)
+  val refundToTaxPayerAuditModelAgentJsonFull = auditDetails(Agent)
 
   val refundToTaxPayerAuditModelIndividualFull = RefundToTaxPayerResponseAuditModel(testRepaymentHistory)
   val refundToTaxPayerAuditModelAgentFull = {

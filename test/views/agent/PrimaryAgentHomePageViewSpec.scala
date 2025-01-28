@@ -17,6 +17,7 @@
 package views.agent
 
 import auth.MtdItUser
+import authV2.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
 import config.FrontendAppConfig
 import config.featureswitch._
 import exceptions.MissingFieldException
@@ -52,31 +53,14 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
     else currentDate.getYear + 1
   }
 
-  val testMtdItUserNotMigrated: MtdItUser[_] = MtdItUser(
-    testMtditid,
-    testNino,
-    Some(testRetrievedUserName),
-    IncomeSourceDetailsModel(testNino, testMtditid, None, Nil, Nil),
-    btaNavPartial = None,
-    Some(testSaUtr),
-    Some(testCredId),
-    Some(Agent),
-    Some(testArn),
-    Some(testClientName)
-  )(FakeRequest())
+  val testMtdItUserNotMigrated: MtdItUser[_] = defaultMTDITUser(Some(Agent),
+    IncomeSourceDetailsModel(testNino, testMtditid, None, Nil, Nil)
+  )
 
-  val testMtdItUserMigrated: MtdItUser[_] = MtdItUser(
-    testMtditid,
-    testNino,
-    Some(testRetrievedUserName),
-    IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), Nil, Nil),
-    btaNavPartial = None,
-    Some(testSaUtr),
-    Some(testCredId),
-    Some(Agent),
-    Some(testArn),
-    None
-  )(FakeRequest())
+  val testMtdItUserMigrated: MtdItUser[_] = defaultMTDITUser(Some(Agent),
+    IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), Nil, Nil))
+
+  val testMtdItUserNoClientName = getMinimalMTDITUser(Some(Agent), IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), Nil, Nil))
 
   val year2018: Int = 2018
   val year2019: Int = 2019
@@ -171,7 +155,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
         document.select("h1").text() shouldBe "Jon Jones’s Income Tax"
       }
 
-      s"have the page heading ${messages("home.agent.heading")}" in new TestSetup(user = testMtdItUserMigrated) {
+      s"have the page heading ${messages("home.agent.heading")}" in new TestSetup(user = testMtdItUserNoClientName) {
         document.select("h1").text() shouldBe "Your client’s Income Tax"
       }
 

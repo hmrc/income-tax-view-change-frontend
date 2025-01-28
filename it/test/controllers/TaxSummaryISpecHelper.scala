@@ -19,17 +19,14 @@ package controllers
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import enums.CodingOutType.{CODING_OUT_CANCELLED, CODING_OUT_CLASS2_NICS}
-import enums.{MTDIndividual, MTDUserRole}
+import enums.MTDUserRole
 import models.admin.NavBarFs
 import models.financialDetails._
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.liabilitycalculation.viewmodels.TYSClaimToAdjustViewModel
 import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import models.taxyearsummary.TaxYearSummaryChargeItem
-import play.api.test.FakeRequest
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
-import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 import java.time.LocalDate
 
@@ -357,15 +354,7 @@ trait TaxSummaryISpecHelper extends ControllerISpecHelper with FeatureSwitching 
   ))
 
   def testUser(mtdUserRole: MTDUserRole, incomeSources: IncomeSourceDetailsModel = multipleBusinessesAndPropertyResponse): MtdItUser[_] = {
-    val (affinityGroup, arn) = if(mtdUserRole == MTDIndividual) {
-      (Individual, None)
-    } else {
-      (Agent, Some("1"))
-    }
-    MtdItUser(
-      testMtditid, testNino, None, incomeSources,
-      None, Some("1234567890"), Some("12345-credId"), Some(affinityGroup), arn
-    )(FakeRequest())
+    getTestUser(mtdUserRole, incomeSources)
   }
 
 }

@@ -17,14 +17,15 @@
 package connectors
 
 import _root_.helpers.{ComponentSpecBase, WiremockHelper}
-import auth.MtdItUserOptionNino
+import auth.authV2.models.AuthorisedAndEnrolledRequest
+import enums.MTDIndividual
 import models.core.{AccountingPeriodModel, AddressModel, NinoResponseError, NinoResponseSuccess}
 import models.incomeSourceDetails._
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import testConstants.BaseTestConstants.{testCredId, testRetrievedUserName, testSaUtr, testUserTypeIndividual}
+import testConstants.BaseIntegrationTestConstants.defaultAuthUserDetails
 
 import java.time.LocalDate
 
@@ -161,19 +162,15 @@ class BusinessDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase {
 
           WiremockHelper.stubGet(url, OK, requestBody)
 
-          implicit val testMtdUserOptionNino: MtdItUserOptionNino[_] =
-            MtdItUserOptionNino(
-              mtditid = testMtditid,
-              nino = Some(nino),
-              userName = Some(testRetrievedUserName),
-              btaNavPartial = None,
-              saUtr = Some(testSaUtr),
-              credId = Some(testCredId),
-              userType = Some(testUserTypeIndividual),
-              arn = None
+          implicit val testAuthorisedAndEnrolled: AuthorisedAndEnrolledRequest[_] =
+            AuthorisedAndEnrolledRequest(
+              mtditId = testMtditid,
+              mtdUserRole = MTDIndividual,
+              authUserDetails = defaultAuthUserDetails(MTDIndividual),
+              None
             )(FakeRequest())
 
-          val result = connector.getIncomeSources()(hc, mtdItUser = testMtdUserOptionNino).futureValue
+          val result = connector.getIncomeSources()(hc, mtdItUser = testAuthorisedAndEnrolled).futureValue
 
           result shouldBe expectedResponse
 
@@ -184,22 +181,16 @@ class BusinessDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase {
       "INTERNAL_SERVER_ERROR - 500" should {
 
         "return IncomeSourceDetailsError with some response body" in {
-
-          val nino = "AB123456A"
           val testMtditid = "XAITSA123456"
 
           val url = s"/income-tax-view-change/income-sources/$testMtditid"
 
-          implicit val testMtdUserOptionNino: MtdItUserOptionNino[_] =
-            MtdItUserOptionNino(
-              mtditid = testMtditid,
-              nino = Some(nino),
-              userName = Some(testRetrievedUserName),
-              btaNavPartial = None,
-              saUtr = Some(testSaUtr),
-              credId = Some(testCredId),
-              userType = Some(testUserTypeIndividual),
-              arn = None
+          implicit val testAuthorisedAndEnrolled: AuthorisedAndEnrolledRequest[_] =
+            AuthorisedAndEnrolledRequest(
+              mtditId = testMtditid,
+              mtdUserRole = MTDIndividual,
+              authUserDetails = defaultAuthUserDetails(MTDIndividual),
+              None
             )(FakeRequest())
 
           val responseBody =
@@ -209,7 +200,7 @@ class BusinessDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase {
 
           WiremockHelper.stubGet(url, INTERNAL_SERVER_ERROR, responseBody)
 
-          val result = connector.getIncomeSources()(hc, mtdItUser = testMtdUserOptionNino).futureValue
+          val result = connector.getIncomeSources()(hc, mtdItUser = testAuthorisedAndEnrolled).futureValue
 
           result shouldBe IncomeSourceDetailsError(status = INTERNAL_SERVER_ERROR, reason = responseBody)
 

@@ -17,6 +17,7 @@
 package services
 
 import audit.mocks.MockAuditingService
+import auth.authV2.models.AuthorisedAndEnrolledRequest
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import mocks.connectors.MockBusinessDetailsConnector
 import mocks.services.config.MockAppConfig
@@ -39,6 +40,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockBusinessDetail
   val cache = app.injector.instanceOf[AsyncCacheApi]
   val expectedAddressString1: Option[String] = Some("Line 1<br>Line 2<br>Line 3<br>Line 4<br>LN1 1NL<br>NI")
   val expectedAddressString2: Option[String] = Some("A Line 1<br>A Line 3<br>LN2 2NL<br>GB")
+  implicit val authorisedAndEnrolledRequest: AuthorisedAndEnrolledRequest[_] = testAuthorisedAndEnrolled
 
   object TestIncomeSourceDetailsService extends IncomeSourceDetailsService(mockBusinessDetailsConnector, ec, mockAppConfig)
 

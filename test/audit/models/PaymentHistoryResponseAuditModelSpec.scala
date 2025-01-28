@@ -16,15 +16,14 @@
 
 package audit.models
 
-import auth.MtdItUser
+import authV2.AuthActionsTestData._
 import models.financialDetails.Payment
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.libs.json._
-import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testSaUtr}
+import testConstants.BaseTestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup._
-import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
 
@@ -35,17 +34,7 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
   val paymentFromEarlierYear: String = messages("paymentHistory.paymentFromEarlierYear")
 
   private def paymentHistoryAuditFullTxm(userType: Option[AffinityGroup] = Some(Individual)) = PaymentHistoryResponseAuditModel(
-    mtdItUser = MtdItUser(
-      mtditid = testMtditid,
-      nino = testNino,
-      userName = Some(Name(Some("firstName"), Some("lastName"))),
-      incomeSources = IncomeSourceDetailsModel(testNino, testMtditid, None, List.empty, List.empty),
-      btaNavPartial = None,
-      saUtr = Some(testSaUtr),
-      credId = Some(testCredId),
-      userType = userType,
-      arn = if (userType.contains(Agent)) Some(testArn) else None
-    ),
+    mtdItUser = defaultMTDITUser(userType, IncomeSourceDetailsModel(testNino, testMtditid, None, List.empty, List.empty)),
   payments = Seq(
       Payment(reference = Some("payment1"), amount = Some(100.00), outstandingAmount = None,
         method = Some("method"), documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"),
@@ -67,16 +56,7 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
   )
 
   val paymentHistoryAuditMin: PaymentHistoryResponseAuditModel = PaymentHistoryResponseAuditModel(
-    mtdItUser = MtdItUser(
-      mtditid = testMtditid,
-      nino = testNino,
-      userName = None,
-      incomeSources = IncomeSourceDetailsModel(testNino, testMtditid, None, List.empty, List.empty),
-      saUtr = None,
-      credId = None,
-      userType = None,
-      arn = None
-    ),
+    mtdItUser = getMinimalMTDITUser(None, IncomeSourceDetailsModel(testNino, testMtditid, None, List.empty, List.empty)),
     payments = Seq.empty[Payment]
   )
 

@@ -17,6 +17,7 @@
 package connectors
 
 import auth.MtdItUser
+import authV2.AuthActionsTestData.defaultMTDITUser
 import com.codahale.metrics.Timer
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
@@ -56,17 +57,7 @@ trait BaseConnectorSpec extends UnitSpec with BeforeAndAfterEach with GuiceOneAp
   implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   def getIndividualUser(request: FakeRequest[AnyContentAsEmpty.type]): MtdItUser[_] =
-    MtdItUser(
-      mtditid = testMtditid,
-      nino = testNino,
-      userName = Some(testRetrievedUserName),
-      incomeSources = businessAndPropertyAligned,
-      btaNavPartial = None,
-      saUtr = Some(testSaUtr),
-      credId = Some(testCredId),
-      userType = Some(testUserTypeIndividual),
-      arn = None
-    )(request)
+    defaultMTDITUser(Some(testUserTypeIndividual),businessAndPropertyAligned, request)
 
   implicit val individualUser: MtdItUser[_] = getIndividualUser(FakeRequest())
 

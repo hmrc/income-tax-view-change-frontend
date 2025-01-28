@@ -36,7 +36,6 @@ import testConstants.BusinessDetailsIntegrationTestConstants.{address, b2Cessati
 import testConstants.NextUpdatesIntegrationTestConstants._
 import testConstants.OutstandingChargesIntegrationTestConstants.{validOutStandingChargeResponseJsonWithAciAndBcdCharges, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges}
 import testConstants.messages.HomeMessages._
-import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate
 
@@ -63,10 +62,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
     properties = Nil
   )
 
-  val testUser: MtdItUser[_] = MtdItUser(
-    testMtditid, testNino, None, incomeSourceDetailsModel, None,
-    Some("1234567890"), Some("12345-credId"), Some(Individual), None
-  )(FakeRequest())
+  val testUser: MtdItUser[_] = getTestUser(MTDIndividual, incomeSourceDetailsModel)
 
   val path = "/"
 

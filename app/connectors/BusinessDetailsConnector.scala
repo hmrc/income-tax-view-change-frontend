@@ -18,17 +18,17 @@ package connectors
 
 import audit.AuditingService
 import audit.models.IncomeSourceDetailsResponseAuditModel
-import auth.MtdItUserOptionNino
+import auth.authV2.models.AuthorisedAndEnrolledRequest
 import config.FrontendAppConfig
 import models.core.{NinoResponse, NinoResponseError, NinoResponseSuccess}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.OK
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import utils.Headers.checkAndAddTestHeader
-import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -102,10 +102,10 @@ class BusinessDetailsConnector @Inject()(
 
   def getIncomeSources()(
     implicit headerCarrier: HeaderCarrier,
-    mtdItUser: MtdItUserOptionNino[_]
+    mtdItUser: AuthorisedAndEnrolledRequest[_]
   ): Future[IncomeSourceDetailsResponse] = {
 
-    val url = getIncomeSourcesUrl(mtdItUser.mtditid)
+    val url = getIncomeSourcesUrl(mtdItUser.mtditId)
     Logger("application").debug(s"GET $url")
 
     val hc: HeaderCarrier = modifyHeaderCarrier(mtdItUser.path, headerCarrier)(appConfig)
@@ -127,6 +127,7 @@ class BusinessDetailsConnector @Inject()(
                 auditingService.extendedAudit(
                   IncomeSourceDetailsResponseAuditModel(
                     mtdItUser,
+                    valid.nino,
                     valid.businesses.map(_.incomeSourceId),
                     valid.properties.map(_.incomeSourceId),
                     valid.yearOfMigration

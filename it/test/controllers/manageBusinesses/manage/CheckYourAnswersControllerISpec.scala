@@ -17,7 +17,6 @@
 package controllers.manageBusinesses.manage
 
 import audit.models.ManageIncomeSourceCheckYourAnswersAuditModel
-import auth.MtdItUser
 import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
@@ -28,12 +27,10 @@ import models.incomeSourceDetails.{LatencyDetails, ManageIncomeSourceData, UIJou
 import models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
-import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
-import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 import java.time.LocalDate
 import java.time.Month.APRIL
@@ -67,18 +64,6 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
 
-  def testUser(mtdUserRole: MTDUserRole): MtdItUser[_] = {
-    val (affinityGroup, arn) = if(mtdUserRole == MTDIndividual) {
-      (Individual, None)
-    } else {
-      (Agent, Some("1"))
-    }
-    MtdItUser(
-      testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
-      None, Some("1234567890"), Some("12345-credId"), Some(affinityGroup), arn
-    )(FakeRequest())
-  }
-
   def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
     journeyType = IncomeSourceJourneyType(Manage, incomeSourceType).toString,
@@ -105,7 +90,7 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
         true, incomeSourceType.journeyType,
         "MANAGE", "Annually",
         "2023-2024", businessName
-      )(testUser(mtdUserRole)).detail)
+      )(getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail)
 
   }
 

@@ -32,11 +32,9 @@ class FeatureSwitchRetrievalAction @Inject()(val featureSwitchService: FeatureSw
                                        val messagesApi: MessagesApi) extends ActionRefiner[MtdItUser, MtdItUser] {
 
   override def refine[A](request: MtdItUser[A]): Future[Either[Result, MtdItUser[A]]] = {
-    featureSwitchService.getAll.map(fs => {
-      val newRequest = request
-        .copy(featureSwitches = fs)(request)
-      Right(newRequest)
-    })
+    featureSwitchService.getAll.map(fs =>
+      Right(request.addFeatureSwitches(fs))
+    )
   }
 }
 

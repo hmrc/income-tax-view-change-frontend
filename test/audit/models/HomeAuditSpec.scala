@@ -16,15 +16,15 @@
 
 package audit.models
 
-import testConstants.BaseTestConstants._
-import auth.MtdItUser
+import authV2.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
+import forms.IncomeSourcesFormsSpec.commonAuditDetails
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.Json
+import testConstants.BaseTestConstants._
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
-import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
 
@@ -37,33 +37,13 @@ class HomeAuditSpec extends AnyWordSpecLike with Matchers {
   def homeAuditFull(userType: Option[AffinityGroup] = Some(Agent), agentReferenceNumber: Option[String] = Some("agentReferenceNumber"),
                     nextPaymentOrOverdue: Either[(LocalDate, Boolean), Int],
                     nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int]): HomeAudit = HomeAudit(
-    mtdItUser = MtdItUser(
-      mtditid = "mtditid",
-      nino = "nino",
-      userName = Some(Name(Some("firstName"), Some("lastName"))),
-      incomeSources = IncomeSourceDetailsModel("nino", "mtditid", None, Nil, Nil),
-      btaNavPartial = None,
-      saUtr = Some("saUtr"),
-      credId = Some("credId"),
-      userType = userType,
-      arn = agentReferenceNumber
-    ),
+    defaultMTDITUser(userType, IncomeSourceDetailsModel("nino", "mtditid", None, Nil, Nil)),
     nextPaymentOrOverdue = Some(nextPaymentOrOverdue),
     nextUpdateOrOverdue = nextUpdateOrOverdue
   )
 
   val homeAuditMin: HomeAudit = HomeAudit(
-    mtdItUser = MtdItUser(
-      mtditid = "mtditid",
-      nino = "nino",
-      userName = None,
-      incomeSources = IncomeSourceDetailsModel("nino", "mtditid", None, Nil, Nil),
-      btaNavPartial = None,
-      saUtr = None,
-      credId = None,
-      userType = None,
-      arn = None
-    ),
+    getMinimalMTDITUser(None, IncomeSourceDetailsModel("nino", "mtditid", None, Nil, Nil)),
     nextPaymentOrOverdue = None,
     nextUpdateOrOverdue = Right(2)
   )
@@ -91,16 +71,9 @@ class HomeAuditSpec extends AnyWordSpecLike with Matchers {
             userType = Some(Agent),
             nextPaymentOrOverdue = Right(2),
             nextUpdateOrOverdue = Right(2)
-          ).detail mustBe Json.obj(
-            "agentReferenceNumber" -> "agentReferenceNumber",
-            "nino" -> "nino",
-            "saUtr" -> "saUtr",
-            "userType" -> "Agent",
-            "credId" -> "credId",
-            "mtditid" -> "mtditid",
+          ).detail mustBe commonAuditDetails(Agent) ++ Json.obj(
             "overduePayments" -> 2,
-            "overdueUpdates" -> 2,
-            "agentReferenceNumber" -> "agentReferenceNumber"
+            "overdueUpdates" -> 2
           )
         }
         "there is are payments and updates due which are not overdue" in {
@@ -108,23 +81,16 @@ class HomeAuditSpec extends AnyWordSpecLike with Matchers {
             userType = Some(Individual),
             nextPaymentOrOverdue = Left(fixedDate -> false),
             nextUpdateOrOverdue = Left(fixedDate -> false)
-          ).detail mustBe Json.obj(
-            "agentReferenceNumber" -> "agentReferenceNumber",
-            "nino" -> "nino",
-            "saUtr" -> "saUtr",
-            "userType" -> "Individual",
-            "credId" -> "credId",
-            "mtditid" -> "mtditid",
+          ).detail mustBe commonAuditDetails(Individual) ++ Json.obj(
             "nextPaymentDeadline" -> fixedDate.toString,
-            "nextUpdateDeadline" -> fixedDate.toString,
-            "agentReferenceNumber" -> "agentReferenceNumber"
+            "nextUpdateDeadline" -> fixedDate.toString
           )
         }
       }
       "the home audit has minimal details" in {
         homeAuditMin.detail mustBe Json.obj(
-          "nino" -> "nino",
-          "mtditid" -> "mtditid",
+          "nino" -> testNino,
+          "mtditid" -> testMtditid,
           "overdueUpdates" -> 2
         )
       }

@@ -16,85 +16,104 @@
 
 package auth.authV2.actions
 
-import auth.{FrontendAuthorisedFunctions, MtdItUserOptionNino}
+import auth.authV2.models.{AuthorisedAgentWithClientDetailsRequest, AuthorisedAndEnrolledRequest}
 import com.google.inject.Singleton
-import config.FrontendAppConfig
+import config.featureswitch.FeatureSwitching
+import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.AuthUtils._
+import enums.{MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import play.api.mvc.Results.Redirect
-import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
+import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Request, Result}
 import play.api.{Configuration, Environment, Logger}
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
-import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: FrontendAuthorisedFunctions,
+class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: AuthorisedFunctions,
                                              val appConfig: FrontendAppConfig,
-                                                  mcc: MessagesControllerComponents)
-  extends AuthoriseHelper with ActionRefiner[ClientDataRequest, MtdItUserOptionNino] {
+                                                  mcc: MessagesControllerComponents,
+                                             errorHandler: AgentItvcErrorHandler)
+  extends FeatureSwitching
+    with ActionRefiner[AuthorisedAgentWithClientDetailsRequest, AuthorisedAndEnrolledRequest] {
 
   lazy val logger: Logger = Logger(getClass)
 
   implicit val executionContext: ExecutionContext = mcc.executionContext
-  lazy val requiredConfidenceLevel: Int = appConfig.requiredConfidenceLevel
 
-
-  override protected def refine[A](request: ClientDataRequest[A]): Future[Either[Result, MtdItUserOptionNino[A]]] = {
+  override protected def refine[A](request: AuthorisedAgentWithClientDetailsRequest[A]): Future[Either[Result, AuthorisedAndEnrolledRequest[A]]] = {
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter
       .fromRequestAndSession(request, request.session)
+    implicit val req: AuthorisedAgentWithClientDetailsRequest[A] = request
 
-    implicit val req: ClientDataRequest[A] = request
+    val clientMtdItId = request.clientDetails.mtdItId
+    lazy val primaryAgentDelegatedEnrolment = Enrolment(
+      key = mtdEnrolmentName,
+      identifiers = Seq(EnrolmentIdentifier(agentIdentifier, clientMtdItId)),
+      state = "Activated",
+      delegatedAuthRule = Some(primaryAgentAuthRule)
+    )
 
-    val isAgent: Predicate = Enrolment("HMRC-AS-AGENT") and AffinityGroup.Agent
-    val isNotAgent: Predicate = AffinityGroup.Individual or AffinityGroup.Organisation
-
-    val hasDelegatedEnrolment: Predicate = if (request.isSupportingAgent) {
-      Enrolment(
-        key = secondaryAgentEnrolmentName,
-        identifiers = Seq(EnrolmentIdentifier(agentIdentifier, request.clientMTDID)),
-        state = "Activated",
-        delegatedAuthRule = Some(secondaryAgentAuthRule)
-      )
-    } else {
-      Enrolment(
-        key = mtdEnrolmentName,
-        identifiers = Seq(EnrolmentIdentifier(agentIdentifier, request.clientMTDID)),
-        state = "Activated",
-        delegatedAuthRule = Some(primaryAgentAuthRule)
-      )
+    authorisedFunctions.authorised(primaryAgentDelegatedEnrolment) {
+      constructAuthorisedAndEnrolledUser(clientMtdItId, MTDPrimaryAgent)
+    }.recoverWith {
+      case _: InsufficientEnrolments =>
+        checkIfUserhasSupportingDelegatedEnrolmentPartialFunction(clientMtdItId)
+      case ex => handleAuthFailure(ex)
     }
 
-    authorisedFunctions.authorised((isAgent and hasDelegatedEnrolment) or isNotAgent)
-      .retrieve(allEnrolments and name and credentials and affinityGroup and confidenceLevel) {
-        redirectIfNotAgent() orElse constructMtdIdUserOptNino()
-      }(hc, executionContext) recoverWith logAndRedirect(true)
   }
 
-  private def constructMtdIdUserOptNino[A]()(
-    implicit request: ClientDataRequest[A]): PartialFunction[AuthRetrievals, Future[Either[Result, MtdItUserOptionNino[A]]]] = {
-    case enrolments ~ userName ~ credentials ~ affinityGroup ~ _ =>
-      Future.successful(
-        Right(MtdItUserOptionNino(
-          mtditid = request.clientMTDID,
-          nino = Some(request.clientNino),
-          userName = userName,
-          btaNavPartial = None,
-          saUtr = Some(request.clientUTR),
-          credId = credentials.map(_.providerId),
-          userType = affinityGroup.map(ag => (ag.toJson \ "affinityGroup").as[AffinityGroup]),
-          arn = enrolments.getEnrolment(agentEnrolmentName).flatMap(_.getIdentifier(arnIdentifier)).map(_.value),
-          optClientName = request.clientName,
-          isSupportingAgent = request.isSupportingAgent,
-          clientConfirmed = request.confirmed
-        ))
+  private def checkIfUserhasSupportingDelegatedEnrolmentPartialFunction[A](clientMtdItId: String)
+                                                                          (implicit hc: HeaderCarrier,
+                                                                           request: AuthorisedAgentWithClientDetailsRequest[A]): Future[Either[Result, AuthorisedAndEnrolledRequest[A]]] = {
+    lazy val supportingAgentDelegatedEnrolment = Enrolment(
+      key = secondaryAgentEnrolmentName,
+      identifiers = Seq(EnrolmentIdentifier(agentIdentifier, clientMtdItId)),
+      state = "Activated",
+      delegatedAuthRule = Some(secondaryAgentAuthRule)
+    )
+    authorisedFunctions.authorised(supportingAgentDelegatedEnrolment) {
+       constructAuthorisedAndEnrolledUser(clientMtdItId, MTDSupportingAgent)
+      }.recoverWith {
+        case ex => handleAuthFailure(ex)
+      }
+  }
+
+  private def constructAuthorisedAndEnrolledUser[A](clientMtdItId: String, mtdUserRole: MTDUserRole)(
+    implicit request: AuthorisedAgentWithClientDetailsRequest[A]): Future[Either[Result, AuthorisedAndEnrolledRequest[A]]] = {
+    Future.successful(
+      Right(
+        AuthorisedAndEnrolledRequest(
+          mtditId = clientMtdItId,
+          mtdUserRole,
+          authUserDetails = request.authUserDetails,
+          clientDetails = Some(request.clientDetails)
+        )
       )
+    )
+  }
+
+  def handleAuthFailure[A](throwable: Throwable)(implicit request: Request[_]): Future[Either[Result, AuthorisedAndEnrolledRequest[A]]] = {
+    throwable match {
+      case _: BearerTokenExpired =>
+        logger.warn("Bearer Token Timed Out.")
+        Future.successful(Left(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout)))
+      case _: InsufficientEnrolments =>
+        logger.error(s"missing delegated enrolment. Redirect to agent error page.")
+        Future.successful(Left(Redirect(controllers.agent.routes.ClientRelationshipFailureController.show)))
+      case authorisationException: AuthorisationException =>
+        logger.error(s"Unauthorised request: ${authorisationException.reason}. Redirect to Sign In.")
+        Future.successful(Left(Redirect(controllers.routes.SignInController.signIn)))
+      case _ =>
+        logger.error(s"Unexpected error from Auth.")
+        Future.successful(Left(errorHandler.showInternalServerError()))
+    }
   }
 }
 

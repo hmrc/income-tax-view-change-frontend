@@ -16,21 +16,20 @@
 
 package authV2
 
-import auth.MtdItUserOptionNino
 import auth.authV2.actions.AgentIsPrimaryAction
-import org.scalatest.Assertion
-import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.mvc.{Result, Results}
-import play.api.test.Helpers._
-import play.api.{Application, Play}
-import uk.gov.hmrc.auth.core.AffinityGroup.Agent
+import auth.authV2.models.AuthorisedAndEnrolledRequest
 import authV2.AuthActionsTestData._
-import com.vladsch.flexmark.ast.HtmlEntity
 import config.AgentItvcErrorHandler
+import enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import org.scalatest.Assertion
 import play.api
+import play.api.Application
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Results.Unauthorized
+import play.api.mvc.{Result, Results}
+import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 
 import scala.concurrent.Future
@@ -44,20 +43,20 @@ class AgentIsPrimaryActionSpec extends AuthActionsSpecHelper {
   }
 
   def defaultAsyncBody(
-                        requestTestCase: MtdItUserOptionNino[_] => Assertion
-                      ): MtdItUserOptionNino[_] => Future[Result] = testRequest => {
+                        requestTestCase: AuthorisedAndEnrolledRequest[_] => Assertion
+                      ): AuthorisedAndEnrolledRequest[_] => Future[Result] = testRequest => {
     requestTestCase(testRequest)
     Future.successful(Results.Ok("Successful"))
   }
 
-  def defaultAsync: MtdItUserOptionNino[_] => Future[Result] = (_) => Future.successful(Results.Ok("Successful"))
+  def defaultAsync: AuthorisedAndEnrolledRequest[_] => Future[Result] = (_) => Future.successful(Results.Ok("Successful"))
 
   lazy val action = app.injector.instanceOf[AgentIsPrimaryAction]
 
   "refine" when {
     "Checking if the Agent is primary" should {
       "Return a Primary agent" in {
-        val fakeRequest = getMtdItUserOptionNinoForAuthorise(Some(Agent))(fakeRequestWithActiveSession)
+        val fakeRequest = defaultAuthorisedAndEnrolledRequest(MTDPrimaryAgent, fakeRequestWithActiveSession)
 
         val result = action.invokeBlock(
           fakeRequest,
@@ -73,7 +72,7 @@ class AgentIsPrimaryActionSpec extends AuthActionsSpecHelper {
           when(mockAgentErrorHandler.supportingAgentUnauthorised()(any()))
             .thenReturn(Unauthorized(HtmlFormat.escape("supporting agent is not authorised")))
 
-          val fakeRequest = getMtdItUserOptionNinoForAuthorise(Some(Agent), isSupportingAgent = true)(fakeRequestWithActiveSession)
+          val fakeRequest = defaultAuthorisedAndEnrolledRequest(MTDSupportingAgent, fakeRequestWithActiveSession)
 
           val result = action.invokeBlock(
             fakeRequest,

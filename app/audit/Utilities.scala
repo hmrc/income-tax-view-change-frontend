@@ -16,7 +16,7 @@
 
 package audit
 
-import auth.MtdItUserBase
+import auth.MtdItUser
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
@@ -25,14 +25,14 @@ import utils.Utilities.JsonUtil
 
 object Utilities {
 
-  private def getBaseDetails(user: MtdItUserBase[_]): JsObject = Json.obj(
+  private def getBaseDetails(user: MtdItUser[_]): JsObject = Json.obj(
     "mtditid" -> user.mtditid) ++
     ("agentReferenceNumber", user.arn) ++
     ("saUtr", user.saUtr) ++
     ("credId", user.credId) ++
     userType(user.userType)
 
-  def userAuditDetails(user: MtdItUserBase[_]): JsObject =
+  def userAuditDetails(user: MtdItUser[_]): JsObject =
     Json.obj("nino" -> user.nino) ++ getBaseDetails(user)
 
   def userType(userType: Option[AffinityGroup]): JsObject = userType match {

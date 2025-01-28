@@ -16,9 +16,9 @@
 
 package testConstants.messages
 
-import helpers.servicemocks.AuthStub.{messagesAPI, lang}
+import helpers.ComponentSpecBase
 
-object WhatYouOweMessages {
+object WhatYouOweMessages extends ComponentSpecBase {
 
   val hmrcAdjustment: String = messagesAPI("whatYouOwe.hmrcAdjustment.text")
   val hmrcAdjustmentHeading: String = messagesAPI("whatYouOwe.hmrcAdjustment.heading")

@@ -18,9 +18,9 @@ package controllers.agent
 
 import mocks.auth.MockAuthActions
 import mocks.views.agent.MockEnterClientsUTR
+import play.api
 import play.api.Application
 import play.api.http.Status
-import play.api
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.BearerTokenExpired
 import views.html.agent.EnterClientsUTR
@@ -35,32 +35,36 @@ class RemoveClientDetailsSessionsControllerSpec extends MockAuthActions
 
   lazy val testRemoveClientDetailsSessionsController = app.injector.instanceOf[RemoveClientDetailsSessionsController]
 
-  Map("primary agent" -> false, "supporting agent" -> true).foreach { case (agentType, isSupportingAgent) =>
-    val fakeRequest = fakeRequestConfirmedClient(isSupportingAgent = isSupportingAgent)
 
-    ".show" when {
-      s"the user is a $agentType" that {
-        "the user is not authenticated" should {
-          "redirect the user to authenticate" in {
-            setupMockAgentWithClientAuthorisationException(isSupportingAgent = isSupportingAgent)
+  ".show" when {
+    s"there is a user" that {
+      "is not authenticated" should {
+        "redirect the user to authenticate" in {
+          setupMockAgentWithClientAuthorisationException()
 
-            val result = testRemoveClientDetailsSessionsController.show()(fakeRequest)
+          val result = testRemoveClientDetailsSessionsController.show()(fakeRequestWithActiveSession)
 
-            status(result) shouldBe Status.SEE_OTHER
-            redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
-          }
+          status(result) shouldBe Status.SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
         }
+      }
 
-        "the user has timed out" should {
-          "redirect to the session timeout page" in {
-            setupMockAgentWithClientAuthorisationException(exception = BearerTokenExpired(), isSupportingAgent = isSupportingAgent)
+      "the user has timed out" should {
+        "redirect to the session timeout page" in {
+          setupMockAgentWithClientAuthorisationException(exception = BearerTokenExpired())
 
-            val result = testRemoveClientDetailsSessionsController.show()(fakeRequest)
+          val result = testRemoveClientDetailsSessionsController.show()(fakeRequestWithActiveSession)
 
-            status(result) shouldBe SEE_OTHER
-            redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
-          }
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
         }
+      }
+    }
+
+    Map("primary agent" -> false, "supporting agent" -> true).foreach { case (agentType, isSupportingAgent) =>
+      val fakeRequest = fakeRequestConfirmedClient(isSupportingAgent = isSupportingAgent)
+
+      s"the user is a $agentType" should {
 
         "remove client details session keys and redirect to the enter client UTR page" in {
           setupMockAgentWithClientAuthAndIncomeSources(isSupportingAgent = isSupportingAgent)

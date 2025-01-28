@@ -16,7 +16,8 @@
 
 package auth.authV2.actions
 
-import auth.{MtdItUser, MtdItUserOptionNino}
+import auth.MtdItUser
+import auth.authV2.models.AuthorisedAndEnrolledRequest
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.BaseController
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
@@ -33,32 +34,31 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class IncomeSourceRetrievalAction @Inject()(val incomeSourceDetailsService: IncomeSourceDetailsService)
                                            (implicit val executionContext: ExecutionContext,
-                                             val individualErrorHandler: ItvcErrorHandler,
-                                             val agentErrorHandler: AgentItvcErrorHandler,
-                                             mcc: MessagesControllerComponents) extends BaseController with
-  ActionRefiner[MtdItUserOptionNino, MtdItUser] {
+                                            val individualErrorHandler: ItvcErrorHandler,
+                                            val agentErrorHandler: AgentItvcErrorHandler,
+                                            mcc: MessagesControllerComponents) extends BaseController with
+  ActionRefiner[AuthorisedAndEnrolledRequest, MtdItUser] {
 
-  override def refine[A](request: MtdItUserOptionNino[A]): Future[Either[Result, MtdItUser[A]]] = {
+  override def refine[A](request: AuthorisedAndEnrolledRequest[A]): Future[Either[Result, MtdItUser[A]]] = {
 
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-    implicit val req: MtdItUserOptionNino[A] = request
+    implicit val req: AuthorisedAndEnrolledRequest[A] = request
 
     // no caching for now
     incomeSourceDetailsService.getIncomeSourceDetails() map {
       case response: IncomeSourceDetailsModel =>
-        Right(MtdItUser(request.mtditid, response.nino, request.userName, response, None, request.saUtr, request.credId, request.userType, request.arn, request.optClientName, request.isSupportingAgent))
+        Right(MtdItUser(request.mtditId, response.nino, request.mtdUserRole, request.authUserDetails, request.clientDetails, response))
       case error: IncomeSourceDetailsError => Left(logWithUserType(s"[${error.status}] ${error.reason}"))
     } recover logAndRedirect()
 
   }
 
-  def logAndRedirect[A]()(implicit req: MtdItUserOptionNino[A]): PartialFunction[Throwable, Either[Result, MtdItUser[A]]] = {
+  def logAndRedirect[A]()(implicit req: AuthorisedAndEnrolledRequest[A]): PartialFunction[Throwable, Either[Result, MtdItUser[A]]] = {
     case throwable: Throwable =>
       Left(logWithUserType(s"[${throwable.getClass.getSimpleName}] ${throwable.getLocalizedMessage}"))
   }
 
-  def logWithUserType[A](msg: String)(implicit req: MtdItUserOptionNino[A]): Result = {
-    req.userType match {
+  def logWithUserType[A](msg: String)(implicit req: AuthorisedAndEnrolledRequest[A]): Result = {
+    req.authUserDetails.affinityGroup match {
       case Some(Agent) =>
         Logger(this.getClass).error(s"[Agent] $msg")
         agentErrorHandler.showInternalServerError()

@@ -17,15 +17,14 @@
 package forms.incomeSources.cease
 
 import auth.MtdItUser
+import authV2.AuthActionsTestData.getMinimalMTDITUser
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import forms.models.DateFormElement
 import models.admin.IncomeSourcesNewJourney
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.{Form, FormError}
-import play.api.i18n.Messages
-import services.{DateService, DateServiceInterface}
-import testConstants.BaseTestConstants.{testMtditid, testMtditid2, testNino, testSelfEmploymentId}
+import services.DateService
+import testConstants.BaseTestConstants.testSelfEmploymentId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessIncome2, ukForeignSoleTraderIncomeSourceBeforeEarliestStartDate, ukPlusForeignPropertyWithSoleTraderIncomeSource}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
@@ -37,41 +36,11 @@ class CeaseIncomeSourceEndDateFormProviderSpec extends AnyWordSpec with Matchers
   val mockDateService: DateService = app.injector.instanceOf[DateService]
   val ceaseEndDateForm: CeaseIncomeSourceEndDateFormProvider = app.injector.instanceOf[CeaseIncomeSourceEndDateFormProvider]
 
-  val testUser: MtdItUser[_] = MtdItUser(
-    mtditid = testMtditid,
-    nino = testNino,
-    userName = None,
-    btaNavPartial = None,
-    saUtr = None,
-    credId = Some("12345-credId"),
-    userType = Some(Individual),
-    arn = None,
-    incomeSources = ukPlusForeignPropertyWithSoleTraderIncomeSource
-  )(fakeRequestNoSession)
+  val testUser: MtdItUser[_] = getMinimalMTDITUser(Some(Individual), ukPlusForeignPropertyWithSoleTraderIncomeSource, false, fakeRequestNoSession)
 
-  val testUser2: MtdItUser[_] = MtdItUser(
-    mtditid = testMtditid2,
-    nino = testNino,
-    userName = None,
-    btaNavPartial = None,
-    saUtr = None,
-    credId = Some("12345-credId"),
-    userType = Some(Individual),
-    arn = None,
-    incomeSources = businessIncome2
-  )(fakeRequestNoSession)
+  val testUser2: MtdItUser[_] = getMinimalMTDITUser(Some(Individual), businessIncome2, false, fakeRequestNoSession)
 
-  val testUser3: MtdItUser[_] = MtdItUser(
-    mtditid = testMtditid2,
-    nino = testNino,
-    userName = None,
-    btaNavPartial = None,
-    saUtr = None,
-    credId = Some("12345-credId"),
-    userType = Some(Individual),
-    arn = None,
-    incomeSources = ukForeignSoleTraderIncomeSourceBeforeEarliestStartDate
-  )(fakeRequestNoSession)
+  val testUser3: MtdItUser[_] = getMinimalMTDITUser(Some(Individual), ukForeignSoleTraderIncomeSourceBeforeEarliestStartDate, false, fakeRequestNoSession)
 
   def setupTestId(incomeSourceType: IncomeSourceType): Option[String] = {
     if (incomeSourceType == SelfEmployment) {

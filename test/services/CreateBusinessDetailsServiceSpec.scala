@@ -17,17 +17,16 @@
 package services
 
 import auth.MtdItUser
+import authV2.AuthActionsTestData._
 import config.featureswitch.FeatureSwitching
 import connectors.CreateIncomeSourceConnector
 import connectors.helpers.IncomeSourcesDataHelper
 import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
-import models.createIncomeSource.{AddressDetails, BusinessDetails, CreateBusinessIncomeSourceRequest, CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
+import models.createIncomeSource._
 import models.incomeSourceDetails.viewmodels._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
-import play.api.test.FakeRequest
-import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
@@ -37,17 +36,7 @@ import scala.concurrent.Future
 
 class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching with IncomeSourcesDataHelper {
 
-  implicit val mtdItUser: MtdItUser[_] = MtdItUser(
-    mtditid = testMtditid,
-    nino = testNino,
-    userName = Some(testRetrievedUserName),
-    incomeSources = singleBusinessIncomeWithCurrentYear,
-    btaNavPartial = None,
-    saUtr = Some("1234567890"),
-    credId = Some("credId"),
-    userType = Some(Individual),
-    None
-  )(FakeRequest())
+  implicit val mtdItUser: MtdItUser[_] = defaultMTDITUser(Some(Individual), singleBusinessIncomeWithCurrentYear)
 
   val mockIncomeSourceConnector: CreateIncomeSourceConnector = mock(classOf[CreateIncomeSourceConnector])
 

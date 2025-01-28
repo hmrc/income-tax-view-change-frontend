@@ -16,15 +16,15 @@
 
 package authV2
 
-import auth.MtdItUserOptionNino
 import auth.authV2.actions.AgentHasConfirmedClientAction
+import auth.authV2.models.AuthorisedAndEnrolledRequest
 import authV2.AuthActionsTestData._
+import enums.MTDSupportingAgent
 import org.scalatest.Assertion
+import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{Result, Results}
 import play.api.test.Helpers._
-import play.api.{Application, Play}
-import uk.gov.hmrc.auth.core.AffinityGroup._
 
 import scala.concurrent.Future
 
@@ -36,21 +36,21 @@ class AgentHasConfirmedClientActionSpec extends AuthActionsSpecHelper {
   }
 
   def defaultAsyncBody(
-                        requestTestCase: MtdItUserOptionNino[_] => Assertion
-                      ): MtdItUserOptionNino[_] => Future[Result] = testRequest => {
+                        requestTestCase: AuthorisedAndEnrolledRequest[_] => Assertion
+                      ): AuthorisedAndEnrolledRequest[_] => Future[Result] = testRequest => {
     requestTestCase(testRequest)
     Future.successful(Results.Ok("Successful"))
   }
 
 
-  def defaultAsync: MtdItUserOptionNino[_] => Future[Result] = (_) => Future.successful(Results.Ok("Successful"))
+  def defaultAsync: AuthorisedAndEnrolledRequest[_] => Future[Result] = (_) => Future.successful(Results.Ok("Successful"))
 
   lazy val action = app.injector.instanceOf[AgentHasConfirmedClientAction]
 
   "refine" when {
     "Checking if the Agent has been confirmed" should {
       "return a confirmed Agent" in {
-        val fakeRequest = getMtdItUserOptionNinoForAuthorise(Some(Agent), clientConfirmed = true)(fakeRequestWithActiveSession)
+        val fakeRequest = defaultAuthorisedAndEnrolledRequest(MTDSupportingAgent, fakeRequestWithActiveSession)
 
         val result = action.invokeBlock(
           fakeRequest,
@@ -63,7 +63,8 @@ class AgentHasConfirmedClientActionSpec extends AuthActionsSpecHelper {
     }
     "Checking if the Agent has not been confirmed" should {
       "Redirect to Confirm Client UTR page" in {
-        val fakeRequest = getMtdItUserOptionNinoForAuthorise(Some(Agent))(fakeRequestWithActiveSession)
+        val fakeRequest = defaultAuthorisedAndEnrolledRequest(MTDSupportingAgent, fakeRequestWithActiveSession)
+          .copy(clientDetails = Some(getAgentClientDetails(false)))
 
         val result = action.invokeBlock(
           fakeRequest,

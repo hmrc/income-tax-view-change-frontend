@@ -20,6 +20,7 @@ import models.liabilitycalculation.viewmodels.AllowancesAndDeductionsViewModel
 import play.api.libs.json.Json
 import testConstants.BaseTestConstants._
 import testUtils.TestSupport
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 class AllowanceAndDeductionsResponseAuditModelISpec extends TestSupport {
 
@@ -53,13 +54,8 @@ class AllowanceAndDeductionsResponseAuditModelISpec extends TestSupport {
 
     "Have the correct details for the audit event" when {
       "information for the audit is complete" in {
-        testAllowanceAndDeductionsResponseAuditModel.detail shouldBe Json.obj(
-          "mtditid" -> testMtditid,
-          "nino" -> testNino,
-          "saUtr" -> testSaUtr,
-          "credId" -> testCredId,
-          "userType" -> testUserTypeAgent.toString,
-          "agentReferenceNumber" -> testArn,
+        testAllowanceAndDeductionsResponseAuditModel.detail shouldBe
+          commonAuditDetails(Agent) ++ Json.obj(
           "personalAllowance" -> 123.12,
           "pensionContributions" -> 456.78,
           "lossRelief" -> 1234.12,

@@ -16,12 +16,10 @@
 
 package audit.models
 
-import auth.{MtdItUser, MtdItUserWithNino}
-import models.admin.FeatureSwitch
+import authV2.AuthActionsTestData.defaultMTDITUser
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
 import play.api.libs.json.Json
-import play.api.test.FakeRequest
 import testConstants.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtr}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
@@ -176,32 +174,11 @@ class ForecastIncomeAuditModelSpec extends TestSupport {
     incomeTaxNicAndCgtAmount = Some(5000.99)
   )
 
-  val testUserIndividual = MtdItUser(
-    mtditid = testMtditid,
-    nino = testNino,
-    userName = None,
-    incomeSources = IncomeSourceDetailsModel(testNino ,testMtditid, None, Nil, Nil),
-    btaNavPartial = None,
-    saUtr = Some(testSaUtr),
-    credId = Some("testCredId"),
-    userType = Some(Individual),
-    arn = None
-  )
-  (FakeRequest())
+  val testUserIndividual = defaultMTDITUser(Some(Individual),
+    IncomeSourceDetailsModel(testNino ,testMtditid, None, Nil, Nil))
 
-  val testUserAgent = MtdItUser(
-    mtditid = testMtditid,
-    nino = testNino,
-    userName = None,
-    incomeSources = IncomeSourceDetailsModel(testNino ,testMtditid, None, Nil, Nil),
-    btaNavPartial = None,
-    saUtr = Some(testSaUtr),
-    credId = Some("testCredId"),
-    userType = Some(Agent),
-    arn = Some("1"),
-    isSupportingAgent = true,
-    featureSwitches = List.empty
-  )(FakeRequest())
+  val testUserAgent = defaultMTDITUser(Some(Agent),
+    IncomeSourceDetailsModel(testNino ,testMtditid, None, Nil, Nil))
 
   def testForecastIncomeAuditModelIndividual( endOfYearEstimate: EndOfYearEstimate = endOfYearEstimate,
                                             ): ForecastIncomeAuditModel = ForecastIncomeAuditModel(
@@ -226,12 +203,7 @@ class ForecastIncomeAuditModelSpec extends TestSupport {
     }
 
     "Have the correct details for the audit event" in {
-      testForecastIncomeAuditModelIndividual().detail shouldBe Json.obj(
-        "userType" -> "Individual",
-        "saUtr" -> testSaUtr,
-        "nino" -> testNino,
-        "credId" -> testCredId,
-        "mtditid" -> testMtditid,
+      testForecastIncomeAuditModelIndividual().detail shouldBe commonAuditDetails(Individual) ++ Json.obj(
         "profitFrom" -> Json.arr(
           Json.obj(
             "name" -> "Trading Inc",

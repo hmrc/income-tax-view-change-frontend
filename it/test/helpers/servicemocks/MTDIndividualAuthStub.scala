@@ -24,9 +24,7 @@ import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolment}
 
 object MTDIndividualAuthStub extends MTDAuthStub {
 
-  val requiredConfidenceLevel = 250
-
-  lazy val getAuthRequest: JsValue = {
+  lazy val enrolledIndividualRequest: JsValue = {
     lazy val isAgentPredicate = AffinityGroup.Agent
     lazy val isNotAgentPredicate = AffinityGroup.Organisation or AffinityGroup.Individual
     lazy val hasEnrolment = Enrolment("HMRC-MTD-IT")
@@ -48,12 +46,11 @@ object MTDIndividualAuthStub extends MTDAuthStub {
     )
   }
 
-
-  override def stubAuthorisedAndMTDEnrolled(confidenceLevel: Option[Int] = None): Unit = {
+  def stubAuthorisedAndMTDEnrolled(confidenceLevel: Option[Int] = None): Unit = {
 
     stubPostWithRequest(
       url = postAuthoriseUrl,
-      requestBody = getAuthRequest,
+      requestBody = enrolledIndividualRequest,
       status = Status.OK,
       responseBody = mtdIndividualUserSuccessResponse(confidenceLevel)
     )
@@ -63,7 +60,7 @@ object MTDIndividualAuthStub extends MTDAuthStub {
 
     stubPostWithRequest(
       url = postAuthoriseUrl,
-      requestBody = getAuthRequest,
+      requestBody = enrolledIndividualRequest,
       status = Status.OK,
       responseBody = mtdIndividualUserSuccessResponse(hasName = false)
     )
@@ -73,19 +70,17 @@ object MTDIndividualAuthStub extends MTDAuthStub {
 
     stubPostWithRequest(
       url = postAuthoriseUrl,
-      requestBody = getAuthRequest,
+      requestBody = enrolledIndividualRequest,
       status = Status.OK,
       responseBody = mtdIndividualUserSuccessResponse(hasNinoEnrolment = false)
     )
   }
 
-
-
   def stubAuthorisedButAgent(): Unit = {
 
     stubPostWithRequest(
       url = postAuthoriseUrl,
-      requestBody = getAuthRequest,
+      requestBody = enrolledIndividualRequest,
       status = Status.OK,
       responseBody = mtdAgentSuccessResponse
     )
@@ -98,7 +93,7 @@ object MTDIndividualAuthStub extends MTDAuthStub {
 
     stubPostWithRequestAndResponseHeaders(
       url = postAuthoriseUrl,
-      requestBody = getAuthRequest,
+      requestBody = enrolledIndividualRequest,
       status = Status.UNAUTHORIZED,
       responseHeaders = responseHeaders
     )
@@ -109,20 +104,18 @@ object MTDIndividualAuthStub extends MTDAuthStub {
 
     stubPostWithRequestAndResponseHeaders(
       url = postAuthoriseUrl,
-      requestBody = getAuthRequest,
+      requestBody = enrolledIndividualRequest,
       status = Status.UNAUTHORIZED,
       responseHeaders = responseHeaders
     )
   }
-
-
 
   override def stubBearerTokenExpired(): Unit = {
     val responseHeaders = Map("WWW-Authenticate" -> "MDTP detail=\"BearerTokenExpired\"")
 
     stubPostWithRequestAndResponseHeaders(
       url = postAuthoriseUrl,
-      requestBody = getAuthRequest,
+      requestBody = enrolledIndividualRequest,
       status = Status.UNAUTHORIZED,
       responseHeaders = responseHeaders
     )
@@ -148,8 +141,8 @@ object MTDIndividualAuthStub extends MTDAuthStub {
     val userNameJsObj = if(hasName) {
       Json.obj(
         "optionalName" -> Json.obj(
-          "name" -> "John",
-          "lastName" -> "Doe"
+          "name" -> "Albert",
+          "lastName" -> "Einstein"
         )
       )
     } else Json.obj()
@@ -158,7 +151,7 @@ object MTDIndividualAuthStub extends MTDAuthStub {
       "allEnrolments" -> getEnrolmentsJson(hasNinoEnrolment, hasSaEnrolment)
     ) ++ userNameJsObj ++ Json.obj(
       "optionalCredentials" -> Json.obj(
-        "providerId" -> "12345-credId",
+        "providerId" -> credId,
         "providerType" -> "GovernmentGateway"
       ),
       "affinityGroup" -> "Individual",
@@ -214,13 +207,13 @@ object MTDIndividualAuthStub extends MTDAuthStub {
           "identifiers" -> Json.arr(
             Json.obj(
               "key" -> "AgentReferenceNumber",
-              "value" -> "1"
+              "value" -> testArn
             )
           )
         )
       ),
       "optionalCredentials" -> Json.obj(
-        "providerId" -> "12345-credId",
+        "providerId" -> credId,
         "providerType" -> "GovernmentGateway"
       ),
       "affinityGroup" -> "Agent",

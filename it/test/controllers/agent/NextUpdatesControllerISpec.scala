@@ -17,7 +17,6 @@
 package controllers.agent
 
 import audit.models.NextUpdatesResponseAuditModel
-import auth.MtdItUser
 import controllers.ControllerISpecHelper
 import enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
@@ -33,8 +32,6 @@ import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.address
 import testConstants.CalculationListIntegrationTestConstants
-import uk.gov.hmrc.auth.core.AffinityGroup.Agent
-import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
 
@@ -59,11 +56,6 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
     )),
     properties = Nil
   )
-
-  val testUser: MtdItUser[_] = MtdItUser(
-    testMtditid, testNino, Some(Name(Some("Test"), Some("User"))), incomeSourceDetails,
-    None, Some("1234567890"), None, Some(Agent), Some("1")
-  )(FakeRequest())
 
   val implicitDateFormatter: ImplicitDateFormatter = app.injector.instanceOf[ImplicitDateFormatterImpl]
   implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
@@ -113,7 +105,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
               pageTitleAgent("nextUpdates.heading")
             )
 
-            verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
+            verifyAuditContainsDetail(NextUpdatesResponseAuditModel(getTestUser(MTDPrimaryAgent, incomeSourceDetails), "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
           }
 
           "has no obligations" in {
@@ -185,7 +177,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
                 "updates through your software by each date shown."),
             )
 
-            verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
+            verifyAuditContainsDetail(NextUpdatesResponseAuditModel(getTestUser(MTDPrimaryAgent, incomeSourceDetails), "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
           }
 
           "has obligations and the Opt Out feature switch disabled" in {
@@ -224,7 +216,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
               isElementVisibleById("#updates-software-link")(expectedValue = false),
             )
 
-            verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
+            verifyAuditContainsDetail(NextUpdatesResponseAuditModel(getTestUser(MTDPrimaryAgent, incomeSourceDetails), "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
           }
 
           "Opt Out feature switch is enabled" should {
