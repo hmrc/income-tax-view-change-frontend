@@ -119,7 +119,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
   class Setup(paymentDueDate: LocalDate = nextPaymentDueDate, overDuePaymentsCount: Int = 0, paymentsAccruingInterestCount: Int = 0, reviewAndReconcileEnabled: Boolean = false,
               nextUpdatesTileViewModel: NextUpdatesTileViewModel = viewModelFuture, utr: Option[String] = Some("1234567890"), paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
               user: MtdItUser[_] = testMtdItUser(), dunningLockExists: Boolean = false, creditAndRefundEnabled: Boolean = false, displayCeaseAnIncome: Boolean = false,
-              incomeSourcesEnabled: Boolean = false, incomeSourcesNewJourneyEnabled: Boolean = false, reportingFrequencyEnabled: Boolean = false, penaltiesAndAppealsEnabled: Boolean = true, currentITSAStatus: ITSAStatus = ITSAStatus.Voluntary) {
+              incomeSourcesEnabled: Boolean = false, incomeSourcesNewJourneyEnabled: Boolean = false, reportingFrequencyEnabled: Boolean = false, penaltiesAndAppealsEnabled: Boolean = true, penaltyPoints: Option[Int] = None, currentITSAStatus: ITSAStatus = ITSAStatus.Voluntary) {
 
     val returnsTileViewModel = ReturnsTileViewModel(currentTaxYear = TaxYear(currentTaxYear - 1, currentTaxYear), iTSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled)
 
@@ -131,7 +131,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
     val accountSettingsTileViewModel = AccountSettingsTileViewModel(TaxYear(currentTaxYear, currentTaxYear + 1), reportingFrequencyEnabled, currentITSAStatus)
 
-    val penaltiesAndAppealsTileViewModel = PenaltiesAndAppealsTileViewModel(penaltiesAndAppealsEnabled = true)
+    val penaltiesAndAppealsTileViewModel = PenaltiesAndAppealsTileViewModel(penaltiesAndAppealsEnabled = penaltiesAndAppealsEnabled, penaltyPoints = penaltyPoints)
 
     val homePageViewModel = HomePageViewModel(
       utr = utr,
@@ -431,6 +431,16 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
         "has a link to Self Assessment Penalties and Appeals page" in new Setup(penaltiesAndAppealsEnabled = true) {
           getElementById("sa-penalties-and-appeals-link").map(_.text()) shouldBe Some("Check Self Assessment penalties and appeals")
           getElementById("sa-penalties-and-appeals-link").map(_.attr("href")) shouldBe Some("")
+        }
+        "has a two-points penalty tag" in new Setup(penaltiesAndAppealsEnabled = true, penaltyPoints = Some(2)) {
+          getElementById("two-penalty-points-tag").map(_.text()) shouldBe Some("2 PENALTY POINTS")
+        }
+        "has a four-points penalty tag" in new Setup(penaltiesAndAppealsEnabled = true, penaltyPoints = Some(4)) {
+          getElementById("four-penalty-points-tag").map(_.text()) shouldBe Some("4 PENALTY POINTS")
+        }
+        "has no penalty tag" in new Setup(penaltiesAndAppealsEnabled = true, penaltyPoints = Some(3)) {
+          getElementById("two-penalty-points-tag").map(_.text()).isDefined shouldBe false
+          getElementById("four-penalty-points-tag").map(_.text()).isDefined shouldBe false
         }
       }
     }

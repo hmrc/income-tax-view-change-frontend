@@ -111,6 +111,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
                   user: MtdItUser[_] = testMtdItUserNotMigrated,
                   reportingFrequencyEnabled: Boolean = false,
                   penaltiesAndAppealsEnabled: Boolean = true,
+                  penaltyPoints: Option[Int] = None,
                   currentITSAStatus: ITSAStatus = ITSAStatus.Voluntary
                  ) {
 
@@ -126,7 +127,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
 
     val accountSettingsTileViewModel = AccountSettingsTileViewModel(TaxYear(currentTaxYear, currentTaxYear + 1), reportingFrequencyEnabled, currentITSAStatus)
 
-    val penaltiesAndAppealsTileViewModel = PenaltiesAndAppealsTileViewModel(penaltiesAndAppealsEnabled = true)
+    val penaltiesAndAppealsTileViewModel = PenaltiesAndAppealsTileViewModel(penaltiesAndAppealsEnabled = penaltiesAndAppealsEnabled, penaltyPoints = penaltyPoints)
 
     val homePageViewModel = HomePageViewModel(
       utr = utr,
