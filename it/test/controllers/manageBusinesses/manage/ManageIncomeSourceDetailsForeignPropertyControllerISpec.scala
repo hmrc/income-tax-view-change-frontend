@@ -19,7 +19,7 @@ package controllers.manageBusinesses.manage
 import enums.IncomeSourceJourney.ForeignProperty
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
-import models.admin.{IncomeSourcesFs, NavBarFs}
+import models.admin.{DisplayBusinessStartDate, IncomeSourcesFs, NavBarFs}
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import testConstants.BaseIntegrationTestConstants._
@@ -42,6 +42,7 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
           "render the Manage Foreign Property page" when {
             "URL contains a valid income source ID and user has no latency information" in {
               enable(IncomeSourcesFs)
+              enable(DisplayBusinessStartDate)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
@@ -64,6 +65,7 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
             "URL contains a valid income source ID and user has latency information, itsa status mandatory/voluntary and two tax years crystallised" in {
               //enable(TimeMachineAddYear)
               enable(IncomeSourcesFs)
+              enable(DisplayBusinessStartDate)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails))
@@ -90,6 +92,7 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
             }
             "URL contains a valid income source ID and user has latency information, itsa status mandatory/voluntary and 2 tax years not crystallised" in {
               enable(IncomeSourcesFs)
+              enable(DisplayBusinessStartDate)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails2))
@@ -115,6 +118,7 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
 
             "URL has valid income source ID and user has latency information, 1st year Annual 2nd year MTD Mandatory | Voluntary and 2 tax years NC" in {
               enable(IncomeSourcesFs)
+              enable(DisplayBusinessStartDate)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails2))
@@ -140,6 +144,7 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
 
             "URL contains a valid income source ID and user has latency information, but itsa status is not mandatory or voluntary" in {
               enable(IncomeSourcesFs)
+              enable(DisplayBusinessStartDate)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseWithUnknownsInLatencyPeriod(latencyDetails))
