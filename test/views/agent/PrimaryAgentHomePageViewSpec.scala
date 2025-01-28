@@ -440,7 +440,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
       }
 
       "have a Penalties and Appeals tile" when {
-        "Penalties and Appeals FS is enabled" which {
+        "User has a valid number of penalty points" which {
           "has a heading" in new TestSetup(penaltyPoints = Some(2)) {
             getElementById("penalties-and-appeals-tile").map(_.select("h2").first().text()) shouldBe Some("Penalties and appeals")
           }
