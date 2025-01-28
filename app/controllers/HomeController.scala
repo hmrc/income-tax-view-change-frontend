@@ -27,6 +27,7 @@ import models.admin._
 import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
 import models.homePage._
 import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus
 import models.obligations.NextUpdatesTileViewModel
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.Logger
@@ -50,6 +51,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
                                val financialDetailsService: FinancialDetailsService,
                                val dateService: DateServiceInterface,
                                val whatYouOweService: WhatYouOweService,
+                               val ITSAStatusService: ITSAStatusService,
                                auditingService: AuditingService)
                               (implicit val ec: ExecutionContext,
                                implicit val itvcErrorHandler: ItvcErrorHandler,
@@ -98,7 +100,10 @@ class HomeController @Inject()(val homeView: views.html.Home,
   }
 
   private def buildHomePage(nextUpdatesDueDates: Seq[LocalDate], origin: Option[String])
-                           (implicit user: MtdItUser[_]): Future[Result] =
+                           (implicit user: MtdItUser[_]): Future[Result] = {
+
+    val currentTaxYear = TaxYear(dateService.getCurrentTaxYearEnd - 1, dateService.getCurrentTaxYearEnd)
+
     for {
       unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails()
       paymentsDue = getDueDates(unpaidCharges)
@@ -107,6 +112,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
       outstandingChargeDueDates = getRelevantDates(outstandingChargesModel)
       overDuePaymentsCount = calculateOverduePaymentsCount(paymentsDue, outstandingChargesModel)
       accruingInterestPaymentsCount = NextPaymentsTileViewModel.paymentsAccruingInterestCount(unpaidCharges, dateService.getCurrentDate)
+      currentITSAStatus <- getCurrentITSAStatus(currentTaxYear)
       paymentsDueMerged = mergePaymentsDue(paymentsDue, outstandingChargeDueDates)
     } yield {
 
@@ -118,7 +124,9 @@ class HomeController @Inject()(val homeView: views.html.Home,
       val yourBusinessesTileViewModel = YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome, isEnabled(IncomeSourcesFs),
         isEnabled(IncomeSourcesNewJourney))
 
-      val returnsTileViewModel = ReturnsTileViewModel(TaxYear(dateService.getCurrentTaxYearEnd - 1, dateService.getCurrentTaxYearEnd), isEnabled(ITSASubmissionIntegration))
+      val returnsTileViewModel = ReturnsTileViewModel(currentTaxYear, isEnabled(ITSASubmissionIntegration))
+
+      val accountSettingsTileViewModel = AccountSettingsTileViewModel(currentTaxYear, isEnabled(ReportingFrequencyPage), currentITSAStatus)
 
       NextPaymentsTileViewModel(paymentsDueMerged, overDuePaymentsCount, accruingInterestPaymentsCount, isEnabled(ReviewAndReconcilePoa)).verify match {
 
@@ -129,6 +137,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
           nextUpdatesTileViewModel = nextUpdatesTileViewModel,
           paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel,
           yourBusinessesTileViewModel = yourBusinessesTileViewModel,
+          accountSettingsTileViewModel = accountSettingsTileViewModel,
           dunningLockExists = dunningLockExists,
           origin = origin
         )
@@ -147,6 +156,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
           handleErrorGettingDueDates(user.isAgent())
     }
 }
+  }
 
 private def getDueDates(unpaidCharges: Option[FinancialDetailsResponseModel]): List[LocalDate] =
   (unpaidCharges collect {
@@ -191,4 +201,11 @@ private def handleErrorGettingDueDates(isAgent: Boolean)(implicit user: MtdItUse
   val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
   errorHandler.showInternalServerError()
 }
+
+  private def getCurrentITSAStatus(taxYear: TaxYear)(implicit user: MtdItUser[_]): Future[ITSAStatus.ITSAStatus] = {
+    ITSAStatusService.getStatusTillAvailableFutureYears(taxYear.previousYear).map(_.view.mapValues(_.status)
+      .toMap
+      .withDefaultValue(ITSAStatus.NoStatus)
+    ).map(detail => detail(taxYear))
+  }
 }

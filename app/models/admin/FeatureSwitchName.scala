@@ -66,6 +66,10 @@ object FeatureSwitchName {
       JsSuccess(FilterCodedOutPoas)
     case JsString(ReportingFrequencyPage.name) =>
       JsSuccess(ReportingFrequencyPage)
+    case JsString(DisplayBusinessStartDate.name) =>
+      JsSuccess(DisplayBusinessStartDate)
+    case JsString(PenaltiesAndAppeals.name) =>
+      JsSuccess(PenaltiesAndAppeals)
     case invalidName =>
       Logger("application").error(s"Invalid feature switch Json found: $invalidName")
       JsSuccess(InvalidFS)
@@ -102,7 +106,9 @@ object FeatureSwitchName {
       AdjustPaymentsOnAccount,
       ReviewAndReconcilePoa,
       FilterCodedOutPoas,
-      ReportingFrequencyPage
+      ReportingFrequencyPage,
+      DisplayBusinessStartDate,
+      PenaltiesAndAppeals
     )
 
   def get(str: String): Option[FeatureSwitchName] = allFeatureSwitches find (_.name == str)
@@ -176,6 +182,15 @@ case object InvalidFS extends FeatureSwitchName {
 case object ReportingFrequencyPage extends FeatureSwitchName {
   override val name: String = "reporting-frequency-page"
   override val toString: String = "Reporting Frequency page"
+}
+
+case object DisplayBusinessStartDate extends FeatureSwitchName {
+  override val name: String = "display-business-start-date"
+  override val toString: String = "Display Business Start Date"
+}
+case object PenaltiesAndAppeals extends FeatureSwitchName {
+  override val name: String = "penalties-and-appeals"
+  override val toString: String = "Penalties and Appeals"
 }
 
 

@@ -38,6 +38,23 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
     FeatureSwitchName.allFeatureSwitches.foreach(feature => sys.props.remove(feature.name))
   }
 
+  val allFeatureSwitches: Set[FeatureSwitchName] = Set(
+    ITSASubmissionIntegration,
+    ChargeHistory,
+    NavBarFs,
+    CreditsRefundsRepay,
+    PaymentHistoryRefunds,
+    IncomeSourcesNewJourney,
+    IncomeSourcesFs,
+    OptOutFs,
+    AdjustPaymentsOnAccount,
+    FilterCodedOutPoas,
+    ReviewAndReconcilePoa,
+    ReportingFrequencyPage,
+    DisplayBusinessStartDate,
+    PenaltiesAndAppeals
+  )
+
   val mtdItUser: MtdItUser[_] =
     MtdItUser(
       mtditid = "mtditid",
@@ -60,71 +77,54 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
 
         val featureSwitchList = FeatureSwitchName.allFeatureSwitches
 
-        featureSwitchList shouldBe
-          Set(
-            ITSASubmissionIntegration,
-            ChargeHistory,
-            NavBarFs,
-            CreditsRefundsRepay,
-            PaymentHistoryRefunds,
-            IncomeSourcesNewJourney,
-            IncomeSourcesFs,
-            OptOutFs,
-            AdjustPaymentsOnAccount,
-            FilterCodedOutPoas,
-            ReviewAndReconcilePoa,
-            ReportingFrequencyPage
-          )
+        featureSwitchList shouldBe allFeatureSwitches
+
       }
     }
   }
 
-  "FeatureSwitching" should {
+  allFeatureSwitches.foreach { featureSwitchName =>
+    "FeatureSwitching" when {
 
-    "enable and disable feature switches by setting system properties" in {
+      s"enable and disable feature switches by setting system properties for FS: ${featureSwitchName.name}" in {
 
-      val featureSwitchName = ReportingFrequencyPage
+        enable(featureSwitchName)
+        sys.props(featureSwitchName.name) shouldBe "true"
 
-      enable(ReportingFrequencyPage)
-      sys.props(featureSwitchName.name) shouldBe "true"
+        disable(featureSwitchName)
+        sys.props(featureSwitchName.name) shouldBe "false"
+      }
 
-      disable(featureSwitchName)
-      sys.props(featureSwitchName.name) shouldBe "false"
-    }
+      s"return true if a feature switch is enabled in system properties for FS: ${featureSwitchName.name}" in {
 
-    "return true if a feature switch is enabled in system properties" in {
+        enable(featureSwitchName)
 
-      val featureSwitchName = ReportingFrequencyPage
-      enable(featureSwitchName)
+        isEnabledFromConfig(featureSwitchName) shouldBe true
+      }
 
-      isEnabledFromConfig(featureSwitchName) shouldBe true
-    }
+      s"return false if a feature switch is disabled in system properties for FS: ${featureSwitchName.name}" in {
 
-    "return false if a feature switch is not set or explicitly disabled in system properties" in {
+        enable(featureSwitchName)
+        disable(featureSwitchName)
 
-      val featureSwitchName = ReportingFrequencyPage
+        isEnabledFromConfig(featureSwitchName) shouldBe false
+      }
 
-      isEnabledFromConfig(featureSwitchName) shouldBe false
+      s"provide a fold function that branches based on feature state for FS: ${featureSwitchName.name}" in {
 
-      enable(featureSwitchName)
-      disable(featureSwitchName)
+        enable(featureSwitchName)
 
-      isEnabledFromConfig(featureSwitchName) shouldBe false
-    }
+        val resultEnabled = featureSwitchName.fold(ifEnabled = "enabled", ifDisabled = "disabled")
+        resultEnabled shouldBe "enabled"
 
-    "provide a fold function that branches based on feature state" in {
-      val featureSwitchName = ReportingFrequencyPage
-      enable(featureSwitchName)
+        disable(featureSwitchName)
 
-      val resultEnabled = featureSwitchName.fold(ifEnabled = "enabled", ifDisabled = "disabled")
-      resultEnabled shouldBe "enabled"
-
-      disable(featureSwitchName)
-
-      val resultDisabled = featureSwitchName.fold(ifEnabled = "enabled", ifDisabled = "disabled")
-      resultDisabled shouldBe "disabled"
+        val resultDisabled = featureSwitchName.fold(ifEnabled = "enabled", ifDisabled = "disabled")
+        resultDisabled shouldBe "disabled"
+      }
     }
   }
+
 
   "Mock FeatureSwitching" when {
 

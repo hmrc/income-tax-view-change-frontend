@@ -26,7 +26,7 @@ import org.jsoup.Jsoup
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
-import testConstants.IncomeSourceIntegrationTestConstants.{businessAndPropertyResponseWoMigration, foreignPropertyAndCeasedBusiness}
+import testConstants.IncomeSourceIntegrationTestConstants.{businessAndPropertyResponseWoMigration, businessWithLatency, foreignPropertyAndCeasedBusiness}
 
 class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
 
@@ -43,6 +43,8 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
 
 
   def optInOptOutLinks(i: Int): String = s"#main-content > div > div > div > ul > li:nth-child($i) > a"
+  def latencyDetailsHeader: String = s"#main-content > div > div > div > details > summary > span"
+  def latencyDetailsLink: String = "#rf-latency-para3-text > a"
 
   def getPath(mtdRole: MTDUserRole): String = {
     val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
@@ -89,6 +91,9 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                   elementTextByID("manage-reporting-frequency-heading")("Manage your reporting frequency for all your businesses"),
                   elementTextBySelector(optInOptOutLinks(1))("Opt out of quarterly reporting and report annually")
                 )
+                result shouldNot have(
+                  elementTextBySelector(latencyDetailsHeader)("Your new businesses can have a different reporting frequency")
+                )
               }
             }
 
@@ -112,6 +117,9 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                   pageTitle(mtdUserRole, "reporting.frequency.title"),
                   elementTextByID("manage-reporting-frequency-heading")("Manage your reporting frequency for all your businesses"),
                   elementTextBySelector(optInOptOutLinks(1))("Opt in to quarterly reporting")
+                )
+                result shouldNot have(
+                  elementTextBySelector(latencyDetailsHeader)("Your new businesses can have a different reporting frequency")
                 )
               }
             }
@@ -137,6 +145,9 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                   elementTextByID("manage-reporting-frequency-heading")("Manage your reporting frequency for all your businesses"),
                   elementTextBySelector(optInOptOutLinks(1))(s"Opt out of quarterly reporting and report annually for the $currentStartYear to $currentEndYear tax year"),
                   elementTextBySelector(optInOptOutLinks(2))(s"Opt in to quarterly reporting from the $nextStartYear to $nextEndYear tax year onwards")
+                )
+                result shouldNot have(
+                  elementTextBySelector(latencyDetailsHeader)("Your new businesses can have a different reporting frequency")
                 )
               }
             }
@@ -164,6 +175,9 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                   elementTextBySelector(optInOptOutLinks(1))(s"Opt in to quarterly reporting for the $currentStartYear to $currentEndYear tax year"),
                   elementTextBySelector(optInOptOutLinks(2))(s"Opt out of quarterly reporting and report annually from the $nextStartYear to $nextEndYear tax year onwards")
                 )
+                result shouldNot have(
+                  elementTextBySelector(latencyDetailsHeader)("Your new businesses can have a different reporting frequency")
+                )
               }
             }
 
@@ -188,6 +202,9 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                   pageTitle(mtdUserRole, "reporting.frequency.title"),
                   elementTextBySelector(optInOptOutLinks(1))(s"Opt in to quarterly reporting for the $currentStartYear to $currentEndYear tax year")
                 )
+                result shouldNot have(
+                  elementTextBySelector(latencyDetailsHeader)("Your new businesses can have a different reporting frequency")
+                )
               }
 
               "CY is Quaterly Mandated and CY+1 is Annual" in {
@@ -209,6 +226,9 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                   pageTitle(mtdUserRole, "reporting.frequency.title"),
                   elementTextByID("manage-reporting-frequency-heading")("Manage your reporting frequency for all your businesses"),
                   elementTextBySelector(optInOptOutLinks(1))(s"Opt in to quarterly reporting from the $nextStartYear to $nextEndYear tax year onwards")
+                )
+                result shouldNot have(
+                  elementTextBySelector(latencyDetailsHeader)("Your new businesses can have a different reporting frequency")
                 )
               }
             }
@@ -234,6 +254,9 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                   pageTitle(mtdUserRole, "reporting.frequency.title"),
                   elementTextByID("manage-reporting-frequency-heading")("Manage your reporting frequency for all your businesses"),
                   elementTextBySelector(optInOptOutLinks(1))(s"Opt out of quarterly reporting and report annually from the $nextStartYear to $nextEndYear tax year onwards")
+                )
+                result shouldNot have(
+                  elementTextBySelector(latencyDetailsHeader)("Your new businesses can have a different reporting frequency")
                 )
               }
             }
@@ -261,6 +284,9 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                   elementTextBySelector(optInOptOutLinks(1))("Opt out of quarterly reporting and report annually"),
                   elementTextBySelector(optInOptOutLinks(2))(s"Opt in to quarterly reporting from the $nextStartYear to $nextEndYear tax year onwards")
                 )
+                result shouldNot have(
+                  elementTextBySelector(latencyDetailsHeader)("Your new businesses can have a different reporting frequency")
+                )
               }
             }
 
@@ -286,6 +312,9 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                   elementTextByID("manage-reporting-frequency-heading")("Manage your reporting frequency for all your businesses"),
                   elementTextBySelector(optInOptOutLinks(1))(s"Opt out of quarterly reporting and report annually for the $previousStartYear to $previousEndYear tax year"),
                   elementTextBySelector(optInOptOutLinks(2))(s"Opt in to quarterly reporting")
+                )
+                result shouldNot have(
+                  elementTextBySelector(latencyDetailsHeader)("Your new businesses can have a different reporting frequency")
                 )
               }
             }
@@ -313,7 +342,8 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                 result shouldNot have(
                   elementTextByID("manage-reporting-frequency-heading")("Manage your reporting frequency for all your businesses"),
                   elementTextBySelector(optInOptOutLinks(1))(s"Opt out of quarterly reporting and report annually for the $previousStartYear to $previousEndYear tax year"),
-                  elementTextBySelector(optInOptOutLinks(2))(s"Opt in to quarterly reporting")
+                  elementTextBySelector(optInOptOutLinks(2))(s"Opt in to quarterly reporting"),
+                  elementTextBySelector(latencyDetailsHeader)("Your new businesses can have a different reporting frequency")
                 )
               }
               "CY, CY-1 and CY+1 are mandated" in {
@@ -339,6 +369,51 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                   elementTextBySelector(optInOptOutLinks(1))(s"Opt out of quarterly reporting and report annually for the $previousStartYear to $previousEndYear tax year"),
                   elementTextBySelector(optInOptOutLinks(2))(s"Opt in to quarterly reporting")
                 )
+                result shouldNot have(
+                  elementTextBySelector(latencyDetailsHeader)("Your new businesses can have a different reporting frequency")
+                )
+              }
+            }
+            "have latency related information section" when {
+              "any of the business is latent" in {
+                enable(ReportingFrequencyPage)
+                enable(OptOutFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessWithLatency)
+                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
+                  dateService.getCurrentTaxYear,
+                  Voluntary,
+                  Annual,
+                  Annual
+                )
+
+                stubCalculationListResponseBody("2022")
+
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "reporting.frequency.title"),
+                  elementTextBySelector(latencyDetailsHeader)("Your new businesses can have a different reporting frequency"),
+                  elementTextByID("rf-latency-para1")("For tax years you report quarterly, you can separately choose to report annually for any new sole trader or property income source:"),
+                  elementTextByID("rf-latency-para1-bullet1")("started less than 2 years ago"),
+                  elementTextByID("rf-latency-para1-bullet2")("that you start in future"),
+                  elementTextByID("rf-latency-para2")("This option is available to new businesses:"),
+                  elementTextByID("rf-latency-para2-bullet1")("for up to 2 tax years"),
+                  elementTextByID("rf-latency-para2-bullet2")("only when you report quarterly for your other businesses"),
+                  elementTextByID("rf-latency-para2-bullet3")("even if your income from self-employment or property, or both, exceeds the income threshold"),
+                  elementTextByID("rf-latency-small-heading")("How to change a new income source’s reporting frequency"),
+                  elementTextByID("rf-latency-para3-text")("You can do this at any time in the all businesses section")
+                )
+
+                if(mtdUserRole == MTDIndividual) {
+                  result should have(
+                    elementAttributeBySelector(latencyDetailsLink, "href")("/report-quarterly/income-and-expenses/view/manage-your-businesses")
+                  )
+                } else {
+                  result should have(
+                    elementAttributeBySelector(latencyDetailsLink, "href")("/report-quarterly/income-and-expenses/view/agents/manage-your-businesses")
+                  )
+                }
               }
             }
           }

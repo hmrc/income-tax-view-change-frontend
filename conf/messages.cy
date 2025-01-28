@@ -156,6 +156,11 @@ home.incomeSources.manageIncomeSource.view                      = Bwrw golwg dro
 home.incomeSources.ceaseIncomeSource.view                       = Dod â ffynhonnell incwm i ben
 home.incomeSources.newJourney.view                              = Ychwanegu, rheoli neu ddod â busnes neu ffynhonnell incwm i ben
 
+home.accountSettings.heading                                    = Gosodiadau eich cyfrif
+home.accountSettings.reportingFrequency.quarterly.text          = Adrodd yn chwarterol ar gyfer blwyddyn dreth {0} i {1}
+home.accountSettings.reportingFrequency.annually.text           = Adrodd yn flynyddol ar gyfer blwyddyn dreth {0} i {1}
+home.accountSettings.reportingFrequency.link                    = Rheoli amlder eich adroddiadau
+
 home.agent.overdue.message.dunningLock.true                     = Mae gan eich cleient daliadau sy’n hwyr ac mae un neu fwy o’i benderfyniadau treth yn cael eu hadolygu. Mae’n bosibl y codir llog arno ar y rhain hyd nes eu bod wedi’u talu’n llawn.
 home.agent.overdue.message.dunningLock.false                    = Mae arnoch daliadau am fod yn hwyr. Mae’n bosibl y codir llog arnoch ar y rhain hyd nes eu bod wedi’u talu’n llawn.
 home.overdue.message.dunningLock.true                           = Mae gennych daliadau sy’n hwyr ac mae un neu fwy o’ch penderfyniadau treth yn cael eu hadolygu. Mae’n bosibl y codir llog arnoch ar y rhain hyd nes eu bod wedi’u talu’n llawn.
@@ -769,11 +774,16 @@ nextUpdates.propertyIncome            							= Incwm o eiddo
 nextUpdates.propertyIncome.UK                                   = Eiddo yn y DU
 nextUpdates.propertyIncome.Foreign                              = Eiddo tramor
 nextUpdates.business            							    = Incwm busnes
-nextUpdates.optOutOneYear-1                                     = Ar hyn o bryd, rydych yn adrodd bob chwarter ar sail wirfoddol ar gyfer blwyddyn dreth {0} i {1}. Gallwch ddewis
-nextUpdates.optOutOneYear-2                                     = optio allan o ddiweddariadau bob chwarter ac adrodd yn flynyddol yn lle hynny.
 
-nextUpdates.optOutMultiYear-1                                   = Ar hyn o bryd rhydych yn cyflwyno adroddiadau’n chwarterol ar sail wirfoddol. Cadarnhewch eich bod am
-nextUpdates.optOutMultiYear-2                                   = optio allan o ddiweddariadau chwarterol ac am gyflwyno’n flynyddol yn lle hynny.
+nextUpdates.optOutOneYear.p.message                             = Ar hyn o bryd, rydych yn adrodd bob chwarter ar sail wirfoddol ar gyfer blwyddyn dreth {0} i {1}. Gallwch ddewis
+nextUpdates.optOutOneYear.p.link                                = optio allan o ddiweddariadau bob chwarter ac adrodd yn flynyddol yn lle hynny.
+nextUpdates.optOutOneYear.reportingFrequency.p.message          = Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
+nextUpdates.optOutOneYear.reportingFrequency.p.link             = bwrw golwg dros a newid amlder eich adroddiadau.
+
+nextUpdates.optOutMultiYear.p.message                           = Ar hyn o bryd rhydych yn cyflwyno adroddiadau’n chwarterol ar sail wirfoddol. Cadarnhewch eich bod am
+nextUpdates.optOutMultiYear.p.link                              = optio allan o ddiweddariadau chwarterol ac am gyflwyno’n flynyddol yn lle hynny.
+nextUpdates.optOutMultiYear.reportingFrequency.p.message        = Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
+nextUpdates.optOutMultiYear.reportingFrequency.p.link           = bwrw golwg dros a newid amlder eich adroddiadau.
 
 sections.open.all												= Dangos pob adran
 sections.close.all												= Cuddio pob adran
@@ -2217,7 +2227,7 @@ optIn.singleTaxYearWarning.dropDown.insetText.p2                        = Yn dib
 optIn.singleTaxYearWarning.dropDown.insetText.p2.list1                  = cyflwyno pob diweddariad chwarter ar wahân, yn nhrefn gronolegol
 optIn.singleTaxYearWarning.dropDown.insetText.p2.list2                  = cyflwyno pob un o’ch diweddariadau sy’n hwyr fel un swmp
 optIn.singleTaxYearWarning.stillOptInCurrentYear.heading                = A ydych am optio i mewn ar gyfer blwyddyn dreth 2024 i 2025 o hyd?
-optIn.singleTaxYearWarning.form.error                                   = Select yes to opt in for the {0} to {1} tax year
+optIn.singleTaxYearWarning.form.error                                   = Dewiswch ‘Iawn’ i optio i mewn ar gyfer blwyddyn dreth {0} i {1}
 optIn.singleTaxYearWarning.stillOptInCurrentYear.radiobutton.yes        = Iawn
 optIn.singleTaxYearWarning.stillOptInCurrentYear.radiobutton.hint1      = Rwyf am optio i mewn i adrodd yn chwarterol, ac rwy’n deall y gall hyn olygu bod fy niweddariadau chwarterol yn hwyr yn barod.
 optIn.singleTaxYearWarning.stillOptInCurrentYear.radiobutton.no         = Na
@@ -2365,3 +2375,16 @@ reporting.frequency.table.annual                                    = Yn flynydd
 reporting.frequency.ceasedBusiness.warning.text.1                   = Nid oes unrhyw fusnesau ar y cyfrif hwn ar hyn o bryd. Gallwch ychwanegu unig fasnachwr neu fusnes eiddo ar y dudalen
 reporting.frequency.ceasedBusiness.warning.link                     = bob busnes.
 reporting.frequency.ceasedBusiness.warning.text.2                   =
+
+reporting.frequency.latency.details.section.header                  = Gall amlder eich adroddiadau ar gyfer eich busnes newydd fod ar sail amlder gwahanol
+reporting.frequency.latency.details.section.text.para1              = Ar gyfer blynyddoedd treth lle yr ydych yn adrodd yn chwarterol, gallwch ddewis i adrodd yn flynyddol ar gyfer unrhyw ffynhonnell incwm o eiddo neu fasnachwr newydd:
+reporting.frequency.latency.details.section.text.para1.bullet1      = a ddechreuodd llai na 2 flynedd yn ôl
+reporting.frequency.latency.details.section.text.para1.bullet2      = a fydd yn dechrau yn y dyfodol
+reporting.frequency.latency.details.section.text.para2              = Mae’r opsiwn hwn ar gael i fusnesau newydd:
+reporting.frequency.latency.details.section.text.para2.bullet1      = am hyd ar 2 flwyddyn dreth
+reporting.frequency.latency.details.section.text.para2.bullet2      = ar yr amod eich bod yn adrodd yn chwarterol ar gyfer eich busnesau eraill
+reporting.frequency.latency.details.section.text.para2.bullet3      = hyd yn oed os yw’ch incwm o hunangyflogaeth neu’ch incwm o eiddo, neu’r ddau, y tu hwn i’r trothwy incwm
+reporting.frequency.latency.details.section.text.para3.heading      = Sut i newid amlder eich adroddiadau ar gyfer ffynhonnell incwm newydd
+reporting.frequency.latency.details.section.text.para3.text.1       = Neges testun. Gallwch wneud hyn ar unrhyw adeg o’r adran
+reporting.frequency.latency.details.section.text.para3.link.text    = pob busnes
+reporting.frequency.latency.details.section.text.para3.text.2       =

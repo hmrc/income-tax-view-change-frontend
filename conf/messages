@@ -156,6 +156,11 @@ home.incomeSources.manageIncomeSource.view                      = View and manag
 home.incomeSources.ceaseIncomeSource.view                       = Cease an income source
 home.incomeSources.newJourney.view                              = Add, manage or cease a business or income source
 
+home.accountSettings.heading                                    = Your account settings
+home.accountSettings.reportingFrequency.quarterly.text          = Reporting quarterly for {0} to {1} tax year
+home.accountSettings.reportingFrequency.annually.text           = Reporting annually for {0} to {1} tax year
+home.accountSettings.reportingFrequency.link                    = Manage your reporting frequency
+
 home.agent.overdue.message.dunningLock.true                     = Your client has overdue payments and one or more of their tax decisions are being reviewed. They may be charged interest on these until they are paid in full.
 home.agent.overdue.message.dunningLock.false                    = You have overdue charges. You may be charged interest on these until they are paid in full.
 home.overdue.message.dunningLock.true                           = You have overdue payments and one or more of your tax decisions are being reviewed. You may be charged interest on these until they are paid in full.
@@ -769,11 +774,16 @@ nextUpdates.propertyIncome            							   = Property income
 nextUpdates.propertyIncome.UK                                      = UK property
 nextUpdates.propertyIncome.Foreign                                 = Foreign property
 nextUpdates.business            							       = Business income
-nextUpdates.optOutOneYear-1                                        = You are currently reporting quarterly on a voluntary basis for the {0} to {1} tax year. You can choose to
-nextUpdates.optOutOneYear-2                                        = opt out of quarterly updates and report annually instead.
 
-nextUpdates.optOutMultiYear-1                                      = You are currently reporting quarterly on a voluntary basis. You can choose to
-nextUpdates.optOutMultiYear-2                                      = opt out of quarterly updates and report annually instead.
+nextUpdates.optOutOneYear.p.message                                = You are currently reporting quarterly on a voluntary basis for the {0} to {1} tax year. You can choose to
+nextUpdates.optOutOneYear.p.link                                   = opt out of quarterly updates and report annually instead.
+nextUpdates.optOutOneYear.reportingFrequency.p.message             = Depending on your circumstances, you may be able to
+nextUpdates.optOutOneYear.reportingFrequency.p.link                = view and change your reporting frequency.
+
+nextUpdates.optOutMultiYear.p.message                              = You are currently reporting quarterly on a voluntary basis. You can choose to
+nextUpdates.optOutMultiYear.p.link                                 = opt out of quarterly updates and report annually instead.
+nextUpdates.optOutMultiYear.reportingFrequency.p.message           = Depending on your circumstances, you may be able to
+nextUpdates.optOutMultiYear.reportingFrequency.p.link              = view and change your reporting frequency.
 
 sections.open.all												   = Show all sections
 sections.close.all												   = Hide all sections
@@ -2365,3 +2375,19 @@ reporting.frequency.table.annual                                    = Annual
 reporting.frequency.ceasedBusiness.warning.text.1                   = There are currently no businesses on this account. You can add a sole trader or property business on the
 reporting.frequency.ceasedBusiness.warning.link                     = all businesses
 reporting.frequency.ceasedBusiness.warning.text.2                   = page.
+
+reporting.frequency.latency.details.section.header                  = Your new businesses can have a different reporting frequency
+reporting.frequency.latency.details.section.text.para1              = For tax years you report quarterly, you can separately choose to report annually for any new sole trader or property income source:
+reporting.frequency.latency.details.section.text.para1.bullet1      = started less than 2 years ago
+reporting.frequency.latency.details.section.text.para1.bullet2      = that you start in future
+reporting.frequency.latency.details.section.text.para2              = This option is available to new businesses:
+reporting.frequency.latency.details.section.text.para2.bullet1      = for up to 2 tax years
+reporting.frequency.latency.details.section.text.para2.bullet2      = only when you report quarterly for your other businesses
+reporting.frequency.latency.details.section.text.para2.bullet3      = even if your income from self-employment or property, or both, exceeds the income threshold
+reporting.frequency.latency.details.section.text.para3.heading      = How to change a new income source’s reporting frequency
+reporting.frequency.latency.details.section.text.para3.text.1       = You can do this at any time in the
+reporting.frequency.latency.details.section.text.para3.link.text    = all businesses
+reporting.frequency.latency.details.section.text.para3.text.2       = section
+
+
+
