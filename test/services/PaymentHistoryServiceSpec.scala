@@ -66,41 +66,6 @@ class PaymentHistoryServiceSpec extends TestSupport with MockFinancialDetailsCon
   object TestPaymentHistoryService extends PaymentHistoryService(mockRepaymentHistoryConnector,
     mockFinancialDetailsConnector, dateService, appConfig)
 
-  "getPaymentHistory" when {
-    "An error is returned from the connector" should {
-      "return a payment history error" in {
-        setupGetPayments(TaxYear(getCurrentTaxEndYear-1, getCurrentTaxEndYear))(PaymentsError(500, "ERROR"))
-        setupGetPayments(TaxYear(getCurrentTaxEndYear-2, getCurrentTaxEndYear-1))(Payments(List.empty))
-        TestPaymentHistoryService.getPaymentHistory.futureValue shouldBe Left(PaymentHistoryError)
-
-      }
-
-      "return a payment history error for status 422" in {
-        setupGetPayments(TaxYear(getCurrentTaxEndYear-1, getCurrentTaxEndYear))(PaymentsError(UNPROCESSABLE_ENTITY, "ERROR"))
-        setupGetPayments(TaxYear(getCurrentTaxEndYear-2, getCurrentTaxEndYear-1))(Payments(List.empty))
-        TestPaymentHistoryService.getPaymentHistory.futureValue shouldBe Left(PaymentHistoryError)
-
-      }
-    }
-
-    "a successful Payment History response is returned from the connector" should {
-      "return a list of payments and ignore any payment data not found (404s)" in {
-        setupGetPayments(TaxYear(getCurrentTaxEndYear-1, getCurrentTaxEndYear))(PaymentsError(NOT_FOUND, "NOT FOUND"))
-        setupGetPayments(TaxYear(getCurrentTaxEndYear-2, getCurrentTaxEndYear-1))(Payments(paymentFull))
-        TestPaymentHistoryService.getPaymentHistory.futureValue shouldBe Right(paymentFull)
-      }
-    }
-
-    "duplicate payments are returned in the response from the connector" should {
-      "return a list of payments with no duplicates" in {
-        setupGetPayments(TaxYear(getCurrentTaxEndYear-1, getCurrentTaxEndYear))(Payments(paymentFull))
-        setupGetPayments(TaxYear(getCurrentTaxEndYear-2, getCurrentTaxEndYear-1))(Payments(paymentFull))
-        TestPaymentHistoryService.getPaymentHistory.futureValue shouldBe Right(paymentFull)
-      }
-    }
-
-  }
-
   "getPaymentHistoryV2" when {
     "An error is returned from the connector" should {
       "return a payment history error" in {

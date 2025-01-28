@@ -36,7 +36,7 @@ import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.i18n.Lang
 import play.api.test.Helpers.{status, _}
 import services.{CalculationService, ClaimToAdjustService, FinancialDetailsService, NextUpdatesService}
-import testConstants.BaseTestConstants.{taxYear, testMtditid, testTaxYear}
+import testConstants.BaseTestConstants.{taxYear, testMtditid, testTaxYear, testTaxYear2018}
 import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
 import testConstants.ChargeConstants
 import testConstants.FinancialDetailsTestConstants.{financialDetails, _}
@@ -123,7 +123,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 setupMockSuccess(mtdUserRole)
                 mockSingleBusinessIncomeSource()
                 mockCalculationSuccessfulNotCrystallised(testMtditid, taxYear = testTaxYear)
-                mockFinancialDetailsSuccess(taxYear = testTaxYear)
+                mockFinancialDetailsSuccess(taxYear = testTaxYear2018)
                 mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
@@ -156,7 +156,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 setupMockSuccess(mtdUserRole)
                 mockSingleBusinessIncomeSource()
                 mockCalculationSuccessfulNew(testMtditid, taxYear = testTaxYear)
-                mockFinancialDetailsSuccess(taxYear = testTaxYear)
+                mockFinancialDetailsSuccess(taxYear = testTaxYear2018)
                 mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
@@ -186,7 +186,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 setupMockSuccess(mtdUserRole)
                 mockSingleBusinessIncomeSource()
                 mockCalculationNotFoundNew(testMtditid, year = testTaxYear)
-                mockFinancialDetailsSuccess(taxYear = testTaxYear)
+                mockFinancialDetailsSuccess(taxYear = testTaxYear2018)
                 mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
