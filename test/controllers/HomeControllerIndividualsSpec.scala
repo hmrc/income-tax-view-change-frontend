@@ -543,7 +543,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             mockGetDueDates(Right(Seq.empty))
             mockSingleBusinessIncomeSource()
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
-              .thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
+              .thenReturn(Future.successful(Some(FinancialDetailsErrorModel(1, "testString"))))
 
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
@@ -562,7 +562,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             mockGetDueDates(Right(Seq.empty))
             mockSingleBusinessIncomeSource()
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
-              .thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
+              .thenReturn(Future.successful(Some(FinancialDetailsErrorModel(1, "testString"))))
 
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
@@ -580,7 +580,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             mockGetDueDates(Right(Seq.empty))
             mockSingleBusinessIncomeSource()
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
-              .thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
+              .thenReturn(Future.successful(Some(FinancialDetailsErrorModel(1, "testString"))))
 
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
