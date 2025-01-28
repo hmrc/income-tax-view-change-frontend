@@ -20,10 +20,11 @@ import javax.inject.Inject
 
 class PenaltyDetailsService @Inject()() {
 
-  def getPenaltyPoints: Option[Int] = {
+  def getPenaltyPoints(penaltiesAndAppealsIsEnabled: Boolean): Option[Int] = {
 
     val dummyResponse = Some(2)
 
-    dummyResponse
+    if(penaltiesAndAppealsIsEnabled) dummyResponse
+    else None
   }
 }

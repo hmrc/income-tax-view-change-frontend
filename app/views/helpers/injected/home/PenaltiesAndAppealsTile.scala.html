@@ -33,7 +33,7 @@
     )
 }
 
-@if(penaltiesAndAppealsTileViewModel.penaltiesAndAppealsEnabled) {
+@if(penaltiesAndAppealsTileViewModel.penaltyPoints.isDefined) {
     @home_tile("penalties-and-appeals-tile", messages("home.penaltiesAndAppeals.heading")) {
         @(penaltiesAndAppealsTileViewModel.penaltyPoints match {
             case Some(2) =>

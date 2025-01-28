@@ -110,7 +110,6 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
                   creditAndRefundEnabled: Boolean = false,
                   user: MtdItUser[_] = testMtdItUserNotMigrated,
                   reportingFrequencyEnabled: Boolean = false,
-                  penaltiesAndAppealsEnabled: Boolean = true,
                   penaltyPoints: Option[Int] = None,
                   currentITSAStatus: ITSAStatus = ITSAStatus.Voluntary
                  ) {
@@ -127,7 +126,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
 
     val accountSettingsTileViewModel = AccountSettingsTileViewModel(TaxYear(currentTaxYear, currentTaxYear + 1), reportingFrequencyEnabled, currentITSAStatus)
 
-    val penaltiesAndAppealsTileViewModel = PenaltiesAndAppealsTileViewModel(penaltiesAndAppealsEnabled = penaltiesAndAppealsEnabled, penaltyPoints = penaltyPoints)
+    val penaltiesAndAppealsTileViewModel = PenaltiesAndAppealsTileViewModel(penaltyPoints = penaltyPoints)
 
     val homePageViewModel = HomePageViewModel(
       utr = utr,
@@ -442,17 +441,25 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
 
       "have a Penalties and Appeals tile" when {
         "Penalties and Appeals FS is enabled" which {
-          "has a heading" in new TestSetup(penaltiesAndAppealsEnabled = true) {
+          "has a heading" in new TestSetup() {
             getElementById("penalties-and-appeals-tile").map(_.select("h2").first().text()) shouldBe Some("Penalties and appeals")
           }
-          "has a link to Self Assessment Penalties and Appeals page" in new TestSetup(penaltiesAndAppealsEnabled = true) {
+          "has a link to Self Assessment Penalties and Appeals page" in new TestSetup() {
             getElementById("sa-penalties-and-appeals-link").map(_.text()) shouldBe Some("Check Self Assessment penalties and appeals")
             getElementById("sa-penalties-and-appeals-link").map(_.attr("href")) shouldBe Some("")
           }
+          "has a two-points penalty tag" in new TestSetup(penaltyPoints = Some(2)) {
+            getElementById("two-penalty-points-tag").map(_.text()) shouldBe Some("2 PENALTY POINTS")
+          }
+          "has a four-points penalty tag" in new TestSetup(penaltyPoints = Some(4)) {
+            getElementById("four-penalty-points-tag").map(_.text()) shouldBe Some("4 PENALTY POINTS")
+          }
+          "has no penalty tag" in new TestSetup(penaltyPoints = Some(3)) {
+            getElementById("two-penalty-points-tag").map(_.text()).isDefined shouldBe false
+            getElementById("four-penalty-points-tag").map(_.text()).isDefined shouldBe false
+          }
         }
       }
-
     }
   }
-
 }
