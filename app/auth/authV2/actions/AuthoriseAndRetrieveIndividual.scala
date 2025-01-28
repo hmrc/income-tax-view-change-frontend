@@ -19,11 +19,12 @@ package auth.authV2.actions
 import audit.AuditingService
 import audit.models.IvUpliftRequiredAuditModel
 import auth._
-import auth.authV2.AuthExceptions.MissingMtdId
-import authV2.Constants
+import auth.authV2.Constants
+import auth.authV2.models.{AuthUserDetails, AuthorisedAndEnrolledRequest}
 import com.google.inject.Singleton
 import config.FrontendAppConfig
 import controllers.agent.AuthUtils.mtdEnrolmentName
+import enums.MTDIndividual
 import models.OriginEnum
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
@@ -44,14 +45,14 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
                                                val appConfig: FrontendAppConfig,
                                                mcc: MessagesControllerComponents,
                                                val auditingService: AuditingService)
-  extends AuthoriseHelper with ActionRefiner[Request, MtdItUserOptionNino]{
+  extends AuthoriseHelper with ActionRefiner[Request, AuthorisedAndEnrolledRequest]{
 
   implicit val executionContext: ExecutionContext = mcc.executionContext
   lazy val requiredConfidenceLevel: Int = appConfig.requiredConfidenceLevel
 
   lazy val logger = Logger(getClass)
 
-  override protected def refine[A](request: Request[A]): Future[Either[Result, MtdItUserOptionNino[A]]] = {
+  override protected def refine[A](request: Request[A]): Future[Either[Result, AuthorisedAndEnrolledRequest[A]]] = {
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter
       .fromRequestAndSession(request, request.session)
@@ -66,8 +67,8 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
     authorisedFunctions.authorised(predicate or AffinityGroup.Agent)
       .retrieve(allEnrolments and name and credentials and affinityGroup and confidenceLevel) {
         redirectIfAgent() orElse
-        redirectIfInsufficientConfidence() orElse constructMtdItUserOptionNino()
-      }(hc, executionContext) recoverWith logAndRedirect(false)
+        redirectIfInsufficientConfidence() orElse constructAuthorisedAndEnrolledUser()
+      }(hc, executionContext) recoverWith logAndRedirect()
   }
 
   // this URL is incorrect in live - the completion and failure URLs must be URL encoded
@@ -80,7 +81,7 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
 
   private def redirectIfInsufficientConfidence[A]()(
     implicit request: Request[A],
-    hc: HeaderCarrier): PartialFunction[AuthRetrievals, Future[Either[Result, MtdItUserOptionNino[A]]]] = {
+    hc: HeaderCarrier): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedAndEnrolledRequest[A]]]] = {
 
     case _ ~ _ ~ _ ~ ag ~ confidenceLevel
       if confidenceLevel.level < requiredConfidenceLevel =>
@@ -88,28 +89,29 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
       Future.successful(Left(Redirect(ivUpliftRedirectUrl)))
   }
 
-  private def constructMtdItUserOptionNino[A]()(
-    implicit request: Request[A]): PartialFunction[AuthRetrievals, Future[Either[Result, MtdItUserOptionNino[A]]]] = {
+  private def constructAuthorisedAndEnrolledUser[A]()(
+    implicit request: Request[A]): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedAndEnrolledRequest[A]]]] = {
     case enrolments ~ userName ~ credentials ~ affinityGroup ~ _ =>
-      def getValueFromEnrolment(enrolment: String, identifier: String): Option[String] =
-        enrolments.getEnrolment(enrolment)
-          .flatMap(_.getIdentifier(identifier)).map(_.value)
-
       lazy val optMtdId: Option[String] =
-        getValueFromEnrolment(Constants.mtdEnrolmentName, Constants.mtdEnrolmentIdentifierKey)
+        enrolments.getEnrolment(Constants.mtdEnrolmentName)
+          .flatMap(_.getIdentifier(Constants.mtdEnrolmentIdentifierKey))
+          .map(_.value)
 
       optMtdId.fold(throw InsufficientEnrolments("Missing MTDId Individual")) {
-        mtditid =>
+        mtdItId =>
+          val authUserDetails = AuthUserDetails(
+            enrolments,
+            affinityGroup,
+            credentials,
+            userName
+          )
           Future.successful(
             Right(
-              MtdItUserOptionNino(
-                mtditid = mtditid,
-                nino = getValueFromEnrolment(Constants.ninoEnrolmentName, Constants.ninoEnrolmentIdentifierKey),
-                userName = userName,
-                saUtr = getValueFromEnrolment(Constants.saEnrolmentName, Constants.saEnrolmentIdentifierKey),
-                credId = credentials.map(credential => credential.providerId),
-                userType = affinityGroup,
-                arn = None
+              AuthorisedAndEnrolledRequest(
+                mtditId = mtdItId,
+                MTDIndividual,
+                authUserDetails = authUserDetails,
+                clientDetails = None
               )
             )
           )

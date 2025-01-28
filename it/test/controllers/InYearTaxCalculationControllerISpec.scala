@@ -17,10 +17,10 @@
 package controllers
 
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import helpers.servicemocks.AuthStub.mockImplicitDateFormatter.{longDate, toTaxYearEndDate}
 import helpers.servicemocks.{AuditStub, IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.liabilitycalculation.LiabilityCalculationError
+import models.liabilitycalculation.viewmodels.CalculationSummary.toTaxYearEndDate
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.i18n.{Lang, Messages}
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
@@ -34,6 +34,7 @@ class InYearTaxCalculationControllerISpec extends ControllerISpecHelper {
 
   val currentDate = LocalDate.of(2023, 4, 5)
   val implicitDateFormatter: ImplicitDateFormatter = app.injector.instanceOf[ImplicitDateFormatterImpl]
+  import implicitDateFormatter.longDate
 
   def toMessages(language: String): Messages = {
     messagesAPI.preferred(Seq(

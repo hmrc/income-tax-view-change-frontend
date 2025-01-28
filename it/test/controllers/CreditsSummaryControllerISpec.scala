@@ -17,7 +17,7 @@
 package controllers
 
 import audit.models.IncomeSourceDetailsResponseAuditModel
-import auth.MtdItUserOptionNino
+import auth.authV2.models.AuthorisedAndEnrolledRequest
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.CreditsSummaryDataHelper
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
@@ -35,15 +35,10 @@ class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSu
   implicit val msgs: MessagesApi = app.injector.instanceOf[MessagesApi]
   val incomeSources = propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
 
-  def testUser(mtdUserRole: MTDUserRole): MtdItUserOptionNino[_] = {
-    val (affinityGroup, arn) = if (mtdUserRole == MTDIndividual) {
-      (Individual, None)
-    } else {
-      (Agent, Some("1"))
-    }
-    MtdItUserOptionNino(
-      testMtditid, Some(testNino), None,
-      None, Some("1234567890"), Some("12345-credId"), Some(affinityGroup), arn
+  def testUser(mtdUserRole: MTDUserRole): AuthorisedAndEnrolledRequest[_] = {
+    AuthorisedAndEnrolledRequest(
+      testMtditid, mtdUserRole, defaultAuthUserDetails(mtdUserRole),
+      if(mtdUserRole == MTDIndividual) None else Some(defaultClientDetails)
     )(FakeRequest())
   }
 
@@ -86,6 +81,7 @@ class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSu
                 AuditStub.verifyAuditContainsDetail(
                   IncomeSourceDetailsResponseAuditModel(
                     mtdItUser = testUser(mtdUserRole),
+                    nino = testNino,
                     selfEmploymentIds = List.empty,
                     propertyIncomeIds = List("1234"),
                     yearOfMigration = Some(testTaxYear.toString)
@@ -137,6 +133,7 @@ class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSu
                 AuditStub.verifyAuditContainsDetail(
                   IncomeSourceDetailsResponseAuditModel(
                     mtdItUser = testUser(mtdUserRole),
+                    nino = testNino,
                     selfEmploymentIds = List.empty,
                     propertyIncomeIds = Nil,
                     yearOfMigration = None

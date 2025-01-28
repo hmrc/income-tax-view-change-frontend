@@ -39,7 +39,7 @@ class DeductionBreakdownViewSpec extends ViewSpec {
 
     "provided with a btaNavPartial" should {
       val taxYear = 2017
-      lazy val view = deductionBreakdownView(AllowancesAndDeductionsViewModel(), taxYear, backUrl, btaNavPartial = testNavHtml)
+      lazy val view = deductionBreakdownView(AllowancesAndDeductionsViewModel(), taxYear, backUrl, btaNavPartial = Some(testNavHtml))
 
       "render the btaNavPartial" in new Setup(view) {
         document.getElementById(s"nav-bar-link-testEnHome").text shouldBe "testEnHome"

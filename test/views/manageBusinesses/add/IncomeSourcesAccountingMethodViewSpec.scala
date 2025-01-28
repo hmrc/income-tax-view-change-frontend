@@ -17,6 +17,7 @@
 package views.manageBusinesses.add
 
 import auth.MtdItUser
+import authV2.AuthActionsTestData.defaultMTDITUser
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import forms.incomeSources.add.IncomeSourcesAccountingMethodForm
 import org.jsoup.Jsoup
@@ -24,7 +25,6 @@ import org.jsoup.nodes.Document
 import play.api.data.Form
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
-import testConstants.BaseTestConstants.{testMtditid, testNino}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.noIncomeDetails
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
@@ -39,17 +39,8 @@ class IncomeSourcesAccountingMethodViewSpec extends TestSupport {
 
   val errorMessageKey: String = "incomeSources.add.AccountingMethod.no-selection"
 
-  val testUser: MtdItUser[_] = MtdItUser(
-    mtditid = testMtditid,
-    nino = testNino,
-    userName = None,
-    btaNavPartial = None,
-    saUtr = None,
-    credId = Some("12345-credId"),
-    userType = Some(Individual),
-    arn = None,
-    incomeSources = noIncomeDetails
-  )(fakeRequestWithNinoAndOrigin("pta"))
+  val testUser: MtdItUser[_] = defaultMTDITUser(Some(Individual),
+    noIncomeDetails, fakeRequestWithNinoAndOrigin("pta"))
 
 
   class Setup(isAgent: Boolean, incomeSourcePrefix: String, incomeSourceType: IncomeSourceType, error: Boolean = false) {

@@ -22,14 +22,13 @@ import forms.agent.ClientsUTRForm
 import mocks.auth.MockAuthActions
 import mocks.services.MockClientDetailsService
 import mocks.views.agent.MockEnterClientsUTR
-import models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostSuccess}
 import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify}
 import play.api
 import play.api.Application
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import services.agent.ClientDetailsService
 import services.agent.ClientDetailsService._
 import testConstants.BaseTestConstants.{agentAuthRetrievalSuccess, testArn, testCredId, testMtditid, testNino}
 import uk.gov.hmrc.auth.core.{Enrolment, InsufficientEnrolments}
@@ -126,7 +125,7 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
             response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
           )
 
-          setupMockPrimaryAgentAuthRetrievalSuccess(agentAuthRetrievalSuccess, testMtditid)
+          setupMockPrimaryAgentAuthRetrievalSuccess(testMtditid)
 
           val result = testEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> validUTR
@@ -152,9 +151,9 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
             response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
           )
 
-          setupMockPrimaryAgentAuthorisationException(testMtditid)
+          setupMockNoPrimaryDelegatedEnrolmentForMTDItId(testMtditid)
 
-          setupMockSecondaryAgentAuthRetrievalSuccess(agentAuthRetrievalSuccess, testMtditid)
+          setupMockSecondaryAgentAuthRetrievalSuccess(testMtditid)
 
           val result = testEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> validUTR
@@ -182,7 +181,7 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
             response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
           )
 
-          setupMockPrimaryAgentAuthRetrievalSuccess(agentAuthRetrievalSuccess, testMtditid)
+          setupMockPrimaryAgentAuthRetrievalSuccess(testMtditid)
 
           val result = testEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> utrWithSpaces
@@ -211,9 +210,9 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
             response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
           )
 
-          setupMockPrimaryAgentAuthorisationException(testMtditid)
+          setupMockNoPrimaryDelegatedEnrolmentForMTDItId(testMtditid)
 
-          setupMockSecondaryAgentAuthRetrievalSuccess(agentAuthRetrievalSuccess, testMtditid)
+          setupMockSecondaryAgentAuthRetrievalSuccess(testMtditid)
 
           val result = testEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> utrWithSpaces
@@ -292,8 +291,8 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
             response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
           )
 
-          setupMockPrimaryAgentAuthorisationException(testMtditid)
-          setupMockSecondaryAgentAuthorisationException(testMtditid)
+          setupMockNoPrimaryDelegatedEnrolmentForMTDItId(testMtditid)
+          setupMockNoSecondaryDelegatedEnrolmentForMTDItId(testMtditid)
 
           val result = testEnterClientsUTRController.submit(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> validUTR

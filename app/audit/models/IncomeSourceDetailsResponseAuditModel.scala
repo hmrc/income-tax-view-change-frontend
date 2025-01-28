@@ -17,11 +17,12 @@
 package audit.models
 
 import audit.Utilities._
-import auth.MtdItUserOptionNino
+import auth.authV2.models.AuthorisedAndEnrolledRequest
 import play.api.libs.json.{JsValue, Json}
 import utils.Utilities._
 
-case class IncomeSourceDetailsResponseAuditModel(mtdItUser: MtdItUserOptionNino[_],
+case class IncomeSourceDetailsResponseAuditModel(mtdItUser: AuthorisedAndEnrolledRequest[_],
+                                                 nino: String,
                                                  selfEmploymentIds: List[String],
                                                  propertyIncomeIds: List[String],
                                                  yearOfMigration: Option[String]) extends ExtendedAuditModel {
@@ -30,14 +31,14 @@ case class IncomeSourceDetailsResponseAuditModel(mtdItUser: MtdItUserOptionNino[
   override val auditType: String = enums.AuditType.IncomeSourceDetailsResponse
 
   override val detail: JsValue = {
-      Json.obj("mtditid" -> mtdItUser.mtditid,
+      Json.obj("mtditid" -> mtdItUser.mtditId,
         "selfEmploymentIncomeSourceIds" -> selfEmploymentIds,
         "propertyIncomeSourceIds" -> propertyIncomeIds) ++
-        ("agentReferenceNumber", mtdItUser.arn) ++
+        ("agentReferenceNumber", mtdItUser.authUserDetails.agentReferenceNumber) ++
         ("saUtr", mtdItUser.saUtr) ++
-        userType(mtdItUser.userType) ++
-        ("credId", mtdItUser.credId) ++
-        ("nino", mtdItUser.nino) ++
+        userType(mtdItUser.authUserDetails.affinityGroup) ++
+        ("credId", mtdItUser.authUserDetails.credId) ++
+        ("nino", Some(nino)) ++
         ("dateOfMigration", yearOfMigration)
   }
 }

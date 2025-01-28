@@ -17,6 +17,7 @@
 package views
 
 import auth.MtdItUser
+import authV2.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import models.admin.PaymentHistoryRefunds
@@ -34,7 +35,6 @@ import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants._
 import testConstants.FinancialDetailsTestConstants.financialDetailsModel
 import testUtils.TestSupport
-import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import views.html.Home
 
 import java.time.LocalDate
@@ -52,48 +52,28 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
     else currentDate.getYear + 1
   }
 
-  def testMtdItUser(saUtr: Option[String] = Some("testUtr")): MtdItUser[_] = {
-    val yearOfMigrationOpt = if (Random.nextBoolean()) {
-      Some("2018")
+  def getIncomeSource(migratedUser: Boolean): IncomeSourceDetailsModel = {
+    if(migratedUser) {
+      IncomeSourceDetailsModel(testNino, mtdbsa = testMtditid, yearOfMigration = Some("2018"), businesses = Nil, properties = Nil)
     } else {
-      None
+      IncomeSourceDetailsModel(testNino, mtdbsa = testMtditid, yearOfMigration = None, businesses = Nil, properties = Nil)
     }
-    MtdItUser(
-      testMtditid,
-      testNino,
-      Some(testRetrievedUserName),
-      IncomeSourceDetailsModel(testNino, mtdbsa = testMtditid, yearOfMigration = yearOfMigrationOpt, businesses = Nil, properties = Nil),
-      testNavHtml,
-      saUtr,
-      Some("testCredId"),
-      Some(Individual),
-      None
-    )(FakeRequest())
   }
 
-  def testMtdItUserMigrated(saUtr: Option[String] = Some("testUtr")): MtdItUser[_] = MtdItUser(
-    testMtditid,
-    testNino,
-    Some(testRetrievedUserName),
-    IncomeSourceDetailsModel(testNino, mtdbsa = testMtditid, yearOfMigration = Some("2018"), businesses = Nil, properties = Nil),
-    testNavHtml,
-    saUtr,
-    Some("testCredId"),
-    Some(Individual),
-    None
-  )(FakeRequest())
+  def testMtdItUser(hasSAUtr: Boolean = true, optIncomeSourceDetailsModel: Option[IncomeSourceDetailsModel] = None): MtdItUser[_] = {
+    val incomeSourceDetailsModel = optIncomeSourceDetailsModel.getOrElse(getIncomeSource(Random.nextBoolean()))
+    if(hasSAUtr) {
+      defaultMTDITUser(Some(testUserTypeIndividual), incomeSourceDetailsModel)
+        .addNavBar(testNavHtml)
+    } else {
+      getMinimalMTDITUser(Some(testUserTypeIndividual), incomeSourceDetailsModel)
+        .addNavBar(testNavHtml)
+    }
+  }
 
-  def testMtdItUserNotMigrated(saUtr: Option[String] = Some("testUtr")): MtdItUser[_] = MtdItUser(
-    testMtditid,
-    testNino,
-    Some(testRetrievedUserName),
-    IncomeSourceDetailsModel(testNino, mtdbsa = testMtditid, yearOfMigration = None, businesses = Nil, properties = Nil),
-    testNavHtml,
-    saUtr,
-    Some("testCredId"),
-    Some(Individual),
-    None
-  )(FakeRequest())
+  def testMtdItUserMigrated(hasSAUtr: Boolean = true): MtdItUser[_] = testMtdItUser(hasSAUtr, Some(getIncomeSource(true)))
+
+  def testMtdItUserNotMigrated(hasSAUtr: Boolean = true): MtdItUser[_] = testMtdItUser(hasSAUtr, Some(getIncomeSource(false)))
 
   val updateDate: LocalDate = LocalDate.of(2100, 1, 1)
   val updateDateLongDate = "1 January 2100"
@@ -186,10 +166,10 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
     }
 
     "have the users UTR" in new Setup {
-      getTextOfElementById("utr-reference-heading") shouldBe Some("Unique Taxpayer Reference (UTR): testUtr")
+      getTextOfElementById("utr-reference-heading") shouldBe Some(s"Unique Taxpayer Reference (UTR): $testSaUtr")
     }
 
-    "not have the users UTR when it is absent in user profile" in new Setup(user = testMtdItUser(saUtr = None)) {
+    "not have the users UTR when it is absent in user profile" in new Setup(user = testMtdItUser(false)) {
       getElementById("utr-reference-heading") shouldBe None
     }
 

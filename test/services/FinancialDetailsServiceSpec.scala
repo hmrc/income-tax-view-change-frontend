@@ -17,6 +17,7 @@
 package services
 
 import auth.MtdItUser
+import authV2.AuthActionsTestData.defaultMTDITUser
 import config.featureswitch.FeatureSwitching
 import enums.ChargeType.NIC4_WALES
 import enums.CodingOutType._
@@ -25,7 +26,6 @@ import models.core.AccountingPeriodModel
 import models.financialDetails._
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.http.Status
-import play.api.test.FakeRequest
 import testConstants.BaseTestConstants._
 import testConstants.BusinessDetailsTestConstants.{address, getCurrentTaxYearEnd, testIncomeSource}
 import testConstants.FinancialDetailsTestConstants.{documentDetailModel, _}
@@ -61,10 +61,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
       documentDetails = documentDetails, financialDetails = financialDetails)
   }
 
-  private def mtdUser(numYears: Int): MtdItUser[_] = MtdItUser(
-    testMtditid,
-    testNino,
-    Some(testRetrievedUserName),
+  private def mtdUser(numYears: Int): MtdItUser[_] = defaultMTDITUser(Some(Individual),
     IncomeSourceDetailsModel(
       testNino,
       testMtditid,
@@ -86,18 +83,12 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         )
       },
       properties = Nil
-    ),
-    btaNavPartial = None,
-    Some("testUtr"),
-    Some("testCredId"),
-    Some(Individual),
-    None
-  )(FakeRequest())
+    ))
 
 
   object TestFinancialDetailsService extends FinancialDetailsService(mockFinancialDetailsConnector, dateService)
 
-  val testUserWithRecentYears: MtdItUser[_] = MtdItUser(testMtditid, testNino, None, IncomeSourceDetailsModel(
+  val testUserWithRecentYears: MtdItUser[_] = defaultMTDITUser(Some(Individual), IncomeSourceDetailsModel(
     nino = testNino,
     mtdbsa = testMtditid,
     yearOfMigration = Some(getCurrentTaxYearEnd.minusYears(1).getYear.toString),
@@ -115,7 +106,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
       )
     ),
     properties = Nil
-  ), btaNavPartial = None, None, None, None, None)(FakeRequest())
+  ))
 
   "getFinancialDetails" when {
     "a successful financial details response is returned from the connector" should {

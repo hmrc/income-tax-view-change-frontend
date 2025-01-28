@@ -17,7 +17,6 @@
 package controllers.incomeSources.cease
 
 import audit.models.CeaseIncomeSourceAuditModel
-import auth.MtdItUser
 import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.Cease
@@ -25,16 +24,14 @@ import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.admin.{IncomeSourcesFs, NavBarFs}
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.{CeaseIncomeSourceData, IncomeSourceDetailsModel, UIJourneySessionData}
+import models.incomeSourceDetails.{CeaseIncomeSourceData, UIJourneySessionData}
 import models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
-import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SessionService
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
-import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 import java.time.LocalDate
 
@@ -68,18 +65,6 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
   val unknown: String = messagesAPI("incomeSources.ceaseBusiness.checkDetails.unknown")
 
   val pageTitleMsgKeyUK = messagesAPI("incomeSources.ceaseUKProperty.checkDetails.heading")
-
-  def testUser(mtdUserRole: MTDUserRole, incomeSourceDetailsModel: IncomeSourceDetailsModel): MtdItUser[_] = {
-    val (affinityGroup, arn) = if(mtdUserRole == MTDIndividual) {
-      (Individual, None)
-    } else {
-      (Agent, Some("1"))
-    }
-    MtdItUser(
-      testMtditid, testNino, None, incomeSourceDetailsModel,
-      None, Some("1234567890"), Some("12345-credId"), Some(affinityGroup), arn
-    )(FakeRequest())
-  }
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -325,7 +310,8 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
                 redirectURI(redirectUrl),
               )
 
-              AuditStub.verifyAuditContainsDetail(CeaseIncomeSourceAuditModel(SelfEmployment, testEndDate2022, mkIncomeSourceId(testSelfEmploymentId), None)(testUser(mtdUserRole, businessOnlyResponse), hc).detail)
+              AuditStub.verifyAuditContainsDetail(CeaseIncomeSourceAuditModel(SelfEmployment, testEndDate2022, mkIncomeSourceId(testSelfEmploymentId), None)
+              (getTestUser(mtdUserRole, businessOnlyResponse), hc).detail)
             }
           }
           testAuthFailures(selfEmploymentPath, mtdUserRole, optBody = Some(Map.empty))
@@ -355,7 +341,8 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
                 redirectURI(redirectUrl),
               )
 
-              AuditStub.verifyAuditContainsDetail(CeaseIncomeSourceAuditModel(UkProperty, testEndDate2022, mkIncomeSourceId(testPropertyIncomeId), None)(testUser(mtdUserRole, ukPropertyOnlyResponse), hc).detail)
+              AuditStub.verifyAuditContainsDetail(CeaseIncomeSourceAuditModel(UkProperty, testEndDate2022, mkIncomeSourceId(testPropertyIncomeId), None)
+              (getTestUser(mtdUserRole, ukPropertyOnlyResponse), hc).detail)
             }
           }
           testAuthFailures(ukPropertyPath, mtdUserRole, optBody = Some(Map.empty))
@@ -383,7 +370,8 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
                 httpStatus(SEE_OTHER),
                 redirectURI(redirectUrl),
               )
-              AuditStub.verifyAuditContainsDetail(CeaseIncomeSourceAuditModel(ForeignProperty, testEndDate2022, mkIncomeSourceId(testPropertyIncomeId), None)(testUser(mtdUserRole, foreignPropertyOnlyResponse), hc).detail)
+              AuditStub.verifyAuditContainsDetail(CeaseIncomeSourceAuditModel(ForeignProperty, testEndDate2022, mkIncomeSourceId(testPropertyIncomeId), None)
+              (getTestUser(mtdUserRole, foreignPropertyOnlyResponse), hc).detail)
             }
           }
           testAuthFailures(foreignPropertyPath, mtdUserRole, optBody = Some(Map.empty))

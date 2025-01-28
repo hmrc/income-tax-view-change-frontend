@@ -18,7 +18,7 @@ package controllers.agent
 
 import config.featureswitch.FeatureSwitching
 import helpers.ComponentSpecBase
-import helpers.servicemocks.{AgentAuthStub, AuthStub}
+import helpers.servicemocks.MTDAgentAuthStub
 import play.api.http.Status._
 import play.api.libs.ws.WSResponse
 
@@ -29,7 +29,7 @@ class ClientDetailsFailureControllerISpec extends ComponentSpecBase with Feature
   s"GET ${controllers.agent.routes.ClientRelationshipFailureController.show.url}" should {
     s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" when {
       "the user is not authenticated" in {
-        AuthStub.stubUnauthorised()
+        MTDAgentAuthStub.stubUnauthorised()
 
         val result: WSResponse = buildGETMTDClient(path, Map.empty).futureValue
 
@@ -41,7 +41,7 @@ class ClientDetailsFailureControllerISpec extends ComponentSpecBase with Feature
     }
     s"redirect to agent error page" when {
       "the user is authenticated but doesn't have the agent enrolment" in {
-        AgentAuthStub.stubNoAgentEnrolment()
+        MTDAgentAuthStub.stubNoAgentEnrolmentError()
 
         val result: WSResponse = buildGETMTDClient(path, Map.empty).futureValue
 
@@ -53,7 +53,7 @@ class ClientDetailsFailureControllerISpec extends ComponentSpecBase with Feature
       }
     }
     s"return $OK with the enter client utr page" in {
-      AuthStub.stubAuthorisedAgent()
+      MTDAgentAuthStub.stubAuthorisedWithAgentEnrolment()
 
       val result: WSResponse = buildGETMTDClient(path, Map.empty).futureValue
 

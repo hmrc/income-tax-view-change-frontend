@@ -16,45 +16,50 @@
 
 package authV2
 
-import auth.authV2.AuthorisedUser
-import auth.authV2.actions.ClientDataRequest
-import auth.{MtdItUser, MtdItUserOptionNino}
+import auth.MtdItUser
+import auth.authV2.models.{AgentClientDetails, AuthUserDetails, AuthorisedAgentWithClientDetailsRequest, AuthorisedAndEnrolledRequest, AuthorisedUserRequest}
+import controllers.agent.AuthUtils.{agentIdentifier, mtdEnrolmentName, primaryAgentAuthRule, secondaryAgentAuthRule, secondaryAgentEnrolmentName}
 import controllers.agent.sessionUtils.SessionKeys
+import controllers.agent.sessionUtils.SessionKeys.clientNino
+import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
+import forms.IncomeSourcesFormsSpec.fakeRequestWithClientDetails
 import models.admin.FeatureSwitch
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
 import models.sessionData.SessionCookieData
 import models.sessionData.SessionDataGetResponse.{SessionDataGetSuccess, SessionDataNotFound}
 import play.api.mvc.Request
+import play.api.test.FakeRequest
 import play.twirl.api.Html
+import testConstants.BaseTestConstants._
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name}
+import uk.gov.hmrc.auth.core.authorise.Predicate
+import uk.gov.hmrc.auth.core.retrieve.Credentials
 
 object AuthActionsTestData {
 
-  val nino              = "AA111111A"
-  val saUtr             = "1234567890"
-  val mtdId             = "XAIT0000123456"
-  val arn               = "1"
-  val firstName = "Issac"
-  val lastName = "Newton"
-  val userName = Name(Some("Issac"), Some("Newton"))
-  val clientName = Name(Some("Test"), Some("Client"))
-
-  val mtdEnrolment              = Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", mtdId)), "Activated", None)
-  val agentEnrolment            = Enrolment("HMRC-AS-AGENT", Seq(EnrolmentIdentifier("AgentReferenceNumber", "1")), "Activated", None)
-  val ninoEnrolment             = Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", nino)), "Activated", None)
-  val saEnrolment               = Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", saUtr)), "Activated", None)
-  val credentials               = Credentials("testCredId", "bar")
-  val defaultIncomeSourcesData  = IncomeSourceDetailsModel(nino, saUtr, Some("2012"), Nil, Nil)
+  val mtdEnrolment              = Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "Activated", None)
+  val agentEnrolment            = Enrolment("HMRC-AS-AGENT", Seq(EnrolmentIdentifier("AgentReferenceNumber", testArn)), "Activated", None)
+  val ninoEnrolment             = Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", testNino)), "Activated", None)
+  val saEnrolment               = Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", testSaUtr)), "Activated", None)
+  val testCredentials               = Credentials(testCredId, "bar")
+  val defaultIncomeSourcesData  = IncomeSourceDetailsModel(testNino, testSaUtr, Some("2012"), Nil, Nil)
   val invalidIncomeSourceData  = IncomeSourceDetailsError(500, "mongo error")
 
   val acceptedConfidenceLevel: ConfidenceLevel = ConfidenceLevel.L250
   val notAcceptedConfidenceLevel: ConfidenceLevel = ConfidenceLevel.L50
 
-  def mtdIdAgentPredicate(mtdId: String): Enrolment = Enrolment("HMRC-MTD-IT").withIdentifier("MTDITID", mtdId).withDelegatedAuthRule("mtd-it-auth")
-  def mtdIdSupportingAgentPredicate(mtdId: String) = Enrolment("HMRC-MTD-IT-SUPP").withIdentifier("MTDITID", mtdId).withDelegatedAuthRule("mtd-it-auth-supp")
-  def mtdIdIndividualPredicate(mtdId: String) = Enrolment("HMRC-MTD-IT").withIdentifier("MTDITID", mtdId)
+  def primaryAgentPredicate(mtdItId: String = testMtditid): Predicate = Enrolment(mtdEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
+    .withDelegatedAuthRule(primaryAgentAuthRule)
+  def secondaryAgentPredicate(mtdItId: String = testMtditid): Predicate = Enrolment(secondaryAgentEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
+    .withDelegatedAuthRule(secondaryAgentAuthRule)
 
+  def delegatedEnrolmentPredicate(mtdItId: String,
+                                  isSupportingAgent: Boolean): Predicate = if(isSupportingAgent) {
+    secondaryAgentPredicate(mtdItId)
+  } else {
+    primaryAgentPredicate(mtdItId)
+  }
 
   def getAllEnrolmentsIndividual(hasNino: Boolean, hasSA: Boolean) = {
     var enrolmentList = List(mtdEnrolment)
@@ -65,92 +70,133 @@ object AuthActionsTestData {
     )
   }
 
-  def getAllEnrolmentsAgent(
-                             hasNino: Boolean,
-                             hasSA: Boolean,
-                             hasDelegatedEnrolment: Boolean = false,
-                             delegatedPredicate: => Enrolment = mtdIdAgentPredicate(mtdId)): Enrolments = {
-    var enrolmentList = if(!hasDelegatedEnrolment) List(agentEnrolment) else List(agentEnrolment, delegatedPredicate)
-    if(hasNino) enrolmentList :+= ninoEnrolment
-    if(hasSA) enrolmentList :+= saEnrolment
+  def getAllEnrolmentsAgent(hasNino: Boolean,
+                             hasSA: Boolean): Enrolments = {
+    val optNinoEnrolment = if(hasNino) Some(ninoEnrolment) else None
+    val optSaEnrolment = if(hasSA) Some(saEnrolment) else None
     Enrolments(
-      enrolmentList.toSet,
+      List(Some(agentEnrolment), optNinoEnrolment, optSaEnrolment).flatten.toSet,
     )
   }
 
-  def getMtdItUserOptionNinoForAuthorise(affinityGroup: Option[AffinityGroup],
-                                         hasNino: Boolean = false,
-                                         hasSA: Boolean = false,
-                                         hasUserName: Boolean = false,
-                                         clientConfirmed: Boolean = false,
-                                         isSupportingAgent: Boolean = false)
-                                        (implicit request: Request[_]): MtdItUserOptionNino[_] = MtdItUserOptionNino(
-    mtdId,
-    if(hasNino) Some(nino) else None,
-    if(hasUserName) Some(userName) else None,
-    None,
-    if(hasSA) Some(saUtr) else None,
-    Some(credentials.providerId),
+  def getAuthUserDetails(affinityGroup: Option[AffinityGroup],
+                         enrolments: Enrolments,
+                         hasUserName: Boolean,
+                         hasCredentials: Boolean = true): AuthUserDetails = AuthUserDetails(
+   enrolments,
     affinityGroup,
-    Some(arn),
-    None,
-    isSupportingAgent,
-    clientConfirmed = clientConfirmed
+    if(hasCredentials) Some(testCredentials) else None,
+    if(hasUserName) Some(testRetrievedUserName) else None
   )
 
-  def getMtdItUserOptionNinoForAuthoriseMtdAgent(affinityGroup: Option[AffinityGroup],
-                                                 cdr: ClientDataRequest[_],
-                                                 isSupportingAgent: Boolean = false)
-                                                (implicit request: Request[_]): MtdItUserOptionNino[_] = MtdItUserOptionNino(
-    mtdId,
-    Some(nino),
-    Some(userName),
-    None,
-    Some(saUtr),
-    Some(credentials.providerId),
-    affinityGroup,
-    Some(arn),
-    Some(clientName),
-    isSupportingAgent
+  def getAgentClientDetails(isConfirmed: Boolean, hasName: Boolean = true): AgentClientDetails = AgentClientDetails(
+    testMtditid,
+    if(hasName) Some(testFirstName) else None,
+    if(hasName) Some(testSecondName) else None,
+    testNino,
+    testSaUtr,
+    isConfirmed
   )
+
+  lazy val defaultAuthUserDetails: MTDUserRole => AuthUserDetails = mtdUserRole => {
+    val (affinityGroup, enrolments) = mtdUserRole match {
+      case MTDIndividual => (Individual, getAllEnrolmentsIndividual(true, true))
+      case _ => (Agent, getAllEnrolmentsAgent(true, true))
+    }
+    getAuthUserDetails(Some(affinityGroup), enrolments, true)
+  }
+
+  lazy val defaultAuthorisedRequest: (MTDUserRole, Request[_]) => AuthorisedUserRequest[_] = {
+    (mtdUserRole, request) =>
+      AuthorisedUserRequest(defaultAuthUserDetails(mtdUserRole))(request)
+  }
+
+  lazy val defaultAuthorisedAndEnrolledRequest: (MTDUserRole, Request[_]) => AuthorisedAndEnrolledRequest[_] = {
+    (mtdUserRole, request) =>
+      val optClientDetails = if(mtdUserRole == MTDIndividual) None else Some(getAgentClientDetails(true))
+      AuthorisedAndEnrolledRequest(testMtditid, mtdUserRole, defaultAuthUserDetails(mtdUserRole), optClientDetails)(request)
+  }
+
+  lazy val defaultAuthorisedWithClientDetailsRequest: AuthorisedAgentWithClientDetailsRequest[_] = {
+      AuthorisedAgentWithClientDetailsRequest(defaultAuthUserDetails(MTDPrimaryAgent), getAgentClientDetails(true))(fakeRequestWithClientDetails)
+  }
 
   def getMtdItUser(affinityGroup: AffinityGroup,
                    featureSwitches: List[FeatureSwitch] = List.empty,
+                   btaNavBar: Option[Html] = None,
                    isSupportingAgent: Boolean = false,
-                   btaNavBar: Option[Html] = None)
-                  (implicit request: Request[_]) = MtdItUser(
-    mtdId,
-    nino,
-    Some(userName),
-    defaultIncomeSourcesData,
-    btaNavBar,
-    Some(saUtr),
-    Some(credentials.providerId),
-    Some(affinityGroup),
-    None,
-    featureSwitches = featureSwitches,
-    isSupportingAgent = isSupportingAgent
-  )(request)
+                   incomeSources: IncomeSourceDetailsModel = defaultIncomeSourcesData)
+                  (implicit request: Request[_]) = {
+    val (mtdUserRole, enrolments, optClientDetails) = affinityGroup match {
+      case Agent =>
+        (if(isSupportingAgent) MTDSupportingAgent else MTDPrimaryAgent, getAllEnrolmentsAgent(true, true), Some(getAgentClientDetails(true)))
+      case _ => (MTDIndividual, getAllEnrolmentsIndividual(true, true), None)
+    }
+    MtdItUser(
+      testMtditid,
+      testNino,
+      mtdUserRole,
+      getAuthUserDetails(Some(affinityGroup), enrolments, true),
+      optClientDetails,
+      incomeSources,
+      btaNavBar,
+      featureSwitches = featureSwitches
+    )(request)
+  }
 
-  def getAuthorisedData(enrolments: Enrolments)(implicit request: Request[_]) = AuthorisedUser(
-    enrolments,
-    Some(AffinityGroup.Agent),
-    acceptedConfidenceLevel,
-    Some(credentials),
-    None
+  def defaultMTDITUser(af: Option[AffinityGroup],
+                       incomeSources: IncomeSourceDetailsModel,
+                       request: Request[_] = FakeRequest(),
+                       isSupportingAgent: Boolean = false): MtdItUser[_] = {
+    getMtdItUser(af.getOrElse(Individual), isSupportingAgent = isSupportingAgent, incomeSources = incomeSources)(request)
+  }
+
+  def getMinimalMTDITUser(af: Option[AffinityGroup],
+                          incomeSources: IncomeSourceDetailsModel,
+                          isSupportingAgent: Boolean = false,
+                          request: Request[_] = FakeRequest()): MtdItUser[_] = {
+    val (mtdUserRole, enrolments, optClientDetails) = af match {
+      case Some(Agent) =>
+        (if(isSupportingAgent) MTDSupportingAgent else MTDPrimaryAgent, getAllEnrolmentsAgent(false, false), Some(getAgentClientDetails(true, false)))
+      case _ => (MTDIndividual, getAllEnrolmentsIndividual(false, false), None)
+    }
+    MtdItUser(
+      testMtditid,
+      testNino,
+      mtdUserRole,
+      getAuthUserDetails(af, enrolments, true, false),
+      optClientDetails,
+      incomeSources
+    )(request)
+  }
+
+  def getAuthorisedData(enrolments: Enrolments)(implicit request: Request[_]) = AuthorisedUserRequest(
+    AuthUserDetails(
+      enrolments,
+      Some(AffinityGroup.Agent),
+      Some(testCredentials),
+      None
+    )
   )(request)
 
   def getSessionCookieData(isSupportingAgent: Boolean, confirmed: Boolean) = {
     val cookieData = SessionCookieData(
-      mtdId, nino, saUtr, Some(firstName), Some(lastName), isSupportingAgent
+      testMtditid, testNino, testSaUtr, Some(testFirstName), Some(testSecondName), isSupportingAgent
     ).toSessionCookieSeq
     if(confirmed) cookieData ++ Seq(SessionKeys.confirmedClient -> "true") else cookieData
   }
 
   val sessionGetSuccessResponse = SessionDataGetSuccess(
-    mtdId, nino, saUtr, "sessionId"
+    testMtditid, testNino, testSaUtr, "sessionId"
   )
   val sessionGetNotFoundResponse = SessionDataNotFound("Not found")
 
+  def getMTDRole(affinityGroup: Option[AffinityGroup], isSupportingAgent: Boolean): MTDUserRole = {
+    affinityGroup match {
+      case Some(Agent) if isSupportingAgent => MTDSupportingAgent
+      case Some(Agent) => MTDPrimaryAgent
+      case _ => MTDIndividual
+    }
+  }
 
 }

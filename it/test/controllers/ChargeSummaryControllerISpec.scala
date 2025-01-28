@@ -27,27 +27,17 @@ import models.admin.ChargeHistory
 import models.financialDetails._
 import play.api.http.Status._
 import play.api.libs.json.Json
-import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testTaxYear}
 import testConstants.FinancialDetailsIntegrationTestConstants.financialDetailModelPartial
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.messages.ChargeSummaryMessages._
-import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 import java.time.LocalDate
 
 class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
 
   def testUser(mtdUserRole: MTDUserRole): MtdItUser[_] = {
-    val (affinityGroup, arn) = if(mtdUserRole == MTDIndividual) {
-      (Individual, None)
-    } else {
-      (Agent, Some("1"))
-    }
-    MtdItUser(
-      testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
-      None, Some("1234567890"), Some("12345-credId"), Some(affinityGroup), arn
-    )(FakeRequest())
+    getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)
   }
 
   def getPath(mtdRole: MTDUserRole, taxYear: String = "2018"): String = {

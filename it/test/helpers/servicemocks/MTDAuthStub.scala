@@ -16,35 +16,35 @@
 
 package helpers.servicemocks
 
+import helpers.ComponentSpecBase
 import play.api.libs.json.{JsString, JsValue, Json}
 import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
 
-trait MTDAuthStub {
+trait MTDAuthStub extends ComponentSpecBase {
 
   lazy val postAuthoriseUrl = "/auth/authorise"
-
-  def stubAuthorisedAndMTDEnrolled(confidenceLevel: Option[Int] = None): Unit
+  lazy val requiredConfidenceLevel = 250
 
   def stubUnauthorised(): Unit
-
   def stubBearerTokenExpired(): Unit
-
   def stubAuthorisedWhenNoChecks(): Unit
+//  def stubUnauthorisedWhenNoChecks(): Unit
+//  def stubBearerTokenExpiredWhenNoChecks(): Unit
+
+  lazy val retrivalsJson = Json.arr(
+    JsString("allEnrolments"),
+    JsString("optionalName"),
+    JsString("optionalCredentials"),
+    JsString("affinityGroup"),
+    JsString("confidenceLevel")
+  )
 
   lazy val emptyPredicateRequest: JsValue = {
-    val predicateJson = {
-      EmptyPredicate.toJson
-    }
-
     Json.obj(
-      "authorise" -> predicateJson,
-      "retrieve" -> Json.arr(
-        JsString("allEnrolments"),
-        JsString("optionalName"),
-        JsString("optionalCredentials"),
-        JsString("affinityGroup"),
-        JsString("confidenceLevel")
-      )
+      "authorise" -> EmptyPredicate.toJson,
+      "retrieve" -> retrivalsJson
     )
   }
+
+  lazy val emptyRetrievalsJson = Json.arr()
 }

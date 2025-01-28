@@ -19,7 +19,8 @@ package controllers.agent
 import audit.AuditingService
 import audit.models.EnterClientUTRAuditModel
 import auth.FrontendAuthorisedFunctions
-import auth.authV2.{AuthActions, AuthorisedUser}
+import auth.authV2.AuthActions
+import auth.authV2.models.AuthorisedUserRequest
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.AuthUtils._
@@ -33,8 +34,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import services.agent.ClientDetailsService
 import services.agent.ClientDetailsService.{BusinessDetailsNotFound, CitizenDetailsNotFound}
 import uk.gov.hmrc.auth.core.Enrolment
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
-import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.auth.core.retrieve.EmptyRetrieval
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.agent.EnterClientsUTR
 
@@ -109,24 +109,24 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
   private def checkAgentAuthorisedAndGetRole(mtdItId: String)(implicit request: Request[_]): Future[MTDUserRole] = {
     authorisedFunctions
       .authorised(Enrolment(mtdEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
-        .withDelegatedAuthRule(primaryAgentAuthRule)).retrieve(allEnrolments and name and credentials and affinityGroup and confidenceLevel) {
-        case _ ~ _ ~ _ ~ _ ~ _ => Future.successful(MTDPrimaryAgent)
+        .withDelegatedAuthRule(primaryAgentAuthRule)) {
+        Future.successful(MTDPrimaryAgent)
       }.recoverWith { case e =>
         authorisedFunctions
           .authorised(Enrolment(secondaryAgentEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
-            .withDelegatedAuthRule(secondaryAgentAuthRule)).retrieve(allEnrolments and name and credentials and affinityGroup and confidenceLevel) { case _ ~ _ ~ _ ~ _ ~ _ => Future.successful(MTDSupportingAgent)
+            .withDelegatedAuthRule(secondaryAgentAuthRule)){Future.successful(MTDSupportingAgent)
           }
       }
   }
 
-  private def sendAudit[A](isSuccessful: Boolean, user: AuthorisedUser[A], validUTR: String, nino: String, mtdItId: String)(implicit request: Request[_]): Unit = {
+  private def sendAudit[A](isSuccessful: Boolean, user: AuthorisedUserRequest[A], validUTR: String, nino: String, mtdItId: String)(implicit request: Request[_]): Unit = {
     auditingService.extendedAudit(EnterClientUTRAuditModel(
       isSuccessful = isSuccessful,
       nino = nino,
       mtditid = mtdItId,
-      arn = user.agentReferenceNumber,
+      arn = user.authUserDetails.agentReferenceNumber,
       saUtr = validUTR,
-      credId = user.credId
+      credId = user.authUserDetails.credId
     )
     )
   }

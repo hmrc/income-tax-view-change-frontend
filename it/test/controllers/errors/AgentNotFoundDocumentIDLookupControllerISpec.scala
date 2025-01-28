@@ -17,7 +17,7 @@
 package controllers.errors
 
 import controllers.ControllerISpecHelper
-import helpers.servicemocks.MTDSupportingAgentAuthStub
+import helpers.servicemocks.MTDAgentAuthStub
 import play.api.http.Status._
 
 class AgentNotFoundDocumentIDLookupControllerISpec extends ControllerISpecHelper {
@@ -28,7 +28,7 @@ class AgentNotFoundDocumentIDLookupControllerISpec extends ControllerISpecHelper
 
     "user is authorised" should {
       "respond with the correct page" in {
-        MTDSupportingAgentAuthStub.stubNoAgentEnrolmentRequiredSuccess()
+        MTDAgentAuthStub.stubNoAgentEnrolmentRequiredSuccess()
 
         val res = buildGETMTDClient(agentErrorUri).futureValue
 

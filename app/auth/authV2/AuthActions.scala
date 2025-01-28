@@ -18,7 +18,7 @@ package auth.authV2
 
 import auth.MtdItUser
 import auth.authV2.actions._
-import enums.MTDUserRole
+import auth.authV2.models.AuthorisedUserRequest
 import play.api.mvc._
 
 import javax.inject.{Inject, Singleton}
@@ -29,7 +29,6 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
                             val authoriseAndRetrieveIndividual: AuthoriseAndRetrieveIndividual,
                             val authoriseAndRetrieveAgent: AuthoriseAndRetrieveAgent,
                             val authoriseAndRetrieveMtdAgent: AuthoriseAndRetrieveMtdAgent,
-                            val agentHasClientDetails: AgentHasClientDetails,
                             val agentHasConfirmedClientAction: AgentHasConfirmedClientAction,
                             val agentIsPrimaryAction: AgentIsPrimaryAction,
                             val retrieveNavBar: NavBarRetrievalAction,
@@ -45,13 +44,13 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
       retrieveNavBar
   }
 
-  def asAgent(arnRequired: Boolean = true): ActionBuilder[AuthorisedUser, AnyContent] = checkSessionTimeout andThen authoriseAndRetrieveAgent.authorise(arnRequired)
+  def asAgent(arnRequired: Boolean = true): ActionBuilder[AuthorisedUserRequest, AnyContent] = checkSessionTimeout andThen authoriseAndRetrieveAgent.authorise(arnRequired)
 
   def asMTDAgentWithConfirmedClient: ActionBuilder[MtdItUser, AnyContent] = {
     checkSessionTimeout andThen
+      authoriseAndRetrieveAgent.authorise() andThen
       retrieveClientData.authorise() andThen
       authoriseAndRetrieveMtdAgent andThen
-      agentHasClientDetails andThen
       agentHasConfirmedClientAction andThen
       retrieveNinoWithIncomeSources andThen
       retrieveFeatureSwitches
@@ -59,6 +58,7 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
 
   def asMTDAgentWithUnconfirmedClient: ActionBuilder[MtdItUser, AnyContent] = {
     checkSessionTimeout andThen
+      authoriseAndRetrieveAgent.authorise() andThen
       retrieveClientData.authorise(useCookies = true) andThen
       authoriseAndRetrieveMtdAgent andThen
       retrieveNinoWithIncomeSources andThen
@@ -67,9 +67,9 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
 
   def asMTDPrimaryAgent: ActionBuilder[MtdItUser, AnyContent] = {
     checkSessionTimeout andThen
+      authoriseAndRetrieveAgent.authorise() andThen
       retrieveClientData.authorise() andThen
       authoriseAndRetrieveMtdAgent andThen
-      agentHasConfirmedClientAction andThen
       agentIsPrimaryAction andThen
       retrieveNinoWithIncomeSources andThen
       retrieveFeatureSwitches
@@ -91,7 +91,7 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
     }
   }
 
-  def asAuthorisedUser: ActionBuilder[AuthorisedUser, AnyContent] = {
+  def asAuthorisedUser: ActionBuilder[AuthorisedUserRequest, AnyContent] = {
     checkSessionTimeout andThen authoriseAndRetrieve
   }
 }

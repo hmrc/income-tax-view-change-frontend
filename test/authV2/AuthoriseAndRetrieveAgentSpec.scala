@@ -18,8 +18,8 @@ package authV2
 
 import audit.AuditingService
 import auth.FrontendAuthorisedFunctions
-import auth.authV2.AuthorisedUser
 import auth.authV2.actions._
+import auth.authV2.models.AuthorisedUserRequest
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.Assertion
@@ -48,13 +48,13 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
   }
 
   def defaultAsyncBody(
-                        requestTestCase: AuthorisedUser[_] => Assertion
-                      ): AuthorisedUser[_] => Future[Result] = testRequest => {
+                        requestTestCase: AuthorisedUserRequest[_] => Assertion
+                      ): AuthorisedUserRequest[_] => Future[Result] = testRequest => {
     requestTestCase(testRequest)
     Future.successful(Results.Ok("Successful"))
   }
 
-  def defaultAsync: AuthorisedUser[_] => Future[Result] = (_) => Future.successful(Results.Ok("Successful"))
+  def defaultAsync: AuthorisedUserRequest[_] => Future[Result] = (_) => Future.successful(Results.Ok("Successful"))
 
   lazy val authAction = app.injector.instanceOf[AuthoriseAndRetrieveAgent]
 
@@ -68,7 +68,7 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
 
             when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
               Future.successful[AuthRetrievals](
-                allEnrolments ~ None ~ Some(credentials) ~ Some(Agent) ~ acceptedConfidenceLevel
+                allEnrolments ~ None ~ Some(testCredentials) ~ Some(Agent) ~ acceptedConfidenceLevel
               )
             )
 
@@ -86,7 +86,7 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
 
             when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
               Future.successful[AuthRetrievals](
-                allEnrolments ~ None ~ Some(credentials) ~ Some(Agent) ~ acceptedConfidenceLevel
+                allEnrolments ~ None ~ Some(testCredentials) ~ Some(Agent) ~ acceptedConfidenceLevel
               )
             )
 
@@ -121,7 +121,7 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
           s"the user is an ${affinityGroup.toString}" in {
             when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
               Future.successful[AuthRetrievals](
-                getAllEnrolmentsAgent(false, false) ~ None ~ Some(credentials) ~ Some(affinityGroup) ~ notAcceptedConfidenceLevel
+                getAllEnrolmentsAgent(false, false) ~ None ~ Some(testCredentials) ~ Some(affinityGroup) ~ notAcceptedConfidenceLevel
               )
             )
 
@@ -177,7 +177,7 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
 
             when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
               Future.successful[AuthRetrievals](
-                allEnrolments ~ None ~ Some(credentials) ~ Some(Agent) ~ acceptedConfidenceLevel
+                allEnrolments ~ None ~ Some(testCredentials) ~ Some(Agent) ~ acceptedConfidenceLevel
               )
             )
 
@@ -195,7 +195,7 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
 
             when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
               Future.successful[AuthRetrievals](
-                allEnrolments ~ None ~ Some(credentials) ~ Some(Agent) ~ acceptedConfidenceLevel
+                allEnrolments ~ None ~ Some(testCredentials) ~ Some(Agent) ~ acceptedConfidenceLevel
               )
             )
 
@@ -211,7 +211,7 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
 
           when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
             Future.successful[AuthRetrievals](
-              Enrolments(Set.empty) ~ None ~ Some(credentials) ~ Some(Agent) ~ acceptedConfidenceLevel
+              Enrolments(Set.empty) ~ None ~ Some(testCredentials) ~ Some(Agent) ~ acceptedConfidenceLevel
             )
           )
 
@@ -229,7 +229,7 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
           s"the user is an ${affinityGroup.toString}" in {
             when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
               Future.successful[AuthRetrievals](
-                getAllEnrolmentsAgent(false, false) ~ None ~ Some(credentials) ~ Some(affinityGroup) ~ notAcceptedConfidenceLevel
+                getAllEnrolmentsAgent(false, false) ~ None ~ Some(testCredentials) ~ Some(affinityGroup) ~ notAcceptedConfidenceLevel
               )
             )
 

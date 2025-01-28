@@ -17,6 +17,7 @@
 package testUtils
 
 import auth.MtdItUser
+import authV2.AuthActionsTestData._
 import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.agent.sessionUtils
@@ -33,15 +34,18 @@ import org.scalatest._
 import org.scalatestplus.play.guice._
 import play.api.http.HeaderNames
 import play.api.i18n.{Messages, MessagesApi}
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.Helpers._
 import play.api.test.{FakeRequest, Injecting}
-import play.api.{Configuration, Environment, Play}
+import play.api.{Configuration, Environment}
+import play.twirl.api.Html
 import services.DateService
 import testConstants.BaseTestConstants._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
-import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
-import uk.gov.hmrc.auth.core.retrieve.Name
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
+import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, Enrolments}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId, SessionKeys}
 import uk.gov.hmrc.play.language.LanguageUtils
 import uk.gov.hmrc.play.partials.HeaderCarrierForPartials
@@ -49,7 +53,6 @@ import uk.gov.hmrc.play.partials.HeaderCarrierForPartials
 import java.time.LocalDate
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
-import play.twirl.api.Html
 
 trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterAll with BeforeAndAfterEach with Injecting with FeatureSwitching {
 
@@ -100,73 +103,51 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
     override def getAccountingPeriodEndDate(startDate: LocalDate): LocalDate = LocalDate.of(2024, 4, 5)
   }
 
-  lazy val tsTestUser: MtdItUser[AnyContentAsEmpty.type] =
-    MtdItUser(
-      mtditid = testMtditid, nino = testNino, userName = None, incomeSources = IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty), btaNavPartial = None,
-      saUtr = Some("1234567890"), credId = Some("12345-credId"), userType = Some(Individual), arn = None
-    )(FakeRequest())
+  lazy val tsTestUser: MtdItUser[_] =
+    defaultMTDITUser(Some(testUserTypeIndividual), IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty))
 
-  lazy val tsTestUserAgent: MtdItUser[_] = MtdItUser(
-    testMtditid, testNino, None, IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty), None,
-    Some("1234567890"), Some("12345-credId"), Some(Agent), None
-  )(FakeRequest())
+  lazy val tsTestUserAgent: MtdItUser[_] =
+    defaultMTDITUser(Some(testUserTypeAgent), IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty))
 
   implicit val individualUser: MtdItUser[_] = getIndividualUser(FakeRequest())
 
-  def getIndividualUser(request: FakeRequest[AnyContentAsEmpty.type]): MtdItUser[_] = MtdItUser(
-    mtditid = testMtditid,
-    nino = testNino,
-    userName = Some(testRetrievedUserName),
-    incomeSources = businessAndPropertyAligned,
-    btaNavPartial = None,
-    saUtr = Some(testSaUtr),
-    credId = Some(testCredId),
-    userType = Some(testUserTypeIndividual),
-    arn = None
-  )(request)
+  lazy val commonAuditDetails: AffinityGroup => JsObject = af => {
+    val commonDetails = Json.obj(
+      "mtditid" -> testMtditid,
+      "nino" -> testNino,
+      "saUtr" -> testSaUtr,
+      "credId" -> testCredId,
+      "userType" -> af.toString
+    )
+    if(af == Agent) commonDetails ++ Json.obj("agentReferenceNumber" -> testArn)
+     else commonDetails
+  }
 
-  def getAgentUser(request: FakeRequest[AnyContentAsEmpty.type]): MtdItUser[_] = MtdItUser(
-    mtditid = testMtditid,
-    nino = testNino,
-    userName = Some(testRetrievedUserName),
-    incomeSources = businessAndPropertyAligned,
-    btaNavPartial = None,
-    saUtr = Some(testSaUtr),
-    credId = Some(testCredId),
-    userType = Some(testUserTypeAgent),
-    arn = Some(testArn)
-  )(request)
+  def getIndividualUser(request: FakeRequest[AnyContentAsEmpty.type]): MtdItUser[_] = {
+    defaultMTDITUser(Some(testUserTypeIndividual), businessAndPropertyAligned, request)
+  }
+
+  def getAgentUser(request: FakeRequest[AnyContentAsEmpty.type]): MtdItUser[_] =
+    defaultMTDITUser(Some(testUserTypeAgent), businessAndPropertyAligned, request)
 
   def getIndividualUserIncomeSourcesConfigurable(request: FakeRequest[AnyContentAsEmpty.type], incomeSources: IncomeSourceDetailsModel)
-  : MtdItUser[_] = MtdItUser(
-    mtditid = testMtditid,
-    nino = testNino,
-    userName = Some(testRetrievedUserName),
-    incomeSources = incomeSources,
-    btaNavPartial = None,
-    saUtr = Some(testSaUtr),
-    credId = Some(testCredId),
-    userType = Some(testUserTypeIndividual),
-    arn = None
-  )(request)
+  : MtdItUser[_] =     defaultMTDITUser(Some(testUserTypeIndividual), incomeSources, request)
 
-  def getIndividualUserWithTwoActiveForeignProperties(request: FakeRequest[AnyContentAsEmpty.type]): MtdItUser[_] = MtdItUser(
-    mtditid = testMtditid,
-    nino = testNino,
-    userName = Some(testRetrievedUserName),
-    incomeSources = twoActiveForeignPropertyIncomes,
-    btaNavPartial = None,
-    saUtr = Some(testSaUtr),
-    credId = Some(testCredId),
-    userType = Some(testUserTypeIndividual),
-    arn = None
-  )(request)
+  def getIndividualUserWithTwoActiveForeignProperties(request: FakeRequest[AnyContentAsEmpty.type]): MtdItUser[_] =
+    defaultMTDITUser(Some(testUserTypeIndividual), twoActiveForeignPropertyIncomes, request)
 
   implicit val serviceInfo: Html = Html("")
 
   implicit class JsoupParse(x: Future[Result]) {
     def toHtmlDocument: Document = Jsoup.parse(contentAsString(x))
   }
+
+  implicit class Ops[A](a: A) {
+    def ~[B](b: B): A ~ B = new ~(a, b)
+  }
+
+  type AuthRetrievals =
+    Enrolments ~ Option[Name] ~ Option[Credentials] ~ Option[AffinityGroup]  ~ ConfidenceLevel
 
   def fakeGetRequestBasedOnMTDUserType(mtdUserRole: MTDUserRole): FakeRequest[AnyContentAsEmpty.type] = {
     mtdUserRole match {
@@ -241,17 +222,17 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
     sessionUtils.SessionKeys.clientFirstName -> "Test",
     sessionUtils.SessionKeys.clientLastName -> "User",
     sessionUtils.SessionKeys.clientUTR -> "1234567890",
-    sessionUtils.SessionKeys.clientMTDID -> "XAIT00000000015",
+    sessionUtils.SessionKeys.clientMTDID -> testMtditid,
     sessionUtils.SessionKeys.clientNino -> testNino,
     sessionUtils.SessionKeys.isSupportingAgent -> "false"
   )
 
-  def fakeRequestUnconfirmedClient(clientNino: String = "AA111111A", isSupportingAgent: Boolean = false): FakeRequest[AnyContentAsEmpty.type] =
+  def fakeRequestUnconfirmedClient(clientNino: String = testNino, isSupportingAgent: Boolean = false): FakeRequest[AnyContentAsEmpty.type] =
     fakeRequestWithActiveSession.withSession(
       sessionUtils.SessionKeys.clientFirstName -> "Test",
       sessionUtils.SessionKeys.clientLastName -> "User",
       sessionUtils.SessionKeys.clientUTR -> "1234567890",
-      sessionUtils.SessionKeys.clientMTDID -> "XAIT00000000015",
+      sessionUtils.SessionKeys.clientMTDID -> testMtditid,
       sessionUtils.SessionKeys.clientNino -> clientNino,
       sessionUtils.SessionKeys.isSupportingAgent -> isSupportingAgent.toString
     )
@@ -261,21 +242,10 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
       sessionUtils.SessionKeys.clientFirstName -> "Test",
       sessionUtils.SessionKeys.clientLastName -> "User",
       sessionUtils.SessionKeys.clientUTR -> "1234567890",
-      sessionUtils.SessionKeys.clientMTDID -> "XAIT00000000015",
-      sessionUtils.SessionKeys.clientNino -> clientNino,
+      sessionUtils.SessionKeys.clientMTDID -> testMtditid,
+      sessionUtils.SessionKeys.clientNino -> testNino,
       sessionUtils.SessionKeys.confirmedClient -> "true",
       sessionUtils.SessionKeys.isSupportingAgent -> isSupportingAgent.toString
-    )
-
-  def fakeRequestConfirmedClientTimeout(clientNino: String = "AA111111A"): FakeRequest[AnyContentAsEmpty.type] =
-    fakeRequestWithTimeoutSession.withSession(
-      sessionUtils.SessionKeys.clientFirstName -> "Test",
-      sessionUtils.SessionKeys.clientLastName -> "User",
-      sessionUtils.SessionKeys.clientUTR -> "1234567890",
-      sessionUtils.SessionKeys.clientMTDID -> "XAIT00000000015",
-      sessionUtils.SessionKeys.clientNino -> clientNino,
-      sessionUtils.SessionKeys.confirmedClient -> "true",
-      sessionUtils.SessionKeys.isSupportingAgent -> "false"
     )
 
   def fakePostRequestConfirmedClient(clientNino: String = "AA111111A", isSupportingAgent: Boolean = false): FakeRequest[AnyContentAsEmpty.type] =
@@ -283,66 +253,14 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
       sessionUtils.SessionKeys.clientFirstName -> "Test",
       sessionUtils.SessionKeys.clientLastName -> "User",
       sessionUtils.SessionKeys.clientUTR -> "1234567890",
-      sessionUtils.SessionKeys.clientMTDID -> "XAIT00000000015",
-      sessionUtils.SessionKeys.clientNino -> clientNino,
+      sessionUtils.SessionKeys.clientMTDID -> testMtditid,
+      sessionUtils.SessionKeys.clientNino -> testNino,
       sessionUtils.SessionKeys.confirmedClient -> "true",
       sessionUtils.SessionKeys.isSupportingAgent -> isSupportingAgent.toString
     )
 
-  def fakeRequestConfirmedClientwithBusinessName(clientNino: String = "AA111111A"): FakeRequest[AnyContentAsEmpty.type] =
-    fakeRequestWithActiveSession.withMethod("POST").withSession(
-      sessionUtils.SessionKeys.clientFirstName -> "Test",
-      sessionUtils.SessionKeys.clientLastName -> "User",
-      sessionUtils.SessionKeys.clientUTR -> "1234567890",
-      sessionUtils.SessionKeys.clientMTDID -> "XAIT00000000015",
-      sessionUtils.SessionKeys.clientNino -> clientNino,
-      sessionUtils.SessionKeys.confirmedClient -> "true"
-    )
-
-  def fakeRequestConfirmedClientwithFullBusinessDetails(clientNino: String = "AA111111A"): FakeRequest[AnyContentAsEmpty.type] =
-    fakeRequestWithActiveSession.withSession(
-      sessionUtils.SessionKeys.clientFirstName -> "Test",
-      sessionUtils.SessionKeys.clientLastName -> "User",
-      sessionUtils.SessionKeys.clientUTR -> "1234567890",
-      sessionUtils.SessionKeys.clientMTDID -> testMtditid,
-      sessionUtils.SessionKeys.clientNino -> clientNino,
-      sessionUtils.SessionKeys.confirmedClient -> "true"
-    )
-
-  def fakeRequestConfirmedClientWithCalculationId(clientNino: String = "AA111111A"): FakeRequest[AnyContentAsEmpty.type] =
-    fakeRequestWithActiveSession.withSession(
-      sessionUtils.SessionKeys.clientFirstName -> "Test",
-      sessionUtils.SessionKeys.clientLastName -> "User",
-      sessionUtils.SessionKeys.clientUTR -> "1234567890",
-      sessionUtils.SessionKeys.clientMTDID -> testMtditid,
-      sessionUtils.SessionKeys.clientNino -> clientNino,
-      sessionUtils.SessionKeys.confirmedClient -> "true",
-      forms.utils.SessionKeys.calculationId -> "1234567890"
-    )
-
-  def fakeRequestConfirmedClientWithReferer(clientNino: String = "AA111111A", referer: String): FakeRequest[AnyContentAsEmpty.type] =
-    fakeRequestWithActiveSession.withSession(
-      sessionUtils.SessionKeys.clientFirstName -> "Test",
-      sessionUtils.SessionKeys.clientLastName -> "User",
-      sessionUtils.SessionKeys.clientUTR -> "1234567890",
-      sessionUtils.SessionKeys.clientMTDID -> "XAIT00000000015",
-      sessionUtils.SessionKeys.clientNino -> clientNino,
-      sessionUtils.SessionKeys.confirmedClient -> "true"
-    ).withHeaders(
-      HeaderNames.REFERER -> referer
-    )
-
-  def agentUserConfirmedClient(clientNino: String = "AA111111A"): MtdItUser[_] = MtdItUser(
-    mtditid = "XAIT00000000015",
-    nino = clientNino,
-    userName = Some(Name(Some("Test"), Some("User"))),
-    incomeSources = businessesAndPropertyIncome,
-    btaNavPartial = None,
-    saUtr = Some("1234567890"),
-    credId = Some(testCredId),
-    userType = Some(testUserTypeAgent),
-    arn = Some(testArn)
-  )(FakeRequest())
+  def agentUserConfirmedClient(): MtdItUser[_] = defaultMTDITUser(
+    Some(testUserTypeAgent), businessesAndPropertyIncome)
 
   lazy val fakeRequestWithNino: FakeRequest[AnyContentAsEmpty.type] = fakeRequestWithActiveSession.withSession("nino" -> testNino)
 

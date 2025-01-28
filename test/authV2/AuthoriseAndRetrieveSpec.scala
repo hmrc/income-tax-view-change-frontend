@@ -18,19 +18,19 @@ package authV2
 
 import audit.AuditingService
 import auth.FrontendAuthorisedFunctions
-import auth.authV2.AuthorisedUser
 import auth.authV2.actions._
+import auth.authV2.models.AuthorisedUserRequest
 import authV2.AuthActionsTestData._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.Assertion
 import play.api
+import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{Result, Results}
 import play.api.test.Helpers._
-import play.api.{Application, Play}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
-import uk.gov.hmrc.auth.core.{BearerTokenExpired, Enrolments, InsufficientEnrolments, MissingBearerToken}
+import uk.gov.hmrc.auth.core.{BearerTokenExpired, Enrolments, MissingBearerToken}
 
 import scala.concurrent.Future
 
@@ -48,13 +48,13 @@ class AuthoriseAndRetrieveSpec extends AuthActionsSpecHelper {
   }
 
   def defaultAsyncBody(
-                        requestTestCase: AuthorisedUser[_] => Assertion
-                      ): AuthorisedUser[_] => Future[Result] = testRequest => {
+                        requestTestCase: AuthorisedUserRequest[_] => Assertion
+                      ): AuthorisedUserRequest[_] => Future[Result] = testRequest => {
     requestTestCase(testRequest)
     Future.successful(Results.Ok("Successful"))
   }
 
-  def defaultAsync: AuthorisedUser[_] => Future[Result] = (_) => Future.successful(Results.Ok("Successful"))
+  def defaultAsync: AuthorisedUserRequest[_] => Future[Result] = (_) => Future.successful(Results.Ok("Successful"))
 
   lazy val authAction = app.injector.instanceOf[AuthoriseAndRetrieve]
 
@@ -67,7 +67,7 @@ class AuthoriseAndRetrieveSpec extends AuthActionsSpecHelper {
 
           when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
             Future.successful[AuthRetrievals](
-              allEnrolments ~ None ~ Some(credentials) ~ Some(Agent) ~ acceptedConfidenceLevel
+              allEnrolments ~ None ~ Some(testCredentials) ~ Some(Agent) ~ acceptedConfidenceLevel
             )
           )
 
@@ -85,7 +85,7 @@ class AuthoriseAndRetrieveSpec extends AuthActionsSpecHelper {
 
           when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
             Future.successful[AuthRetrievals](
-              allEnrolments ~ None ~ Some(credentials) ~ Some(Agent) ~ acceptedConfidenceLevel
+              allEnrolments ~ None ~ Some(testCredentials) ~ Some(Agent) ~ acceptedConfidenceLevel
             )
           )
 
@@ -101,7 +101,7 @@ class AuthoriseAndRetrieveSpec extends AuthActionsSpecHelper {
 
         when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
           Future.successful[AuthRetrievals](
-            Enrolments(Set.empty) ~ None ~ Some(credentials) ~ Some(Agent) ~ acceptedConfidenceLevel
+            Enrolments(Set.empty) ~ None ~ Some(testCredentials) ~ Some(Agent) ~ acceptedConfidenceLevel
           )
         )
 
@@ -117,7 +117,7 @@ class AuthoriseAndRetrieveSpec extends AuthActionsSpecHelper {
     s"the user is an Individual" in {
       when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
         Future.successful[AuthRetrievals](
-          Enrolments(Set.empty) ~ None ~ Some(credentials) ~ Some(Individual) ~ acceptedConfidenceLevel
+          Enrolments(Set.empty) ~ None ~ Some(testCredentials) ~ Some(Individual) ~ acceptedConfidenceLevel
         )
       )
 
@@ -132,7 +132,7 @@ class AuthoriseAndRetrieveSpec extends AuthActionsSpecHelper {
     s"the user is an Organisation" in {
       when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
         Future.successful[AuthRetrievals](
-          Enrolments(Set.empty) ~ None ~ Some(credentials) ~ Some(Organisation) ~ acceptedConfidenceLevel
+          Enrolments(Set.empty) ~ None ~ Some(testCredentials) ~ Some(Organisation) ~ acceptedConfidenceLevel
         )
       )
 

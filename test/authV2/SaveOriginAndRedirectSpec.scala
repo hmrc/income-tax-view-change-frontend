@@ -18,6 +18,7 @@ package authV2
 
 import auth.MtdItUser
 import auth.authV2.actions.SaveOriginAndRedirect
+import authV2.AuthActionsTestData.defaultMTDITUser
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import mocks.services.MockAsyncCacheApi
@@ -38,18 +39,15 @@ import scala.concurrent.Future
 
 class SaveOriginAndRedirectSpec extends TestSupport with MockAsyncCacheApi with FeatureSwitching {
 
-  lazy val successResponseWithoutOrigin: MtdItUser[Any] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), singleBusinessIncome,
-    None, Some("testUtr"), Some("testCredId"), Some(Individual), None)
-
-  lazy val successResponseWithBtaOriginAndWithoutSession: MtdItUser[Any] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), singleBusinessIncome,
-    Some(testView.apply(testListLink)), Some("testUtr"), Some("testCredId"), Some(Individual), None)(fakeRequestQueryStringAndOriginWithoutSession("BTA"))
-
-  lazy val successResponseWithSessionOriginPTA: MtdItUser[Any] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), singleBusinessIncome,
-    Some(Html("")), Some("testUtr"), Some("testCredId"), Some(Individual), None)(fakeRequestQueryStringAndOrigin("BTA", "PTA"))
   val testView: BtaNavBar = app.injector.instanceOf[BtaNavBar]
+  lazy val successResponseWithoutOrigin: MtdItUser[_] = defaultMTDITUser(Some(Individual), singleBusinessIncome)
+  lazy val successResponseWithBtaOriginAndWithoutSession: MtdItUser[_] = defaultMTDITUser(Some(Individual), singleBusinessIncome, fakeRequestQueryStringAndOriginWithoutSession("BTA"))
+    .addNavBar(testView.apply(testListLink))
 
-  lazy val successResponseWithInvalidQueryString: MtdItUser[Any] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), singleBusinessIncome,
-      None, Some("testUtr"), Some("testCredId"), Some(Individual), None)(fakeRequestQueryStringAndOriginWithoutSession("INVALID"))
+  lazy val successResponseWithSessionOriginPTA: MtdItUser[_] = defaultMTDITUser(Some(Individual), singleBusinessIncome, fakeRequestQueryStringAndOrigin("BTA", "PTA"))
+    .addNavBar(Html(""))
+
+  lazy val successResponseWithInvalidQueryString: MtdItUser[_] = defaultMTDITUser(Some(Individual), singleBusinessIncome, fakeRequestQueryStringAndOriginWithoutSession("INVALID"))
 
   val obj: SaveOriginAndRedirect = new SaveOriginAndRedirect() {
     override def messagesApi: MessagesApi = mock(classOf[MessagesApi])

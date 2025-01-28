@@ -208,7 +208,7 @@ class FinalTaxCalculationControllerISpec extends ControllerISpecHelper {
 
                 res should have(
                   httpStatus(OK),
-                  pageTitle(mtdUserRole, s"final-tax-overview${if(isAgent) ".agent" else ".individual"}.heading")(Lang("cy")),
+                  pageTitle(mtdUserRole, s"final-tax-overview${if(isAgent) ".agent" else ".individual"}.heading")(implicitly, Lang("cy")),
                   elementTextBySelector(Selectors.caption)(ExpectedValuesWelsh.caption),
                   elementTextBySelector(Selectors.insetText)(ExpectedValuesWelsh.insetTextFull(isAgent)),
                   elementTextBySelector(Selectors.insetLinkText)(ExpectedValuesWelsh.insetTextLink(isAgent)),

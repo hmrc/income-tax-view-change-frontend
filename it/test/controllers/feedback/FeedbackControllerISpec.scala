@@ -17,8 +17,9 @@
 package controllers.feedback
 
 import controllers.ControllerISpecHelper
-import enums.MTDIndividual
+import enums.{MTDIndividual, MTDPrimaryAgent}
 import helpers.FeedbackConnectorStub
+import helpers.servicemocks.{MTDAgentAuthStub, MTDIndividualAuthStub}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 
@@ -30,21 +31,20 @@ class FeedbackControllerISpec extends ControllerISpecHelper {
     pathStart + pathEnd
   }
 
-  mtdAllRoles.foreach { case mtdUserRole =>
-    val isAgent = mtdUserRole != MTDIndividual
+  List(false, true).foreach { isAgent =>
     val feedbackPath = getPath(isAgent)
     val thankyouPath = getPath(isAgent, true)
-    val authStub = getMTDAuthStub(mtdUserRole)
+    val (authStub, role) = if(isAgent) (MTDAgentAuthStub, "Agent") else (MTDIndividualAuthStub, "Individual")
 
     s"calling GET $feedbackPath" should {
       "render the Feedback page" when {
-        s"User is an authorised $mtdUserRole" in {
+        s"User is an authorised $role" in {
           authStub.stubAuthorisedWhenNoChecks()
           val result = buildGETMTDClient(feedbackPath, Map.empty).futureValue
 
           result should have(
             httpStatus(OK),
-            pageTitle(mtdUserRole, "feedback.heading")
+            pageTitle(if(isAgent) MTDPrimaryAgent else MTDIndividual, "feedback.heading")
           )
         }
       }
@@ -52,7 +52,7 @@ class FeedbackControllerISpec extends ControllerISpecHelper {
 
     s"POST $feedbackPath" should {
       "redirect to thankyou page" when {
-        s"user is an authorised $mtdUserRole and all fields filled in" in {
+        s"user is an authorised $role and all fields filled in" in {
           authStub.stubAuthorisedWhenNoChecks()
           FeedbackConnectorStub.stubPostFeedback(OK)
 
@@ -83,7 +83,8 @@ class FeedbackControllerISpec extends ControllerISpecHelper {
       }
 
       "return an error" when {
-        s"user is an authorised $mtdUserRole and missing form data" in {
+
+        s"user is an authorised $role and missing form data" in {
           authStub.stubAuthorisedWhenNoChecks()
 
           FeedbackConnectorStub.stubPostFeedback(OK)
@@ -103,7 +104,7 @@ class FeedbackControllerISpec extends ControllerISpecHelper {
 
           res should have(
             httpStatus(BAD_REQUEST),
-            pageTitle(mtdUserRole, "feedback.heading", isInvalidInput = true)
+            pageTitle(if(isAgent) MTDPrimaryAgent else MTDIndividual, "feedback.heading", isInvalidInput = true)
           )
         }
       }
@@ -111,7 +112,7 @@ class FeedbackControllerISpec extends ControllerISpecHelper {
 
     s"GET $thankyouPath" should {
       "render the Thankyou page" when {
-        s"user is an authorised $mtdUserRole" in {
+        s"user is an authorised $role" in {
           authStub.stubAuthorisedWhenNoChecks()
           FeedbackConnectorStub.stubPostThankyou(OK)
 
@@ -119,7 +120,7 @@ class FeedbackControllerISpec extends ControllerISpecHelper {
 
           res should have(
             httpStatus(OK),
-            pageTitle(mtdUserRole, "feedback.thankYou")
+            pageTitle(if(isAgent) MTDPrimaryAgent else MTDIndividual, "feedback.thankYou")
           )
         }
       }

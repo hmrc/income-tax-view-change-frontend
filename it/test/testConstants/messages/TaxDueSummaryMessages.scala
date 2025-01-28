@@ -16,9 +16,9 @@
 
 package testConstants.messages
 
-import helpers.servicemocks.AuthStub.{messagesAPI, lang}
+import helpers.ComponentSpecBase
 
-object TaxDueSummaryMessages {
+object TaxDueSummaryMessages  extends ComponentSpecBase {
 
   val voluntaryClass2Nics: String = messagesAPI("taxCal_breakdown.table.nic2.true")
   val nonVoluntaryClass2Nics: String = messagesAPI("taxCal_breakdown.table.nic2.false")

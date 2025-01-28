@@ -34,6 +34,7 @@ package connectors
 
 import audit.AuditingService
 import audit.models._
+import auth.authV2.models.AuthorisedAndEnrolledRequest
 import config.FrontendAppConfig
 import models.core.{NinoResponse, NinoResponseError}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
@@ -57,6 +58,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class BusinessDetailsConnectorSpec extends BaseConnectorSpec {
 
   lazy val mockAuditingService: AuditingService = mock(classOf[AuditingService])
+  implicit val authorisedAndEnrolledRequest: AuthorisedAndEnrolledRequest[_] = testAuthorisedAndEnrolled
 
   def verifyAudit(model: AuditModel, path: Option[String] = None): Unit = {
     verify(mockAuditingService).audit(
@@ -221,7 +223,7 @@ class BusinessDetailsConnectorSpec extends BaseConnectorSpec {
             val result: Future[IncomeSourceDetailsResponse] = connector.getIncomeSources()
             result.futureValue shouldBe singleBusinessAndPropertyMigrat2019
 
-            verifyExtendedAudit(IncomeSourceDetailsResponseAuditModel(testMtdUserOptionNino, List(testSelfEmploymentId), List(testPropertyIncomeId), Some(testMigrationYear2019)))
+            verifyExtendedAudit(IncomeSourceDetailsResponseAuditModel(testAuthorisedAndEnrolled, testNino, List(testSelfEmploymentId), List(testPropertyIncomeId), Some(testMigrationYear2019)))
           }
 
           "return IncomeSourceDetailsError in case of bad/malformed JSON response" in new Setup {

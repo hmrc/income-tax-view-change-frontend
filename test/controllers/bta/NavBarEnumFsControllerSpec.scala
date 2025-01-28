@@ -17,7 +17,8 @@
 package controllers.bta
 
 
-import auth.{MtdItUser, MtdItUserWithNino}
+import auth.MtdItUser
+import authV2.AuthActionsTestData.defaultMTDITUser
 import connectors.BtaNavBarPartialConnector
 import models.btaNavBar._
 import org.mockito.ArgumentMatchers.any
@@ -27,7 +28,6 @@ import play.api.Application
 import play.api.i18n.{Lang, Messages}
 import play.api.inject.guice.GuiceApplicationBuilder
 import services.BtaNavBarService
-import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
@@ -51,10 +51,7 @@ class NavBarEnumFsControllerSpec extends TestSupport {
   lazy val testView: BtaNavBar = app.injector.instanceOf[BtaNavBar]
   val saUtr = "1234567800"
 
-  lazy val userWithNino: MtdItUserWithNino[Any] = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName),
-    None, Some("testUtr"), Some("testCredId"), Some(Individual), None)
-  lazy val successResponse: MtdItUser[Any] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), singleBusinessIncome,
-    None, Some("testUtr"), Some("testCredId"), Some(Individual), None)
+  lazy val successResponse: MtdItUser[_] = defaultMTDITUser(Some(Individual), singleBusinessIncome)
 
   "ServiceInfoController" should {
     "retrieve the correct Model and return HTML" in {
@@ -81,10 +78,10 @@ class NavBarEnumFsControllerSpec extends TestSupport {
 
       when(mockNavBarService.partialList(any())(any())).thenReturn(listLinks)
 
-      val result = testController.btaNavBarPartial(userWithNino)
+      val result = testController.btaNavBarPartial(successResponse)
 
       whenReady(result) { response =>
-        response.get.toString shouldBe (testView.apply(listLinks).toString())
+        response.toString shouldBe (testView.apply(listLinks).toString())
       }
     }
 
@@ -101,7 +98,7 @@ class NavBarEnumFsControllerSpec extends TestSupport {
 
 
       whenReady(result) { response =>
-        response.get.toString shouldBe (testView.apply(Seq()).toString())
+        response.toString shouldBe (testView.apply(Seq()).toString())
       }
     }
   }

@@ -17,7 +17,6 @@
 package controllers.claimToAdjustPoa
 
 import audit.models.AdjustPaymentsOnAccountAuditModel
-import auth.MtdItUser
 import controllers.ControllerISpecHelper
 import controllers.claimToAdjustPoa.routes._
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
@@ -30,15 +29,12 @@ import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
-import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.PaymentOnAccountSessionService
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.address
 import testConstants.FinancialDetailsTestConstants.testFinancialDetailsErrorModelJson
 import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
-import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
-import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
 
@@ -68,17 +64,6 @@ class ConfirmationForAdjustingPoaControllerISpec extends ControllerISpecHelper {
     properties = Nil
   )
 
-  def testUser(mtdUserRole: MTDUserRole): MtdItUser[_] = {
-    val (affinityGroup, arn) = if (mtdUserRole == MTDIndividual) {
-      (Individual, None)
-    } else {
-      (Agent, Some("1"))
-    }
-    MtdItUser(
-      testMtditid, testNino, Some(Name(Some("Test"), Some("User"))), incomeSource,
-      None, Some("1234567890"), credId = None, Some(affinityGroup), arn)(FakeRequest())
-  }
-
   private def auditAdjustPayementsOnAccount(isSuccessful: Boolean, mtdUserRole: MTDUserRole): AdjustPaymentsOnAccountAuditModel = AdjustPaymentsOnAccountAuditModel(
     isSuccessful = isSuccessful,
     previousPaymentOnAccountAmount = 2000.00,
@@ -86,7 +71,7 @@ class ConfirmationForAdjustingPoaControllerISpec extends ControllerISpecHelper {
     adjustmentReasonCode = "001",
     adjustmentReasonDescription = "My main income will be lower",
     isDecreased = true
-  )(testUser(mtdUserRole))
+  )(getTestUser(mtdUserRole, incomeSource))
 
   override def beforeEach(): Unit = {
     super.beforeEach()

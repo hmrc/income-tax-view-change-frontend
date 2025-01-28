@@ -34,7 +34,6 @@ import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2CessationReason, b2TradingStart}
 import testConstants.NextUpdatesIntegrationTestConstants.currentDate
 import testConstants.messages.HomeMessages.{overdue, overdueUpdates}
-import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
@@ -62,10 +61,7 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
     properties = Nil
   )
 
-  val testUser: MtdItUser[_] = MtdItUser(
-    testMtditid, testNino, None, incomeSourceDetailsModel, None,
-    Some("1234567890"), Some("12345-credId"), Some(Agent), Some("1"), Some(clientName), true
-  )(FakeRequest())
+  val testUser: MtdItUser[_] = getTestUser(MTDSupportingAgent, incomeSourceDetailsModel)
 
   val path = "/agents"
 
