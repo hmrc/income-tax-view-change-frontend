@@ -152,12 +152,12 @@ object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
 
   def getFinancialsByDocumentIdUrl(nino: String, documentNumber: String) = s"/income-tax-view-change/$nino/financial-details/charges/documentId/$documentNumber"
 
-  def stubGetFinancialDetailsByDateRange(nino: String, from: String = "2017-04-06", to: String = "2018-04-05")
+  def stubGetFinancialDetailsByDateRange(nino: String, from: String = "2017-04-06", to: String = "2023-04-05")
                                         (status: Int, response: JsValue): StubMapping = {
     WiremockHelper.stubGet(financialDetailsUrl(nino, from, to), status, response.toString())
   }
 
-  def stubGetFinancialDetailsCreditsByDateRange(nino: String, from: String = "2017-04-06", to: String = "2018-04-05")
+  def stubGetFinancialDetailsCreditsByDateRange(nino: String, from: String = "2017-04-06", to: String = "2023-04-05")
                                         (status: Int, response: JsValue): StubMapping = {
     WiremockHelper.stubGet(financialDetailsCreditsUrl(nino, from, to), status, response.toString())
   }
@@ -166,7 +166,7 @@ object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
     WiremockHelper.verifyGet(financialDetailsUrl(nino, from, to), noOffcalls)
   }
 
-  def verifyGetFinancialDetailsCreditsByDateRange(nino: String, from: String = "2017-04-06", to: String = "2018-04-05", noOffcalls: Int = 1): Unit = {
+  def verifyGetFinancialDetailsCreditsByDateRange(nino: String, from: String = "2017-04-06", to: String = "2023-04-05", noOffcalls: Int = 1): Unit = {
     WiremockHelper.verifyGet(financialDetailsCreditsUrl(nino, from, to), noOffcalls)
   }
 
