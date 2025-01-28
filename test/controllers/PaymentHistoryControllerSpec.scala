@@ -69,7 +69,7 @@ class PaymentHistoryControllerSpec extends MockAuthActions
             "the user has payment history but no repayment history" in {
               setupMockSuccess(mtdUserRole)
               mockSingleBusinessIncomeSource()
-              when(paymentHistoryService.getPaymentHistoryV2(any(), any()))
+              when(paymentHistoryService.getPaymentHistory(any(), any()))
                 .thenReturn(Future.successful(Right(testPayments)))
               when(paymentHistoryService.getRepaymentHistory(any())(any(), any()))
                 .thenReturn(Future.successful(Right(List.empty[RepaymentHistory])))
@@ -84,7 +84,7 @@ class PaymentHistoryControllerSpec extends MockAuthActions
             "payment history returns an error" in {
               setupMockSuccess(mtdUserRole)
               mockSingleBusinessIncomeSource()
-              when(paymentHistoryService.getPaymentHistoryV2(any(), any()))
+              when(paymentHistoryService.getPaymentHistory(any(), any()))
                 .thenReturn(Future.successful(Right(testPayments)))
 
               when(paymentHistoryService.getRepaymentHistory(any())(any(), any()))
@@ -97,7 +97,7 @@ class PaymentHistoryControllerSpec extends MockAuthActions
             "repayment history returns an error" in {
               setupMockSuccess(mtdUserRole)
               mockSingleBusinessIncomeSource()
-              when(paymentHistoryService.getPaymentHistoryV2(any(), any()))
+              when(paymentHistoryService.getPaymentHistory(any(), any()))
                 .thenReturn(Future.successful(Left(PaymentHistoryError)))
 
               when(paymentHistoryService.getRepaymentHistory(any())(any(), any()))

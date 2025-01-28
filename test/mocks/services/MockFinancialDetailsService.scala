@@ -41,11 +41,11 @@ trait MockFinancialDetailsService extends UnitSpec with BeforeAndAfterEach {
   }
 
   def setupMockGetFinancialDetails(taxYear: TaxYear)(response: FinancialDetailsResponseModel): Unit =
-    when(mockFinancialDetailsService.getFinancialDetailsV2(ArgumentMatchers.eq(taxYear), ArgumentMatchers.any(), ArgumentMatchers.eq(testNino))
+    when(mockFinancialDetailsService.getFinancialDetails(ArgumentMatchers.eq(taxYear), ArgumentMatchers.any(), ArgumentMatchers.eq(testNino))
     (any(), any())).thenReturn(Future.successful(response))
 
   def setupMockGetFinancialDetailsWithTaxYearAndNino(taxYear: TaxYear, nino: String)(response: FinancialDetailsResponseModel): Unit = {
-    when(mockFinancialDetailsService.getFinancialDetailsV2(ArgumentMatchers.eq(taxYear), ArgumentMatchers.any(), ArgumentMatchers.eq(nino))
+    when(mockFinancialDetailsService.getFinancialDetails(ArgumentMatchers.eq(taxYear), ArgumentMatchers.any(), ArgumentMatchers.eq(nino))
     (any(), any())).thenReturn(Future.successful(response))
   }
 
@@ -59,12 +59,12 @@ trait MockFinancialDetailsService extends UnitSpec with BeforeAndAfterEach {
     setupMockGetFinancialDetails(testTaxYear2018)(testFinancialDetailsNotFoundErrorModel)
 
   def mockGetAllFinancialDetails(response: Option[FinancialDetailsResponseModel]): Unit = {
-    when(mockFinancialDetailsService.getAllFinancialDetailsV2(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
+    when(mockFinancialDetailsService.getAllFinancialDetails(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
 
   def mockGetAllUnpaidFinancialDetails(response: FinancialDetailsModel = financialDetailsDueInMoreThan30Days()): Unit = {
-    when(mockFinancialDetailsService.getAllUnpaidFinancialDetailsV2()(any(), any(), any()))
+    when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
       .thenReturn(Future.successful(Some(response)))
   }
 }

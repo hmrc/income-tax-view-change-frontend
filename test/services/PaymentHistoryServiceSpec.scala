@@ -66,19 +66,19 @@ class PaymentHistoryServiceSpec extends TestSupport with MockFinancialDetailsCon
   object TestPaymentHistoryService extends PaymentHistoryService(mockRepaymentHistoryConnector,
     mockFinancialDetailsConnector, dateService, appConfig)
 
-  "getPaymentHistoryV2" when {
+  "getPaymentHistory" when {
     "An error is returned from the connector" should {
       "return a payment history error" in {
         setupGetPayments(TaxYear.forYearEnd(getCurrentTaxEndYear - 1),
           TaxYear.forYearEnd(getCurrentTaxEndYear))(PaymentsError(500, "ERROR"))
-        TestPaymentHistoryService.getPaymentHistoryV2.futureValue shouldBe Left(PaymentHistoryError)
+        TestPaymentHistoryService.getPaymentHistory.futureValue shouldBe Left(PaymentHistoryError)
 
       }
 
       "return a payment history error for status 422" in {
         setupGetPayments(TaxYear.forYearEnd(getCurrentTaxEndYear - 1),
           TaxYear.forYearEnd(getCurrentTaxEndYear))(PaymentsError(UNPROCESSABLE_ENTITY, "ERROR"))
-        TestPaymentHistoryService.getPaymentHistoryV2.futureValue shouldBe Left(PaymentHistoryError)
+        TestPaymentHistoryService.getPaymentHistory.futureValue shouldBe Left(PaymentHistoryError)
 
       }
     }
@@ -87,7 +87,7 @@ class PaymentHistoryServiceSpec extends TestSupport with MockFinancialDetailsCon
       "return a list of payments" in {
         setupGetPayments(TaxYear.forYearEnd(getCurrentTaxEndYear - 1),
           TaxYear.forYearEnd(getCurrentTaxEndYear))(Payments(paymentFull))
-        TestPaymentHistoryService.getPaymentHistoryV2.futureValue shouldBe Right(paymentFull)
+        TestPaymentHistoryService.getPaymentHistory.futureValue shouldBe Right(paymentFull)
       }
     }
   }

@@ -64,7 +64,7 @@ class CreditAndRefundControllerSpec extends MockAuthActions with MockCreditServi
               enable(CreditsRefundsRepay)
               setupMockSuccess(mtdUserRole)
               mockSingleBISWithCurrentYearAsMigrationYear()
-              when(mockCreditService.getAllCreditsV2(any(), any())).thenReturn(Future.successful(
+              when(mockCreditService.getAllCredits(any(), any())).thenReturn(Future.successful(
                 ANewCreditAndRefundModel()
                   .withBalancingChargeCredit(LocalDate.parse("2022-08-16"), 100.0)
                   .get()))
@@ -80,7 +80,7 @@ class CreditAndRefundControllerSpec extends MockAuthActions with MockCreditServi
               setupMockSuccess(mtdUserRole)
               mockSingleBISWithCurrentYearAsMigrationYear()
 
-              when(mockCreditService.getAllCreditsV2(any(), any())).thenReturn(Future.successful(
+              when(mockCreditService.getAllCredits(any(), any())).thenReturn(Future.successful(
                 ANewCreditAndRefundModel()
                   .withBalancingChargeCredit(LocalDate.parse("2022-08-16"), 100.0)
                   .get()))
@@ -94,7 +94,7 @@ class CreditAndRefundControllerSpec extends MockAuthActions with MockCreditServi
               setupMockSuccess(mtdUserRole)
               mockSingleBISWithCurrentYearAsMigrationYear()
 
-              when(mockCreditService.getAllCreditsV2(any(), any())).thenReturn(Future.successful(
+              when(mockCreditService.getAllCredits(any(), any())).thenReturn(Future.successful(
                 ANewCreditAndRefundModel()
                   .withBalancingChargeCredit(LocalDate.of(2019, 5, 15), 250.0)
                   .withBalancingChargeCredit(LocalDate.of(2019, 5, 15), 125.0)
@@ -152,7 +152,7 @@ class CreditAndRefundControllerSpec extends MockAuthActions with MockCreditServi
               setupMockSuccess(mtdUserRole)
               mockSingleBISWithCurrentYearAsMigrationYear()
 
-              when(mockCreditService.getAllCreditsV2(any(), any())).thenReturn(Future.successful(
+              when(mockCreditService.getAllCredits(any(), any())).thenReturn(Future.successful(
                 ANewCreditAndRefundModel()
                   .withBalancingChargeCredit(LocalDate.parse("2022-08-16"), 100.0)
                   .get()))
@@ -182,7 +182,7 @@ class CreditAndRefundControllerSpec extends MockAuthActions with MockCreditServi
               setupMockSuccess(mtdUserRole)
               mockSingleBISWithCurrentYearAsMigrationYear()
 
-              when(mockCreditService.getAllCreditsV2(any(), any())).thenReturn(Future.successful(
+              when(mockCreditService.getAllCredits(any(), any())).thenReturn(Future.successful(
                 ANewCreditAndRefundModel()
                   .withBalancingChargeCredit(LocalDate.parse("2022-08-16"), 100.0)
                   .get()))
@@ -201,7 +201,7 @@ class CreditAndRefundControllerSpec extends MockAuthActions with MockCreditServi
               enable(CreditsRefundsRepay)
               setupMockSuccess(mtdUserRole)
               mockSingleBISWithCurrentYearAsMigrationYear()
-              when(mockCreditService.getAllCreditsV2(any(), any())).thenReturn(Future.successful(
+              when(mockCreditService.getAllCredits(any(), any())).thenReturn(Future.successful(
                 ANewCreditAndRefundModel()
                   .withBalancingChargeCredit(LocalDate.parse("2022-08-16"), 100.0)
                   .get()))

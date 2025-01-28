@@ -34,12 +34,7 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
                                         implicit val dateService: DateServiceInterface)
                                        (implicit val appConfig: FrontendAppConfig, ec: ExecutionContext) {
 
-  @deprecated("Use getFinancialDetailsV2 instead", "MISUV-8845")
-  def getFinancialDetails(taxYear: Int, nino: String)(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
-    financialDetailsConnector.getFinancialDetails(taxYear, nino)
-  }
-
-  def getFinancialDetailsV2(taxYearFrom: TaxYear, taxYearTo: TaxYear, nino: String)(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
+  def getFinancialDetails(taxYearFrom: TaxYear, taxYearTo: TaxYear, nino: String)(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
     financialDetailsConnector.getFinancialDetails(taxYearFrom, taxYearTo, nino)
   }
 
@@ -60,25 +55,8 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
     }
   }
 
-  @deprecated("Use getAllFinancialDetailsV2 instead", "MISUV-8845")
   def getAllFinancialDetails(implicit user: MtdItUser[_],
-                             hc: HeaderCarrier, ec: ExecutionContext): Future[List[(Int, FinancialDetailsResponseModel)]] = {
-    Logger("application").debug(
-      s"Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
-
-    Future.sequence(user.incomeSources.orderedTaxYearsByYearOfMigration.map {
-      taxYear =>
-        Logger("application").debug(s"Getting financial details for TaxYear: ${taxYear}")
-        financialDetailsConnector.getFinancialDetails(taxYear, user.nino).map {
-          case financialDetails: FinancialDetailsModel => Some((taxYear, financialDetails))
-          case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Some((taxYear, error))
-          case _ => None
-        }
-    }).map(_.flatten)
-  }
-
-  def getAllFinancialDetailsV2(implicit user: MtdItUser[_],
-                               hc: HeaderCarrier, ec: ExecutionContext): Future[Option[FinancialDetailsResponseModel]] = {
+                             hc: HeaderCarrier, ec: ExecutionContext): Future[Option[FinancialDetailsResponseModel]] = {
     Logger("application").debug(
       s"Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
 
@@ -99,20 +77,8 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
     }
   }
 
-  @deprecated("Use getUnpaidFinancialDetailsV2 instead", "MISUV-8845")
-  def getAllUnpaidFinancialDetails()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[List[FinancialDetailsResponseModel]] = {
-    getAllFinancialDetails.map { chargesWithYears =>
-      chargesWithYears.flatMap {
-        case (_, errorModel: FinancialDetailsErrorModel) => Some(errorModel)
-        case (_, financialDetails: FinancialDetailsModel) =>
-          val unpaidDocDetails: List[DocumentDetail] = financialDetails.unpaidDocumentDetails()
-          if (unpaidDocDetails.nonEmpty) Some(financialDetails.copy(documentDetails = unpaidDocDetails)) else None
-      }
-    }
-  }
-
-  def getAllUnpaidFinancialDetailsV2()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[FinancialDetailsResponseModel]] = {
-    getAllFinancialDetailsV2.map {
+  def getAllUnpaidFinancialDetails()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[FinancialDetailsResponseModel]] = {
+    getAllFinancialDetails.map {
       case Some(errorModel: FinancialDetailsErrorModel) => Some(errorModel)
       case Some(financialDetails: FinancialDetailsModel) =>
         val unpaidDocDetails: List[DocumentDetail] = financialDetails.unpaidDocumentDetails()

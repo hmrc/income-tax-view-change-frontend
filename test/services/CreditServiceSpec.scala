@@ -53,7 +53,7 @@ class CreditServiceSpec extends TestSupport {
 
  class TestCreditService extends CreditService(mockFinancialDetailsConnector, dateService)
 
-  "CreditService.getAllCreditsV2 method" should {
+  "CreditService.getAllCredits method" should {
     "return a list of financial details credit charges" when {
 
       "a successful response is received in all tax year calls" in {
@@ -67,7 +67,7 @@ class CreditServiceSpec extends TestSupport {
               .withBalancingChargeCredit(LocalDate.parse("2023-08-16"), 200.0)
               .get())))
 
-        new TestCreditService().getAllCreditsV2(mtdItUser, headerCarrier).futureValue shouldBe ANewCreditAndRefundModel()
+        new TestCreditService().getAllCredits(mtdItUser, headerCarrier).futureValue shouldBe ANewCreditAndRefundModel()
           .withFirstRefund(10)
           .withSecondRefund(20)
           .withBalancingChargeCredit(LocalDate.parse("2022-08-16"), 100.0)
@@ -81,7 +81,7 @@ class CreditServiceSpec extends TestSupport {
         when(mockFinancialDetailsConnector.getCreditsAndRefund(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Left(ErrorModel(500, "INTERNAL_SERVER ERROR"))))
 
-        val result = new TestCreditService().getAllCreditsV2(mtdItUser, headerCarrier).failed.futureValue
+        val result = new TestCreditService().getAllCredits(mtdItUser, headerCarrier).failed.futureValue
 
         result shouldBe an[Exception]
         result.getMessage shouldBe "Error response while getting Unpaid financial details"

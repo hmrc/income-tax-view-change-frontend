@@ -100,7 +100,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
   private def buildHomePage(nextUpdatesDueDates: Seq[LocalDate], origin: Option[String])
                            (implicit user: MtdItUser[_]): Future[Result] =
     for {
-      unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetailsV2()
+      unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails()
       paymentsDue = getDueDates(unpaidCharges)
       dunningLockExists = hasDunningLock(unpaidCharges)
       outstandingChargesModel <- getOutstandingChargesModel(unpaidCharges)

@@ -64,7 +64,7 @@ class CreditAndRefundController @Inject()(val authActions: AuthActions,
 
   def handleRequest(isAgent: Boolean, backUrl: String)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
-    creditService.getAllCreditsV2 map {
+    creditService.getAllCredits map {
       case _ if !isEnabled(CreditsRefundsRepay) =>
         Ok(customNotFoundErrorView()(user, messages))
       case creditsModel: CreditsModel =>
@@ -100,7 +100,7 @@ class CreditAndRefundController @Inject()(val authActions: AuthActions,
 
   private def handleRefundRequest(isAgent: Boolean, backUrl: String)
                                  (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
-    creditService.getAllCreditsV2 flatMap {
+    creditService.getAllCredits flatMap {
       case _ if !isEnabled(CreditsRefundsRepay) =>
         Future.successful(Ok(customNotFoundErrorView()(user, messages)))
       case creditsModel: CreditsModel =>

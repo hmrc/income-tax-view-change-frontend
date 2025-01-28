@@ -83,7 +83,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
                     origin: Option[String] = None)
                    (implicit user: MtdItUser[_],
                     hc: HeaderCarrier): Future[Result] = {
-    creditHistoryService.getCreditsHistoryV2(calendarYear, user.nino).flatMap {
+    creditHistoryService.getCreditsHistory(calendarYear, user.nino).flatMap {
       case Right(credits) =>
         val charges: List[CreditDetailModel] = credits.sortBy(_.date.toEpochDay)
         val maybeAvailableCredit: Option[BigDecimal] =

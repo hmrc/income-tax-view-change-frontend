@@ -50,13 +50,13 @@ class CreditHistoryServiceSpec extends TestSupport with MockFinancialDetailsConn
 
   object TestCreditHistoryService extends CreditHistoryService(mockFinancialDetailsConnector, appConfig)
 
-  "getCreditHistoryV2" when {
+  "getCreditHistory" when {
 
     "an error is returned from the connector" should {
 
       "return a credit history error (~getFinancialDetails failed)" in {
         setupMockGetFinancialDetails(TaxYear.forYearEnd(taxYear), TaxYear.forYearEnd(taxYear + 1), nino)(FinancialDetailsErrorModel(500, "ERROR"))
-        TestCreditHistoryService.getCreditsHistoryV2(taxYear, nino).futureValue shouldBe Left(CreditHistoryError)
+        TestCreditHistoryService.getCreditsHistory(taxYear, nino).futureValue shouldBe Left(CreditHistoryError)
       }
     }
 
@@ -64,14 +64,14 @@ class CreditHistoryServiceSpec extends TestSupport with MockFinancialDetailsConn
       "entering the service" should {
         "return a list of MFA/BC/CutOver credits" in {
           setupMockGetFinancialDetails(TaxYear.forYearEnd(taxYear), TaxYear.forYearEnd(taxYear + 1), nino)(taxYearFinancialDetailsTwoYears)
-          val futureResult = TestCreditHistoryService.getCreditsHistoryV2(taxYear, nino)
+          val futureResult = TestCreditHistoryService.getCreditsHistory(taxYear, nino)
           whenReady(futureResult) { result =>
             result shouldBe Right(List(creditDetailModelasCutOver, creditDetailModelasMfa, creditDetailModelasBCC))
           }
         }
         "return a list of all credits" in {
           setupMockGetFinancialDetails(TaxYear.forYearEnd(taxYear), TaxYear.forYearEnd(taxYear + 1), nino)(taxYearFinancialDetailsAllCreditsTwoYears)
-          val futureResult = TestCreditHistoryService.getCreditsHistoryV2(taxYear, nino)
+          val futureResult = TestCreditHistoryService.getCreditsHistory(taxYear, nino)
           whenReady(futureResult) { result =>
             result shouldBe Right(List(
               creditDetailModelasSetInterest, creditDetailModelasCutOver, creditDetailModelasMfa, creditDetailModelasBCC))

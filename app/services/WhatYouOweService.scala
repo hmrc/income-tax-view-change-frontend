@@ -51,7 +51,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
                               (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
     {
       for {
-        unpaidChanges <- financialDetailsService.getAllUnpaidFinancialDetailsV2()
+        unpaidChanges <- financialDetailsService.getAllUnpaidFinancialDetails()
       } yield getWhatYouOweChargesList(unpaidChanges, isReviewAndReconcile, isFilterCodedOutPoasEnabled)
     }.flatten
   }
