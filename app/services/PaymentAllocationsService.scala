@@ -92,7 +92,7 @@ class PaymentAllocationsService @Inject()(financialDetailsConnector: FinancialDe
               documentDetailsWithFinancialDetails.documentDetails.head.originalAmount)
         }
       case Some(errorModel: FinancialDetailsErrorModel) =>
-        Logger("application").error(s"error when getting financial details: $errorModel")
+        Logger("application").error(s"error when getting financial details - code: ${errorModel.code}, message: ${errorModel.message}")
         None
       case None =>
         None

@@ -80,8 +80,8 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
           case Some(outstandingChargesModel) => whatYouOweChargesList.copy(outstandingChargesModel = Some(outstandingChargesModel))
           case _ => whatYouOweChargesList
         }
-      case Some(error: FinancialDetailsErrorModel) =>
-        Logger("application").error(s"error model in unpaid charges: $error")
+      case Some(errorModel: FinancialDetailsErrorModel) =>
+        Logger("application").error(s"error model in unpaid charges - code: ${errorModel.code}, message: ${errorModel.message}")
         throw new Exception("Error response while getting Unpaid financial details")
       case None =>
         val whatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None))
