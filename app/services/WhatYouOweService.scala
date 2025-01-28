@@ -22,6 +22,7 @@ import config.featureswitch.FeatureSwitching
 import connectors.{FinancialDetailsConnector, OutstandingChargesConnector}
 import models.financialDetails._
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
+import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
@@ -79,6 +80,9 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
           case Some(outstandingChargesModel) => whatYouOweChargesList.copy(outstandingChargesModel = Some(outstandingChargesModel))
           case _ => whatYouOweChargesList
         }
+      case Some(error: FinancialDetailsErrorModel) =>
+        Logger("application").error(s"error model in unpaid charges: $error")
+        throw new Exception("Error response while getting Unpaid financial details")
       case None =>
         val whatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None))
         callOutstandingCharges(mtdUser.saUtr, mtdUser.incomeSources.yearOfMigration, dateService.getCurrentTaxYearEnd).map {

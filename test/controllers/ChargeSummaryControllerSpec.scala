@@ -389,20 +389,6 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR
               JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe errorHeading
             }
-
-            //TODO: Check validity of this test
-//            if (mtdUserRole == MTDIndividual) {
-//              "no related tax year financial details found" in new Setup(testFinancialDetailsModelWithPayeSACodingOut()) {
-//                disable(ChargeHistory)
-//                setupMockSuccess(mtdUserRole)
-//                mockBothIncomeSources()
-//
-//                val result: Future[Result] = testController.show(2020, "CODINGOUT01")(fakeRequest)
-//
-//                status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-//                JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe errorHeading
-//              }
-//            }
           }
         }
       }

@@ -38,6 +38,10 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
     financialDetailsConnector.getFinancialDetails(taxYearFrom, taxYearTo, nino)
   }
 
+  def getFinancialDetailsSingleYear(taxYear: TaxYear, nino: String)(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
+    financialDetailsConnector.getFinancialDetails(taxYear, taxYear, nino)
+  }
+
   def getChargeDueDates(financialDetails: List[FinancialDetailsResponseModel]): Option[Either[(LocalDate, Boolean), Int]] = {
     val chargeDueDates: List[LocalDate] = financialDetails.flatMap {
       case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay.getAllDueDates

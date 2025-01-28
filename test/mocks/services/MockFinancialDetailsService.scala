@@ -40,9 +40,12 @@ trait MockFinancialDetailsService extends UnitSpec with BeforeAndAfterEach {
     reset(mockFinancialDetailsService)
   }
 
-  def setupMockGetFinancialDetails(taxYear: TaxYear)(response: FinancialDetailsResponseModel): Unit =
+  def setupMockGetFinancialDetails(taxYear: TaxYear)(response: FinancialDetailsResponseModel): Unit = {
     when(mockFinancialDetailsService.getFinancialDetails(ArgumentMatchers.eq(taxYear), ArgumentMatchers.any(), ArgumentMatchers.eq(testNino))
     (any(), any())).thenReturn(Future.successful(response))
+    when(mockFinancialDetailsService.getFinancialDetailsSingleYear(ArgumentMatchers.eq(taxYear), ArgumentMatchers.eq(testNino))
+    (any(), any())).thenReturn(Future.successful(response))
+  }
 
   def setupMockGetFinancialDetailsWithTaxYearAndNino(taxYear: TaxYear, nino: String)(response: FinancialDetailsResponseModel): Unit = {
     when(mockFinancialDetailsService.getFinancialDetails(ArgumentMatchers.eq(taxYear), ArgumentMatchers.any(), ArgumentMatchers.eq(nino))
