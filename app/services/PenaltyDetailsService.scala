@@ -27,7 +27,7 @@ class PenaltyDetailsService @Inject()() {
     Random.shuffle(Seq("Annual", "Quarterly")).head
 
   val dummyPenaltyPoints: Int =
-    Random.shuffle(Seq(2, 4)).head
+    Random.nextInt(5) + 1
 
   def getPenaltyPenaltiesAndAppealsTileViewModel(penaltiesAndAppealsIsEnabled: Boolean): PenaltiesAndAppealsTileViewModel = {
 
