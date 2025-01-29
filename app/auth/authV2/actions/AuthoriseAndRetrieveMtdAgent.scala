@@ -22,12 +22,11 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.AuthUtils._
 import enums.{MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
+import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Request, Result}
-import play.api.{Configuration, Environment, Logger}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.Inject
