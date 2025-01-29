@@ -66,4 +66,4 @@ case class YourBusinessesTileViewModel(displayCeaseAnIncome: Boolean, incomeSour
 
 case class AccountSettingsTileViewModel(currentTaxYear: TaxYear, reportingFrequencyEnabled: Boolean, currentYearITSAStatus: ITSAStatus)
 
-case class PenaltiesAndAppealsTileViewModel(penaltyPoints: Option[Int])
+case class PenaltiesAndAppealsTileViewModel(penaltiesAndAppealsIsEnabled: Boolean, penaltiesTagMessageKey: Option[String])

@@ -16,15 +16,31 @@
 
 package services
 
+import models.homePage.PenaltiesAndAppealsTileViewModel
+
 import javax.inject.Inject
+import scala.util.Random
 
 class PenaltyDetailsService @Inject()() {
 
-  def getPenaltyPoints(penaltiesAndAppealsIsEnabled: Boolean): Option[Int] = {
+  private val annualPenaltyThreshold = 2
 
-    val dummyResponse = Some(2)
+  private val quarterlyPenaltyThreshold = 4
 
-    if(penaltiesAndAppealsIsEnabled) dummyResponse
-    else None
+  val dummySubmissionFrequency: String =
+    Random.shuffle(Seq("Annual", "Quarterly")).head
+
+  val dummyPenaltyPoints: Int =
+    Random.shuffle(Seq(annualPenaltyThreshold, quarterlyPenaltyThreshold)).head
+
+  def getPenaltyPenaltiesAndAppealsTileViewModel(penaltiesAndAppealsIsEnabled: Boolean): PenaltiesAndAppealsTileViewModel = {
+
+    val penaltiesTagMessageKey: Option[String] = (dummySubmissionFrequency, dummyPenaltyPoints) match {
+      case ("Annual",    points) if points >= 2 => Some("home.penaltiesAndAppeals.twoPenaltiesTag")
+      case ("Quarterly", points) if points >= 4 => Some("home.penaltiesAndAppeals.fourPenaltiesTag")
+      case _                                    => None
+    }
+
+    PenaltiesAndAppealsTileViewModel(penaltiesAndAppealsIsEnabled, penaltiesTagMessageKey)
   }
 }

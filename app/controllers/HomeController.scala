@@ -114,7 +114,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
       overDuePaymentsCount = calculateOverduePaymentsCount(paymentsDue, outstandingChargesModel)
       accruingInterestPaymentsCount = NextPaymentsTileViewModel.paymentsAccruingInterestCount(unpaidCharges, dateService.getCurrentDate)
       currentITSAStatus <- getCurrentITSAStatus(currentTaxYear)
-      maybePenaltyPoints = penaltyDetailsService.getPenaltyPoints(isEnabled(PenaltiesAndAppeals))
+      penaltiesAndAppealsTileViewModel = penaltyDetailsService.getPenaltyPenaltiesAndAppealsTileViewModel(isEnabled(PenaltiesAndAppeals))
       paymentsDueMerged = mergePaymentsDue(paymentsDue, outstandingChargeDueDates)
     } yield {
 
@@ -129,8 +129,6 @@ class HomeController @Inject()(val homeView: views.html.Home,
       val returnsTileViewModel = ReturnsTileViewModel(currentTaxYear, isEnabled(ITSASubmissionIntegration))
 
       val accountSettingsTileViewModel = AccountSettingsTileViewModel(currentTaxYear, isEnabled(ReportingFrequencyPage), currentITSAStatus)
-
-      val penaltiesAndAppealsTileViewModel = PenaltiesAndAppealsTileViewModel(maybePenaltyPoints)
 
       NextPaymentsTileViewModel(paymentsDueMerged, overDuePaymentsCount, accruingInterestPaymentsCount, isEnabled(ReviewAndReconcilePoa)).verify match {
 
