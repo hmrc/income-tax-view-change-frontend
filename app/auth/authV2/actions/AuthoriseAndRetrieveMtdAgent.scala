@@ -110,8 +110,6 @@ class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: AuthorisedFunc
         Future.successful(Left(Redirect(controllers.routes.SignInController.signIn)))
       case ex =>
         logger.error(s"Unexpected error from Auth.")
-        println("*****************")
-        println(ex.getMessage)
         Future.successful(Left(errorHandler.showInternalServerError()))
     }
   }
