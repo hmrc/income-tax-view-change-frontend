@@ -66,4 +66,15 @@ case class YourBusinessesTileViewModel(displayCeaseAnIncome: Boolean, incomeSour
 
 case class AccountSettingsTileViewModel(currentTaxYear: TaxYear, reportingFrequencyEnabled: Boolean, currentYearITSAStatus: ITSAStatus)
 
-case class PenaltiesAndAppealsTileViewModel(penaltiesAndAppealsIsEnabled: Boolean, penaltiesTagMessageKey: Option[String])
+case class PenaltiesAndAppealsTileViewModel(penaltiesAndAppealsIsEnabled: Boolean, submissionFrequency: String, penaltyPoints: Int) {
+
+  private val annualPenaltyThreshold = 2
+
+  private val quarterlyPenaltyThreshold = 4
+
+  val penaltiesTagMessageKey: Option[String] = (submissionFrequency, penaltyPoints) match {
+    case ("Annual",    points) if points >= annualPenaltyThreshold    => Some("home.penaltiesAndAppeals.twoPenaltiesTag")
+    case ("Quarterly", points) if points >= quarterlyPenaltyThreshold => Some("home.penaltiesAndAppeals.fourPenaltiesTag")
+    case _                                                            => None
+  }
+}

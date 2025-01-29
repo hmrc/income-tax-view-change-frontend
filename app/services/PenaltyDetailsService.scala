@@ -23,24 +23,14 @@ import scala.util.Random
 
 class PenaltyDetailsService @Inject()() {
 
-  private val annualPenaltyThreshold = 2
-
-  private val quarterlyPenaltyThreshold = 4
-
   val dummySubmissionFrequency: String =
     Random.shuffle(Seq("Annual", "Quarterly")).head
 
   val dummyPenaltyPoints: Int =
-    Random.shuffle(Seq(annualPenaltyThreshold, quarterlyPenaltyThreshold)).head
+    Random.shuffle(Seq(2, 4)).head
 
   def getPenaltyPenaltiesAndAppealsTileViewModel(penaltiesAndAppealsIsEnabled: Boolean): PenaltiesAndAppealsTileViewModel = {
 
-    val penaltiesTagMessageKey: Option[String] = (dummySubmissionFrequency, dummyPenaltyPoints) match {
-      case ("Annual",    points) if points >= annualPenaltyThreshold    => Some("home.penaltiesAndAppeals.twoPenaltiesTag")
-      case ("Quarterly", points) if points >= quarterlyPenaltyThreshold => Some("home.penaltiesAndAppeals.fourPenaltiesTag")
-      case _                                                            => None
-    }
-
-    PenaltiesAndAppealsTileViewModel(penaltiesAndAppealsIsEnabled, penaltiesTagMessageKey)
+    PenaltiesAndAppealsTileViewModel(penaltiesAndAppealsIsEnabled, dummySubmissionFrequency, dummyPenaltyPoints)
   }
 }

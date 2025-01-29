@@ -110,7 +110,9 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
                   creditAndRefundEnabled: Boolean = false,
                   user: MtdItUser[_] = testMtdItUserNotMigrated,
                   reportingFrequencyEnabled: Boolean = false,
-                  penaltyPoints: Option[Int] = None,
+                  penaltiesAndAppealsIsEnabled: Boolean = true,
+                  submissionFrequency: String = "Annual",
+                  penaltyPoints: Int = 0,
                   currentITSAStatus: ITSAStatus = ITSAStatus.Voluntary
                  ) {
 
@@ -126,7 +128,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
 
     val accountSettingsTileViewModel = AccountSettingsTileViewModel(TaxYear(currentTaxYear, currentTaxYear + 1), reportingFrequencyEnabled, currentITSAStatus)
 
-    val penaltiesAndAppealsTileViewModel = PenaltiesAndAppealsTileViewModel(penaltyPoints = penaltyPoints)
+    val penaltiesAndAppealsTileViewModel = PenaltiesAndAppealsTileViewModel(penaltiesAndAppealsIsEnabled, submissionFrequency, penaltyPoints)
 
     val homePageViewModel = HomePageViewModel(
       utr = utr,
@@ -440,23 +442,27 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
       }
 
       "have a Penalties and Appeals tile" when {
-        "User has a valid number of penalty points" which {
-          "has a heading" in new TestSetup(penaltyPoints = Some(2)) {
+        "PenaltiesAndAppeals FS is enabled" which {
+          "has a heading" in new TestSetup(submissionFrequency = "Annual", penaltyPoints = 2) {
             getElementById("penalties-and-appeals-tile").map(_.select("h2").first().text()) shouldBe Some("Penalties and appeals")
           }
-          "has a link to Self Assessment Penalties and Appeals page" in new TestSetup(penaltyPoints = Some(2)) {
+          "has a link to Self Assessment Penalties and Appeals page" in new TestSetup(penaltiesAndAppealsIsEnabled = true) {
             getElementById("sa-penalties-and-appeals-link").map(_.text()) shouldBe Some("Check Self Assessment penalties and appeals")
             getElementById("sa-penalties-and-appeals-link").map(_.attr("href")) shouldBe Some("")
           }
-          "has a two-points penalty tag" in new TestSetup(penaltyPoints = Some(2)) {
-            getElementById("two-penalty-points-tag").map(_.text()) shouldBe Some("2 PENALTY POINTS")
+          "has a two-points penalty tag" in new TestSetup(submissionFrequency = "Annual", penaltyPoints = 3) {
+            getElementById("penalty-points-tag").map(_.text()) shouldBe Some("2 PENALTY POINTS")
           }
-          "has a four-points penalty tag" in new TestSetup(penaltyPoints = Some(4)) {
-            getElementById("four-penalty-points-tag").map(_.text()) shouldBe Some("4 PENALTY POINTS")
+          "has a four-points penalty tag" in new TestSetup(submissionFrequency = "Quarterly", penaltyPoints = 4) {
+            getElementById("penalty-points-tag").map(_.text()) shouldBe Some("4 PENALTY POINTS")
           }
-          "has no penalty tag" in new TestSetup(penaltyPoints = Some(3)) {
-            getElementById("two-penalty-points-tag").map(_.text()).isDefined shouldBe false
-            getElementById("four-penalty-points-tag").map(_.text()).isDefined shouldBe false
+          "has no penalty tag if 2 points reached but User is reporting Quarterly" in new TestSetup(submissionFrequency = "Quarterly", penaltyPoints = 2) {
+            getElementById("penalty-points-tag").map(_.text()).isDefined shouldBe false
+            getElementById("penalty-points-tag").map(_.text()).isDefined shouldBe false
+          }
+          "has no penalty tag if user has only 1 point" in new TestSetup(penaltyPoints = 1) {
+            getElementById("penalty-points-tag").map(_.text()).isDefined shouldBe false
+            getElementById("penalty-points-tag").map(_.text()).isDefined shouldBe false
           }
         }
       }
