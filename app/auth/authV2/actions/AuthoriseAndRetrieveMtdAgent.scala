@@ -62,9 +62,8 @@ class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: AuthorisedFunc
     authorisedFunctions.authorised(primaryAgentDelegatedEnrolment) {
       constructAuthorisedAndEnrolledUser(clientMtdItId, MTDPrimaryAgent)
     }.recoverWith {
-      case _: InsufficientEnrolments =>
+      case _ =>
         checkIfUserhasSupportingDelegatedEnrolmentPartialFunction(clientMtdItId)
-      case ex => handleAuthFailure(ex)
     }
 
   }
@@ -110,8 +109,10 @@ class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: AuthorisedFunc
       case authorisationException: AuthorisationException =>
         logger.error(s"Unauthorised request: ${authorisationException.reason}. Redirect to Sign In.")
         Future.successful(Left(Redirect(controllers.routes.SignInController.signIn)))
-      case _ =>
+      case ex =>
         logger.error(s"Unexpected error from Auth.")
+        println("*****************")
+        println(ex.getMessage)
         Future.successful(Left(errorHandler.showInternalServerError()))
     }
   }
