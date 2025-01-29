@@ -129,85 +129,51 @@ class AuthoriseAndRetrieveMtdAgentSpec extends AuthActionsSpecHelper {
       }
     }
 
-    List("primaryAgent", "supportingAgent").foreach { agentType =>
-      "redirect to Session timed out page" when {
-        s"the check for $agentType has an expired bearer token" in {
 
-          if(agentType == "primaryAgent") {
-            when(mockAuthConnector.authorise(ArgumentMatchers.eq(primaryAgentPredicate()), ArgumentMatchers.eq(EmptyRetrieval))(any(), any())).thenReturn(
-              Future.failed(BearerTokenExpired())
-            )
-          } else {
-            when(mockAuthConnector.authorise(ArgumentMatchers.eq(primaryAgentPredicate()), ArgumentMatchers.eq(EmptyRetrieval))(any(), any())).thenReturn(
-              Future.failed(InsufficientEnrolments("enrolment missing"))
-            )
+    "redirect to Session timed out page" when {
+      s"there is an expired bearer token" in {
+        when(mockAuthConnector.authorise(any(), ArgumentMatchers.eq(EmptyRetrieval))(any(), any())).thenReturn(
+          Future.failed(BearerTokenExpired())
+        )
 
-            when(mockAuthConnector.authorise(ArgumentMatchers.eq(secondaryAgentPredicate()), ArgumentMatchers.eq(EmptyRetrieval))(any(), any())).thenReturn(
-              Future.failed(BearerTokenExpired())
-            )
-          }
+        val result = authAction.invokeBlock(
+          defaultAuthorisedWithClientDetailsRequest,
+          redirectAsync("/report-quarterly/income-and-expenses/view/session-timeout")
+        )
 
-          val result = authAction.invokeBlock(
-            defaultAuthorisedWithClientDetailsRequest,
-            redirectAsync("/report-quarterly/income-and-expenses/view/session-timeout")
-          )
-
-          status(result) shouldBe SEE_OTHER
-          redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/session-timeout")
-        }
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/session-timeout")
       }
+    }
 
-      "redirect to Signin" when {
-        s"the check for $agentType has an missing bearer token" in {
+    "redirect to Signin" when {
+      s"there is a missing bearer token" in {
+        when(mockAuthConnector.authorise(any(), ArgumentMatchers.eq(EmptyRetrieval))(any(), any())).thenReturn(
+          Future.failed(MissingBearerToken())
+        )
 
-          if(agentType == "primaryAgent") {
-            when(mockAuthConnector.authorise(ArgumentMatchers.eq(primaryAgentPredicate()), ArgumentMatchers.eq(EmptyRetrieval))(any(), any())).thenReturn(
-              Future.failed(MissingBearerToken())
-            )
-          } else {
-            when(mockAuthConnector.authorise(ArgumentMatchers.eq(primaryAgentPredicate()), ArgumentMatchers.eq(EmptyRetrieval))(any(), any())).thenReturn(
-              Future.failed(InsufficientEnrolments("enrolment missing"))
-            )
+        val result = authAction.invokeBlock(
+          defaultAuthorisedWithClientDetailsRequest,
+          defaultAsync
+        )
 
-            when(mockAuthConnector.authorise(ArgumentMatchers.eq(secondaryAgentPredicate()), ArgumentMatchers.eq(EmptyRetrieval))(any(), any())).thenReturn(
-              Future.failed(MissingBearerToken())
-            )
-          }
-
-          val result = authAction.invokeBlock(
-            defaultAuthorisedWithClientDetailsRequest,
-            defaultAsync
-          )
-
-          status(result) shouldBe SEE_OTHER
-          redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/sign-in")
-        }
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/sign-in")
       }
+    }
 
-      "render the error page" when {
-        s"the check for $agentType has an unexpected error" in {
+    "render the error page" when {
+      s"there is an unexpected error" in {
+        when(mockAuthConnector.authorise(any(), ArgumentMatchers.eq(EmptyRetrieval))(any(), any())).thenReturn(
+          Future.failed(new Exception("error"))
+        )
 
-          if(agentType == "primaryAgent") {
-            when(mockAuthConnector.authorise(ArgumentMatchers.eq(primaryAgentPredicate()), ArgumentMatchers.eq(EmptyRetrieval))(any(), any())).thenReturn(
-              Future.failed(new Exception("error"))
-            )
-          } else {
-            when(mockAuthConnector.authorise(ArgumentMatchers.eq(primaryAgentPredicate()), ArgumentMatchers.eq(EmptyRetrieval))(any(), any())).thenReturn(
-              Future.failed(InsufficientEnrolments("enrolment missing"))
-            )
+        val result = authAction.invokeBlock(
+          defaultAuthorisedWithClientDetailsRequest,
+          defaultAsync
+        )
 
-            when(mockAuthConnector.authorise(ArgumentMatchers.eq(secondaryAgentPredicate()), ArgumentMatchers.eq(EmptyRetrieval))(any(), any())).thenReturn(
-              Future.failed(new Exception("error"))
-            )
-          }
-
-          val result = authAction.invokeBlock(
-            defaultAuthorisedWithClientDetailsRequest,
-            defaultAsync
-          )
-
-          status(result) shouldBe INTERNAL_SERVER_ERROR
-        }
+        status(result) shouldBe INTERNAL_SERVER_ERROR
       }
     }
   }
