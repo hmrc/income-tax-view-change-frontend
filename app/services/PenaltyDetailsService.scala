@@ -36,9 +36,9 @@ class PenaltyDetailsService @Inject()() {
   def getPenaltyPenaltiesAndAppealsTileViewModel(penaltiesAndAppealsIsEnabled: Boolean): PenaltiesAndAppealsTileViewModel = {
 
     val penaltiesTagMessageKey: Option[String] = (dummySubmissionFrequency, dummyPenaltyPoints) match {
-      case ("Annual",    points) if points >= 2 => Some("home.penaltiesAndAppeals.twoPenaltiesTag")
-      case ("Quarterly", points) if points >= 4 => Some("home.penaltiesAndAppeals.fourPenaltiesTag")
-      case _                                    => None
+      case ("Annual",    points) if points >= annualPenaltyThreshold    => Some("home.penaltiesAndAppeals.twoPenaltiesTag")
+      case ("Quarterly", points) if points >= quarterlyPenaltyThreshold => Some("home.penaltiesAndAppeals.fourPenaltiesTag")
+      case _                                                            => None
     }
 
     PenaltiesAndAppealsTileViewModel(penaltiesAndAppealsIsEnabled, penaltiesTagMessageKey)
