@@ -28,8 +28,6 @@ trait MTDAuthStub extends ComponentSpecBase {
   def stubUnauthorised(): Unit
   def stubBearerTokenExpired(): Unit
   def stubAuthorisedWhenNoChecks(): Unit
-//  def stubUnauthorisedWhenNoChecks(): Unit
-//  def stubBearerTokenExpiredWhenNoChecks(): Unit
 
   lazy val retrivalsJson = Json.arr(
     JsString("allEnrolments"),
