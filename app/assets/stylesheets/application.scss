@@ -1,8 +1,8 @@
 
-$govuk-assets-path: "/report-quarterly/income-and-expenses/view/assets/lib/govuk-frontend/govuk/assets/";
+$govuk-assets-path: "/report-quarterly/income-and-expenses/view/assets/lib/govuk-frontend/dist/govuk/assets/";
 $hmrc-assets-path: "/report-quarterly/income-and-expenses/view/assets/lib/hmrc-frontend/hmrc/";
 
-@import "lib/govuk-frontend/govuk/all";
+@import "lib/govuk-frontend/dist/govuk/all";
 @import "lib/hmrc-frontend/hmrc/all";
 
 .app-reference-number {
@@ -81,4 +81,8 @@ $hmrc-assets-path: "/report-quarterly/income-and-expenses/view/assets/lib/hmrc-f
 
 .display-none {
   display: none;
+}
+
+.govuk-tag {
+    max-width: none;
 }

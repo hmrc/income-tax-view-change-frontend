@@ -779,11 +779,16 @@ nextUpdates.propertyIncome            							= Incwm o eiddo
 nextUpdates.propertyIncome.UK                                   = Eiddo yn y DU
 nextUpdates.propertyIncome.Foreign                              = Eiddo tramor
 nextUpdates.business            							    = Incwm busnes
-nextUpdates.optOutOneYear-1                                     = Ar hyn o bryd, rydych yn adrodd bob chwarter ar sail wirfoddol ar gyfer blwyddyn dreth {0} i {1}. Gallwch ddewis
-nextUpdates.optOutOneYear-2                                     = optio allan o ddiweddariadau bob chwarter ac adrodd yn flynyddol yn lle hynny.
 
-nextUpdates.optOutMultiYear-1                                   = Ar hyn o bryd rhydych yn cyflwyno adroddiadau’n chwarterol ar sail wirfoddol. Cadarnhewch eich bod am
-nextUpdates.optOutMultiYear-2                                   = optio allan o ddiweddariadau chwarterol ac am gyflwyno’n flynyddol yn lle hynny.
+nextUpdates.optOutOneYear.p.message                             = Ar hyn o bryd, rydych yn adrodd bob chwarter ar sail wirfoddol ar gyfer blwyddyn dreth {0} i {1}. Gallwch ddewis
+nextUpdates.optOutOneYear.p.link                                = optio allan o ddiweddariadau bob chwarter ac adrodd yn flynyddol yn lle hynny.
+nextUpdates.optOutOneYear.reportingFrequency.p.message          = Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
+nextUpdates.optOutOneYear.reportingFrequency.p.link             = bwrw golwg dros a newid amlder eich adroddiadau.
+
+nextUpdates.optOutMultiYear.p.message                           = Ar hyn o bryd rhydych yn cyflwyno adroddiadau’n chwarterol ar sail wirfoddol. Cadarnhewch eich bod am
+nextUpdates.optOutMultiYear.p.link                              = optio allan o ddiweddariadau chwarterol ac am gyflwyno’n flynyddol yn lle hynny.
+nextUpdates.optOutMultiYear.reportingFrequency.p.message        = Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
+nextUpdates.optOutMultiYear.reportingFrequency.p.link           = bwrw golwg dros a newid amlder eich adroddiadau.
 
 sections.open.all												= Dangos pob adran
 sections.close.all												= Cuddio pob adran
