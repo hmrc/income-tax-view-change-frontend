@@ -1433,18 +1433,24 @@ incomeSources.cease.SE.checkboxLabel                      = I confirm I want to 
 incomeSources.cease.SE.hint                               = Only cease {0} if you no longer receive any income or have any expenses related to this business.
 incomeSources.cease.SE.hint.noBusinessName                = Only cease your sole trader business if you no longer receive any income or have any expenses related to this business.
 incomeSources.cease.SE.checkboxError                      = Select that you confirm you no longer get any income from this business
+incomeSources.cease.SE.continue                           = Confirm and continue
+incomeSources.cease.SE.p1                                 = By continuing I confirm I want to cease this business.
 
 incomeSources.cease.UK.heading                            = Cease UK property business
 incomeSources.cease.UK.caption                            = UK property
 incomeSources.cease.UK.checkboxLabel                      = I declare that I no longer get an income from any UK properties
 incomeSources.cease.UK.hint                               = Only cease your UK property business if you no longer get income from any properties in the UK
 incomeSources.cease.UK.checkboxError                      = Select that you declare you no longer get any income from UK property
+incomeSources.cease.UK.continue                           = Confirm and continue
+incomeSources.cease.UK.p1                                 = By continuing I confirm I want to cease this business.
 
 incomeSources.cease.FP.heading                            = Cease foreign property business
 incomeSources.cease.FP.caption                            = Foreign property
 incomeSources.cease.FP.checkboxLabel                      = I declare that I no longer get an income from any foreign properties
 incomeSources.cease.FP.hint                               = Only cease your foreign property business if you no longer get income from any properties abroad.
 incomeSources.cease.FP.checkboxError                      = Select that you declare you no longer get any income from foreign property
+incomeSources.cease.FP.continue                           = Confirm and continue
+incomeSources.cease.FP.p1                                 = By continuing I confirm I want to cease this business.
 
 incomeSources.cease.endDate.foreignProperty.heading                = Date your foreign property business stopped
 incomeSources.cease.endDate.foreignProperty.error.invalid          = The date your foreign property business stopped must be a real date
