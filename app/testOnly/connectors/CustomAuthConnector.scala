@@ -58,7 +58,8 @@ class CustomAuthConnector @Inject()(servicesConfig: ServicesConfig,
 
   def login(nino: Nino, isAgent: Boolean, isSupporting: Boolean)(implicit hc: HeaderCarrier): Future[(AuthExchange, GovernmentGatewayToken)] = {
     createPayload(nino, isAgent, isSupporting) flatMap {
-      payload => loginRequest(payload)
+      payload =>
+        loginRequest(payload)
     }
   }
 

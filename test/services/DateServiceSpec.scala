@@ -17,11 +17,13 @@
 package services
 
 import auth.MtdItUser
+import authV2.AuthActionsTestData.defaultMTDITUser
 import config.{FrontendAppConfig, TimeMachine}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.mockito.Mockito.{mock, reset, when}
 import play.api.test.FakeRequest
 import testConstants.BaseTestConstants.{testMtditid, testNino}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
@@ -44,10 +46,7 @@ class DateServiceSpec extends TestSupport {
 
   def getTaxYearStartDate(year: Int): LocalDate = LocalDate.of(year, 4, 6)
 
-  val testUser: MtdItUser[_] = MtdItUser(
-    testMtditid, testNino, None, IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty), None,
-    Some("1234567890"), Some("12345-credId"), Some(Individual), None
-  )(FakeRequest())
+  val testUser: MtdItUser[_] = defaultMTDITUser(Some(Individual), IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty))
 
   override def beforeEach(): Unit = {
     super.beforeEach()

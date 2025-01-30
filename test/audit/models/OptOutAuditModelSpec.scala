@@ -25,6 +25,7 @@ import play.api.libs.json.Json
 import services.optout.{OptOutProposition, OptOutTestSupport}
 import testConstants.BaseTestConstants.testNino
 import testUtils.TestSupport
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 class OptOutAuditModelSpec extends TestSupport {
 
@@ -97,13 +98,8 @@ class OptOutAuditModelSpec extends TestSupport {
 
         val actual = Json.toJson(auditModel)
 
-        val expectedJson =
+        val expectedJson = commonAuditDetails(Individual) ++
           Json.obj(
-            "saUtr" -> "1234567890",
-            "credId" -> "12345-credId",
-            "userType" -> "Individual",
-            "mtditid" -> "XAIT0000123456",
-            "nino" -> "AB123456C",
             "outcome" -> Json.obj("isSuccessful" -> true),
             "optOutRequestedFromTaxYear" -> "21-22",
             "currentYear" -> "22-23",
@@ -126,12 +122,7 @@ class OptOutAuditModelSpec extends TestSupport {
         val expectedOutcome: Outcome = Outcome(isSuccessful = true, None, None)
 
         val actual =
-          Json.obj(
-            "saUtr" -> "1234567890",
-            "credId" -> "12345-credId",
-            "userType" -> "Individual",
-            "mtditid" -> "XAIT0000123456",
-            "nino" -> "AB123456C",
+          {commonAuditDetails(Individual) ++ Json.obj(
             "outcome" -> Json.obj("isSuccessful" -> true),
             "optOutRequestedFromTaxYear" -> "21-22",
             "currentYear" -> "22-23",
@@ -142,7 +133,7 @@ class OptOutAuditModelSpec extends TestSupport {
             "afterAssumedITSAStatusCurrentYear" -> "No Status",
             "afterAssumedITSAStatusCurrentYear+1" -> "Annual",
             "currentYear-1Crystallised" -> false
-          ).as[OptOutAuditModel]
+          )}.as[OptOutAuditModel]
 
         val expectedModel =
           OptOutAuditModel(

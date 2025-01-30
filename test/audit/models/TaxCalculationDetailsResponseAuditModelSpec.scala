@@ -16,18 +16,17 @@
 
 package audit.models
 
-import auth.MtdItUser
+import authV2.AuthActionsTestData.defaultMTDITUser
+import forms.IncomeSourcesFormsSpec.commonAuditDetails
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.{JsObject, Json}
-import play.api.test.FakeRequest
-import testConstants.BaseTestConstants.{testMtditid, testTaxYear}
+import testConstants.BaseTestConstants._
 import testConstants.NewCalcBreakdownUnitTestConstants.{liabilityCalculationModelDeductionsMinimal, liabilityCalculationModelSuccessful}
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
-import uk.gov.hmrc.auth.core.retrieve.Name
 
 class TaxCalculationDetailsResponseAuditModelSpec extends AnyWordSpecLike with Matchers {
 
@@ -36,64 +35,30 @@ class TaxCalculationDetailsResponseAuditModelSpec extends AnyWordSpecLike with M
 
   val taxCalculationDetailsResponseAuditModelFull: TaxDueResponseAuditModel =
     TaxDueResponseAuditModel(
-      mtdItUser = MtdItUser(
-        mtditid = testMtditid,
-        nino = "nino",
-        userName = Some(Name(Some("firstName"), Some("lastName"))),
-        incomeSources = IncomeSourceDetailsModel("nino", testMtditid, None, Nil, Nil),
-        btaNavPartial = None,
-        saUtr = Some("saUtr"),
-        credId = Some("credId"),
-        userType = Some(Individual),
-        arn = None
-      )(FakeRequest()),
+      mtdItUser = defaultMTDITUser(Some(Individual), IncomeSourceDetailsModel(testNino, testMtditid, None, Nil, Nil)),
       viewModel = TaxDueSummaryViewModel(liabilityCalculationModelSuccessful),
       taxYear = testTaxYear
     )
 
-  def taxCalculationDetailsResponseAuditModelMinimal(userType: Option[AffinityGroup] = Some(Individual),
-                                                     arn: Option[String] = None): TaxDueResponseAuditModel =
+  def taxCalculationDetailsResponseAuditModelMinimal(userType: Option[AffinityGroup] = Some(Individual)): TaxDueResponseAuditModel =
     TaxDueResponseAuditModel(
-      mtdItUser = MtdItUser(
-        mtditid = testMtditid,
-        nino = "nino",
-        userName = Some(Name(Some("firstName"), Some("lastName"))),
-        incomeSources = IncomeSourceDetailsModel("nino", testMtditid, None, Nil, Nil),
-        btaNavPartial = None,
-        saUtr = Some("saUtr"),
-        credId = Some("credId"),
-        userType = userType,
-        arn = arn
-      )(FakeRequest()),
+      mtdItUser = defaultMTDITUser(userType, IncomeSourceDetailsModel(testNino, testMtditid, None, Nil, Nil)),
       viewModel = TaxDueSummaryViewModel(liabilityCalculationModelDeductionsMinimal()),
       taxYear = testTaxYear
     )
 
-  val taxCalcDetailsResponseAuditModelDetailJsonMinimalIndividual: JsObject = Json.obj(
-    "userType" -> "Individual",
-    "saUtr" -> "saUtr",
-    "nino" -> "nino",
-    "credId" -> "credId",
-    "mtditid" -> testMtditid,
+  val taxCalcDetailsResponseAuditModelDetailJsonMinimalIndividual: JsObject =
+    commonAuditDetails(Individual) ++ Json.obj(
     "selfAssessmentTaxAmount" -> 0
   )
 
-  val taxCalcDetailsResponseAuditModelDetailJsonMinimalAgent: JsObject = Json.obj(
-    "userType" -> "Agent",
-    "saUtr" -> "saUtr",
-    "nino" -> "nino",
-    "credId" -> "credId",
-    "mtditid" -> testMtditid,
-    "agentReferenceNumber" -> "1",
+  val taxCalcDetailsResponseAuditModelDetailJsonMinimalAgent: JsObject =
+    commonAuditDetails(Agent) ++ Json.obj(
     "selfAssessmentTaxAmount" -> 0
   )
 
-  val taxCalcDetailsResponseAuditModelDetailJsonFull: JsObject = Json.obj(
-    "userType" -> "Individual",
-    "saUtr" -> "saUtr",
-    "nino" -> "nino",
-    "credId" -> "credId",
-    "mtditid" -> testMtditid,
+  val taxCalcDetailsResponseAuditModelDetailJsonFull: JsObject =
+    commonAuditDetails(Individual) ++ Json.obj(
     "calculationOnTaxableIncome" -> 12500,
     "selfAssessmentTaxAmount" -> 5000.99,
     "class4NationalInsurance" -> Json.arr(
@@ -297,7 +262,7 @@ class TaxCalculationDetailsResponseAuditModelSpec extends AnyWordSpecLike with M
 
       "the user is an agent" in {
         taxCalculationDetailsResponseAuditModelMinimal(
-          userType = Some(Agent), arn = Some("1")
+          userType = Some(Agent)
         ).detail mustBe taxCalcDetailsResponseAuditModelDetailJsonMinimalAgent
       }
 

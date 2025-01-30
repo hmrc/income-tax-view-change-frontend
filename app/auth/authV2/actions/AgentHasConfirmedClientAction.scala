@@ -16,7 +16,7 @@
 
 package auth.authV2.actions
 
-import auth.MtdItUserOptionNino
+import auth.authV2.models.AuthorisedAndEnrolledRequest
 import com.google.inject.Singleton
 import controllers.agent.routes
 import play.api.mvc.Results.Redirect
@@ -27,10 +27,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AgentHasConfirmedClientAction @Inject()(implicit val executionContext: ExecutionContext)
-  extends ActionRefiner[MtdItUserOptionNino, MtdItUserOptionNino] {
+  extends ActionRefiner[AuthorisedAndEnrolledRequest, AuthorisedAndEnrolledRequest] {
 
-  override protected def refine[A](request: MtdItUserOptionNino[A]): Future[Either[Result, MtdItUserOptionNino[A]]] = {
-    if(request.clientConfirmed) {
+  override protected def refine[A](request: AuthorisedAndEnrolledRequest[A]): Future[Either[Result, AuthorisedAndEnrolledRequest[A]]] = {
+    if(request.clientDetails.exists(_.confirmed)) {
       Future.successful(Right(request))
     } else {
       Future.successful(Left(Redirect(routes.ConfirmClientUTRController.show)))

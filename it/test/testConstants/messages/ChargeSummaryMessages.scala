@@ -16,9 +16,8 @@
 
 package testConstants.messages
 
-import helpers.servicemocks.AuthStub.{messagesAPI, lang}
-
-object ChargeSummaryMessages {
+import helpers.ComponentSpecBase
+object ChargeSummaryMessages extends ComponentSpecBase {
 
   val paymentBreakdownHeading: String = messagesAPI("chargeSummary.paymentBreakdown.heading")
   val underReview: String = messagesAPI("chargeSummary.paymentBreakdown.dunningLocks.underReview")

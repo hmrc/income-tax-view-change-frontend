@@ -16,7 +16,7 @@
 
 package audit.models
 
-import auth.MtdItUser
+import authV2.AuthActionsTestData._
 import implicits.ImplicitDateParser
 import models.core.AccountingPeriodModel
 import models.financialDetails.{ChargeItem, DocumentDetail, DocumentDetailWithDueDate}
@@ -27,14 +27,12 @@ import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObli
 import models.taxyearsummary.TaxYearSummaryChargeItem
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.{JsObject, Json}
-import play.api.test.FakeRequest
-import testConstants.BaseTestConstants.taxYear
+import testConstants.BaseTestConstants.{taxYear, testArn, testCredId, testMtditid, testNino, testSaUtr}
 import testConstants.BusinessDetailsTestConstants.{address, testIncomeSource}
 import testConstants.ChargeConstants
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
-import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
 
@@ -160,12 +158,12 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
   ))))
 
   val jsonAuditAgentResponse = Json.obj(
-    "nino" -> "nino",
-    "mtditid" -> "mtditid",
-    "saUtr" -> "saUtr",
-    "credId" -> "credId",
+    "nino" -> testNino,
+    "mtditid" -> testMtditid,
+    "saUtr" -> testSaUtr,
+    "credId" -> testCredId,
     "userType" -> "Agent",
-    "agentReferenceNumber" -> "agentReferenceNumber",
+    "agentReferenceNumber" -> testArn,
     "taxYearOverview" -> Json.obj(
       "calculationDate" -> "2017-07-06",
       "calculationAmount" -> 2010,
@@ -206,10 +204,10 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
   )
 
   val jsonAuditIndividualResponse = Json.obj(
-    "nino" -> "nino",
-    "mtditid" -> "mtditid",
-    "saUtr" -> "saUtr",
-    "credId" -> "credId",
+    "nino" -> testNino,
+    "mtditid" -> testMtditid,
+    "saUtr" -> testSaUtr,
+    "credId" -> testCredId,
     "userType" -> "Individual",
     "taxYearOverview" -> Json.obj(
       "calculationDate" -> "2017-07-06",
@@ -258,17 +256,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
                                        forecastAllowancesAndDeductions: Option[BigDecimal] = None,
                                        messages: Option[Messages] = None): TaxYearSummaryResponseAuditModel =
     TaxYearSummaryResponseAuditModel(
-      mtdItUser = MtdItUser(
-        mtditid = "mtditid",
-        nino = "nino",
-        userName = Some(Name(Some("firstName"), Some("lastName"))),
-        incomeSources = IncomeSourceDetailsModel("nino", "mtditid", None, business, Nil),
-        btaNavPartial = None,
-        saUtr = Some("saUtr"),
-        credId = Some("credId"),
-        userType = userType,
-        arn = agentReferenceNumber
-      )(FakeRequest()),
+      mtdItUser = defaultMTDITUser(userType, IncomeSourceDetailsModel(testNino, testMtditid, None, business, Nil)),
       messagesApi = messagesApi,
       taxYearSummaryViewModel = TaxYearSummaryViewModel(
         calculationSummary = Some(calculationSummary(
@@ -288,17 +276,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
                                                  forecastIncomeTaxAndNics: Option[BigDecimal] = None,
                                                  forecastAllowancesAndDeductions: Option[BigDecimal] = None): TaxYearSummaryResponseAuditModel =
     TaxYearSummaryResponseAuditModel(
-      mtdItUser = MtdItUser(
-        mtditid = "mtditid",
-        nino = "nino",
-        userName = Some(Name(Some("firstName"), Some("lastName"))),
-        incomeSources = IncomeSourceDetailsModel("nino", "mtditid", None, business, Nil),
-        btaNavPartial = None,
-        saUtr = Some("saUtr"),
-        credId = Some("credId"),
-        userType = userType,
-        arn = agentReferenceNumber
-      )(FakeRequest()),
+      mtdItUser = defaultMTDITUser(userType, IncomeSourceDetailsModel(testNino, testMtditid, None, business, Nil)),
       messagesApi = messagesApi,
       taxYearSummaryViewModel = TaxYearSummaryViewModel(Some(unattendedCalcSummary(
         forecastIncome = forecastIncome,

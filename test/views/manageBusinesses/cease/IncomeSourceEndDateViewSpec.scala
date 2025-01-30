@@ -17,6 +17,7 @@
 package views.manageBusinesses.cease
 
 import auth.MtdItUser
+import authV2.AuthActionsTestData.defaultMTDITUser
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import forms.incomeSources.cease.CeaseIncomeSourceEndDateFormProvider
 import forms.models.DateFormElement
@@ -46,18 +47,8 @@ class IncomeSourceEndDateViewSpec extends TestSupport {
 
   val ceasePrefix: String = "incomeSources.cease"
 
-  val testUser: MtdItUser[_] = MtdItUser(
-    mtditid = testMtditid,
-    nino = testNino,
-    userName = None,
-    btaNavPartial = None,
-    saUtr = None,
-    credId = Some("12345-credId"),
-    userType = Some(Individual),
-    arn = None,
-    incomeSources = ukPlusForeignPropertyWithSoleTraderIncomeSource
-  )(fakeRequestWithNinoAndOrigin("pta"))
-
+  val testUser: MtdItUser[_] = defaultMTDITUser(Some(Individual),
+    ukPlusForeignPropertyWithSoleTraderIncomeSource, fakeRequestWithNinoAndOrigin("pta"))
 
   class Setup(isAgent: Boolean, error: Boolean = false, incomeSourceType: IncomeSourceType) {
     val mockDateService: DateService = app.injector.instanceOf[DateService]

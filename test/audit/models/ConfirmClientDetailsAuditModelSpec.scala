@@ -17,7 +17,7 @@
 package audit.models
 
 import play.api.libs.json.Json
-import testConstants.BaseTestConstants.{testArn, testCredId, testMtditidAgent, testNinoAgent, testSaUtrId}
+import testConstants.BaseTestConstants.{testArn, testCredId, testMtditidAgent, testNinoAgent, testSaUtr}
 import testUtils.TestSupport
 
 class ConfirmClientDetailsAuditModelSpec extends TestSupport {
@@ -26,7 +26,7 @@ class ConfirmClientDetailsAuditModelSpec extends TestSupport {
   val auditType = enums.AuditType.ClientDetailsConfirmed.name
 
   def getConfirmClientDetailsAuditModel(): ConfirmClientDetailsAuditModel = {
-    ConfirmClientDetailsAuditModel(clientName = "Test User", nino = testNinoAgent, mtditid = testMtditidAgent, arn = testArn, saUtr = testSaUtrId, credId = Some(testCredId))
+    ConfirmClientDetailsAuditModel(clientName = "Test User", nino = testNinoAgent, mtditid = testMtditidAgent, arn = testArn, saUtr = testSaUtr, credId = Some(testCredId))
   }
 
 

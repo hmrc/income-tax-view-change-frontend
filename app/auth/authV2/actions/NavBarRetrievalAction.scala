@@ -26,7 +26,6 @@ import models.admin.NavBarFs
 import play.api.i18n.MessagesApi
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
-import play.twirl.api.Html
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -40,12 +39,11 @@ class NavBarRetrievalAction @Inject()(val btaNavBarController: BtaNavBarControll
                                       val ptaPartial: PtaPartial,
                                       val itvcErrorHandler: ItvcErrorHandler)
                                      (implicit val appConfig: FrontendAppConfig,
-                                val executionContext: ExecutionContext,
-                                val messagesApi: MessagesApi
-                               ) extends ActionRefiner[MtdItUser, MtdItUser] with SaveOriginAndRedirect {
+                                      val executionContext: ExecutionContext,
+                                      val messagesApi: MessagesApi
+                                     ) extends ActionRefiner[MtdItUser, MtdItUser] with SaveOriginAndRedirect {
 
   override def refine[A](request: MtdItUser[A]): Future[Either[Result, MtdItUser[A]]] = {
-
     val header: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     implicit val hc: HeaderCarrier = header.copy(extraHeaders = header.headers(Seq(play.api.http.HeaderNames.COOKIE)))
     lazy val navigationBarDisabled = !isEnabled(NavBarFs)(request)
@@ -61,7 +59,7 @@ class NavBarRetrievalAction @Inject()(val btaNavBarController: BtaNavBarControll
   def retrieveCacheAndHandleNavBar[A](request: MtdItUser[A])(implicit hc: HeaderCarrier): Future[Either[Result, MtdItUser[A]]] = {
     request.session.get(SessionKeys.origin) match {
       case Some(origin) if OriginEnum(origin).contains(PTA) =>
-        Future.successful(Right(returnMtdItUserWithNavbar(request, ptaPartial()(request, request.messages, appConfig))))
+        Future.successful(Right(request.addNavBar(ptaPartial()(request, request.messages, appConfig))))
       case Some(origin) if OriginEnum(origin).contains(BTA) =>
         handleBtaNavBar(request)
       case _ =>
@@ -69,16 +67,9 @@ class NavBarRetrievalAction @Inject()(val btaNavBarController: BtaNavBarControll
     }
   }
 
-  def returnMtdItUserWithNavbar[A](request: MtdItUser[A], partial: Html): MtdItUser[A] = {
-    MtdItUser[A](mtditid = request.mtditid, nino = request.nino, userName = request.userName,
-      incomeSources = request.incomeSources, btaNavPartial = Some(partial), saUtr = request.saUtr, credId = request.credId,
-      userType = request.userType, arn = request.arn, optClientName = request.optClientName, featureSwitches = request.featureSwitches)(request)
-  }
-
   def handleBtaNavBar[A](request: MtdItUser[A])(implicit hc: HeaderCarrier): Future[Either[Result, MtdItUser[A]]] = {
-    btaNavBarController.btaNavBarPartial(request) map {
-      case Some(partial) => Right(returnMtdItUserWithNavbar(request, partial))
-      case _ => Left(itvcErrorHandler.showInternalServerError()(request))
+    btaNavBarController.btaNavBarPartial(request) map { partial =>
+      Right(request.addNavBar(partial))
     }
   }
 }

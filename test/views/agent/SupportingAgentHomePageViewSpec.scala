@@ -17,6 +17,7 @@
 package views.agent
 
 import auth.MtdItUser
+import authV2.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
 import config.FrontendAppConfig
 import config.featureswitch._
 import models.homePage._
@@ -31,10 +32,9 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants._
-import testConstants.FinancialDetailsTestConstants.financialDetailsModel
 import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
-import views.html.agent.{PrimaryAgentHome, SupportingAgentHome}
+import views.html.agent.SupportingAgentHome
 
 import java.time.{LocalDate, Month}
 import scala.util.Try
@@ -51,31 +51,15 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
     else currentDate.getYear + 1
   }
 
-  val testMtdItUserNotMigrated: MtdItUser[_] = MtdItUser(
-    testMtditid,
-    testNino,
-    Some(testRetrievedUserName),
-    IncomeSourceDetailsModel(testNino, testMtditid, None, Nil, Nil),
-    btaNavPartial = None,
-    Some(testSaUtr),
-    Some(testCredId),
-    Some(Agent),
-    Some(testArn),
-    Some(testClientName)
-  )(FakeRequest())
+  val testMtdItUserNotMigrated: MtdItUser[_] = defaultMTDITUser(Some(Agent),
+    IncomeSourceDetailsModel(testNino, testMtditid, None, Nil, Nil), isSupportingAgent = true
+  )
 
-  val testMtdItUserMigrated: MtdItUser[_] = MtdItUser(
-    testMtditid,
-    testNino,
-    Some(testRetrievedUserName),
-    IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), Nil, Nil),
-    btaNavPartial = None,
-    Some(testSaUtr),
-    Some(testCredId),
-    Some(Agent),
-    Some(testArn),
-    None
-  )(FakeRequest())
+  val testMtdItUserMigrated: MtdItUser[_] = defaultMTDITUser(Some(Agent),
+    IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), Nil, Nil), isSupportingAgent = true)
+
+  val testMtdItUserNoClientName = getMinimalMTDITUser(Some(Agent), IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), Nil, Nil), isSupportingAgent = true)
+
 
   val year2018: Int = 2018
   val year2019: Int = 2019
@@ -146,7 +130,7 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
         document.select("h1").text() shouldBe messages("home.agent.headingWithClientName", testClientNameString)
       }
 
-      s"have the page heading ${messages("home.agent.heading")}" in new TestSetup(user = testMtdItUserMigrated) {
+      s"have the page heading ${messages("home.agent.heading")}" in new TestSetup(user = testMtdItUserNoClientName) {
         document.select("h1").text() shouldBe messages("home.agent.heading")
       }
 

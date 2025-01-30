@@ -25,7 +25,7 @@ import play.api.Application
 import play.api.http.{HeaderNames, Status}
 import play.api.test.Helpers._
 import services.{CalculationService, CreditHistoryService}
-import testConstants.BaseTestConstants.{calendarYear2018, testSaUtrId}
+import testConstants.BaseTestConstants.{calendarYear2018, testSaUtr}
 import testConstants.FinancialDetailsTestConstants._
 import views.html.CreditsSummary
 
@@ -82,7 +82,7 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 }
                 val expectedContent: String = creditsSummaryView(
                   backUrl = backUrl,
-                  utr = Some(testSaUtrId),
+                  utr = Some(testSaUtr),
                   isAgent = isAgent,
                   charges = chargesList,
                   maybeAvailableCredit = financialDetailCreditCharge.balanceDetails.availableCredit,
@@ -115,7 +115,7 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 }
                 val expectedContent: String = creditsSummaryView(
                   backUrl = backUrl,
-                  utr = Some(testSaUtrId),
+                  utr = Some(testSaUtr),
                   isAgent = isAgent,
                   charges = chargesList,
                   maybeAvailableCredit = None,
@@ -145,7 +145,7 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 }
                 val expectedContent: String = creditsSummaryView(
                   backUrl = backUrl,
-                  utr = Some(testSaUtrId),
+                  utr = Some(testSaUtr),
                   isAgent = isAgent,
                   charges = chargesList,
                   maybeAvailableCredit = financialDetailCreditCharge.balanceDetails.availableCredit,
@@ -174,7 +174,7 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 }
                 val expectedContent: String = creditsSummaryView(
                   backUrl = backUrl,
-                  utr = Some(testSaUtrId),
+                  utr = Some(testSaUtr),
                   isAgent = isAgent,
                   charges = chargesList,
                   maybeAvailableCredit = financialDetailCreditCharge.balanceDetails.availableCredit,
@@ -202,7 +202,7 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 }
                 val expectedContent: String = creditsSummaryView(
                   backUrl = backUrl,
-                  utr = Some(testSaUtrId),
+                  utr = Some(testSaUtr),
                   isAgent = isAgent,
                   charges = chargesList,
                   maybeAvailableCredit = financialDetailCreditCharge.balanceDetails.availableCredit,

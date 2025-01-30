@@ -16,19 +16,77 @@
 
 package helpers.servicemocks
 
-import helpers.WiremockHelper.stubPostWithRequest
+import controllers.agent.AuthUtils._
+import helpers.WiremockHelper.{stubPostWithRequest, stubPostWithRequestAndResponseHeaders}
 import play.api.http.Status
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
+import testConstants.BaseIntegrationTestConstants.{credId, testArn, testMtditid}
+import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolment}
 
-trait MTDAgentAuthStub extends MTDAuthStub {
+object MTDAgentAuthStub extends MTDAuthStub {
 
-  def stubAuthorisedAndMTDEnrolled(confidenceLevel: Option[Int] = None): Unit
+  def stubAuthorisedAndMTDEnrolled(isSupportingAgent: Boolean): Unit = {
+    stubAuthorisedWithAgentEnrolment()
+    if(isSupportingAgent) {
+      stubMissingDelegatedEnrolment(false)
+    }
+    stubAuthorisedAgentWithDelegatedEnrolment(isSupportingAgent)
+  }
 
-  def stubUnauthorised(): Unit
+  def stubAuthorisedButNotMTDEnrolled(): Unit = {
+    stubAuthorisedWithAgentEnrolment()
+    stubMissingDelegatedEnrolment(false)
+    stubMissingDelegatedEnrolment(true)
+  }
 
-  def stubBearerTokenExpired(): Unit
+  override def stubUnauthorised(): Unit = {
+    val responseHeaders = Map("WWW-Authenticate" -> "MDTP detail=\"InvalidBearerToken\"")
 
-  def stubNotAnAgent(): Unit
+    stubPostWithRequestAndResponseHeaders(
+      url = postAuthoriseUrl,
+      requestBody = isAgentWithAgentEnrolmentPredicateRequest,
+      status = Status.UNAUTHORIZED,
+      responseHeaders = responseHeaders
+    )
+  }
+
+  override def stubBearerTokenExpired(): Unit = {
+    val responseHeaders = Map("WWW-Authenticate" -> "MDTP detail=\"BearerTokenExpired\"")
+
+    stubPostWithRequestAndResponseHeaders(
+      url = postAuthoriseUrl,
+      requestBody = isAgentWithAgentEnrolmentPredicateRequest,
+      status = Status.UNAUTHORIZED,
+      responseHeaders = responseHeaders
+    )
+  }
+
+  def stubAuthorisedWithAgentEnrolment(): Unit = {
+    stubPostWithRequest(
+      url = postAuthoriseUrl,
+      requestBody = isAgentWithAgentEnrolmentPredicateRequest,
+      status = Status.OK,
+      responseBody = agentSuccessResponse
+    )
+  }
+
+  def stubAuthorisedAgentWithDelegatedEnrolment(isSupportingAgent: Boolean): Unit = {
+    stubPostWithRequest(
+      url = postAuthoriseUrl,
+      requestBody = delegatedEnrolmentRequest(isSupportingAgent),
+      status = Status.OK,
+      responseBody = Json.arr().toString()
+    )
+  }
+
+  def stubNotAnAgent(): Unit = {
+    stubPostWithRequest(
+      url = postAuthoriseUrl,
+      requestBody = isAgentWithAgentEnrolmentPredicateRequest,
+      status = Status.OK,
+      responseBody = mtdNotAgentSuccessResponse()
+    )
+  }
 
   def stubNoAgentEnrolmentRequiredSuccess(): Unit = stubPostWithRequest(
     url = postAuthoriseUrl,
@@ -37,20 +95,98 @@ trait MTDAgentAuthStub extends MTDAuthStub {
     responseBody = noAgentEnrolmentSuccessResponse
   )
 
-  def stubNoAgentEnrolmentError(): Unit
+  def stubNoAgentEnrolmentError(): Unit = {
+    val responseHeaders = Map("WWW-Authenticate" -> "MDTP detail=\"InsufficientEnrolments\"",
+      "Failing-Enrolment" -> "no arn enrolment")
 
-  def stubMissingDelegatedEnrolment(): Unit
+    stubPostWithRequestAndResponseHeaders(
+      url = postAuthoriseUrl,
+      requestBody = isAgentWithAgentEnrolmentPredicateRequest,
+      status = Status.UNAUTHORIZED,
+      responseHeaders = responseHeaders
+    )
+  }
+
+  def stubMissingDelegatedEnrolment(isSupportingAgent: Boolean): Unit = {
+    val enrolmentName = if(isSupportingAgent) "HMRC-MTD-IT-SUPP" else "HMRC-MTD-IT"
+    val responseHeaders = Map("WWW-Authenticate" -> "MDTP detail=\"InsufficientEnrolments\"",
+      "Failing-Enrolment" -> s"no $enrolmentName enrolment")
+    stubPostWithRequestAndResponseHeaders(
+      url = postAuthoriseUrl,
+      requestBody = delegatedEnrolmentRequest(isSupportingAgent),
+      status = Status.UNAUTHORIZED,
+      responseHeaders = responseHeaders
+    )
+  }
 
   def stubAuthorisedWhenNoChecks(): Unit = stubNoAgentEnrolmentRequiredSuccess()
+
+  lazy val isAgentWithAgentEnrolmentPredicateRequest = {
+    lazy val isNotAgentPredicate = AffinityGroup.Individual or AffinityGroup.Organisation
+    lazy val isAgentPredicate = Enrolment("HMRC-AS-AGENT") and AffinityGroup.Agent
+    val predicateJson = Json.arr((isAgentPredicate or isNotAgentPredicate).toJson)
+    Json.obj(
+      "authorise" -> predicateJson,
+      "retrieve" -> retrivalsJson
+    )
+  }
+
+  lazy val delegatedEnrolmentRequest: Boolean => JsObject = isSupportingAgent => {
+    val predicate = if(isSupportingAgent) {
+      Enrolment(secondaryAgentEnrolmentName).withIdentifier(agentIdentifier, testMtditid)
+        .withDelegatedAuthRule(secondaryAgentAuthRule).toJson
+    } else {
+      Enrolment(mtdEnrolmentName).withIdentifier(agentIdentifier, testMtditid)
+        .withDelegatedAuthRule(primaryAgentAuthRule).toJson
+    }
+    Json.obj(
+      "authorise" -> Json.arr(predicate),
+      "retrieve" -> emptyRetrievalsJson
+    )
+  }
 
   lazy val noAgentEnrolmentSuccessResponse = Json.stringify(Json.obj(
     "allEnrolments" -> Json.arr(),
     "optionalCredentials" -> Json.obj(
-      "providerId" -> "12345-credId",
+      "providerId" -> credId,
       "providerType" -> "GovernmentGateway"
     ),
     "affinityGroup" -> "Agent",
     "confidenceLevel" -> 200
   ))
+
+  lazy val agentSuccessResponse: String = {
+    Json.stringify(Json.obj(
+      "allEnrolments" -> Json.arr(
+        Json.obj(
+          "key" -> "HMRC-AS-AGENT",
+          "identifiers" -> Json.arr(
+            Json.obj(
+              "key" -> "AgentReferenceNumber",
+              "value" -> testArn
+            )
+          )
+        )
+      ),
+      "optionalCredentials" -> Json.obj(
+        "providerId" -> credId,
+        "providerType" -> "GovernmentGateway"
+      ),
+      "affinityGroup" -> "Agent",
+      "confidenceLevel" -> requiredConfidenceLevel
+    ))
+  }
+
+  def mtdNotAgentSuccessResponse(): String = {
+    Json.stringify(Json.obj(
+      "allEnrolments" -> Json.arr(),
+      "optionalCredentials" -> Json.obj(
+        "providerId" -> credId,
+        "providerType" -> "GovernmentGateway"
+      ),
+      "affinityGroup" -> "Individual",
+      "confidenceLevel" -> requiredConfidenceLevel
+    ))
+  }
 
 }

@@ -17,6 +17,7 @@
 package viewUtils
 
 import auth.MtdItUser
+import authV2.AuthActionsTestData.defaultMTDITUser
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatter
@@ -25,13 +26,11 @@ import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.optout.{OptOutMultiYearViewModel, OptOutOneYearViewModel}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Messages, MessagesApi}
-import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.twirl.api.{Html, HtmlFormat}
 import services.optout.{OneYearOptOutFollowedByAnnual, OneYearOptOutFollowedByMandated}
-import testConstants.BaseTestConstants.{testMtditid, testNino}
+import testConstants.BaseTestConstants.{testNino, testUserTypeIndividual}
 import testUtils.UnitSpec
-import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.components.link
 
@@ -43,11 +42,8 @@ class NextUpdatesViewUtilsSpec extends UnitSpec with FeatureSwitching with Impli
 
   implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
-  implicit val tsTestUser: MtdItUser[AnyContentAsEmpty.type] =
-    MtdItUser(
-      mtditid = testMtditid, nino = testNino, userName = None, incomeSources = IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty), btaNavPartial = None,
-      saUtr = Some("1234567890"), credId = Some("12345-credId"), userType = Some(Individual), arn = None
-    )(FakeRequest())
+  implicit val tsTestUser: MtdItUser[_] = defaultMTDITUser(Some(testUserTypeIndividual),
+    IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty))
 
 
   val nextUpdatesViewUtils = new NextUpdatesViewUtils(linkComponent)

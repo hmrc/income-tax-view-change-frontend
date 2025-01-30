@@ -16,9 +16,10 @@
 
 package auth.authV2.actions
 
-import auth.MtdItUserOptionNino
+import auth.authV2.models.AuthorisedAndEnrolledRequest
 import com.google.inject.Singleton
 import config.AgentItvcErrorHandler
+import enums.MTDSupportingAgent
 import play.api.mvc.{ActionRefiner, Result}
 
 import javax.inject.Inject
@@ -26,10 +27,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AgentIsPrimaryAction @Inject()(agentItvcErrorHandler: AgentItvcErrorHandler)(implicit val executionContext: ExecutionContext)
-extends ActionRefiner[MtdItUserOptionNino, MtdItUserOptionNino] {
+extends ActionRefiner[AuthorisedAndEnrolledRequest, AuthorisedAndEnrolledRequest] {
 
-  override protected def refine[A](request: MtdItUserOptionNino[A]): Future[Either[Result, MtdItUserOptionNino[A]]] = {
-    if(request.isSupportingAgent) {
+  override protected def refine[A](request: AuthorisedAndEnrolledRequest[A]): Future[Either[Result, AuthorisedAndEnrolledRequest[A]]] = {
+    if(request.mtdUserRole == MTDSupportingAgent) {
       Future.successful(Left(agentItvcErrorHandler.supportingAgentUnauthorised()(request)))
     } else {
       Future.successful(Right(request))

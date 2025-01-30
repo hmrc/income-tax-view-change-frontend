@@ -17,8 +17,6 @@
 package authV2
 
 import audit.AuditingService
-import auth.authV2.AuthActions
-import auth.authV2.actions._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, FrontendAuthConnector, ItvcErrorHandler}
 import controllers.bta.BtaNavBarController
 import org.mockito.Mockito
@@ -27,8 +25,6 @@ import org.scalatestplus.mockito.MockitoSugar.mock
 import services.admin.FeatureSwitchService
 import services.{IncomeSourceDetailsService, SessionDataService}
 import testUtils.TestSupport
-import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
 import views.html.navBar.PtaPartial
 
 trait AuthActionsSpecHelper extends TestSupport with ScalaFutures {
@@ -51,15 +47,5 @@ trait AuthActionsSpecHelper extends TestSupport with ScalaFutures {
     Mockito.reset(mockIncomeSourceDetailsService)
     Mockito.reset(mockAuditingService)
   }
-
-  implicit class Ops[A](a: A) {
-    def ~[B](b: B): A ~ B = new ~(a, b)
-  }
-
-  type AgentAuthRetrievals =
-    Enrolments ~ Option[Credentials] ~ Option[AffinityGroup]  ~ ConfidenceLevel
-
-  type AuthRetrievals =
-    Enrolments ~ Option[Name] ~ Option[Credentials] ~ Option[AffinityGroup]  ~ ConfidenceLevel
 
 }

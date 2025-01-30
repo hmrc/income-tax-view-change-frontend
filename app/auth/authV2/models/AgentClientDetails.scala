@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,22 @@
  * limitations under the License.
  */
 
-package helpers
+package auth.authV2.models
 
-import helpers.servicemocks._
+import uk.gov.hmrc.auth.core.retrieve.Name
 
-trait GenericStubMethods extends CustomMatchers {
-
-  def isAuthorisedUser(authorised: Boolean): Unit = {
-    if (authorised) {
-      AuthStub.stubAuthorised()
+case class AgentClientDetails(mtdItId: String,
+                              firstName: Option[String],
+                              lastName: Option[String],
+                              nino: String,
+                              utr: String,
+                              confirmed: Boolean
+                        ) {
+  val clientName: Option[Name] = {
+    if (firstName.isDefined && lastName.isDefined) {
+      Some(Name(firstName, lastName))
     } else {
-      AuthStub.stubUnauthorised()
+      None
     }
   }
 }

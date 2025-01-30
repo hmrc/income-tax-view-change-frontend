@@ -17,7 +17,6 @@
 package controllers.manageBusinesses.add
 
 import audit.models.IncomeSourceReportingMethodAuditModel
-import auth.MtdItUser
 import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
@@ -29,14 +28,12 @@ import models.incomeSourceDetails._
 import models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.libs.json.Json
-import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.{DateService, SessionService}
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.b1TradingName
 import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants._
-import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 import java.time.LocalDate
 import java.time.Month.APRIL
@@ -90,17 +87,6 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
     case UkProperty => "UK property"
     case ForeignProperty => "Foreign property"
     case SelfEmployment => b1TradingName
-  }
-  def testUser(mtdUserRole: MTDUserRole): MtdItUser[_] = {
-    val (affinityGroup, arn) = if(mtdUserRole == MTDIndividual) {
-      (Individual, None)
-    } else {
-      (Agent, Some("1"))
-    }
-    MtdItUser(
-      testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
-      None, Some("1234567890"), Some("12345-credId"), Some(affinityGroup), arn
-    )(FakeRequest())
   }
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
@@ -332,7 +318,7 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
                 val result = buildPOSTMTDPostClient(path, additionalCookies, validFormData).futureValue
                 AuditStub.verifyAuditContainsDetail(
                   IncomeSourceReportingMethodAuditModel(isSuccessful = true, incomeSourceType.journeyType, "ADD",
-                    "Annually", taxYearYYYYtoYYYY, businessName(incomeSourceType))(testUser(mtdUserRole)).detail
+                    "Annually", taxYearYYYYtoYYYY, businessName(incomeSourceType))(getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail
                 )
 
                 result should have(
@@ -355,7 +341,7 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
 
                 AuditStub.verifyAuditContainsDetail(
                   IncomeSourceReportingMethodAuditModel(isSuccessful = false, incomeSourceType.journeyType, "ADD",
-                    "Annually", taxYearYYYYtoYYYY, businessName(incomeSourceType))(testUser(mtdUserRole)).detail
+                    "Annually", taxYearYYYYtoYYYY, businessName(incomeSourceType))(getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail
                 )
 
                 result should have(

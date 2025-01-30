@@ -16,6 +16,7 @@
 
 package auth.authV2.actions
 
+import auth.authV2.models.{AgentClientDetails, AuthorisedAgentWithClientDetailsRequest, AuthorisedUserRequest}
 import com.google.inject.Singleton
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.routes
@@ -42,13 +43,11 @@ class RetrieveClientData @Inject()(sessionDataService: SessionDataService,
 
   lazy val logger: Logger = Logger(getClass)
 
-  lazy val noClientDetailsRoute: Result = Redirect(routes.EnterClientsUTRController.show)
-
-  def authorise(useCookies: Boolean = false): ActionRefiner[Request, ClientDataRequest] = new ActionRefiner[Request, ClientDataRequest] {
+  def authorise(useCookies: Boolean = false): ActionRefiner[AuthorisedUserRequest, AuthorisedAgentWithClientDetailsRequest] = new ActionRefiner[AuthorisedUserRequest, AuthorisedAgentWithClientDetailsRequest] {
 
     implicit val executionContext: ExecutionContext = mcc.executionContext
 
-    override protected def refine[A](request: Request[A]): Future[Either[Result, ClientDataRequest[A]]] = {
+    override protected def refine[A](request: AuthorisedUserRequest[A]): Future[Either[Result, AuthorisedAgentWithClientDetailsRequest[A]]] = {
 
       implicit val r: Request[A] = request
       implicit val hc: HeaderCarrier = HeaderCarrierConverter
@@ -59,17 +58,21 @@ class RetrieveClientData @Inject()(sessionDataService: SessionDataService,
       sessionDataService.getSessionData(useCookie = useCookies || !useSessionDataService).flatMap {
         case Right(sessionData) =>
           clientDetailsService.checkClientDetails(sessionData.utr).map {
-            case Right(name) => Right(ClientDataRequest(
-              sessionData.mtditid,
-              name.firstName,
-              name.lastName,
-              sessionData.nino,
-              sessionData.utr,
-              getBooleanFromSession(SessionKeys.isSupportingAgent),
-              confirmed = {
-                if (appConfig.isSessionDataStorageEnabled) true
-                else getBooleanFromSession(SessionKeys.confirmedClient)
-              }
+            case Right(details) =>
+              val agentClientDetails = AgentClientDetails(
+                sessionData.mtditid,
+                details.firstName,
+                details.lastName,
+                sessionData.nino,
+                sessionData.utr,
+                confirmed = {
+                  if (appConfig.isSessionDataStorageEnabled) true
+                  else getBooleanFromSession(SessionKeys.confirmedClient)
+                }
+              )
+              Right(AuthorisedAgentWithClientDetailsRequest(
+              request.authUserDetails,
+                agentClientDetails
             ))
             case Left(error) =>
               Logger("error").error(s"unable to find client with UTR: ${sessionData.utr} " + error)

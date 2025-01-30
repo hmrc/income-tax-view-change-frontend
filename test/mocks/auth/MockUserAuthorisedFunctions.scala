@@ -50,9 +50,31 @@ trait MockUserAuthorisedFunctions extends BeforeAndAfterEach {
       .thenReturn(
         new mockAuthService.AuthorisedFunction(EmptyPredicate) {
           override def apply[A](body: => Future[A])(implicit hc: HeaderCarrier, executionContext: ExecutionContext) = Future.failed(exception)
+          override def retrieve[A](retrieval: Retrieval[A]) = new mockAuthService.AuthorisedFunctionWithResult[A](EmptyPredicate, retrieval) {
+            override def apply[B](body: A => Future[B])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[B] = Future.failed(exception)
+          }
+        }
+      )
+    }
+
+  def setupMockAuthorisedUserNoCheckAuthSuccess[X, Y](retrievalValue: X ~ Y): Unit = {
+    when(mockAuthService.authorised(EmptyPredicate))
+      .thenReturn(
+        new mockAuthService.AuthorisedFunction(EmptyPredicate) {
+          override def retrieve[A](retrieval: Retrieval[A]) = new mockAuthService.AuthorisedFunctionWithResult[A](EmptyPredicate, retrieval) {
+            override def apply[B](body: A => Future[B])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[B] = body.apply(retrievalValue.asInstanceOf[A])
+          }
+        })
+  }
+
+  def setupMockUserAuthNoCheckException(exception: AuthorisationException = new InvalidBearerToken): Unit = {
+    when(mockAuthService.authorised(EmptyPredicate))
+      .thenReturn(
+        new mockAuthService.AuthorisedFunction(EmptyPredicate) {
+          override def apply[A](body: => Future[A])(implicit hc: HeaderCarrier, executionContext: ExecutionContext) = Future.failed(exception)
 
           override def retrieve[A](retrieval: Retrieval[A]) = new mockAuthService.AuthorisedFunctionWithResult[A](EmptyPredicate, retrieval) {
-            override def apply[B](body: A => Future[B])(implicit hc: HeaderCarrier, executionContext: ExecutionContext): Future[B] = Future.failed(exception)
+            override def apply[B](body: A => Future[B])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[B] = Future.failed(exception)
           }
         }
       )

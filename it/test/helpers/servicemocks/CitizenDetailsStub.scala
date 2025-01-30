@@ -19,14 +19,15 @@ package helpers.servicemocks
 import helpers.WiremockHelper
 import play.api.http.Status.OK
 import play.api.libs.json.{JsValue, Json}
-import testConstants.BaseIntegrationTestConstants.testNino
+import testConstants.BaseIntegrationTestConstants.{testClientFirstName, testClientSurname, testNino}
+import testConstants.BaseTestConstants.testSaUtr
 
 object CitizenDetailsStub {
 
   def citizenDetailsUrl(utr: String): String = s"/citizen-details/sautr/$utr"
 
   //Financial Transactions
-  def stubGetCitizenDetails(utr: String = "1234567890", status: Int = OK, response: JsValue = validCitizenDetailsResponse("Test", "User", testNino)): Unit =
+  def stubGetCitizenDetails(utr: String = testSaUtr, status: Int = OK, response: JsValue = validCitizenDetailsResponse(testClientFirstName, testClientSurname, testNino)): Unit =
     WiremockHelper.stubGet(citizenDetailsUrl(utr), status, response.toString())
 
   //Verifications

@@ -118,7 +118,7 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
       "remove all unnecessary fields" in {
         val expected = IncomeSourceDetailsModel(
           testNino,
-          "XIAT0000000000A",
+          testMtditid,
           Some((fixedDate.getYear - 1).toString),
           List(
             BusinessDetailsModel(

@@ -16,76 +16,35 @@
 
 package auth
 
-import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
+import auth.authV2.models.{AgentClientDetails, AuthUserDetails}
+import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import models.admin.FeatureSwitch
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.mvc.{Request, WrappedRequest}
 import play.twirl.api.Html
 import uk.gov.hmrc.auth.core.AffinityGroup
-import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.Name
-
-abstract class MtdItUserBase[A](implicit request: Request[A]) extends WrappedRequest[A](request) {
-
-  def mtditid: String
-
-  def nino: String
-
-  def userName: Option[Name]
-
-  def saUtr: Option[String]
-
-  def credId: Option[String]
-
-  def userType: Option[AffinityGroup]
-
-  def arn: Option[String]
-
-  def optClientName: Option[Name]
-
-  def isSupportingAgent: Boolean
-}
-
-case class MtdItUserOptionNino[A](mtditid: String,
-                                  nino: Option[String],
-                                  userName: Option[Name],
-                                  btaNavPartial: Option[Html] = None,
-                                  saUtr: Option[String],
-                                  credId: Option[String],
-                                  userType: Option[AffinityGroup],
-                                  arn: Option[String],
-                                  optClientName: Option[Name] = None,
-                                  isSupportingAgent: Boolean = false,
-                                  clientConfirmed: Boolean = false)(implicit request: Request[A]) extends WrappedRequest[A](request)
-
-case class MtdItUserWithNino[A](mtditid: String,
-                                nino: String,
-                                userName: Option[Name],
-                                btaNavPartial: Option[Html] = None,
-                                saUtr: Option[String],
-                                credId: Option[String],
-                                userType: Option[AffinityGroup],
-                                arn: Option[String],
-                                optClientName: Option[Name] = None,
-                                isSupportingAgent: Boolean = false)(implicit request: Request[A]) extends MtdItUserBase[A]
 
 case class MtdItUser[A](mtditid: String,
                         nino: String,
-                        userName: Option[Name],
+                        usersRole: MTDUserRole,
+                        authUserDetails: AuthUserDetails,
+                        clientDetails: Option[AgentClientDetails],
                         incomeSources: IncomeSourceDetailsModel,
                         btaNavPartial: Option[Html] = None,
-                        saUtr: Option[String],
-                        credId: Option[String],
-                        userType: Option[AffinityGroup],
-                        arn: Option[String],
-                        optClientName: Option[Name] = None,
-                        isSupportingAgent: Boolean = false,
                         featureSwitches: List[FeatureSwitch] = List.empty // TODO: remove default
-                       )(implicit request: Request[A]) extends MtdItUserBase[A] {
+                       )(implicit request: Request[A]) extends WrappedRequest[A](request){
 
-  def isAgent(): Boolean = userType.contains(Agent)
+  val saUtr: Option[String] = if(clientDetails.isDefined) clientDetails.map(_.utr)
+  else authUserDetails.saUtr
+  val credId: Option[String] = authUserDetails.credId
+  val userType: Option[AffinityGroup] = authUserDetails.affinityGroup
+  val arn: Option[String] = authUserDetails.agentReferenceNumber
 
+  def isAgent(): Boolean = usersRole != MTDIndividual
+  def userName: Option[Name] = authUserDetails.name
   def optClientNameAsString: Option[String] = {
+    val optClientName = clientDetails.fold[Option[Name]](None)(_.clientName)
     val firstName = optClientName.fold[Option[String]](None)(_.name)
     val lastName  = optClientName.fold[Option[String]](None)(_.lastName)
     (firstName, lastName) match {
@@ -94,10 +53,9 @@ case class MtdItUser[A](mtditid: String,
     }
   }
 
-  lazy val usersRole: MTDUserRole = (isAgent(), isSupportingAgent) match {
-    case (true, true) => MTDSupportingAgent
-    case (true, _) => MTDPrimaryAgent
-    case _ => MTDIndividual
-  }
+  val isSupportingAgent: Boolean = usersRole == MTDSupportingAgent
+
+  def addFeatureSwitches(newFeatureSwitches: List[FeatureSwitch]) = copy(featureSwitches = newFeatureSwitches)
+  def addNavBar(partial: Html) = copy(btaNavPartial = Some(partial))
 
 }

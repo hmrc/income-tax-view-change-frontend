@@ -17,6 +17,7 @@
 package views.incomeSources.cease
 
 import auth.MtdItUser
+import authV2.AuthActionsTestData.defaultMTDITUser
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import forms.incomeSources.cease.CeaseIncomeSourceEndDateFormProvider
 import org.jsoup.Jsoup
@@ -38,17 +39,8 @@ class IncomeSourceEndDateViewSpec extends TestSupport {
   val IncomeSourceEndDateView: IncomeSourceEndDate = app.injector.instanceOf[IncomeSourceEndDate]
   val incomeSourceEndDateForm: CeaseIncomeSourceEndDateFormProvider = app.injector.instanceOf[CeaseIncomeSourceEndDateFormProvider]
 
-  val testUser: MtdItUser[_] = MtdItUser(
-    mtditid = testMtditid,
-    nino = testNino,
-    userName = None,
-    btaNavPartial = None,
-    saUtr = None,
-    credId = Some("12345-credId"),
-    userType = Some(Individual),
-    arn = None,
-    incomeSources = ukPlusForeignPropertyWithSoleTraderIncomeSource
-  )(fakeRequestWithNinoAndOrigin("pta"))
+  val testUser: MtdItUser[_] = defaultMTDITUser(Some(Individual),
+    ukPlusForeignPropertyWithSoleTraderIncomeSource, fakeRequestWithNinoAndOrigin("pta"))
 
 
   class Setup(isAgent: Boolean, error: Boolean = false, incomeSourceType: IncomeSourceType) {

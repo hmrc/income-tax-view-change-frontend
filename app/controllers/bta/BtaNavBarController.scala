@@ -35,14 +35,14 @@ class BtaNavBarController @Inject()(BtaNavBarPartialConnector: BtaNavBarPartialC
                                     mcc: MessagesControllerComponents,
                                     navBarService: BtaNavBarService) extends FrontendController(mcc) with Logging {
 
-  def btaNavBarPartial[A](request: Request[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Html]] = {
+  def btaNavBarPartial[A](request: Request[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Html] = {
     val maybeNavLinks = BtaNavBarPartialConnector.getNavLinks()
     implicit val messages: Messages = mcc.messagesApi.preferred(request.request)
     for {
       navLinks <- maybeNavLinks
     } yield {
       logger.info("successful")
-      Some(navBar(navBarService.partialList(navLinks)))
+      navBar(navBarService.partialList(navLinks))
     }
   }
 }

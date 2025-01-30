@@ -18,19 +18,21 @@ package authV2
 
 import audit.AuditingService
 import audit.models.IvUpliftRequiredAuditModel
+import auth.FrontendAuthorisedFunctions
 import auth.authV2.actions._
-import auth.{FrontendAuthorisedFunctions, MtdItUserOptionNino}
+import auth.authV2.models.AuthorisedAndEnrolledRequest
+import authV2.AuthActionsTestData._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatest.Assertion
 import play.api
+import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{Result, Results}
 import play.api.test.Helpers._
-import play.api.{Application, Play}
+import testConstants.BaseTestConstants.{testNino, testRetrievedUserName, testSaUtr}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.core.{BearerTokenExpired, InsufficientEnrolments, MissingBearerToken}
-import authV2.AuthActionsTestData._
 
 import scala.concurrent.Future
 
@@ -48,13 +50,13 @@ class AuthoriseAndRetrieveIndividualSpec extends AuthActionsSpecHelper {
   }
 
   def defaultAsyncBody(
-                        requestTestCase: MtdItUserOptionNino[_] => Assertion
-                      ): MtdItUserOptionNino[_] => Future[Result] = testRequest => {
+                        requestTestCase: AuthorisedAndEnrolledRequest[_] => Assertion
+                      ): AuthorisedAndEnrolledRequest[_] => Future[Result] = testRequest => {
     requestTestCase(testRequest)
     Future.successful(Results.Ok("Successful"))
   }
 
-  def defaultAsync: MtdItUserOptionNino[_] => Future[Result] = (_) => Future.successful(Results.Ok("Successful"))
+  def defaultAsync: AuthorisedAndEnrolledRequest[_] => Future[Result] = (_) => Future.successful(Results.Ok("Successful"))
 
   lazy val authAction = app.injector.instanceOf[AuthoriseAndRetrieveIndividual]
 
@@ -66,17 +68,17 @@ class AuthoriseAndRetrieveIndividualSpec extends AuthActionsSpecHelper {
 
             when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
               Future.successful[AuthRetrievals](
-                getAllEnrolmentsIndividual(true, true) ~ Some(userName) ~ Some(credentials) ~ Some(affinityGroup) ~ acceptedConfidenceLevel
+                getAllEnrolmentsIndividual(true, true) ~ Some(testRetrievedUserName) ~ Some(testCredentials) ~ Some(affinityGroup) ~ acceptedConfidenceLevel
               )
             )
 
             val result = authAction.invokeBlock(
               fakeRequestWithActiveSession,
               defaultAsyncBody{res =>
-                res.userType shouldBe Some(affinityGroup)
-                res.nino shouldBe Some(nino)
-                res.saUtr shouldBe Some(saUtr)
-                res.userName shouldBe Some(userName)
+                res.authUserDetails.affinityGroup shouldBe Some(affinityGroup)
+                res.authUserDetails.optNino shouldBe Some(testNino)
+                res.authUserDetails.saUtr shouldBe Some(testSaUtr)
+                res.authUserDetails.name shouldBe Some(testRetrievedUserName)
               }
             )
 
@@ -88,17 +90,17 @@ class AuthoriseAndRetrieveIndividualSpec extends AuthActionsSpecHelper {
 
             when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
               Future.successful[AuthRetrievals](
-                getAllEnrolmentsIndividual(false, false) ~ None ~ Some(credentials) ~ Some(affinityGroup) ~ acceptedConfidenceLevel
+                getAllEnrolmentsIndividual(false, false) ~ None ~ Some(testCredentials) ~ Some(affinityGroup) ~ acceptedConfidenceLevel
               )
             )
 
             val result = authAction.invokeBlock(
               fakeRequestWithActiveSession,
               defaultAsyncBody{res =>
-                res.userType shouldBe Some(affinityGroup)
-                res.nino shouldBe None
-                res.saUtr shouldBe None
-                res.userName shouldBe None
+                res.authUserDetails.affinityGroup shouldBe Some(affinityGroup)
+                res.authUserDetails.optNino shouldBe None
+                res.authUserDetails.saUtr shouldBe None
+                res.authUserDetails.name shouldBe None
               })
 
             status(result) shouldBe OK
@@ -112,7 +114,7 @@ class AuthoriseAndRetrieveIndividualSpec extends AuthActionsSpecHelper {
 
               when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
                 Future.successful[AuthRetrievals](
-                  getAllEnrolmentsIndividual(true, true) ~ Some(userName) ~ Some(credentials) ~ Some(affinityGroup) ~ notAcceptedConfidenceLevel
+                  getAllEnrolmentsIndividual(true, true) ~ Some(testRetrievedUserName) ~ Some(testCredentials) ~ Some(affinityGroup) ~ notAcceptedConfidenceLevel
                 )
               )
 
@@ -129,7 +131,7 @@ class AuthoriseAndRetrieveIndividualSpec extends AuthActionsSpecHelper {
 
               when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
                 Future.successful[AuthRetrievals](
-                  getAllEnrolmentsIndividual(false, false) ~ None ~ Some(credentials) ~ Some(affinityGroup) ~ notAcceptedConfidenceLevel
+                  getAllEnrolmentsIndividual(false, false) ~ None ~ Some(testCredentials) ~ Some(affinityGroup) ~ notAcceptedConfidenceLevel
                 )
               )
 
@@ -166,7 +168,7 @@ class AuthoriseAndRetrieveIndividualSpec extends AuthActionsSpecHelper {
       "the user is an Agent" in {
         when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
           Future.successful[AuthRetrievals](
-            getAllEnrolmentsIndividual(true, true) ~ Some(userName) ~ Some(credentials) ~ Some(Agent) ~ notAcceptedConfidenceLevel
+            getAllEnrolmentsIndividual(true, true) ~ Some(testRetrievedUserName) ~ Some(testCredentials) ~ Some(Agent) ~ notAcceptedConfidenceLevel
           )
         )
 
