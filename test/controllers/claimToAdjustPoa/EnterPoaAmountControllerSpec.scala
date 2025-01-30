@@ -27,6 +27,8 @@ import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import org.scalacheck.Gen
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 import play.api
 import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
@@ -76,6 +78,30 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
     fullyPaid = false
   )
 
+  val poaViewModelGen: Gen[PaymentOnAccountViewModel] = for {
+    poaOneTransactionId <- Gen.alphaNumStr
+    poaTwoTransactionId <- Gen.alphaNumStr
+    taxYear <- Gen.const(TaxYear.makeTaxYearWithEndYear(2024))
+    totalAmountOne <- Gen.choose(1000, 5000)
+    totalAmountTwo <- Gen.choose(1000, 5000)
+    relevantAmountOne <- Gen.choose(500, totalAmountOne)
+    relevantAmountTwo <- Gen.choose(500, totalAmountTwo)
+    previouslyAdjusted <- Gen.option(Gen.oneOf(true, false))
+    partiallyPaid <- Gen.oneOf(true, false)
+    fullyPaid <- Gen.oneOf(true, false)
+  } yield PaymentOnAccountViewModel(
+    poaOneTransactionId,
+    poaTwoTransactionId,
+    taxYear,
+    totalAmountOne,
+    totalAmountTwo,
+    relevantAmountOne,
+    relevantAmountTwo,
+    previouslyAdjusted,
+    partiallyPaid,
+    fullyPaid
+  )
+
   def getPostRequest(isAgent: Boolean, mode: Mode, poaAmount: String) = {
     if (isAgent) {
       FakeRequest(POST, routes.EnterPoaAmountController.submit(false, mode).url)
@@ -112,12 +138,17 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                   enable(AdjustPaymentsOnAccount)
                   mockSingleBISWithCurrentYearAsMigrationYear()
                   setupMockPaymentOnAccountSessionService(Future(Right(Some(PoaAmendmentData(Some(MainIncomeLower))))))
-                  setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
+                  forAll(poaViewModelGen) { generatedPoaViewModel =>
+                    setupMockGetPoaAmountViewModel(Right(generatedPoaViewModel))
+                    setupMockSuccess(mtdRole)
 
-                  setupMockSuccess(mtdRole)
-                  val result = action(fakeRequest)
-                  status(result) shouldBe OK
-                  Jsoup.parse(contentAsString(result)).select("#poa-amount").attr("value") shouldBe ""
+                    val result = action(fakeRequest)
+                    val content = contentAsString(result)
+                    val parsedHtml = Jsoup.parse(content)
+                    val parsedValue = parsedHtml.select("#poa-amount").attr("value")
+                    status(result) shouldBe OK
+                    parsedValue shouldBe generatedPoaViewModel.relevantAmountOne.toString
+                  }
                 }
               }
               "PoA tax year crystallized and newPoaAmount exists in session" in {

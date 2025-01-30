@@ -22,10 +22,9 @@ import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.PaymentHistoryController
 import models.incomeSourceDetails.IncomeSourceDetailsModel
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito._
 import org.scalacheck.Gen
-import org.scalacheck.Prop.forAll
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import play.api.mvc._
@@ -44,7 +43,6 @@ class PaymentCreditAndRefundHistorySpec extends PlaySpec with MockitoSugar {
 
   implicit private val ec: ExecutionContext = scala.concurrent.ExecutionContext.global
 
-  // Mock dependencies
   private val mockAuthActions = mock[AuthActions]
   private val mockPaymentHistoryService = mock[PaymentHistoryService]
   private val mockAuditingService = mock[AuditingService]
@@ -104,16 +102,21 @@ class PaymentCreditAndRefundHistorySpec extends PlaySpec with MockitoSugar {
   )(mockAppConfig, mockDateService, mockLanguageUtils, stubMCC, ec)
 
   "PaymentHistoryController" should {
-    "return 200 OK when rendering PaymentHistory view" in forAll(viewModelGen) { viewModel =>
+    "return 200 OK when rendering PaymentHistory view with the generated viewModel" in {
       implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, "/payment-refund-history")
       implicit val user: MtdItUser[_] = testUser(request)
       implicit val hc: HeaderCarrier = HeaderCarrier()
 
-      when(mockPaymentHistoryService.getPaymentHistory()(hc, user))
+      val viewModel = viewModelGen.sample.get
+
+      when(mockPaymentHistoryService.getPaymentHistoryV2)
         .thenReturn(Future.successful(Right(Seq.empty)))
 
-      when(mockPaymentHistoryService.getRepaymentHistory(any[Boolean])(hc, user))
-        .thenReturn(Future.successful(Right(Seq.empty)))
+      when(mockPaymentHistoryService.getRepaymentHistory(any[Boolean])(any[HeaderCarrier], any[MtdItUser[_]]))
+        .thenReturn(Future.successful(Right(List.empty[models.repaymentHistory.RepaymentHistory])))
+
+      when(mockPaymentHistoryView.apply(any(), any(), any(), any(), eqTo(Some(viewModel.toString)), any())(any(), any()))
+        .thenReturn(play.twirl.api.HtmlFormat.empty)
 
       val result = controller.show(origin = None)(request)
 
@@ -121,3 +124,4 @@ class PaymentCreditAndRefundHistorySpec extends PlaySpec with MockitoSugar {
     }
   }
 }
+
