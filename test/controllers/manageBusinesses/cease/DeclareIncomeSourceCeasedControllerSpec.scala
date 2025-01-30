@@ -94,7 +94,7 @@ class DeclareIncomeSourceCeasedControllerSpec extends MockAuthActions with MockS
             val document: Document = Jsoup.parse(contentAsString(result))
             status(result) shouldBe Status.OK
             document.title shouldBe getTitle(incomeSourceType, isAgent)
-            document.select("legend:nth-child(1)").text shouldBe getHeader(incomeSourceType)
+            document.select("h1").text shouldBe getHeader(incomeSourceType)
           }
 
           "return 303 SEE_OTHER and redirect to home page" when {
@@ -171,19 +171,6 @@ class DeclareIncomeSourceCeasedControllerSpec extends MockAuthActions with MockS
 
               status(result) shouldBe Status.SEE_OTHER
               redirectLocation(result) shouldBe Some(expectedRedirectUrl)
-            }
-          }
-
-          "return 400 BAD_REQUEST" when {
-            "cease declaration is not completed" in {
-              setupMockSuccess(mtdRole)
-              enable(IncomeSourcesFs)
-              mockBothPropertyBothBusiness()
-              setupMockSetSessionKeyMongo(Right(true))
-              val invalidForm = Map(DeclareIncomeSourceCeasedForm.declaration -> "invalid")
-              val result = action(fakeRequest.withFormUrlEncodedBody(invalidForm.toSeq: _*))
-
-              status(result) shouldBe Status.BAD_REQUEST
             }
           }
 

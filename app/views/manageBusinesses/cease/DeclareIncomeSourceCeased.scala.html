@@ -34,6 +34,9 @@
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.insettext.InsetText
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.Legend
 @import enums.IncomeSourceJourney.SelfEmployment
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.components._
 
 @this(
         mainTemplate: unifiedLayout,
@@ -42,8 +45,12 @@
         errorSummary: ErrorSummary,
         govukCheckboxes: GovukCheckboxes,
         hmrcPageHeading: HmrcPageHeading,
-        govukInsetText : GovukInsetText
+        govukInsetText : GovukInsetText,
+        p : p,
+        h1: h1,
+        govukButton: GovukButton
 )
+
 
 @(
         form: Form[DeclareIncomeSourceCeasedForm],
@@ -63,7 +70,18 @@
 
 @title = @{ getMessage("heading") }
 
-@formName = @{ DeclareIncomeSourceCeasedForm.declaration }
+@hintMessage = @{
+    soleTraderBusinessName match {
+        case _ if incomeSourceType != SelfEmployment => getMessage("hint")
+        case Some(businessName)                      => getMessage("hint", businessName)
+        case None                                    => getMessage("hint.noBusinessName")
+    }
+}
+
+@hintInset = @{
+    govukInsetText(InsetText(id=Some("cease-income-source-declaration-hint"), content = HtmlContent(hintMessage)))
+}
+
 
 @mainTemplate(
     pageTitle = title,
@@ -72,40 +90,20 @@
     backUrl = Some(backUrl),
     btaNavPartial = user.btaNavPartial
 ) {
-
-    @errorSummary(form)
-
     <span class="govuk-caption-l"> @getMessage("caption") </span>
 
+    @h1(id = Some("heading"), msg = getMessage("heading"), classes = "govuk-heading-l")
+
+    @hintInset
+
     @formWithCSRF(action = postAction, Symbol("id") -> "declare-income-source-ceased-form") {
+        @p(id = Some("confirm-cease-p1")){@getMessage("p1")}
 
-        @govukCheckboxes(Checkboxes(
-            fieldset = Some(Fieldset(
-                legend = Some(Legend(
-                    content = Text(Messages(title)),
-                    classes = "govuk-fieldset__legend--l"
-                ))
-            )),
-            name = formName,
-            items = Seq(
-                CheckboxItem(
-                    content = Text(getMessage("checkboxLabel")),
-                    value = "true"
-                )
-            ),
-            hint = Some(Hint(
-                classes = "govuk-inset-text govuk-!-margin-top-3",
-                content = Text(
-                    soleTraderBusinessName match {
-                        case _ if incomeSourceType != SelfEmployment => getMessage("hint")
-                        case Some(businessName)                      => getMessage("hint", businessName)
-                        case None                                    => getMessage("hint.noBusinessName")
-                    }
-                )
-            )),
-            errorMessage = form.errors.asTextErrorMessageForField(formName)
-        ).withFormField(form(formName)))
-
-        <div class="govuk-!-padding-top-4"> @continueButton() </div>
+        <div class="govuk-button-group">
+            @govukButton(Button(
+                content = Text(getMessage("continue")),
+                attributes = Map("id" -> "confirm-button")
+            ))
+        </div>
     }
 }

@@ -67,16 +67,8 @@ class DeclareIncomeSourceCeasedViewSpec extends TestSupport {
     isAgent          <- Seq(true, false)
   } yield {
     s"Declare $incomeSourceType Ceased View - isAgent = $isAgent" should {
-      "render the legend" in new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType) {
-        document.getElementsByClass("govuk-fieldset__legend govuk-fieldset__legend--l").first().text() shouldBe
-          messages(s"incomeSources.cease.${incomeSourceType.key}.heading")
-      }
-      "render the checkbox" in new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType) {
-        document.getElementById(declaration).attr("type") shouldBe "checkbox"
-      }
-      "render the checkbox label" in new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType) {
-        document.getElementsByClass("govuk-label govuk-checkboxes__label").first().text() shouldBe
-          messages(s"incomeSources.cease.${incomeSourceType.key}.checkboxLabel")
+      "render the correct h1" in new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType) {
+        document.getElementById("heading").text() shouldBe messages(s"incomeSources.cease.${incomeSourceType.key}.heading")
       }
 
       if (incomeSourceType equals SelfEmployment) {
@@ -99,13 +91,13 @@ class DeclareIncomeSourceCeasedViewSpec extends TestSupport {
           else         controllers.manageBusinesses.cease.routes.CeaseIncomeSourceController.show().url
         )
       }
-      "render the continue button" in new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType) {
-        document.getElementById("continue-button").text() shouldBe messages("base.continue")
+
+      "render the p1" in new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType) {
+        document.getElementById("confirm-cease-p1").text() shouldBe messages(s"incomeSources.cease.${incomeSourceType.key}.p1")
       }
-      "render the error summary" in new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType, error = true) {
-        document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
-        document.getElementsByClass("govuk-error-summary__body").first().text() shouldBe
-          messages(s"incomeSources.cease.${incomeSourceType.key}.checkboxError")
+
+      "render the confirm and continue button" in new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType) {
+        document.getElementById("confirm-button").text() shouldBe messages(s"incomeSources.cease.${incomeSourceType.key}.continue")
       }
     }
   }

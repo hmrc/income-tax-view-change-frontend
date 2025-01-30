@@ -20,12 +20,11 @@ import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
-import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.{IncomeSourcesFs, NavBarFs}
 import models.incomeSourceDetails.CeaseIncomeSourceData.ceaseIncomeSourceDeclare
 import models.incomeSourceDetails.UIJourneySessionData
-import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
+import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSelfEmploymentIdHashed, testSessionId}
@@ -34,7 +33,6 @@ import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndP
 class DeclareIncomeSourceCeasedControllerISpec extends ControllerISpecHelper {
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
 
-  val buttonLabel: String = messagesAPI("base.continue")
   val stringTrue: String = "true"
 
   override def beforeEach(): Unit = {
@@ -69,13 +67,12 @@ class DeclareIncomeSourceCeasedControllerISpec extends ControllerISpecHelper {
               val result = buildGETMTDClient(path, additionalCookies).futureValue
               IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-              val checkboxLabelMessage: String = messagesAPI(s"incomeSources.cease.${incomeSourceType.key}.checkboxLabel")
+              val buttonLabel: String = messagesAPI(s"incomeSources.cease.${incomeSourceType.key}.continue")
 
               result should have(
                 httpStatus(OK),
                 pageTitle(mtdUserRole, s"incomeSources.cease.${incomeSourceType.key}.heading"),
-                elementTextBySelector("label")(checkboxLabelMessage),
-                elementTextByID("continue-button")(buttonLabel)
+                elementTextByID("confirm-button")(buttonLabel)
               )
             }
           }
@@ -88,7 +85,7 @@ class DeclareIncomeSourceCeasedControllerISpec extends ControllerISpecHelper {
         s"a user is a $mtdUserRole" that {
           "is authenticated, with a valid enrolment" should {
             "redirect to IncomeSourceEndDateControllerUrl" when {
-              "form is filled correctly" in {
+              "continue is pressed correctly" in {
                 stubAuthorised(mtdUserRole)
                 disable(NavBarFs)
                 enable(IncomeSourcesFs)
@@ -96,8 +93,7 @@ class DeclareIncomeSourceCeasedControllerISpec extends ControllerISpecHelper {
                 await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"CEASE-${incomeSourceType.key}")))
 
                 val result = buildPOSTMTDPostClient(path,
-                  additionalCookies,
-                  body = DeclareIncomeSourceCeasedForm(Some("true"), "csrfToken").toFormMap).futureValue
+                  additionalCookies, body = Map()).futureValue
 
                 val expectedRedirectUrl = controllers.manageBusinesses.cease.routes
                   .IncomeSourceEndDateController.show(optIdHash, incomeSourceType, mtdUserRole != MTDIndividual, false).url
@@ -108,27 +104,6 @@ class DeclareIncomeSourceCeasedControllerISpec extends ControllerISpecHelper {
                 )
                 sessionService.getMongoKey(ceaseIncomeSourceDeclare, IncomeSourceJourneyType(Cease, incomeSourceType)).futureValue shouldBe Right(Some(stringTrue))
 
-              }
-            }
-            "return a BadRequest" when {
-              "form is filled incorrectly" in {
-                stubAuthorised(mtdUserRole)
-                disable(NavBarFs)
-                enable(IncomeSourcesFs)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-
-                await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"CEASE-${incomeSourceType.key}")))
-
-                val result = buildPOSTMTDPostClient(path,
-                  additionalCookies,
-                  body = Map.empty).futureValue
-
-                val checkboxErrorMessage: String = messagesAPI(s"incomeSources.cease.${incomeSourceType.key}.checkboxError")
-
-                result should have(
-                  httpStatus(BAD_REQUEST),
-                  elementTextByID("cease-income-source-declaration-error")(messagesAPI("base.error-prefix") + " " + checkboxErrorMessage)
-                )
               }
             }
           }
