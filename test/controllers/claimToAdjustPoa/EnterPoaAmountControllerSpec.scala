@@ -366,6 +366,33 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                 status(result) shouldBe BAD_REQUEST
                 redirectLocation(result) shouldBe None
               }
+              "Fails when view model is a negative amount" in {
+                enable(AdjustPaymentsOnAccount)
+                mockSingleBISWithCurrentYearAsMigrationYear()
+                setupMockPaymentOnAccountSessionService(Future(Right(Some(PoaAmendmentData(Some(MainIncomeLower))))))
+                forAll(poaViewModelGen) { generatedPoaViewModel =>
+                  setupMockGetPoaAmountViewModel(Right(generatedPoaViewModel))
+                  setupMockSuccess(mtdRole)
+
+                  val inputAmount = -100
+                  val result = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> inputAmount.toString))
+                  status(result) shouldBe BAD_REQUEST
+                  redirectLocation(result) shouldBe None
+                }
+              }
+              "Fails when input amount exceeds relevant amount from view model" in {
+                enable(AdjustPaymentsOnAccount)
+                mockSingleBISWithCurrentYearAsMigrationYear()
+                forAll(poaViewModelGen) { generatedPoaViewModel =>
+                  setupMockGetPoaAmountViewModel(Right(generatedPoaViewModel))
+                  setupMockSuccess(mtdRole)
+
+                  val inputAmount = generatedPoaViewModel.relevantAmountOne + 100
+                  val result = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> inputAmount.toString))
+                  status(result) shouldBe BAD_REQUEST
+                  redirectLocation(result) shouldBe None
+                }
+              }
               "Input PoA Amount is not a valid number" in {
                 enable(AdjustPaymentsOnAccount)
                 mockSingleBISWithCurrentYearAsMigrationYear()
