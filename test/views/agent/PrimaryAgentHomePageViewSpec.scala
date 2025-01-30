@@ -110,6 +110,9 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
                   creditAndRefundEnabled: Boolean = false,
                   user: MtdItUser[_] = testMtdItUserNotMigrated,
                   reportingFrequencyEnabled: Boolean = false,
+                  penaltiesAndAppealsIsEnabled: Boolean = true,
+                  submissionFrequency: String = "Annual",
+                  penaltyPoints: Int = 0,
                   currentITSAStatus: ITSAStatus = ITSAStatus.Voluntary
                  ) {
 
@@ -125,6 +128,8 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
 
     val accountSettingsTileViewModel = AccountSettingsTileViewModel(TaxYear(currentTaxYear, currentTaxYear + 1), reportingFrequencyEnabled, currentITSAStatus)
 
+    val penaltiesAndAppealsTileViewModel = PenaltiesAndAppealsTileViewModel(penaltiesAndAppealsIsEnabled, submissionFrequency, penaltyPoints)
+
     val homePageViewModel = HomePageViewModel(
       utr = utr,
       nextUpdatesTileViewModel = nextUpdatesTileViewModel,
@@ -133,6 +138,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
       paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel,
       yourBusinessesTileViewModel = yourBusinessesTileViewModel,
       accountSettingsTileViewModel = accountSettingsTileViewModel,
+      penaltiesAndAppealsTileViewModel = penaltiesAndAppealsTileViewModel,
       dunningLockExists = dunningLockExists
     )
     val view: HtmlFormat.Appendable = agentHome(
@@ -431,6 +437,32 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
           "has a link to AddIncomeSourceController.show()" in new TestSetup(user = testMtdItUserMigrated, incomeSourcesEnabled = true, incomeSourcesNewJourneyEnabled = true) {
             getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").text()) shouldBe Some("Add, manage or cease a business or income source")
             getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").attr("href")) shouldBe Some(controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url)
+          }
+        }
+      }
+
+      "have a Penalties and Appeals tile" when {
+        "PenaltiesAndAppeals FS is enabled" which {
+          "has a heading" in new TestSetup(submissionFrequency = "Annual", penaltyPoints = 2) {
+            getElementById("penalties-and-appeals-tile").map(_.select("h2").first().text()) shouldBe Some("Penalties and appeals")
+          }
+          "has a link to Self Assessment Penalties and Appeals page" in new TestSetup(penaltiesAndAppealsIsEnabled = true) {
+            getElementById("sa-penalties-and-appeals-link").map(_.text()) shouldBe Some("Check Self Assessment penalties and appeals")
+            getElementById("sa-penalties-and-appeals-link").map(_.attr("href")) shouldBe Some("")
+          }
+          "has a two-points penalty tag" in new TestSetup(submissionFrequency = "Annual", penaltyPoints = 3) {
+            getElementById("penalty-points-tag").map(_.text()) shouldBe Some("2 PENALTY POINTS")
+          }
+          "has a four-points penalty tag" in new TestSetup(submissionFrequency = "Quarterly", penaltyPoints = 4) {
+            getElementById("penalty-points-tag").map(_.text()) shouldBe Some("4 PENALTY POINTS")
+          }
+          "has no penalty tag if 2 points reached but User is reporting Quarterly" in new TestSetup(submissionFrequency = "Quarterly", penaltyPoints = 2) {
+            getElementById("penalty-points-tag").map(_.text()).isDefined shouldBe false
+            getElementById("penalty-points-tag").map(_.text()).isDefined shouldBe false
+          }
+          "has no penalty tag if user has only 1 point" in new TestSetup(penaltyPoints = 1) {
+            getElementById("penalty-points-tag").map(_.text()).isDefined shouldBe false
+            getElementById("penalty-points-tag").map(_.text()).isDefined shouldBe false
           }
         }
       }

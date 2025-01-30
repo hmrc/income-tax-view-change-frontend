@@ -52,6 +52,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
                                val dateService: DateServiceInterface,
                                val whatYouOweService: WhatYouOweService,
                                val ITSAStatusService: ITSAStatusService,
+                               val penaltyDetailsService: PenaltyDetailsService,
                                auditingService: AuditingService)
                               (implicit val ec: ExecutionContext,
                                implicit val itvcErrorHandler: ItvcErrorHandler,
@@ -122,6 +123,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
       overDuePaymentsCount = calculateOverduePaymentsCount(paymentsDue, outstandingChargesModel)
       accruingInterestPaymentsCount = NextPaymentsTileViewModel.paymentsAccruingInterestCount(unpaidCharges, dateService.getCurrentDate)
       currentITSAStatus <- getCurrentITSAStatus(currentTaxYear)
+      penaltiesAndAppealsTileViewModel = penaltyDetailsService.getPenaltyPenaltiesAndAppealsTileViewModel(isEnabled(PenaltiesAndAppeals))
       paymentsDueMerged = mergePaymentsDue(paymentsDue, outstandingChargeDueDates)
     } yield {
 
@@ -147,6 +149,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
           paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel,
           yourBusinessesTileViewModel = yourBusinessesTileViewModel,
           accountSettingsTileViewModel = accountSettingsTileViewModel,
+          penaltiesAndAppealsTileViewModel = penaltiesAndAppealsTileViewModel,
           dunningLockExists = dunningLockExists,
           origin = origin
         )

@@ -119,7 +119,8 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
   class Setup(paymentDueDate: LocalDate = nextPaymentDueDate, overDuePaymentsCount: Int = 0, paymentsAccruingInterestCount: Int = 0, reviewAndReconcileEnabled: Boolean = false,
               nextUpdatesTileViewModel: NextUpdatesTileViewModel = viewModelFuture, utr: Option[String] = Some("1234567890"), paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
               user: MtdItUser[_] = testMtdItUser(), dunningLockExists: Boolean = false, creditAndRefundEnabled: Boolean = false, displayCeaseAnIncome: Boolean = false,
-              incomeSourcesEnabled: Boolean = false, incomeSourcesNewJourneyEnabled: Boolean = false, reportingFrequencyEnabled: Boolean = false, currentITSAStatus: ITSAStatus = ITSAStatus.Voluntary) {
+              incomeSourcesEnabled: Boolean = false, incomeSourcesNewJourneyEnabled: Boolean = false, reportingFrequencyEnabled: Boolean = false, penaltiesAndAppealsIsEnabled: Boolean = true,
+              penaltyPoints: Int = 0, submissionFrequency: String = "Annual", currentITSAStatus: ITSAStatus = ITSAStatus.Voluntary) {
 
     val returnsTileViewModel = ReturnsTileViewModel(currentTaxYear = TaxYear(currentTaxYear - 1, currentTaxYear), iTSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled)
 
@@ -131,6 +132,8 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
     val accountSettingsTileViewModel = AccountSettingsTileViewModel(TaxYear(currentTaxYear, currentTaxYear + 1), reportingFrequencyEnabled, currentITSAStatus)
 
+    val penaltiesAndAppealsTileViewModel = PenaltiesAndAppealsTileViewModel(penaltiesAndAppealsIsEnabled, submissionFrequency, penaltyPoints)
+
     val homePageViewModel = HomePageViewModel(
       utr = utr,
       nextUpdatesTileViewModel = nextUpdatesTileViewModel,
@@ -139,6 +142,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel,
       yourBusinessesTileViewModel = yourBusinessesTileViewModel,
       accountSettingsTileViewModel = accountSettingsTileViewModel,
+      penaltiesAndAppealsTileViewModel = penaltiesAndAppealsTileViewModel,
       dunningLockExists = dunningLockExists
     )
 
@@ -416,6 +420,30 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       "the reporting frequency page FS is disabled" which {
         "does not have the Account Settings tile" in new Setup(user = testMtdItUserMigrated(), reportingFrequencyEnabled = false) {
           getElementById("account-settings-tile") shouldBe None
+        }
+      }
+    }
+
+    "have a Penalties and Appeals tile" when {
+      "PenaltiesAndAppeals FS is enabled" which {
+        "has a heading" in new Setup(submissionFrequency = "Annual", penaltyPoints = 2) {
+          getElementById("penalties-and-appeals-tile").map(_.select("h2").first().text()) shouldBe Some("Penalties and appeals")
+        }
+        "has a link to Self Assessment Penalties and Appeals page" in new Setup(penaltiesAndAppealsIsEnabled = true) {
+          getElementById("sa-penalties-and-appeals-link").map(_.text()) shouldBe Some("Check Self Assessment penalties and appeals")
+          getElementById("sa-penalties-and-appeals-link").map(_.attr("href")) shouldBe Some("")
+        }
+        "has a two-points penalty tag" in new Setup(submissionFrequency = "Annual", penaltyPoints = 3) {
+          getElementById("penalty-points-tag").map(_.text()) shouldBe Some("2 PENALTY POINTS")
+        }
+        "has a four-points penalty tag" in new Setup(submissionFrequency = "Quarterly", penaltyPoints = 4) {
+          getElementById("penalty-points-tag").map(_.text()) shouldBe Some("4 PENALTY POINTS")
+        }
+        "has no penalty tag if 2 points reached but User is reporting Quarterly" in new Setup(submissionFrequency = "Quarterly", penaltyPoints = 2) {
+          getElementById("penalty-points-tag").map(_.text()).isDefined shouldBe false
+        }
+        "has no penalty tag if user has only 1 point" in new Setup(penaltyPoints = 1) {
+          getElementById("penalty-points-tag").map(_.text()).isDefined shouldBe false
         }
       }
     }
