@@ -93,7 +93,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
           Future.successful(onError(s"Transaction id not found for tax year $taxYear", isAgent, showInternalServerError = false))
         case Some(error: FinancialDetailsErrorModel) =>
           Future.successful(onError(s"Financial details error :: $error", isAgent, showInternalServerError = true))
-        case _ =>
+        case None =>
           Future.successful(onError("Failed to find related financial detail for tax year and charge ", isAgent, showInternalServerError = true))
       }
     }
