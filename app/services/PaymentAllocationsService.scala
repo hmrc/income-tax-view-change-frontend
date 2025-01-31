@@ -95,6 +95,7 @@ class PaymentAllocationsService @Inject()(financialDetailsConnector: FinancialDe
         Logger("application").error(s"error when getting financial details - code: ${errorModel.code}, message: ${errorModel.message}")
         None
       case None =>
+        Logger("application").error(s"No response returned when getting financial details")
         None
     }
   }
