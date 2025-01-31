@@ -31,7 +31,7 @@ case class ChargeItem (
                         transactionType: TransactionType,
                         subTransactionType: Option[SubTransactionType],
                         documentDate: LocalDate,
-                        private val dueDate: Option[LocalDate],
+                        dueDate: Option[LocalDate],
                         originalAmount: BigDecimal,
                         outstandingAmount: BigDecimal,
                         interestOutstandingAmount: Option[BigDecimal],
