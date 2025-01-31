@@ -499,7 +499,11 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
             messages("whatYouOwe.moneyOnAccount-3") + "."
         }
 
-        "money in your account section with zero available credits" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
+        "money in your account section with no available credits" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
+          findElementById("money-in-your-account") shouldBe None
+        }
+
+        "money in your account section with available credits equal to £0 " in new TestSetup(charges = whatYouOweDataWithDataDueIn30DaysAvailableCreditZero()) {
           findElementById("money-in-your-account") shouldBe None
         }
 
@@ -1177,7 +1181,11 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           messages("whatYouOwe.moneyOnAccount-3") + "."
       }
 
-      "money in your account section with zero available credits" in new AgentTestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
+      "money in your account section with no available credits" in new AgentTestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
+        findAgentElementById("money-in-your-account") shouldBe None
+      }
+
+      "money in your account section with an available credit of £0.00" in new AgentTestSetup(charges = whatYouOweDataWithDataDueIn30DaysAvailableCreditZero()) {
         findAgentElementById("money-in-your-account") shouldBe None
       }
     }
