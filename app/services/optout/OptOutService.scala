@@ -22,6 +22,7 @@ import auth.MtdItUser
 import cats.data.OptionT
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure}
+import enums._
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
@@ -253,6 +254,20 @@ class OptOutService @Inject()(
         case (false, true) => chosenTaxYear
         case _ => singleTaxYear
       }
+    }
+  }
+
+
+  def determineOptOutIntentYear()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[ChosenTaxYear] = {
+    repository.fetchSavedIntent().map {
+      case Some(chosenYear) if chosenYear == dateService.getCurrentTaxYear.previousYear =>
+        PreviousTaxYear
+      case Some(chosenYear) if chosenYear == dateService.getCurrentTaxYear =>
+        CurrentTaxYear
+      case Some(chosenYear) if chosenYear == dateService.getCurrentTaxYear.nextYear =>
+        NextTaxYear
+      case _ =>
+        NoChosenTaxYear
     }
   }
 

@@ -59,7 +59,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   //SA for Agents Online Service
   lazy val saForAgents: String = "https://www.gov.uk/guidance/self-assessment-for-agents-online-service"
 
-
   //GG Sign In via BAS Gateway
   lazy val signInUrl: String = servicesConfig.getString("base.sign-in")
   lazy val ggSignInUrl: String = servicesConfig.getString("government-gateway.sign-in.url")
@@ -188,5 +187,8 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val timeMachineAddDays: Int = servicesConfig.getInt("time-machine.add-days")
 
   lazy val isSessionDataStorageEnabled: Boolean = servicesConfig.getBoolean("feature-switch.enable-session-data-storage")
+
+  val selfAssessmentTaxReturn = servicesConfig.getString("external-urls.self-assessment-tax-return-link")
+  val compatibleSoftwareLink = servicesConfig.getString("external-urls.compatible-software-link")
 
 }
