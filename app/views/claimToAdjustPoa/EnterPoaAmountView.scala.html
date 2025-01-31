@@ -194,9 +194,8 @@
             spellcheck = Some(false),
             prefix = Some(PrefixOrSuffix(
                 content = Text("£")
-            )),
-            value = enterPoaForm("poa-amount").value.orElse(Some(viewModel.relevantAmountOne.toString))
-            ).withFormField(enterPoaForm("poa-amount")))
+            ))
+        ).withFormField(enterPoaForm("poa-amount")))
 
         <div class="govuk-button-group">
             @govukButton(
