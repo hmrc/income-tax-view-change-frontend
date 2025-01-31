@@ -73,6 +73,29 @@ class ConfirmedOptOutViewUtilsSpec extends UnitSpec with FeatureSwitching with I
 
     ".submitYourTaxReturnContent()" when {
 
+      "CY-1 == Quarterly, CY == Quarterly, CY+1 == Quarterly - chosen intent is CurrentTaxYear, is a multi year scenario & CY-1 is Crystallised" should {
+
+        "return the correct content" in {
+
+          val actual: Option[Html] =
+            confirmedOptOutViewUtils.submitYourTaxReturnContent(
+              `itsaStatusCY-1` = Voluntary,
+              itsaStatusCY = Voluntary,
+              `itsaStatusCY+1` = Voluntary,
+              chosenTaxYear = CurrentTaxYear,
+              isMultiYear = true,
+              isPreviousYearCrystallised = true
+            )
+
+          val expected =
+            HtmlFormat.fill(
+              Seq(submitYourTaxReturnHeading, firstParagraph)
+            )
+
+          actual shouldBe Some(expected)
+        }
+      }
+
       "CY-1 == Quarterly, CY == Quarterly, CY+1 == Quarterly - chosen intent is CurrentTaxYear and is a multi year scenario" should {
 
         "return the correct content" in {
