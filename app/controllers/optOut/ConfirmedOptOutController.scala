@@ -20,12 +20,16 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import enums.ChosenTaxYear
 import models.admin.ReportingFrequencyPage
+import models.optout.ConfirmedOptOutViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.optout.OptOutService
+import play.twirl.api.Html
+import services.optout.{OptOutProposition, OptOutService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import viewUtils.ConfirmedOptOutViewUtils
 import views.html.optOut.ConfirmedOptOut
 
 import javax.inject.Inject
@@ -33,16 +37,17 @@ import scala.concurrent.{ExecutionContext, Future}
 
 
 class ConfirmedOptOutController @Inject()(val authActions: AuthActions,
-                                           val view: ConfirmedOptOut,
+                                          confirmedOptOutViewUtils: ConfirmedOptOutViewUtils,
+                                          val view: ConfirmedOptOut,
                                           val itvcErrorHandler: ItvcErrorHandler,
                                           val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                           val optOutService: OptOutService
+                                          val optOutService: OptOutService
                                          )
                                          (implicit val appConfig: FrontendAppConfig,
                                           mcc: MessagesControllerComponents,
                                           val ec: ExecutionContext
                                          )
-  extends FrontendController(mcc) with I18nSupport with FeatureSwitching{
+  extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
@@ -57,15 +62,32 @@ class ConfirmedOptOutController @Inject()(val authActions: AuthActions,
   def show(isAgent: Boolean = false): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
       withRecover(isAgent) {
+
         val showReportingFrequencyContent = isEnabled(ReportingFrequencyPage)
-        optOutService.optOutConfirmedPageViewModel().map {
-          case Some(viewModel) => Ok(view(viewModel, isAgent, showReportingFrequencyContent))
-          case None =>
-            Logger("application").error(s"error, invalid Opt-out journey")
-            errorHandler(isAgent).showInternalServerError()
+
+        for {
+          proposition: OptOutProposition <- optOutService.fetchOptOutProposition()
+          chosenTaxYear: ChosenTaxYear <- optOutService.determineOptOutIntentYear()
+          viewModel: Option[ConfirmedOptOutViewModel] <- optOutService.optOutConfirmedPageViewModel()
+          submitYourTaxReturnContent: Option[Html] =
+            confirmedOptOutViewUtils
+              .submitYourTaxReturnContent(
+                `itsaStatusCY-1` = proposition.previousTaxYear.status,
+                `itsaStatusCY` = proposition.currentTaxYear.status,
+                `itsaStatusCY+1` = proposition.nextTaxYear.status,
+                chosenTaxYear = chosenTaxYear,
+                isMultiYear = proposition.isMultiYearOptOut,
+                isPreviousYearCrystallised = proposition.previousTaxYear.crystallised
+              )
+        } yield {
+          viewModel match {
+            case Some(viewModel) =>
+              Ok(view(viewModel, isAgent, showReportingFrequencyContent, submitYourTaxReturnContent))
+            case None =>
+              Logger("application").error(s"error, invalid Opt-out journey")
+              errorHandler(isAgent).showInternalServerError()
+          }
         }
       }
-
   }
-
 }

@@ -18,17 +18,20 @@ package controllers.optOut
 
 import controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDUserRole}
-import helpers.OptOutSessionRepositoryHelper
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import helpers.{OptOutSessionRepositoryHelper, WiremockHelper}
 import models.admin.NavBarFs
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus._
 import play.api.http.Status.OK
+import play.api.libs.json.Json
 import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
+import testConstants.ITSAStatusTestConstants.successITSAStatusResponseJson
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
 class ConfirmedOptOutControllerISpec extends ControllerISpecHelper {
+
   private val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
 
   private val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
@@ -40,7 +43,7 @@ class ConfirmedOptOutControllerISpec extends ControllerISpecHelper {
   }
 
   def getPath(mtdRole: MTDUserRole): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
     pathStart + "/optout/confirmed"
   }
 
@@ -51,9 +54,15 @@ class ConfirmedOptOutControllerISpec extends ControllerISpecHelper {
       s"a user is a $mtdUserRole" that {
         "is authenticated, with a valid enrolment" should {
           s"render confirm single year opt out page" in {
+
             disable(NavBarFs)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+            val responseBody = Json.arr(successITSAStatusResponseJson)
+            val url = s"/income-tax-view-change/itsa-status/status/AA123456A/21-22?futureYears=true&history=false"
+
+            WiremockHelper.stubGet(url, OK, responseBody.toString())
 
             helper.stubOptOutInitialState(currentTaxYear,
               previousYearCrystallised = false,
