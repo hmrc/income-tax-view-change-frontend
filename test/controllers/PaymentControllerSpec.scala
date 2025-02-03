@@ -25,9 +25,8 @@ import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import play.api
 import play.api.Application
-import play.api.mvc.Result
 import play.api.test.Helpers._
-import testConstants.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtrId}
+import testConstants.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtr}
 import testConstants.PaymentDataTestConstants._
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -61,7 +60,7 @@ class PaymentControllerSpec extends MockAuthActions {
             "a successful payments journey is started" in {
               setupMockSuccess(mtdUserRole)
               mockSingleBusinessIncomeSource()
-              when(mockPayApiConnector.startPaymentJourney(ArgumentMatchers.eq(testSaUtrId), ArgumentMatchers.eq(BigDecimal(10000)),
+              when(mockPayApiConnector.startPaymentJourney(ArgumentMatchers.eq(testSaUtr), ArgumentMatchers.eq(BigDecimal(10000)),
                 ArgumentMatchers.eq(isAgent))
               (ArgumentMatchers.any[HeaderCarrier])).thenReturn(Future.successful(paymentJourneyModel))
               val result = action(fakeRequest)
@@ -69,7 +68,7 @@ class PaymentControllerSpec extends MockAuthActions {
               status(result) shouldBe SEE_OTHER
               redirectLocation(result) shouldBe Some("redirect-url")
               verifyExtendedAudit(InitiatePayNowAuditModel(testMtditid, testNino,
-                Some(testSaUtrId), Some(testCredId),
+                Some(testSaUtr), Some(testCredId),
                 Some {
                   if (mtdUserRole == MTDIndividual) Individual else Agent
                 }))
@@ -88,7 +87,7 @@ class PaymentControllerSpec extends MockAuthActions {
             "an error response is returned by the connector" in {
               setupMockSuccess(mtdUserRole)
               mockSingleBusinessIncomeSource()
-              when(mockPayApiConnector.startPaymentJourney(ArgumentMatchers.eq(testSaUtrId), ArgumentMatchers.eq(BigDecimal(10000)),
+              when(mockPayApiConnector.startPaymentJourney(ArgumentMatchers.eq(testSaUtr), ArgumentMatchers.eq(BigDecimal(10000)),
                 ArgumentMatchers.eq(isAgent))
               (ArgumentMatchers.any[HeaderCarrier])).thenReturn(Future.successful(PaymentJourneyErrorResponse(INTERNAL_SERVER_ERROR, "Error Message")))
               val result = action(fakeRequest)
@@ -98,7 +97,7 @@ class PaymentControllerSpec extends MockAuthActions {
             "an exception is returned by the connector" in {
               setupMockSuccess(mtdUserRole)
               mockSingleBusinessIncomeSource()
-              when(mockPayApiConnector.startPaymentJourney(ArgumentMatchers.eq(testSaUtrId), ArgumentMatchers.eq(BigDecimal(10000)),
+              when(mockPayApiConnector.startPaymentJourney(ArgumentMatchers.eq(testSaUtr), ArgumentMatchers.eq(BigDecimal(10000)),
                 ArgumentMatchers.eq(isAgent))
               (ArgumentMatchers.any[HeaderCarrier])).thenReturn(Future.failed(new Exception("Exception Message")))
               val result = action(fakeRequest)

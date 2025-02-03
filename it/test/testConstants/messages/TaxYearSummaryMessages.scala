@@ -16,9 +16,9 @@
 
 package testConstants.messages
 
-import helpers.servicemocks.AuthStub.{lang, messagesAPI}
+import helpers.ComponentSpecBase
 
-object TaxYearSummaryMessages {
+object TaxYearSummaryMessages extends ComponentSpecBase {
 
   val noCalcHeading: String = messagesAPI("tax-year-summary.tax-calculation.no-calc")
   val noCalcNote: String = messagesAPI("tax-year-summary.tax-calculation.no-calc.note")

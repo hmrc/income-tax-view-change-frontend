@@ -32,8 +32,8 @@ import play.api.mvc.{Action, AnyContent}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
 import services.optIn.OptInService
 import services.optIn.core.OptInProposition
-import testConstants.BaseTestConstants.testNino
-import testConstants.BusinessDetailsTestConstants.{business1, testMtdItId}
+import testConstants.BaseTestConstants._
+import testConstants.BusinessDetailsTestConstants.business1
 import views.html.optIn.OptInCancelledView
 
 import scala.concurrent.Future
@@ -62,7 +62,7 @@ class OptInCancelledControllerSpec extends MockAuthActions with MockOptInService
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
       s"the user is authenticated as a $mtdRole" should {
         s"render the opt in cancelled page" in {
-          val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2017"), List(business1), Nil)
+          val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
           setupMockSuccess(mtdRole)
           when(
             mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
@@ -91,7 +91,7 @@ class OptInCancelledControllerSpec extends MockAuthActions with MockOptInService
 
         "show the Error Template view" when {
           "and return Internal Server Error - 500" in {
-            val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2017"), List(business1), Nil)
+            val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
 
             setupMockSuccess(mtdRole)
 

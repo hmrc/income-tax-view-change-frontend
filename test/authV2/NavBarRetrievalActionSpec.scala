@@ -18,6 +18,7 @@ package authV2
 
 import auth.MtdItUser
 import auth.authV2.actions._
+import authV2.AuthActionsTestData._
 import config.ItvcErrorHandler
 import controllers.bta.BtaNavBarController
 import forms.utils.SessionKeys
@@ -26,16 +27,14 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.Assertion
 import play.api
+import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.mvc.Results.InternalServerError
 import play.api.mvc.request.RequestTarget
 import play.api.mvc.{Result, Results}
 import play.api.test.Helpers._
-import play.api.{Application, Play}
 import play.twirl.api.Html
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import views.html.navBar.PtaPartial
-import authV2.AuthActionsTestData._
 
 import scala.concurrent.Future
 
@@ -122,7 +121,7 @@ class NavBarRetrievalActionSpec extends AuthActionsSpecHelper {
             )
             val mtdIdUserRequest = getMtdItUser(affinityGroup, featureSwitches = featureSwitchesIncludingNavBarEnabled)(fakeRequest)
             when(mockBtaNavBarController.btaNavBarPartial(any())(any(), any()))
-              .thenReturn(Future.successful(Some(btaNavBar)))
+              .thenReturn(Future.successful(btaNavBar))
 
             val result = action.invokeBlock(
               mtdIdUserRequest,
@@ -212,27 +211,6 @@ class NavBarRetrievalActionSpec extends AuthActionsSpecHelper {
             status(result) shouldBe SEE_OTHER
             redirectLocation(result) shouldBe Some("/testing")
             session(result).get(SessionKeys.origin) shouldBe Some("BTA")
-          }
-        }
-
-        "render the itvc internal error page" when {
-          "the navigation bar is enabled but bta controller returns None" in {
-            val fakeRequest = fakeRequestWithActiveSession.withSession(
-              SessionKeys.origin -> "BTA"
-            )
-            val mtdIdUserRequest = getMtdItUser(affinityGroup, featureSwitches = featureSwitchesIncludingNavBarEnabled)(fakeRequest)
-
-            when(mockBtaNavBarController.btaNavBarPartial(any())(any(), any()))
-              .thenReturn(Future.successful(None))
-            when(mockItvcErrorHandler.showInternalServerError()(any()))
-              .thenReturn(InternalServerError("ERROR PAGE"))
-
-            val result = action.invokeBlock(
-              mtdIdUserRequest,
-              defaultAsyncBody(_.btaNavPartial shouldBe None))
-
-            status(result) shouldBe INTERNAL_SERVER_ERROR
-            contentAsString(result) shouldBe "ERROR PAGE"
           }
         }
       }

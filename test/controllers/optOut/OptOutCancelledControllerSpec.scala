@@ -30,8 +30,8 @@ import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
 import services.optout.{OptOutProposition, OptOutService}
-import testConstants.BaseTestConstants.testNino
-import testConstants.BusinessDetailsTestConstants.{business1, testMtdItId}
+import testConstants.BaseTestConstants.{testMtditid, testNino}
+import testConstants.BusinessDetailsTestConstants.business1
 import views.html.optOut.OptOutCancelledView
 
 import scala.concurrent.Future
@@ -67,7 +67,7 @@ class OptOutCancelledControllerSpec extends MockAuthActions with MockOptOutServi
 
           "render the opt out cancelled page" in {
 
-            val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2017"), List(business1), Nil)
+            val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
             setupMockSuccess(mtdRole)
 
             when(
@@ -109,7 +109,7 @@ class OptOutCancelledControllerSpec extends MockAuthActions with MockOptOutServi
 
           "render the opt out cancelled page - OK 200" in {
 
-            val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2017"), List(business1), Nil)
+            val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
 
             setupMockSuccess(mtdRole)
 
@@ -151,7 +151,7 @@ class OptOutCancelledControllerSpec extends MockAuthActions with MockOptOutServi
 
             "recover and return error template Internal Server Error - 500" in {
 
-              val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2017"), List(business1), Nil)
+              val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
 
               setupMockSuccess(mtdRole)
 

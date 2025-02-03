@@ -22,13 +22,10 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
-import play.api.{Configuration, Environment}
 import testOnly.connectors.DynamicStubConnector
 import testOnly.forms.StubSchemaForm
 import testOnly.models.SchemaModel
 import testOnly.views.html.StubSchemaView
-import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
-import utils.{AuthExchange, SessionBuilder}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,12 +33,10 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class StubSchemaController @Inject()(stubSchemaView: StubSchemaView)
                                     (implicit val appConfig: FrontendAppConfig,
-                                     override val config: Configuration,
-                                     override val env: Environment,
                                      implicit val mcc: MessagesControllerComponents,
                                      implicit val executionContext: ExecutionContext,
                                      val dynamicStubConnector: DynamicStubConnector
-                                    ) extends BaseController with AuthRedirects with I18nSupport {
+                                    ) extends BaseController with I18nSupport {
 
   val show: Action[AnyContent] = Action.async { implicit request =>
     Future.successful(Ok(view(StubSchemaForm.stubSchemaForm)))

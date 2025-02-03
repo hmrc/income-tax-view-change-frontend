@@ -16,17 +16,16 @@
 
 package audit.models
 
-import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testSaUtr}
-import auth.MtdItUser
+import authV2.AuthActionsTestData._
 import models.financialDetails.{DocumentDetail, FinancialDetail, SubItem}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, PaymentAllocationViewModel}
-import models.paymentAllocations.{AllocationDetail, PaymentAllocations}
+import models.paymentAllocations.AllocationDetail
 import play.api.libs.json.Json
+import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testSaUtr}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
-import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
 
@@ -84,34 +83,14 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
 
   def paymentAllocationsAuditFull(userType: Option[AffinityGroup] = Some(Agent)): PaymentAllocationsResponseAuditModel = {
     PaymentAllocationsResponseAuditModel(
-      mtdItUser = MtdItUser(
-        mtditid = testMtditid,
-        nino = testNino,
-        userName = Some(Name(Some("firstName"), Some("lastName"))),
-        incomeSources = IncomeSourceDetailsModel(testNino, testMtditid, None, List.empty, List.empty),
-        btaNavPartial = None,
-        saUtr = Some(testSaUtr),
-        credId = Some(testCredId),
-        userType = userType,
-        arn = if (userType.contains(Agent)) Some(testArn) else None
-      ),
+      mtdItUser = defaultMTDITUser(userType, IncomeSourceDetailsModel(testNino, testMtditid, None, List.empty, List.empty)),
       paymentAllocations = PaymentAllocationViewModel(paymentAllocationChargeModel, originalPaymentAllocationWithClearingDate)
     )
   }
 
   def paymentAllocationsAuditFullCredit(userType: Option[AffinityGroup] = Some(Agent)): PaymentAllocationsResponseAuditModel = {
     PaymentAllocationsResponseAuditModel(
-      mtdItUser = MtdItUser(
-        mtditid = testMtditid,
-        nino = testNino,
-        userName = Some(Name(Some("firstName"), Some("lastName"))),
-        incomeSources = IncomeSourceDetailsModel(testNino, testMtditid, None, List.empty, List.empty),
-        btaNavPartial = None,
-        saUtr = Some(testSaUtr),
-        credId = Some(testCredId),
-        userType = userType,
-        arn = if (userType.contains(Agent)) Some(testArn) else None
-      ),
+      mtdItUser = defaultMTDITUser(userType, IncomeSourceDetailsModel(testNino, testMtditid, None, List.empty, List.empty)),
       paymentAllocations = PaymentAllocationViewModel(paymentAllocationChargeModelCredit, originalPaymentAllocationWithClearingDateCredit)
     )
   }

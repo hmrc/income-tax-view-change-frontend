@@ -17,13 +17,13 @@
 package config.featureswitch
 
 import auth.MtdItUser
+import authV2.AuthActionsTestData._
 import config.FrontendAppConfig
 import models.admin._
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
 import testUtils.TestSupport
-import uk.gov.hmrc.auth.core.retrieve.Name
 
 class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with MockitoSugar {
 
@@ -38,6 +38,7 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
     FeatureSwitchName.allFeatureSwitches.foreach(feature => sys.props.remove(feature.name))
   }
 
+  val mtdItUser: MtdItUser[_] = defaultMTDITUser(None, IncomeSourceDetailsModel("nino", "mtditid", None, Nil, Nil))
   val allFeatureSwitches: Set[FeatureSwitchName] = Set(
     ITSASubmissionIntegration,
     ChargeHistory,
@@ -54,19 +55,6 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
     DisplayBusinessStartDate,
     PenaltiesAndAppeals
   )
-
-  val mtdItUser: MtdItUser[_] =
-    MtdItUser(
-      mtditid = "mtditid",
-      nino = "nino",
-      userName = Some(Name(Some("firstName"), Some("lastName"))),
-      incomeSources = IncomeSourceDetailsModel("nino", "mtditid", None, Nil, Nil),
-      btaNavPartial = None,
-      saUtr = Some("saUtr"),
-      credId = Some("credId"),
-      userType = None,
-      arn = None
-    )
 
   "FeatureSwitchName" when {
     ".allFeatureSwitches" should {

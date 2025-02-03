@@ -17,7 +17,6 @@
 package controllers.agent
 
 import audit.models.ConfirmClientDetailsAuditModel
-import authV2.AuthActionsTestData
 import controllers.agent.sessionUtils.SessionKeys
 import mocks.auth.MockAuthActions
 import mocks.views.agent.MockConfirmClient
@@ -29,8 +28,8 @@ import org.mockito.Mockito.{times, verify}
 import play.api
 import play.api.Application
 import play.api.test.Helpers._
-import play.twirl.api.{Html, HtmlFormat}
-import testConstants.BaseTestConstants.{testMtditid, testNino}
+import play.twirl.api.HtmlFormat
+import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testSaUtr}
 import uk.gov.hmrc.auth.core.{BearerTokenExpired, InsufficientEnrolments}
 import views.html.agent.confirmClient
 
@@ -44,66 +43,73 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions
 
   lazy val testConfirmClientUTRController = app.injector.instanceOf[ConfirmClientUTRController]
 
-  Map("primary agent" -> false, "supporting agent" -> true).foreach { case (agentType, isSupportingAgent) =>
-    val fakeRequest = fakeRequestUnconfirmedClient(isSupportingAgent = isSupportingAgent)
-    "show" when {
-      s"the user is a $agentType" that {
-        "is not authenticated" should {
-          "redirect the user to authenticate" in {
-            setupMockAgentWithClientAuthorisationException(isSupportingAgent = isSupportingAgent)
+  "show" when {
+    s"there is a user" that {
+      "is not authenticated" should {
+        "redirect the user to authenticate" in {
+          setupMockAgentWithClientAuthorisationException()
 
-            val result = testConfirmClientUTRController.show()(fakeRequest)
+          val result = testConfirmClientUTRController.show()(fakeRequestWithActiveSession)
 
-            status(result) shouldBe SEE_OTHER
-            redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
-          }
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
         }
+      }
 
-        s"has timed out" should {
-          "redirect to the session timeout page" in {
-            setupMockAgentWithClientAuthorisationException(exception = BearerTokenExpired(), isSupportingAgent)
+      s"has timed out" should {
+        "redirect to the session timeout page" in {
+          setupMockAgentWithClientAuthorisationException(exception = BearerTokenExpired())
 
-            val result = testConfirmClientUTRController.show()(fakeRequest)
+          val result = testConfirmClientUTRController.show()(fakeRequestWithActiveSession)
 
-            status(result) shouldBe SEE_OTHER
-            redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
-          }
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
         }
+      }
 
-        s"does not have an agent reference number" should {
-          "redirect to agent error controller" in {
-            setupMockAgentWithClientAuthorisationException(exception = InsufficientEnrolments("HMRC-AS-AGENT is missing"), isSupportingAgent)
+      s"does not have an agent reference number" should {
+        "redirect to agent error controller" in {
+          setupMockAgentWithClientAuthorisationException(exception = InsufficientEnrolments("HMRC-AS-AGENT is missing"))
 
-            val result = testConfirmClientUTRController.show()(fakeRequest)
+          val result = testConfirmClientUTRController.show()(fakeRequestWithActiveSession)
 
-            status(result) shouldBe SEE_OTHER
-            redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentErrorController.show.url)
-          }
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentErrorController.show.url)
         }
+      }
 
-        s"does not have client details in session" should {
-          "redirect to the Enter Client UTR page" in {
-            setupMockGetSessionDataNotFound()
+      s"does not have client details in session" should {
+        "redirect to the Enter Client UTR page" in {
+          setupMockAgentSuccess()
+          setupMockGetSessionDataNotFound()
 
-            val result = testConfirmClientUTRController.show()(fakeRequest)
+          val result = testConfirmClientUTRController.show()(fakeRequestWithActiveSession)
 
-            status(result) shouldBe SEE_OTHER
-            redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show.url)
-          }
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show.url)
         }
+      }
 
-        "fails the auth check to find a valid agent-client relationship" should {
-          "redirect to the Agent Client Relationship error page" in {
-            setupMockAgentWithClientAuthorisationException(exception = InsufficientEnrolments("HMRC-MTD-IT is missing"), isSupportingAgent)
+      "fails the auth check to find a valid agent-client relationship" should {
+        "redirect to the Agent Client Relationship error page" in {
+          setupMockGetSessionDataSuccess()
+          setupMockGetClientDetailsSuccess()
+          setupMockAgentWithoutMTDEnrolmentForClient()
 
-            val result = testConfirmClientUTRController.show()(fakeRequest)
+          val result = testConfirmClientUTRController.show()(fakeRequestWithActiveSession)
 
-            status(result) shouldBe SEE_OTHER
-            redirectLocation(result) shouldBe Some(controllers.agent.routes.ClientRelationshipFailureController.show.url)
-          }
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.agent.routes.ClientRelationshipFailureController.show.url)
         }
+      }
+    }
 
-        "that is fully authenticated" should {
+    Map("primary agent" -> false, "supporting agent" -> true).foreach { case (agentType, isSupportingAgent) =>
+      val fakeRequest = fakeRequestUnconfirmedClient(isSupportingAgent = isSupportingAgent)
+
+      s"there is a $agentType user" that {
+
+        "is fully authenticated" should {
           "return OK and display confirm Client details page" in {
             setupMockAgentWithClientAuthAndIncomeSources(isSupportingAgent)
             mockConfirmClientResponse(HtmlFormat.empty)
@@ -116,63 +122,73 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions
         }
       }
     }
+  }
 
-    "submit" when {
-      s"the user is a $agentType" that {
-        "is not authenticated" should {
-          "redirect the user to authenticate" in {
-            setupMockAgentWithClientAuthorisationException(isSupportingAgent = isSupportingAgent)
+  "submit" when {
+    s"there is a user" that {
+      "is not authenticated" should {
+        "redirect the user to authenticate" in {
+          setupMockAgentWithClientAuthorisationException()
 
-            val result = testConfirmClientUTRController.submit()(fakeRequest)
+          val result = testConfirmClientUTRController.submit()(fakeRequestWithActiveSession)
 
-            status(result) shouldBe SEE_OTHER
-            redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
-          }
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
         }
+      }
 
-        "has timed out" should {
-          "redirect to the session timeout page" in {
-            setupMockAgentWithClientAuthorisationException(exception = BearerTokenExpired(), isSupportingAgent)
+      "has timed out" should {
+        "redirect to the session timeout page" in {
+          setupMockAgentWithClientAuthorisationException(exception = BearerTokenExpired())
 
-            val result = testConfirmClientUTRController.submit()(fakeRequest)
+          val result = testConfirmClientUTRController.submit()(fakeRequestWithActiveSession)
 
-            status(result) shouldBe SEE_OTHER
-            redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
-          }
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
         }
+      }
 
-        "does not have an agent reference number" should {
-          "redirect to agent error controller" in {
-            setupMockAgentWithClientAuthorisationException(exception = InsufficientEnrolments("HMRC-AS-AGENT is missing"), isSupportingAgent)
+      "does not have an agent reference number" should {
+        "redirect to agent error controller" in {
+          setupMockAgentWithClientAuthorisationException(exception = InsufficientEnrolments("HMRC-AS-AGENT is missing"))
 
-            val result = testConfirmClientUTRController.submit()(fakeRequest)
+          val result = testConfirmClientUTRController.submit()(fakeRequestWithActiveSession)
 
-            status(result) shouldBe SEE_OTHER
-            redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentErrorController.show.url)
-          }
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentErrorController.show.url)
         }
+      }
 
-        "has no client details in session" should {
-          "redirect to the Enter Client UTR page" in {
-            setupMockGetSessionDataNotFound()
+      "has no client details in session" should {
+        "redirect to the Enter Client UTR page" in {
+          setupMockAgentSuccess()
+          setupMockGetSessionDataNotFound()
 
-            val result = testConfirmClientUTRController.submit()(fakeRequest)
+          val result = testConfirmClientUTRController.submit()(fakeRequestWithActiveSession)
 
-            status(result) shouldBe SEE_OTHER
-            redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show.url)
-          }
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show.url)
         }
+      }
 
-        "fails the auth check to find a valid agent-client relationship" should {
-          "redirect to the Agent Client Relationship error page" in {
-            setupMockAgentWithClientAuthorisationException(exception = InsufficientEnrolments("HMRC-MTD-IT is missing"), isSupportingAgent)
+      "fails the auth check to find a valid agent-client relationship" should {
+        "redirect to the Agent Client Relationship error page" in {
+          setupMockGetSessionDataSuccess()
+          setupMockGetClientDetailsSuccess()
+          setupMockAgentWithoutMTDEnrolmentForClient()
 
-            val result = testConfirmClientUTRController.submit()(fakeRequest)
+          val result = testConfirmClientUTRController.submit()(fakeRequestWithActiveSession)
 
-            status(result) shouldBe SEE_OTHER
-            redirectLocation(result) shouldBe Some(controllers.agent.routes.ClientRelationshipFailureController.show.url)
-          }
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.agent.routes.ClientRelationshipFailureController.show.url)
         }
+      }
+    }
+
+    Map("primary agent" -> false, "supporting agent" -> true).foreach { case (agentType, isSupportingAgent) =>
+      val fakeRequest = fakeRequestUnconfirmedClient(isSupportingAgent = isSupportingAgent)
+
+      s"there is a $agentType user" that {
 
         "is fully authenticated" should {
           "redirect to Home page and relevant data added to session or sent to session data service successfully" in {
@@ -182,26 +198,27 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions
 
             val result = testConfirmClientUTRController.submit()(fakeRequest)
 
-            val expectedAudit = ConfirmClientDetailsAuditModel(clientName = "Test User", nino = testNino, mtditid = AuthActionsTestData.mtdId, arn = AuthActionsTestData.arn, saUtr = AuthActionsTestData.saUtr, credId = Some(AuthActionsTestData.credentials.providerId))
+            val expectedAudit = ConfirmClientDetailsAuditModel(clientName = "Test User", nino = testNino, mtditid = testMtditid, arn = testArn, saUtr = testSaUtr, credId = Some(testCredId))
 
             status(result) shouldBe SEE_OTHER
             redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
             if (!appConfig.isSessionDataStorageEnabled) {
               session(result).get(SessionKeys.confirmedClient) shouldBe Some("true")
             }
-            else{
-              val sessionDataModel: SessionDataModel = SessionDataModel(AuthActionsTestData.mtdId, testNino, AuthActionsTestData.saUtr, isSupportingAgent)
+            else {
+              val sessionDataModel: SessionDataModel = SessionDataModel(testMtditid, testNino, testSaUtr, isSupportingAgent)
               verify(mockSessionDataService, times(1)).postSessionData(ArgumentMatchers.eq(sessionDataModel))(any())
             }
             verifyExtendedAuditSent(expectedAudit)
           }
+
           if (appConfig.isSessionDataStorageEnabled) {
             "throw an error if session data service flag is true and request to session data service is unsuccessful" in {
               setupMockAgentWithClientAuthAndIncomeSources(isSupportingAgent)
 
               setupMockPostSessionData(Left(SessionDataPostFailure(INTERNAL_SERVER_ERROR, "POST to session data service was unsuccessful TEST")))
 
-              val result = testConfirmClientUTRController.submit()(fakeRequest)
+              val result = testConfirmClientUTRController.submit()(fakeRequestWithClientDetails)
 
               status(result) shouldBe INTERNAL_SERVER_ERROR
             }

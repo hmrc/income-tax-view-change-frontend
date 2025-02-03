@@ -17,7 +17,7 @@
 package audit.models
 
 import play.api.libs.json.Json
-import testConstants.BaseTestConstants.{testArn, testCredId, testMtditidAgent, testNinoAgent, testSaUtrId}
+import testConstants.BaseTestConstants.{testArn, testCredId, testMtditidAgent, testNinoAgent, testSaUtr}
 import testUtils.TestSupport
 
 class EnterClientUTRAuditModelSpec extends TestSupport {
@@ -26,7 +26,7 @@ class EnterClientUTRAuditModelSpec extends TestSupport {
   val auditType = enums.AuditType.EnterClientUTR.name
 
   def getEnterClientUTRAuditModel(isSuccessful: Boolean): EnterClientUTRAuditModel = {
-    EnterClientUTRAuditModel(isSuccessful = isSuccessful, nino = testNinoAgent, mtditid = testMtditidAgent, arn = Some(testArn), saUtr = testSaUtrId, credId = Some(testCredId))
+    EnterClientUTRAuditModel(isSuccessful = isSuccessful, nino = testNinoAgent, mtditid = testMtditidAgent, arn = Some(testArn), saUtr = testSaUtr, credId = Some(testCredId))
   }
 
 

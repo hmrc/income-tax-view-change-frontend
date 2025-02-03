@@ -52,6 +52,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
                                val dateService: DateServiceInterface,
                                val whatYouOweService: WhatYouOweService,
                                val ITSAStatusService: ITSAStatusService,
+                               val penaltyDetailsService: PenaltyDetailsService,
                                auditingService: AuditingService)
                               (implicit val ec: ExecutionContext,
                                implicit val itvcErrorHandler: ItvcErrorHandler,
@@ -86,17 +87,26 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
   private def buildHomePageForSupportingAgent(nextUpdatesDueDates: Seq[LocalDate])
                                              (implicit user: MtdItUser[_]): Future[Result] = {
-    val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, dateService.getCurrentDate, isEnabled(OptOutFs))
-    val yourBusinessesTileViewModel = YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome, isEnabled(IncomeSourcesFs),
-      isEnabled(IncomeSourcesNewJourney))
-    Future.successful(
+
+    val currentTaxYear = TaxYear(dateService.getCurrentTaxYearEnd - 1, dateService.getCurrentTaxYearEnd)
+
+    for {
+      currentITSAStatus <- getCurrentITSAStatus(currentTaxYear)
+    } yield {
+
+      val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, dateService.getCurrentDate, isEnabled(OptOutFs))
+      val yourBusinessesTileViewModel = YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome, isEnabled(IncomeSourcesFs),
+        isEnabled(IncomeSourcesNewJourney))
+      val accountSettingsTileViewModel = AccountSettingsTileViewModel(currentTaxYear, isEnabled(ReportingFrequencyPage), currentITSAStatus)
+
       Ok(
         supportingAgentHomeView(
           yourBusinessesTileViewModel,
-          nextUpdatesTileViewModel
+          nextUpdatesTileViewModel,
+          accountSettingsTileViewModel
         )
       )
-    )
+    }
   }
 
   private def buildHomePage(nextUpdatesDueDates: Seq[LocalDate], origin: Option[String])
@@ -113,6 +123,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
       overDuePaymentsCount = calculateOverduePaymentsCount(paymentsDue, outstandingChargesModel)
       accruingInterestPaymentsCount = NextPaymentsTileViewModel.paymentsAccruingInterestCount(unpaidCharges, dateService.getCurrentDate)
       currentITSAStatus <- getCurrentITSAStatus(currentTaxYear)
+      penaltiesAndAppealsTileViewModel = penaltyDetailsService.getPenaltyPenaltiesAndAppealsTileViewModel(isEnabled(PenaltiesAndAppeals))
       paymentsDueMerged = mergePaymentsDue(paymentsDue, outstandingChargeDueDates)
     } yield {
 
@@ -138,6 +149,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
           paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel,
           yourBusinessesTileViewModel = yourBusinessesTileViewModel,
           accountSettingsTileViewModel = accountSettingsTileViewModel,
+          penaltiesAndAppealsTileViewModel = penaltiesAndAppealsTileViewModel,
           dunningLockExists = dunningLockExists,
           origin = origin
         )

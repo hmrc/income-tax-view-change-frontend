@@ -19,7 +19,7 @@ package helpers.servicemocks
 import helpers.WiremockHelper
 import play.api.http.Status
 import play.api.libs.json.Json
-import testConstants.BaseIntegrationTestConstants.testMtditid
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSaUtr}
 
 object SessionDataStub {
 
@@ -40,8 +40,8 @@ object SessionDataStub {
 
   val testSessionResponse: String = Json.stringify(Json.obj(
     "mtditid" -> testMtditid,
-    "nino" -> "AA123456A",
-    "utr" -> "1234567890",
+    "nino" -> testNino,
+    "utr" -> testSaUtr,
     "sessionId" -> "sessionId"
   ))
 

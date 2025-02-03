@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,26 +14,28 @@
  * limitations under the License.
  */
 
-package auth.authV2
+package auth.authV2.models
 
-import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name}
+import auth.authV2.Constants
 import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, Enrolment, Enrolments}
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name}
 
-case class AuthorisedUser[A](
-                      enrolments: Enrolments,
-                      affinityGroup: Option[AffinityGroup],
-                      confidenceLevel: ConfidenceLevel,
-                      credentials: Option[Credentials],
-                      name: Option[Name] = None
-                    )(implicit request: Request[A]) extends WrappedRequest[A](request){
-
+case class AuthUserDetails(enrolments: Enrolments,
+                           affinityGroup: Option[AffinityGroup],
+                           credentials: Option[Credentials],
+                           name: Option[Name] = None
+                          ){
   lazy val agentReferenceNumber: Option[String] = getEnrolment(Constants.agentServiceEnrolmentName)
 
   lazy val credId = credentials.map(credential => credential.providerId)
 
+  val saUtr = getValueFromEnrolment(Constants.saEnrolmentName, Constants.saEnrolmentIdentifierKey)
+  val optNino = getValueFromEnrolment(Constants.ninoEnrolmentName, Constants.ninoEnrolmentIdentifierKey)
   private def getEnrolment(key: String): Option[String] = {
     enrolments.enrolments.find(e => e.key == key && e.identifiers.nonEmpty) map { enr: Enrolment => enr.identifiers.head.value }
   }
 
+  private def getValueFromEnrolment(enrolment: String, identifier: String): Option[String] =
+    enrolments.getEnrolment(enrolment)
+      .flatMap(_.getIdentifier(identifier)).map(_.value)
 }

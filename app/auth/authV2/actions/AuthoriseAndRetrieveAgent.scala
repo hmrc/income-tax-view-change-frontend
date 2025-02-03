@@ -17,20 +17,19 @@
 package auth.authV2.actions
 
 import auth.FrontendAuthorisedFunctions
-import auth.authV2.AuthorisedUser
+import auth.authV2.models.{AuthUserDetails, AuthorisedUserRequest}
 import com.google.inject.Singleton
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Request, Result}
-import play.api.{Configuration, Environment, Logger}
+import play.api.Logger
 import uk.gov.hmrc.auth.core.AffinityGroup.{Individual, Organisation}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.{EmptyPredicate, Predicate}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.Inject
@@ -39,18 +38,16 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class AuthoriseAndRetrieveAgent @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
                                           val appConfig: FrontendAppConfig,
-                                          override val config: Configuration,
-                                          override val env: Environment,
                                           mcc: MessagesControllerComponents)
-  extends AuthRedirects with FeatureSwitching {
+  extends FeatureSwitching {
 
   lazy val logger: Logger = Logger(getClass)
 
-  def authorise(arnRequired: Boolean = true): ActionRefiner[Request, AuthorisedUser] = new ActionRefiner[Request, AuthorisedUser] {
+  def authorise(arnRequired: Boolean = true): ActionRefiner[Request, AuthorisedUserRequest] = new ActionRefiner[Request, AuthorisedUserRequest] {
 
     implicit val executionContext: ExecutionContext = mcc.executionContext
 
-    override protected def refine[A](request: Request[A]): Future[Either[Result, AuthorisedUser[A]]] = {
+    override protected def refine[A](request: Request[A]): Future[Either[Result, AuthorisedUserRequest[A]]] = {
 
       implicit val hc: HeaderCarrier = HeaderCarrierConverter
         .fromRequestAndSession(request, request.session)
@@ -71,7 +68,7 @@ class AuthoriseAndRetrieveAgent @Inject()(val authorisedFunctions: FrontendAutho
     }
   }
 
-  def logAndRedirect[A]: PartialFunction[Throwable, Future[Either[Result, AuthorisedUser[A]]]] = {
+  def logAndRedirect[A]: PartialFunction[Throwable, Future[Either[Result, AuthorisedUserRequest[A]]]] = {
     case _: BearerTokenExpired =>
       logger.warn("Bearer Token Timed Out.")
       Future.successful(Left(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout)))
@@ -90,20 +87,21 @@ class AuthoriseAndRetrieveAgent @Inject()(val authorisedFunctions: FrontendAutho
 
 
   private def constructAgentUser[A]()(
-    implicit request: Request[A]): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedUser[A]]]] = {
+    implicit request: Request[A]): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedUserRequest[A]]]] = {
     case enrolments ~ name ~ credentials ~ affinityGroup ~ confidenceLevel =>
+      val authUserDetails = AuthUserDetails(
+        enrolments = enrolments,
+        affinityGroup = affinityGroup,
+        credentials = credentials,
+        name = name
+      )
       Future.successful(
-        Right(AuthorisedUser(
-          enrolments = enrolments,
-          affinityGroup = affinityGroup,
-          confidenceLevel = confidenceLevel,
-          credentials = credentials,
-          name = name))
+        Right(AuthorisedUserRequest(authUserDetails))
       )
   }
 
   private def redirectIfNotAgent[A]()(
-    implicit request: Request[A]): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedUser[A]]]] = {
+    implicit request: Request[A]): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedUserRequest[A]]]] = {
     case _ ~ _ ~ Some(ag@(Organisation | Individual)) ~ _ =>
       logger.error(s"$ag on endpoint for agents")
       Future.successful(Left(Redirect(controllers.routes.HomeController.show())))

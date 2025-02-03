@@ -17,19 +17,23 @@
 package authV2
 
 import audit.AuditingService
+import auth.FrontendAuthorisedFunctions
 import auth.authV2.actions._
-import auth.{FrontendAuthorisedFunctions, MtdItUserOptionNino}
+import auth.authV2.models.AuthorisedAndEnrolledRequest
+import authV2.AuthActionsTestData._
+import enums.{MTDPrimaryAgent, MTDSupportingAgent}
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.Assertion
 import play.api
+import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{Result, Results}
 import play.api.test.Helpers._
-import play.api.{Application, Play}
-import uk.gov.hmrc.auth.core.AffinityGroup.{Individual, Organisation}
-import uk.gov.hmrc.auth.core.{AffinityGroup, BearerTokenExpired, InsufficientEnrolments, MissingBearerToken}
-import authV2.AuthActionsTestData._
+import testConstants.BaseTestConstants.testMtditid
+import uk.gov.hmrc.auth.core.retrieve.EmptyRetrieval
+import uk.gov.hmrc.auth.core.{BearerTokenExpired, InsufficientEnrolments, MissingBearerToken}
 
 import scala.concurrent.Future
 
@@ -47,53 +51,32 @@ class AuthoriseAndRetrieveMtdAgentSpec extends AuthActionsSpecHelper {
   }
 
   def defaultAsyncBody(
-                        requestTestCase: MtdItUserOptionNino[_] => Assertion
-                      ): MtdItUserOptionNino[_] => Future[Result] = testRequest => {
+                        requestTestCase: AuthorisedAndEnrolledRequest[_] => Assertion
+                      ): AuthorisedAndEnrolledRequest[_] => Future[Result] = testRequest => {
     requestTestCase(testRequest)
     Future.successful(Results.Ok("Successful"))
   }
 
-  def defaultAsync: MtdItUserOptionNino[_] => Future[Result] = (_) => Future.successful(Results.Ok("Successful"))
+  def defaultAsync: AuthorisedAndEnrolledRequest[_] => Future[Result] = (_) => Future.successful(Results.Ok("Successful"))
 
-  def redirectAsync(location: String): MtdItUserOptionNino[_] => Future[Result] = (_) => Future.successful(Results.SeeOther(location))
+  def redirectAsync(location: String): AuthorisedAndEnrolledRequest[_] => Future[Result] = (_) => Future.successful(Results.SeeOther(location))
 
   lazy val authAction = app.injector.instanceOf[AuthoriseAndRetrieveMtdAgent]
 
-  //TODO move this to AuthActionsTestData
-  lazy val fakeClientDetailsRequest = ClientDataRequest(
-    clientMTDID = mtdId,
-    clientFirstName = Some("Test"),
-    clientLastName = Some("Client"),
-    clientNino = nino,
-    clientUTR = saUtr,
-    isSupportingAgent = false,
-    confirmed = true
-  )(fakeRequestWithClientDetails)
-
   "refine" should {
     "return the expected MtdItUserOptionNino response" when {
-      s"the user is an Agent enrolled as a HMRC-AS-AGENT with a primary delegated enrolment (HMRC-MTD-IT)" in {
-        val allEnrolments = getAllEnrolmentsAgent(true, true, hasDelegatedEnrolment = true)
-
-        when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
-          Future.successful[AuthRetrievals](
-            allEnrolments ~ Some(userName) ~ Some(credentials) ~ Some(AffinityGroup.Agent) ~ acceptedConfidenceLevel
-          )
+      s"the user is an Agent with a primary delegated enrolment (HMRC-MTD-IT)" in {
+        when(mockAuthConnector.authorise(ArgumentMatchers.eq(primaryAgentPredicate()), ArgumentMatchers.eq(EmptyRetrieval))(any(), any())).thenReturn(
+          Future.successful(EmptyRetrieval)
         )
 
         val result = authAction.invokeBlock(
-          fakeClientDetailsRequest,
+          defaultAuthorisedWithClientDetailsRequest,
           defaultAsyncBody { res =>
-            res.mtditid shouldBe mtdId
-            res.nino shouldBe Some(nino)
-            res.userName shouldBe Some(userName)
-            res.btaNavPartial shouldBe None
-            res.saUtr shouldBe Some(saUtr)
-            res.credId shouldBe Some(credentials.providerId)
-            res.userType shouldBe Some(AffinityGroup.Agent)
-            res.arn shouldBe Some(arn)
-            res.optClientName shouldBe Some(clientName)
-            res.isSupportingAgent shouldBe false
+            res.mtditId shouldBe testMtditid
+            res.mtdUserRole shouldBe MTDPrimaryAgent
+            res.clientDetails.get shouldBe defaultAuthorisedWithClientDetailsRequest.clientDetails
+            res.authUserDetails shouldBe defaultAuthorisedWithClientDetailsRequest.authUserDetails
           }
         )
 
@@ -101,28 +84,22 @@ class AuthoriseAndRetrieveMtdAgentSpec extends AuthActionsSpecHelper {
         contentAsString(result) shouldBe "Successful"
       }
 
-      s"the user is an Agent enrolled as a HMRC-AS-AGENT with a secondary delegated enrolment (HMRC-MTD-IT-SUPP)" in {
-        val allEnrolments = getAllEnrolmentsAgent(true, true, hasDelegatedEnrolment = true, mtdIdSupportingAgentPredicate(mtdId))
+      s"the user is an Agent with a secondary delegated enrolment (HMRC-MTD-IT-SUPP)" in {
+        when(mockAuthConnector.authorise(ArgumentMatchers.eq(primaryAgentPredicate()), ArgumentMatchers.eq(EmptyRetrieval))(any(), any())).thenReturn(
+          Future.failed(InsufficientEnrolments("enrolment missing"))
+        )
 
-        when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
-          Future.successful[AuthRetrievals](
-            allEnrolments ~ Some(userName) ~ Some(credentials) ~ Some(AffinityGroup.Agent) ~ acceptedConfidenceLevel
-          )
+        when(mockAuthConnector.authorise(ArgumentMatchers.eq(secondaryAgentPredicate()), ArgumentMatchers.eq(EmptyRetrieval))(any(), any())).thenReturn(
+          Future.successful(EmptyRetrieval)
         )
 
         val result = authAction.invokeBlock(
-          fakeClientDetailsRequest,
+          defaultAuthorisedWithClientDetailsRequest,
           defaultAsyncBody { res =>
-            res.mtditid shouldBe mtdId
-            res.nino shouldBe Some(nino)
-            res.userName shouldBe Some(userName)
-            res.btaNavPartial shouldBe None
-            res.saUtr shouldBe Some(saUtr)
-            res.credId shouldBe Some(credentials.providerId)
-            res.userType shouldBe Some(AffinityGroup.Agent)
-            res.arn shouldBe Some(arn)
-            res.optClientName shouldBe Some(clientName)
-            res.isSupportingAgent shouldBe false
+            res.mtditId shouldBe testMtditid
+            res.mtdUserRole shouldBe MTDSupportingAgent
+            res.clientDetails.get shouldBe defaultAuthorisedWithClientDetailsRequest.clientDetails
+            res.authUserDetails shouldBe defaultAuthorisedWithClientDetailsRequest.authUserDetails
           }
         )
 
@@ -131,67 +108,36 @@ class AuthoriseAndRetrieveMtdAgentSpec extends AuthActionsSpecHelper {
       }
     }
 
-    "redirect to Home page" when {
-      List(Individual, Organisation).foreach { affinityGroup =>
-        s"the user is an ${affinityGroup.toString}" in {
-          when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
-            Future.successful[AuthRetrievals](
-              getAllEnrolmentsAgent(false, false) ~ Some(userName) ~ Some(credentials) ~ Some(affinityGroup) ~ acceptedConfidenceLevel
-            )
-          )
+    "redirect to the ClientRelationshipFailureController" when {
 
-          val result = authAction.invokeBlock(
-            fakeClientDetailsRequest,
-            redirectAsync("/report-quarterly/income-and-expenses/view/")
-          )
+      "the user is an Agent, but has no delegated enrolments" in {
+        when(mockAuthConnector.authorise(ArgumentMatchers.eq(primaryAgentPredicate()), ArgumentMatchers.eq(EmptyRetrieval))(any(), any())).thenReturn(
+          Future.failed(InsufficientEnrolments("enrolment missing"))
+        )
 
-          status(result) shouldBe SEE_OTHER
-          redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view")
-        }
-      }
-    }
-
-    "redirect to the Agent Error page" when {
-      "the user is an Agent that is not enrolled into HMRC-AS-AGENT" in {
-        when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
-          Future.failed[AuthRetrievals](InsufficientEnrolments())
+        when(mockAuthConnector.authorise(ArgumentMatchers.eq(secondaryAgentPredicate()), ArgumentMatchers.eq(EmptyRetrieval))(any(), any())).thenReturn(
+          Future.failed(InsufficientEnrolments("enrolment missing"))
         )
 
         val result = authAction.invokeBlock(
-          fakeClientDetailsRequest,
-          defaultAsync)
+          defaultAuthorisedWithClientDetailsRequest,
+          defaultAsync
+        )
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/agents/agent-error")
-      }
-
-      "redirect to the ClientRelationshipFailureController" when {
-
-        "the user is an Agent, but has no delegated enrolments" in {
-          when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
-            Future.failed[AuthRetrievals](InsufficientEnrolments("HMRC-MTD-IT"))
-          )
-
-          val result = authAction.invokeBlock(
-            fakeClientDetailsRequest,
-            defaultAsync
-          )
-
-          status(result) shouldBe SEE_OTHER
-          redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/agents/not-authorised-to-view-client")
-        }
+        redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/agents/not-authorised-to-view-client")
       }
     }
 
-    "redirect to Session timed out page" when {
-      s"the user is has an expired bearer token" in {
 
-        when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
-          Future.failed[AuthRetrievals](BearerTokenExpired())
+    "redirect to Session timed out page" when {
+      s"there is an expired bearer token" in {
+        when(mockAuthConnector.authorise(any(), ArgumentMatchers.eq(EmptyRetrieval))(any(), any())).thenReturn(
+          Future.failed(BearerTokenExpired())
         )
 
         val result = authAction.invokeBlock(
-          fakeClientDetailsRequest,
+          defaultAuthorisedWithClientDetailsRequest,
           redirectAsync("/report-quarterly/income-and-expenses/view/session-timeout")
         )
 
@@ -201,19 +147,33 @@ class AuthoriseAndRetrieveMtdAgentSpec extends AuthActionsSpecHelper {
     }
 
     "redirect to Signin" when {
-      s"the user is not signed in" in {
-
-        when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
-          Future.failed[AuthRetrievals](MissingBearerToken())
+      s"there is a missing bearer token" in {
+        when(mockAuthConnector.authorise(any(), ArgumentMatchers.eq(EmptyRetrieval))(any(), any())).thenReturn(
+          Future.failed(MissingBearerToken())
         )
 
         val result = authAction.invokeBlock(
-          fakeClientDetailsRequest,
+          defaultAuthorisedWithClientDetailsRequest,
           defaultAsync
         )
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/sign-in")
+      }
+    }
+
+    "render the error page" when {
+      s"there is an unexpected error" in {
+        when(mockAuthConnector.authorise(any(), ArgumentMatchers.eq(EmptyRetrieval))(any(), any())).thenReturn(
+          Future.failed(new Exception("error"))
+        )
+
+        val result = authAction.invokeBlock(
+          defaultAuthorisedWithClientDetailsRequest,
+          defaultAsync
+        )
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
       }
     }
   }

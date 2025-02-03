@@ -37,8 +37,8 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
 import services.DateService
 import services.optIn.OptInService
 import services.optout.{OptOutProposition, OptOutService}
-import testConstants.BaseTestConstants.testNino
-import testConstants.BusinessDetailsTestConstants.{business1, testMtdItId}
+import testConstants.BaseTestConstants.{testMtditid, testNino}
+import testConstants.BusinessDetailsTestConstants.business1
 import views.html.ReportingFrequencyView
 
 import scala.concurrent.Future
@@ -71,7 +71,7 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
           "the reporting frequency feature switch is enabled" in {
             enable(ReportingFrequencyPage)
             setupMockSuccess(mtdRole)
-            val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2017"), List(business1), Nil)
+            val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
             val optOutProposition: OptOutProposition = OptOutProposition.createOptOutProposition(
               currentYear = TaxYear(2024, 2025),
               previousYearCrystallised = false,
@@ -117,7 +117,7 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
           "the reporting frequency feature switch is disabled" in {
             disable(ReportingFrequencyPage)
             setupMockSuccess(mtdRole)
-            val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2017"), List(business1), Nil)
+            val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
             val optOutProposition: OptOutProposition = OptOutProposition.createOptOutProposition(
               currentYear = TaxYear(2024, 2025),
               previousYearCrystallised = false,

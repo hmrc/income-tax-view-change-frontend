@@ -459,8 +459,8 @@
     }
 
     @if(creditAndRefundEnabled){
-        @whatYouOweChargesList.balanceDetails.getAbsoluteAvailableCreditAmount.map { availableCredit =>
-                @availableCreditInAccount(availableCredit.toCurrencyString)
+        @whatYouOweChargesList.availableCredit.map { ac =>
+                @availableCreditInAccount(ac.toCurrencyString)
         }
     }
 }

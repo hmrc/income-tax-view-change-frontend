@@ -17,14 +17,13 @@
 package services
 
 import auth.MtdItUser
+import authV2.AuthActionsTestData.defaultMTDITUser
 import config.featureswitch.FeatureSwitching
 import mocks.connectors.MockFinancialDetailsConnector
 import models.financialDetails.FinancialDetailsErrorModel
 import models.incomeSourceDetails.TaxYear
-import play.api.test.FakeRequest
 import services.CreditHistoryService.CreditHistoryError
 import services.helpers.CreditHistoryDataHelper
-import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.oldUserDetails
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
@@ -32,17 +31,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 class CreditHistoryServiceSpec extends TestSupport with MockFinancialDetailsConnector
   with FeatureSwitching with CreditHistoryDataHelper {
 
-  val user: MtdItUser[_] = MtdItUser(
-    mtditid = testMtditid,
-    nino = testNino,
-    userName = Some(testRetrievedUserName),
-    incomeSources = oldUserDetails,
-    btaNavPartial = None,
-    saUtr = Some("saUtr"),
-    credId = Some("credId"),
-    userType = Some(Individual),
-    None
-  )(FakeRequest())
+  val user: MtdItUser[_] = defaultMTDITUser(Some(Individual), oldUserDetails)
 
   override def beforeEach(): Unit = {
     super.beforeEach()

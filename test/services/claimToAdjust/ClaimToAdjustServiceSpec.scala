@@ -17,6 +17,7 @@
 package services.claimToAdjust
 
 import auth.MtdItUser
+import authV2.AuthActionsTestData.defaultMTDITUser
 import mocks.connectors.{MockCalculationListConnector, MockChargeHistoryConnector, MockFinancialDetailsConnector}
 import mocks.services.MockFinancialDetailsService
 import models.calculationList.{CalculationListModel, CalculationListResponseModel}
@@ -24,9 +25,8 @@ import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryModel}
 import models.claimToAdjustPoa.PaymentOnAccountViewModel
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
-import play.api.test.FakeRequest
 import services.{ClaimToAdjustService, DateService}
-import testConstants.BaseTestConstants.{testMtditid, testNino, testUserNino}
+import testConstants.BaseTestConstants.{testNino, testUserNino}
 import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
@@ -50,17 +50,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
     val testClaimToAdjustService = new ClaimToAdjustService(mockFinancialDetailsConnector, mockChargeHistoryConnector, mockCalculationListConnector, mockDateService)
   }
 
-  val testUser: MtdItUser[_] = MtdItUser(
-    testMtditid,
-    testNino,
-    None,
-    incomeSources = IncomeSourceDetailsModel(testNino, "123", Some("2023"), List.empty, List.empty),
-    None,
-    Some("1234567890"),
-    Some("12345-credId"),
-    Some(Individual),
-    None
-  )(FakeRequest())
+  val testUser: MtdItUser[_] = defaultMTDITUser(Some(Individual), IncomeSourceDetailsModel(testNino, "123", Some("2023"), List.empty, List.empty))
 
   val calculationListSuccessResponseModelCrystallised: CalculationListResponseModel = CalculationListModel(
     calculationId = "TEST_ID",

@@ -20,9 +20,10 @@ import enums.FailureCategory.ApiFailure
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import models.createIncomeSource.CreateIncomeSourceResponse
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckPropertyViewModel}
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import testConstants.BaseTestConstants.testSelfEmploymentId
 import testUtils.TestSupport
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 import java.time.LocalDate
 
@@ -70,95 +71,48 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
     }
   }
 
-
-  val detailIndividualSE = Json.parse(
-    """{
-      |    "nino": "AB123456C",
-      |    "mtditid": "XAIT0000123456",
-      |    "saUtr": "testSaUtr",
-      |    "credId": "testCredId",
-      |    "userType": "Individual",
-      |    "outcome": {
-      |        "isSuccessful": true
-      |    },
-      |    "journeyType": "SE",
-      |    "addedIncomeSourceID": "XA00001234",
-      |    "dateStarted": "2022-01-01",
-      |    "businessName": "someBusinessName",
-      |    "businessDescription": "someBusinessTrade",
-      |    "addressLine1": "2 Test Lane",
-      |    "addressLine2": "Test Unit",
-      |    "addressTownOrCity": "Test City",
-      |    "addressPostcode": "TE5 7TT",
-      |    "addressCountry": "GB",
-      |    "accountingMethod":"CASH"
-      |}""".stripMargin)
-
-
-  val detailAgentSE = Json.parse(
-    """{
-      |    "nino": "AA111111A",
-      |    "mtditid": "XAIT00000000015",
-      |    "agentReferenceNumber": "XAIT0000123456",
-      |    "saUtr": "1234567890",
-      |    "credId": "testCredId",
-      |    "userType": "Agent",
-      |    "outcome": {
-      |        "isSuccessful": true
-      |    },
-      |    "journeyType": "SE",
-      |    "addedIncomeSourceID": "XA00001234",
-      |    "dateStarted": "2022-01-01",
-      |    "businessName": "someBusinessName",
-      |    "businessDescription": "someBusinessTrade",
-      |    "addressLine1": "2 Test Lane",
-      |    "addressLine2": "Test Unit",
-      |    "addressTownOrCity": "Test City",
-      |    "addressPostcode": "TE5 7TT",
-      |    "addressCountry": "GB",
-      |    "accountingMethod":"CASH"
-      |}""".stripMargin)
+  val seAuditDetails: Boolean => JsObject = isSuccess => {
+    val outcome = if(isSuccess) {
+      Json.obj(
+          "isSuccessful" -> true
+        )
+    } else {
+      Json.obj(
+        "isSuccessful" -> false,
+        "failureCategory" -> "API_FAILURE",
+        "failureReason" -> "Failure Reason"
+      )
+    }
+    Json.obj(
+      "outcome" -> outcome,
+      "journeyType" -> "SE",
+      "dateStarted" -> "2022-01-01",
+      "businessName" -> "someBusinessName",
+      "businessDescription" -> "someBusinessTrade",
+      "addressLine1" -> "2 Test Lane",
+      "addressLine2" -> "Test Unit",
+      "addressTownOrCity" -> "Test City",
+      "addressPostcode" -> "TE5 7TT",
+      "addressCountry" -> "GB",
+      "accountingMethod" -> "CASH"
+    ) ++ {if(isSuccess) Json.obj("addedIncomeSourceID" -> "XA00001234") else Json.obj()}
+  }
 
 
-  val detailOutcomeError = Json.parse(
-    """{
-      |    "nino": "AB123456C",
-      |    "mtditid": "XAIT0000123456",
-      |    "saUtr": "testSaUtr",
-      |    "credId": "testCredId",
-      |    "userType": "Individual",
-      |    "outcome": {
-      |        "isSuccessful": false,
-      |        "failureCategory": "API_FAILURE",
-      |        "failureReason": "Failure Reason"
-      |    },
-      |    "journeyType": "SE",
-      |    "dateStarted": "2022-01-01",
-      |    "businessName": "someBusinessName",
-      |    "businessDescription": "someBusinessTrade",
-      |    "addressLine1": "2 Test Lane",
-      |    "addressLine2": "Test Unit",
-      |    "addressTownOrCity": "Test City",
-      |    "addressPostcode": "TE5 7TT",
-      |    "addressCountry": "GB",
-      |    "accountingMethod":"CASH"
-      |}""".stripMargin)
+  val detailIndividualSE = commonAuditDetails(Individual) ++ seAuditDetails(true)
 
-  val detailProperty = Json.parse(
-    """{
-      |    "nino": "AB123456C",
-      |    "mtditid": "XAIT0000123456",
-      |    "saUtr": "testSaUtr",
-      |    "credId": "testCredId",
-      |    "userType": "Individual",
-      |    "outcome": {
-      |        "isSuccessful": true
-      |    },
-      |    "journeyType": "UKPROPERTY",
-      |    "addedIncomeSourceID":"XA00001234",
-      |    "dateStarted": "2022-01-01",
-      |    "accountingMethod":"CASH"
-      |}""".stripMargin)
+  val detailAgentSE = commonAuditDetails(Agent) ++ seAuditDetails(true)
+
+
+  val detailOutcomeError = commonAuditDetails(Individual) ++ seAuditDetails(false)
+
+  val detailProperty = commonAuditDetails(Individual) ++ Json.obj(
+    "outcome" -> Json.obj("isSuccessful" -> true),
+    "journeyType" -> "UKPROPERTY",
+    "addedIncomeSourceID" ->"XA00001234",
+    "dateStarted" -> "2022-01-01",
+    "accountingMethod" -> "CASH"
+  )
 
   "CeaseIncomeSourceAuditModel" should {
     s"have the correct transaction name of - $transactionName" in {

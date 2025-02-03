@@ -17,17 +17,14 @@
 package services
 
 import auth.MtdItUser
+import authV2.AuthActionsTestData.defaultMTDITUser
 import connectors.FinancialDetailsConnector
 import models.core.ErrorModel
-import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
-import play.api.test.FakeRequest
 import testConstants.ANewCreditAndRefundModel
-import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
-import testConstants.FinancialDetailsTestConstants._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
@@ -37,17 +34,7 @@ import scala.concurrent.Future
 
 class CreditServiceSpec extends TestSupport {
 
-  implicit val mtdItUser: MtdItUser[_] = MtdItUser(
-    mtditid = testMtditid,
-    nino = testNino,
-    userName = Some(testRetrievedUserName),
-    incomeSources = businessesAndPropertyIncome.copy(yearOfMigration = Some(s"${dateService.getCurrentTaxYearEnd - 1 }")),
-    btaNavPartial = None,
-    saUtr = Some("1234567890"),
-    credId = Some("credId"),
-    userType = Some(Individual),
-    None
-  )(FakeRequest())
+  implicit val mtdItUser: MtdItUser[_] = defaultMTDITUser(Some(Individual), businessesAndPropertyIncome.copy(yearOfMigration = Some(s"${dateService.getCurrentTaxYearEnd - 1 }")))
 
   val mockFinancialDetailsConnector = mock(classOf[FinancialDetailsConnector])
 

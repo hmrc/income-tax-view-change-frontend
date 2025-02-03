@@ -18,19 +18,19 @@ package authV2
 
 import auth.MtdItUser
 import auth.authV2.actions.IncomeSourceRetrievalAction
+import authV2.AuthActionsTestData._
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
+import enums.{MTDIndividual, MTDPrimaryAgent}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.Assertion
 import play.api
+import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Results.InternalServerError
 import play.api.mvc.{Result, Results}
 import play.api.test.Helpers._
-import play.api.{Application, Play}
 import services.IncomeSourceDetailsService
-import uk.gov.hmrc.auth.core.AffinityGroup._
-import authV2.AuthActionsTestData._
 
 import scala.concurrent.Future
 
@@ -60,12 +60,12 @@ class IncomeSourceRetrievalActionSpec extends AuthActionsSpecHelper {
   "refine" when {
     "Return the income source details" should {
       "return the expected IncomeSourceDetails" in {
-        val mtdItUserRequest = getMtdItUserOptionNinoForAuthorise(Some(Individual))(fakeRequestWithActiveSession)
+        val authorisedAndEnrolledRequest = defaultAuthorisedAndEnrolledRequest(MTDPrimaryAgent, fakeRequestWithActiveSession)
         when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
           .thenReturn(Future.successful(defaultIncomeSourcesData))
 
         val result = action.invokeBlock(
-          mtdItUserRequest,
+          authorisedAndEnrolledRequest,
           defaultAsyncBody(_.incomeSources shouldBe defaultIncomeSourcesData)
         )
 
@@ -75,7 +75,7 @@ class IncomeSourceRetrievalActionSpec extends AuthActionsSpecHelper {
     }
     "Income source details are not returned" should {
       "Show internal server error for individual" in {
-        val mtdItUserRequest = getMtdItUserOptionNinoForAuthorise(Some(Individual))(fakeRequestWithActiveSession)
+        val authorisedAndEnrolledRequest = defaultAuthorisedAndEnrolledRequest(MTDIndividual, fakeRequestWithActiveSession)
         when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
           .thenReturn(Future.successful(invalidIncomeSourceData))
 
@@ -83,17 +83,15 @@ class IncomeSourceRetrievalActionSpec extends AuthActionsSpecHelper {
           .thenReturn(InternalServerError("ERROR PAGE"))
 
         val result = action.invokeBlock(
-          mtdItUserRequest,
+          authorisedAndEnrolledRequest,
           defaultAsync
         )
 
           status(result) shouldBe INTERNAL_SERVER_ERROR
           contentAsString(result) shouldBe "ERROR PAGE"
-
-
       }
       "Show internal server error for agent" in {
-        val mtdItUserRequest = getMtdItUserOptionNinoForAuthorise(Some(Agent))(fakeRequestWithActiveSession)
+        val authorisedAndEnrolledRequest = defaultAuthorisedAndEnrolledRequest(MTDPrimaryAgent, fakeRequestWithActiveSession)
         when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
           .thenReturn(Future.successful(invalidIncomeSourceData))
 
@@ -101,7 +99,7 @@ class IncomeSourceRetrievalActionSpec extends AuthActionsSpecHelper {
           .thenReturn(InternalServerError("ERROR PAGE"))
 
         val result = action.invokeBlock(
-          mtdItUserRequest,
+          authorisedAndEnrolledRequest,
           defaultAsync
         )
             status(result) shouldBe INTERNAL_SERVER_ERROR

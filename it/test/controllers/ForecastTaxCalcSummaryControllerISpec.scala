@@ -17,29 +17,15 @@
 package controllers
 
 import audit.models.ForecastTaxCalculationAuditModel
-import auth.MtdItUser
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.{AuditStub, IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
 import models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
 import play.api.http.Status.OK
-import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testYear}
-import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, multipleBusinessesAndUkProperty}
+import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndUkProperty
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
-import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 object ForecastTaxSummaryControllerTestConstants {
-  def testUser(mtdUserRole: MTDUserRole): MtdItUser[_] = {
-    val (affinityGroup, arn) = if(mtdUserRole == MTDIndividual) {
-      (Individual, None)
-    } else {
-      (Agent, Some("1"))
-    }
-    MtdItUser(
-      testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
-      None, Some("1234567890"), Some("12345-credId"), Some(affinityGroup), arn
-    )(FakeRequest())
-  }
 
   val taxableIncome = 12500
 
@@ -116,7 +102,7 @@ class ForecastTaxCalcSummaryControllerISpec extends ControllerISpecHelper {
               val res = buildGETMTDClient(path, additionalCookies).futureValue
               IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
 
-              AuditStub.verifyAuditEvent(ForecastTaxCalculationAuditModel(ForecastTaxSummaryControllerTestConstants.testUser(mtdUserRole),
+              AuditStub.verifyAuditEvent(ForecastTaxCalculationAuditModel(getTestUser(mtdUserRole, multipleBusinessesAndUkProperty),
                 ForecastTaxSummaryControllerTestConstants.endOfYearEstimate))
 
               res should have(

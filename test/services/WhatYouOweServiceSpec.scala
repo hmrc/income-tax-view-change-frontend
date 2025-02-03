@@ -17,6 +17,7 @@
 package services
 
 import auth.MtdItUser
+import authV2.AuthActionsTestData.defaultMTDITUser
 import config.featureswitch.FeatureSwitching
 import connectors.{FinancialDetailsConnector, OutstandingChargesConnector}
 import enums.ChargeType.NIC4_WALES
@@ -26,8 +27,6 @@ import models.financialDetails._
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
-import play.api.test.FakeRequest
-import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
 import testConstants.ChargeConstants
 import testConstants.FinancialDetailsTestConstants._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
@@ -40,17 +39,7 @@ import scala.concurrent.Future
 
 class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with ChargeConstants {
 
-  implicit val mtdItUser: MtdItUser[_] = MtdItUser(
-    mtditid = testMtditid,
-    nino = testNino,
-    userName = Some(testRetrievedUserName),
-    incomeSources = singleBusinessIncomeWithCurrentYear,
-    btaNavPartial = None,
-    saUtr = Some("1234567890"),
-    credId = Some("credId"),
-    userType = Some(Individual),
-    None
-  )(FakeRequest())
+  implicit val mtdItUser: MtdItUser[_] = defaultMTDITUser(Some(Individual), singleBusinessIncomeWithCurrentYear)
 
   override def beforeEach(): Unit = {
     super.beforeEach()

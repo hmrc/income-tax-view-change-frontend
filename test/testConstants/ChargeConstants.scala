@@ -503,6 +503,12 @@ trait ChargeConstants {
     outstandingChargesModel = Some(outstandingChargesDueIn30Days)
   )
 
+  def whatYouOweDataWithDataDueIn30DaysAvailableCreditZero(dunningLocks: List[Option[String]] = noDunningLocks)(implicit dateService: DateService): WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 0.00, 1.00, Some(0.00), None, None, None, None),
+    chargesList = financialDetailsDueIn30DaysCi(dunningLocks),
+    outstandingChargesModel = Some(outstandingChargesDueIn30Days)
+  )
+
   val financialDetailsBalancingChargeNotOverdue: List[ChargeItem] = testFinancialDetailsChargeItems(
     transactionId = List(id1040000123, id1040000124),
     transactionTypes = List(BalancingCharge, BalancingCharge),

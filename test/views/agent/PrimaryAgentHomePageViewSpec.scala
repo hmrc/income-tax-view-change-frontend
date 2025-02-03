@@ -17,6 +17,7 @@
 package views.agent
 
 import auth.MtdItUser
+import authV2.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
 import config.FrontendAppConfig
 import config.featureswitch._
 import exceptions.MissingFieldException
@@ -52,31 +53,14 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
     else currentDate.getYear + 1
   }
 
-  val testMtdItUserNotMigrated: MtdItUser[_] = MtdItUser(
-    testMtditid,
-    testNino,
-    Some(testRetrievedUserName),
-    IncomeSourceDetailsModel(testNino, testMtditid, None, Nil, Nil),
-    btaNavPartial = None,
-    Some(testSaUtr),
-    Some(testCredId),
-    Some(Agent),
-    Some(testArn),
-    Some(testClientName)
-  )(FakeRequest())
+  val testMtdItUserNotMigrated: MtdItUser[_] = defaultMTDITUser(Some(Agent),
+    IncomeSourceDetailsModel(testNino, testMtditid, None, Nil, Nil)
+  )
 
-  val testMtdItUserMigrated: MtdItUser[_] = MtdItUser(
-    testMtditid,
-    testNino,
-    Some(testRetrievedUserName),
-    IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), Nil, Nil),
-    btaNavPartial = None,
-    Some(testSaUtr),
-    Some(testCredId),
-    Some(Agent),
-    Some(testArn),
-    None
-  )(FakeRequest())
+  val testMtdItUserMigrated: MtdItUser[_] = defaultMTDITUser(Some(Agent),
+    IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), Nil, Nil))
+
+  val testMtdItUserNoClientName = getMinimalMTDITUser(Some(Agent), IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), Nil, Nil))
 
   val year2018: Int = 2018
   val year2019: Int = 2019
@@ -110,6 +94,9 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
                   creditAndRefundEnabled: Boolean = false,
                   user: MtdItUser[_] = testMtdItUserNotMigrated,
                   reportingFrequencyEnabled: Boolean = false,
+                  penaltiesAndAppealsIsEnabled: Boolean = true,
+                  submissionFrequency: String = "Annual",
+                  penaltyPoints: Int = 0,
                   currentITSAStatus: ITSAStatus = ITSAStatus.Voluntary
                  ) {
 
@@ -125,6 +112,8 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
 
     val accountSettingsTileViewModel = AccountSettingsTileViewModel(TaxYear(currentTaxYear, currentTaxYear + 1), reportingFrequencyEnabled, currentITSAStatus)
 
+    val penaltiesAndAppealsTileViewModel = PenaltiesAndAppealsTileViewModel(penaltiesAndAppealsIsEnabled, submissionFrequency, penaltyPoints)
+
     val homePageViewModel = HomePageViewModel(
       utr = utr,
       nextUpdatesTileViewModel = nextUpdatesTileViewModel,
@@ -133,6 +122,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
       paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel,
       yourBusinessesTileViewModel = yourBusinessesTileViewModel,
       accountSettingsTileViewModel = accountSettingsTileViewModel,
+      penaltiesAndAppealsTileViewModel = penaltiesAndAppealsTileViewModel,
       dunningLockExists = dunningLockExists
     )
     val view: HtmlFormat.Appendable = agentHome(
@@ -171,7 +161,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
         document.select("h1").text() shouldBe "Jon Jones’s Income Tax"
       }
 
-      s"have the page heading ${messages("home.agent.heading")}" in new TestSetup(user = testMtdItUserMigrated) {
+      s"have the page heading ${messages("home.agent.heading")}" in new TestSetup(user = testMtdItUserNoClientName) {
         document.select("h1").text() shouldBe "Your client’s Income Tax"
       }
 
@@ -431,6 +421,32 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
           "has a link to AddIncomeSourceController.show()" in new TestSetup(user = testMtdItUserMigrated, incomeSourcesEnabled = true, incomeSourcesNewJourneyEnabled = true) {
             getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").text()) shouldBe Some("Add, manage or cease a business or income source")
             getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").attr("href")) shouldBe Some(controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url)
+          }
+        }
+      }
+
+      "have a Penalties and Appeals tile" when {
+        "PenaltiesAndAppeals FS is enabled" which {
+          "has a heading" in new TestSetup(submissionFrequency = "Annual", penaltyPoints = 2) {
+            getElementById("penalties-and-appeals-tile").map(_.select("h2").first().text()) shouldBe Some("Penalties and appeals")
+          }
+          "has a link to Self Assessment Penalties and Appeals page" in new TestSetup(penaltiesAndAppealsIsEnabled = true) {
+            getElementById("sa-penalties-and-appeals-link").map(_.text()) shouldBe Some("Check Self Assessment penalties and appeals")
+            getElementById("sa-penalties-and-appeals-link").map(_.attr("href")) shouldBe Some("")
+          }
+          "has a two-points penalty tag" in new TestSetup(submissionFrequency = "Annual", penaltyPoints = 3) {
+            getElementById("penalty-points-tag").map(_.text()) shouldBe Some("2 PENALTY POINTS")
+          }
+          "has a four-points penalty tag" in new TestSetup(submissionFrequency = "Quarterly", penaltyPoints = 4) {
+            getElementById("penalty-points-tag").map(_.text()) shouldBe Some("4 PENALTY POINTS")
+          }
+          "has no penalty tag if 2 points reached but User is reporting Quarterly" in new TestSetup(submissionFrequency = "Quarterly", penaltyPoints = 2) {
+            getElementById("penalty-points-tag").map(_.text()).isDefined shouldBe false
+            getElementById("penalty-points-tag").map(_.text()).isDefined shouldBe false
+          }
+          "has no penalty tag if user has only 1 point" in new TestSetup(penaltyPoints = 1) {
+            getElementById("penalty-points-tag").map(_.text()).isDefined shouldBe false
+            getElementById("penalty-points-tag").map(_.text()).isDefined shouldBe false
           }
         }
       }

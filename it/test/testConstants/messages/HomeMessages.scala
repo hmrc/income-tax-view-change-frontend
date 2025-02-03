@@ -16,9 +16,9 @@
 
 package testConstants.messages
 
-import helpers.servicemocks.AuthStub.{messagesAPI, lang}
+import helpers.ComponentSpecBase
 
-object HomeMessages {
+object HomeMessages extends ComponentSpecBase {
 
   val noPaymentsDue: String = messagesAPI("home.payments.no-payments-due")
   val overdue: String = messagesAPI("home.overdue.date")

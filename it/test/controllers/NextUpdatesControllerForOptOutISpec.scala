@@ -18,21 +18,20 @@ package controllers
 
 import audit.models.NextUpdatesAuditing.NextUpdatesAuditModel
 import auth.MtdItUser
+import enums.MTDIndividual
 import helpers.ComponentSpecBase
 import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
-import helpers.servicemocks.{AuditStub, CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub, MTDIndividualAuthStub}
+import helpers.servicemocks._
 import models.admin.OptOutFs
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.obligations.ObligationsModel
 import org.mongodb.scala.bson.BsonDocument
 import play.api.http.Status._
-import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.NextUpdatesIntegrationTestConstants._
-import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 class NextUpdatesControllerForOptOutISpec extends ComponentSpecBase {
 
@@ -45,10 +44,7 @@ class NextUpdatesControllerForOptOutISpec extends ComponentSpecBase {
 
   s"GET $path" when {
 
-    val testPropertyOnlyUser: MtdItUser[_] = MtdItUser(
-      testMtditid, testNino, None, ukPropertyOnlyResponse,
-      None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
-    )(FakeRequest())
+    val testPropertyOnlyUser: MtdItUser[_] = getTestUser(MTDIndividual, ukPropertyOnlyResponse)
 
     "one year opt-out scenarios" ignore {
 

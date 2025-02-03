@@ -92,8 +92,8 @@ class ForecastTaxCalcSummaryViewSpec extends ViewSpec {
 
   lazy val forecastTaxCalcView: ForecastTaxCalcSummary = app.injector.instanceOf[ForecastTaxCalcSummary]
 
-  val view: HtmlFormat.Appendable = forecastTaxCalcView(endOfYearEstimateModel, testTaxYear, backUrl, btaNavPartial = testNavHtml)
-  val viewModel2: HtmlFormat.Appendable = forecastTaxCalcView(endOfYearEstimateModel2, testTaxYear, backUrl, btaNavPartial = testNavHtml)
+  val view: HtmlFormat.Appendable = forecastTaxCalcView(endOfYearEstimateModel, testTaxYear, backUrl, btaNavPartial = Some(testNavHtml))
+  val viewModel2: HtmlFormat.Appendable = forecastTaxCalcView(endOfYearEstimateModel2, testTaxYear, backUrl, btaNavPartial = Some(testNavHtml))
 
   "The Forecast Tax Calc Summary View" when {
     "provided with a btaNavPartial" should {
@@ -176,7 +176,7 @@ class ForecastTaxCalcSummaryViewSpec extends ViewSpec {
     "have the correct Forecast Self Assessment tax amount but any incomeTaxNic~ is empty" should {
       "throw a MissingFieldException" in {
         intercept[MissingFieldException] { // attempt to construct a view will raise an exception
-          forecastTaxCalcView(endOfYearEstimateModel3, testTaxYear, backUrl, btaNavPartial = testNavHtml)
+          forecastTaxCalcView(endOfYearEstimateModel3, testTaxYear, backUrl, btaNavPartial = Some(testNavHtml))
         }
       }
     }

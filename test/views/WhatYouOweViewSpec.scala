@@ -17,6 +17,7 @@
 package views
 
 import auth.MtdItUser
+import authV2.AuthActionsTestData.defaultMTDITUser
 import config.featureswitch.FeatureSwitching
 import enums.CodingOutType._
 import implicits.ImplicitDateFormatter
@@ -29,11 +30,10 @@ import org.jsoup.nodes.{Document, Element}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testRetrievedUserName, testSaUtr, testUserTypeAgent, testUserTypeIndividual}
+import testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
 import testConstants.ChargeConstants
-import testConstants.FinancialDetailsTestConstants.{fixedDate, testFinancialDetailsModel, _}
+import testConstants.FinancialDetailsTestConstants._
 import testUtils.{TestSupport, ViewSpec}
-import uk.gov.hmrc.auth.core.retrieve.Name
 import views.html.WhatYouOwe
 
 import java.time.LocalDate
@@ -127,17 +127,10 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
                   adjustPaymentsOnAccountFSEnabled: Boolean = false,
                   claimToAdjustViewModel: Option[WYOClaimToAdjustViewModel] = None
                  ) {
-    val individualUser: MtdItUser[_] = MtdItUser(
-      mtditid = testMtditid,
-      nino = testNino,
-      userName = Some(testRetrievedUserName),
-      incomeSources = IncomeSourceDetailsModel(testNino, "testMtdItId", Some(migrationYear.toString), List(), List()),
-      btaNavPartial = None,
-      saUtr = Some(testSaUtr),
-      credId = Some(testCredId),
-      userType = Some(testUserTypeIndividual),
-      arn = None
-    )(FakeRequest())
+    val individualUser: MtdItUser[_] = defaultMTDITUser(
+      Some(testUserTypeIndividual),
+      IncomeSourceDetailsModel(testNino, "testMtditid", Some(migrationYear.toString), List(), List())
+    )
 
     val defaultClaimToAdjustViewModel = ctaViewModel(adjustPaymentsOnAccountFSEnabled)
 
@@ -178,17 +171,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
     val defaultClaimToAdjustViewModel = ctaViewModel(adjustPaymentsOnAccountFSEnabled)
 
-    val agentUser: MtdItUser[_] = MtdItUser(
-      nino = "AA111111A",
-      mtditid = "XAIT00000000015",
-      userName = Some(Name(Some("Test"), Some("User"))),
-      incomeSources = IncomeSourceDetailsModel("AA111111A", "testMtdItId", Some(migrationYear.toString), List(), List()),
-      btaNavPartial = None,
-      saUtr = Some("1234567890"),
-      credId = Some(testCredId),
-      userType = Some(testUserTypeAgent),
-      arn = Some(testArn)
-    )(FakeRequest())
+    val agentUser: MtdItUser[_] =
+      defaultMTDITUser(Some(testUserTypeAgent), IncomeSourceDetailsModel("AA111111A", "testMtditid", Some(migrationYear.toString), List(), List()))
 
     def findAgentElementById(id: String): Option[Element] = {
       Option(pageDocument.getElementById(id))
@@ -515,7 +499,11 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
             messages("whatYouOwe.moneyOnAccount-3") + "."
         }
 
-        "money in your account section with zero available credits" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
+        "money in your account section with no available credits" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
+          findElementById("money-in-your-account") shouldBe None
+        }
+
+        "money in your account section with available credits equal to £0 " in new TestSetup(charges = whatYouOweDataWithDataDueIn30DaysAvailableCreditZero()) {
           findElementById("money-in-your-account") shouldBe None
         }
 
@@ -1193,7 +1181,11 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           messages("whatYouOwe.moneyOnAccount-3") + "."
       }
 
-      "money in your account section with zero available credits" in new AgentTestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
+      "money in your account section with no available credits" in new AgentTestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
+        findAgentElementById("money-in-your-account") shouldBe None
+      }
+
+      "money in your account section with an available credit of £0.00" in new AgentTestSetup(charges = whatYouOweDataWithDataDueIn30DaysAvailableCreditZero()) {
         findAgentElementById("money-in-your-account") shouldBe None
       }
     }
