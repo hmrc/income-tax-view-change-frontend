@@ -17,13 +17,11 @@
 package controllers.constants
 
 import auth.MtdItUser
-import enums.{MTDIndividual, MTDUserRole}
+import enums.MTDUserRole
+import helpers.servicemocks.BtaPartialStub.getTestUser
 import models.incomeSourceDetails.TaxYear
-import play.api.test.FakeRequest
 import services.DateService
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
-import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 object ConfirmOptOutControllerConstants {
 
@@ -39,15 +37,7 @@ object ConfirmOptOutControllerConstants {
   val optOutExpectedTitle = "Check your answers"
 
   def testUser(mtdUserRole: MTDUserRole): MtdItUser[_] = {
-    val (affinityGroup, arn) = if(mtdUserRole == MTDIndividual) {
-      (Individual, None)
-    } else {
-      (Agent, Some("1"))
-    }
-    MtdItUser(
-      testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
-      None, Some("1234567890"), Some("12345-credId"), Some(affinityGroup), arn
-    )(FakeRequest())
+    getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)
   }
 
 }

@@ -16,12 +16,11 @@
 
 package audit.models
 
-import testConstants.BaseTestConstants._
-import testConstants.NextUpdatesTestConstants._
-import auth.MtdItUser
+import authV2.AuthActionsTestData.getMinimalMTDITUser
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.libs.json.Json
-import play.api.test.FakeRequest
+import testConstants.BaseTestConstants._
+import testConstants.NextUpdatesTestConstants._
 import testUtils.TestSupport
 
 class NextUpdatesResponseAuditModelSpec extends TestSupport {
@@ -125,7 +124,7 @@ class NextUpdatesResponseAuditModelSpec extends TestSupport {
     "Supplied with no Obligations and optional fields" should {
 
       val testNextUpdatesResponseAuditModel = NextUpdatesResponseAuditModel(
-        MtdItUser(testMtditid, testNino, None, IncomeSourceDetailsModel(testNino ,testMtditid, None, Nil, Nil), None, None, None, None, None)(FakeRequest()),
+        getMinimalMTDITUser(None, IncomeSourceDetailsModel(testNino ,testMtditid, None, Nil, Nil)),
         testSelfEmploymentId,
         List()
       )

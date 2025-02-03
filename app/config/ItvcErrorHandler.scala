@@ -20,7 +20,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.InternalServerError
 import play.api.mvc.{Request, Result}
 import play.twirl.api.Html
-import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
+import uk.gov.hmrc.play.bootstrap.frontend.http.LegacyFrontendErrorHandler
 import views.html.errorPages.templates.ErrorTemplate
 
 import javax.inject.Inject
@@ -32,7 +32,7 @@ trait ShowInternalServerError {
 
 class ItvcErrorHandler @Inject()(val errorTemplate: ErrorTemplate,
                                  val config: FrontendAppConfig,
-                                 val messagesApi: MessagesApi) extends FrontendErrorHandler with I18nSupport with ShowInternalServerError {
+                                 val messagesApi: MessagesApi) extends LegacyFrontendErrorHandler with I18nSupport with ShowInternalServerError {
 
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit r: Request[_]): Html = {
     errorTemplate(pageTitle, heading, message, isAgent = false)

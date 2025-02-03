@@ -17,7 +17,7 @@
 package testConstants
 
 import enums.ChargeType.NIC4_WALES
-import helpers.servicemocks.AuthStub.dateService
+import helpers.ComponentSpecBase
 import models.financialDetails._
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.libs.json.{JsValue, Json}
@@ -27,7 +27,7 @@ import testConstants.IncomeSourceIntegrationTestConstants.{id1040000123, noDunni
 
 import java.time.LocalDate
 
-object FinancialDetailsIntegrationTestConstants  {
+object FinancialDetailsIntegrationTestConstants  extends ComponentSpecBase {
 
   val currentDate: LocalDate = LocalDate.of(2023, 4, 5)
 

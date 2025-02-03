@@ -17,11 +17,11 @@
 package forms.incomeSources.add
 
 import auth.MtdItUser
+import authV2.AuthActionsTestData.getMinimalMTDITUser
 import enums.IncomeSourceJourney.SelfEmployment
 import implicits.ImplicitDateFormatter
-import play.api.data.{Form, FormError}
+import play.api.data.Form
 import services.DateService
-import testConstants.BaseTestConstants.{testMtditid, testNino}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.noIncomeDetails
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
@@ -30,17 +30,7 @@ class AddIncomeSourceStartDateCheckFormSpec extends TestSupport with ImplicitDat
 
   val mockDateService: DateService = app.injector.instanceOf[DateService]
 
-  val testUser: MtdItUser[_] = MtdItUser(
-    mtditid = testMtditid,
-    nino = testNino,
-    userName = None,
-    btaNavPartial = None,
-    saUtr = None,
-    credId = Some("12345-credId"),
-    userType = Some(Individual),
-    arn = None,
-    incomeSources = noIncomeDetails
-  )(fakeRequestNoSession)
+  val testUser: MtdItUser[_] = getMinimalMTDITUser(Some(Individual), noIncomeDetails, false, fakeRequestNoSession)
 
   lazy val form: Form[AddIncomeSourceStartDateCheckForm] = AddIncomeSourceStartDateCheckForm(SelfEmployment.addStartDateCheckMessagesPrefix)
   "ForeignPropertyStartDateCheck form" should {

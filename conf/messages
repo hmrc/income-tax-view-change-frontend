@@ -177,6 +177,11 @@ home.agent.supporting.cannotAccess.returns                      = returns
 home.agent.supporting.cannotAccess.nextChargesDue               = next charges due
 home.agent.supporting.readMore                                  = Read more about the difference between main and supporting agents on GOV.UK (opens in new tab).
 
+home.penaltiesAndAppeals.heading                                = Penalties and appeals
+home.penaltiesAndAppeals.view                                   = Check Self Assessment penalties and appeals
+home.penaltiesAndAppeals.twoPenaltiesTag                        = 2 PENALTY POINTS
+home.penaltiesAndAppeals.fourPenaltiesTag                       = 4 PENALTY POINTS
+
 ## Custom Error Page ##
 error.custom.heading                                            = There is a problem
 error.custom.message                                            = The page you’re trying to view has changed
@@ -774,11 +779,16 @@ nextUpdates.propertyIncome            							   = Property income
 nextUpdates.propertyIncome.UK                                      = UK property
 nextUpdates.propertyIncome.Foreign                                 = Foreign property
 nextUpdates.business            							       = Business income
-nextUpdates.optOutOneYear-1                                        = You are currently reporting quarterly on a voluntary basis for the {0} to {1} tax year. You can choose to
-nextUpdates.optOutOneYear-2                                        = opt out of quarterly updates and report annually instead.
 
-nextUpdates.optOutMultiYear-1                                      = You are currently reporting quarterly on a voluntary basis. You can choose to
-nextUpdates.optOutMultiYear-2                                      = opt out of quarterly updates and report annually instead.
+nextUpdates.optOutOneYear.p.message                                = You are currently reporting quarterly on a voluntary basis for the {0} to {1} tax year. You can choose to
+nextUpdates.optOutOneYear.p.link                                   = opt out of quarterly updates and report annually instead.
+nextUpdates.optOutOneYear.reportingFrequency.p.message             = Depending on your circumstances, you may be able to
+nextUpdates.optOutOneYear.reportingFrequency.p.link                = view and change your reporting frequency.
+
+nextUpdates.optOutMultiYear.p.message                              = You are currently reporting quarterly on a voluntary basis. You can choose to
+nextUpdates.optOutMultiYear.p.link                                 = opt out of quarterly updates and report annually instead.
+nextUpdates.optOutMultiYear.reportingFrequency.p.message           = Depending on your circumstances, you may be able to
+nextUpdates.optOutMultiYear.reportingFrequency.p.link              = view and change your reporting frequency.
 
 sections.open.all												   = Show all sections
 sections.close.all												   = Hide all sections
@@ -2127,12 +2137,18 @@ optout.confirmedOptOut.taxYear                                   = You are repor
 optout.confirmedOptOut.one-year                                  = You are reporting annually for the {0} to {1} tax year
 optout.confirmedOptOut.yourRevisedDeadlines.h2                   = Your revised deadlines
 optout.confirmedOptOut.yourRevisedDeadlines.desc1                = Your tax return for the {0} to {1} tax year is due by <b>31 January {2}</b>.
-optout.confirmedOptOut.viewUpcomingUpdates.text                  = View your upcoming updates
+optout.confirmedOptOut.viewUpcomingDeadlines.text                = View your upcoming deadlines
 optout.confirmedOptOut.yourRevisedDeadlines.desc2                = You can decide at any time to opt back in to reporting quarterly for all of your businesses on {0} page.
 optout.confirmedOptOut.yourReportingFrequency.text               = your reporting frequency
+
 optout.confirmedOptOut.submitTax                                 = Submit your tax return
-optout.confirmedOptOut.submitTax.desc1                           = When reporting annually, you can submit your tax return directly through your HMRC online account or software compatible.
-optout.confirmedOptOut.submitTax.desc2                           = However, compatible software is required for any tax years for which you are reporting quarterly.
+
+optout.confirmedOptOut.submitTax.confirmed.p1                    = Now you have opted out, you will need to go back to the way you have previously
+optout.confirmedOptOut.submitTax.confirmed.p1.link               = filed your Self Assessment tax return
+
+optout.confirmedOptOut.submitTax.confirmed.p2                    = For any tax year you are reporting quarterly, you will need
+optout.confirmedOptOut.submitTax.confirmed.p2.link               = software compatible with Making Tax Digital for Income Tax
+
 optout.confirmedOptOut.updatesDue                                = Your next updates due
 optout.confirmedOptOut.updatesDue.desc                           = Check the {0} page for the current tax year’s deadlines. Deadlines for future years will not be visible until they become the current year.
 optout.confirmedOptOut.next-updates                              = next updates

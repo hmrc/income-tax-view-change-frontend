@@ -32,7 +32,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
   s"GET $path" should {
     s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" when {
       "the user is not authenticated" in {
-        AuthStub.stubUnauthorised()
+        MTDAgentAuthStub.stubUnauthorised()
 
         val result = buildGETMTDClient(path).futureValue
 
@@ -44,7 +44,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
     }
     s"redirect ($SEE_OTHER) to ${controllers.agent.errors.routes.AgentErrorController.show.url}" when {
       "the user is authenticated but doesn't have the agent enrolment" in {
-        AgentAuthStub.stubNoAgentEnrolment(testMtdItId)
+        MTDAgentAuthStub.stubNoAgentEnrolmentError()
         val result = buildGETMTDClient(path).futureValue
 
         result should have(
@@ -54,7 +54,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
       }
     }
     s"return $OK with the enter client utr page" in {
-      AgentAuthStub.stubAuthAgent(testMtdItId)
+      MTDAgentAuthStub.stubAuthorisedWithAgentEnrolment()
       val result = buildGETMTDClient(path).futureValue
 
       result should have(
@@ -67,7 +67,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
   s"POST ${controllers.agent.routes.EnterClientsUTRController.submit.url}" should {
     s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" when {
       "the user is not authenticated" in {
-        AuthStub.stubUnauthorised()
+        MTDAgentAuthStub.stubUnauthorised()
 
         val result = buildPOSTMTDPostClient(path, body = Map.empty).futureValue
 
@@ -80,7 +80,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
 
     s"redirect to agent error page" when {
       "the user is authenticated but doesn't have the agent enrolment" in {
-        AgentAuthStub.stubNoAgentEnrolment(testMtdItId)
+        MTDAgentAuthStub.stubNoAgentEnrolmentError()
 
         val result = buildPOSTMTDPostClient(path, body = Map.empty).futureValue
 
@@ -93,7 +93,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
 
     s"return $BAD_REQUEST" when {
       "no utr is submitted" in {
-        AuthStub.stubAuthorisedAgent(testMtdItId)
+        MTDAgentAuthStub.stubAuthorisedWithAgentEnrolment()
 
         val result = buildPOSTMTDPostClient(path, body = Map.empty).futureValue
 
@@ -104,7 +104,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
         )
       }
       "an empty utr string is submitted" in {
-        AuthStub.stubAuthorisedAgent(testMtdItId)
+        MTDAgentAuthStub.stubAuthorisedWithAgentEnrolment()
 
         val result = buildPOSTMTDPostClient(path, body = Map("utr" -> Seq(""))).futureValue
 
@@ -114,7 +114,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
         )
       }
       "a utr containing non-digits is submitted" in {
-        AuthStub.stubAuthorisedAgent(testMtdItId)
+        MTDAgentAuthStub.stubAuthorisedWithAgentEnrolment()
 
         val result = buildPOSTMTDPostClient(path, body = Map("utr" -> Seq("abc"))).futureValue
         
@@ -124,7 +124,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
         )
       }
       "a utr which has less than 10 digits is submitted" in {
-        AuthStub.stubAuthorisedAgent(testMtdItId)
+        MTDAgentAuthStub.stubAuthorisedWithAgentEnrolment()
 
         val result = buildPOSTMTDPostClient(path, body = Map("utr" -> Seq("123456789"))).futureValue
 
@@ -134,7 +134,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
         )
       }
       "a utr which has more than 10 digits is submitted" in {
-        AuthStub.stubAuthorisedAgent(testMtdItId)
+        MTDAgentAuthStub.stubAuthorisedWithAgentEnrolment()
 
         val result = buildPOSTMTDPostClient(path, body = Map("utr" -> Seq("12345678901"))).futureValue
 
@@ -148,8 +148,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
     s"redirect ($SEE_OTHER) to the next page" when {
       "the utr is submitted by a primary agent is valid" in {
         val validUTR: String = "1234567890"
-        AuthStub.stubAuthorisedAgent(testMtdItId)
-        AgentAuthStub.stubPrimaryAuthorisedAgent(testMtdItId)
+        MTDAgentAuthStub.stubAuthorisedAndMTDEnrolled(false)
         CitizenDetailsStub.stubGetCitizenDetails(validUTR,
           status = OK,
           response = CitizenDetailsStub.validCitizenDetailsResponse(
@@ -165,7 +164,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
 
         val result = buildPOSTMTDPostClient(path, body = Map("utr" -> Seq(validUTR))).futureValue
         
-        AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some("1"), saUtr = validUTR, credId = None))
+        AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some(testArn), saUtr = validUTR, credId = Some(credId)))
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -175,9 +174,8 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
 
       "the utr submitted by a secondary agent is valid" in {
         val validUTR: String = "1234567890"
-        AuthStub.stubAuthorisedAgent(testMtdItId)
-        AgentAuthStub.failedPrimaryAgent(testMtdItId)
-        AgentAuthStub.stubSecondaryAuthorisedAgent(testMtdItId)
+        MTDAgentAuthStub.stubAuthorisedAndMTDEnrolled(true)
+
         CitizenDetailsStub.stubGetCitizenDetails(validUTR,
           status = OK,
           response = CitizenDetailsStub.validCitizenDetailsResponse(
@@ -193,7 +191,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
 
         val result = buildPOSTMTDPostClient(path, body = Map("utr" -> Seq(validUTR))).futureValue
 
-        AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some("1"), saUtr = validUTR, credId = None))
+        AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some(testArn), saUtr = validUTR, credId = Some(credId)))
 
         Then("The enter clients utr page is returned with an error")
         result should have(
@@ -206,8 +204,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
         val validUTR: String = "1234567890"
         val utrWithSpaces: String = " 1 2 3 4 5 6 7 8 9 0 "
 
-        AuthStub.stubAuthorisedAgent(testMtdItId)
-        AgentAuthStub.stubPrimaryAuthorisedAgent(testMtdItId)
+        MTDAgentAuthStub.stubAuthorisedAndMTDEnrolled(false)
 
         CitizenDetailsStub.stubGetCitizenDetails(validUTR,
           status = OK,
@@ -224,7 +221,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
 
         val result = buildPOSTMTDPostClient(path, body = Map("utr" -> Seq(utrWithSpaces))).futureValue
 
-        AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some("1"), saUtr = validUTR, credId = None))
+        AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some(testArn), saUtr = validUTR, credId = Some(credId)))
 
         Then("The enter clients utr page is returned with an error")
         result should have(
@@ -237,9 +234,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
         val validUTR: String = "1234567890"
         val utrWithSpaces: String = " 1 2 3 4 5 6 7 8 9 0 "
 
-        AuthStub.stubAuthorisedAgent(testMtdItId)
-        AgentAuthStub.failedPrimaryAgent(testMtdItId)
-        AgentAuthStub.stubSecondaryAuthorisedAgent(testMtdItId)
+        MTDAgentAuthStub.stubAuthorisedAndMTDEnrolled(true)
 
         CitizenDetailsStub.stubGetCitizenDetails(validUTR,
           status = OK,
@@ -256,7 +251,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
 
         val result = buildPOSTMTDPostClient(path, body = Map("utr" -> Seq(utrWithSpaces))).futureValue
 
-        AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some("1"), saUtr = validUTR, credId = None))
+        AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some(testArn), saUtr = validUTR, credId = Some(credId)))
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -269,7 +264,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
       "the client details could not be found" in {
         val validUTR: String = "1234567890"
 
-        AuthStub.stubAuthorisedAgent(testMtdItId)
+        MTDAgentAuthStub.stubAuthorisedWithAgentEnrolment()
         CitizenDetailsStub.stubGetCitizenDetails(validUTR,
           status = NOT_FOUND,
           response = Json.obj()
@@ -287,7 +282,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
       "the business details could not be found" in {
         val validUTR: String = "1234567890"
 
-        AuthStub.stubAuthorisedAgent(testMtdItId)
+        MTDAgentAuthStub.stubAuthorisedWithAgentEnrolment()
         CitizenDetailsStub.stubGetCitizenDetails(validUTR,
           status = OK,
           response = CitizenDetailsStub.validCitizenDetailsResponse(
@@ -313,9 +308,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
       "the primary or secondary agent enrolment is not present" in {
         val validUTR: String = "1234567890"
 
-        AuthStub.stubAuthorisedAgent(testMtdItId)
-        AgentAuthStub.failedPrimaryAgent(testMtdItId)
-        AgentAuthStub.failedSecondaryAgent(testMtdItId)
+        MTDAgentAuthStub.stubAuthorisedButNotMTDEnrolled()
         CitizenDetailsStub.stubGetCitizenDetails(validUTR,
           status = OK,
           response = CitizenDetailsStub.validCitizenDetailsResponse(

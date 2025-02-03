@@ -16,8 +16,11 @@
 
 package testConstants
 
-import auth.{MtdItUser, MtdItUserOptionNino}
+import auth.MtdItUser
+import auth.authV2.models.AuthorisedAndEnrolledRequest
+import authV2.AuthActionsTestData._
 import config.FrontendAppConfig
+import enums.MTDIndividual
 import models.btaNavBar.ListLinks
 import models.core.Nino
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
@@ -47,8 +50,7 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
   val dateFrom = "12/02/2021"
   val dateTo = "12/02/2022"
   val testUserNino: Nino = Nino(testNino)
-  val testSaUtrId = "1234567890"
-  val testSaUtr = "testSaUtr"
+  val testSaUtr = "1234567890"
   val taxYear: Int = 2020
   val taxYear2020: String = "2020"
   val idNumber = "1234567890"
@@ -78,20 +80,16 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
   val testRetrievedUserName: Name = Name(Some(testUserName), None)
   val testClientName: Name = Name(Some(testFirstName), Some(testSecondName))
   val testPaymentRedirectUrl = "http://localhost:9081/report-quarterly/income-and-expenses/view"
-  lazy val testMtdUserNoNino: MtdItUserOptionNino[_] = MtdItUserOptionNino(testMtditid, Some(testNino), None, None, Some(testSaUtr), Some(testCredId), Some(testUserTypeIndividual), None)(FakeRequest())
-  implicit val testMtdUserOptionNino: MtdItUserOptionNino[_] = MtdItUserOptionNino(testMtditid, Some(testNino), Some(testRetrievedUserName), btaNavPartial = None, Some(testSaUtr), Some(testCredId), userType = Some(testUserTypeIndividual), arn = None)(FakeRequest())
+  lazy val testAuthorisedAndEnrolled: AuthorisedAndEnrolledRequest[_] = defaultAuthorisedAndEnrolledRequest(MTDIndividual, FakeRequest())
 
-  lazy val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
-    businessesAndPropertyIncome, btaNavPartial = None, Some(testSaUtr), Some(testCredId), Some(testUserTypeIndividual), None)(FakeRequest())
+  lazy val testMtdItUser: MtdItUser[_] = defaultMTDITUser(Some(testUserTypeIndividual), businessesAndPropertyIncome)
 
-  lazy val testMtdItAgentUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
-    businessesAndPropertyIncome, btaNavPartial = None, Some(testSaUtr), Some(testCredId), Some(testUserTypeAgent), Some(testArn))(FakeRequest())
+  lazy val testMtdItAgentUser: MtdItUser[_] = defaultMTDITUser(Some(testUserTypeAgent), businessesAndPropertyIncome)
 
-  lazy val testMtdItUserMinimal: MtdItUser[_] = MtdItUser(testMtditid, testNino, userName = None,
-    incomeSources = businessesAndPropertyIncome, btaNavPartial = None, saUtr = None, credId = None, userType = None, arn = None)(FakeRequest())
+  lazy val testMtdItUserMinimal: MtdItUser[_] = getMinimalMTDITUser(None, businessesAndPropertyIncome)
 
-  lazy val testMtdItUserNoIncomeSource: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
-    IncomeSourceDetailsModel(testNino, "", Some("2018"), List(business1.copy("", None, None, None)), List(propertyDetails.copy("", None, None))), btaNavPartial = None, Some(testSaUtr), Some(testCredId), Some(testUserTypeIndividual), None)(FakeRequest())
+  lazy val testMtdItUserNoIncomeSource: MtdItUser[_] = defaultMTDITUser(Some(testUserTypeIndividual),
+    IncomeSourceDetailsModel(testNino, "", Some("2018"), List(business1.copy("", None, None, None)), List(propertyDetails.copy("", None, None))))
   val testSelfEmploymentId = "XA00001234"
   val testSelfEmploymentId2 = "XA00001235"
   val testSelfEmploymentIdValidation = "XAIS00000000002"
@@ -180,7 +178,7 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
 
   val testReferrerUrl = "/test/url"
 
-  val testNavHtml: Option[Html] = Some(HtmlFormat.raw(
+  val testNavHtml: Html = HtmlFormat.raw(
     "<html><head></head><body>  <nav id='secondary-nav' class='hmrc-account-menu'> " +
       "<ul class='hmrc-account-menu__main govuk-grid-column-full' style='padding: 0;'>" +
       "<li> <a href='http://localhost:9081/report-quarterly/income-and-expenses/view' id='nav-bar-link-testEnHome' class='hmrc-account-menu__link'> testEnHome </a> </li>" +
@@ -188,5 +186,5 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
       "<li> <a href='testUrl' id='nav-bar-link-testEnMessages' class='hmrc-account-menu__link'> testEnMessages </a> </li>" +
       "<li> <a href='testUrl' id='nav-bar-link-testEnForm' class='hmrc-account-menu__link'> testEnForm <span class='hmrc-notification-badge'>1</span> </a> </li>" +
       "<li> <a href='testUrl' id='nav-bar-link-testEnHelp' class='hmrc-account-menu__link'> testEnHelp </a> </li>" +
-      "</ul>  </nav> </body></html>"))
+      "</ul>  </nav> </body></html>")
 }

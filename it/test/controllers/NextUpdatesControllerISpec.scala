@@ -26,12 +26,10 @@ import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.obligations.ObligationsModel
 import play.api.http.Status._
-import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.NextUpdatesIntegrationTestConstants._
-import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
@@ -39,15 +37,9 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
   s"GET $path" when {
     val mtdUserRole = MTDIndividual
-    val testPropertyOnlyUser: MtdItUser[_] = MtdItUser(
-      testMtditid, testNino, None, ukPropertyOnlyResponse,
-      None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
-    )(FakeRequest())
+    val testPropertyOnlyUser: MtdItUser[_] = getTestUser(MTDIndividual, ukPropertyOnlyResponse)
 
-    val testBusinessOnlyUser: MtdItUser[_] = MtdItUser(
-      testMtditid, testNino, None, businessOnlyResponse,
-      None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
-    )(FakeRequest())
+    val testBusinessOnlyUser: MtdItUser[_] = getTestUser(MTDIndividual, businessOnlyResponse)
 
     testAuthFailures(path, mtdUserRole)
 
@@ -301,9 +293,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
         Then("the quarterly updates info sections")
         res should have(
-          elementTextBySelector("#one-year-opt-out-message")(expectedValue = "You are currently reporting quarterly on a " +
-            "voluntary basis for the 2021 to 2022 tax year. You can choose to opt out of quarterly updates and " +
-            "report annually instead.")
+          elementTextBySelector("#what-the-user-can-do")(expectedValue = "You are currently reporting quarterly on a voluntary basis for the 2021 to 2022 tax year. You can choose to opt out of quarterly updates and report annually instead.")
         )
 
       }
@@ -335,8 +325,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
         Then("the quarterly updates info sections")
         res should have(
-          elementTextBySelector("#multi-year-opt-out-message")(expectedValue = "You are currently reporting quarterly on a " +
-            "voluntary basis. You can choose to opt out of quarterly updates and report annually instead.")
+          elementTextBySelector("#what-the-user-can-do")(expectedValue = "You are currently reporting quarterly on a voluntary basis. You can choose to opt out of quarterly updates and report annually instead.")
         )
       }
     }

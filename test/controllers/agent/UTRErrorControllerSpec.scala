@@ -82,7 +82,6 @@ class UTRErrorControllerSpec extends MockAuthActions
 
       status(result) shouldBe OK
       contentType(result) shouldBe Some(HTML)
-      verify(mockAuthService, times(0)).authorised(ArgumentMatchers.any(Enrolment.apply("").getClass))
     }
   }
 
@@ -128,7 +127,6 @@ class UTRErrorControllerSpec extends MockAuthActions
       status(result) shouldBe SEE_OTHER
       redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show.url)
       result.futureValue.session(fakeRequestWithClientUTR).get(SessionKeys.clientUTR) shouldBe None
-      verify(mockAuthService, times(0)).authorised(ArgumentMatchers.any(Enrolment.apply("").getClass))
     }
   }
 }

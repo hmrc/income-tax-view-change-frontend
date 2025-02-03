@@ -17,7 +17,6 @@
 package controllers.incomeSources.add
 
 import audit.models.CreateIncomeSourceAuditModel
-import auth.MtdItUser
 import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
@@ -27,12 +26,10 @@ import models.admin.{IncomeSourcesFs, NavBarFs}
 import models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
 import models.incomeSourceDetails.UIJourneySessionData
 import play.api.http.Status.{OK, SEE_OTHER}
-import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSelfEmploymentId, testSessionId}
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testSelfEmploymentId, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.{emptyUIJourneySessionData, multipleBusinessesAndPropertyResponse, noPropertyOrBusinessResponse}
-import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 
@@ -50,18 +47,6 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
   val testBusinessCountryCodeView: String = "United Kingdom"
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
-
-  def testUser(mtdUserRole: MTDUserRole): MtdItUser[_] = {
-    val (affinityGroup, arn) = if(mtdUserRole == MTDIndividual) {
-      (Individual, None)
-    } else {
-      (Agent, Some("1"))
-    }
-    MtdItUser(
-      testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
-      None, Some("1234567890"), Some("12345-credId"), Some(affinityGroup), arn
-    )(FakeRequest())
-  }
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -157,13 +142,16 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 
                 incomeSourceType match {
                   case SelfEmployment => AuditStub.verifyAuditContainsDetail(
-                    CreateIncomeSourceAuditModel(SelfEmployment, testSEViewModel, None, None, Some(CreateIncomeSourceResponse(testSelfEmploymentId)))(testUser(mtdUserRole)).detail)
+                    CreateIncomeSourceAuditModel(SelfEmployment, testSEViewModel, None, None, Some(CreateIncomeSourceResponse(testSelfEmploymentId)))
+                    (getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail)
 
                   case UkProperty => AuditStub.verifyAuditContainsDetail(
-                    CreateIncomeSourceAuditModel(UkProperty, testUKPropertyViewModel, None, None, Some(CreateIncomeSourceResponse(testSelfEmploymentId)))(testUser(mtdUserRole)).detail)
+                    CreateIncomeSourceAuditModel(UkProperty, testUKPropertyViewModel, None, None, Some(CreateIncomeSourceResponse(testSelfEmploymentId)))
+                    (getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail)
 
                   case ForeignProperty => AuditStub.verifyAuditContainsDetail(
-                    CreateIncomeSourceAuditModel(ForeignProperty, testForeignPropertyViewModel, None, None, Some(CreateIncomeSourceResponse(testSelfEmploymentId)))(testUser(mtdUserRole)).detail)
+                    CreateIncomeSourceAuditModel(ForeignProperty, testForeignPropertyViewModel, None, None, Some(CreateIncomeSourceResponse(testSelfEmploymentId)))
+                    (getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail)
                 }
 
                 result should have(
@@ -187,13 +175,16 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 
                 incomeSourceType match {
                   case SelfEmployment => AuditStub.verifyAuditContainsDetail(
-                    CreateIncomeSourceAuditModel(SelfEmployment, testSEViewModel, Some("API_FAILURE"), Some(testErrorReason), None)(testUser(mtdUserRole)).detail)
+                    CreateIncomeSourceAuditModel(SelfEmployment, testSEViewModel, Some("API_FAILURE"), Some(testErrorReason), None)
+                    (getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail)
 
                   case UkProperty => AuditStub.verifyAuditContainsDetail(
-                    CreateIncomeSourceAuditModel(UkProperty, testUKPropertyViewModel, Some("API_FAILURE"), Some(testErrorReason), None)(testUser(mtdUserRole)).detail)
+                    CreateIncomeSourceAuditModel(UkProperty, testUKPropertyViewModel, Some("API_FAILURE"), Some(testErrorReason), None)
+                    (getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail)
 
                   case ForeignProperty => AuditStub.verifyAuditContainsDetail(
-                    CreateIncomeSourceAuditModel(ForeignProperty, testForeignPropertyViewModel, Some("API_FAILURE"), Some(testErrorReason), None)(testUser(mtdUserRole)).detail)
+                    CreateIncomeSourceAuditModel(ForeignProperty, testForeignPropertyViewModel, Some("API_FAILURE"), Some(testErrorReason), None)
+                    (getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail)
                 }
 
                 result should have(

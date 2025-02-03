@@ -16,14 +16,14 @@
 
 package audit.models
 
-import testConstants.BaseTestConstants._
-import auth.{MtdItUserOptionNino, MtdItUserWithNino}
+import authV2.AuthActionsTestData.defaultAuthorisedAndEnrolledRequest
+import enums.MTDPrimaryAgent
 import play.api.http.Status.OK
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
+import testConstants.BaseTestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
-import uk.gov.hmrc.auth.core.retrieve.Name
 
 class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
 
@@ -37,7 +37,8 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
     "Supplied with Multiple Business IDs and Property IDs for individual which display no arn and Individual as user type" should {
       s"return $OK" when {
         val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
-          testMtdUserOptionNino,
+          testAuthorisedAndEnrolled,
+          testNino,
           List(testSelfEmploymentId, testSelfEmploymentId2),
           List(testPropertyIncomeId, testPropertyIncomeId2),
           Some(testMigrationYear2019)
@@ -69,16 +70,8 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
     "Supplied with Multiple Business IDs and Property IDs for agent" should {
       s"return $OK" when {
         val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
-          mtdItUser = MtdItUserOptionNino(
-            btaNavPartial = None,
-            saUtr = Some(testSaUtr),
-            nino = Some(testNino),
-            mtditid = testMtditidAgent,
-            arn = Some("arn"),
-            userType = Some(Agent),
-            credId = Some(testCredId),
-            userName = Some(Name(Some("firstName"), Some("lastName")))
-          )(FakeRequest()),
+          defaultAuthorisedAndEnrolledRequest(MTDPrimaryAgent, FakeRequest()),
+          testNino,
           List(testSelfEmploymentId, testSelfEmploymentId2),
           List(testPropertyIncomeId, testPropertyIncomeId2),
           Some(testMigrationYear2019)
@@ -93,17 +86,10 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
         }
 
         "Have the correct details for the audit event which display the arn and Agent as user type" in {
-          testIncomeSourceDetailsResponseAuditModel.detail shouldBe Json.obj(
+          testIncomeSourceDetailsResponseAuditModel.detail shouldBe commonAuditDetails(Agent) ++ Json.obj(
             propertyIdsKey -> Json.toJson(List(testPropertyIncomeId, testPropertyIncomeId2)),
-            "saUtr" -> testSaUtr,
-            "nino" -> testNino,
-            "agentReferenceNumber" -> "arn",
-            "userType" -> "Agent",
             "dateOfMigration" -> testMigrationYear2019,
-            "credId" -> testCredId,
-            seIdsKey -> Json.toJson(List(testSelfEmploymentId, testSelfEmploymentId2)),
-            "mtditid" -> testMtditidAgent
-          )
+            seIdsKey -> Json.toJson(List(testSelfEmploymentId, testSelfEmploymentId2)))
         }
       }
     }
@@ -111,7 +97,8 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
     "Supplied with Single Business IDs and a Property ID" should {
       s"return $OK" when {
         val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
-          testMtdUserOptionNino,
+          testAuthorisedAndEnrolled,
+          testNino,
           List(testSelfEmploymentId),
           List(testPropertyIncomeId),
           Some(testMigrationYear2019)
@@ -143,7 +130,8 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
     "Supplied with No Business IDs and a Property ID" should {
       s"return $OK" when {
         val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
-          testMtdUserOptionNino,
+          testAuthorisedAndEnrolled,
+          testNino,
           List(testSelfEmploymentId),
           List(testPropertyIncomeId),
           Some(testMigrationYear2019)
@@ -175,7 +163,8 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
     "Supplied with Single Business IDs and MtditUser, No Property ID, no year of Migration fields" should {
       s"return $OK" when {
         val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
-          testMtdUserOptionNino,
+          testAuthorisedAndEnrolled,
+          testNino,
           List(testSelfEmploymentId),
           Nil, None
         )
@@ -205,7 +194,8 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
     "Supplied with Multiple Business IDs and No Property ID" should {
       s"return $OK" when {
         val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
-          testMtdUserOptionNino,
+          testAuthorisedAndEnrolled,
+          testNino,
           List(testSelfEmploymentId),
           Nil, None
         )
@@ -235,7 +225,8 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
     "Supplied with Multiple Property IDs and No Business IDs" should {
       s"return $OK" when {
         val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
-          testMtdUserOptionNino,
+          testAuthorisedAndEnrolled,
+          testNino,
           Nil,
           List(testPropertyIncomeId, testPropertyIncomeId2), None
         )
@@ -265,7 +256,8 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
     "Supplied with No Business IDs and No Property ID" should {
       s"return $OK" when {
         val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
-          testMtdUserOptionNino,
+          testAuthorisedAndEnrolled,
+          testNino,
           Nil,
           Nil, None
         )

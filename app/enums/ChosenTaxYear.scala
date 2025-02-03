@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package helpers
+package enums
 
-import helpers.servicemocks._
+sealed trait ChosenTaxYear
 
-trait GenericStubMethods extends CustomMatchers {
+case object PreviousTaxYear extends ChosenTaxYear
 
-  def isAuthorisedUser(authorised: Boolean): Unit = {
-    if (authorised) {
-      AuthStub.stubAuthorised()
-    } else {
-      AuthStub.stubUnauthorised()
-    }
-  }
-}
+case object CurrentTaxYear extends ChosenTaxYear
+
+case object NextTaxYear extends ChosenTaxYear
+
+case object NoChosenTaxYear extends ChosenTaxYear
+
+
+

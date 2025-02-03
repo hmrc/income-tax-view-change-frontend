@@ -22,7 +22,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.Configuration
 import play.mvc.Http.Status
-import testConstants.BaseTestConstants.{idNumber, idType, taxYear2020, testSaUtr, testSaUtrId, testTo}
+import testConstants.BaseTestConstants._
 import testConstants.OutstandingChargesTestConstants._
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -48,8 +48,8 @@ class OutstandingChargesConnectorSpec extends BaseConnectorSpec {
     ".getOutstandingChargesUrl()" should {
 
       "return the correct url" in new Setup {
-        connector.getOutstandingChargesUrl(testSaUtr, testSaUtrId, testTo) shouldBe
-          s"$baseUrl/income-tax-view-change/out-standing-charges/$testSaUtr/$testSaUtrId/$testTo"
+        connector.getOutstandingChargesUrl(testSaUtr, idNumber, testTo) shouldBe
+          s"$baseUrl/income-tax-view-change/out-standing-charges/$testSaUtr/$idNumber/$testTo"
       }
     }
 

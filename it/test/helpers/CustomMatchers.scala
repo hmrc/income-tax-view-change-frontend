@@ -17,12 +17,11 @@
 package helpers
 
 import enums.{MTDIndividual, MTDUserRole}
-import helpers.servicemocks.AuthStub.{lang, messagesAPI}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.scalatest._
 import org.scalatest.matchers._
-import play.api.i18n.Lang
+import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json.Reads
 import play.api.libs.ws.WSResponse
 
@@ -70,15 +69,17 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
       }
     }
 
-  def pageTitle(mtdUserRole: MTDUserRole, messageKey: String, isInvalidInput: Boolean = false, isErrorPage: Boolean = false)(implicit lang: Lang): HavePropertyMatcher[WSResponse, String] = {
+  def pageTitle(mtdUserRole: MTDUserRole, messageKey: String, isInvalidInput: Boolean = false, isErrorPage: Boolean = false)
+               (implicit messagesAPI: MessagesApi, lang: Lang): HavePropertyMatcher[WSResponse, String] = {
     if (mtdUserRole == MTDIndividual) {
-      pageTitleIndividual(messageKey, isInvalidInput, isErrorPage)(lang)
+      pageTitleIndividual(messageKey, isInvalidInput, isErrorPage)
     } else {
-      pageTitleAgent(messageKey, isInvalidInput, isErrorPage)(lang)
+      pageTitleAgent(messageKey, isInvalidInput, isErrorPage)
     }
   }
 
-  def pageTitleIndividual(messageKey: String, isInvalidInput: Boolean = false, isErrorPage: Boolean = false)(implicit lang: Lang): HavePropertyMatcher[WSResponse, String] =
+  def pageTitleIndividual(messageKey: String, isInvalidInput: Boolean = false, isErrorPage: Boolean = false)
+                         (implicit lang: Lang, messagesAPI: MessagesApi): HavePropertyMatcher[WSResponse, String] =
     new HavePropertyMatcher[WSResponse, String] {
 
       def apply(response: WSResponse) = {
@@ -118,7 +119,7 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
                      isInvalidInput: Boolean = false,
                      isErrorPage: Boolean = false,
                      showServiceName: Boolean = true)
-                    (implicit lang: Lang): HavePropertyMatcher[WSResponse, String] =
+                    (implicit messagesAPI: MessagesApi, lang: Lang): HavePropertyMatcher[WSResponse, String] =
     new HavePropertyMatcher[WSResponse, String] {
 
       def apply(response: WSResponse): HavePropertyMatchResult[String] = {
@@ -143,7 +144,8 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
   def pageTitleInd(messageKey: String,
                    isInvalidInput: Boolean = false,
                    isErrorPage: Boolean = false,
-                   showServiceName: Boolean = true): HavePropertyMatcher[WSResponse, String] =
+                   showServiceName: Boolean = true)
+                  (implicit messagesAPI: MessagesApi, lang: Lang): HavePropertyMatcher[WSResponse, String] =
     new HavePropertyMatcher[WSResponse, String] {
 
       def apply(response: WSResponse): HavePropertyMatchResult[String] = {
@@ -167,7 +169,7 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
 
   def pageTitleAgentLogin(messageKey: String,
                           isInvalidInput: Boolean = false,
-                          isErrorPage: Boolean = false): HavePropertyMatcher[WSResponse, String] =
+                          isErrorPage: Boolean = false)(implicit messagesAPI: MessagesApi, lang: Lang): HavePropertyMatcher[WSResponse, String] =
     new HavePropertyMatcher[WSResponse, String] {
 
       def apply(response: WSResponse): HavePropertyMatchResult[String] = {

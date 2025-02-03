@@ -17,6 +17,7 @@
 package forms.incomeSources.add
 
 import auth.MtdItUser
+import authV2.AuthActionsTestData.getMinimalMTDITUser
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import implicits.ImplicitDateFormatter
 import play.api.data.FormError
@@ -37,17 +38,7 @@ class IncomeSourcesAccountingMethodFormSpec extends TestSupport with ImplicitDat
   val traditionalAccountingMethod = "traditional"
   val radioEmptyError: String = "incomeSources.add.AccountingMethod.no-selection"
 
-  val testUser: MtdItUser[_] = MtdItUser(
-    mtditid = testMtditid,
-    nino = testNino,
-    userName = None,
-    btaNavPartial = None,
-    saUtr = None,
-    credId = Some("12345-credId"),
-    userType = Some(Individual),
-    arn = None,
-    incomeSources = noIncomeDetails
-  )(fakeRequestNoSession)
+  val testUser: MtdItUser[_] = getMinimalMTDITUser(Some(Individual), noIncomeDetails, false, fakeRequestNoSession)
 
   "IncomeSourcesAccountingMethodForm form" should {
     "bind with a valid response Self Employment - cash" in {

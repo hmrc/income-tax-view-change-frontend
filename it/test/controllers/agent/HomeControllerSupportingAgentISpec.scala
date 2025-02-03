@@ -21,11 +21,11 @@ import auth.MtdItUser
 import controllers.ControllerISpecHelper
 import enums.MTDSupportingAgent
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.admin.{IncomeSourcesFs, IncomeSourcesNewJourney, NavBarFs}
 import models.core.{AccountingPeriodModel, CessationModel}
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
 import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.i18n.{Messages, MessagesApi}
@@ -34,7 +34,6 @@ import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2CessationReason, b2TradingStart}
 import testConstants.NextUpdatesIntegrationTestConstants.currentDate
 import testConstants.messages.HomeMessages.{overdue, overdueUpdates}
-import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
@@ -62,10 +61,7 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
     properties = Nil
   )
 
-  val testUser: MtdItUser[_] = MtdItUser(
-    testMtditid, testNino, None, incomeSourceDetailsModel, None,
-    Some("1234567890"), Some("12345-credId"), Some(Agent), Some("1"), Some(clientName), true
-  )(FakeRequest())
+  val testUser: MtdItUser[_] = getTestUser(MTDSupportingAgent, incomeSourceDetailsModel)
 
   val path = "/agents"
 
@@ -85,6 +81,7 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
                 status = OK,
                 response = incomeSourceDetailsModel
               )
+              ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
               val currentObligations: ObligationsModel = ObligationsModel(Seq(
                 GroupedObligationsModel(
                   identification = "testId",
@@ -128,6 +125,8 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
                   ))
               ))
 
+              ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
+
               IncomeTaxViewChangeStub.stubGetNextUpdates(
                 nino = testNino,
                 deadlines = currentObligations
@@ -166,6 +165,7 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
                       ))
                   ))
 
+              ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
               IncomeTaxViewChangeStub.stubGetNextUpdates(
                 nino = testNino,
                 deadlines = currentObligations
@@ -200,6 +200,8 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
                     SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", StatusFulfilled)
                   ))
               ))
+
+              ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
 
               IncomeTaxViewChangeStub.stubGetNextUpdates(
                 nino = testNino,
@@ -236,6 +238,8 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
                   ))
               ))
 
+              ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
+
               IncomeTaxViewChangeStub.stubGetNextUpdates(
                 nino = testNino,
                 deadlines = currentObligations
@@ -264,6 +268,8 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
               response = incomeSourceDetailsModel
             )
 
+            ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
+
             IncomeTaxViewChangeStub.stubGetNextUpdatesError(testNino)
 
             val result = buildGETMTDClient(path, additionalCookies).futureValue
@@ -277,6 +283,8 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
             disable(NavBarFs)
             enable(IncomeSourcesFs)
             stubAuthorised(mtdUserRole)
+
+            ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
 
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsErrorResponse(testMtditid)(
               status = INTERNAL_SERVER_ERROR)

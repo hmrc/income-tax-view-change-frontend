@@ -16,19 +16,19 @@
 
 package auth.authV2.actions
 
-import auth.MtdItUserBase
+import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import forms.utils.SessionKeys
 import models.OriginEnum
 import play.api.i18n.I18nSupport
-import play.api.mvc.Result
+import play.api.mvc.{Request, Result}
 import play.api.mvc.Results.Redirect
 
 import scala.concurrent.Future
 
 trait SaveOriginAndRedirect extends I18nSupport with FeatureSwitching {
 
-  def saveOriginAndReturnToHomeWithoutQueryParams[A](request: MtdItUserBase[A], navBarFsDisabled: Boolean = true): Future[Result] = {
+  def saveOriginAndReturnToHomeWithoutQueryParams[A](request: Request[A], navBarFsDisabled: Boolean = true): Future[Result] = {
     val originStringOpt: Option[String] = request.getQueryString(SessionKeys.origin)
     val redirectToOriginalCall: Result = Redirect(request.path)
 

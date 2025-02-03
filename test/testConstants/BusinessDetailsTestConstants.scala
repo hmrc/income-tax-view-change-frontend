@@ -21,7 +21,7 @@ import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core._
 import models.incomeSourceDetails.viewmodels._
 import models.incomeSourceDetails.{BusinessDetailsModel, LatencyDetails, QuarterTypeElection}
-import models.obligations.{SingleObligationModel, GroupedObligationsModel, ObligationStatus, ObligationsModel, StatusFulfilled}
+import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import testConstants.BaseTestConstants._
 import testConstants.NextUpdatesTestConstants.{fakeNextUpdatesModel, openObligation, overdueObligation}
 
@@ -67,7 +67,6 @@ object BusinessDetailsTestConstants {
   val testCessation = CessationModel(Some(LocalDate.of(year2018, Month.JANUARY, 1)), Some("It was a stupid idea anyway"))
   val testCessation2 = CessationModel(Some(LocalDate.of(year2019, Month.JANUARY, 1)), Some("It was a stupid idea anyway"))
   val testCessation3 = CessationModel(Some(LocalDate.of(year2022, Month.JANUARY, 1)), Some("It was a stupid idea anyway"))
-  val testMtdItId = "XIAT0000000000A"
   val testStartDate = LocalDate.parse("2022-01-01")
   val testStartDate2 = LocalDate.parse("2021-01-01")
   val testStartDate3 = LocalDate.parse("2013-01-01")

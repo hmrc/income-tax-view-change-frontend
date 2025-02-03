@@ -16,18 +16,21 @@
 
 package controllers.optOut
 
-import enums.MTDIndividual
+import enums.{CurrentTaxYear, MTDIndividual}
 import mocks.auth.MockAuthActions
 import mocks.services.MockOptOutService
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
+import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
 import models.optout.ConfirmedOptOutViewModel
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
-import services.optout.{CurrentOptOutTaxYear, OneYearOptOutFollowedByMandated, OptOutService, OptOutTaxYear}
+import services.optout._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import scala.concurrent.Future
@@ -42,7 +45,6 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions
 
   lazy val testController = app.injector.instanceOf[ConfirmedOptOutController]
 
-
   val taxYear = TaxYear.forYearEnd(2024)
   val optOutYear: OptOutTaxYear = CurrentOptOutTaxYear(ITSAStatus.Voluntary, taxYear)
   val eligibleTaxYearResponse = Future.successful(Some(ConfirmedOptOutViewModel(optOutYear.taxYear, Some(OneYearOptOutFollowedByMandated))))
@@ -52,13 +54,32 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions
   mtdAllRoles.foreach { mtdRole =>
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
     val isAgent = mtdRole != MTDIndividual
+
     s"show(isAgent = $isAgent)" when {
       val action = testController.show(isAgent)
       s"the user is authenticated as a $mtdRole" should {
         "render the Confirmed page" in {
+
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
           mockOptOutConfirmedPageViewModel(eligibleTaxYearResponse)
+
+          when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(
+            Future(
+              OptOutProposition.createOptOutProposition(
+                currentYear = TaxYear(2024, 2025),
+                previousYearCrystallised = false,
+                previousYearItsaStatus = Mandated,
+                currentYearItsaStatus = Voluntary,
+                nextYearItsaStatus = Voluntary
+              )
+            )
+          )
+
+          when(mockOptOutService.determineOptOutIntentYear()(any(), any()))
+            .thenReturn(
+              Future(CurrentTaxYear)
+            )
 
           val result = action(fakeRequest)
 
@@ -71,6 +92,23 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
             mockOptOutConfirmedPageViewModel(noEligibleTaxYearResponse)
 
+            when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(
+              Future(
+                OptOutProposition.createOptOutProposition(
+                  currentYear = TaxYear(2024, 2025),
+                  previousYearCrystallised = false,
+                  previousYearItsaStatus = Mandated,
+                  currentYearItsaStatus = Voluntary,
+                  nextYearItsaStatus = Voluntary
+                )
+              )
+            )
+
+            when(mockOptOutService.determineOptOutIntentYear()(any(), any()))
+              .thenReturn(
+                Future(CurrentTaxYear)
+              )
+
             val result = action(fakeRequest)
 
             status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -80,6 +118,15 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
             mockOptOutConfirmedPageViewModel(failedResponse)
+
+            when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(
+              Future(throw new Exception("some error"))
+            )
+
+            when(mockOptOutService.determineOptOutIntentYear()(any(), any()))
+              .thenReturn(
+                Future(CurrentTaxYear)
+              )
 
             val result = action(fakeRequest)
 

@@ -31,7 +31,12 @@
     govukInsetText : GovukInsetText
 )
 
-@(viewModel: ConfirmedOptOutViewModel, isAgent: Boolean = false, showReportingFrequencyContent: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(
+    viewModel: ConfirmedOptOutViewModel,
+    isAgent: Boolean = false,
+    showReportingFrequencyContent: Boolean,
+    submitYourTaxReturnContent: Option[Html]
+)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 
 @panelBody = @{
@@ -93,12 +98,12 @@
 @revisedDeadlinesBlock = {
     <div id="revised-deadlines" class="govuk-!-margin-bottom-7 govuk-!-margin-top-8">
         <h2 id="revised-deadlines-heading" class="govuk-heading-m" >@messages("optout.confirmedOptOut.yourRevisedDeadlines.h2")</h2>
-        <p id="revised-deadlines-p1" class="govuk-body" >@Html(messages("optout.confirmedOptOut.yourRevisedDeadlines.desc1", viewModel.startYear, viewModel.endYear, viewModel.nextYear))</p>
+        <p id="revised-deadlines-p1" class="govuk-body">@Html(messages("optout.confirmedOptOut.yourRevisedDeadlines.desc1", viewModel.startYear, viewModel.endYear, viewModel.nextYear))</p>
         <p id="view-upcoming-updates">
             @link(
                 id = Some("view-upcoming-updates-link"),
                 link = if(isAgent) controllers.routes.NextUpdatesController.showAgent.url else controllers.routes.NextUpdatesController.show().url,
-                messageKey = "optout.confirmedOptOut.viewUpcomingUpdates.text"
+                messageKey = "optout.confirmedOptOut.viewUpcomingDeadlines.text"
             )
         </p>
         <p id="your-reporting-frequency-block" class="govuk-body">
@@ -110,11 +115,13 @@
 }
 
 @submitYourTaxReturnBlock = {
-    <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
-        <h2 id="submit-tax-heading" class="govuk-heading-m" >@messages("optout.confirmedOptOut.submitTax")</h2>
-        <p id="submit-tax-p1" class="govuk-body" >@messages("optout.confirmedOptOut.submitTax.desc1")</p>
-        <p id="submit-tax-p2" class="govuk-body" >@messages("optout.confirmedOptOut.submitTax.desc2")</p>
-    </div>
+
+        @submitYourTaxReturnContent.map{ content =>
+            <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
+                @content
+            </div>
+        }
+
 }
 
 @reportingUpdatesBlock = {
@@ -138,7 +145,8 @@
                     id = Some("sign-up-criteria-ext"),
                     target = Some("_blank"),
                     link = externalRefLink,
-                    messageKey = "optout.confirmedOptOut.reportQuarterly.desc3.anchor-text"  )
+                    messageKey = "optout.confirmedOptOut.reportQuarterly.desc3.anchor-text"
+                )
 
                 Html(messages("optout.confirmedOptOut.reportQuarterly.desc3", anchor.toString()))
             }

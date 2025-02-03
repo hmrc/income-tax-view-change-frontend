@@ -37,7 +37,6 @@ import testConstants.BusinessDetailsIntegrationTestConstants.{address, b2Cessati
 import testConstants.NextUpdatesIntegrationTestConstants.currentDate
 import testConstants.OutstandingChargesIntegrationTestConstants._
 import testConstants.messages.HomeMessages.{noPaymentsDue, overdue, overduePayments, overdueUpdates}
-import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import java.time.LocalDate
 
@@ -64,10 +63,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
     properties = Nil
   )
 
-  val testUser: MtdItUser[_] = MtdItUser(
-    testMtditid, testNino, None, incomeSourceDetailsModel, None,
-    Some("1234567890"), Some("12345-credId"), Some(Agent), Some("1")
-  )(FakeRequest())
+  val testUser: MtdItUser[_] = getTestUser(MTDPrimaryAgent, incomeSourceDetailsModel)
 
   val path = "/agents"
 

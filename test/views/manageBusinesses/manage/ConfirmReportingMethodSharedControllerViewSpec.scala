@@ -17,6 +17,7 @@
 package views.manageBusinesses.manage
 
 import auth.MtdItUser
+import authV2.AuthActionsTestData.defaultMTDITUser
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import org.jsoup.Jsoup
@@ -25,7 +26,7 @@ import play.api.data.{Form, FormError}
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
-import testConstants.BaseTestConstants.{testMtditid, testNino, testSelfEmploymentId}
+import testConstants.BaseTestConstants.testSelfEmploymentId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.ukPlusForeignPropertyWithSoleTraderIncomeSource
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
@@ -35,17 +36,8 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
 
   val confirmReportingMethodView: ConfirmReportingMethod = app.injector.instanceOf[ConfirmReportingMethod]
 
-  val testUser: MtdItUser[_] = MtdItUser(
-    mtditid = testMtditid,
-    nino = testNino,
-    userName = None,
-    btaNavPartial = None,
-    saUtr = None,
-    credId = Some("12345-credId"),
-    userType = Some(Individual),
-    arn = None,
-    incomeSources = ukPlusForeignPropertyWithSoleTraderIncomeSource
-  )(fakeRequestNoSession)
+  val testUser: MtdItUser[_] = defaultMTDITUser(Some(Individual),
+    ukPlusForeignPropertyWithSoleTraderIncomeSource, fakeRequestNoSession)
 
   val testTaxYear = "2021-2022"
   val testTaxYearStartYear = "2021"

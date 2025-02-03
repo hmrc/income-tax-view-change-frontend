@@ -16,7 +16,8 @@
 
 package services
 
-import auth.{MtdItUser, MtdItUserOptionNino}
+import auth.MtdItUser
+import auth.authV2.models.AuthorisedAndEnrolledRequest
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import connectors.BusinessDetailsConnector
@@ -49,7 +50,7 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
   )
 
   def getIncomeSourceDetails()(implicit hc: HeaderCarrier,
-                               mtdUser: MtdItUserOptionNino[_]): Future[IncomeSourceDetailsResponse] = {
+                               mtdUser: AuthorisedAndEnrolledRequest[_]): Future[IncomeSourceDetailsResponse] = {
     businessDetailsConnector.getIncomeSources()
   }
 

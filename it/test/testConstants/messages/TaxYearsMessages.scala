@@ -16,9 +16,9 @@
 
 package testConstants.messages
 
-import helpers.servicemocks.AuthStub.{messagesAPI, lang}
+import helpers.ComponentSpecBase
 
-object TaxYearsMessages {
+object TaxYearsMessages  extends ComponentSpecBase {
 
   val viewSummary: String = messagesAPI("taxYears.viewSummary")
 

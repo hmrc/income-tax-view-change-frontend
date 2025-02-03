@@ -16,18 +16,17 @@
 
 package audit.models
 
-import auth.MtdItUser
+import authV2.AuthActionsTestData._
 import models.core.AccountingPeriodModel
 import models.financialDetails.{BalanceDetails, WhatYouOweChargesList}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.libs.json.{JsValue, Json}
-import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testSaUtr}
+import testConstants.BaseTestConstants._
 import testConstants.ChargeConstants
 import testConstants.FinancialDetailsTestConstants.dueDateOverdue
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
-import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
 
@@ -51,17 +50,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport with ChargeConstants 
                                        yearOfMigration: Option[String] = Some("2015"),
                                        chargesList: WhatYouOweChargesList = whatYouOwePartialChargesListX,
                                       ): WhatYouOweResponseAuditModel = WhatYouOweResponseAuditModel(
-    user = MtdItUser(
-      mtditid = testMtditid,
-      nino = testNino,
-      userName = Some(Name(Some("firstName"), Some("lastName"))),
-      incomeSources = IncomeSourceDetailsModel(testNino, testMtditid, yearOfMigration, List.empty, List.empty),
-      btaNavPartial = None,
-      saUtr = Some(testSaUtr),
-      credId = Some(testCredId),
-      userType = userType,
-      arn = if (userType.contains(Agent)) Some(testArn) else None
-    ),
+    user = defaultMTDITUser(userType, IncomeSourceDetailsModel(testNino, testMtditid, yearOfMigration, List.empty, List.empty)),
     whatYouOweChargesList = chargesList,
     dateService,
 

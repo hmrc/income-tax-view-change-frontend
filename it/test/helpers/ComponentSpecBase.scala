@@ -39,7 +39,6 @@ import play.api.{Application, Environment, Mode}
 import repositories.{OptOutSessionDataRepository, UIJourneySessionDataRepository}
 import services.{DateService, DateServiceInterface}
 import testConstants.BaseIntegrationTestConstants._
-import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier, SessionId}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -92,7 +91,7 @@ class TestDateService extends DateServiceInterface {
 trait ComponentSpecBase extends TestSuite with CustomMatchers
   with GuiceOneServerPerSuite with ScalaFutures with IntegrationPatience with Matchers
   with WiremockHelper with BeforeAndAfterEach with BeforeAndAfterAll with Eventually
-  with GenericStubMethods with FeatureSwitching with SessionCookieBaker {
+  with FeatureSwitching with SessionCookieBaker {
 
   val mockHost: String = WiremockHelper.wiremockHost
   val mockPort: String = WiremockHelper.wiremockPort.toString
@@ -100,7 +99,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val cache: AsyncCacheApi = app.injector.instanceOf[AsyncCacheApi]
   val languageUtils: LanguageUtils = app.injector.instanceOf[LanguageUtils]
-  val messagesAPI: MessagesApi = app.injector.instanceOf[MessagesApi]
+  implicit val messagesAPI: MessagesApi = app.injector.instanceOf[MessagesApi]
   val mockLanguageUtils: LanguageUtils = app.injector.instanceOf[LanguageUtils]
   implicit val lang: Lang = Lang("GB")
   implicit val mockImplicitDateFormatter: ImplicitDateFormatterImpl = new ImplicitDateFormatterImpl(mockLanguageUtils)
@@ -122,21 +121,17 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val titleNotFound = "Page not found - 404"
   val titleProbWithService = "Sorry, there is a problem with the service"
   val titleThereIsAProblem = "There’s a problem"
-  implicit val csbTestUser: MtdItUser[_] =
-    MtdItUser(
-      testMtditid, testNino, None, IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty), None,
-      Some("1234567890"), Some("12345-credId"), Some(Individual), None
-    )(FakeRequest())
+  implicit val csbTestUser: MtdItUser[_] = getTestUser(MTDIndividual,
+    IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty))
 
   def getTestUser(mtdUserRole: MTDUserRole, incomeSources: IncomeSourceDetailsModel): MtdItUser[_] = {
-    val (affinityGroup, arn) = if (mtdUserRole == MTDIndividual) {
-      (Individual, None)
-    } else {
-      (Agent, Some("1"))
-    }
     MtdItUser(
-      testMtditid, testNino, None, incomeSources,
-      None, Some("1234567890"), Some("12345-credId"), Some(affinityGroup), arn
+      testMtditid,
+      testNino,
+      mtdUserRole,
+      defaultAuthUserDetails(mtdUserRole),
+      if(mtdUserRole == MTDIndividual) None else Some(defaultClientDetails),
+      incomeSources
     )(FakeRequest())
   }
 

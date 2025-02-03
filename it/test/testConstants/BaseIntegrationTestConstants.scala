@@ -16,8 +16,10 @@
 
 package testConstants
 
+import auth.authV2.models.{AgentClientDetails, AuthUserDetails}
 import controllers.agent.sessionUtils.SessionKeys
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import enums.{MTDIndividual, MTDUserRole}
 import models.btaNavBar.{NavContent, NavLinks}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.{AddressModel, IncomeSourceId}
@@ -26,6 +28,8 @@ import models.incomeSourceDetails._
 import play.api.http.Status
 import testConstants.PropertyDetailsIntegrationTestConstants.propertyTradingStartDate
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
+import uk.gov.hmrc.auth.core.retrieve.Credentials
+import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
 
 import java.time.LocalDate
 
@@ -41,6 +45,8 @@ object BaseIntegrationTestConstants {
   val testMtditidEnrolmentIdentifier = "MTDITID"
   val testMtditid = "XAITSA123456"
   val testUserName = "Albert Einstein"
+  val testClientFirstName = "Issac"
+  val testClientSurname = "Newton"
 
   val testSaUtrEnrolmentKey = "IR-SA"
   val testSaUtrEnrolmentIdentifier = "UTR"
@@ -87,9 +93,39 @@ object BaseIntegrationTestConstants {
   val testTimeStampString = "2017-07-06T12:34:56.789Z"
 
   val stringTrue = "true"
+  val testCredentials = Credentials(credId, "bar")
 
   val expectedAddress: Option[AddressModel] = Some(AddressModel("Line 1", Some("Line 2"), Some("Line 3"), Some("Line 4"), Some("LN12 2NL"), "NI"))
 
+  val mtdEnrolment              = Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "Activated", None)
+  val agentEnrolment            = Enrolment("HMRC-AS-AGENT", Seq(EnrolmentIdentifier("AgentReferenceNumber", testArn)), "Activated", None)
+  val ninoEnrolment             = Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", testNino)), "Activated", None)
+  val saEnrolment               = Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", testSaUtr)), "Activated", None)
+
+  lazy val defaultEnrolments: MTDUserRole => Enrolments = mtdUserRole => {
+    mtdUserRole match {
+      case MTDIndividual => Enrolments(Set(mtdEnrolment, ninoEnrolment, saEnrolment))
+      case _ => Enrolments(Set(agentEnrolment, ninoEnrolment, saEnrolment))
+    }
+  }
+
+  lazy val defaultAuthUserDetails: MTDUserRole => AuthUserDetails = mtdUserRole => {
+    AuthUserDetails(
+      defaultEnrolments(mtdUserRole),
+      Some(if(mtdUserRole == MTDIndividual) Individual else Agent),
+      Some(testCredentials),
+      None
+    )
+  }
+
+  lazy val defaultClientDetails = AgentClientDetails(
+    testMtditid,
+    Some(testClientFirstName),
+    Some(testClientSurname),
+    testNino,
+    testSaUtr,
+    true
+  )
   val testLatencyDetails3: LatencyDetails = LatencyDetails(
     latencyEndDate = LocalDate.of(testYear2023, 1, 1),
     taxYear1 = testYear2023.toString,

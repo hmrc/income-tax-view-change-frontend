@@ -17,6 +17,7 @@
 package services
 
 import auth.MtdItUser
+import authV2.AuthActionsTestData.defaultMTDITUser
 import config.featureswitch.FeatureSwitching
 import connectors.RepaymentHistoryConnector
 import mocks.connectors.MockFinancialDetailsConnector
@@ -24,9 +25,7 @@ import models.financialDetails.{Payment, Payments, PaymentsError}
 import models.incomeSourceDetails.TaxYear
 import org.mockito.Mockito.mock
 import play.api.http.Status.{NOT_FOUND, UNPROCESSABLE_ENTITY}
-import play.api.test.FakeRequest
 import services.PaymentHistoryService.PaymentHistoryError
-import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.oldUserDetails
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
@@ -49,17 +48,7 @@ class PaymentHistoryServiceSpec extends TestSupport with MockFinancialDetailsCon
     outstandingAmount = Some(1.00), method = Some("method"), documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"),
     dueDate = Some(fixedDate), documentDate = fixedDate, Some("DOCID01")))
 
-  val oldUser: MtdItUser[_] = MtdItUser(
-    mtditid = testMtditid,
-    nino = testNino,
-    userName = Some(testRetrievedUserName),
-    incomeSources = oldUserDetails,
-    btaNavPartial = None,
-    saUtr = Some("saUtr"),
-    credId = Some("credId"),
-    userType = Some(Individual),
-    None
-  )(FakeRequest())
+  val oldUser: MtdItUser[_] = defaultMTDITUser(Some(Individual), oldUserDetails)
 
   val mockRepaymentHistoryConnector: RepaymentHistoryConnector = mock(classOf[RepaymentHistoryConnector])
 

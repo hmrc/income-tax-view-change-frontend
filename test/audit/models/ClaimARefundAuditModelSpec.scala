@@ -17,12 +17,14 @@
 package audit.models
 
 import auth.MtdItUser
+import forms.IncomeSourcesFormsSpec.commonAuditDetails
 import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetail}
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.Json
 import testConstants.ANewCreditAndRefundModel
 import testConstants.BaseTestConstants._
 import testConstants.CreditAndRefundConstants.documentDetailWithDueDateFinancialDetailListModel
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 import java.time.LocalDate
 
@@ -76,12 +78,7 @@ class ClaimARefundAuditModelSpec extends AnyWordSpecLike {
       claimARefundAuditFull().auditType shouldBe auditType
     }
     s"return a full audit event correctly with MFA Credits, Cutover Credits, Payments and Refunds, Balancing Charge Credit & Repayment Supplement Credit" in {
-      claimARefundAuditFull().detail shouldBe Json.obj(
-        "nino" -> testMtdItUser.nino,
-        "mtditid" -> testMtdItUser.mtditid,
-        "saUtr" -> testMtdItUser.saUtr,
-        "credId" -> testMtdItUser.credId,
-        "userType" -> testMtdItUser.userType,
+      claimARefundAuditFull().detail shouldBe commonAuditDetails(Individual) ++ Json.obj(
         "creditOnAccount" -> 7600,
         "creditDocuments" ->
           Json.arr(
@@ -102,12 +99,7 @@ class ClaimARefundAuditModelSpec extends AnyWordSpecLike {
           ))
     }
     "return a minimal audit event correctly" in {
-      claimARefundAuditMin().detail shouldBe Json.obj(
-        "nino" -> testMtdItUser.nino,
-        "mtditid" -> testMtdItUser.mtditid,
-        "saUtr" -> testMtdItUser.saUtr,
-        "credId" -> testMtdItUser.credId,
-        "userType" -> testMtdItUser.userType,
+      claimARefundAuditMin().detail shouldBe commonAuditDetails(Individual) ++ Json.obj(
         "creditOnAccount" -> 0,
         "creditDocuments" ->
           Json.arr(),
@@ -115,13 +107,7 @@ class ClaimARefundAuditModelSpec extends AnyWordSpecLike {
           Json.arr())
     }
     s"return a full audit event for an agent user correctly with MFA Credits, Cutover Credits, Payments and Refunds & Repayment Supplement Credit" in {
-      claimARefundAuditFull(testMtdItAgentUser).detail shouldBe Json.obj(
-        "nino" -> testMtdItAgentUser.nino,
-        "mtditid" -> testMtdItAgentUser.mtditid,
-        "userType" -> testMtdItAgentUser.userType,
-        "agentReferenceNumber" -> testMtdItAgentUser.arn,
-        "saUtr" -> testMtdItAgentUser.saUtr,
-        "credId" -> testMtdItAgentUser.credId,
+      claimARefundAuditFull(testMtdItAgentUser).detail shouldBe commonAuditDetails(Agent) ++ Json.obj(
         "creditOnAccount" -> 7600,
         "creditDocuments" ->
           Json.arr(
@@ -142,13 +128,7 @@ class ClaimARefundAuditModelSpec extends AnyWordSpecLike {
           ))
     }
     "return a minimal audit event for an agent user correctly" in {
-      claimARefundAuditMin(testMtdItAgentUser).detail shouldBe Json.obj(
-        "nino" -> testMtdItAgentUser.nino,
-        "mtditid" -> testMtdItAgentUser.mtditid,
-        "userType" -> testMtdItAgentUser.userType,
-        "agentReferenceNumber" -> testMtdItAgentUser.arn,
-        "saUtr" -> testMtdItAgentUser.saUtr,
-        "credId" -> testMtdItAgentUser.credId,
+      claimARefundAuditMin(testMtdItAgentUser).detail shouldBe commonAuditDetails(Agent) ++ Json.obj(
         "creditOnAccount" -> 0,
         "creditDocuments" ->
           Json.arr(),

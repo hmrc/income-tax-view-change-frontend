@@ -177,6 +177,11 @@ home.agent.supporting.cannotAccess.returns                      = Ffurflenni Tre
 home.agent.supporting.cannotAccess.nextChargesDue               = y ffioedd sy’n ddyledus nesaf
 home.agent.supporting.readMore                                  = Darllenwch ragor am y gwahaniaeth rhwng prif asiantau ac asiantau ategol ar GOV.UK (yn agor tab newydd).
 
+home.penaltiesAndAppeals.heading                                = Cosbau ac apeliadau
+home.penaltiesAndAppeals.view                                   = Gwirio cosbau ac apeliadau Hunanasesiad
+home.penaltiesAndAppeals.twoPenaltiesTag                        = 2 BWYNT COSB
+home.penaltiesAndAppeals.fourPenaltiesTag                       = 4 PWYNT COSB
+
 ## Custom Error Page ##
 error.custom.heading                                           = Mae problem wedi codi
 error.custom.message                                           = Mae’r dudalen rydych yn ceisio’i gweld wedi newid
@@ -774,11 +779,16 @@ nextUpdates.propertyIncome            							= Incwm o eiddo
 nextUpdates.propertyIncome.UK                                   = Eiddo yn y DU
 nextUpdates.propertyIncome.Foreign                              = Eiddo tramor
 nextUpdates.business            							    = Incwm busnes
-nextUpdates.optOutOneYear-1                                     = Ar hyn o bryd, rydych yn adrodd bob chwarter ar sail wirfoddol ar gyfer blwyddyn dreth {0} i {1}. Gallwch ddewis
-nextUpdates.optOutOneYear-2                                     = optio allan o ddiweddariadau bob chwarter ac adrodd yn flynyddol yn lle hynny.
 
-nextUpdates.optOutMultiYear-1                                   = Ar hyn o bryd rhydych yn cyflwyno adroddiadau’n chwarterol ar sail wirfoddol. Cadarnhewch eich bod am
-nextUpdates.optOutMultiYear-2                                   = optio allan o ddiweddariadau chwarterol ac am gyflwyno’n flynyddol yn lle hynny.
+nextUpdates.optOutOneYear.p.message                             = Ar hyn o bryd, rydych yn adrodd bob chwarter ar sail wirfoddol ar gyfer blwyddyn dreth {0} i {1}. Gallwch ddewis
+nextUpdates.optOutOneYear.p.link                                = optio allan o ddiweddariadau bob chwarter ac adrodd yn flynyddol yn lle hynny.
+nextUpdates.optOutOneYear.reportingFrequency.p.message          = Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
+nextUpdates.optOutOneYear.reportingFrequency.p.link             = bwrw golwg dros a newid amlder eich adroddiadau.
+
+nextUpdates.optOutMultiYear.p.message                           = Ar hyn o bryd rhydych yn cyflwyno adroddiadau’n chwarterol ar sail wirfoddol. Cadarnhewch eich bod am
+nextUpdates.optOutMultiYear.p.link                              = optio allan o ddiweddariadau chwarterol ac am gyflwyno’n flynyddol yn lle hynny.
+nextUpdates.optOutMultiYear.reportingFrequency.p.message        = Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
+nextUpdates.optOutMultiYear.reportingFrequency.p.link           = bwrw golwg dros a newid amlder eich adroddiadau.
 
 sections.open.all												= Dangos pob adran
 sections.close.all												= Cuddio pob adran
@@ -2127,12 +2137,17 @@ optout.confirmedOptOut.taxYear                                   = Rydych yn cyf
 optout.confirmedOptOut.one-year                                  = Rydych yn cyflwyno adroddiadau’n flynyddol ar gyfer blwyddyn dreth {0} i {1}
 optout.confirmedOptOut.yourRevisedDeadlines.h2                   = Eich dyddiadau cau sydd wedi’u haddasu
 optout.confirmedOptOut.yourRevisedDeadlines.desc1                = Mae’n rhaid i chi gyflwyno’ch Ffurflen Dreth ar gyfer blwyddyn dreth {0} i {1} erbyn <b>31 Ionawr {2}</b>.
-optout.confirmedOptOut.viewUpcomingUpdates.text                  = Bwrw golwg dros eich diweddariadau sydd ar y gweill
+optout.confirmedOptOut.viewUpcomingDeadlines.text                = Bwrw golwg dros eich dyddiadau cau sydd ar y gweill
 optout.confirmedOptOut.yourRevisedDeadlines.desc2                = Gallwch, ar unrhyw adeg, optio’n ôl i mewn i adrodd yn chwarterol ar gyfer pob un o’ch busnesau. Gallwch wneud hyn drwy fynd i’r dudalen ynghylch {0}
 optout.confirmedOptOut.yourReportingFrequency.text               = amlder eich adroddiadau.
+
 optout.confirmedOptOut.submitTax                                 = Cyflwyno’ch Ffurflen Dreth
-optout.confirmedOptOut.submitTax.desc1                           = Wrth adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth yn uniongyrchol drwy’ch cyfrif ar-lein CThEF neu drwy ddefnyddio meddalwedd sy’n cydweddu.
-optout.confirmedOptOut.submitTax.desc2                           = Fodd bynnag, mae’n rhaid i chi ddefnyddio meddalwedd sy’n cydweddu ar gyfer unrhyw flynyddoedd yr ydych yn adrodd amdanynt yn chwarterol.
+optout.confirmedOptOut.submitTax.confirmed.p1                    = Nawr eich bod wedi optio allan, bydd angen i chi fynd yn ôl i’r ffordd rydych wedi
+optout.confirmedOptOut.submitTax.confirmed.p1.link               = cyflwyno’ch Ffurflen Dreth Hunanasesiad yn y gorffennol (yn agor tab newydd)
+
+optout.confirmedOptOut.submitTax.confirmed.p2                    = Os ydych yn adrodd am flwyddyn dreth yn chwarterol, bydd angen i chi ddefnyddio
+optout.confirmedOptOut.submitTax.confirmed.p2.link               =  meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd)
+
 optout.confirmedOptOut.updatesDue                                = Eich diweddariadau nesaf sy’n ddyledus
 optout.confirmedOptOut.updatesDue.desc                           = Gwiriwch y dudalen {0} ar gyfer dyddiadau cau y flwyddyn dreth bresennol. Ni fydd dyddiadau cau ar gyfer blynyddoedd yn y dyfodol i’w gweld hyd nes eu bod yn newid i’r flwyddyn dreth bresennol.
 optout.confirmedOptOut.next-updates                              = diweddariadau nesaf

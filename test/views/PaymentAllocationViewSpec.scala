@@ -17,6 +17,7 @@
 package views
 
 import auth.MtdItUser
+import authV2.AuthActionsTestData.defaultMTDITUser
 import config.FrontendAppConfig
 import enums.ChargeType._
 import exceptions.MissingFieldException
@@ -24,10 +25,8 @@ import implicits.ImplicitDateFormatter
 import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, PaymentAllocationViewModel}
 import models.paymentAllocations.AllocationDetail
 import org.jsoup.select.Elements
-import play.api.test.FakeRequest
-import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
 import testConstants.PaymentAllocationsTestConstants._
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
 import testUtils.ViewSpec
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import views.html.PaymentAllocation
@@ -43,8 +42,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
   lazy val backUrl: String = controllers.routes.PaymentHistoryController.show().url
 
-  val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), businessAndPropertyAligned,
-    btaNavPartial = None, Some("testUtr"), Some("testCredId"), Some(Individual), None)(FakeRequest())
+  val testMtdItUser: MtdItUser[_] = defaultMTDITUser(Some(Individual), businessAndPropertyAligned)
 
   val singleTestPaymentAllocationChargeWithOutstandingAmountZero: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
     List(documentDetail.copy(outstandingAmount = 0)),

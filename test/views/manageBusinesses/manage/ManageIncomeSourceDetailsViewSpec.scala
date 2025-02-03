@@ -341,7 +341,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
   def backUrl(isAgent: Boolean): String =
     controllers.manageBusinesses.manage.routes.ManageIncomeSourceController.show(isAgent).url
 
-  class SelfEmploymentSetup(isAgent: Boolean, error: Boolean = false) {
+  class SelfEmploymentSetup(isAgent: Boolean, error: Boolean = false, startDateEnabled: Boolean = true) {
 
     def changeReportingMethodUrl(id: String, taxYear: String, changeTo: String): String = {
       controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController
@@ -357,7 +357,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       manageIncomeSourceDetailsView(
         selfEmploymentViewModel,
         isAgent,
-        backUrl(isAgent)
+        backUrl = backUrl(isAgent),
+        showStartDate = startDateEnabled
       )(messages, implicitly)
     }
 
@@ -365,7 +366,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
   }
 
-  class SelfEmploymentUnknownsSetup(isAgent: Boolean, error: Boolean = false) {
+  class SelfEmploymentUnknownsSetup(isAgent: Boolean, error: Boolean = false, startDateEnabled: Boolean = true) {
 
     def changeReportingMethodUrl(id: String, taxYear: String, changeTo: String): String = {
       if(isAgent) {
@@ -379,7 +380,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       manageIncomeSourceDetailsView(
         selfEmploymentViewModelWithUnknowns,
         isAgent,
-        backUrl(isAgent)
+        backUrl = backUrl(isAgent),
+        showStartDate = startDateEnabled
       )(messages, implicitly)
     }
 
@@ -388,7 +390,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
   }
 
 
-  class SelfEmploymentCrystallisedSetup(isAgent: Boolean, error: Boolean = false) {
+  class SelfEmploymentCrystallisedSetup(isAgent: Boolean, error: Boolean = false, startDateEnabled: Boolean = true) {
 
     def changeReportingMethodUrl(id: String, taxYear: String, changeTo: String): String = {
       if(isAgent) {
@@ -402,7 +404,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       manageIncomeSourceDetailsView(
         selfEmploymentViewModelOneYearCrystallised,
         isAgent,
-        backUrl(isAgent)
+        backUrl = backUrl(isAgent),
+        showStartDate = startDateEnabled
       )(messages, implicitly)
     }
 
@@ -410,13 +413,14 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
   }
 
-  class SelfEmploymentCYLatencyUnknownSetup(isAgent: Boolean, error: Boolean = false) {
+  class SelfEmploymentCYLatencyUnknownSetup(isAgent: Boolean, error: Boolean = false, startDateEnabled: Boolean = true) {
 
     lazy val view: HtmlFormat.Appendable = {
       manageIncomeSourceDetailsView(
         selfEmploymentViewModelCYUnknown,
         isAgent,
-        backUrl(isAgent)
+        backUrl = backUrl(isAgent),
+        showStartDate = startDateEnabled
       )(messages, implicitly)
     }
 
@@ -425,7 +429,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
   }
 
 
-  class ukSetup(isAgent: Boolean, error: Boolean = false) {
+  class ukSetup(isAgent: Boolean, error: Boolean = false, startDateEnabled: Boolean = true) {
 
     def changeReportingMethodUrl(taxYear: String, changeTo: String): String = {
       if(isAgent) {
@@ -439,14 +443,15 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       manageIncomeSourceDetailsView(
         ukViewModel,
         isAgent,
-        backUrl(isAgent)
+        backUrl = backUrl(isAgent),
+        showStartDate = startDateEnabled
       )(messages, implicitly)
     }
 
     lazy val document: Document = Jsoup.parse(contentAsString(view))
   }
 
-  class ukSetupUnknowns(isAgent: Boolean, error: Boolean = false) {
+  class ukSetupUnknowns(isAgent: Boolean, error: Boolean = false, startDateEnabled: Boolean = true) {
 
     def changeReportingMethodUrl(taxYear: String, changeTo: String): String = {
       if(isAgent) {
@@ -460,14 +465,15 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       manageIncomeSourceDetailsView(
         ukViewModelUnknowns,
         isAgent,
-        backUrl(isAgent)
+        backUrl = backUrl(isAgent),
+        showStartDate = startDateEnabled
       )(messages, implicitly)
     }
 
     lazy val document: Document = Jsoup.parse(contentAsString(view))
   }
 
-  class ukCrystallisedSetup(isAgent: Boolean, error: Boolean = false) {
+  class ukCrystallisedSetup(isAgent: Boolean, error: Boolean = false, startDateEnabled: Boolean = true) {
 
     def changeReportingMethodUrl(id: String, taxYear: String, changeTo: String): String = {
      if(isAgent) {
@@ -482,7 +488,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       manageIncomeSourceDetailsView(
         ukPropertyViewModelOneYearCrystallised,
         isAgent,
-        backUrl(isAgent)
+        backUrl = backUrl(isAgent),
+        showStartDate = startDateEnabled
       )(messages, implicitly)
     }
 
@@ -490,13 +497,14 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
   }
 
-  class ukCYLatencyUnknownSetup(isAgent: Boolean, error: Boolean = false) {
+  class ukCYLatencyUnknownSetup(isAgent: Boolean, error: Boolean = false, startDateEnabled: Boolean = true) {
 
     lazy val view: HtmlFormat.Appendable = {
       manageIncomeSourceDetailsView(
         ukPropertyViewModelCYUnknown,
         isAgent,
-        backUrl(isAgent)
+        backUrl = backUrl(isAgent),
+        showStartDate = startDateEnabled
       )(messages, implicitly)
     }
 
@@ -505,7 +513,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
   }
 
 
-  class foreignSetup(isAgent: Boolean, error: Boolean = false) {
+  class foreignSetup(isAgent: Boolean, error: Boolean = false, startDateEnabled: Boolean = true) {
 
     def changeReportingMethodUrl(taxYear: String, changeTo: String): String = {
       if(isAgent) {
@@ -519,14 +527,15 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       manageIncomeSourceDetailsView(
         foreignViewModel,
         isAgent,
-        backUrl(isAgent)
+        backUrl = backUrl(isAgent),
+        showStartDate = startDateEnabled
       )(messages, implicitly)
     }
 
     lazy val document: Document = Jsoup.parse(contentAsString(view))
   }
 
-  class foreignSetupUnknowns(isAgent: Boolean, error: Boolean = false) {
+  class foreignSetupUnknowns(isAgent: Boolean, error: Boolean = false, startDateEnabled: Boolean = true) {
 
     def changeReportingMethodUrl(taxYear: String, changeTo: String): String = {
       if(isAgent) {
@@ -540,14 +549,15 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       manageIncomeSourceDetailsView(
         foreignViewModelUnknowns,
         isAgent,
-        backUrl(isAgent)
+        backUrl = backUrl(isAgent),
+        showStartDate = startDateEnabled
       )(messages, implicitly)
     }
 
     lazy val document: Document = Jsoup.parse(contentAsString(view))
   }
 
-  class foreignCrystallisedSetup(isAgent: Boolean, error: Boolean = false) {
+  class foreignCrystallisedSetup(isAgent: Boolean, error: Boolean = false, startDateEnabled: Boolean = true) {
 
     def changeReportingMethodUrl(id: String, taxYear: String, changeTo: String): String = {
       if(isAgent) {
@@ -561,7 +571,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       manageIncomeSourceDetailsView(
         foreignPropertyViewModelOneYearCrystallised,
         isAgent,
-        backUrl(isAgent)
+        backUrl = backUrl(isAgent),
+        showStartDate = startDateEnabled
       )(messages, implicitly)
     }
 
@@ -569,13 +580,14 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
   }
 
-  class foreignCYLatencyUnknownSetup(isAgent: Boolean, error: Boolean = false) {
+  class foreignCYLatencyUnknownSetup(isAgent: Boolean, error: Boolean = false, startDateEnabled: Boolean = true) {
 
     lazy val view: HtmlFormat.Appendable = {
       manageIncomeSourceDetailsView(
         foreignPropertyLatencyYearTwoUnknown,
         isAgent,
-        backUrl(isAgent)
+        backUrl = backUrl(isAgent),
+        showStartDate = startDateEnabled
       )(messages, implicitly)
     }
 
@@ -668,6 +680,10 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       Option(document.getElementById("change-link-1")) shouldBe None
       Option(document.getElementById("change-link-2")) shouldBe None
     }
+
+    "Don't display start date if DisplayBusinessStartDate is disabled" in new SelfEmploymentSetup(false, startDateEnabled = false) {
+      Option(document.getElementById("manage-details-table")).mkString("").contains("Date started") shouldBe false
+    }
   }
   "ManageSelfEmployment - Agent" should {
     "render the heading" in new SelfEmploymentSetup(true) {
@@ -711,6 +727,10 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       expandableInfo.getElementById("expandable-info-p2").text() shouldBe expandableInfoStandardContentP2
       expandableInfo.getElementById("expandable-more-info-link").text() shouldBe expandableInfoContentP3 + " " + opensInNewTabText
       expandableInfo.getElementById("expandable-more-info-link").attr("href") shouldBe expandableMoreInfoLink
+    }
+
+    "Don't display start date if DisplayBusinessStartDate is disabled" in new SelfEmploymentSetup(true, startDateEnabled = false) {
+      Option(document.getElementById("manage-details-table")).mkString("").contains("Date started") shouldBe false
     }
   }
 
@@ -785,6 +805,10 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       Option(document.getElementById("change-link-2")) shouldBe None
     }
 
+    "Don't display start date if DisplayBusinessStartDate is disabled" in new ukSetup(false, startDateEnabled = false) {
+      Option(document.getElementById("manage-details-table")).mkString("").contains("Date started") shouldBe false
+    }
+
   }
   "Manage Uk Property - Agent" should {
     "render the heading" in new ukSetup(true) {
@@ -830,6 +854,10 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
       document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe unknown
       document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe "Cash basis accounting"
+    }
+
+    "Don't display start date if DisplayBusinessStartDate is disabled" in new ukSetup(false, startDateEnabled = false) {
+      Option(document.getElementById("manage-details-table")).mkString("").contains("Date started") shouldBe false
     }
   }
 
@@ -901,6 +929,10 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       Option(document.getElementById("change-link-1")) shouldBe None
       Option(document.getElementById("change-link-2")) shouldBe None
     }
+
+    "Don't display start date if DisplayBusinessStartDate is disabled" in new foreignSetup(false, startDateEnabled = false) {
+      Option(document.getElementById("manage-details-table")).mkString("").contains("Date started") shouldBe false
+    }
   }
   "Manage Foreign Property - Agent" should {
     "render the heading" in new foreignSetup(true) {
@@ -946,5 +978,10 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe unknown
       document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe cashBasisAccounting
     }
+
+    "Don't display start date if DisplayBusinessStartDate is disabled" in new foreignSetup(true, startDateEnabled = false) {
+      Option(document.getElementById("manage-details-table")).mkString("").contains("Date started") shouldBe false
+    }
+
   }
 }

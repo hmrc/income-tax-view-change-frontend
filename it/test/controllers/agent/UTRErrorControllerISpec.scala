@@ -18,7 +18,7 @@ package controllers.agent
 
 import config.featureswitch.FeatureSwitching
 import helpers.ComponentSpecBase
-import helpers.servicemocks.{AgentAuthStub, AuthStub}
+import helpers.servicemocks.MTDAgentAuthStub
 import play.api.http.Status._
 
 class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
@@ -27,7 +27,7 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
   s"GET $path" should {
     s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" when {
       "the user is not authenticated" in {
-        AuthStub.stubUnauthorised()
+        MTDAgentAuthStub.stubUnauthorised()
         val result = buildGETMTDClient(path).futureValue
 
         result should have(
@@ -39,7 +39,7 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
     s"return $SEE_OTHER with Agent error page" when {
       "the user is authenticated but doesn't have the agent enrolment" in {
-        AgentAuthStub.stubNoAgentEnrolment()
+        MTDAgentAuthStub.stubNoAgentEnrolmentError()
         val result = buildGETMTDClient(path).futureValue
 
         Then(s"Agent error page is shown with status SEE_OTHER")
@@ -52,7 +52,7 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
     s"return $OK with the UTR Error page" when {
       "without checking whether the UTR is in session" in {
-        AuthStub.stubAuthorisedAgent()
+        MTDAgentAuthStub.stubAuthorisedWithAgentEnrolment()
 
         val result = buildGETMTDClient(path).futureValue
 
@@ -68,7 +68,7 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
   s"POST $path" should {
     s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" when {
       "the user is not authenticated" in {
-        AuthStub.stubUnauthorised()
+        MTDAgentAuthStub.stubUnauthorised()
         val result = buildPOSTMTDPostClient(path, body = Map.empty).futureValue
 
         result should have(
@@ -80,7 +80,7 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
     s"return $SEE_OTHER to agent error page" when {
       "the user is authenticated but doesn't have the agent enrolment" in {
-        AgentAuthStub.stubNoAgentEnrolment()
+        MTDAgentAuthStub.stubNoAgentEnrolmentError()
         val result = buildPOSTMTDPostClient(path, body = Map.empty).futureValue
 
         result should have(

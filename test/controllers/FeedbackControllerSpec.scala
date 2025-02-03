@@ -35,11 +35,8 @@ import play.api.test.Helpers._
 import testConstants.BaseTestConstants.{agentAuthRetrievalSuccess, testAuthSuccessResponse}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
 import uk.gov.hmrc.auth.core.InvalidBearerToken
-import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
-import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
-import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class FeedbackControllerSpec extends MockAuthActions
   with ImplicitDateFormatter {
@@ -194,29 +191,10 @@ class FeedbackControllerSpec extends MockAuthActions
     }
   }
 
-  def setupMockAuthorisedUserNoCheckAuthSuccess[X, Y](retrievalValue: X ~ Y): Unit = {
-    when(mockAuthService.authorised(any()))
-      .thenReturn(
-        new mockAuthService.AuthorisedFunction(EmptyPredicate) {
-          override def retrieve[A](retrieval: Retrieval[A]) = new mockAuthService.AuthorisedFunctionWithResult[A](EmptyPredicate, retrieval) {
-            override def apply[B](body: A => Future[B])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[B] = body.apply(retrievalValue.asInstanceOf[A])
-          }
-        })
-  }
-
   private def testAuthFailures(action: Action[AnyContent])(fakeRequest: FakeRequest[AnyContentAsEmpty.type]) = {
     "redirect to sign in" when {
       "the user is not authenticated" in {
-        when(mockAuthService.authorised(any()))
-          .thenReturn(
-            new mockAuthService.AuthorisedFunction(EmptyPredicate) {
-              override def apply[A](body: => Future[A])(implicit hc: HeaderCarrier, executionContext: ExecutionContext) = Future.failed(new InvalidBearerToken)
-
-              override def retrieve[A](retrieval: Retrieval[A]) = new mockAuthService.AuthorisedFunctionWithResult[A](EmptyPredicate, retrieval) {
-                override def apply[B](body: A => Future[B])(implicit hc: HeaderCarrier, executionContext: ExecutionContext): Future[B] = Future.failed(new InvalidBearerToken)
-              }
-            }
-          )
+        setupMockUserAuthNoCheckException(new InvalidBearerToken)
 
         val result: Future[Result] = action(fakeRequest)
 
@@ -227,7 +205,6 @@ class FeedbackControllerSpec extends MockAuthActions
 
     "redirect to the session timeout page" when {
       "the user has timed out" in {
-
         val result: Future[Result] = action(fakeRequestWithTimeoutSession)
 
         status(result) shouldBe SEE_OTHER

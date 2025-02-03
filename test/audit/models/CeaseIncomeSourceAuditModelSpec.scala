@@ -18,10 +18,12 @@ package audit.models
 
 import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
 import models.core.IncomeSourceId.mkIncomeSourceId
-import play.api.libs.json.Json
-import testConstants.BaseTestConstants.{testPropertyIncomeId, testSelfEmploymentId}
+import play.api.libs.json.{JsValue, Json}
+import testConstants.BaseTestConstants._
 import testConstants.UpdateIncomeSourceTestConstants.failureResponse
 import testUtils.TestSupport
+import uk.gov.hmrc.auth.core.AffinityGroup
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 class CeaseIncomeSourceAuditModelSpec extends TestSupport {
 
@@ -39,73 +41,34 @@ class CeaseIncomeSourceAuditModelSpec extends TestSupport {
     }
   }
 
+  lazy val detailsAuditDataSuccess: (AffinityGroup, IncomeSourceType) => JsValue = (af, incomeSourceType) => {
+    val journeyDetails = if(incomeSourceType == SelfEmployment) Json.obj(
+      "journeyType" -> "SE",
+      "incomeSourceID" -> "XA00001234",
+      "businessName" -> "nextUpdates.business"
+      )
+    else Json.obj(
+      "journeyType" -> "UKPROPERTY",
+      "incomeSourceID" -> "1234"
+    )
+    commonAuditDetails(af) ++ Json.obj(
+      "outcome" -> Json.obj("isSuccessful" -> true),
+      "dateBusinessStopped" -> "2022-08-01"
+    ) ++ journeyDetails
+  }
 
-  val detailIndividualSE = Json.parse(
-    """{
-      |    "nino": "AB123456C",
-      |    "mtditid": "XAIT0000123456",
-      |    "saUtr": "testSaUtr",
-      |    "credId": "testCredId",
-      |    "userType": "Individual",
-      |    "outcome": {
-      |        "isSuccessful": true
-      |    },
-      |    "journeyType": "SE",
-      |    "dateBusinessStopped": "2022-08-01",
-      |    "incomeSourceID": "XA00001234",
-      |    "businessName": "nextUpdates.business"
-      |}""".stripMargin)
-
-  val detailAgentSE = Json.parse(
-    """{
-      |    "nino": "AA111111A",
-      |    "mtditid": "XAIT00000000015",
-      |    "agentReferenceNumber": "XAIT0000123456",
-      |    "saUtr": "1234567890",
-      |    "credId": "testCredId",
-      |    "userType": "Agent",
-      |    "outcome": {
-      |        "isSuccessful": true
-      |    },
-      |    "journeyType": "SE",
-      |    "dateBusinessStopped": "2022-08-01",
-      |    "incomeSourceID": "XA00001234",
-      |    "businessName": "nextUpdates.business"
-      |}""".stripMargin)
-
-  val detailOutcomeError = Json.parse(
-    """{
-      |    "nino": "AB123456C",
-      |    "mtditid": "XAIT0000123456",
-      |    "saUtr": "testSaUtr",
-      |    "credId": "testCredId",
-      |    "userType": "Individual",
-      |    "outcome": {
-      |        "isSuccessful": false,
-      |        "failureCategory": "API_FAILURE",
-      |        "failureReason": "Error message"
-      |    },
-      |    "journeyType": "SE",
-      |    "dateBusinessStopped": "2022-08-01",
-      |    "incomeSourceID": "XA00001234",
-      |    "businessName": "nextUpdates.business"
-      |}""".stripMargin)
-
-  val detailProperty = Json.parse(
-    """{
-      |    "nino": "AB123456C",
-      |    "mtditid": "XAIT0000123456",
-      |    "saUtr": "testSaUtr",
-      |    "credId": "testCredId",
-      |    "userType": "Individual",
-      |    "outcome": {
-      |        "isSuccessful": true
-      |    },
-      |    "journeyType": "UKPROPERTY",
-      |    "dateBusinessStopped": "2022-08-01",
-      |    "incomeSourceID": "1234"
-      |}""".stripMargin)
-
+  lazy val detailsAuditDataFailure: AffinityGroup => JsValue = af =>
+    commonAuditDetails(af) ++ Json.obj(
+      "outcome" -> Json.obj(
+        "isSuccessful" -> false,
+        "failureCategory" -> "API_FAILURE",
+        "failureReason" -> "Error message"
+      ),
+      "journeyType" -> "SE",
+      "dateBusinessStopped" -> "2022-08-01",
+      "incomeSourceID" -> "XA00001234",
+      "businessName" -> "nextUpdates.business"
+    )
 
   "CeaseIncomeSourceAuditModel" should {
     s"have the correct transaction name of '$transactionName'" in {
@@ -119,19 +82,19 @@ class CeaseIncomeSourceAuditModelSpec extends TestSupport {
 
   "have the correct detail for the audit event" when {
     "user is an Individual and when income source type is Self Employment" in {
-      getCeaseIncomeSourceAuditModel(SelfEmployment, isAgent = false, isError = false).detail shouldBe detailIndividualSE
+      getCeaseIncomeSourceAuditModel(SelfEmployment, isAgent = false, isError = false).detail shouldBe detailsAuditDataSuccess(Individual, SelfEmployment)
     }
 
     "user is an Agent and when income source type is Self Employment" in {
-      getCeaseIncomeSourceAuditModel(SelfEmployment, isAgent = true, isError = false).detail shouldBe detailAgentSE
+      getCeaseIncomeSourceAuditModel(SelfEmployment, isAgent = true, isError = false).detail shouldBe detailsAuditDataSuccess(Agent, SelfEmployment)
     }
 
     "error while updating income source" in {
-      getCeaseIncomeSourceAuditModel(SelfEmployment, isAgent = false, isError = true).detail shouldBe detailOutcomeError
+      getCeaseIncomeSourceAuditModel(SelfEmployment, isAgent = false, isError = true).detail shouldBe detailsAuditDataFailure(Individual)
     }
 
     "user is an Individual and when income source type is Property" in {
-      getCeaseIncomeSourceAuditModel(UkProperty, isAgent = false, isError = false).detail shouldBe detailProperty
+      getCeaseIncomeSourceAuditModel(UkProperty, isAgent = false, isError = false).detail shouldBe detailsAuditDataSuccess(Individual, UkProperty)
     }
   }
 }
