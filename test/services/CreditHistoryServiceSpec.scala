@@ -55,7 +55,7 @@ class CreditHistoryServiceSpec extends TestSupport with MockFinancialDetailsConn
     "an error is returned from the connector" should {
 
       "return a credit history error (~getFinancialDetails failed)" in {
-        setupMockGetFinancialDetails(TaxYear.forYearEnd(taxYear), TaxYear.forYearEnd(taxYear + 1), nino)(FinancialDetailsErrorModel(500, "ERROR"))
+        setupMockGetFinancialDetailsSingleYear(TaxYear.forYearEnd(taxYear), TaxYear.forYearEnd(taxYear + 1), nino)(FinancialDetailsErrorModel(500, "ERROR"))
         TestCreditHistoryService.getCreditsHistory(taxYear, nino).futureValue shouldBe Left(CreditHistoryError)
       }
     }
@@ -63,14 +63,14 @@ class CreditHistoryServiceSpec extends TestSupport with MockFinancialDetailsConn
     "a successful response returned from the connector" when {
       "entering the service" should {
         "return a list of MFA/BC/CutOver credits" in {
-          setupMockGetFinancialDetails(TaxYear.forYearEnd(taxYear), TaxYear.forYearEnd(taxYear + 1), nino)(taxYearFinancialDetailsTwoYears)
+          setupMockGetFinancialDetailsSingleYear(TaxYear.forYearEnd(taxYear), TaxYear.forYearEnd(taxYear + 1), nino)(taxYearFinancialDetailsTwoYears)
           val futureResult = TestCreditHistoryService.getCreditsHistory(taxYear, nino)
           whenReady(futureResult) { result =>
             result shouldBe Right(List(creditDetailModelasCutOver, creditDetailModelasMfa, creditDetailModelasBCC))
           }
         }
         "return a list of all credits" in {
-          setupMockGetFinancialDetails(TaxYear.forYearEnd(taxYear), TaxYear.forYearEnd(taxYear + 1), nino)(taxYearFinancialDetailsAllCreditsTwoYears)
+          setupMockGetFinancialDetailsSingleYear(TaxYear.forYearEnd(taxYear), TaxYear.forYearEnd(taxYear + 1), nino)(taxYearFinancialDetailsAllCreditsTwoYears)
           val futureResult = TestCreditHistoryService.getCreditsHistory(taxYear, nino)
           whenReady(futureResult) { result =>
             result shouldBe Right(List(

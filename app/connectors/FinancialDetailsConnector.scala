@@ -23,7 +23,8 @@ import models.core.{CorrelationId, Nino}
 import models.creditsandrefunds.CreditsModel
 import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
-import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel, FinancialDetailsWithDocumentDetailsResponse}
+import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel,
+  FinancialDetailsWithDocumentDetailsResponse}
 import models.paymentAllocations.{PaymentAllocations, PaymentAllocationsError, PaymentAllocationsResponse}
 import play.api.Logger
 import play.api.http.Status
@@ -96,28 +97,6 @@ class FinancialDetailsConnector @Inject()(
       }
   }
 
-  def getCreditsAndRefund(taxYear: TaxYear, nino: String)
-                         (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[ResponseModel[CreditsModel]] = {
-
-    val url = getCreditAndRefundUrl(nino, taxYear.financialYearStartString, taxYear.financialYearEndString)
-    Logger("application").debug(s"GET $url")
-
-    val hc = checkAndAddTestHeader(mtdItUser.path, headerCarrier, appConfig.poaAdjustmentOverrides(), "afterPoaAmountAdjusted")
-
-    val correlationId =
-      CorrelationId.fromHeaderCarrier(hc).getOrElse(CorrelationId())
-
-    httpV2
-      .get(url"$url")
-      .setHeader(correlationId.asHeader())
-      .execute[ResponseModel[CreditsModel]]
-      .recover {
-        case e =>
-          Logger("application").error(e.getMessage)
-          Left(UnexpectedError)
-      }
-  }
-
   def getCreditsAndRefund(taxYearFrom: TaxYear, taxYearTo: TaxYear, nino: String)
                          (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[ResponseModel[CreditsModel]] = {
 
@@ -141,8 +120,8 @@ class FinancialDetailsConnector @Inject()(
   }
 
   // TODO: MFA Credits
-  def getFinancialDetails(taxYear: Int, nino: String)
-                         (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
+  def getFinancialDetailsSingleYear(taxYear: Int, nino: String)
+                                   (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
 
     val dateFrom: String = (taxYear - 1).toString + "-04-06"
     val dateTo: String = taxYear.toString + "-04-05"

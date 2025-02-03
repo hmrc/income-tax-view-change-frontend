@@ -120,13 +120,13 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
   "getFinancialDetails" when {
     "a successful financial details response is returned from the connector" should {
       "return a valid FinancialDetails model" in {
-        setupMockGetFinancialDetails(fixedTaxYear, fixedTaxYear, testNino)(financialDetailsModel(fixedTaxYear.endYear))
+        setupMockGetFinancialDetailsSingleYear(fixedTaxYear, fixedTaxYear, testNino)(financialDetailsModel(fixedTaxYear.endYear))
         TestFinancialDetailsService.getFinancialDetails(fixedTaxYear, fixedTaxYear, testNino).futureValue shouldBe financialDetailsModel(fixedTaxYear.endYear)
       }
     }
     "a error model is returned from the connector" should {
       "return a FinancialDetailsError model" in {
-        setupMockGetFinancialDetails(fixedTaxYear, fixedTaxYear, testNino)(testFinancialDetailsErrorModel)
+        setupMockGetFinancialDetailsSingleYear(fixedTaxYear, fixedTaxYear, testNino)(testFinancialDetailsErrorModel)
         TestFinancialDetailsService.getFinancialDetails(fixedTaxYear, fixedTaxYear, testNino).futureValue shouldBe testFinancialDetailsErrorModel
       }
     }
@@ -255,7 +255,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         val financialDetail = getFinancialDetailSuccess()
         val expectedResult: Option[FinancialDetailsResponseModel] = Some(financialDetail)
 
-        setupMockGetFinancialDetails(fixedTaxYear, fixedTaxYear, testNino)(financialDetail)
+        setupMockGetFinancialDetailsSingleYear(fixedTaxYear, fixedTaxYear, testNino)(financialDetail)
         val result = TestFinancialDetailsService.getAllFinancialDetails(mtdUser(1), headerCarrier, ec)
         result.futureValue shouldBe expectedResult
       }
@@ -264,7 +264,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         val financialDetail = getMultiYearFinancialDetailSuccess()
         val expectedResult: Option[FinancialDetailsResponseModel] = Some(financialDetail)
 
-        setupMockGetFinancialDetails(fixedTaxYear.previousYear, fixedTaxYear.nextYear,testNino)(financialDetail)
+        setupMockGetFinancialDetailsSingleYear(fixedTaxYear.previousYear, fixedTaxYear.nextYear,testNino)(financialDetail)
 
         val result = TestFinancialDetailsService.getAllFinancialDetails(mtdUser(2), headerCarrier, ec)
 
@@ -274,7 +274,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         val financialDetailNotFound = FinancialDetailsErrorModel(Status.NOT_FOUND, "not found")
         val expectedResult: Option[FinancialDetailsResponseModel] = None
 
-        setupMockGetFinancialDetails(fixedTaxYear, fixedTaxYear, testNino)(financialDetailNotFound)
+        setupMockGetFinancialDetailsSingleYear(fixedTaxYear, fixedTaxYear, testNino)(financialDetailNotFound)
 
         val result = TestFinancialDetailsService.getAllFinancialDetails(mtdUser(1), headerCarrier, ec)
 
@@ -286,7 +286,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         val financialDetailsError = FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "internal service error")
         val expectedResult: Option[FinancialDetailsResponseModel] = Some(financialDetailsError)
 
-        setupMockGetFinancialDetails(fixedTaxYear, fixedTaxYear, testNino)(financialDetailsError)
+        setupMockGetFinancialDetailsSingleYear(fixedTaxYear, fixedTaxYear, testNino)(financialDetailsError)
 
         val result = TestFinancialDetailsService.getAllFinancialDetails(mtdUser(1), headerCarrier, ec)
 
@@ -315,7 +315,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           financialDetail
         )
 
-        setupMockGetFinancialDetails(fixedTaxYear, fixedTaxYear, testNino)(financialDetail)
+        setupMockGetFinancialDetailsSingleYear(fixedTaxYear, fixedTaxYear, testNino)(financialDetail)
         val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails()(mtdUser(1), headerCarrier, ec)
 
         result.futureValue shouldBe expectedResult
@@ -335,7 +335,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           ))
         )
 
-        setupMockGetFinancialDetails(fixedTaxYear.previousYear, fixedTaxYear, testNino)(getFinancialDetailSuccess(documentDetails = List(
+        setupMockGetFinancialDetailsSingleYear(fixedTaxYear.previousYear, fixedTaxYear, testNino)(getFinancialDetailSuccess(documentDetails = List(
           fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(50.0)),
           fullDocumentDetailModel.copy(outstandingAmount = 100.00, originalAmount = 100.00),
           fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(0.00), interestOutstandingAmount = Some(100.00)),
@@ -354,7 +354,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
       }
       "no unpaid transactions exist" in {
 
-        setupMockGetFinancialDetails(fixedTaxYear.previousYear, fixedTaxYear, testNino)(getFinancialDetailSuccess(documentDetails = List(
+        setupMockGetFinancialDetailsSingleYear(fixedTaxYear.previousYear, fixedTaxYear, testNino)(getFinancialDetailSuccess(documentDetails = List(
           fullDocumentDetailModel.copy(outstandingAmount = 0, latePaymentInterestAmount = None, interestOutstandingAmount = None),
           fullDocumentDetailModel.copy(outstandingAmount = 0, latePaymentInterestAmount = None, interestOutstandingAmount = None),
           fullDocumentDetailModel.copy(outstandingAmount = 0, latePaymentInterestAmount = None, interestOutstandingAmount = None),
@@ -389,7 +389,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           fullFinancialDetailModel
         ))
 
-        setupMockGetFinancialDetails(fixedTaxYear.previousYear, fixedTaxYear, testNino)(financialDetailCodingOut)
+        setupMockGetFinancialDetailsSingleYear(fixedTaxYear.previousYear, fixedTaxYear, testNino)(financialDetailCodingOut)
 
         val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails()(mtdUser(2), headerCarrier, ec)
 

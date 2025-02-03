@@ -101,8 +101,8 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
       "a user has two sets of document details relating to PoA data. The first year is a CTA amendable year and is non-crystallised" in {
         setupGetCalculationList(testNino, "22-23")(calculationListSuccessResponseModelNonCrystallised)
         setupGetCalculationList(testNino, "23-24")(calculationListSuccessResponseModelNonCrystallised)
-        setupMockGetFinancialDetails(2024, testNino)(userPOADetails2024)
-        setupMockGetFinancialDetails(2023, testNino)(genericUserPoaDetails(2023, outstandingAmount = 250.00))
+        setupMockGetFinancialDetailsSingleYear(2024, testNino)(userPOADetails2024)
+        setupMockGetFinancialDetailsSingleYear(2023, testNino)(genericUserPoaDetails(2023, outstandingAmount = 250.00))
 
         val f = fixture(LocalDate.of(2023, 8, 27))
         val result = f.testClaimToAdjustService.getPoaTaxYearForEntryPoint(testUserNino)
@@ -113,8 +113,8 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
       "a user has two sets of document details relating to PoA data. The second year is a CTA amendable year. Only the second year is non-crystallised" in {
         setupGetCalculationList(testNino, "22-23")(calculationListSuccessResponseModelCrystallised)
         setupGetCalculationList(testNino, "23-24")(calculationListSuccessResponseModelNonCrystallised)
-        setupMockGetFinancialDetails(2024, testNino)(userPOADetails2024)
-        setupMockGetFinancialDetails(2023, testNino)(genericUserPoaDetails(2023, outstandingAmount = 250.00))
+        setupMockGetFinancialDetailsSingleYear(2024, testNino)(userPOADetails2024)
+        setupMockGetFinancialDetailsSingleYear(2023, testNino)(genericUserPoaDetails(2023, outstandingAmount = 250.00))
 
         val f = fixture(LocalDate.of(2023, 8, 27))
         val result = f.testClaimToAdjustService.getPoaTaxYearForEntryPoint(testUserNino)
@@ -124,7 +124,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
       }
       "a user has only one CTA amendable year. This year has POA data and is not crystallised" in {
         setupGetCalculationList(testNino, "23-24")(calculationListSuccessResponseModelNonCrystallised)
-        setupMockGetFinancialDetails(2024, testNino)(userPOADetails2024)
+        setupMockGetFinancialDetailsSingleYear(2024, testNino)(userPOADetails2024)
 
         val f = fixture(LocalDate.of(2024, 4, 1))
         val result = f.testClaimToAdjustService.getPoaTaxYearForEntryPoint(testUserNino)
@@ -137,8 +137,8 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
       "for amendable Poa years a user has non-crystallised tax years but no poa data" in {
         setupGetCalculationList(testNino, "22-23")(calculationListSuccessResponseModelNonCrystallised)
         setupGetCalculationList(testNino, "23-24")(calculationListSuccessResponseModelNonCrystallised)
-        setupMockGetFinancialDetails(2024, testNino)(userNoPoaDetails)
-        setupMockGetFinancialDetails(2023, testNino)(userNoPoaDetails)
+        setupMockGetFinancialDetailsSingleYear(2024, testNino)(userNoPoaDetails)
+        setupMockGetFinancialDetailsSingleYear(2023, testNino)(userNoPoaDetails)
 
         val f = fixture(LocalDate.of(2023, 8, 27))
         val result = f.testClaimToAdjustService.getPoaTaxYearForEntryPoint(testUserNino)
@@ -152,8 +152,8 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         setupGetCalculationList(testNino, "22-23")(calculationListSuccessResponseModelNonCrystallised)
         setupGetCalculationList(testNino, "23-24")(calculationListSuccessResponseModelNonCrystallised)
 
-        setupMockGetFinancialDetails(2024, testNino)(financialDetailsErrorModel(500))
-        setupMockGetFinancialDetails(2023, testNino)(financialDetailsErrorModel(500))
+        setupMockGetFinancialDetailsSingleYear(2024, testNino)(financialDetailsErrorModel(500))
+        setupMockGetFinancialDetailsSingleYear(2023, testNino)(financialDetailsErrorModel(500))
 
         val f = fixture(LocalDate.of(2023, 8, 27))
         val result = f.testClaimToAdjustService.getPoaTaxYearForEntryPoint(testUserNino)
@@ -169,8 +169,8 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
       "a user has two sets of document details relating to PoA data. The first year is a CTA amendable year and is non-crystallised" in {
         setupGetCalculationList(testNino, "22-23")(calculationListSuccessResponseModelNonCrystallised)
         setupGetCalculationList(testNino, "23-24")(calculationListSuccessResponseModelNonCrystallised)
-        setupMockGetFinancialDetails(2024, testNino)(genericUserPoaDetails(2023, outstandingAmount = 250.00))
-        setupMockGetFinancialDetails(2023, testNino)(userPOADetails2023)
+        setupMockGetFinancialDetailsSingleYear(2024, testNino)(genericUserPoaDetails(2023, outstandingAmount = 250.00))
+        setupMockGetFinancialDetailsSingleYear(2023, testNino)(userPOADetails2023)
 
         val f = fixture(LocalDate.of(2023, 8, 27))
         val result = f.testClaimToAdjustService.getPoaForNonCrystallisedTaxYear(testUserNino)
@@ -181,8 +181,8 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
       "a user has two sets of document details relating to PoA data. The second year is a CTA amendable year. Only the second year is non-crystallised" in {
         setupGetCalculationList(testNino, "22-23")(calculationListSuccessResponseModelCrystallised)
         setupGetCalculationList(testNino, "23-24")(calculationListSuccessResponseModelNonCrystallised)
-        setupMockGetFinancialDetails(2024, testNino)(userPOADetails2024)
-        setupMockGetFinancialDetails(2023, testNino)(genericUserPoaDetails(2023, outstandingAmount = 250.00))
+        setupMockGetFinancialDetailsSingleYear(2024, testNino)(userPOADetails2024)
+        setupMockGetFinancialDetailsSingleYear(2023, testNino)(genericUserPoaDetails(2023, outstandingAmount = 250.00))
 
         val f = fixture(LocalDate.of(2023, 8, 27))
         val result = f.testClaimToAdjustService.getPoaForNonCrystallisedTaxYear(testUserNino)
@@ -192,7 +192,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
       }
       "a user has only one CTA amendable year. This year has POA data and is not crystallised" in {
         setupGetCalculationList(testNino, "23-24")(calculationListSuccessResponseModelNonCrystallised)
-        setupMockGetFinancialDetails(2024, testNino)(userPOADetails2024)
+        setupMockGetFinancialDetailsSingleYear(2024, testNino)(userPOADetails2024)
 
         val f = fixture(LocalDate.of(2024, 4, 1))
         val result = f.testClaimToAdjustService.getPoaForNonCrystallisedTaxYear(testUserNino)
@@ -204,8 +204,8 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
       "for amendable Poa years a user has non-crystallised tax years but no poa data" in {
         setupGetCalculationList(testNino, "22-23")(calculationListSuccessResponseModelNonCrystallised)
         setupGetCalculationList(testNino, "23-24")(calculationListSuccessResponseModelNonCrystallised)
-        setupMockGetFinancialDetails(2024, testNino)(userNoPoaDetails)
-        setupMockGetFinancialDetails(2023, testNino)(userNoPoaDetails)
+        setupMockGetFinancialDetailsSingleYear(2024, testNino)(userNoPoaDetails)
+        setupMockGetFinancialDetailsSingleYear(2023, testNino)(userNoPoaDetails)
 
         val f = fixture(LocalDate.of(2023, 8, 27))
         val result = f.testClaimToAdjustService.getPoaForNonCrystallisedTaxYear(testUserNino)
@@ -219,8 +219,8 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         setupGetCalculationList(testNino, "22-23")(calculationListSuccessResponseModelNonCrystallised)
         setupGetCalculationList(testNino, "23-24")(calculationListSuccessResponseModelNonCrystallised)
 
-        setupMockGetFinancialDetails(2024, testNino)(financialDetailsErrorModel(500))
-        setupMockGetFinancialDetails(2023, testNino)(financialDetailsErrorModel(500))
+        setupMockGetFinancialDetailsSingleYear(2024, testNino)(financialDetailsErrorModel(500))
+        setupMockGetFinancialDetailsSingleYear(2023, testNino)(financialDetailsErrorModel(500))
 
         val f = fixture(LocalDate.of(2023, 8, 27))
         val result = f.testClaimToAdjustService.getPoaForNonCrystallisedTaxYear(testUserNino)
@@ -251,7 +251,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         chargeHistoryDetails = Some(chargeHistories)
       ))
 
-      setupMockGetFinancialDetails(taxYear, testNino)(financialDetailsModelBothPoasWithOutstandingAmount(taxYear, outstandingAmount))
+      setupMockGetFinancialDetailsSingleYear(taxYear, testNino)(financialDetailsModelBothPoasWithOutstandingAmount(taxYear, outstandingAmount))
 
       val f = fixture(LocalDate.of(taxYear, 8, 27))
       val result = f.testClaimToAdjustService.getAmendablePoaViewModel(testUserNino)
@@ -290,7 +290,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         chargeHistoryDetails = Some(chargeHistories)
       ))
 
-      setupMockGetFinancialDetails(taxYear, testNino)(financialDetailsModelBothPoasWithOutstandingAmount(taxYear, outstandingAmount))
+      setupMockGetFinancialDetailsSingleYear(taxYear, testNino)(financialDetailsModelBothPoasWithOutstandingAmount(taxYear, outstandingAmount))
 
       val f = fixture(LocalDate.of(taxYear, 8, 27))
       val result = f.testClaimToAdjustService.getAmendablePoaViewModel(testUserNino)
@@ -318,7 +318,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
 
       val financialDetailsModelWithoutDocumentDetails = financialDetailsModelBothPoas
 
-      setupMockGetFinancialDetails(taxYear, testNino)(financialDetailsModelWithoutDocumentDetails)
+      setupMockGetFinancialDetailsSingleYear(taxYear, testNino)(financialDetailsModelWithoutDocumentDetails)
 
       setupGetChargeHistory(testNino, Some("ABCD1234"))(ChargesHistoryModel(
         idType = "NINO",
@@ -357,7 +357,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         chargeHistoryDetails = Some(chargeHistories)
       ))
 
-      setupMockGetFinancialDetails(taxYear, testNino)(financialDetailsWithUnpaidPoas(taxYear))
+      setupMockGetFinancialDetailsSingleYear(taxYear, testNino)(financialDetailsWithUnpaidPoas(taxYear))
 
       val f = fixture(LocalDate.of(taxYear, 8, 27))
 
@@ -386,7 +386,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         chargeHistoryDetails = Some(chargeHistories)
       ))
 
-      setupMockGetFinancialDetails(taxYear, testNino)(financialDetailsModelBothPoasWithOutstandingAmount(taxYear, outstandingAmount))
+      setupMockGetFinancialDetailsSingleYear(taxYear, testNino)(financialDetailsModelBothPoasWithOutstandingAmount(taxYear, outstandingAmount))
 
       val f = fixture(LocalDate.of(taxYear, 8, 27))
 
@@ -404,7 +404,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
 
       val financialDetailsModelWithoutDocumentDetails = financialDetailsModelBothPoas
 
-      setupMockGetFinancialDetails(taxYear, testNino)(financialDetailsModelWithoutDocumentDetails)
+      setupMockGetFinancialDetailsSingleYear(taxYear, testNino)(financialDetailsModelWithoutDocumentDetails)
 
       setupGetChargeHistory(testNino, Some("ABCD1234"))(ChargesHistoryModel(
         idType = "NINO",
@@ -440,7 +440,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         chargeHistoryDetails = Some(chargeHistoriesNoPoaAtHead)
       ))
 
-      setupMockGetFinancialDetails(taxYear, testNino)(financialDetailsWithUnpaidPoas(taxYear))
+      setupMockGetFinancialDetailsSingleYear(taxYear, testNino)(financialDetailsWithUnpaidPoas(taxYear))
 
       val f = fixture(LocalDate.of(taxYear, 8, 27))
 
@@ -466,7 +466,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         chargeHistoryDetails = Some(chargeHistoriesNoPoaAtHead)
       ))
 
-      setupMockGetFinancialDetails(taxYear, testNino)(financialDetailsWithUnpaidPoas(taxYear))
+      setupMockGetFinancialDetailsSingleYear(taxYear, testNino)(financialDetailsWithUnpaidPoas(taxYear))
 
       val f = fixture(LocalDate.of(taxYear, 8, 27))
 

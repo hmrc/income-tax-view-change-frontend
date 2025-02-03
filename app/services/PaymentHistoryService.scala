@@ -20,7 +20,7 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.{FinancialDetailsConnector, RepaymentHistoryConnector}
 import models.core.Nino
-import models.financialDetails.{Payment, Payments, PaymentsError}
+import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel, Payment, Payments, PaymentsError}
 import models.incomeSourceDetails.TaxYear
 import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryErrorModel, RepaymentHistoryModel}
 import play.api.Logger
@@ -45,12 +45,24 @@ class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistor
     val (from, to) = (orderedTaxYears.min, orderedTaxYears.max)
     Logger("application").debug(s"Getting payment history for TaxYears: ${from} - ${to}")
 
-    for {
-      response <- financialDetailsConnector.getPayments(TaxYear.forYearEnd(from), TaxYear.forYearEnd(to))
-    } yield response match {
-      case Payments(payments) => Right(payments.distinct)
-      case PaymentsError(_, _) => Left(PaymentHistoryError)
-    }
+    val maxYears = 5
+    val listOfCalls = orderedTaxYears.grouped(maxYears).toList
+
+    Future.sequence(listOfCalls.map { years =>
+      val (from, to) = (years.min, years.max)
+      Logger("application").debug(s"Getting payment history for TaxYears: ${from} - ${to}")
+
+      for {
+        response <- financialDetailsConnector.getPayments(TaxYear.forYearEnd(from), TaxYear.forYearEnd(to))
+      } yield response match {
+        case Payments(payments) => Right(payments.distinct)
+        case PaymentsError(_, _) => Left(PaymentHistoryError)
+      }
+    }).map(x => {
+      x.foldLeft[Either[PaymentHistoryError.type, Seq[Payment]]](Left(PaymentHistoryError)){(acc, next) =>
+        combineTwoResponses(acc, next)
+      }
+    })
   }
 
   def getRepaymentHistory(paymentHistoryAndRefundsEnabled: Boolean)
@@ -63,6 +75,16 @@ class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistor
         case RepaymentHistoryErrorModel(_, _) => Left(RepaymentHistoryErrorModel)
       }
     else Future(Right(Nil))
+  }
+
+  def combineTwoResponses(response1: Either[PaymentHistoryError.type, Seq[Payment]],
+                          response2: Either[PaymentHistoryError.type, Seq[Payment]]): Either[PaymentHistoryError.type, Seq[Payment]] = {
+    (response1, response2) match {
+      case (Right(model1: Seq[Payment]), Right(model2: Seq[Payment])) => Right(model1 ++ model2)
+      case (Right(model: Seq[Payment]), _) => Right(model)
+      case (_, Right(model: Seq[Payment])) => Right(model)
+      case _ => Left(PaymentHistoryError)
+    }
   }
 }
 

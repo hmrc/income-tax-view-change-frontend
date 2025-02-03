@@ -48,9 +48,10 @@ class TaxYearsController @Inject()(taxYearsView: TaxYears,
                     isAgent: Boolean,
                     origin: Option[String] = None)
                    (implicit user: MtdItUser[_]): Future[Result] = {
+    val maxTaxYears = 5
     Try {
       taxYearsView(
-        taxYears = user.incomeSources.orderedTaxYearsByAccountingPeriods.reverse,
+        taxYears = user.incomeSources.orderedTaxYearsByAccountingPeriods.reverse.take(maxTaxYears),
         backUrl,
         isAgent = isAgent,
         utr = user.saUtr,
