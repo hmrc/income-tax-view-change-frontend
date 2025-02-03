@@ -382,7 +382,7 @@
                                         @getMessage("pre-mtd-year", (currentTaxYear - 2).toString, (currentTaxYear - 1).toString)
                                         </td>
                                         <td class="govuk-table__cell govuk-table__cell--numeric">@{
-                                            whatYouOweChargesList.outstandingChargesModel.get.getAciChargeWithTieBreaker.getOrElse(throw MissingFieldException("ACI Charge with Tie Breaker")).chargeAmount.toCurrency
+                                            whatYouOweChargesList.getAciChargeWithTieBreakerChargeAmount.toCurrency
                                         }
                                         </td>
                                     </tr>

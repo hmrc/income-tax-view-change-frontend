@@ -56,6 +56,9 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, chargesList: Li
   def getRelevantDueDate: LocalDate =
     outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.getOrElse(throw MissingFieldException("documentRelevantDueDate"))
 
+  def getAciChargeWithTieBreakerChargeAmount: BigDecimal =
+    outstandingChargesModel.get.getAciChargeWithTieBreaker.getOrElse(throw MissingFieldException("documentAciChargeWithTieBreaker")).chargeAmount
+
   def getEarliestTaxYearAndAmountByDueDate: Option[(Int, BigDecimal)] = {
 
     implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
