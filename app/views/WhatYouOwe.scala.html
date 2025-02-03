@@ -349,7 +349,7 @@
                             @if(whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero) {
                                 <tr class="govuk-table__row" id="balancing-charge-type-0">
                                     <td class="govuk-table__cell">@{
-                                        whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.getOrElse(throw MissingFieldException("Outstanding Charge Relevant Due Date")).toLongDateShort
+                                        whatYouOweChargesList.getRelevantDueDate.toLongDateShort
                                     }</td>
                                     <td class="govuk-table__cell">
                                         @if(whatYouOweChargesList.getRelevantDueDate.isBefore(currentDate)) {
@@ -366,14 +366,14 @@
                                     }</td>
                                 </tr>
                                 @if(whatYouOweChargesList.outstandingChargesModel.get.getAciChargeWithTieBreaker.isDefined
-                                        && whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.getOrElse(throw MissingFieldException("Outstanding Charge Relevant Due Date")).isBefore(currentDate)) {
+                                        && whatYouOweChargesList.getRelevantDueDate.isBefore(currentDate)) {
                                     <tr class="govuk-table__row" id="balancing-charge-type-1">
                                         <td class="govuk-table__cell"></td>
                                         <td class="govuk-table__cell">
                                             @getMessage("balancingCharge.interest.line1.text")
                                             <div>
                                             @getMessage("balancingCharge.interest.line2.text",
-                                                whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.getOrElse(throw MissingFieldException("Outstanding Charge Relevant Due Date")).toLongDateShort,
+                                                whatYouOweChargesList.getRelevantDueDate.toLongDateShort,
                                                 currentDate.toLongDateShort
                                             )
                                             </div>

@@ -54,7 +54,7 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, chargesList: Li
     else false
 
   def getRelevantDueDate: LocalDate =
-    outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.getOrElse(throw MissingFieldException("Outstanding Charge Relevant Due Date"))
+    outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.getOrElse(throw MissingFieldException("documentRelevantDueDate"))
 
   def getEarliestTaxYearAndAmountByDueDate: Option[(Int, BigDecimal)] = {
 
