@@ -408,7 +408,7 @@
                                             @taxYearSummaryLink(charge.taxYear.endYear, index, "taxYearSummary-accuring-interest-link")
                                             </td>
                                             <td class="govuk-table__cell govuk-table__cell--numeric">@{
-                                                charge.interestOutstandingAmount.getOrElse(throw MissingFieldException("Overdue Payment Interest Outstanding Amount")).toCurrency
+                                                charge.getInterestOutstandingAmount.toCurrency
                                             }</td>
                                         </tr>
                                     }

@@ -75,6 +75,8 @@ case class ChargeItem (
 
   def getInterestRate: BigDecimal = interestRate.getOrElse(throw MissingFieldException("documentInterestRate"))
 
+  def getInterestOutstandingAmount: BigDecimal = interestOutstandingAmount.getOrElse(throw MissingFieldException("documentInterestOutstandingAmount"))
+
   def isPaid: Boolean = outstandingAmount match {
     case amount if amount == 0 => true
     case _ => false
