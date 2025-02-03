@@ -163,7 +163,6 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
           documentDetail = defaultDocDetails,
           financialDetails = List(poaOneReconciliationDebitDetails))
 
-        println(s"INTEREST FROM DATE: ${chargeItem.interestFromDate}")
         chargeItem.getInterestFromDate shouldBe LocalDate.of(2018, 3, 29)
 
       }
@@ -181,7 +180,33 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
 
       }
+    }
 
+    "getInterestEndDate" when {
+
+      "successfully gets InterestEndDate" in {
+
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(poaOneReconciliationDebitDetails))
+
+        chargeItem.getInterestEndDate shouldBe LocalDate.of(2018, 6, 15)
+
+      }
+
+      "throws MissingFieldException when interestEndDate is not found" in {
+
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(poaOneReconciliationDebitDetails)).copy(interestEndDate = None)
+
+        val exception = intercept[MissingFieldException] {
+          chargeItem.getInterestEndDate
+        }
+        exception shouldBe MissingFieldException("documentInterestEndDate")
+
+
+      }
     }
 
     "interestIsPaid" when {
