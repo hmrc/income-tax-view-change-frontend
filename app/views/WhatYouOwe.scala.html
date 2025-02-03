@@ -227,7 +227,7 @@
     <tr class="govuk-table__row" id="@rowId2">
         <td class="govuk-table__cell">
             @if(chargeItem.isLatePaymentInterest && chargeItem.isPaid) {
-                 @chargeItem.interestEndDate.getOrElse(throw MissingFieldException("document interest end date")).toLongDateShort.toNonBreaking
+                 @chargeItem.getInterestEndDate.toLongDateShort.toNonBreaking
              }else{
                 @chargeItem.getDueDate.toLongDateShort.toNonBreaking
             }
@@ -398,8 +398,8 @@
                                                 @getInterestMessage(charge)
                                                 <div>
                                                 @getMessage("over-due.interest.line2",
-                                                    charge.interestFromDate.getOrElse(throw MissingFieldException("Overdue Payment Interest From Date")).toLongDateShort,
-                                                    charge.interestEndDate.getOrElse(throw MissingFieldException("Overdue Payment Interest End Date")).toLongDateShort,
+                                                    charge.getInterestFromDate.toLongDateShort,
+                                                    charge.getInterestEndDate.toLongDateShort,
                                                     charge.interestRate.getOrElse(throw MissingFieldException("Overdue Payment Interest Rate")).toString
                                                 )
                                                 </div>
