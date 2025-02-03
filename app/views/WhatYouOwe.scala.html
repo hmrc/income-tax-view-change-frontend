@@ -497,7 +497,7 @@
             @getMessage("credit-overpaid-prefix")
         }
         <a class="govuk-link" id="coding-out-summary-link" href="@getCodingOutHref(codedOutDocumentDetail.taxYear.endYear, codedOutDocumentDetail.transactionId)">
-            @codedOutDocumentDetail.amountCodedOut.getOrElse(throw new MissingFieldException("ChargeItem.amountCodedOut")).toCurrency
+            @codedOutDocumentDetail.getAmountCodedOut.toCurrency
         </a>
         @getMessage("codingOut-1b")
         <b>@getMessage("codingOut-2", (codedOutDocumentDetail.taxYear.endYear - 1).toString(),
