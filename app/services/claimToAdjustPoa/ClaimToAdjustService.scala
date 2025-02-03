@@ -113,14 +113,9 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
   //TODO: Merge the two functions below, lots of code duplication
   private def getNonCrystallisedFinancialDetails(nino: Nino)
                                                 (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, Option[FinancialDetailsModel]]] = {
-    println("BEEP1")
     checkCrystallisation(nino, getPoaAdjustableTaxYears)(hc, dateService, calculationListConnector, ec).flatMap {
-      case None => {
-        println("BEEP2.3")
-        Future.successful(Right(None))
-      }
+      case None => Future.successful(Right(None))
       case Some(taxYear: TaxYear) =>
-        println("BEEP2")
         financialDetailsConnector.getFinancialDetailsSingleYear(taxYear.endYear, nino.value).map {
         case financialDetails: FinancialDetailsModel => Right(Some(financialDetails))
         case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Left(new Exception("There was an error whilst fetching financial details data"))

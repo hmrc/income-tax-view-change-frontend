@@ -46,11 +46,11 @@ class TaxYearsControllerISpec extends ControllerISpecHelper with FeatureSwitchin
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
                 IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-                Then("The view should have the correct headings and all tax years display")
+                Then("The view should have the correct headings and 5 most recent tax years display")
                 res should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "taxYears.heading"),
-                  nElementsWithClass("govuk-summary-list__row")(6),
+                  nElementsWithClass("govuk-summary-list__row")(5),
                   elementTextBySelectorList("dl", "div:nth-child(1)", "dt")(
                     expectedValue = s"6 April ${getCurrentTaxYearEnd.getYear - 1} to 5 April ${getCurrentTaxYearEnd.getYear}"
                   )

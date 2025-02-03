@@ -34,9 +34,31 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
                                         implicit val dateService: DateServiceInterface)
                                        (implicit val appConfig: FrontendAppConfig, ec: ExecutionContext) {
 
+  def getFinancialDetails(taxYearFrom: TaxYear, taxYearTo: TaxYear, nino: String)
+                         (implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
+    financialDetailsConnector.getFinancialDetails(taxYearFrom, taxYearTo, nino)
+  }
+
   def getFinancialDetailsSingleYear(taxYear: TaxYear, nino: String)
                                    (implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
     financialDetailsConnector.getFinancialDetails(taxYear, taxYear, nino)
+  }
+
+  def getChargeDueDates(financialDetails: List[FinancialDetailsResponseModel]): Option[Either[(LocalDate, Boolean), Int]] = {
+    val chargeDueDates: List[LocalDate] = financialDetails.flatMap {
+      case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay.getAllDueDates
+      case _ => List.empty[LocalDate]
+    }.sortWith(_ isBefore _)
+
+    val overdueDates: List[LocalDate] = chargeDueDates.filter(_ isBefore dateService.getCurrentDate)
+    val nextDueDates: List[LocalDate] = chargeDueDates.diff(overdueDates)
+
+    (overdueDates, nextDueDates) match {
+      case (Nil, Nil) => None
+      case (Nil, nextDueDate :: _) => Some(Left((nextDueDate, false)))
+      case (overdueDate :: Nil, _) => Some(Left((overdueDate, true)))
+      case _ => Some(Right(overdueDates.size))
+    }
   }
 
   def getAllFinancialDetails(implicit user: MtdItUser[_],
@@ -49,7 +71,7 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
       Future.successful(None)
     else {
       val maxYears = 5
-      val listOfCalls = yearsOfMigration.grouped(maxYears).toList
+      val listOfCalls = yearsOfMigration.reverse.grouped(maxYears).toList
 
       Future.sequence(listOfCalls.map { years =>
         val (from, to) = (years.min, years.max)
@@ -64,7 +86,7 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
         }
       }).map(x => {
         x.foldLeft[Option[FinancialDetailsResponseModel]](None) { (acc, next) =>
-          Some(combineTwoResponses(acc, next))
+          combineTwoResponses(acc, next)
         }
       })
     }
@@ -81,16 +103,16 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
   }
 
   def combineTwoResponses(response1: Option[FinancialDetailsResponseModel],
-                                  response2: Option[FinancialDetailsResponseModel]): FinancialDetailsResponseModel = {
+                                  response2: Option[FinancialDetailsResponseModel]): Option[FinancialDetailsResponseModel] = {
     (response1, response2) match {
-      case (Some(validModel1: FinancialDetailsModel), Some(validModel2: FinancialDetailsModel)) => validModel1.mergeLists(validModel2)
-      case (Some(validModel: FinancialDetailsModel), _) => validModel
-      case (_, Some(validModel: FinancialDetailsModel)) => validModel
+      case (Some(validModel1: FinancialDetailsModel), Some(validModel2: FinancialDetailsModel)) => Some(validModel1.mergeLists(validModel2))
+      case (Some(validModel: FinancialDetailsModel), _) => Some(validModel)
+      case (_, Some(validModel: FinancialDetailsModel)) => Some(validModel)
       case (Some(errorModel1: FinancialDetailsErrorModel), Some(errorModel2: FinancialDetailsErrorModel)) =>
-        FinancialDetailsErrorModel(errorModel1.code, s"Multiple errors returned when retrieving financial details: $errorModel1 + $errorModel2")
-      case (Some(errorModel: FinancialDetailsErrorModel), _) => errorModel
-      case (_, Some(errorModel: FinancialDetailsErrorModel)) => errorModel
-      case _ => FinancialDetailsErrorModel(INTERNAL_SERVER_ERROR, "Error handling response for financial details")
+        Some(FinancialDetailsErrorModel(errorModel1.code, s"Multiple errors returned when retrieving financial details: $errorModel1 + $errorModel2"))
+      case (Some(errorModel: FinancialDetailsErrorModel), _) if errorModel.code != NOT_FOUND => Some(errorModel)
+      case (_, Some(errorModel: FinancialDetailsErrorModel)) if errorModel.code != NOT_FOUND => Some(errorModel)
+      case _ => None
     }
   }
 }
