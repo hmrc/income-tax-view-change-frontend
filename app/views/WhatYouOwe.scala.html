@@ -400,7 +400,7 @@
                                                 @getMessage("over-due.interest.line2",
                                                     charge.getInterestFromDate.toLongDateShort,
                                                     charge.getInterestEndDate.toLongDateShort,
-                                                    charge.interestRate.getOrElse(throw MissingFieldException("Overdue Payment Interest Rate")).toString
+                                                    charge.getInterestRate.toString
                                                 )
                                                 </div>
                                             </td>

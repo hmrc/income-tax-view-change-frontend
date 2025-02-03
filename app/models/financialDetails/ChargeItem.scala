@@ -73,6 +73,8 @@ case class ChargeItem (
 
   def getInterestEndDate: LocalDate = interestEndDate.getOrElse(throw MissingFieldException("documentInterestEndDate"))
 
+  def getInterestRate: BigDecimal = interestRate.getOrElse(throw MissingFieldException("documentInterestRate"))
+
   def isPaid: Boolean = outstandingAmount match {
     case amount if amount == 0 => true
     case _ => false
