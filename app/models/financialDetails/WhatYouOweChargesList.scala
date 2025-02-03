@@ -16,6 +16,7 @@
 
 package models.financialDetails
 
+import exceptions.MissingFieldException
 import models.outstandingCharges.OutstandingChargesModel
 import services.DateServiceInterface
 
@@ -47,11 +48,13 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, chargesList: Li
       && overdueChargeList.exists(_.lpiWithDunningLock.getOrElse[BigDecimal](0) > 0)) true
     else false
 
-
   def interestOnOverdueCharges: Boolean =
     if (overdueChargeList.exists(_.interestOutstandingAmount.isDefined)
       && overdueChargeList.exists(_.latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0)) true
     else false
+
+  def getRelevantDueDate: LocalDate =
+    outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.getOrElse(throw MissingFieldException("Outstanding Charge Relevant Due Date"))
 
   def getEarliestTaxYearAndAmountByDueDate: Option[(Int, BigDecimal)] = {
 

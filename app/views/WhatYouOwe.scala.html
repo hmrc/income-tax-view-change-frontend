@@ -352,7 +352,7 @@
                                         whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.getOrElse(throw MissingFieldException("Outstanding Charge Relevant Due Date")).toLongDateShort
                                     }</td>
                                     <td class="govuk-table__cell">
-                                        @if(whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.getOrElse(throw MissingFieldException("Outstanding Charge Relevant Due Date")).isBefore(currentDate)) {
+                                        @if(whatYouOweChargesList.getRelevantDueDate.isBefore(currentDate)) {
                                             <span id="balancing-charge-type-overdue" class="govuk-tag govuk-tag--red">@getMessage("over-due")</span>
                                         }
                                         @p(id = Some("balancing-charge"))(Html(getMessage("balancingCharge.text")))
