@@ -19,8 +19,12 @@ package audit.models
 import play.api.libs.json.{JsObject, JsValue, Json}
 import utils.Utilities.JsonUtil
 
-case class ConfirmClientDetailsAuditModel(clientName: String, nino: String,
-                                          mtditid: String, arn: String,saUtr: String,
+case class ConfirmClientDetailsAuditModel(clientName: String,
+                                          nino: String,
+                                          mtditid: String,
+                                          arn: String,
+                                          saUtr: String,
+                                          isSupportingAgent: Boolean,
                                           credId: Option[String]) extends ExtendedAuditModel {
 
   override val transactionName: String = enums.TransactionName.ClientDetailsConfirmed
@@ -32,7 +36,9 @@ case class ConfirmClientDetailsAuditModel(clientName: String, nino: String,
     "mtditid" -> mtditid,
     "saUtr" -> saUtr,
     "agentReferenceNumber" -> arn,
-    "userType" -> "Agent") ++
+    "userType" -> "Agent",
+    "isSupportingAgent" -> isSupportingAgent
+  ) ++
     ("credId", credId)
 
   override val detail: JsValue = userDetailsJson ++ Json.obj("clientName" -> clientName)

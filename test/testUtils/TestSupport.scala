@@ -117,9 +117,12 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
       "nino" -> testNino,
       "saUtr" -> testSaUtr,
       "credId" -> testCredId,
-      "userType" -> af.toString
+      "userType" -> af
     )
-    if(af == Agent) commonDetails ++ Json.obj("agentReferenceNumber" -> testArn)
+    if(af == Agent) commonDetails ++ Json.obj(
+      "isSupportingAgent" -> false,
+      "agentReferenceNumber" -> testArn
+    )
      else commonDetails
   }
 
