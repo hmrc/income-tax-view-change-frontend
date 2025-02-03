@@ -209,6 +209,32 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
       }
     }
 
+    "getInterestRate" when {
+
+      "successfully gets InterestRate" in {
+
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(poaOneReconciliationDebitDetails))
+
+        chargeItem.getInterestRate shouldBe 100
+
+      }
+
+      "throws MissingFieldException when interestRate is not found" in {
+
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(poaOneReconciliationDebitDetails)).copy(interestRate = None)
+
+        val exception = intercept[MissingFieldException] {
+          chargeItem.getInterestRate
+        }
+        exception shouldBe MissingFieldException("documentInterestRate")
+
+      }
+    }
+
     "interestIsPaid" when {
 
       "interest outstanding amount is 0 returns true" in {
