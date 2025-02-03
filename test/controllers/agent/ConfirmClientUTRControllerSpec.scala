@@ -198,7 +198,10 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions
 
             val result = testConfirmClientUTRController.submit()(fakeRequest)
 
-            val expectedAudit = ConfirmClientDetailsAuditModel(clientName = "Test User", nino = testNino, mtditid = testMtditid, arn = testArn, saUtr = testSaUtr, credId = Some(testCredId))
+            val expectedAudit = ConfirmClientDetailsAuditModel(
+              clientName = "Test User", nino = testNino, mtditid = testMtditid,
+              arn = testArn, saUtr = testSaUtr, isSupportingAgent = isSupportingAgent, credId = Some(testCredId)
+            )
 
             status(result) shouldBe SEE_OTHER
             redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)

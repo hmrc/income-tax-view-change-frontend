@@ -26,7 +26,8 @@ class ConfirmClientDetailsAuditModelSpec extends TestSupport {
   val auditType = enums.AuditType.ClientDetailsConfirmed.name
 
   def getConfirmClientDetailsAuditModel(): ConfirmClientDetailsAuditModel = {
-    ConfirmClientDetailsAuditModel(clientName = "Test User", nino = testNinoAgent, mtditid = testMtditidAgent, arn = testArn, saUtr = testSaUtr, credId = Some(testCredId))
+    ConfirmClientDetailsAuditModel(clientName = "Test User", nino = testNinoAgent,
+      mtditid = testMtditidAgent, arn = testArn, saUtr = testSaUtr, isSupportingAgent = false, credId = Some(testCredId))
   }
 
 
@@ -38,6 +39,7 @@ class ConfirmClientDetailsAuditModelSpec extends TestSupport {
       |    "saUtr": "1234567890",
       |    "credId": "testCredId",
       |    "userType": "Agent",
+      |    "isSupportingAgent": false,
       |    "clientName": "Test User"
       |}""".stripMargin)
 
