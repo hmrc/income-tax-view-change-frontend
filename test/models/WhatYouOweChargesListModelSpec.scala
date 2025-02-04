@@ -64,7 +64,7 @@ class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers with ChargeC
 
       "throws MissingFieldException when relevantDueDate is not found" in {
 
-        val outstandingChargeWithoutDate = OutstandingChargeModel(
+        val outstandingChargeWithoutRelevantDueDate = OutstandingChargeModel(
           chargeName = "BCD",
           relevantDueDate = None,
           chargeAmount = 100.00,
@@ -72,7 +72,7 @@ class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers with ChargeC
         )
 
         val whatYouOweChargesList = whatYouOweAllData().copy(
-          outstandingChargesModel = Some(OutstandingChargesModel(List(outstandingChargeWithoutDate)))
+          outstandingChargesModel = Some(OutstandingChargesModel(List(outstandingChargeWithoutRelevantDueDate)))
         )
 
         val exception = intercept[MissingFieldException] {
@@ -82,6 +82,36 @@ class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers with ChargeC
         exception shouldBe MissingFieldException("documentRelevantDueDate")
       }
 
+
+    }
+
+    "getAciChargeWithTieBreakerChargeAmount" when {
+
+      "successfully gets aciChargeWithTieBreakerChargeAmount" in {
+
+        val whatYouOweChargesList = whatYouOweAllData()
+
+        whatYouOweChargesList.getAciChargeWithTieBreakerChargeAmount shouldBe 12.67
+      }
+
+      "throws MissingFieldException when aciChargeWithTieBreakerChargeAmount is not found" in {
+
+        val aciChargeWithoutTieBreaker = OutstandingChargeModel(
+          chargeName = "ACI",
+          relevantDueDate = Some(LocalDate.of(2023, 12, 15)),
+          chargeAmount = 100.00,
+          tieBreaker = 1
+        )
+
+        val whatYouOweChargesList = whatYouOweAllData().copy(
+          outstandingChargesModel = Some(OutstandingChargesModel(List(aciChargeWithoutTieBreaker)))
+        )
+
+        val exception = intercept[MissingFieldException] {
+          whatYouOweChargesList.getAciChargeWithTieBreakerChargeAmount
+        }
+        exception shouldBe MissingFieldException("documentAciChargeWithTieBreaker")
+      }
 
     }
 
