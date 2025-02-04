@@ -16,9 +16,10 @@
 
 package models
 
+import exceptions.MissingFieldException
 import testConstants.FinancialDetailsTestConstants._
 import models.financialDetails.{BalanceDetails, WhatYouOweChargesList}
-import models.outstandingCharges.OutstandingChargesModel
+import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import org.scalatest.matchers.should.Matchers
 import services.DateService
 import testConstants.BaseTestConstants.app
@@ -51,6 +52,38 @@ class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers with ChargeC
 
 
   "The WhatYouOweChargesList model" when {
+
+    "getRelevantDueDate" when {
+
+      "successfully gets relevantDueDate" in {
+
+        val whatYouOweChargesList = whatYouOweAllData()
+
+          whatYouOweChargesList.getRelevantDueDate shouldBe LocalDate.of(2022, 11, 15)
+      }
+
+      "throws MissingFieldException when relevantDueDate is not found" in {
+
+        val outstandingChargeWithoutDate = OutstandingChargeModel(
+          chargeName = "BCD",
+          relevantDueDate = None,
+          chargeAmount = 100.00,
+          tieBreaker = 1
+        )
+
+        val whatYouOweChargesList = whatYouOweAllData().copy(
+          outstandingChargesModel = Some(OutstandingChargesModel(List(outstandingChargeWithoutDate)))
+        )
+
+        val exception = intercept[MissingFieldException] {
+          whatYouOweChargesList.getRelevantDueDate
+        }
+
+        exception shouldBe MissingFieldException("documentRelevantDueDate")
+      }
+
+
+    }
 
     "all values in model exists with tie breaker matching in OutstandingCharges Model" should {
       "bcdChargeTypeDefinedAndGreaterThanZero is true" in {
