@@ -2143,10 +2143,10 @@ optout.confirmedOptOut.yourReportingFrequency.text               = amlder eich a
 
 optout.confirmedOptOut.submitTax                                 = Cyflwyno’ch Ffurflen Dreth
 optout.confirmedOptOut.submitTax.confirmed.p1                    = Nawr eich bod wedi optio allan, bydd angen i chi fynd yn ôl i’r ffordd rydych wedi
-optout.confirmedOptOut.submitTax.confirmed.p1.link               = cyflwyno’ch Ffurflen Dreth Hunanasesiad yn y gorffennol (yn agor tab newydd)
+optout.confirmedOptOut.submitTax.confirmed.p1.link               = cyflwyno’ch Ffurflen Dreth Hunanasesiad yn y gorffennol
 
 optout.confirmedOptOut.submitTax.confirmed.p2                    = Os ydych yn adrodd am flwyddyn dreth yn chwarterol, bydd angen i chi ddefnyddio
-optout.confirmedOptOut.submitTax.confirmed.p2.link               =  meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd)
+optout.confirmedOptOut.submitTax.confirmed.p2.link               =  meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
 
 optout.confirmedOptOut.updatesDue                                = Eich diweddariadau nesaf sy’n ddyledus
 optout.confirmedOptOut.updatesDue.desc                           = Gwiriwch y dudalen {0} ar gyfer dyddiadau cau y flwyddyn dreth bresennol. Ni fydd dyddiadau cau ar gyfer blynyddoedd yn y dyfodol i’w gweld hyd nes eu bod yn newid i’r flwyddyn dreth bresennol.
