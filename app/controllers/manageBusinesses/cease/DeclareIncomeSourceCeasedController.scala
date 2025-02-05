@@ -110,27 +110,16 @@ class DeclareIncomeSourceCeasedController @Inject()(val authActions: AuthActions
   def handleSubmitRequest(id: Option[String], isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType)
                          (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
 
-    DeclareIncomeSourceCeasedForm.form(incomeSourceType).bindFromRequest().fold(
-      hasErrors =>
-        Future.successful {
-          BadRequest(view(
-            form = hasErrors,
-            incomeSourceType = incomeSourceType,
-            soleTraderBusinessName = getBusinessName(user, id),
-            postAction = postAction(id, isAgent, incomeSourceType),
-            backUrl = backCall(isAgent).url,
-            isAgent = isAgent
-          ))
-        },
-      _ => {
-        sessionService.setMongoKey(key = CeaseIncomeSourceData.ceaseIncomeSourceDeclare, value = "true", incomeSources = IncomeSourceJourneyType(Cease, incomeSourceType))
-          .flatMap {
-            case Right(_) => Future.successful(Redirect(redirectAction(id, isAgent, isChange, incomeSourceType)))
-            case Left(exception) => Future.failed(exception)
-          }
+    sessionService.setMongoKey(
+        key = CeaseIncomeSourceData.ceaseIncomeSourceDeclare,
+        value = "true",
+        incomeSources = IncomeSourceJourneyType(Cease, incomeSourceType)
+      )
+      .flatMap {
+        case Right(_) => Future.successful(Redirect(redirectAction(id, isAgent, isChange, incomeSourceType)))
+        case Left(exception) => Future.failed(exception)
       }
-    )
-  }.recover {
+  } recover {
     case ex: Exception =>
       Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
       showInternalServerError()
@@ -139,10 +128,6 @@ class DeclareIncomeSourceCeasedController @Inject()(val authActions: AuthActions
   private val postAction: (Option[String], Boolean, IncomeSourceType) => Call = (id, isAgent, incomeSourceType) =>
     if (isAgent) routes.DeclareIncomeSourceCeasedController.submitAgent(id, incomeSourceType)
     else         routes.DeclareIncomeSourceCeasedController.submit(id, incomeSourceType)
-
-  private val backCall: Boolean => Call = isAgent =>
-    if (isAgent) routes.CeaseIncomeSourceController.showAgent()
-    else         routes.CeaseIncomeSourceController.show()
 
   private val redirectAction: (Option[String], Boolean, Boolean, IncomeSourceType) => Call = (id, isAgent, isChange, incomeSourceType) =>
     routes.IncomeSourceEndDateController.show(id, incomeSourceType, isAgent, isChange)

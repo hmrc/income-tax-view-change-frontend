@@ -18,6 +18,8 @@ package controllers.claimToAdjustPoa
 
 import controllers.agent.sessionUtils
 import enums.{MTDIndividual, MTDSupportingAgent}
+import forms.adjustPoa.EnterPoaAmountForm
+import generators.PoaGenerator
 import mocks.auth.MockAuthActions
 import mocks.services.{MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.admin.AdjustPaymentsOnAccount
@@ -27,6 +29,8 @@ import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import org.scalacheck.Gen
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 import play.api
 import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
@@ -39,7 +43,8 @@ import scala.concurrent.Future
 
 class EnterPoaAmountControllerSpec extends MockAuthActions
   with MockClaimToAdjustService
-  with MockPaymentOnAccountSessionService {
+  with MockPaymentOnAccountSessionService
+  with PoaGenerator {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
@@ -118,6 +123,19 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                   val result = action(fakeRequest)
                   status(result) shouldBe OK
                   Jsoup.parse(contentAsString(result)).select("#poa-amount").attr("value") shouldBe ""
+                }
+                "Empty PoA amount input when no existing PoA tax year in session" in {
+                  enable(AdjustPaymentsOnAccount)
+                  mockSingleBISWithCurrentYearAsMigrationYear()
+                  setupMockPaymentOnAccountSessionService(Future(Right(Some(PoaAmendmentData(Some(MainIncomeLower))))))
+                  forAll(poaViewModelGen) { generatedPoaViewModel =>
+                    setupMockGetPoaAmountViewModel(Right(generatedPoaViewModel))
+
+                    setupMockSuccess(mtdRole)
+                    val result = action(fakeRequest)
+                    status(result) shouldBe OK
+                    Jsoup.parse(contentAsString(result)).select("#poa-amount").attr("value") shouldBe ""
+                  }
                 }
               }
               "PoA tax year crystallized and newPoaAmount exists in session" in {
@@ -334,6 +352,33 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                 val result = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> ""))
                 status(result) shouldBe BAD_REQUEST
                 redirectLocation(result) shouldBe None
+              }
+              "Fails when view model is a negative amount" in {
+                enable(AdjustPaymentsOnAccount)
+                mockSingleBISWithCurrentYearAsMigrationYear()
+                setupMockPaymentOnAccountSessionService(Future(Right(Some(PoaAmendmentData(Some(MainIncomeLower))))))
+                forAll(poaViewModelGen) { generatedPoaViewModel =>
+                  setupMockGetPoaAmountViewModel(Right(generatedPoaViewModel))
+                  setupMockSuccess(mtdRole)
+
+                  val inputAmount = -100
+                  val result = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> inputAmount.toString))
+                  status(result) shouldBe BAD_REQUEST
+                  redirectLocation(result) shouldBe None
+                }
+              }
+              "Fails when input amount exceeds relevant amount from view model" in {
+                enable(AdjustPaymentsOnAccount)
+                mockSingleBISWithCurrentYearAsMigrationYear()
+                forAll(poaViewModelGen) { generatedPoaViewModel =>
+                  setupMockGetPoaAmountViewModel(Right(generatedPoaViewModel))
+                  setupMockSuccess(mtdRole)
+
+                  val inputAmount = generatedPoaViewModel.relevantAmountOne + 100
+                  val result = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> inputAmount.toString))
+                  status(result) shouldBe BAD_REQUEST
+                  redirectLocation(result) shouldBe None
+                }
               }
               "Input PoA Amount is not a valid number" in {
                 enable(AdjustPaymentsOnAccount)
