@@ -35,13 +35,12 @@ import scala.concurrent.{ExecutionContext, Future}
 class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistoryConnector,
                                       financialDetailsConnector: FinancialDetailsConnector,
                                       implicit val dateService: DateServiceInterface,
-                                      val appConfig: FrontendAppConfig)
+                                      implicit val appConfig: FrontendAppConfig)
                                      (implicit ec: ExecutionContext) {
 
   def getPaymentHistory(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[PaymentHistoryError.type, Seq[Payment]]] = {
 
-    val maxYears = appConfig.api1553MaxYears
-    val listOfCalls = user.incomeSources.orderedTaxYearsInWindows(maxYears)
+    val listOfCalls = user.incomeSources.orderedTaxYearsInWindows
 
     Future.sequence(listOfCalls.map { years =>
       val (from, to) = (years.min, years.max)

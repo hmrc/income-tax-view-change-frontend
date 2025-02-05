@@ -66,8 +66,7 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
     Logger("application").debug(
       s"Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
 
-    val maxYears = appConfig.api1553MaxYears
-    val listOfCalls = user.incomeSources.orderedTaxYearsInWindows(maxYears)
+    val listOfCalls = user.incomeSources.orderedTaxYearsInWindows
 
     if (listOfCalls.isEmpty)
       Future.successful(None)

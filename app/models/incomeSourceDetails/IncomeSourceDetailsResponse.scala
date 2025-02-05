@@ -61,9 +61,9 @@ case class IncomeSourceDetailsModel(nino: String,
     taxYears
   }
 
-  def orderedTaxYearsInWindows(windowWidth: Int)(implicit dateService: DateServiceInterface): List[List[Int]] = {
+  def orderedTaxYearsInWindows(implicit dateService: DateServiceInterface, appConfig: FrontendAppConfig): List[List[Int]] = {
     val orderedTaxYears = yearOfMigration.map(year => (year.toInt to dateService.getCurrentTaxYearEnd).toList).getOrElse(List.empty[Int]).reverse
-    orderedTaxYears.grouped(windowWidth).toList
+    orderedTaxYears.grouped(appConfig.api1553MaxYears).toList
   }
 
   def getForeignProperty: Option[PropertyDetailsModel] = {
