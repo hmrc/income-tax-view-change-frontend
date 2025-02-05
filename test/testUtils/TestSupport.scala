@@ -111,7 +111,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
 
   implicit val individualUser: MtdItUser[_] = getIndividualUser(FakeRequest())
 
-  lazy val commonAuditDetails: AffinityGroup => JsObject = af => {
+  def commonAuditDetails(af:AffinityGroup, isSupportingAgent: Boolean = false): JsObject = {
     val commonDetails = Json.obj(
       "mtditid" -> testMtditid,
       "nino" -> testNino,
@@ -120,8 +120,8 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
       "userType" -> af
     )
     if(af == Agent) commonDetails ++ Json.obj(
-      "isSupportingAgent" -> false,
-      "agentReferenceNumber" -> testArn
+      "isSupportingAgent" -> isSupportingAgent,
+      "agentReferenceNumber" -> testArn,
     )
      else commonDetails
   }
@@ -262,8 +262,8 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
       sessionUtils.SessionKeys.isSupportingAgent -> isSupportingAgent.toString
     )
 
-  def agentUserConfirmedClient(): MtdItUser[_] = defaultMTDITUser(
-    Some(testUserTypeAgent), businessesAndPropertyIncome)
+  def agentUserConfirmedClient(isSupportingAgent: Boolean = false): MtdItUser[_] = defaultMTDITUser(
+    Some(testUserTypeAgent), businessesAndPropertyIncome, isSupportingAgent = isSupportingAgent)
 
   lazy val fakeRequestWithNino: FakeRequest[AnyContentAsEmpty.type] = fakeRequestWithActiveSession.withSession("nino" -> testNino)
 
