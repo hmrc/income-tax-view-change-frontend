@@ -55,8 +55,14 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, chargesList: Li
       && overdueChargeList.exists(_.latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0)) true
     else false
 
-  def getRelevantDueDate: LocalDate =
-    outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.getOrElse(throw MissingFieldException("documentRelevantDueDate"))
+  def getRelevantDueDate: LocalDate = {
+    try {
+      val bcdCharge = outstandingChargesModel.get.bcdChargeType.get
+      bcdCharge.relevantDueDate.getOrElse(throw MissingFieldException("documentRelevantDueDate"))
+    } catch {
+      case _: NoSuchElementException => throw MissingFieldException("documentBcdChargeType")
+    }
+  }
 
   def getAciChargeWithTieBreakerChargeAmount: BigDecimal =
     outstandingChargesModel.get.getAciChargeWithTieBreaker.getOrElse(throw MissingFieldException("documentAciChargeWithTieBreaker")).chargeAmount
