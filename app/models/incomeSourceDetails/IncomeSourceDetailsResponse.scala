@@ -17,6 +17,7 @@
 package models.incomeSourceDetails
 
 import auth.MtdItUser
+import config.FrontendAppConfig
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
 import models.core.IncomeSourceId.mkIncomeSourceId
@@ -58,6 +59,11 @@ case class IncomeSourceDetailsModel(nino: String,
     val taxYears = yearOfMigration.map(year => (year.toInt to dateService.getCurrentTaxYearEnd).toList).getOrElse(List.empty[Int])
     Logger("application").debug(s"Tax years list = $taxYears")
     taxYears
+  }
+
+  def orderedTaxYearsInWindows(windowWidth: Int)(implicit dateService: DateServiceInterface): List[List[Int]] = {
+    val orderedTaxYears = yearOfMigration.map(year => (year.toInt to dateService.getCurrentTaxYearEnd).toList).getOrElse(List.empty[Int]).reverse
+    orderedTaxYears.grouped(windowWidth).toList
   }
 
   def getForeignProperty: Option[PropertyDetailsModel] = {

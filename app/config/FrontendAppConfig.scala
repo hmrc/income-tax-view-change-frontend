@@ -155,6 +155,8 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   // API timeout
 
+  lazy val api1553MaxYears: Int = 5
+
   lazy val claimToAdjustTimeout: Int = servicesConfig.getInt("claim-to-adjust.timeout")
 
   // enrolment-store-proxy url

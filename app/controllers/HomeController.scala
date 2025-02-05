@@ -174,6 +174,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
     (unpaidCharges collect {
       case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay.getAllDueDates
     }).getOrElse(List.empty)
+      .sortWith(_ isBefore _)
+      .sortBy(_.toEpochDay())
 
   private def getOutstandingChargesModel(unpaidCharges: Option[FinancialDetailsResponseModel])
                                         (implicit user: MtdItUser[_]): Future[List[OutstandingChargeModel]] =

@@ -66,13 +66,12 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
     Logger("application").debug(
       s"Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
 
-    val yearsOfMigration = user.incomeSources.orderedTaxYearsByYearOfMigration
-    if (yearsOfMigration.isEmpty)
+    val maxYears = appConfig.api1553MaxYears
+    val listOfCalls = user.incomeSources.orderedTaxYearsInWindows(maxYears)
+
+    if (listOfCalls.isEmpty)
       Future.successful(None)
     else {
-      val maxYears = 5
-      val listOfCalls = yearsOfMigration.reverse.grouped(maxYears).toList
-
       Future.sequence(listOfCalls.map { years =>
         val (from, to) = (years.min, years.max)
         Logger("application").debug(s"Getting financial details for TaxYears: ${from} - ${to}")

@@ -40,13 +40,8 @@ class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistor
 
   def getPaymentHistory(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[PaymentHistoryError.type, Seq[Payment]]] = {
 
-    val orderedTaxYears: List[Int] = user.incomeSources.orderedTaxYearsByYearOfMigration.reverse.take(appConfig.paymentHistoryLimit)
-
-    val (from, to) = (orderedTaxYears.min, orderedTaxYears.max)
-    Logger("application").debug(s"Getting payment history for TaxYears: ${from} - ${to}")
-
-    val maxYears = 5
-    val listOfCalls = orderedTaxYears.grouped(maxYears).toList
+    val maxYears = appConfig.api1553MaxYears
+    val listOfCalls = user.incomeSources.orderedTaxYearsInWindows(maxYears)
 
     Future.sequence(listOfCalls.map { years =>
       val (from, to) = (years.min, years.max)

@@ -41,7 +41,8 @@ class CreditService @Inject()(val financialDetailsConnector: FinancialDetailsCon
     Logger("application").debug(
       s"Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
 
-    val from = Math.max(user.incomeSources.orderedTaxYearsByYearOfMigration.min, dateService.getCurrentTaxYearEnd - 4)
+    val maxTaxYears = appConfig.api1553MaxYears
+    val from = Math.max(user.incomeSources.orderedTaxYearsByYearOfMigration.min, dateService.getCurrentTaxYearEnd - {maxTaxYears - 1})
     val to = user.incomeSources.orderedTaxYearsByYearOfMigration.max
     Logger("application").debug(s"Getting financial details for TaxYears: ${from} - ${to}")
 

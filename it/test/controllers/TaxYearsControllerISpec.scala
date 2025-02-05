@@ -46,7 +46,7 @@ class TaxYearsControllerISpec extends ControllerISpecHelper with FeatureSwitchin
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
                 IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-                Then("The view should have the correct headings and 5 most recent tax years display")
+                Then(s"The view should have the correct headings and ${testAppConfig.api1553MaxYears} most recent tax years display")
                 res should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "taxYears.heading"),
