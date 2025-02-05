@@ -57,15 +57,22 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, chargesList: Li
 
   def getRelevantDueDate: LocalDate = {
     try {
-      val bcdCharge = outstandingChargesModel.get.bcdChargeType.get
-      bcdCharge.relevantDueDate.getOrElse(throw MissingFieldException("documentRelevantDueDate"))
+      outstandingChargesModel.get.bcdChargeType.get.relevantDueDate
+        .getOrElse(throw MissingFieldException("documentRelevantDueDate"))
     } catch {
       case _: NoSuchElementException => throw MissingFieldException("documentBcdChargeType")
     }
   }
 
-  def getAciChargeWithTieBreakerChargeAmount: BigDecimal =
-    outstandingChargesModel.get.getAciChargeWithTieBreaker.getOrElse(throw MissingFieldException("documentAciChargeWithTieBreaker")).chargeAmount
+  def getAciChargeWithTieBreakerChargeAmount: BigDecimal = {
+    try {
+      outstandingChargesModel.get.getAciChargeWithTieBreaker
+        .getOrElse(throw MissingFieldException("documentAciChargeWithTieBreaker"))
+        .chargeAmount
+    } catch {
+      case _: NoSuchElementException => throw MissingFieldException("documentAciChargeType")
+    }
+  }
 
   def getEarliestTaxYearAndAmountByDueDate: Option[(Int, BigDecimal)] = {
 

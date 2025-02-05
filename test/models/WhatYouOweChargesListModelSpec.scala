@@ -59,9 +59,7 @@ class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers with ChargeC
 
         val whatYouOweChargesList = whatYouOweAllData()
 
-        println(whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType)
-
-          whatYouOweChargesList.getRelevantDueDate shouldBe LocalDate.of(2022, 11, 15)
+        whatYouOweChargesList.getRelevantDueDate shouldBe LocalDate.of(2022, 11, 15)
       }
 
       "throws MissingFieldException when relevantDueDate is not found" in {
@@ -83,18 +81,9 @@ class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers with ChargeC
         exception shouldBe MissingFieldException("documentRelevantDueDate")
       }
 
-      "throws MissingFieldException when bcdChargeType is not found" in {
+      "throws MissingFieldException when there is no bcdChargeType" in {
 
-        val nonBcdCharge = OutstandingChargeModel(
-          chargeName = "NOT_BCD",
-          relevantDueDate = Some(LocalDate.of(2023, 12, 15)),
-          chargeAmount = 100.00,
-          tieBreaker = 1
-        )
-
-        val whatYouOweChargesList = whatYouOweAllData().copy(
-          outstandingChargesModel = Some(OutstandingChargesModel(List(nonBcdCharge)))
-        )
+        val whatYouOweChargesList = whatYouOweFinancialDataWithoutOutstandingCharges()
 
         val exception = intercept[MissingFieldException] {
           whatYouOweChargesList.getRelevantDueDate
@@ -132,6 +121,17 @@ class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers with ChargeC
         }
         exception shouldBe MissingFieldException("documentAciChargeWithTieBreaker")
       }
+
+      "throws MissingFieldException when there is no aciChargeType" in {
+
+        val whatYouOweChargesList = whatYouOweFinancialDataWithoutOutstandingCharges()
+
+        val exception = intercept[MissingFieldException] {
+          whatYouOweChargesList.getAciChargeWithTieBreakerChargeAmount
+        }
+        exception shouldBe MissingFieldException("documentAciChargeType")
+      }
+
 
     }
 
