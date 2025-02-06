@@ -36,6 +36,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
   val interestOutstandingAmount: Option[BigDecimal] = Some(40.0)
   val latePaymentInterestAmount: Option[BigDecimal] = Some(30.0)
   val lpiWithDunningLock: Option[BigDecimal] = Some(20.0)
+  val amountCodedOut: Option[BigDecimal] = Some(150.0)
 
 
   val defaultDocDetails = documentDetailModel(documentDueDate = Some(dueDate),
@@ -46,6 +47,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
     lpiWithDunningLock = lpiWithDunningLock)
 
   val docDetailsNoOutstandingAmout = defaultDocDetails.copy(outstandingAmount = 0)
+  val docDetailsAmountCodedOut = defaultDocDetails.copy(amountCodedOut = amountCodedOut)
 
   val poa1FinancialDetails = financialDetail()
   val poa2FinancialDetails = financialDetail(mainTransaction = "4930")
@@ -153,6 +155,138 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
       }
 
+    }
+
+    "getInterestFromDate" when {
+
+      "successfully gets interestFromDate" in {
+
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(poaOneReconciliationDebitDetails))
+
+        chargeItem.getInterestFromDate shouldBe LocalDate.of(2018, 3, 29)
+
+      }
+
+      "throws MissingFieldException when interestFromDate is not found" in {
+
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(poaOneReconciliationDebitDetails)).copy(interestFromDate = None)
+
+        val exception = intercept[MissingFieldException] {
+          chargeItem.getInterestFromDate
+        }
+        exception shouldBe MissingFieldException("documentInterestFromDate")
+
+
+      }
+    }
+
+    "getInterestEndDate" when {
+
+      "successfully gets InterestEndDate" in {
+
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(poaOneReconciliationDebitDetails))
+
+        chargeItem.getInterestEndDate shouldBe LocalDate.of(2018, 6, 15)
+
+      }
+
+      "throws MissingFieldException when interestEndDate is not found" in {
+
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(poaOneReconciliationDebitDetails)).copy(interestEndDate = None)
+
+        val exception = intercept[MissingFieldException] {
+          chargeItem.getInterestEndDate
+        }
+        exception shouldBe MissingFieldException("documentInterestEndDate")
+
+
+      }
+    }
+
+    "getInterestRate" when {
+
+      "successfully gets InterestRate" in {
+
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(poaOneReconciliationDebitDetails))
+
+        chargeItem.getInterestRate shouldBe 100
+
+      }
+
+      "throws MissingFieldException when interestRate is not found" in {
+
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(poaOneReconciliationDebitDetails)).copy(interestRate = None)
+
+        val exception = intercept[MissingFieldException] {
+          chargeItem.getInterestRate
+        }
+        exception shouldBe MissingFieldException("documentInterestRate")
+
+      }
+    }
+
+    "getInterestOutstandingAmount" when {
+
+      "successfully gets interestOutstandingAmount" in {
+
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(poaOneReconciliationDebitDetails))
+
+        chargeItem.getInterestOutstandingAmount shouldBe 40
+
+      }
+
+      "throws MissingFieldException when interestRate is not found" in {
+
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(poaOneReconciliationDebitDetails)).copy(interestOutstandingAmount = None)
+
+        val exception = intercept[MissingFieldException] {
+          chargeItem.getInterestOutstandingAmount
+        }
+        exception shouldBe MissingFieldException("documentInterestOutstandingAmount")
+
+      }
+    }
+
+    "getAmountCodedOut" when {
+
+      "successfully gets amountCodedOut" in {
+
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = docDetailsAmountCodedOut,
+          financialDetails = List(poaOneReconciliationDebitDetails))
+
+        chargeItem.getAmountCodedOut shouldBe 150
+
+      }
+
+      "throws MissingFieldException when amountCodedOut is not found" in {
+
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails,
+          financialDetails = List(poaOneReconciliationDebitDetails))
+
+        val exception = intercept[MissingFieldException] {
+          chargeItem.getAmountCodedOut
+        }
+        exception shouldBe MissingFieldException("documentAmountCodedOut")
+
+      }
     }
 
     "interestIsPaid" when {

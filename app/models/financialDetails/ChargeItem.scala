@@ -69,6 +69,16 @@ case class ChargeItem (
 
   def getDueDate: LocalDate = dueDate.getOrElse(throw MissingFieldException("documentDueDate"))
 
+  def getInterestFromDate: LocalDate = interestFromDate.getOrElse(throw MissingFieldException("documentInterestFromDate"))
+
+  def getInterestEndDate: LocalDate = interestEndDate.getOrElse(throw MissingFieldException("documentInterestEndDate"))
+
+  def getInterestRate: BigDecimal = interestRate.getOrElse(throw MissingFieldException("documentInterestRate"))
+
+  def getInterestOutstandingAmount: BigDecimal = interestOutstandingAmount.getOrElse(throw MissingFieldException("documentInterestOutstandingAmount"))
+
+  def getAmountCodedOut: BigDecimal = amountCodedOut.getOrElse(throw MissingFieldException("documentAmountCodedOut"))
+
   def isPaid: Boolean = outstandingAmount match {
     case amount if amount == 0 => true
     case _ => false
