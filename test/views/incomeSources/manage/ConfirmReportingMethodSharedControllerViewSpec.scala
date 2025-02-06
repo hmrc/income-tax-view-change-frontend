@@ -98,7 +98,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
 
   "ConfirmReportingMethodView - UKProperty - Individual" should {
     "render the heading" in new Setup(isAgent = false, error = false, incomeSourceType = UkProperty) {
-      document.getElementsByClass("govuk-fieldset__legend--l").first().text() shouldBe messages(switchToAnnualHeadingMessage, testTaxYearStartYear, testTaxYearEndYear)
+      document.getElementsByClass("govuk-heading-l").first().text() shouldBe messages(switchToAnnualHeadingMessage, testTaxYearStartYear, testTaxYearEndYear)
     }
     "render the checkbox" in new Setup(isAgent = false, error = false, incomeSourceType = UkProperty) {
       document.getElementsByClass("govuk-checkboxes").size() shouldBe 1
@@ -139,7 +139,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
 
   "ConfirmReportingMethodView - ForeignProperty - Individual" should {
     "render the heading" in new Setup(isAgent = false, error = false, incomeSourceType = ForeignProperty) {
-      document.getElementsByClass("govuk-fieldset__legend--l").first().text() shouldBe messages(switchToAnnualHeadingMessage, testTaxYearStartYear, testTaxYearEndYear)
+      document.getElementsByClass("govuk-heading-l").first().text() shouldBe messages(switchToAnnualHeadingMessage, testTaxYearStartYear, testTaxYearEndYear)
     }
     "render the checkbox" in new Setup(isAgent = false, error = false, incomeSourceType = ForeignProperty) {
       document.getElementsByClass("govuk-checkboxes").size() shouldBe 1
@@ -180,7 +180,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
 
   "ConfirmReportingMethodView - Sole Trader Business - Individual" should {
     "render the heading" in new Setup(isAgent = false, error = false, incomeSourceType = SelfEmployment) {
-      document.getElementsByClass("govuk-fieldset__legend--l").first().text() shouldBe messages(switchToAnnualHeadingMessage, testTaxYearStartYear, testTaxYearEndYear)
+      document.getElementsByClass("govuk-heading-l").first().text() shouldBe messages(switchToAnnualHeadingMessage, testTaxYearStartYear, testTaxYearEndYear)
     }
     "render the checkbox" in new Setup(isAgent = false, error = false, incomeSourceType = SelfEmployment) {
       document.getElementsByClass("govuk-checkboxes").size() shouldBe 1
@@ -221,7 +221,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
 
   "ConfirmReportingMethodView - UKProperty - Agent" should {
     "render the heading" in new Setup(isAgent = true, error = false, incomeSourceType = UkProperty) {
-      document.getElementsByClass("govuk-fieldset__legend--l").first().text() shouldBe messages(switchToAnnualHeadingMessage, testTaxYearStartYear, testTaxYearEndYear)
+      document.getElementsByClass("govuk-heading-l").first().text() shouldBe messages(switchToAnnualHeadingMessage, testTaxYearStartYear, testTaxYearEndYear)
     }
     "render the checkbox" in new Setup(isAgent = true, error = false, incomeSourceType = UkProperty) {
       document.getElementsByClass("govuk-checkboxes").size() shouldBe 1
@@ -262,7 +262,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
 
   "ConfirmReportingMethodView - Foreign Property - Agent" should {
     "render the heading" in new Setup(isAgent = true, error = false, incomeSourceType = ForeignProperty) {
-      document.getElementsByClass("govuk-fieldset__legend--l").first().text() shouldBe messages(switchToAnnualHeadingMessage, testTaxYearStartYear, testTaxYearEndYear)
+      document.getElementsByClass("govuk-heading-l").first().text() shouldBe messages(switchToAnnualHeadingMessage, testTaxYearStartYear, testTaxYearEndYear)
     }
     "render the checkbox" in new Setup(isAgent = true, error = false, incomeSourceType = ForeignProperty) {
       document.getElementsByClass("govuk-checkboxes").size() shouldBe 1
@@ -303,7 +303,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
 
   "ConfirmReportingMethodView - Sole Trader Business - Agent" should {
     "render the heading" in new Setup(isAgent = true, error = false, incomeSourceType = SelfEmployment) {
-      document.getElementsByClass("govuk-fieldset__legend--l").first().text() shouldBe messages(switchToAnnualHeadingMessage, testTaxYearStartYear, testTaxYearEndYear)
+      document.getElementsByClass("govuk-heading-l").first().text() shouldBe messages(switchToAnnualHeadingMessage, testTaxYearStartYear, testTaxYearEndYear)
     }
     "render the checkbox" in new Setup(isAgent = true, error = false, incomeSourceType = SelfEmployment) {
       document.getElementsByClass("govuk-checkboxes").size() shouldBe 1
