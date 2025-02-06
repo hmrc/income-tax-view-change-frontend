@@ -79,7 +79,7 @@
     @formWithCSRF(action = postAction, Symbol("id") -> s"$prefix-form") {
 
         @h1(getMessage(s"heading.$newReportingMethod", taxYearStartYear, taxYearEndYear),
-            "govuk-fieldset__legend--l govuk-!-margin-bottom-6")
+            "govuk-heading-l govuk-!-margin-bottom-6")
 
         @if(showChangingToAnnualWarningText) {
             @govukWarningText(WarningText(
