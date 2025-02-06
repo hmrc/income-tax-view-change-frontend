@@ -16,9 +16,10 @@
 
 package models
 
+import exceptions.MissingFieldException
 import testConstants.FinancialDetailsTestConstants._
 import models.financialDetails.{BalanceDetails, WhatYouOweChargesList}
-import models.outstandingCharges.OutstandingChargesModel
+import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import org.scalatest.matchers.should.Matchers
 import services.DateService
 import testConstants.BaseTestConstants.app
@@ -51,6 +52,88 @@ class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers with ChargeC
 
 
   "The WhatYouOweChargesList model" when {
+
+    "getRelevantDueDate" when {
+
+      "successfully gets relevantDueDate" in {
+
+        val whatYouOweChargesList = whatYouOweAllData()
+
+        whatYouOweChargesList.getRelevantDueDate shouldBe LocalDate.of(2022, 11, 15)
+      }
+
+      "throws MissingFieldException when relevantDueDate is not found" in {
+
+        val outstandingChargeWithoutRelevantDueDate = OutstandingChargeModel(
+          chargeName = "BCD",
+          relevantDueDate = None,
+          chargeAmount = 100.00,
+          tieBreaker = 1
+        )
+
+        val whatYouOweChargesList = whatYouOweAllData().copy(
+          outstandingChargesModel = Some(OutstandingChargesModel(List(outstandingChargeWithoutRelevantDueDate)))
+        )
+
+        val exception = intercept[MissingFieldException] {
+          whatYouOweChargesList.getRelevantDueDate
+        }
+        exception shouldBe MissingFieldException("documentRelevantDueDate")
+      }
+
+      "throws MissingFieldException when there is no bcdChargeType" in {
+
+        val whatYouOweChargesList = whatYouOweFinancialDataWithoutOutstandingCharges()
+
+        val exception = intercept[MissingFieldException] {
+          whatYouOweChargesList.getRelevantDueDate
+        }
+
+        exception shouldBe MissingFieldException("documentBcdChargeType")
+      }
+
+    }
+
+    "getAciChargeWithTieBreakerChargeAmount" when {
+
+      "successfully gets aciChargeWithTieBreakerChargeAmount" in {
+
+        val whatYouOweChargesList = whatYouOweAllData()
+
+        whatYouOweChargesList.getAciChargeWithTieBreakerChargeAmount shouldBe 12.67
+      }
+
+      "throws MissingFieldException when aciChargeWithTieBreakerChargeAmount is not found" in {
+
+        val aciChargeWithoutTieBreaker = OutstandingChargeModel(
+          chargeName = "ACI",
+          relevantDueDate = Some(LocalDate.of(2023, 12, 15)),
+          chargeAmount = 100.00,
+          tieBreaker = 1
+        )
+
+        val whatYouOweChargesList = whatYouOweAllData().copy(
+          outstandingChargesModel = Some(OutstandingChargesModel(List(aciChargeWithoutTieBreaker)))
+        )
+
+        val exception = intercept[MissingFieldException] {
+          whatYouOweChargesList.getAciChargeWithTieBreakerChargeAmount
+        }
+        exception shouldBe MissingFieldException("documentAciChargeWithTieBreaker")
+      }
+
+      "throws MissingFieldException when there is no aciChargeType" in {
+
+        val whatYouOweChargesList = whatYouOweFinancialDataWithoutOutstandingCharges()
+
+        val exception = intercept[MissingFieldException] {
+          whatYouOweChargesList.getAciChargeWithTieBreakerChargeAmount
+        }
+        exception shouldBe MissingFieldException("documentAciChargeType")
+      }
+
+
+    }
 
     "all values in model exists with tie breaker matching in OutstandingCharges Model" should {
       "bcdChargeTypeDefinedAndGreaterThanZero is true" in {
