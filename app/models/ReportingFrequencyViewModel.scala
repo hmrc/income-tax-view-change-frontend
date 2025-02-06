@@ -39,4 +39,6 @@ case class ReportingFrequencyViewModel(
   val isOptInLinkFirst: Boolean =
     optOutTaxYears.isEmpty ||
       (optInTaxYears.nonEmpty && (optInTaxYears.minBy(_.startYear).startYear < optOutTaxYears.minBy(_.startYear).startYear))
+
+  val atLeastOneOfOptInOrOptOutExists: Boolean = optOutTaxYears.nonEmpty || optInTaxYears.nonEmpty
 }

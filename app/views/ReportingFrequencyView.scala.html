@@ -179,7 +179,7 @@
     @if(viewModel.isAnyOfBusinessLatent) {
         @detailsDropdown("reporting.frequency.latency.details.section.header", latentBusinessText)
     }
-    @if(viewModel.displayManageYourRfSection) {
+    @if(viewModel.displayManageYourRfSection && viewModel.atLeastOneOfOptInOrOptOutExists) {
         @manageReportingFrequency
     }
 
