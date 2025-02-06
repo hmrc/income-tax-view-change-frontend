@@ -436,9 +436,9 @@
         @if(!whatYouOweChargesList.isChargesListEmpty) {
             @saNoteParagraph
         }
-        @whatYouOweChargesList.balanceDetails.getAbsoluteUnAllocatedCreditAmount.map { unallocatedCreditAmt =>
-            @if(unallocatedCreditAmt > 0) {
-                @unallocatedCreditParagraphContent(unallocatedCreditAmt.toCurrencyString)
+        @whatYouOweChargesList.balanceDetails.availableCredit.map { availableCreditAmt =>
+            @if(availableCreditAmt > 0) {
+                @unallocatedCreditParagraphContent(availableCreditAmt.toCurrencyString)
             }
         }
         @if(utr.isDefined && !isAgent && whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.isDefined) {
