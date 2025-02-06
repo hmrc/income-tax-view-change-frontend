@@ -21,7 +21,7 @@ import enums.{MTDIndividual, MTDUserRole}
 import helpers.WiremockHelper
 import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.admin.{OptOutFs, ReportingFrequencyPage}
-import models.itsaStatus.ITSAStatus.{Annual, Mandated, Voluntary}
+import models.itsaStatus.ITSAStatus.{Annual, Mandated, Voluntary, NoStatus}
 import org.jsoup.Jsoup
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import repositories.UIJourneySessionDataRepository
@@ -356,6 +356,33 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                   Mandated,
                   Mandated,
                   Mandated
+                )
+                stubCalculationListResponseBody("2022")
+
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "reporting.frequency.title")
+                )
+                result shouldNot have(
+                  elementTextByID("manage-reporting-frequency-heading")("Manage your reporting frequency for all your businesses"),
+                  elementTextBySelector(optInOptOutLinks(1))(s"Opt out of quarterly reporting and report annually for the $previousStartYear to $previousEndYear tax year"),
+                  elementTextBySelector(optInOptOutLinks(2))(s"Opt in to quarterly reporting")
+                )
+                result shouldNot have(
+                  elementTextBySelector(latencyDetailsHeader)("Your new businesses can have a different reporting frequency")
+                )
+              }
+              "CY is mandated and no opt in or opt out years to be displayed" in {
+                enable(ReportingFrequencyPage)
+                enable(OptOutFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
+                  dateService.getCurrentTaxYear,
+                  NoStatus,
+                  Mandated,
+                  NoStatus
                 )
                 stubCalculationListResponseBody("2022")
 
